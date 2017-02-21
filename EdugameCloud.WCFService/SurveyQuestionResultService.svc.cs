@@ -31,98 +31,23 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the survey result model.
-        /// </summary>
-        private SurveyResultModel SurveyResultModel
-        {
-            get
-            {
-                return IoC.Resolve<SurveyResultModel>();
-            }
-        }
+        private SurveyResultModel SurveyResultModel => IoC.Resolve<SurveyResultModel>();
 
-        /// <summary>
-        /// Gets the distractor result model.
-        /// </summary>
-        private DistractorModel DistractorModel
-        {
-            get
-            {
-                return IoC.Resolve<DistractorModel>();
-            }
-        }
+        private DistractorModel DistractorModel => IoC.Resolve<DistractorModel>();
 
-        /// <summary>
-        /// Gets the survey question result model.
-        /// </summary>
-        private SurveyQuestionResultModel SurveyQuestionResultModel
-        {
-            get
-            {
-                return IoC.Resolve<SurveyQuestionResultModel>();
-            }
-        }
+        private SurveyQuestionResultModel SurveyQuestionResultModel => IoC.Resolve<SurveyQuestionResultModel>();
 
-        /// <summary>
-        /// Gets the survey question result answer model.
-        /// </summary>
-        private SurveyQuestionResultAnswerModel SurveyQuestionResultAnswerModel
-        {
-            get
-            {
-                return IoC.Resolve<SurveyQuestionResultAnswerModel>();
-            }
-        }
+        private SurveyQuestionResultAnswerModel SurveyQuestionResultAnswerModel => IoC.Resolve<SurveyQuestionResultAnswerModel>();
 
-        /// <summary>
-        /// Gets the question type model.
-        /// </summary>
-        private QuestionTypeModel QuestionTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionTypeModel>();
-            }
-        }
+        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionModel QuestionModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionModel>();
-            }
-        }
+        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
-        /// <summary>
-        /// Gets the quiz result converter.
-        /// </summary>
-        private QuizResultConverter QuizResultConverter
-        {
-            get
-            {
-                return IoC.Resolve<QuizResultConverter>();
-            }
-        }
+        private QuizResultConverter QuizResultConverter => IoC.Resolve<QuizResultConverter>();
 
-        private ConverterFactory ConverterFactory
-        {
-            get
-            {
-                return IoC.Resolve<ConverterFactory>();
-            }
-        }
+        private ConverterFactory ConverterFactory => IoC.Resolve<ConverterFactory>();
 
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
-            }
-        }
+        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
 
         #endregion
 

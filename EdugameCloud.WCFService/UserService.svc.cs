@@ -31,79 +31,25 @@
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the user login history model.
-        /// </summary>
-        private UserLoginHistoryModel UserLoginHistoryModel
-        {
-            get { return IoC.Resolve<UserLoginHistoryModel>(); }
-        }
+        private UserLoginHistoryModel UserLoginHistoryModel => IoC.Resolve<UserLoginHistoryModel>();
 
-        /// <summary>
-        /// Gets the language model.
-        /// </summary>
-        private LanguageModel LanguageModel
-        {
-            get { return IoC.Resolve<LanguageModel>(); }
-        }
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
-        /// <summary>
-        /// Gets the time zone model.
-        /// </summary>
-        private TimeZoneModel TimeZoneModel
-        {
-            get { return IoC.Resolve<TimeZoneModel>(); }
-        }
+        private TimeZoneModel TimeZoneModel => IoC.Resolve<TimeZoneModel>();
 
-        /// <summary>
-        /// Gets the UserRole model.
-        /// </summary>
-        private UserRoleModel UserRoleModel
-        {
-            get { return IoC.Resolve<UserRoleModel>(); }
-        }
+        private UserRoleModel UserRoleModel => IoC.Resolve<UserRoleModel>();
 
-        /// <summary>
-        /// Gets the CompanyLicense model.
-        /// </summary>
-        private CompanyLicenseModel CompanyLicenseModel
-        {
-            get { return IoC.Resolve<CompanyLicenseModel>(); }
-        }
+        private CompanyLicenseModel CompanyLicenseModel => IoC.Resolve<CompanyLicenseModel>();
 
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyModel CompanyModel
-        {
-            get { return IoC.Resolve<CompanyModel>(); }
-        }
+        private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
 
-        /// <summary>
-        /// Gets the company LMS model.
-        /// </summary>
-        private LmsCompanyModel LmsCompanyModel
-        {
-            get { return IoC.Resolve<LmsCompanyModel>(); }
-        }
+        private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get { return IoC.Resolve<LmsUserParametersModel>(); }
-        }
+        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
 
-        /// <summary>
-        /// Gets the social user tokens
-        /// </summary>
-        private SocialUserTokensModel SocialUserTokensModel
-        {
-            get { return IoC.Resolve<SocialUserTokensModel>(); }
-        }
+        private SocialUserTokensModel SocialUserTokensModel => IoC.Resolve<SocialUserTokensModel>();
 
-        private LmsProviderModel LmsProviderModel
-        {
-            get { return IoC.Resolve<LmsProviderModel>(); }
-        }
+        private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
         #endregion
 

@@ -24,20 +24,7 @@
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class ThemeService : BaseService, IThemeService
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets the theme model.
-        /// </summary>
-        private ThemeModel ThemeModel
-        {
-            get
-            {
-                return IoC.Resolve<ThemeModel>();
-            }
-        }
-
-        #endregion
+        private ThemeModel ThemeModel => IoC.Resolve<ThemeModel>();
 
         #region Public Methods and Operators
 

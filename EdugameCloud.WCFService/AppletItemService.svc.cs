@@ -26,20 +26,7 @@
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class AppletItemService : BaseService, IAppletItemService
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets the AppletItem model.
-        /// </summary>
-        private AppletItemModel AppletItemModel
-        {
-            get
-            {
-                return IoC.Resolve<AppletItemModel>();
-            }
-        }
-
-        #endregion
+        private AppletItemModel AppletItemModel => IoC.Resolve<AppletItemModel>();
 
         #region Public Methods and Operators
 

@@ -32,29 +32,10 @@ namespace EdugameCloud.WCFService
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class EmailService : BaseService, IEmailService
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets the newsletter subscription model.
-        /// </summary>
-        private NewsletterSubscriptionModel NewsletterSubscriptionModel
-        {
-            get
-            {
-                return IoC.Resolve<NewsletterSubscriptionModel>();
-            }
-        }
-
-        #endregion
+        private NewsletterSubscriptionModel NewsletterSubscriptionModel => IoC.Resolve<NewsletterSubscriptionModel>();
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// Logs error to server log.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="EmailHistoryDTO"/>.
-        /// </returns>      
         public EmailHistoryDTO[] GetHistory()
         {
             return this.EmailHistoryModel.GetAll().Select(x => new EmailHistoryDTO(x)).ToArray();

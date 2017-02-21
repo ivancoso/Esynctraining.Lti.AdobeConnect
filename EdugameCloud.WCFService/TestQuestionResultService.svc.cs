@@ -29,49 +29,13 @@
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the test result model.
-        /// </summary>
-        private TestResultModel TestResultModel
-        {
-            get
-            {
-                return IoC.Resolve<TestResultModel>();
-            }
-        }
+        private TestResultModel TestResultModel => IoC.Resolve<TestResultModel>();
 
-        /// <summary>
-        /// Gets the test question result model.
-        /// </summary>
-        private TestQuestionResultModel TestQuestionResultModel
-        {
-            get
-            {
-                return IoC.Resolve<TestQuestionResultModel>();
-            }
-        }
+        private TestQuestionResultModel TestQuestionResultModel => IoC.Resolve<TestQuestionResultModel>();
 
-        /// <summary>
-        /// Gets the question type model.
-        /// </summary>
-        private QuestionTypeModel QuestionTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionTypeModel>();
-            }
-        }
+        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionModel QuestionModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionModel>();
-            }
-        }
+        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
         #endregion
 

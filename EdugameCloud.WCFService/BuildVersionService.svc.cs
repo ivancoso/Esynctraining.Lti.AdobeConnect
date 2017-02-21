@@ -28,27 +28,9 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the build version Model.
-        /// </summary>
-        private BuildVersionModel BuildVersionModel
-        {
-            get
-            {
-                return IoC.Resolve<BuildVersionModel>();
-            }
-        }
+        private BuildVersionModel BuildVersionModel => IoC.Resolve<BuildVersionModel>();
 
-        /// <summary>
-        /// Gets the build version type model.
-        /// </summary>
-        private BuildVersionTypeModel BuildVersionTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<BuildVersionTypeModel>();
-            }
-        }
+        private BuildVersionTypeModel BuildVersionTypeModel => IoC.Resolve<BuildVersionTypeModel>();
 
         #endregion
 

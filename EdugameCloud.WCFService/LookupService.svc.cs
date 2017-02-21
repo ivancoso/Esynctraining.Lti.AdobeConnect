@@ -29,75 +29,33 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
         
-        private LanguageModel LanguageModel
-        {
-            get { return IoC.Resolve<LanguageModel>(); }
-        }
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
         
-        private QuestionTypeModel QuestionTypeModel
-        {
-            get { return IoC.Resolve<QuestionTypeModel>(); }
-        }
+        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
         
-        private GeoModel GeoModel
-        {
-            get { return IoC.Resolve<GeoModel>(); }
-        }
+        private GeoModel GeoModel => IoC.Resolve<GeoModel>();
         
-        private QuizFormatModel QuizFormatModel
-        {
-            get { return IoC.Resolve<QuizFormatModel>(); }
-        }
+        private QuizFormatModel QuizFormatModel => IoC.Resolve<QuizFormatModel>();
         
-        private SurveyGroupingTypeModel SurveyGroupingTypeModel
-        {
-            get { return IoC.Resolve<SurveyGroupingTypeModel>(); }
-        }
+        private SurveyGroupingTypeModel SurveyGroupingTypeModel => IoC.Resolve<SurveyGroupingTypeModel>();
         
-        private UserRoleModel UserRoleModel
-        {
-            get { return IoC.Resolve<UserRoleModel>(); }
-        }
+        private UserRoleModel UserRoleModel => IoC.Resolve<UserRoleModel>();
         
-        private ScoreTypeModel ScoreTypeModel
-        {
-            get { return IoC.Resolve<ScoreTypeModel>(); }
-        }
+        private ScoreTypeModel ScoreTypeModel => IoC.Resolve<ScoreTypeModel>();
         
-        private TimeZoneModel TimeZoneModel
-        {
-            get { return IoC.Resolve<TimeZoneModel>(); }
-        }
+        private TimeZoneModel TimeZoneModel => IoC.Resolve<TimeZoneModel>();
         
-        private BuildVersionTypeModel BuildVersionTypeModel
-        {
-            get { return IoC.Resolve<BuildVersionTypeModel>(); }
-        }
+        private BuildVersionTypeModel BuildVersionTypeModel => IoC.Resolve<BuildVersionTypeModel>();
         
-        private StateModel StateModel
-        {
-            get { return IoC.Resolve<StateModel>(); }
-        }
+        private StateModel StateModel => IoC.Resolve<StateModel>();
 
-        private SchoolModel SchoolModel
-        {
-            get { return IoC.Resolve<SchoolModel>(); }
-        }
+        private SchoolModel SchoolModel => IoC.Resolve<SchoolModel>();
 
-        private CountryModel CountryModel
-        {
-            get { return IoC.Resolve<CountryModel>(); }
-        }
+        private CountryModel CountryModel => IoC.Resolve<CountryModel>();
         
-        private SNServiceModel SNServiceModel
-        {
-            get { return IoC.Resolve<SNServiceModel>(); }
-        }
+        private SNServiceModel SNServiceModel => IoC.Resolve<SNServiceModel>();
         
-        private SNMapProviderModel SNMapProviderModel
-        {
-            get { return IoC.Resolve<SNMapProviderModel>(); }
-        }
+        private SNMapProviderModel SNMapProviderModel => IoC.Resolve<SNMapProviderModel>();
 
         ///// <summary>
         ///// Gets the facebook model.
@@ -110,10 +68,7 @@ namespace EdugameCloud.WCFService
         //    }
         //}
         
-        private VCFModel VCFModel
-        {
-            get { return IoC.Resolve<VCFModel>(); }
-        }
+        private VCFModel VCFModel => IoC.Resolve<VCFModel>();
 
         ///// <summary>
         ///// Gets the twitter model.
@@ -126,10 +81,7 @@ namespace EdugameCloud.WCFService
         //    }
         //}
 
-        private ICache Cache
-        {
-            get { return IoC.Resolve<ICache>(); }
-        }
+        private ICache Cache => IoC.Resolve<ICache>();
 
         #endregion
 

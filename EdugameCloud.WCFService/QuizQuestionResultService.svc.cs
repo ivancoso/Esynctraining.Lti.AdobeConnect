@@ -29,73 +29,19 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionModel QuestionModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionModel>();
-            }
-        }
+        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
-        /// <summary>
-        /// Gets the question type model.
-        /// </summary>
-        private QuestionTypeModel QuestionTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionTypeModel>();
-            }
-        }
+        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
 
-        /// <summary>
-        /// Gets the quiz question result model.
-        /// </summary>
-        private QuizQuestionResultModel QuizQuestionResultModel
-        {
-            get
-            {
-                return IoC.Resolve<QuizQuestionResultModel>();
-            }
-        }
+        private QuizQuestionResultModel QuizQuestionResultModel => IoC.Resolve<QuizQuestionResultModel>();
 
-        /// <summary>
-        /// Gets the quiz result model.
-        /// </summary>
-        private QuizResultModel QuizResultModel
-        {
-            get
-            {
-                return IoC.Resolve<QuizResultModel>();
-            }
-        }
+        private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
 
-        private ConverterFactory ConverterFactory
-        {
-            get
-            {
-                return IoC.Resolve<ConverterFactory>();
-            }
-        }
+        private ConverterFactory ConverterFactory => IoC.Resolve<ConverterFactory>();
 
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
-            }
-        }
+        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
 
-        private QuizQuestionResultAnswerModel QuizQuestionResultAnswerModel
-        {
-            get
-            {
-                return IoC.Resolve<QuizQuestionResultAnswerModel>();
-            }
-        }
+        private QuizQuestionResultAnswerModel QuizQuestionResultAnswerModel => IoC.Resolve<QuizQuestionResultAnswerModel>();
 
         #endregion
 

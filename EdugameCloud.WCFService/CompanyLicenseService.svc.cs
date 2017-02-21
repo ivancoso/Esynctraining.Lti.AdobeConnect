@@ -32,31 +32,9 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class CompanyLicenseService : BaseService, ICompanyLicenseService
     {
-        #region Properties
+        private CompanyLicenseModel CompanyLicenseModel => IoC.Resolve<CompanyLicenseModel>();
 
-        /// <summary>
-        /// Gets the company license model.
-        /// </summary>
-        private CompanyLicenseModel CompanyLicenseModel
-        {
-            get
-            {
-                return IoC.Resolve<CompanyLicenseModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyModel CompanyModel
-        {
-            get
-            {
-                return IoC.Resolve<CompanyModel>();
-            }
-        }
-
-        #endregion
+        private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
 
         #region Public Methods and Operators
 

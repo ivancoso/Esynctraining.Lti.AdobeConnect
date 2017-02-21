@@ -37,40 +37,19 @@ namespace EdugameCloud.WCFService
 
         #region Properties
 
-        private LmsCompanyModel LmsCompanyModel
-        {
-            get { return IoC.Resolve<LmsCompanyModel>(); }
-        }
+        private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 
-        private LmsCompanySettingModel LmsCompanySettingModel
-        {
-            get { return IoC.Resolve<LmsCompanySettingModel>(); }
-        }
+        private LmsCompanySettingModel LmsCompanySettingModel => IoC.Resolve<LmsCompanySettingModel>();
 
-        private LmsCourseMeetingModel LmsCourseMeetingModel
-        {
-            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
-        }
+        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
-        private MeetingSetup MeetingSetup
-        {
-            get { return IoC.Resolve<MeetingSetup>(); }
-        }
+        private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
         
-        private LmsUserModel LmsUserModel
-        {
-            get { return IoC.Resolve<LmsUserModel>(); }
-        }
+        private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
         
-        private LmsProviderModel LmsProviderModel
-        {
-            get { return IoC.Resolve<LmsProviderModel>(); }
-        }
+        private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
-        private TestConnectionService TestConnectionService
-        {
-            get { return IoC.Resolve<TestConnectionService>(); }
-        }
+        private TestConnectionService TestConnectionService => IoC.Resolve<TestConnectionService>();
 
         #endregion
 

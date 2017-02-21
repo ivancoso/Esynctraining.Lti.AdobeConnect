@@ -19,12 +19,6 @@ namespace EdugameCloud.WCFService
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class ErrorService : BaseService, IErrorService
     {
-        #region Properties
-
-        #endregion
-
-        #region Public Methods and Operators
-
         /// <summary>
         /// The send email about error.
         /// </summary>
@@ -68,6 +62,6 @@ namespace EdugameCloud.WCFService
                         CurrentUser.With(x => x.Email)));
         }
 
-        #endregion
     }
+
 }

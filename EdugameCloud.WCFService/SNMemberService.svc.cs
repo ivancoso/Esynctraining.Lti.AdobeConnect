@@ -26,20 +26,7 @@
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class SNMemberService : BaseService, ISNMemberService
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets the SN session member model.
-        /// </summary>
-        private SNMemberModel SNSessionMemberModel
-        {
-            get
-            {
-                return IoC.Resolve<SNMemberModel>();
-            }
-        }
-
-        #endregion
+        private SNMemberModel SNSessionMemberModel => IoC.Resolve<SNMemberModel>();
 
         #region Public Methods and Operators
 

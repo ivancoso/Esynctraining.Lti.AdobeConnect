@@ -25,49 +25,13 @@
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the Quiz model.
-        /// </summary>
-        private QuizModel QuizModel
-        {
-            get
-            {
-                return IoC.Resolve<QuizModel>();
-            }
-        }
+        private QuizModel QuizModel => IoC.Resolve<QuizModel>();
 
-        /// <summary>
-        /// Gets the LMS user parameters model.
-        /// </summary>
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
-            }
-        }
+        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
 
-        /// <summary>
-        /// Gets the QuizFormat model.
-        /// </summary>
-        private QuizFormatModel QuizFormatModel
-        {
-            get
-            {
-                return IoC.Resolve<QuizFormatModel>();
-            }
-        }
+        private QuizFormatModel QuizFormatModel => IoC.Resolve<QuizFormatModel>();
 
-        /// <summary>
-        /// Gets the Score model.
-        /// </summary>
-        private ScoreTypeModel ScoreTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<ScoreTypeModel>();
-            }
-        }
+        private ScoreTypeModel ScoreTypeModel => IoC.Resolve<ScoreTypeModel>();
 
         #endregion
 

@@ -28,27 +28,9 @@
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the Test model.
-        /// </summary>
-        private TestModel TestModel
-        {
-            get
-            {
-                return IoC.Resolve<TestModel>();
-            }
-        }
+        private TestModel TestModel => IoC.Resolve<TestModel>();
 
-        /// <summary>
-        /// Gets the Score model.
-        /// </summary>
-        private ScoreTypeModel ScoreTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<ScoreTypeModel>();
-            }
-        }
+        private ScoreTypeModel ScoreTypeModel => IoC.Resolve<ScoreTypeModel>();
 
         #endregion
 

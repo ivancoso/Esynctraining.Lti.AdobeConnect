@@ -28,27 +28,9 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionModel QuestionModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionModel>();
-            }
-        }
+        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
-        /// <summary>
-        /// Gets the distractor model.
-        /// </summary>
-        private DistractorModel DistractorModel
-        {
-            get
-            {
-                return IoC.Resolve<DistractorModel>();
-            }
-        }
+        private DistractorModel DistractorModel => IoC.Resolve<DistractorModel>()
 
         #endregion
 

@@ -23,20 +23,7 @@
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class QuestionTypeService : BaseService, IQuestionTypeService
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets the question type model.
-        /// </summary>
-        private QuestionTypeModel QuestionTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionTypeModel>();
-            }
-        }
-
-        #endregion
+        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
 
         #region Public Methods and Operators
 

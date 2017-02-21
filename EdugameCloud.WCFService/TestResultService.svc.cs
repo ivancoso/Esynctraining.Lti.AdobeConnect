@@ -30,27 +30,9 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the test result model.
-        /// </summary>
-        private TestResultModel TestResultModel
-        {
-            get
-            {
-                return IoC.Resolve<TestResultModel>();
-            }
-        }
+        private TestResultModel TestResultModel => IoC.Resolve<TestResultModel>();
 
-        /// <summary>
-        /// Gets the Test model.
-        /// </summary>
-        private TestModel TestModel
-        {
-            get
-            {
-                return IoC.Resolve<TestModel>();
-            }
-        }
+        private TestModel TestModel => IoC.Resolve<TestModel>();
 
         #endregion
 

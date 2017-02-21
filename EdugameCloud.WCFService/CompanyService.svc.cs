@@ -34,77 +34,23 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyModel CompanyModel
-        {
-            get { return IoC.Resolve<CompanyModel>(); }
-        }
+        private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
         
-        /// <summary>
-        /// Gets the company license model.
-        /// </summary>
-        private LmsCompanyModel LmsCompanyModel
-        {
-            get { return IoC.Resolve<LmsCompanyModel>(); }
-        }
+        private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 
-        /// <summary>
-        /// Gets the company license model.
-        /// </summary>
-        private LmsProviderModel LmsProviderModel
-        {
-            get { return IoC.Resolve<LmsProviderModel>(); }
-        }
+        private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
-        /// <summary>
-        /// Gets the LMS user model.
-        /// </summary>
-        private LmsUserModel LmsUserModel
-        {
-            get { return IoC.Resolve<LmsUserModel>(); }
-        }
+        private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
 
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyThemeModel CompanyThemeModel
-        {
-            get { return IoC.Resolve<CompanyThemeModel>(); }
-        }
+        private CompanyThemeModel CompanyThemeModel => IoC.Resolve<CompanyThemeModel>();
 
-        /// <summary>
-        /// Gets the company license model.
-        /// </summary>
-        private CompanyLicenseModel CompanyLicenseModel
-        {
-            get { return IoC.Resolve<CompanyLicenseModel>(); }
-        }
+        private CompanyLicenseModel CompanyLicenseModel => IoC.Resolve<CompanyLicenseModel>();
 
-        /// <summary>
-        /// Gets the time zone model.
-        /// </summary>
-        private TimeZoneModel TimeZoneModel
-        {
-            get { return IoC.Resolve<TimeZoneModel>(); }
-        }
+        private TimeZoneModel TimeZoneModel => IoC.Resolve<TimeZoneModel>();
 
-        /// <summary>
-        /// Gets the language model.
-        /// </summary>
-        private LanguageModel LanguageModel
-        {
-            get { return IoC.Resolve<LanguageModel>(); }
-        }
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
-        /// <summary>
-        /// Gets the UserRole model.
-        /// </summary>
-        private UserRoleModel UserRoleModel
-        {
-            get { return IoC.Resolve<UserRoleModel>(); }
-        }
+        private UserRoleModel UserRoleModel => IoC.Resolve<UserRoleModel>();
 
         #endregion
 

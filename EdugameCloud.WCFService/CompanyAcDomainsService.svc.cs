@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
-using System.Text;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
@@ -21,21 +17,9 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class CompanyAcDomainsService : BaseService, ICompanyAcDomainsService
     {
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyAcServerModel CompanyAcServerModel
-        {
-            get { return IoC.Resolve<CompanyAcServerModel>(); }
-        }
+        private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
 
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyModel CompanyModel
-        {
-            get { return IoC.Resolve<CompanyModel>(); }
-        }
+        private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
 
 
         public ACDomainDTO[] GetAllByCompany(int companyId)

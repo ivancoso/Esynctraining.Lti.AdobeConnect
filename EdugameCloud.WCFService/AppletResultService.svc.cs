@@ -29,29 +29,9 @@ namespace EdugameCloud.WCFService
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class AppletResultService : BaseService, IAppletResultService
     {
-        #region Properties
+        private AppletResultModel AppletResultModel => IoC.Resolve<AppletResultModel>();
 
-        /// <summary>
-        /// Gets the ac user mode model.
-        /// </summary>
-        private AppletResultModel AppletResultModel
-        {
-            get
-            {
-                return IoC.Resolve<AppletResultModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the AppletItem model.
-        /// </summary>
-        private AppletItemModel AppletItemModel
-        {
-            get
-            {
-                return IoC.Resolve<AppletItemModel>();
-            }
-        }
+        private AppletItemModel AppletItemModel => IoC.Resolve<AppletItemModel>();
 
         #endregion
 

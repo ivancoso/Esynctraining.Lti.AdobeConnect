@@ -29,27 +29,9 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the sub module model.
-        /// </summary>
-        private SubModuleModel SubModuleModel
-        {
-            get
-            {
-                return IoC.Resolve<SubModuleModel>();
-            }
-        }
+        private SubModuleModel SubModuleModel => IoC.Resolve<SubModuleModel>();
 
-        /// <summary>
-        /// Gets the sub module category model.
-        /// </summary>
-        private SubModuleCategoryModel SubModuleCategoryModel
-        {
-            get
-            {
-                return IoC.Resolve<SubModuleCategoryModel>();
-            }
-        }
+        private SubModuleCategoryModel SubModuleCategoryModel => IoC.Resolve<SubModuleCategoryModel>();
 
         #endregion
 

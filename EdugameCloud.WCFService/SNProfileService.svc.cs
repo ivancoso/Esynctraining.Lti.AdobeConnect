@@ -31,104 +31,23 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the SN map provider model.
-        /// </summary>
-        private SNMapProviderModel SNMapProviderModel
-        {
-            get
-            {
-                return IoC.Resolve<SNMapProviderModel>();
-            }
-        }
+        private SNMapProviderModel SNMapProviderModel => IoC.Resolve<SNMapProviderModel>();
 
-        /// <summary>
-        /// Gets the SN map settings model.
-        /// </summary>
-        private SNMapSettingsModel SNMapSettingsModel
-        {
-            get
-            {
-                return IoC.Resolve<SNMapSettingsModel>();
-            }
-        }
+        private SNMapSettingsModel SNMapSettingsModel => IoC.Resolve<SNMapSettingsModel>();
 
-        /// <summary>
-        /// Gets the SN profile Model.
-        /// </summary>
-        private SNProfileModel SNProfileModel
-        {
-            get
-            {
-                return IoC.Resolve<SNProfileModel>();
-            }
-        }
+        private SNProfileModel SNProfileModel => IoC.Resolve<SNProfileModel>();
 
-        /// <summary>
-        /// Gets the SN service model.
-        /// </summary>
-        private SNServiceModel SNServiceModel
-        {
-            get
-            {
-                return IoC.Resolve<SNServiceModel>();
-            }
-        }
+        private SNServiceModel SNServiceModel => IoC.Resolve<SNServiceModel>();
 
-        /// <summary>
-        /// Gets the SN profile SN service model.
-        /// </summary>
-        private SNProfileSNServiceModel SNProfileSNServiceModel
-        {
-            get
-            {
-                return IoC.Resolve<SNProfileSNServiceModel>();
-            }
-        }
+        private SNProfileSNServiceModel SNProfileSNServiceModel => IoC.Resolve<SNProfileSNServiceModel>();
 
-        /// <summary>
-        /// Gets the SN link model.
-        /// </summary>
-        private SNLinkModel SNLinkModel
-        {
-            get
-            {
-                return IoC.Resolve<SNLinkModel>();
-            }
-        }
+        private SNLinkModel SNLinkModel => IoC.Resolve<SNLinkModel>();
 
-        /// <summary>
-        /// Gets the address model
-        /// </summary>
-        private AddressModel AddressModel
-        {
-            get
-            {
-                return IoC.Resolve<AddressModel>();
-            }
-        }
+        private AddressModel AddressModel => IoC.Resolve<AddressModel>();
 
-        /// <summary>
-        /// Gets the state model
-        /// </summary>
-        private StateModel StateModel
-        {
-            get
-            {
-                return IoC.Resolve<StateModel>();
-            }
-        }
+        private StateModel StateModel => IoC.Resolve<StateModel>();
 
-        /// <summary>
-        /// Gets the country model
-        /// </summary>
-        private CountryModel CountryModel
-        {
-            get
-            {
-                return IoC.Resolve<CountryModel>();
-            }
-        }
+        private CountryModel CountryModel => IoC.Resolve<CountryModel>();
 
         #endregion
 

@@ -25,20 +25,7 @@
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class SNGroupDiscussionService : BaseService, ISNGroupDiscussionService
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets the SNGroupDiscussion Model.
-        /// </summary>
-        private SNGroupDiscussionModel SNGroupDiscussionModel
-        {
-            get
-            {
-                return IoC.Resolve<SNGroupDiscussionModel>();
-            }
-        }
-
-        #endregion
+        private SNGroupDiscussionModel SNGroupDiscussionModel => IoC.Resolve<SNGroupDiscussionModel>();
 
         #region Public Methods and Operators
 

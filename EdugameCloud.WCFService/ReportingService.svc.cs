@@ -17,35 +17,17 @@
     {
         #region Properties
         
-        private AppletItemModel AppletItemModel
-        {
-            get { return IoC.Resolve<AppletItemModel>(); }
-        }
+        private AppletItemModel AppletItemModel => IoC.Resolve<AppletItemModel>();
         
-        private QuizResultModel QuizResultModel
-        {
-            get { return IoC.Resolve<QuizResultModel>(); }
-        }
+        private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
         
-        private TestResultModel TestResultModel
-        {
-            get { return IoC.Resolve<TestResultModel>(); }
-        }
+        private TestResultModel TestResultModel => IoC.Resolve<TestResultModel>();
         
-        private SurveyResultModel SurveyResultModel
-        {
-            get { return IoC.Resolve<SurveyResultModel>(); }
-        }
+        private SurveyResultModel SurveyResultModel => IoC.Resolve<SurveyResultModel>();
         
-        private SNGroupDiscussionModel SNGroupDiscussionModel
-        {
-            get { return IoC.Resolve<SNGroupDiscussionModel>(); }
-        }
+        private SNGroupDiscussionModel SNGroupDiscussionModel => IoC.Resolve<SNGroupDiscussionModel>();
         
-        private SNMemberModel SNMemberModel
-        {
-            get { return IoC.Resolve<SNMemberModel>(); }
-        }
+        private SNMemberModel SNMemberModel => IoC.Resolve<SNMemberModel>();
 
         #endregion
 

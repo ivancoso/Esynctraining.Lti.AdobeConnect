@@ -31,16 +31,7 @@
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class Uploader : IUploader
     {
-        /// <summary>
-        /// The file model.
-        /// </summary>
-        private FileModel FileModel
-        {
-            get
-            {
-                return IoC.Resolve<FileModel>();
-            }
-        }
+        private FileModel FileModel => IoC.Resolve<FileModel>();
 
         /// <summary>
         /// Gets the current request.

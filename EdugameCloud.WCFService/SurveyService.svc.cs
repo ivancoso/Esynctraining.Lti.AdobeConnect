@@ -27,38 +27,11 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the Survey model.
-        /// </summary>
-        private SurveyModel SurveyModel
-        {
-            get
-            {
-                return IoC.Resolve<SurveyModel>();
-            }
-        }
+        private SurveyModel SurveyModel => IoC.Resolve<SurveyModel>();
 
-        /// <summary>
-        /// Gets the SurveyGroupingType model.
-        /// </summary>
-        private SurveyGroupingTypeModel SurveyGroupingTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<SurveyGroupingTypeModel>();
-            }
-        }
+        private SurveyGroupingTypeModel SurveyGroupingTypeModel => IoC.Resolve<SurveyGroupingTypeModel>();
 
-        /// <summary>
-        /// Gets the LMS user parameters model.
-        /// </summary>
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
-            }
-        }
+        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
 
         #endregion
 

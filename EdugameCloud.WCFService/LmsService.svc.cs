@@ -45,55 +45,25 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        private QuizModel QuizModel
-        {
-            get { return IoC.Resolve<QuizModel>(); }
-        }
+        private QuizModel QuizModel => IoC.Resolve<QuizModel>();
 
-        private SurveyModel SurveyModel
-        {
-            get { return IoC.Resolve<SurveyModel>(); }
-        }
+        private SurveyModel SurveyModel => IoC.Resolve<SurveyModel>();
 
-        private MeetingSetup MeetingSetup
-        {
-            get { return IoC.Resolve<MeetingSetup>(); }
-        }
+        private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get { return IoC.Resolve<LmsUserParametersModel>(); }
-        }
+        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
 
-        private LmsFactory LmsFactory
-        {
-            get { return IoC.Resolve<LmsFactory>(); }
-        }
+        private LmsFactory LmsFactory => IoC.Resolve<LmsFactory>();
 
-        private QuizConverter QuizConverter
-        {
-            get { return IoC.Resolve<QuizConverter>(); }
-        }
+        private QuizConverter QuizConverter => IoC.Resolve<QuizConverter>();
 
-        private LmsProviderModel LmsProviderModel
-        {
-            get { return IoC.Resolve<LmsProviderModel>(); }
-        }
+        private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
-        private LmsCompanyModel LmsCompanyModel
-        {
-            get { return IoC.Resolve<LmsCompanyModel>(); }
-        }
+        private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 
-        private LmsCompanyRoleMappingModel LmsCompanyRoleMappingModel
-        {
-            get { return IoC.Resolve<LmsCompanyRoleMappingModel>(); }
-        }
+        private LmsCompanyRoleMappingModel LmsCompanyRoleMappingModel => IoC.Resolve<LmsCompanyRoleMappingModel>();
 
-        private Lti.API.AdobeConnect.IAdobeConnectAccountService AdobeConnectAccountService
-        {
-            get { return IoC.Resolve<Lti.API.AdobeConnect.IAdobeConnectAccountService>(); }
-        }
+        private Lti.API.AdobeConnect.IAdobeConnectAccountService AdobeConnectAccountService => IoC.Resolve<Lti.API.AdobeConnect.IAdobeConnectAccountService>();
         
         #endregion
 
