@@ -16,6 +16,7 @@
         {
             this.Map(x => x.QuizName).Length(100).Not.Nullable();
             this.Map(x => x.Description).Nullable();
+            this.Map(x => x.IsPostQuiz);
 
             this.HasMany(x => x.Results).ExtraLazyLoad().Cascade.Delete().Inverse();
 

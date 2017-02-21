@@ -10,9 +10,28 @@ namespace EdugameCloud.WCFService.Contracts
     {
         [OperationContract]
         [FaultContract(typeof(Error))]
-        //[WebGet(UriTemplate = "GetAllByCompany", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         [WebGet(UriTemplate = "GetAllByCompany?companyId={companyId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         CompanyEventDTO[] GetAllByCompany(int companyId);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetEventsByCompanyAcServer?companyAcServerId={companyAcServerId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        CompanyEventDTO[] GetEventsByCompanyAcServer(int companyAcServerId);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetEventQuizMappings", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        CompanyQuizEventMappingDTO[] GetEventQuizMappings();
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetEventQuizMappingsByCompanyId?companyId={companyId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        CompanyQuizEventMappingDTO[] GetEventQuizMappingsByCompanyId(int companyId);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetEventQuizMappingsByAcServerId?acServerId={acServerId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        CompanyQuizEventMappingDTO[] GetEventQuizMappingsByAcServerId(int acServerId);
 
         [OperationContract]
         [FaultContract(typeof(Error))]
@@ -20,6 +39,6 @@ namespace EdugameCloud.WCFService.Contracts
 
         [OperationContract]
         [FaultContract(typeof(Error))]
-        CompanyEventDTO Save(CompanyEventDTO acDomain);
+        CompanyQuizEventMappingDTO Save(CompanyQuizEventMappingDTO eventQuizMapping);
     }
 }

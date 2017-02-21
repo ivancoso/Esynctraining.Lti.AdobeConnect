@@ -9,6 +9,7 @@ using System.ServiceModel.Web;
 using System.Text;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.WCFService.Base;
 using EdugameCloud.WCFService.Contracts;
 using Esynctraining.AC.Provider;
@@ -35,6 +36,20 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<CompanyAcServerModel>(); }
         }
 
+        private CompanyEventQuizMappingModel CompanyEventQuizMappingModel
+        {
+            get { return IoC.Resolve<CompanyEventQuizMappingModel>(); }
+        }
+
+        private QuizModel QuizModel
+        {
+            get { return IoC.Resolve<QuizModel>(); }
+        }
+
+        private ILogger Logger
+        {
+            get { return IoC.Resolve<ILogger>(); }
+        }
 
         public CompanyEventDTO[] GetAllByCompany(int companyId)
         {
@@ -45,6 +60,11 @@ namespace EdugameCloud.WCFService
                 return null;
             }
 
+            return GetAllEventsFromAcServer(defaultAcDomain);
+        }
+
+        private CompanyEventDTO[] GetAllEventsFromAcServer(CompanyAcServer defaultAcDomain)
+        {
             var acUri = new Uri(defaultAcDomain.AcServer);
             var acProvider = new AdobeConnectProvider(new ConnectionDetails(acUri));
             var acProxy = new AdobeConnectProxy(acProvider, Logger, acUri);
@@ -61,7 +81,7 @@ namespace EdugameCloud.WCFService
             {
                 result.Add(new CompanyEventDTO()
                 {
-                    companyId = companyId,
+                    companyId = defaultAcDomain.Company.Id,
                     dateBegin = content.BeginDate,
                     dateEnd = content.EndDate,
                     name = content.Name,
@@ -72,7 +92,6 @@ namespace EdugameCloud.WCFService
                     dateModified = content.DateModified,
                     isSeminar = content.IsSeminar
                 });
-
             }
             return result.ToArray();
         }
@@ -82,9 +101,55 @@ namespace EdugameCloud.WCFService
             throw new NotImplementedException();
         }
 
-        public CompanyEventDTO Save(CompanyEventDTO acDomain)
+        public CompanyQuizEventMappingDTO Save(CompanyQuizEventMappingDTO eventQuizMapping)
         {
-            throw new NotImplementedException();
+            var companyAcDomain = CompanyAcServerModel.GetOneById(eventQuizMapping.CompanyAcDomainId).Value;
+            var preQuiz = QuizModel.GetOneById(eventQuizMapping.PreQuizId).Value;
+            var postQuiz = QuizModel.GetOneById(eventQuizMapping.PostQuizId).Value;
+            var companyEventQuizMapping = new CompanyEventQuizMapping()
+            {
+                Id = eventQuizMapping.EventQuizMappingId,
+                CompanyAcDomain = companyAcDomain,
+                PreQuiz = preQuiz,
+                PostQuiz = postQuiz,
+                AcEventScoId = eventQuizMapping.AcEventScoId
+            };
+            CompanyEventQuizMappingModel.RegisterSave(companyEventQuizMapping, true);
+            eventQuizMapping.EventQuizMappingId = companyEventQuizMapping.Id;
+            return eventQuizMapping;
+        }
+
+        public CompanyEventDTO[] GetEventsByCompanyAcServer(int companyAcServerId)
+        {
+            var defaultAcDomain = CompanyAcServerModel.GetOneById(companyAcServerId).Value;
+            if (defaultAcDomain == null)
+            {
+                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+                return null;
+            }
+
+            return GetAllEventsFromAcServer(defaultAcDomain);
+        }
+
+        public CompanyQuizEventMappingDTO[] GetEventQuizMappings()
+        {
+            var events = CompanyEventQuizMappingModel.GetAll();
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x)).ToArray();
+            return result;
+        }
+
+        public CompanyQuizEventMappingDTO[] GetEventQuizMappingsByCompanyId(int companyId)
+        {
+            var events = CompanyEventQuizMappingModel.GetAllByCompanyId(companyId);
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x)).ToArray();
+            return result;
+        }
+
+        public CompanyQuizEventMappingDTO[] GetEventQuizMappingsByAcServerId(int acServerId)
+        {
+            var events = CompanyEventQuizMappingModel.GetAllByAcServerId(acServerId);
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x)).ToArray();
+            return result;
         }
     }
 }

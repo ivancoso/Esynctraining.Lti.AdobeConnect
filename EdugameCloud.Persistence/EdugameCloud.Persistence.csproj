@@ -103,6 +103,7 @@
     <Compile Include="ISessionSource.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
     <Compile Include="Mappings\CompanyAcServerMap.cs" />
+    <Compile Include="Mappings\CompanyEventQuizMappingMap.cs" />
     <Compile Include="Mappings\CompanyMap.cs" />
     <Compile Include="Mappings\AddressMap.cs" />
     <Compile Include="Mappings\ACSessionMap.cs" />

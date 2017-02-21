@@ -46,6 +46,8 @@
         /// </summary>
         public virtual int? LmsQuizId { get; set; }
 
+        public bool IsPostQuiz { get; set; }
+
         #endregion
 
         public Quiz()

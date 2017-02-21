@@ -237,6 +237,7 @@ namespace EdugameCloud.WCFService.Converters
             egcQuiz.LmsQuizId = quiz.id;
             egcQuiz.QuizName = quiz.title;
             egcQuiz.SubModuleItem = submoduleItem;
+            egcQuiz.IsPostQuiz = egcQuiz.IsPostQuiz;
             egcQuiz.Description = quiz.description == null ? null : quiz.description.ClearName();
             egcQuiz.ScoreType = this.ScoreTypeModel.GetOneById(1).Value;
             egcQuiz.QuizFormat = this.QuizFormatModel.GetOneById(1).Value;

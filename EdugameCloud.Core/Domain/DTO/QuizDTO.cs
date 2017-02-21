@@ -83,6 +83,9 @@
         /// </summary>
         [DataMember]
         public int lmsQuizId { get; set; }
+        
+        [DataMember]
+        public bool IsPostQuiz { get; set; }
 
         #endregion
     }

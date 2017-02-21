@@ -108,6 +108,7 @@
     <Compile Include="Business\CachePolicies.cs" />
     <Compile Include="Business\Models\ACUserModeModel.cs" />
     <Compile Include="Business\Models\CompanyAcServerModel.cs" />
+    <Compile Include="Business\Models\CompanyEventQuizMappingModel.cs" />
     <Compile Include="Business\Models\CompanyModel.cs" />
     <Compile Include="Business\Models\ACSessionModel.cs" />
     <Compile Include="Business\Models\AppletResultModel.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
     <Compile Include="Domain\DTO\AcDomainDTO.cs" />
     <Compile Include="Domain\DTO\CompanyEventDTO.cs" />
+    <Compile Include="Domain\DTO\CompanyQuizEventMappingDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordResultByACSessionFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordSessionDTO.cs" />
     <Compile Include="Domain\DTO\CompanyFlatDTO.cs" />
@@ -286,6 +288,7 @@
     <Compile Include="Domain\DTO\WebHeaderDTO.cs" />
     <Compile Include="Domain\DTO\WebRequestDTO.cs" />
     <Compile Include="Domain\Entities\CompanyAcServer.cs" />
+    <Compile Include="Domain\Entities\CompanyEventQuizMapping.cs" />
     <Compile Include="Domain\Entities\CompanyStatus.cs" />
     <Compile Include="Domain\Entities\ACSessionStatusEnum.cs" />
     <Compile Include="Domain\Entities\CompanyLicenseStatus.cs" />

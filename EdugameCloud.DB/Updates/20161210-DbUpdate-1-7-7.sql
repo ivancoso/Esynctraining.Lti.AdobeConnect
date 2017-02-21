@@ -3,10 +3,12 @@
 	where [Type] = N'Multiple Answer'
 )
 begin
-	insert into QuestionType values (N'Multiple Answer', 18, NULL,NULL,NULL,NULL,1, N'ICON_MULTI_CHOICE'  )
+	SET IDENTITY_INSERT QuestionType ON
+	insert into QuestionType (questionTypeId,type, questionTypeOrder, isActive,iconSource)  values (23, N'Multiple Answer', 18, 1, N'ICON_MULTI_CHOICE'  )
+	SET IDENTITY_INSERT QuestionType OFF
 end
 
-
+GO
 
   declare @sakaiId int
   select @sakaiId = lmsProviderId
