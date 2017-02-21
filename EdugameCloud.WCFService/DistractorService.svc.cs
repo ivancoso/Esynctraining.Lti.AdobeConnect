@@ -30,7 +30,7 @@ namespace EdugameCloud.WCFService
 
         private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
-        private DistractorModel DistractorModel => IoC.Resolve<DistractorModel>()
+        private DistractorModel DistractorModel => IoC.Resolve<DistractorModel>();
 
         #endregion
 
