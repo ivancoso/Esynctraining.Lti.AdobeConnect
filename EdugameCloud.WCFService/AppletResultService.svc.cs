@@ -33,8 +33,6 @@ namespace EdugameCloud.WCFService
 
         private AppletItemModel AppletItemModel => IoC.Resolve<AppletItemModel>();
 
-        #endregion
-
         #region Public Methods and Operators
 
         /// <summary>
