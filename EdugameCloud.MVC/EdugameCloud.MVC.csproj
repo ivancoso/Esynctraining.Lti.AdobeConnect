@@ -218,7 +218,6 @@
     <Compile Include="BuildDeliverController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
-    <Compile Include="Constants\Bundles.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BuildDeliverController.cs" />
     <Compile Include="Controllers\FileController.LtiReports.cs" />
@@ -236,7 +235,6 @@
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
     <Compile Include="ModelBinders\BaseModelBinder.cs" />
-    <Compile Include="ModelBinders\TimeSpanModelBinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\MngQuizReportService.cs" />
     <Compile Include="Services\MngSurveyReportService.cs" />
@@ -261,13 +259,9 @@
     <Compile Include="Validators\ImportUsersViewModelValidator.cs" />
     <Compile Include="Validators\VCFViewModelValidator.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\CompanyViewModel.cs" />
     <Compile Include="ViewModels\ImportQuestionsViewModel.cs" />
     <Compile Include="ViewModels\ImportUsersViewModel.cs" />
-    <Compile Include="ViewModels\EntityViewModel.cs" />
-    <Compile Include="ViewModels\HistoryViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
-    <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\VCFViewModel.cs" />
     <Compile Include="ViewResults\ContentResultWithStatusCode.cs" />
     <Compile Include="Wrappers\HandleErrorInforWrapper.cs" />
