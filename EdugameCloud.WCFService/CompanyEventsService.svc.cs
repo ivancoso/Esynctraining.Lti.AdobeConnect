@@ -35,10 +35,6 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<CompanyAcServerModel>(); }
         }
 
-        private ILogger Logger
-        {
-            get { return IoC.Resolve<ILogger>(); }
-        }
 
         public CompanyEventDTO[] GetAllByCompany(int companyId)
         {

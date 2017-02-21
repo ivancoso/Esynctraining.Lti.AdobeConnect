@@ -25,6 +25,11 @@
         /// </summary>
         Seminar = 4,
 
+        /// <summary>
+        /// Virtual Classroom
+        /// </summary>
+        VirtualClassroom = 5,
+
     }
 
 }

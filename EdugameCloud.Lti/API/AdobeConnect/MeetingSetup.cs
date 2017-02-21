@@ -317,7 +317,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (addedOfficeHoursFromOtherCourse)
             {
-                var ohDto = ret.FirstOrDefault(m => m.type == (int)LmsMeetingType.OfficeHours);
+                var ohDto = ret.FirstOrDefault(m => m.Type == (int)LmsMeetingType.OfficeHours);
                 // NOTE: can be NULL if OH meeting not found in AC
                 if (ohDto != null)
                     ohDto.IsDisabledForThisCourse = true;
@@ -624,7 +624,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 // NOTE: for meeting we need users to add to AC meeting;
                 // For StudyGroup - to be sure we can get them on 2nd tab (and reuse them if retrieveLmsUsers==true)
-                if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) 
+                if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
+                    || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom)
                     || (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
                     || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
                 {
@@ -735,7 +736,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             SpecialPermissionId specialPermissionId = meetingDTO.GetPermissionId();
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
             
-            if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
+            if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
                 && lmsUsers.Count <= Core.Utils.Constants.SyncUsersCountLimit)
             {
                 string msg;
@@ -861,7 +862,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 LmsCompanyId = credentials.Id,
                 CourseId = param.course_id,
-                LmsMeetingType = (int)LmsMeetingType.Meeting,
+                LmsMeetingType = (int)dto.GetMeetingType(),
                 ScoId = dto.ScoId,
                 Reused = true,
                 SourceCourseMeetingId = sourceLtiCreatedMeetingId,
@@ -1647,6 +1648,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 AcRoomUrl = meeting.Sco.UrlPath.Trim('/'),
                 Name = meetingName,
                 Summary = meeting.Sco.Description,
+                ClassRoomId = meeting.Sco.ScoTag,
                 Template = meeting.Sco.SourceScoId,
                 // HACK: localization
                 //start_date = meeting.Sco.BeginDate.ToString("yyyy-MM-dd"),
@@ -1658,7 +1660,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 AccessLevel = meeting.GetPublicAccessPermission(),
                 CanJoin = canJoin,
                 IsEditable = isEditable,
-                type = (int) type,
+                Type = (int) type,
                 OfficeHours = officeHoursString,
                 Reused = scoIdReused,
                 ReusedByAnotherMeeting = usedByAnotherMeeting,
@@ -1749,7 +1751,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             updateItem.FolderId = folderSco;
             updateItem.Language = LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode;
             updateItem.Type = ScoType.meeting;
-            
+            updateItem.ScoTag = string.IsNullOrWhiteSpace(meetingDTO.ClassRoomId) ? null : meetingDTO.ClassRoomId;
+
             if (isNew)
             {
                 updateItem.SourceScoId = meetingDTO.Template;

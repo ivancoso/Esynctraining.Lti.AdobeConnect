@@ -23,7 +23,6 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
     using Resources;

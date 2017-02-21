@@ -201,7 +201,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 AccessLevel = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
                 CanJoin = canJoin,
                 IsEditable = isEditable,
-                type = (int)LmsMeetingType.Seminar,
+                Type = (int)LmsMeetingType.Seminar,
                 OfficeHours = null,
                 Reused = false,
 

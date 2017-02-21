@@ -6,8 +6,6 @@
     using Esynctraining.Core.Extensions;
     using EdugameCloud.Lti.DTO;
 
-    using Esynctraining.Core.Extensions;
-
     /// <summary>
     /// The company DTO.
     /// </summary>

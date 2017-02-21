@@ -15,6 +15,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private static readonly Dictionary<LmsMeetingType, string> meetingNames = new Dictionary<LmsMeetingType, string>
         {
             { LmsMeetingType.Meeting, "Adobe Connect" },
+            { LmsMeetingType.VirtualClassroom, "Virtual Classroom" },
             { LmsMeetingType.OfficeHours, "Office Hours" },
             { LmsMeetingType.StudyGroup, "Study Group" },
             { LmsMeetingType.Seminar, "Seminar Room" }
@@ -108,6 +109,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             switch (meetingType)
             {
                 case LmsMeetingType.Meeting:
+                case LmsMeetingType.VirtualClassroom:
                     string pattern = "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.";
                     return string.Format(
                         pattern,
@@ -189,6 +191,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             switch (meetingType)
             {
                 case LmsMeetingType.Meeting:
+                case LmsMeetingType.VirtualClassroom:
                     string pattern = "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.";
                     return string.Format(
                         pattern,

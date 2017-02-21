@@ -22,6 +22,18 @@ namespace EdugameCloud.Lti.Controllers
 
         [DataMember]
         public bool MergeUsers { get; set; }
+
+        [DataMember]
+        public int Type { get; set; }
+
+
+        public LmsMeetingType GetMeetingType()
+        {
+            if (Type <= 0)
+                throw new InvalidOperationException($"Invalid meeting type '{Type}'");
+            return (LmsMeetingType)Type;
+        }
+
     }
 
     public partial class LtiController

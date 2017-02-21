@@ -79,7 +79,7 @@ namespace EdugameCloud.Lti.Controllers
                 throw new ArgumentNullException(nameof(meeting));
 
             //TRICK:
-            meeting.type = (int)LmsMeetingType.Seminar;
+            meeting.Type = (int)LmsMeetingType.Seminar;
 
             LmsCompany credentials = null;
             try

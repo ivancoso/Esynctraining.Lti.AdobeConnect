@@ -40,12 +40,8 @@
         #region Public Properties
 
         [DataMember]
-        public int type { get; set; }
-
-        [Obsolete("TODO: add to MeetingDtoBase? not in use from SSO for now, but amgen had this functionality")]
-        [DataMember]
-        public string ClassRoomId { get; set; }
-
+        public int Type { get; set; }
+        
         [DataMember]
         public string OfficeHours { get; set; }
 
@@ -75,9 +71,9 @@
 
         public LmsMeetingType GetMeetingType()
         {
-            if (type <= 0)
-                throw new InvalidOperationException($"Invalid meeting type '{type}'");
-            return (LmsMeetingType)type;
+            if (Type <= 0)
+                throw new InvalidOperationException($"Invalid meeting type '{Type}'");
+            return (LmsMeetingType)Type;
         }
 
     }
@@ -88,7 +84,13 @@
     [DataContract]
     public class MeetingDTO : MeetingDTOLtiBase<MeetingSessionDTO>
     {
-        
+        /// <summary>
+        /// Used to support Virtual Classroom.
+        /// TODO: check SSO - not in use there for now. But required for amgem.
+        /// </summary>
+        [DataMember]
+        public string ClassRoomId { get; set; }
+
     }
 
 }

@@ -137,7 +137,7 @@ namespace EdugameCloud.Lti.API
                                 var acPrincipalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
 
                                 if (syncACUsers 
-                                    && (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting || meeting.LmsMeetingType == (int)LmsMeetingType.Seminar)
+                                    && (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting || meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom || meeting.LmsMeetingType == (int)LmsMeetingType.Seminar)
                                     &&
                                     (dbPrincipalIds.Count != meeting.MeetingRoles.Count 
                                     || dbPrincipalIds.Count != acPrincipalIds.Count
