@@ -36,7 +36,7 @@ namespace EdugameCloud.Lti
                 //int id;
                 //SlugIds.TryGetValue(slug, out id);
                 //filterContext.ActionParameters["id"] = id;
-                LmsCompany lmsCompany = null;
+                //LmsCompany lmsCompany = null;
                 var session = GetReadOnlySession(sessionKey);
 
                 if (session == null)
@@ -90,4 +90,5 @@ namespace EdugameCloud.Lti
         }
 
     }
+
 }

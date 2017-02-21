@@ -1,6 +1,11 @@
 ﻿@model EdugameCloud.Lti.DTO.LtiViewModelDto
+@using Jil;
 @{
-	Layout = null;
+    Layout = null;
+
+    var options = new Options(false, true, false, Jil.DateTimeFormat.MillisecondsSinceUnixEpoch, true,
+                UnspecifiedDateTimeKindBehavior.IsUTC,
+                SerializationNameFormat.CamelCase);
 }
 <!DOCTYPE html>
 <html>
@@ -13,7 +18,7 @@
 	<link rel="stylesheet" href="extjs/resources/libs/videojs/video-js.min.css" />
 }
 	<script type="text/javascript">
-		var EsyncLti = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model, Newtonsoft.Json.Formatting.Indented));
+		var EsyncLti = @Html.Raw(JSON.Serialize(Model, options));
 		var Ext = Ext || {};
 		Ext.manifest = {
 			"js": [{ "path": "extjs/app.js" }],

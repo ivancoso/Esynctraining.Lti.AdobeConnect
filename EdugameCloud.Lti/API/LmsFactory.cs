@@ -106,5 +106,7 @@ namespace EdugameCloud.Lti.API
             return new MeetingSessionService(lmsCourseMeetingModel, logger, null);
         }
         #endregion
+
     }
+
 }

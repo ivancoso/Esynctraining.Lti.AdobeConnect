@@ -8,7 +8,7 @@ using EdugameCloud.Lti.API.BrainHoney;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using Esynctraining.AC.Provider;
+using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
@@ -111,7 +111,7 @@ namespace EdugameCloud.Lti.BrainHoney
         {
             if (courseUsers != null && courseUsers.Any())
             {
-                List<int> courseIds = courseUsers.Select(x => int.Parse(x.id)).ToList();
+                List<int> courseIds = courseUsers.Select(x => int.Parse(x.Id)).ToList();
                 List<Signal> toRemove = soleEnrollments.Where(x => courseIds.Contains(x.EntityId)).ToList();
                 foreach (Signal signal in toRemove)
                 {
@@ -154,7 +154,7 @@ namespace EdugameCloud.Lti.BrainHoney
                     }
 
                     IAdobeConnectProxy adobeConnectProvider = _acAccountService.GetProvider(brainHoneyCompany);
-                    IEnumerable<TemplateDTO> templates = _acAccountService.GetSharedMeetingTemplates(adobeConnectProvider, cache);
+                    IEnumerable<TemplateDto> templates = _acAccountService.GetSharedMeetingTemplates(adobeConnectProvider, cache);
                     if (!templates.Any())
                     {
                         error = "No templates found for " + brainHoneyCompany.LmsDomain;
@@ -246,7 +246,7 @@ namespace EdugameCloud.Lti.BrainHoney
             Session session,
             List<string> errors,
             IAdobeConnectProxy adobeConnectProvider,
-            IEnumerable<TemplateDTO> templates)
+            IEnumerable<TemplateDto> templates)
         {
             var result = new List<LmsUserDTO>();
             string error;
@@ -285,17 +285,17 @@ namespace EdugameCloud.Lti.BrainHoney
                     brainHoneyCompany,
                     adobeConnectProvider,
                     param,
-                    new MeetingDTO
+                    new MeetingDTOInput
                     {
-                        start_date = startDate.ToString("MM-dd-yyyy"),
-                        start_time = startDate.ToString("hh:mm tt"),
-                        duration = "01:00",
+                        StartDate = startDate.ToString("MM-dd-yyyy"),
+                        StartTime = startDate.ToString("hh:mm tt"),
+                        Duration = "01:00",
 
                         // TODO: review it!!
                         //id = courseSignal.ItemId,
 
-                        name = course.Title,
-                        template = templates.First().With(x => x.id)
+                        Name = course.Title,
+                        Template = templates.First().With(x => x.Id)
                     },
                     trace,
                     fb);
@@ -382,11 +382,11 @@ namespace EdugameCloud.Lti.BrainHoney
                         {
                             var lmsUser = new LmsUserDTO
                             {
-                                login_id = enrollment.UserName,
-                                primary_email = enrollment.Email,
-                                lms_role = enrollment.Role,
-                                id = enrollment.UserId,
-                                is_editable = true,
+                                LoginId = enrollment.UserName,
+                                PrimaryEmail = enrollment.Email,
+                                LmsRole = enrollment.Role,
+                                Id = enrollment.UserId,
+                                IsEditable = true,
                             };
                             this._usersSetup.SetLMSUserDefaultACPermissions(provider, brainHoneyCompany, null, lmsUser, null);
                             this._usersSetup.UpdateUser(

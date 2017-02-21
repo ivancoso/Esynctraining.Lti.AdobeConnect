@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
+using System.Web.Http;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -12,7 +13,7 @@ using Esynctraining.Core.Providers;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    public class AcTemplateController : BaseController
+    public class AcTemplateController : BaseApiController
     {
         public AcTemplateController(
             LmsUserSessionModel userSessionModel,
@@ -25,22 +26,24 @@ namespace EdugameCloud.Lti.Controllers
 
 
         // TODO: Add caching
+        // TODO: copy DTO validation from SSO
         [HttpPost]
-        public virtual JsonResult GetTemplates(string lmsProviderName)
+        [Route("Templates")]
+        public virtual OperationResultWithData<IEnumerable<TemplateDto>> GetTemplates([FromBody]RequestDto request)
         {
             LmsCompany credentials = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = GetReadOnlySession(request.lmsProviderName);
                 credentials = session.LmsCompany;
-                IEnumerable<TemplateDTO> templates = acAccountService.GetSharedMeetingTemplates(this.GetAdobeConnectProvider(credentials), Cache);
+                IEnumerable<TemplateDto> templates = acAccountService.GetSharedMeetingTemplates(this.GetAdobeConnectProvider(credentials), Cache);
 
-                return Json(OperationResultWithData<IEnumerable<TemplateDTO>>.Success(templates));
+                return templates.ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("GetTemplates", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
+                return OperationResultWithData<IEnumerable<TemplateDto>>.Error(errorMessage);
             }
         }
 

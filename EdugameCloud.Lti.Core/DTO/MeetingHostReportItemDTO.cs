@@ -16,8 +16,8 @@ namespace EdugameCloud.Lti.Core.DTO
 
         public MeetingHostReportItemDTO(PrincipalReportDto principalReport)
         {
-            this.HostName = principalReport.Principal.name;
-            this.Email = principalReport.Principal.email;
+            this.HostName = principalReport.Principal.Name;
+            this.Email = principalReport.Principal.Email;
             this.MeetingName = principalReport.LastTransaction == null ? string.Empty : principalReport.LastTransaction.Name;
             this.LastMeetingAttend = principalReport.LastTransaction == null ? null : (DateTime?)principalReport.LastTransaction.DateCreated;
         }

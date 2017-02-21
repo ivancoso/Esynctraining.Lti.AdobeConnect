@@ -6,32 +6,32 @@ namespace EdugameCloud.Lti.Core.DTO
     public sealed class PrincipalInputDto
     {
         [DataMember]
-        public string principal_id { get; set; }
+        public string PrincipalId { get; set; }
 
         [DataMember]
-        public string login { get; set; }
+        public string Login { get; set; }
 
         [DataMember]
-        public string email { get; set; }
+        public string Email { get; set; }
 
         [DataMember]
-        public string firstName { get; set; }
+        public string FirstName { get; set; }
 
         [DataMember]
-        public string lastName { get; set; }
+        public string LastName { get; set; }
 
         [DataMember]
-        public string password { get; set; }
+        public string Password { get; set; }
 
         [DataMember]
-        public bool sendEmail { get; set; }
+        public bool SendEmail { get; set; }
 
         // TODO: IMPLEMENT!!
         [DataMember]
-        public bool promptPassword { get; set; }
+        public bool PromptPassword { get; set; }
 
         [DataMember]
-        public int meetingRole { get; set; }
+        public int MeetingRole { get; set; }
 
     }
 

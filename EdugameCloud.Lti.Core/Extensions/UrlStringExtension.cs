@@ -3,21 +3,9 @@
     using System;
     using EdugameCloud.Lti.Core.Constants;
     using System.Web;
-
-    /// <summary>
-    /// The url string extension.
-    /// </summary>
+    
     public static class UrlStringExtension
     {
-        /// <summary>
-        /// The remove protocol.
-        /// </summary>
-        /// <param name="url">
-        /// The url.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         public static string RemoveHttpProtocolAndTrailingSlash(this string url)
         {
             if (url != null)
@@ -40,48 +28,18 @@
 
             return url;
         }
-
-        /// <summary>
-        /// The is SSL.
-        /// </summary>
-        /// <param name="url">
-        /// The url.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+        
         public static bool StartsWithProtocol(this string url)
         {
             return !string.IsNullOrWhiteSpace(url) && 
                 (url.StartsWith(HttpScheme.Https, StringComparison.OrdinalIgnoreCase) || url.StartsWith(HttpScheme.Http, StringComparison.OrdinalIgnoreCase));
         }
-
-        /// <summary>
-        /// The is SSL.
-        /// </summary>
-        /// <param name="url">
-        /// The url.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+        
         public static bool IsSSL(this string url)
         {
             return !string.IsNullOrWhiteSpace(url) && url.StartsWith(HttpScheme.Https, StringComparison.OrdinalIgnoreCase);
         }
-
-        /// <summary>
-        /// The add http protocol.
-        /// </summary>
-        /// <param name="url">
-        /// The url.
-        /// </param>
-        /// <param name="useSsl">
-        /// The use SSL.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public static string AddHttpProtocol(this string url, bool useSsl)
         {
             var domain = url.RemoveHttpProtocolAndTrailingSlash();
@@ -96,7 +54,7 @@
         public static string GetScheme(this HttpRequestBase request)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
 
             var protoHeader = request.Headers["X-Forwarded-Proto"];
             bool isHttps = (protoHeader != null) && protoHeader.IndexOf("https", StringComparison.OrdinalIgnoreCase) != -1;
@@ -107,19 +65,19 @@
             return schema;
         }
 
-        public static string GetScheme(this HttpRequest request)
-        {
-            if (request == null)
-                throw new ArgumentNullException("request");
+        //public static string GetScheme(this HttpRequest request)
+        //{
+        //    if (request == null)
+        //        throw new ArgumentNullException("request");
 
-            var protoHeader = request.Headers["X-Forwarded-Proto"];
-            bool isHttps = (protoHeader != null) && protoHeader.IndexOf("https", StringComparison.OrdinalIgnoreCase) != -1;
-            string schema = request.Url.Scheme;
-            if (isHttps)
-                schema = "https";
+        //    var protoHeader = request.Headers["X-Forwarded-Proto"];
+        //    bool isHttps = (protoHeader != null) && protoHeader.IndexOf("https", StringComparison.OrdinalIgnoreCase) != -1;
+        //    string schema = request.Url.Scheme;
+        //    if (isHttps)
+        //        schema = "https";
 
-            return schema;
-        }
+        //    return schema;
+        //}
 
     }
 

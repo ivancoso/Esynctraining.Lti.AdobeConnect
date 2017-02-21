@@ -5,11 +5,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Dto
     [DataContract]
     public sealed class RecordingActionRequestDto
     {
-        [DataMember(Name = "lmsProviderName")]
+        [DataMember]
         public string LmsProviderName { get; set; }
 
         // TODO: make string
-        [DataMember(Name = "recordingId")]
+        [DataMember]
         public long RecordingId { get; set; }
 
     }

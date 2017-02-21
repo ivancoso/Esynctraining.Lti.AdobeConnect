@@ -10,40 +10,40 @@ namespace EdugameCloud.Lti.Core.DTO
     [DataContract]
     public class TransactionInfoDto
     {
-        [DataMember(Name = "dateClosed")]
+        [DataMember]
         public DateTime DateClosed { get; set; }
 
-        [DataMember(Name = "dateCreated")]
+        [DataMember]
         public DateTime DateCreated { get; set; }
 
-        [DataMember(Name = "login")]
+        [DataMember]
         public string Login { get; set; }
 
-        [DataMember(Name = "name")]
+        [DataMember]
         public string Name { get; set; }
 
-        [DataMember(Name = "principalId")]
+        [DataMember]
         public string PrincipalId { get; set; }
 
-        [DataMember(Name = "scoId")]
+        [DataMember]
         public string ScoId { get; set; }
 
-        [DataMember(Name = "score")]
+        [DataMember]
         public string Score { get; set; }
 
-        [DataMember(Name = "status")]
+        [DataMember]
         public string Status { get; set; }
 
-        [DataMember(Name = "transactionId")]
+        [DataMember]
         public string TransactionId { get; set; }
 
-        [DataMember(Name = "type")]
+        [DataMember]
         public int Type { get; set; }
 
-        [DataMember(Name = "url")]
+        [DataMember]
         public string Url { get; set; }
 
-        [DataMember(Name = "userName")]
+        [DataMember]
         public string UserName { get; set; }
 
 

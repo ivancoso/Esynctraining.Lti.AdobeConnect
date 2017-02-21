@@ -51,7 +51,7 @@ namespace EdugameCloud.Lti.Desire2Learn
             }
 
             return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, extraData)
-                .FirstOrDefault(u => u.id == lmsUserId);
+                .FirstOrDefault(u => u.Id == lmsUserId);
         }
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
@@ -59,7 +59,7 @@ namespace EdugameCloud.Lti.Desire2Learn
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, extraData);
-            return OperationResultWithData<List<LmsUserDTO>>.Success(users);
+            return users.ToSuccessResult();
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,
@@ -166,11 +166,11 @@ namespace EdugameCloud.Lti.Desire2Learn
 
                     var user = new LmsUserDTO
                     {
-                        id = enrollment.Identifier,
-                        login_id = enrollment.Username,
-                        name = enrollment.GetValidFullName(),
-                        primary_email = enrollment.Email ?? userInfo?.User.EmailAddress,
-                        lms_role = userInfo != null ? userInfo.Role.Name : "Unknown",
+                        Id = enrollment.Identifier,
+                        LoginId = enrollment.Username,
+                        Name = enrollment.GetValidFullName(),
+                        PrimaryEmail = enrollment.Email ?? userInfo?.User.EmailAddress,
+                        LmsRole = userInfo != null ? userInfo.Role.Name : "Unknown",
                     };
                     result.Add(user);
                 }

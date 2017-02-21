@@ -10,6 +10,8 @@ using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
+using Esynctraining.AdobeConnect.Api.Meeting;
+using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
@@ -45,7 +47,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public IAdobeConnectProxy GetProvider(string acDomain, UserCredentials credentials, bool login)
         {
-            var connectionDetails = new ConnectionDetails(new Uri(acDomain));
+            var apiUrl = new Uri(acDomain);
+
+            var connectionDetails = new ConnectionDetails(apiUrl);
             string principalId = null;
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
@@ -53,13 +57,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 LoginResult result = provider.Login(credentials);
                 if (!result.Success)
                 {
-                    _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status.Code:Status.SubCode = " + result.Status.Code.ToString() + ":" + result.Status.SubCode.ToString());
-                    throw new InvalidOperationException("Login to Adobe Connect failed. Status.Code:Status.SubCode = " + result.Status.Code.ToString() + ":" + result.Status.SubCode.ToString());
+                    _logger.Error($"AdobeConnectAccountService.GetProvider. Login failed to { acDomain }. Status: { result.Status.GetErrorInfo() }");
+                    throw new InvalidOperationException($"Login to Adobe Connect failed. Status: { result.Status.GetErrorInfo() }");
                 }
                 principalId = result.User.UserId;
             }
 
-            return new AdobeConnectProxy(provider, _logger, new Uri(acDomain), principalId);
+            return new AdobeConnectProxy(provider, _logger, apiUrl, principalId);
         }
         
 
@@ -70,7 +74,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            var item = CacheUtility.GetCachedItem<ACDetailsDTO>(cache, CachePolicies.Keys.AcDetails(provider.AdobeConnectRoot.Host), () =>
+            var item = CacheUtility.GetCachedItem<ACDetailsDTO>(cache, CachePolicies.Keys.AcDetails(provider.AdobeConnectRoot.ToString()), () =>
             {
                 return IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>().GetAccountDetails(provider);
             });
@@ -171,33 +175,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return breezeToken;
         }
 
-        public IEnumerable<TemplateDTO> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache)
+        // TODO: USE Esynctraining.AdobeConnect.WebApi.Meeting !!!
+        public IEnumerable<TemplateDto> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            var item = CacheUtility.GetCachedItem<IEnumerable<TemplateDTO>>(cache, CachePolicies.Keys.SharedMeetingTemplates(provider.AdobeConnectRoot.Host), () =>
-            {
-                ScoContentCollectionResult sharedTemplates = provider.GetContentsByType("shared-meeting-templates");
-                if (!sharedTemplates.Success)
-                {
-                    _logger.ErrorFormat("get shared-meeting-templates. AC error. {0}.", sharedTemplates.Status.GetErrorInfo());
-                    return Enumerable.Empty<TemplateDTO>();
-                }
-
-                ScoContentCollectionResult result = provider.GetContentsByScoId(sharedTemplates.ScoId);
-                if (result.Values == null)
-                {
-                    _logger.ErrorFormat("get shared-meeting-templates. AC error. {0}.", result.Status.GetErrorInfo());
-                    return Enumerable.Empty<TemplateDTO>();
-                }
-
-                return result.Values.Select(v => new TemplateDTO { id = v.ScoId, name = v.Name }).ToList();
-            });
-
-            return item;
+            return new MeetingTemplateService(_logger).GetSharedMeetingTemplates(provider, cache, () => CachePolicies.Keys.SharedMeetingTemplates(provider.AdobeConnectRoot.ToString()));
         }
         
     }

@@ -9,6 +9,7 @@ using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
+using Esynctraining.AdobeConnect.Api.MeetingRecording.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -47,7 +48,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meeting == null)
             {
-                return Enumerable.Empty<RecordingDTO>();
+                return Enumerable.Empty<RecordingDto>();
             }
 
             var timeZone = acAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
@@ -98,12 +99,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //    return result;
         //}
 
-        private static List<RecordingDTO> GetRecordingsLegacy(string meetingSco, 
+        private static List<RecordingDto> GetRecordingsLegacy(string meetingSco, 
             string accountUrl,
             TimeZoneInfo timeZone,
             Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
-            var result = new List<RecordingDTO>();
+            var result = new List<RecordingDto>();
             ScoContentCollectionResult apiRecordings = provider.GetMeetingRecordings(new [] {meetingSco});
 
             foreach (var v in apiRecordings.Values)
@@ -115,7 +116,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
                 }
 
-                result.Add(new RecordingDTO(v, accountUrl, isPublic, timeZone));
+                result.Add(new RecordingDto(v, accountUrl, isPublic, timeZone));
             }
 
             return result;

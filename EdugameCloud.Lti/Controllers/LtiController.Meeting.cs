@@ -18,29 +18,23 @@ namespace EdugameCloud.Lti.Controllers
     public class MeetingReuseDTO
     {
         [DataMember]
-        public string sco_id { get; set; }
+        public string ScoId { get; set; }
 
         [DataMember]
-        public bool mergeUsers { get; set; }
+        public bool MergeUsers { get; set; }
     }
 
     public partial class LtiController
     {
-        #region Properties
-        
-        private UsersSetup UsersSetup
-        {
-            get { return IoC.Resolve<UsersSetup>(); }
-        }
+        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>(); 
 
-        #endregion
 
         [HttpPost]
         public virtual JsonResult ReuseExistedAdobeConnectMeeting(string lmsProviderName, MeetingReuseDTO dto, bool? retrieveLmsUsers)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
                 return Json(OperationResult.Error("Session not found."));
-            if (string.IsNullOrWhiteSpace(dto.sco_id))
+            if (string.IsNullOrWhiteSpace(dto.ScoId))
                 return Json(OperationResult.Error("Source AdobeConnect meeting is not selected."));
 
             LmsCompany credentials = null;
@@ -71,7 +65,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public virtual JsonResult UpdateMeeting(string lmsProviderName, MeetingDTO meeting)
+        public virtual JsonResult UpdateMeeting(string lmsProviderName, MeetingDTOInput meeting)
         {
             LmsCompany credentials = null;
             try
@@ -103,7 +97,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public virtual JsonResult UpdateMeetingAndReturnLmsUsers(string lmsProviderName, MeetingDTO meeting)
+        public virtual JsonResult UpdateMeetingAndReturnLmsUsers(string lmsProviderName, MeetingDTOInput meeting)
         {
             LmsCompany credentials = null;
             try

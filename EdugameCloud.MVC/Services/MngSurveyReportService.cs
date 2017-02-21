@@ -18,7 +18,7 @@ namespace EdugameCloud.MVC.Services
             var questions = dtos.SelectMany(x => x.Questions).GroupBy(x => x.Id).Select(x => x.First()).OrderBy(x => x.QuestionOrder);
             using (ExcelPackage pck = new ExcelPackage())
             {
-                int sessionNumber = 1;
+                //int sessionNumber = 1;
                 foreach (var sessionResult in dtos)
                 {
                     ExcelWorksheet ws = pck.Workbook.Worksheets.Add($"{sessionResult.Name}");

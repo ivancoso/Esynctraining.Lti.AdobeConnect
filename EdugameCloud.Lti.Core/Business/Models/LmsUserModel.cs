@@ -82,7 +82,7 @@
             {
 
                 lmsUserSelectParam.AppendFormat("<user id=\"{0}\" email=\"{1}\" login=\"{2}\" />",
-                    ((string.IsNullOrEmpty(u.lti_id) ? u.id : u.lti_id) ?? string.Empty).Trim(),
+                    ((string.IsNullOrEmpty(u.LtiId) ? u.Id : u.LtiId) ?? string.Empty).Trim(),
                     u.GetEmail(),
                     u.GetLogin());
             }

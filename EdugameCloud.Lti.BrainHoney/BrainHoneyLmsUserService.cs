@@ -24,7 +24,7 @@ namespace EdugameCloud.Lti.BrainHoney
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, extraData);
-            return OperationResultWithData<List<LmsUserDTO>>.Success(users);
+            return users.ToSuccessResult();
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,

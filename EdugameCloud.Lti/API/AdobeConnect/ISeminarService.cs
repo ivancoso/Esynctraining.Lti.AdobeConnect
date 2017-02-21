@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.AdobeConnect.Api.Seminar.Dto;
 using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
@@ -15,7 +16,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             TimeZoneInfo timeZone);
 
-        OperationResultWithData<SeminarSessionDto> SaveSeminarSession(SeminarSessionDto seminarSessionDto, 
+        OperationResultWithData<SeminarSessionDto> SaveSeminarSession(SeminarSessionInputDto seminarSessionDto,
+            string seminarScoId,
             IAdobeConnectProxy provider,
             TimeZoneInfo timeZone);
 

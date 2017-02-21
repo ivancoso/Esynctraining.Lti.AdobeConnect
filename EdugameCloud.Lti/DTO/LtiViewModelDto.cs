@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using EdugameCloud.Lti.Core.Domain.Entities;
 using Esynctraining.AdobeConnect;
+using Esynctraining.AdobeConnect.Api.Meeting;
 
 namespace EdugameCloud.Lti.DTO
 {

@@ -74,7 +74,7 @@ namespace EdugameCloud.Lti.Canvas
 
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
 
-            return OperationResultWithData<List<LmsUserDTO>>.Success(users);
+            return users.ToSuccessResult();
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, object param = null)
@@ -94,7 +94,7 @@ namespace EdugameCloud.Lti.Canvas
                 courseId);
 
             // IF emails are NOT included (for student + lmsCompany.AdminUser == null)
-            if (users.Any(x => string.IsNullOrEmpty(x.primary_email)))
+            if (users.Any(x => string.IsNullOrEmpty(x.PrimaryEmail)))
             {
                 logger.ErrorFormat("[Canvas GetUsers] API did not return emails. CourseID={0}. LMSCompanyID:{1}.", courseId, lmsCompany.Id);
             }

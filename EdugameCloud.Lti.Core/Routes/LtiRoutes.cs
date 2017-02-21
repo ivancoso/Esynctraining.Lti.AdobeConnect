@@ -93,17 +93,18 @@
             // ??? routes.MapLowercaseRoute("UserParameters", "Lti/GetAuthenticationParameters", new { controller = "Lti", action = "GetAuthenticationParameters" });
 
             routes.MapLowercaseRoute("scheduled", "scheduled-actions/{action}", new { controller = "LtiSchedule" });
-            routes.MapLowercaseRoute("getusers", "users", new { controller = "Lti", action = "GetUsers" });
+            //routes.MapLowercaseRoute("getusers", "users", new { controller = "Lti", action = "GetUsers" });
             routes.MapLowercaseRoute("updateuser", "users/update", new { controller = "Lti", action = "UpdateUser" });
             routes.MapLowercaseRoute("removefromacmeeting", "users/removefrommeeting", new { controller = "Lti", action = "RemoveFromAcMeeting" });
 
-            routes.MapLowercaseRoute("checkpass", "settings/checkpass", new { controller = "Lti", action = "CheckPasswordBeforeJoin" });
-            routes.MapLowercaseRoute("savesettings", "settings/save", new { controller = "Lti", action = "SaveSettings" });
-            routes.MapLowercaseRoute("leavemeeting", "meeting/Leave", new { controller = "Lti", action = "LeaveMeeting" });
-            routes.MapLowercaseRoute("setdefaults", "meeting/SetDefaultACRoles", new { controller = "Lti", action = "SetDefaultRolesForNonParticipants" });
-            routes.MapLowercaseRoute("getmeetingattendance", "meeting/attendance", new { controller = "LtiReport", action = "GetAttendanceReport" });
-            routes.MapLowercaseRoute("getmeetingsessions", "meeting/sessions", new { controller = "LtiReport", action = "GetSessionsReport" });
-            routes.MapLowercaseRoute("getmeetingrecordings", "meeting/reports/by-recordings", new { controller = "LtiReport", action = "GetRecordingsReport" });
+            //routes.MapLowercaseRoute("checkpass", "settings/checkpass", new { controller = "Lti", action = "CheckPasswordBeforeJoin" });
+            //routes.MapLowercaseRoute("savesettings", "settings/save", new { controller = "Lti", action = "SaveSettings" });
+            //routes.MapLowercaseRoute("leavemeeting", "meeting/Leave", new { controller = "Lti", action = "LeaveMeeting" });
+            //routes.MapLowercaseRoute("setdefaults", "meeting/SetDefaultACRoles", new { controller = "Lti", action = "SetDefaultRolesForNonParticipants" });
+
+            //routes.MapLowercaseRoute("getmeetingattendance", "meeting/attendance", new { controller = "LtiReport", action = "GetAttendanceReport" });
+            //routes.MapLowercaseRoute("getmeetingsessions", "meeting/sessions", new { controller = "LtiReport", action = "GetSessionsReport" });
+            //routes.MapLowercaseRoute("getmeetingrecordings", "meeting/reports/by-recordings", new { controller = "LtiReport", action = "GetRecordingsReport" });
 
             routes.MapLowercaseRoute("updatemeeting", "meeting/update", new { controller = "Lti", action = "UpdateMeeting" });
             routes.MapLowercaseRoute("updatemeetingreturnusers", "meeting/UpdateAndReturnLmsUsers", new { controller = "Lti", action = "UpdateMeetingAndReturnLmsUsers" });
@@ -126,13 +127,13 @@
             routes.MapLowercaseRoute("publishrecording", "recordings/publish", new { controller = "LtiRecording", action = "PublishRecording" });
             routes.MapLowercaseRoute("unpublishrecording", "recordings/unpublish", new { controller = "LtiRecording", action = "UnpublishRecording" });
 
-            routes.MapLowercaseRoute("gettemplates", "templates", new { controller = "AcTemplate", action = "GetTemplates" });
+            //routes.MapLowercaseRoute("gettemplates", "templates", new { controller = "AcTemplate", action = "GetTemplates" });
 
             routes.MapLowercaseRoute("extjspage", "extjs-entry", new { controller = "Lti", action = "GetExtJsPage" });
 
-            routes.MapLowercaseRoute("addNewAcUser", "acNewUser", new { controller = "AcUser", action = "AddNewUser" });
-            routes.MapLowercaseRoute("searchExistingAcUser", "acSearchUser", new { controller = "AcUser", action = "SearchExistingUser" });
-            routes.MapLowercaseRoute("searchExistingMeeting", "acSearchMeeting", new { controller = "AcMeeting", action = "SearchExistingMeeting" });
+            //routes.MapLowercaseRoute("addNewAcUser", "acNewUser", new { controller = "AcUser", action = "AddNewUser" });
+            //routes.MapLowercaseRoute("searchExistingAcUser", "acSearchUser", new { controller = "AcUser", action = "SearchExistingUser" });
+            //routes.MapLowercaseRoute("searchExistingMeeting", "acSearchMeeting", new { controller = "AcMeeting", action = "SearchExistingMeeting" });
             routes.MapLowercaseRoute("reuseAdobeConnectMeeting", "useExistingMeeting", new { controller = "Lti", action = "ReuseExistedAdobeConnectMeeting" });
 
             routes.MapLowercaseRoute("register-proxy-tool", "register-proxy-tool", new { controller = "LtiProxyTool", action = "register-proxy-tool" });
@@ -151,7 +152,7 @@
             routes.MapLowercaseRoute("calendarDeleteEvent", "calendar/deleteevent", new { controller = "Calendar", action = "DeleteEvent" });
 
 
-            routes.MapLowercaseRoute("GetAudioProfiles", "GetAudioProfiles", new { controller = "Lti", action = "GetAudioProfiles" });
+            //routes.MapLowercaseRoute("GetAudioProfiles", "GetAudioProfiles", new { controller = "Lti", action = "GetAudioProfiles" });
 
             //routes.MapLowercaseRoute("DefaultLtiAction", "{action}", new { controller = "Lti" });
 

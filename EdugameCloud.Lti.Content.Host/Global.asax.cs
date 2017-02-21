@@ -5,7 +5,6 @@ using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using EdugameCloud.Lti;
 using EdugameCloud.Persistence;
 using Esynctraining.Core.Providers;
 using Esynctraining.WebApi;

@@ -5,22 +5,22 @@ namespace EdugameCloud.Lti.DTO
     [DataContract]
     public class MeetingSessionDTO
     {
-        [DataMember(Name = "id")]
+        [DataMember]
         public int Id { get; set; }
 
-        [DataMember(Name = "eventId")]
+        [DataMember]
         public string EventId { get; set; }
 
-        [DataMember(Name = "name")]
+        [DataMember]
         public string Name { get; set; }
 
-        [DataMember(Name = "startDate")]
+        [DataMember]
         public string StartDate { get; set; }
 
-        [DataMember(Name = "endDate")]
+        [DataMember]
         public string EndDate { get; set; }
 
-        [DataMember(Name = "summary")]
+        [DataMember]
         public string Summary { get; set; }
 
     }

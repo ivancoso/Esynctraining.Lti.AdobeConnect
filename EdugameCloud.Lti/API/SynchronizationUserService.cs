@@ -87,7 +87,7 @@ namespace EdugameCloud.Lti.API
                         }
                         else
                         {
-                            var userIds = opResult.Data.Select(x => x.lti_id ?? x.id);
+                            var userIds = opResult.Data.Select(x => x.LtiId ?? x.Id);
                             logger.InfoFormat("API user ids: {0}", String.Join(",", userIds));
                             var existedDbUsers =
                                 lmsUserModel.GetByUserIdAndCompanyLms(userIds.ToArray(),
@@ -126,7 +126,7 @@ namespace EdugameCloud.Lti.API
                                 {
                                     Meeting = meeting,
                                     User = x,
-                                    LmsRole = opResult.Data.First(dto => x.UserId == (dto.lti_id ?? dto.id)).lms_role
+                                    LmsRole = opResult.Data.First(dto => x.UserId == (dto.LtiId ?? dto.Id)).LmsRole
                                 }));
                                 meeting.EnableDynamicProvisioning = false;
                                 lmsCourseMeetingModel.RegisterSave(meeting, true);
@@ -160,6 +160,7 @@ namespace EdugameCloud.Lti.API
             }
         }
 
+
         private IEnumerable<LmsUser> UpdateDbUsers(List<LmsUserDTO> lmsUserDtos, LmsCompany lmsCompany,
             IEnumerable<LmsUser> existedDbUsers, IAdobeConnectProxy provider)
         {
@@ -167,16 +168,14 @@ namespace EdugameCloud.Lti.API
             foreach (var lmsUserDto in lmsUserDtos)
             {
                 var dbUser = existedDbUsers.FirstOrDefault(u =>
-                    (lmsUserDto.lti_id != null &&
-                     u.UserId == lmsUserDto.lti_id)
-                    || u.UserId == lmsUserDto.id);
+                    (lmsUserDto.LtiId != null && u.UserId == lmsUserDto.LtiId) || u.UserId == lmsUserDto.Id);
                 if (dbUser == null)
                 {
                     string login = lmsUserDto.GetLogin();
                     Principal principal = null;
                     try
                     {
-                        principal = acUserService.GetOrCreatePrincipal(provider, login, lmsUserDto.primary_email,
+                        principal = acUserService.GetOrCreatePrincipal(provider, login, lmsUserDto.PrimaryEmail,
                             lmsUserDto.GetFirstName(),
                             lmsUserDto.GetLastName(), lmsCompany);
                     }
@@ -191,18 +190,18 @@ namespace EdugameCloud.Lti.API
                     {
                         LmsCompany = lmsCompany,
                         Username = login.Substring(0, loginLength), // hack: to escape GenericADOException when name>50 //todo: review lmsUserDto.GetLogin() and lmsUser.Username usage
-                        UserId = lmsUserDto.lti_id ?? lmsUserDto.id,
+                        UserId = lmsUserDto.LtiId ?? lmsUserDto.Id,
                         PrincipalId = principal?.PrincipalId,
                     };
                     newUsers.Add(dbUser);
                     logger.InfoFormat(
                         "New user to DB: lmsCompanyId={0}, UserId={1}, Username={2}, Name={3}, Email={4}",
-                        lmsCompany.Id, dbUser.UserId, login, lmsUserDto.name, lmsUserDto.primary_email);
+                        lmsCompany.Id, dbUser.UserId, login, lmsUserDto.Name, lmsUserDto.PrimaryEmail);
                     lmsUserModel.RegisterSave(dbUser);
                 }
-                dbUser.Name = lmsUserDto.name;
-                dbUser.Email = lmsUserDto.primary_email;
-                dbUser.UserIdExtended = lmsUserDto.lti_id != null ? lmsUserDto.id : null;
+                dbUser.Name = lmsUserDto.Name;
+                dbUser.Email = lmsUserDto.PrimaryEmail;
+                dbUser.UserIdExtended = lmsUserDto.LtiId != null ? lmsUserDto.Id : null;
                 // todo: save lmsUserDto.id to dbUser.UserId
             }
 
@@ -225,13 +224,13 @@ namespace EdugameCloud.Lti.API
                     meeting,
                     meetingRoles.Select(x => new LmsUserDTO
                     {
-                        ac_id = x.User.PrincipalId,
-                        id = x.User.UserIdExtended ?? x.User.UserId,
-                        lti_id = x.User.UserId,
-                        login_id = x.User.Username,
-                        name = x.User.Name,
-                        primary_email = x.User.Email,
-                        lms_role = x.LmsRole
+                        AcId = x.User.PrincipalId,
+                        Id = x.User.UserIdExtended ?? x.User.UserId,
+                        LtiId = x.User.UserId,
+                        LoginId = x.User.Username,
+                        Name = x.User.Name,
+                        PrimaryEmail = x.User.Email,
+                        LmsRole = x.LmsRole
                     }),
                     dbUsers,
                     enrollments,

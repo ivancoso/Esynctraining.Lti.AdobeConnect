@@ -174,11 +174,11 @@
                     result.Add(
                         new LmsUserDTO
                             {
-                                lms_role = role, 
-                                primary_email = email, 
-                                login_id = userName, 
-                                id = userId, 
-                                name = firstName + " " + lastName, 
+                                LmsRole = role, 
+                                PrimaryEmail = email, 
+                                LoginId = userName, 
+                                Id = userId, 
+                                Name = firstName + " " + lastName, 
                             });
                 }
             }

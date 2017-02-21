@@ -1,13 +1,13 @@
 ﻿using System.Runtime.Serialization;
-using EdugameCloud.Lti.Core.DTO;
+using Esynctraining.AdobeConnect.Api.MeetingRecording.Dto;
 using Esynctraining.Mp4Service.Tasks.Client.Dto;
 
 namespace EdugameCloud.Lti.Mp4.Host.Dto
 {
     [DataContract]
-    public class RecordingWithMp4Dto : RecordingDTO, IMp4StatusContainer
+    public class RecordingWithMp4Dto : RecordingDto, IMp4StatusContainer
     {
-        [DataMember(Name = "mp4")]
+        [DataMember]
         public Mp4TaskStatusDto Mp4 { get; set; }
         
     }
@@ -15,11 +15,12 @@ namespace EdugameCloud.Lti.Mp4.Host.Dto
     [DataContract]
     public sealed class SeminarRecordingWithMp4Dto : RecordingWithMp4Dto
     {
-        [DataMember(Name = "seminarSessionId")]
+        [DataMember]
         public string SeminarSessionId { get; set; }
 
-        [DataMember(Name = "seminarSessionName")]
+        [DataMember]
         public string SeminarSessionName { get; set; }
+
     }
 
 }

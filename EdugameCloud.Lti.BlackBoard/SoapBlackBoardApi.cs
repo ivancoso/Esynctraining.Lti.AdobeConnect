@@ -240,12 +240,12 @@ namespace EdugameCloud.Lti.BlackBoard
 
                                         return new LmsUserDTO
                                         {
-                                            id = e.userId,
-                                            login_id = user.With(x => x.name),
-                                            primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
-                                            name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
-                                            lms_role = GetRole(e.roleId, roles),
-                                            lti_id = ltiIdString,
+                                            Id = e.userId,
+                                            LoginId = user.With(x => x.name),
+                                            PrimaryEmail = user.With(x => x.extendedInfo).With(x => x.emailAddress),
+                                            Name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
+                                            LmsRole = GetRole(e.roleId, roles),
+                                            LtiId = ltiIdString,
                                         };
                                     }).ToList();
                             }

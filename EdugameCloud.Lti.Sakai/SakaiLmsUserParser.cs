@@ -62,11 +62,11 @@ namespace EdugameCloud.Lti.Sakai
         private static LmsUserDTO ParseSingleUser(XmlNode node)
         {
             var info = new LmsUserDTO();
-            info.id = node.GetNodeValue("id");
-            info.login_id = node.GetNodeValue("username");
-            info.primary_email = node.GetNodeValue("email");
-            info.name = node.GetNodeValue("fullname");
-            info.lms_role = GetRole(node.GetNodeXmlValues("roles"));
+            info.Id = node.GetNodeValue("id");
+            info.LoginId = node.GetNodeValue("username");
+            info.PrimaryEmail = node.GetNodeValue("email");
+            info.Name = node.GetNodeValue("fullname");
+            info.LmsRole = GetRole(node.GetNodeXmlValues("roles"));
             return info;
         }
 

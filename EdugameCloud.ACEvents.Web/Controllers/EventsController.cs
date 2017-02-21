@@ -36,7 +36,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             var eventScoId = Request.QueryString["eventScoId"];
             var acUrl = "http://esynctraining.adobeconnect.com";
-            var apiUrl = acUrl + "/api/xml";
+            var apiUrl = new Uri(acUrl);
             _logger.Info("Signup started");
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), _logger, apiUrl);
             var eventInfo = proxy.GetScoInfo(eventScoId);
@@ -100,7 +100,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             }
             var servicesUrl = _settings.EgcServicesUrl;
             var acUrl = "http://esynctraining.adobeconnect.com";
-            var apiUrl = acUrl + "/api/xml";
+            var apiUrl = new Uri(acUrl);
             var logger = IoC.Resolve<ILogger>();
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
 

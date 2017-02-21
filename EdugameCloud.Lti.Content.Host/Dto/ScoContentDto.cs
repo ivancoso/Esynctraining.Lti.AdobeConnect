@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
-using Esynctraining.AdobeConnect.WebApi;
+using Esynctraining.AdobeConnect.Api;
 using Esynctraining.Core.Extensions;
 
 namespace EdugameCloud.Lti.Content.Host.Dto
@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.Content.Host.Dto
     [DataContract]
     public class ScoContentDto
     {
-        [DataMember(Name = "sco_id")]
+        [DataMember]
         public string ScoId { get; set; }
 
         //[DataMember]
@@ -19,39 +19,25 @@ namespace EdugameCloud.Lti.Content.Host.Dto
         //[DataMember]
         //public string Type { get; set; }
 
-        [DataMember(Name = "icon")]
+        [DataMember]
         public string Icon { get; set; }
 
-        [DataMember(Name = "isFolder")]
+        [IgnoreDataMember]
         public bool IsFolder { get; set; }
 
-        [DataMember(Name = "name")]
+        [DataMember]
         public string Name { get; set; }
 
+        [IgnoreDataMember]
         public DateTime BeginDate { get; set; }
 
+        [IgnoreDataMember]
         public DateTime DateModified { get; set; }
 
+        [IgnoreDataMember]
         public DateTime EndDate { get; set; }
-
-        //[DataMember(Name = "start_timestamp")]
-        //public long? StartTimestamp
-        //{
-        //    get
-        //    {
-        //        if (IsFolder)
-        //            return null;
-        //        if (BeginDate == DateTime.MinValue)
-        //            return null;
-
-        //        return (long)BeginDate.ConvertToUnixTimestamp();
-        //    }
-        //    set
-        //    {
-        //    }
-        //}
-
-        [DataMember(Name = "duration")]
+        
+        [DataMember]
         public string Duration
         {
             get
@@ -68,13 +54,13 @@ namespace EdugameCloud.Lti.Content.Host.Dto
             }
         }
 
-        [DataMember(Name = "byteCount")]
+        [DataMember]
         public int ByteCount { get; set; }
 
-        [DataMember(Name = "description")]
+        [DataMember]
         public string Description { get; set; }
 
-        [DataMember(Name = "modifiedAt")]
+        [DataMember]
         public long? ModifiedAt
         {
             get

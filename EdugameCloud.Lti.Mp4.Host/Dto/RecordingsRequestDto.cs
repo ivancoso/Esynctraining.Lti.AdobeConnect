@@ -1,18 +1,17 @@
 ﻿using System.Runtime.Serialization;
-using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.Mp4.Host.Dto
 {
     [DataContract]
     public sealed class RecordingsRequestDto
     {
-        [DataMember(Name = "lmsProviderName")]
+        [DataMember]
         public string LmsProviderName { get; set; }
 
         [DataMember(Name = "type")]
-        public string LmsMeetingType { get; set; }
+        public int LmsMeetingType { get; set; }
 
-        [DataMember(Name = "meetingId")]
+        [DataMember]
         public int MeetingId { get; set; }
         
     }

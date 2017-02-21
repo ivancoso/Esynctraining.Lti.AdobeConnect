@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Domain.Entities;
@@ -42,8 +43,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private void CreateAnnouncement(
             LmsMeetingType meetingType,
             LmsCompany lmsCompany, 
-            LtiParamDTO param, 
-            MeetingDTO meetingDto)
+            LtiParamDTO param,
+            MeetingDTOInput meetingDto)
         {
             if (!lmsCompany.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
             {
@@ -86,34 +87,133 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private string GetAnnouncementMessage(LmsMeetingType meetingType, MeetingDTO meetingDto, string referrer)
+        private string GetAnnouncementMessage(LmsMeetingType meetingType, MeetingDTOInput meetingDto, string referrer)
         {
+            //string startDate;
+            //string startTime;
+            //// TRICK: !!
+            //var input = meetingDto as MeetingDTOInput;
+            //if (input != null)
+            //{
+            //    startDate = input.StartDate;
+            //    startTime = input.StartTime;
+            //}
+            //else
+            //{
+            //    DateTime begin = ((double)meetingDto.StartTimeStamp).ConvertFromUnixTimeStamp();
+            //    //start_date = meeting.Sco.BeginDate.ToString("yyyy-MM-dd"),
+            //    //start_time = meeting.Sco.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
+            //}
+
             switch (meetingType)
             {
                 case LmsMeetingType.Meeting:
                     string pattern = "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.";
                     return string.Format(
                         pattern,
-                        meetingDto.name,
-                        meetingDto.start_date,
-                        meetingDto.start_time,
-                        meetingDto.duration,
+                        meetingDto.Name,
+                        meetingDto.StartDate,
+                        meetingDto.StartTime,
+                        meetingDto.Duration,
                         referrer ?? string.Empty);
                 case LmsMeetingType.OfficeHours:
-                    string message = String.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.name.Trim(), referrer ?? string.Empty);
-                    if (!String.IsNullOrEmpty(meetingDto.office_hours))
+                    string message = string.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.Name.Trim(), referrer ?? string.Empty);
+                    if (!string.IsNullOrEmpty(meetingDto.OfficeHours))
                     {
-                        message = String.Format("Meeting time: {0}. ", meetingDto.office_hours) + message;
+                        message = string.Format("Meeting time: {0}. ", meetingDto.OfficeHours) + message;
                     }
                     return message;
                 case LmsMeetingType.StudyGroup:
-                    return String.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.name.Trim(), referrer ?? string.Empty);
+                    return string.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.Name.Trim(), referrer ?? string.Empty);
 
                 case LmsMeetingType.Seminar:
-                    return String.Format("You can join the seminar \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.name.Trim(), referrer ?? string.Empty);
+                    return string.Format("You can join the seminar \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.Name.Trim(), referrer ?? string.Empty);
             }
 
-            return String.Empty;
+            return string.Empty;
         }
+
+        private void CreateAnnouncement(
+            LmsMeetingType meetingType,
+            LmsCompany lmsCompany,
+            LtiParamDTO param,
+            MeetingDTO meetingDto,
+            DateTime startDate)
+        {
+            if (!lmsCompany.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
+            {
+                return;
+            }
+
+            var announcementTitle = string.Format(
+                "A new {0} room was created for course {1}",
+                meetingNames[meetingType],
+                param.context_title);
+            string announcementMessage = GetAnnouncementMessage(meetingType, meetingDto, param.referer, startDate);
+
+            switch (lmsCompany.LmsProviderId)
+            {
+                case (int)LmsProviderEnum.Canvas:
+                    var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+                    var token = UsersSetup.IsTeacher(param) && !String.IsNullOrEmpty(lmsUser.Token)
+                        ? lmsUser.Token
+                        : lmsCompany.AdminUser.Return(a => a.Token, string.Empty);
+
+                    CanvasApi.CreateAnnouncement(
+                        lmsCompany.LmsDomain,
+                        token,
+                        param.course_id,
+                        announcementTitle,
+                        announcementMessage);
+                    break;
+                case (int)LmsProviderEnum.Blackboard:
+                    BlackboardApi.CreateAnnouncement(param.course_id, param.user_id, lmsCompany, announcementTitle, announcementMessage);
+                    break;
+                case (int)LmsProviderEnum.BrainHoney:
+                    // string error;
+                    //                    this.dlapApi.CreateAnnouncement(
+                    //                        credentials,
+                    //                        param.course_id,
+                    //                        announcementTitle,
+                    //                        announcementMessage, 
+                    //                        out error);
+                    break;
+            }
+        }
+
+        private string GetAnnouncementMessage(LmsMeetingType meetingType, MeetingDTO meetingDto, string referrer, DateTime startDate)
+        {
+            string date = startDate.ToString("yyyy-MM-dd");
+            string time = startDate.ToString("h:mm tt", CultureInfo.InvariantCulture);
+
+            switch (meetingType)
+            {
+                case LmsMeetingType.Meeting:
+                    string pattern = "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.";
+                    return string.Format(
+                        pattern,
+                        meetingDto.Name,
+                        date,
+                        time,
+                        meetingDto.Duration,
+                        referrer ?? string.Empty);
+                case LmsMeetingType.OfficeHours:
+                    string message = string.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.Name.Trim(), referrer ?? string.Empty);
+                    if (!string.IsNullOrEmpty(meetingDto.OfficeHours))
+                    {
+                        message = string.Format("Meeting time: {0}. ", meetingDto.OfficeHours) + message;
+                    }
+                    return message;
+                case LmsMeetingType.StudyGroup:
+                    return string.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.Name.Trim(), referrer ?? string.Empty);
+
+                case LmsMeetingType.Seminar:
+                    return string.Format("You can join the seminar \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.Name.Trim(), referrer ?? string.Empty);
+            }
+
+            return string.Empty;
+        }
+
     }
+
 }

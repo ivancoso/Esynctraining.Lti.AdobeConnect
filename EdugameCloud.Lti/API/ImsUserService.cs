@@ -14,7 +14,7 @@ namespace EdugameCloud.Lti.API
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsUser lmsUser, int courseId, object extraData = null)
         {
-            return OperationResultWithData<List<LmsUserDTO>>.Success(new List<LmsUserDTO>());
+            return new List<LmsUserDTO>().ToSuccessResult();
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, object param = null)

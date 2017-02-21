@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -11,17 +9,17 @@ using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Mp4.Host.Dto;
 using Esynctraining.AdobeConnect;
+using Esynctraining.AdobeConnect.Api.MeetingRecording.Dto;
+using Esynctraining.AdobeConnect.Api.Seminar.Dto;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Mp4Service.Tasks.Client;
 using Esynctraining.Mp4Service.Tasks.Client.Dto;
-using Esynctraining.WebApi.Client;
 
 namespace EdugameCloud.Lti.Mp4.Host.Controllers
 {
@@ -29,15 +27,12 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")] //POST,OPTIONS
     public class RecordingsController : BaseController
     {
-        private static readonly MapperConfiguration mapConfig = new MapperConfiguration(cfg => cfg.CreateMap<RecordingDTO, RecordingWithMp4Dto>());
+        private static readonly MapperConfiguration mapConfig = new MapperConfiguration(cfg => cfg.CreateMap<RecordingDto, RecordingWithMp4Dto>());
         private static readonly MapperConfiguration seminarMapConfig = new MapperConfiguration(cfg => cfg.CreateMap<SeminarSessionRecordingDto, SeminarRecordingWithMp4Dto>());
         private readonly IMp4LinkBuilder _mp4LinkBuilder;
         private readonly IVttLinkBuilder _vttLinkBuilder;
 
-        private IRecordingsService RecordingsService
-        {
-            get { return IoC.Resolve<IRecordingsService>(); }
-        }
+        private IRecordingsService RecordingsService => IoC.Resolve<IRecordingsService>();
 
 
         public RecordingsController(
@@ -67,7 +62,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var ac = this.GetAdobeConnectProvider(session);
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
-                    () => new RoomTypeFactory(ac, (LmsMeetingType)int.Parse(input.LmsMeetingType), IoC.Resolve<API.AdobeConnect.ISeminarService>());
+                    () => new RoomTypeFactory(ac, (LmsMeetingType)input.LmsMeetingType, IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
                 IEnumerable<IRecordingDto> rawRecordings = RecordingsService.GetRecordings(
                     lmsCompany,
@@ -80,7 +75,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var map = mapConfig.CreateMapper();
 
                 IEnumerable<RecordingWithMp4Dto> recordings =
-                    ((LmsMeetingType)int.Parse(input.LmsMeetingType) == LmsMeetingType.Seminar)
+                    ((LmsMeetingType)input.LmsMeetingType == LmsMeetingType.Seminar)
                     ? rawRecordings.Select(x => smap.Map<SeminarRecordingWithMp4Dto>(x))
                     : rawRecordings.Select(x => map.Map<RecordingWithMp4Dto>(x));
 
@@ -95,14 +90,14 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
                     mp4Subtitles = Guid.Empty;
 
-                List<IMp4StatusContainer> result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
+                IEnumerable<IMp4StatusContainer> result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
                     mp4,
                     mp4Subtitles,
                     _mp4LinkBuilder,
                     _vttLinkBuilder,
                     Logger);
 
-                return OperationResultWithData<IEnumerable<IMp4StatusContainer>>.Success(result);
+                return result.ToSuccessResult();
             }
             catch (Exception ex)
             {

@@ -16,29 +16,29 @@
         /// </summary>
         public LmsUserDTO()
         {
-            this.is_editable = true;
+            this.IsEditable = true;
         }
 
         #region Public Properties
         
         [DataMember]
-        public string ac_id { get; set; }
+        public string AcId { get; set; }
         
         [DataMember]
-        public int? ac_role { get; set; }
+        public int? AcRole { get; set; }
         
         [DataMember]
-        public string lms_role { get; set; }
+        public string LmsRole { get; set; }
         
         [DataMember]
-        public string id { get; set; }
+        public string Id { get; set; }
 
-        [DataMember]
+        [IgnoreDataMember]
         [ScriptIgnore]
-        public string login_id { get; set; }
+        public string LoginId { get; set; }
         
         [DataMember]
-        public string name 
+        public string Name 
         {
             get 
             {
@@ -52,23 +52,23 @@
                     _name = value.Trim();
             } 
         }
+        
+        [ScriptIgnore]
+        [IgnoreDataMember]
+        public string PrimaryEmail { get; set; }
+        
+        [DataMember]
+        public bool IsEditable { get; set; }
 
-        [DataMember]
+        [IgnoreDataMember]
         [ScriptIgnore]
-        public string primary_email { get; set; }
-        
-        [DataMember]
-        public bool is_editable { get; set; }
-        
-        [DataMember]
-        [ScriptIgnore]
-        public string lti_id { get; set; }
+        public string LtiId { get; set; }
 
         [DataMember]
         public string email { get; set; }
         
         [DataMember]
-        public int? guest_id { get; set; }
+        public int? GuestId { get; set; }
 
         #endregion
 
@@ -76,14 +76,14 @@
         
         public string GetLogin()
         {
-            return this.login_id ?? this.name;
+            return this.LoginId ?? this.Name;
         }
         
         public string GetEmail()
         {
-            if (this.primary_email != null)
+            if (this.PrimaryEmail != null)
             {
-                return this.primary_email;
+                return this.PrimaryEmail;
             }
 
             try
@@ -100,34 +100,34 @@
         
         public string GetFirstName()
         {
-            if (this.name == null)
+            if (this.Name == null)
             {
                 return "no";
             }
 
-            int index = this.name.IndexOf(" ", StringComparison.Ordinal);
+            int index = this.Name.IndexOf(" ", StringComparison.Ordinal);
             if (index < 0)
             {
-                return this.name;
+                return this.Name;
             }
 
-            return this.name.Substring(0, index);
+            return this.Name.Substring(0, index);
         }
         
         public string GetLastName()
         {
-            if (this.name == null)
+            if (this.Name == null)
             {
                 return "name";
             }
 
-            int index = this.name.IndexOf(" ", StringComparison.Ordinal);
+            int index = this.Name.IndexOf(" ", StringComparison.Ordinal);
             if (index < 0)
             {
-                return this.lms_role;
+                return this.LmsRole;
             }
 
-            return this.name.Substring(index + 1);
+            return this.Name.Substring(index + 1);
         }
 
         #endregion

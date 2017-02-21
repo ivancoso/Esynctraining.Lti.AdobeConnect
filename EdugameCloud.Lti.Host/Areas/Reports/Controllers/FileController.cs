@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using EdugameCloud.Core.Business.Models;
@@ -17,6 +16,8 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
 using EdugameCloud.Lti.Host.Dtos;
+using Esynctraining.AdobeConnect.Api.MeetingReports;
+using Esynctraining.AdobeConnect.Api.MeetingReports.Dto;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -27,13 +28,16 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
     public class FileController : BaseController
     {
         private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
-        private readonly IReportService meetingSetup;
+        private readonly IReportsService meetingSetup;
+        private readonly LtiReportService ltiReports = new LtiReportService();
         private readonly CompanyModel companyModel;
         private readonly ACUserModeModel userModeModel;
 
+
         public FileController(
             LmsCourseMeetingModel lmsCourseMeetingModel,
-            IReportService meetingSetup,
+            IReportsService meetingSetup,
+            //LtiReportService ltiReports,
             CompanyModel companyModel,
             ACUserModeModel userModeModel,
             LmsUserSessionModel userSessionModel,
@@ -46,6 +50,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
             this.meetingSetup = meetingSetup;
             this.companyModel = companyModel;
             this.userModeModel = userModeModel;
+            //this.ltiReports = ltiReports;
         }
 
 
@@ -78,16 +83,17 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     return null;
                 }
 
-                var tempParticipants = this.meetingSetup.GetAttendanceReport(
+                var tempParticipants = this.meetingSetup.GetAttendanceReports(
+                    meeting.GetMeetingScoId(),
                     this.GetAdobeConnectProvider(credentials),
-                    meeting,
+                    TimeZoneInfo.Utc,
                     startIndex,
                     limit);
 
-                var participants = new List<ACSessionParticipantReportDTO>();
+                var participants = new List<ACSessionParticipantReportDto>();
                 if (tempParticipants.Any())
                 {
-                    participants = tempParticipants.Select(x => new ACSessionParticipantReportDTO(x, timezoneOffset)).ToList();
+                    participants = tempParticipants.Select(x => new ACSessionParticipantReportDto(x, TimeZoneInfo.Utc)).ToList();
                 }
 
                 bool isShowMeetingTitle = false;
@@ -144,17 +150,18 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var acMeetingUrl = credentials.AcServer + acMeeting.ScoInfo.UrlPath;
                 var acMeetingTitle = acMeeting.ScoInfo.Name;
 
-                var tempMeetingSessions = this.meetingSetup.GetSessionsReport(
+                var tempMeetingSessions = this.meetingSetup.GetSessionsReports(
+                    meeting.GetMeetingScoId(),
                     acProvider,
-                    meeting,
+                    TimeZoneInfo.Utc,
                     startIndex,
                     limit);
 
-                var meetingSessions = new List<ACSessionReportDTO>();
+                var meetingSessions = new List<ACSessionReportDto>();
 
                 if (tempMeetingSessions.Any())
                 {
-                    meetingSessions = tempMeetingSessions.Select(x => new ACSessionReportDTO(x, timezoneOffset)).ToList();
+                    meetingSessions = tempMeetingSessions.Select(x => new ACSessionReportDto(x, TimeZoneInfo.Utc)).ToList();
                 }
 
                 if (format.ToUpper() != "PDF" && format.ToUpper() != "EXCEL")
@@ -181,11 +188,11 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                         new KeyValuePair<string, SubreportProcessingEventHandler>("ParticipantsSubReport",
                             (sender, args) =>
                             {
-                                var assetId = Convert.ToInt32(args.Parameters[0].Values[0]);
+                                var assetId = args.Parameters[0].Values[0];
                                 args.DataSources.Clear();
 
-                                var sessions = (IEnumerable<ACSessionReportDTO>)(((LocalReport) sender).DataSources["ItemDataSet"].Value);
-                                var participants = new List<ACSessionParticipantReportDTO>();
+                                var sessions = (IEnumerable<ACSessionReportDto>)(((LocalReport) sender).DataSources["ItemDataSet"].Value);
+                                var participants = new List<ACSessionParticipantReportDto>();
                                 if (sessions.Any())
                                 {
                                     var tempSession = sessions.FirstOrDefault(x => x.assetId == assetId);
@@ -251,7 +258,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     return null;
                 }
 
-                var tempParticipants = this.meetingSetup.GetRecordingsReport(
+                var tempParticipants = ltiReports.GetRecordingsReport(
                     this.GetAdobeConnectProvider(credentials),
                     meeting,
                     startIndex,

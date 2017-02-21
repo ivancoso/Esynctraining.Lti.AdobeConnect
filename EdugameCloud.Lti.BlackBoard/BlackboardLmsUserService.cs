@@ -26,7 +26,7 @@ namespace EdugameCloud.Lti.BlackBoard
         {
             Guid guid;
             return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error)
-                .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
+                .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.LtiId : u.Id));
         }
 
         //public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, 
@@ -80,7 +80,7 @@ namespace EdugameCloud.Lti.BlackBoard
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, lmsUser != null ? lmsUser.UserId : null, courseId, out error);
-            return OperationResultWithData<List<LmsUserDTO>>.Success(users);
+            return users.ToSuccessResult();
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,

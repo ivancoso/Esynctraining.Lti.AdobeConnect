@@ -124,7 +124,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                     throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
                 }
 
-                var ac = this.GetAdobeConnectProvider(session);
+                var ac = GetAdminAdobeConnectProvider(session);
                 var registeredUser = ac.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
 
                 var MeetingSetup = IoC.Resolve<MeetingSetup>();
@@ -138,7 +138,23 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 throw;
             }
         }
-        
+
+        private IAdobeConnectProxy GetAdminAdobeConnectProvider(LmsUserSession session)
+        {
+            var lmsCompany = session.LmsCompany;
+            string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(lmsCompany.Id);
+
+            var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
+            if (provider == null)
+            {
+                provider = acAccountService.GetProvider(new AdobeConnectAccess(new Uri(lmsCompany.AcServer), lmsCompany.AcUsername, lmsCompany.AcPassword), true);
+                var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
+                _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
+            }
+
+            return provider;
+        }
+
         protected string GetOutputErrorMessage(string methodName, LmsCompany credentials, Exception ex)
         {
             string lmsInfo = (credentials != null)

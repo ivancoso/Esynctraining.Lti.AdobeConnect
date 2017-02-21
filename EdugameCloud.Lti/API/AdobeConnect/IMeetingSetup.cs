@@ -15,7 +15,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            MeetingDTO meetingDTO,
+            MeetingDTOInput meetingDTO,
             StringBuilder trace,
             IFolderBuilder fb,
             bool retrieveLmsUsers = false);

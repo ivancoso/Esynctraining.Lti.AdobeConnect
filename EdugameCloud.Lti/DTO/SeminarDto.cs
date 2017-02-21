@@ -1,13 +1,13 @@
 ﻿using System.Runtime.Serialization;
+using Esynctraining.AdobeConnect.Api.Seminar.Dto;
 
+//TODO: Esynctraining.AdobeConnect.WebApi.Seminar.Dto
 namespace EdugameCloud.Lti.DTO
 {
     [DataContract]
-    public class SeminarDto : MeetingDTO
+    public class SeminarDto : MeetingDTOLtiBase<SeminarSessionDto>
     {
-        [DataMember(Name = "sessions")]
-        public SeminarSessionDto[] Sessions { get; set; }
-
+        // NOTE: EXTRA!!
         [DataMember(Name = "seminarLicenseId")]
         public string SeminarLicenseId { get; set; }
 

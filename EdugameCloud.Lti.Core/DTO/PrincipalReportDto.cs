@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.Core.DTO
 {

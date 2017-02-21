@@ -15,6 +15,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AdobeConnect;
+    using Esynctraining.AdobeConnect.Api.Meeting;
     using Esynctraining.Core;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
@@ -216,13 +217,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 var dbUserMeetingRoles = GetUserMeetingRoles(meeting);
                 var userDtos = dbUserMeetingRoles.Select(x => new LmsUserDTO
                 {
-                    ac_id = x.User.PrincipalId,
-                    id = x.User.UserIdExtended ?? x.User.UserId,
-                    lti_id = x.User.UserId,
-                    login_id = x.User.Username,
-                    name = x.User.Name,
-                    primary_email = x.User.Email,
-                    lms_role = x.LmsRole,
+                    AcId = x.User.PrincipalId,
+                    Id = x.User.UserIdExtended ?? x.User.UserId,
+                    LtiId = x.User.UserId,
+                    LoginId = x.User.Username,
+                    Name = x.User.Name,
+                    PrimaryEmail = x.User.Email,
+                    LmsRole = x.LmsRole,
                 });
 
                 if (userDtos.Any())
@@ -283,7 +284,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (user != null)
                 {
-                    login = user.login_id;
+                    login = user.LoginId;
                 }
             }
 
@@ -342,7 +343,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 meeting.GetMeetingScoId(),
                 nonEditable);
 
-            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
+            string[] userIds = users.Select(user => user.LtiId ?? user.Id).ToArray();
             IEnumerable<LmsUser> lmsUsers = null;
             if (lmsCompany.UseSynchronizedUsers && meeting.MeetingRoles != null)
             {
@@ -375,7 +376,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 foreach (LmsUserDTO user in users)
                 {
                     string login = user.GetLogin();
-                    LmsUser lmsUser = lmsUsers.FirstOrDefault(u => u.UserId == (user.lti_id ?? user.id));
+                    LmsUser lmsUser = lmsUsers.FirstOrDefault(u => u.UserId == (user.LtiId ?? user.Id));
                     if (usersCount <= EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit)
                     {
                         if (lmsUser == null)
@@ -384,7 +385,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             {
                                 LmsCompany = lmsCompany,
                                 Username = login,
-                                UserId = user.lti_id ?? user.id,
+                                UserId = user.LtiId ?? user.Id,
                             };
                         }
 
@@ -424,23 +425,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         continue;
                     }
 
-                    user.ac_id = lmsUser.PrincipalId;
-                    user.is_editable = !nonEditable.Contains(user.ac_id);
+                    user.AcId = lmsUser.PrincipalId;
+                    user.IsEditable = !nonEditable.Contains(user.AcId);
 
-                    if (attendees.Hosts.Any(v => v.PrincipalId == user.ac_id))
+                    if (attendees.Hosts.Any(v => v.PrincipalId == user.AcId))
                     {
-                        user.ac_role = AcRole.Host.Id;
-                        attendees.Hosts = attendees.Hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
+                        user.AcRole = AcRole.Host.Id;
+                        attendees.Hosts = attendees.Hosts.Where(v => v.PrincipalId != user.AcId).ToList();
                     }
-                    else if (attendees.Presenters.Any(v => v.PrincipalId == user.ac_id))
+                    else if (attendees.Presenters.Any(v => v.PrincipalId == user.AcId))
                     {
-                        user.ac_role = AcRole.Presenter.Id;
-                        attendees.Presenters = attendees.Presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
+                        user.AcRole = AcRole.Presenter.Id;
+                        attendees.Presenters = attendees.Presenters.Where(v => v.PrincipalId != user.AcId).ToList();
                     }
-                    else if (attendees.Participants.Any(v => v.PrincipalId == user.ac_id))
+                    else if (attendees.Participants.Any(v => v.PrincipalId == user.AcId))
                     {
-                        user.ac_role = AcRole.Participant.Id;
-                        attendees.Participants = attendees.Participants.Where(v => v.PrincipalId != user.ac_id).ToList();
+                        user.AcRole = AcRole.Participant.Id;
+                        attendees.Participants = attendees.Participants.Where(v => v.PrincipalId != user.AcId).ToList();
                     }
                     else
                     {
@@ -464,7 +465,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 users.ForEach(x => 
                 {
-                    x.email = x.primary_email;
+                    x.email = x.PrimaryEmail;
                 });
             }
             
@@ -483,10 +484,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     users.Add(
                         new LmsUserDTO
                         {
-                            guest_id = guest.Id,
-                            ac_id = guest.PrincipalId,
-                            name = permissionInfo.Name,
-                            ac_role = role.Id,
+                            GuestId = guest.Id,
+                            AcId = guest.PrincipalId,
+                            Name = permissionInfo.Name,
+                            AcRole = role.Id,
                         });
                 }
                 else
@@ -494,9 +495,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     users.Add(
                         new LmsUserDTO
                         {
-                            ac_id = permissionInfo.PrincipalId,
-                            name = permissionInfo.Name,
-                            ac_role = role.Id,
+                            AcId = permissionInfo.PrincipalId,
+                            Name = permissionInfo.Name,
+                            AcRole = role.Id,
                         });
                 }
             }
@@ -521,7 +522,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (lmsUser != null)
             {
-                var lmsDbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUser.lti_id ?? lmsUser.id, lmsCompany.Id).Value;
+                var lmsDbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUser.LtiId ?? lmsUser.Id, lmsCompany.Id).Value;
                 var nonEditable = new HashSet<string>();
                 MeetingAttendees attendees = GetMeetingAttendees(
                     provider,
@@ -554,7 +555,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 LmsCompany = lmsCompany,
                 Username = login,
-                UserId = user.lti_id ?? user.id,
+                UserId = user.LtiId ?? user.Id,
             };
 
             if (string.IsNullOrEmpty(lmsDbUser.PrincipalId))
@@ -580,20 +581,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            user.ac_id = lmsDbUser.PrincipalId;
-            user.is_editable = !nonEditable.Contains(user.ac_id);
+            user.AcId = lmsDbUser.PrincipalId;
+            user.IsEditable = !nonEditable.Contains(user.AcId);
 
-            if (attendees.Hosts.Any(v => v.PrincipalId == user.ac_id))
+            if (attendees.Hosts.Any(v => v.PrincipalId == user.AcId))
             {
-                user.ac_role = AcRole.Host.Id;
+                user.AcRole = AcRole.Host.Id;
             }
-            else if (attendees.Presenters.Any(v => v.PrincipalId == user.ac_id))
+            else if (attendees.Presenters.Any(v => v.PrincipalId == user.AcId))
             {
-                user.ac_role = AcRole.Presenter.Id;
+                user.AcRole = AcRole.Presenter.Id;
             }
-            else if (attendees.Participants.Any(v => v.PrincipalId == user.ac_id))
+            else if (attendees.Participants.Any(v => v.PrincipalId == user.AcId))
             {
-                user.ac_role = AcRole.Participant.Id;
+                user.AcRole = AcRole.Participant.Id;
             }
         }
 
@@ -655,7 +656,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             foreach (LmsUserDTO lmsUserDto in usersToAddToMeeting)
             {
                 // TRICK: we can filter by 'UserId' - cause we sync it in 'getUsersByLmsCompanyId' SP
-                string id = lmsUserDto.lti_id ?? lmsUserDto.id;
+                string id = lmsUserDto.LtiId ?? lmsUserDto.Id;
                 LmsUser dbUser = lmsDbUsers.FirstOrDefault(x => x.UserId == id)
                     ?? new LmsUser { LmsCompany = lmsCompany, Username = lmsUserDto.GetLogin(), UserId = id, };
 
@@ -676,14 +677,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
 
                 // TRICK: dbUser.PrincipalId can be updated within CreatePrincipalAndUpdateLmsUserPrincipalId
-                lmsUserDto.ac_id = dbUser.PrincipalId;
+                lmsUserDto.AcId = dbUser.PrincipalId;
 
                 MeetingPermissionInfo enrollment = enrollments.FirstOrDefault(e => e.PrincipalId.Equals(dbUser.PrincipalId));
 
                 if (enrollment != null)
                 {
                     new RoleMappingService().CheckAndSetNoneACMapping(lmsUserDto, lmsCompany);
-                    if(lmsUserDto.ac_role == AcRole.None.Id)
+                    if(lmsUserDto.AcRole == AcRole.None.Id)
                     {
                         meetingPermissions.Add(new MeetingPermissionUpdateTrio
                         {
@@ -694,7 +695,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
                     else
                     {
-                        lmsUserDto.ac_role = AcRole.GetRoleId(enrollment.PermissionId);
+                        lmsUserDto.AcRole = AcRole.GetRoleId(enrollment.PermissionId);
                     }
 
                     principalIds.Remove(dbUser.PrincipalId);
@@ -758,10 +759,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     result.Add(new LmsUserDTO
                     {
-                        guest_id = guest.Id,
-                        ac_id = guest.PrincipalId,
-                        name = guestEnrollment.Name,
-                        ac_role = AcRole.GetRoleId(guestEnrollment.PermissionId),
+                        GuestId = guest.Id,
+                        AcId = guest.PrincipalId,
+                        Name = guestEnrollment.Name,
+                        AcRole = AcRole.GetRoleId(guestEnrollment.PermissionId),
                     });
                 }
             }
@@ -788,9 +789,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         principalId =>
                             new LmsUserDTO
                             {
-                                ac_id = principalId,
-                                name = enrollments.Single(x => x.PrincipalId == principalId).Name,
-                                ac_role = AcRole.GetRoleId(enrollments.Single(x => x.PrincipalId == principalId).PermissionId),
+                                AcId = principalId,
+                                Name = enrollments.Single(x => x.PrincipalId == principalId).Name,
+                                AcRole = AcRole.GetRoleId(enrollments.Single(x => x.PrincipalId == principalId).PermissionId),
                             }));
                 }
                 else
@@ -847,7 +848,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (principal != null)
             {
-                lmsUserDto.ac_id = principal.PrincipalId;
+                lmsUserDto.AcId = principal.PrincipalId;
                 dbUser.PrincipalId = principal.PrincipalId;
                 this.LmsUserModel.RegisterSave(dbUser);
             }
@@ -887,7 +888,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return users;
             }
 
-            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
+            string[] userIds = users.Select(user => user.LtiId ?? user.Id).ToArray();
             IEnumerable<LmsUser> lmsDbUsers = null;
             if (lmsCompany.UseSynchronizedUsers && meeting.MeetingRoles != null)
             {
@@ -913,8 +914,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault())
             {
-                bool containsEmptyEmails = lmsUsers.Any(x => string.IsNullOrWhiteSpace(x.primary_email));
-                bool containsDuplicateEmails = lmsUsers.Select(x => x.primary_email).Count() != lmsUsers.Select(x => x.primary_email).Distinct().Count();
+                bool containsEmptyEmails = lmsUsers.Any(x => string.IsNullOrWhiteSpace(x.PrimaryEmail));
+                bool containsDuplicateEmails = lmsUsers.Select(x => x.PrimaryEmail).Count() != lmsUsers.Select(x => x.PrimaryEmail).Distinct().Count();
                 if (containsEmptyEmails || containsDuplicateEmails)
                 {
                     message += Resources.Messages.UsersCannotBeSync;
@@ -927,13 +928,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     message += ". ";
                 }
 
-                var duplicateEmails = lmsUsers.GroupBy(x => x.primary_email)
+                var duplicateEmails = lmsUsers.GroupBy(x => x.PrimaryEmail)
                     .Where(g => g.Count() > 1)
                     .Select(y => y.Key)
                     .ToList();
 
                 // NOTE: process ONLY VALID users
-                usersToAddToMeeting = lmsUsers.Where(x => !string.IsNullOrWhiteSpace(x.primary_email) && !duplicateEmails.Contains(x.primary_email)).ToList();
+                usersToAddToMeeting = lmsUsers.Where(x => !string.IsNullOrWhiteSpace(x.PrimaryEmail) && !duplicateEmails.Contains(x.PrimaryEmail)).ToList();
             }
 
             //TRICK: we need email on client side only if AC uses emails as login!!
@@ -942,7 +943,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 usersToAddToMeeting.ForEach(x =>
                 {
-                    x.email = x.primary_email;
+                    x.email = x.PrimaryEmail;
                 });
             }
 
@@ -1093,11 +1094,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 return skipReturningUsers
                     ? null
-                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.id);
+                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.Id);
             }
 
             // NOTE: now we create AC principal within Users/GetAll method. So user will always have ac_id here.
-            if (user.ac_id == null)
+            if (user.AcId == null)
             {
                 logger.WarnFormat("[UpdateUser]. ac_id == null. LmsCompanyId:{0}. Id:{1}. UserLogin:{2}.", lmsCompany.Id, id, user.GetLogin());
 
@@ -1114,7 +1115,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (principal != null)
                 {
-                    user.ac_id = principal.PrincipalId;
+                    user.AcId = principal.PrincipalId;
                 }
                 else if (lmsCompany.DenyACUserCreation)
                 {
@@ -1128,7 +1129,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            if (!user.ac_role.HasValue)
+            if (!user.AcRole.HasValue)
             {
                 throw new InvalidOperationException("Adobe Connect principal role is empty");
             }
@@ -1139,13 +1140,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 meeting.GetMeetingScoId(),
                 nonEditable);
             var permission = MeetingPermissionId.view;
-            if (attendees.Contains(user.ac_id))
+            if (attendees.Contains(user.AcId))
             {
-                if (user.ac_role.Value == AcRole.Presenter.Id)
+                if (user.AcRole.Value == AcRole.Presenter.Id)
                 {
                     permission = MeetingPermissionId.mini_host;
                 }
-                else if (user.ac_role.Value == AcRole.Host.Id)
+                else if (user.AcRole.Value == AcRole.Host.Id)
                 {
                     permission = MeetingPermissionId.host;
                 }
@@ -1157,15 +1158,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             try
             {
-                StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+                StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.AcId, permission);
             }
             catch (InvalidOperationException)
             {
                 // NOTE: check that Principal is in AC yet
-                var principalInfo = provider.GetOneByPrincipalId(user.ac_id);
+                var principalInfo = provider.GetOneByPrincipalId(user.AcId);
                 if (!principalInfo.Success)
                 {
-                    var dbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, lmsCompany.Id).Value;
+                    var dbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.LtiId ?? user.Id, lmsCompany.Id).Value;
 
                     //
                     // TODO: CHECK EMAIL IS VALID (UNIQUE AND NON-EMPTY) if AC uses Emails-as-Logins
@@ -1185,17 +1186,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
 
                 // NOTE: try again
-                StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+                StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.AcId, permission);
             }
 
             if (permission == MeetingPermissionId.host)
             {
-                this.AddUsersToMeetingHostsGroup(provider, new[] { user.ac_id });
+                this.AddUsersToMeetingHostsGroup(provider, new[] { user.AcId });
             }
 
             return skipReturningUsers
                 ? null
-                : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.id);
+                : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.Id);
         }
 
         public void DeleteUserFromAcMeeting(
@@ -1251,32 +1252,32 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return null;
             }
 
-            if (user.ac_id == null)
+            if (user.AcId == null)
             {
                 error = Resources.Messages.UserNotInAdobeConnect;
                 return null;
             }
 
-            if (!user.ac_role.HasValue)
+            if (!user.AcRole.HasValue)
             {
                 throw new InvalidOperationException("AdobeConnect role is empty");
             }
             
-            var permission = AcRole.GetById(user.ac_role.Value).MeetingPermissionId;
-            provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+            var permission = AcRole.GetById(user.AcRole.Value).MeetingPermissionId;
+            provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.AcId, permission);
 
             if (permission == MeetingPermissionId.host)
             {
-                AddUsersToMeetingHostsGroup(provider, new[] { user.ac_id });
+                AddUsersToMeetingHostsGroup(provider, new[] { user.AcId });
             }
 
             return new LmsUserDTO
             {
-                id = user.id,
-                guest_id = user.guest_id,
-                ac_id = user.ac_id,
-                name = user.name,
-                ac_role = user.ac_role,
+                Id = user.Id,
+                GuestId = user.GuestId,
+                AcId = user.AcId,
+                Name = user.Name,
+                AcRole = user.AcRole,
             };
         }
 
@@ -1673,7 +1674,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (principal != null)
                 {
                     // TRICK: we can filter by 'UserId' - cause we sync it in 'getUsersByLmsCompanyId' SP
-                    string id = u.lti_id ?? u.id;
+                    string id = u.LtiId ?? u.Id;
                     LmsUser lmsUser = lmsUsers.FirstOrDefault(x => x.UserId == id);
 
                     if (lmsUser == null || !principal.PrincipalId.Equals(lmsUser.PrincipalId))

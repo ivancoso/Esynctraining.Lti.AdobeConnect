@@ -137,11 +137,11 @@ namespace EdugameCloud.Lti.Sakai
                         result.Add(
                         new LmsUserDTO
                         {
-                            lms_role = groupName,
-                            primary_email = email,
-                            login_id = userName,
-                            id = userId,
-                            name = fullName,
+                            LmsRole = groupName,
+                            PrimaryEmail = email,
+                            LoginId = userName,
+                            Id = userId,
+                            Name = fullName,
                         });
                     }
                 }

@@ -34,7 +34,7 @@ namespace EdugameCloud.Lti.Controllers
                 LtiParamDTO param = session.LtiSession.LtiParam;
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 var result = meetingSessionService.CreateBatch(dto, param);
-                return Json(OperationResultWithData<IEnumerable<MeetingSessionDTO>>.Success(result));
+                return Json(result.ToSuccessResult());
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace EdugameCloud.Lti.Controllers
                 var session = GetReadOnlySession(lmsProviderName);
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 var result = meetingSessionService.GetSessions(meetingId);
-                return Json(OperationResultWithData<IEnumerable<MeetingSessionDTO>>.Success(result));
+                return Json(result.ToSuccessResult());
             }
             catch (Exception ex)
             {
@@ -69,7 +69,7 @@ namespace EdugameCloud.Lti.Controllers
                 LtiParamDTO param = session.LtiSession.LtiParam;
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 var eve = meetingSessionService.CreateSession(meetingId, param);
-                return Json(OperationResultWithData<MeetingSessionDTO>.Success(eve));
+                return Json(eve.ToSuccessResult());
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace EdugameCloud.Lti.Controllers
                 LtiParamDTO param = session.LtiSession.LtiParam;
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 var eve = meetingSessionService.SaveSession(meetingId, ev, param);
-                return Json(OperationResultWithData<MeetingSessionDTO>.Success(eve));
+                return Json(eve.ToSuccessResult());
             }
             catch (Exception ex)
             {

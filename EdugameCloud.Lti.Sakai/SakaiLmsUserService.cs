@@ -23,7 +23,7 @@ namespace EdugameCloud.Lti.Sakai
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, extraData);
-            return error != null ? OperationResultWithData<List<LmsUserDTO>>.Success(users): OperationResultWithData<List<LmsUserDTO>>.Error(error);
+            return error != null ? users.ToSuccessResult() : OperationResultWithData<List<LmsUserDTO>>.Error(error);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string lmsUserId, 

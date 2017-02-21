@@ -5,6 +5,7 @@ using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
+using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
@@ -19,7 +20,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         IEnumerable<PrincipalReportDto> GetMeetingHostReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider);
 
-        IEnumerable<TemplateDTO> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache);
+        IEnumerable<TemplateDto> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache);
 
         string LoginIntoAC(
             LmsCompany lmsCompany,

@@ -1,4 +1,6 @@
 ﻿using System.Web.Http;
+using Bmbsqd.JilMediaFormatter;
+using Jil;
 using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Mp4.Host
@@ -12,26 +14,16 @@ namespace EdugameCloud.Lti.Mp4.Host
 
             config.EnableCors();
 
-            // Web API configuration and services
-            // Configure Web API to use only bearer token authentication.
-            //config.SuppressDefaultHostAuthentication();
-            //config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
+            config.Formatters.Remove(config.Formatters.JsonFormatter);
 
-            
-            config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                //ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            };
+            var options = new Options(false, true, false, Jil.DateTimeFormat.MillisecondsSinceUnixEpoch, true,
+                UnspecifiedDateTimeKindBehavior.IsUTC,
+                SerializationNameFormat.CamelCase);
 
-            //var constraints = new { httpMethod = new HttpMethodConstraint(HttpMethod.Options) };
-            //config.Routes.IgnoreRoute("OPTIONS", "{*pathInfo}", constraints);
-
-            //config.Routes.MapHttpRoute(
-            //    name: "DefaultApi",
-            //    routeTemplate: "api/{controller}/{id}",
-            //    defaults: new { id = RouteParameter.Optional }
-            //);
+            var jsonFormatter = new JilMediaTypeFormatter(options);
+            //var mp = jsonFormatter.SupportedMediaTypes;
+            config.Formatters.Add(jsonFormatter);
 
         }
 

@@ -15,6 +15,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     {
         private readonly LmsCourseMeetingModel meetingModel;
         private readonly ILogger logger;
+        private readonly Esynctraining.AdobeConnect.Api.AudioProfiles.AudioProfilesService _innerService;
 
 
         public AudioProfilesService(LmsCourseMeetingModel meetingModel, ILogger logger)
@@ -26,6 +27,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             this.meetingModel = meetingModel;
             this.logger = logger;
+            _innerService = new Esynctraining.AdobeConnect.Api.AudioProfiles.AudioProfilesService(logger);
         }
 
 
@@ -39,9 +41,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var usedAudioProfiles = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique) 
                 ? meetingModel.GetByCompanyWithAudioProfiles(lmsCompany).ToList().Select(x => x.AudioProfileId).ToList() 
                 : new List<string>();
-
-            var telephonyPrfilesListResult = provider.TelephonyProfileList(principalId);
-            var profiles = telephonyPrfilesListResult.Values.Where(x => !usedAudioProfiles.Contains(x.ProfileId)).ToList();
+            
+            var profiles = _innerService.GetAudioProfiles(provider, principalId)
+                .Where(x => !usedAudioProfiles.Contains(x.ProfileId)).ToList();
             return profiles;
         }
 
@@ -55,23 +57,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (string.IsNullOrWhiteSpace(audioProfileId))
                 throw new ArgumentException("Non-empty value expected", nameof(audioProfileId));
 
-            //todo: telephony-profile-info to AC provider
-            var telephonyProfileListResult = provider.TelephonyProfileInfo(audioProfileId);
-
-            if (telephonyProfileListResult.Success && telephonyProfileListResult.TelephonyProfile != null)
-            {
-                //if(telephonyPrfilesListResult.Values.Any(x => x.ProfileId.Equals(audioProfileId)))
-                {
-                    provider.UpdateAclField(meetingScoId, AclFieldId.telephony_profile, audioProfileId);
-                    return OperationResult.Success();
-                }
-
-                //logger.ErrorFormat($"Couldn't get audio profile. PrincipalId={principalId ?? provider.PrincipalId}, profileId={audioProfileId}.");
-                //return OperationResult.Error("Couldn't get audio profile. Please refresh page and try again.");
-            }
-
-            logger.ErrorFormat($"Error occured when tried to AddAudioProfileToMeeting. ProfileId={audioProfileId}.");
-            return OperationResult.Error("Unexpected error. Please refresh page and try again.");
+            return _innerService.AddAudioProfileToMeeting(provider, meetingScoId, audioProfileId);
         }
 
         public OperationResult RemoveAudioProfileFromMeeting(string meetingScoId, IAdobeConnectProxy provider)
@@ -88,27 +74,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             logger.ErrorFormat($"Error occured when tried to RemoveAudioProfileFromMeeting. MeetingScoId={meetingScoId}. AC Error: {status.GetErrorInfo()}");
             return OperationResult.Error("Unexpected error. Please refresh page and try again.");
         }
-
-        //public OperationResult UpdateAudioProfileId(LmsCourseMeeting meeting, IAdobeConnectProxy provider, string audioProfileId)
-        //{
-        //    if (meeting == null)
-        //        throw new ArgumentNullException(nameof(meeting));
-        //    if (provider == null)
-        //        throw new ArgumentNullException(nameof(provider));
-
-        //    var opResult = AddAudioProfileToMeeting(meeting.ScoId, audioProfileId, provider);
-        //    if (!opResult.IsSuccess)
-        //    {
-        //        return opResult;
-        //    }
-
-        //    meeting.AudioProfileId = audioProfileId;
-
-        //    meetingModel.RegisterSave(meeting, flush: true);
-
-        //    return OperationResultWithData<LmsCourseMeeting>.Success("Meeting audio profile updated", meeting);
-        //}
-
+        
         public OperationResult DeleteAudioProfile(string audioProfileId, IAdobeConnectProxy provider)
         {
             if (provider == null)

@@ -12,10 +12,8 @@ namespace EdugameCloud.Lti.Controllers
     using System.Web;
     using System.Web.Helpers;
     using System.Web.Mvc;
-    using Core.Domain.Entities;
     using DotNetOpenAuth.AspNet;
     using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Desire2Learn;
@@ -29,6 +27,7 @@ namespace EdugameCloud.Lti.Controllers
     using EdugameCloud.Lti.OAuth.Canvas;
     using EdugameCloud.Lti.OAuth.Desire2Learn;
     using Esynctraining.AC.Provider.Entities;
+    using Esynctraining.AdobeConnect.Api.Meeting;
     using Esynctraining.Core.Caching;
     using Esynctraining.Core.Domain;
     using Esynctraining.Core.Extensions;
@@ -57,40 +56,18 @@ namespace EdugameCloud.Lti.Controllers
 
         #endregion
 
-        private ICanvasAPI CanvasApi
-        {
-            get { return IoC.Resolve<ICanvasAPI>(); }
-        }
+        private ICanvasAPI CanvasApi => IoC.Resolve<ICanvasAPI>();
 
-        private ISynchronizationUserService SynchronizationUserService
-        {
-            get { return IoC.Resolve<ISynchronizationUserService>(); }
-        }
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
-        private LmsFactory LmsFactory
-        {
-            get { return IoC.Resolve<LmsFactory>(); }
-        }
-
-        private LanguageModel LanguageModel
-        {
-            get { return IoC.Resolve<LanguageModel>(); }
-        }
-
-        private CompanyModel CompanyModel
-        {
-            get { return IoC.Resolve<CompanyModel>(); }
-        }
+        private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
         
         private LmsProviderModel LmsProviderModel
         {
             get { return _lmsProviderModel ?? (_lmsProviderModel = IoC.Resolve<LmsProviderModel>()); }
         }
 
-        private LmsCourseMeetingModel LmsCourseMeetingModel
-        {
-            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
-        }
+        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
         #region Constructors and Destructors
 
@@ -264,94 +241,6 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
         
-        [HttpPost]
-        public virtual JsonResult SaveSettings(LmsUserSettingsDTO settings)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var lmsProviderName = settings.lmsProviderName;
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
-                var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-                if (lmsUser == null)
-                {
-                    lmsUser = session.LmsUser ?? new LmsUser { LmsCompany = lmsCompany, UserId = param.lms_user_id, Username = GetUserNameOrEmail(param) };
-                }
-
-                var acConnectionMode = (AcConnectionMode)settings.acConnectionMode;
-                lmsUser.PrimaryColor = settings.primaryColor;
-
-                if (acConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
-                {
-                    var provider = GetAdobeConnectProvider(lmsCompany);
-                    var couldSavePassword = UsersSetup.SetACPassword(provider, lmsCompany, lmsUser, param, settings.password);
-                    if (!couldSavePassword)
-                    {
-                        return Json(OperationResult.Error(Resources.Messages.IncorrectAcPassword));
-                    }
-                }
-                else
-                {
-                    lmsUser.SharedKey = null;
-                    lmsUser.ACPasswordData = null;
-                }
-
-                lmsUser.AcConnectionMode = acConnectionMode;
-                this.lmsUserModel.RegisterSave(lmsUser);
-                return Json(OperationResultWithData<LmsUserSettingsDTO>.Success(settings));
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("SaveSettings", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-
-        /// <summary>
-        /// The check password before join.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
-        [HttpPost]
-        public virtual JsonResult CheckPasswordBeforeJoin(string lmsProviderName)
-        {
-            LmsCompany companyLms = null;
-            try
-            {
-                bool isValid = false;
-                var session = GetReadOnlySession(lmsProviderName);
-                companyLms = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
-                if (lmsUser != null)
-                {
-                    var mode = lmsUser.AcConnectionMode;
-                    switch (mode)
-                    {
-                        case AcConnectionMode.DontOverwriteLocalPassword:
-                            isValid = !string.IsNullOrWhiteSpace(lmsUser.ACPassword);
-                            break;
-                        default:
-                            isValid = true;
-                            break;
-                    }
-                }
-
-                return Json(OperationResultWithData<bool>.Success(isValid));
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("CheckPasswordBeforeJoin", companyLms, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-        
         public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode, bool disableCacheBuster = true)
         {
             LtiViewModelDto model = TempData["lti-index-model"] as LtiViewModelDto;
@@ -365,48 +254,6 @@ namespace EdugameCloud.Lti.Controllers
             }
             
             return View("Index", model);
-        }
-                
-        [HttpPost]
-        public virtual ActionResult GetUsers(string lmsProviderName, int meetingId, bool forceUpdate = false)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                string error;
-                var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
-
-                if (forceUpdate && lmsCompany.UseSynchronizedUsers
-                    && service != null
-                    && service.CanRetrieveUsersFromApiForCompany(lmsCompany)
-                    && lmsCompany.LmsCourseMeetings != null)
-                {
-                    SynchronizationUserService.SynchronizeUsers(lmsCompany, syncACUsers: false, meetingIds: new[] { meetingId });
-                }
-
-                IList<LmsUserDTO> users = this.usersSetup.GetUsers(
-                    lmsCompany,
-                    this.GetAdobeConnectProvider(lmsCompany),
-                    param,
-                    meetingId,
-                    out error,
-                    null);
-
-                if (string.IsNullOrWhiteSpace(error))
-                {
-                    return Json(OperationResultWithData<IList<LmsUserDTO>>.Success(users));
-                }
-
-                return Json(OperationResult.Error(error));
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetUsers", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
         }
         
         public virtual ActionResult JoinMeeting(string lmsProviderName, int meetingId)
@@ -477,7 +324,7 @@ namespace EdugameCloud.Lti.Controllers
                 if (string.IsNullOrWhiteSpace(breezeSession))
                     return Json(OperationResult.Error(Resources.Messages.CanNotGetBreezeSession), JsonRequestBehavior.AllowGet);
 
-                return Json(OperationResultWithData<string>.Success(breezeSession), JsonRequestBehavior.AllowGet);
+                return Json(breezeSession.ToSuccessResult(), JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -485,39 +332,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
             }
         }
-
-        /// <summary>
-        /// The leave meeting.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS provider name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
-        [HttpPost]
-        public virtual JsonResult LeaveMeeting(string lmsProviderName, int meetingId)
-        {
-            LmsCompany credentials = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                credentials = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                OperationResult result = this.meetingSetup.LeaveMeeting(credentials, param, meetingId, this.GetAdobeConnectProvider(credentials));
-
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("LeaveMeeting", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-
+        
         [ActionName("login")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
@@ -787,35 +602,6 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
         
-        [HttpPost]
-        public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName, int meetingId)
-        {
-            LmsCompany credentials = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                credentials = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                string error = null;
-                List<LmsUserDTO> updatedUsers = this.usersSetup.SetDefaultRolesForNonParticipants(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
-                    param,
-                    meetingId,
-                    out error);
-
-                //if (string.IsNullOrEmpty(error))
-                    return Json(OperationResultWithData<List<LmsUserDTO>>.Success(error, updatedUsers));
-
-                //return Json(OperationResult.Error(error));
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("SetDefaultRolesForNonParticipants", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-
         #endregion
 
         #region Methods
@@ -1004,7 +790,7 @@ namespace EdugameCloud.Lti.Controllers
                     Logger.Warn("[Canvas Auth Issue]. lms_user_login == '$Canvas.user.loginId'");
                     LmsUserDTO user = CanvasApi.GetUser(company.LmsDomain, token, userId);
                     if (user != null)
-                        userName = user.login_id;
+                        userName = user.LoginId;
                 }
 
                 if (string.IsNullOrWhiteSpace(username))

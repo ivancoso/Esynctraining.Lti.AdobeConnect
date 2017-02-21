@@ -6,30 +6,27 @@ namespace EdugameCloud.Lti.Core.DTO
     [DataContract]
     public sealed class PrincipalDto
     {
-        [DataMember(Name = "login")]
-        public string login { get; set; }
+        [DataMember]
+        public string Login { get; set; }
 
-        [DataMember(Name = "email")]
-        public string email { get; set; }
+        [DataMember]
+        public string Email { get; set; }
 
-        [DataMember(Name = "name")]
-        public string name { get; set; }
-
-        /// <summary>
-        /// TRICK:  DataMember - used for Flex; property name - for MVC Json serializer
-        /// </summary>
-        [DataMember(Name = "principalId")]
-        public string principal_id { get; set; }
+        [DataMember]
+        public string Name { get; set; }
+        
+        [DataMember]
+        public string PrincipalId { get; set; }
 
 
         public static PrincipalDto Build(Principal arg)
         {
             return new PrincipalDto
             {
-                login = arg.Login,
-                email = arg.Email,
-                name = arg.Name,
-                principal_id = arg.PrincipalId,
+                Login = arg.Login,
+                Email = arg.Email,
+                Name = arg.Name,
+                PrincipalId = arg.PrincipalId,
             };
         }
 

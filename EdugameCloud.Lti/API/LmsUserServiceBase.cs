@@ -29,7 +29,7 @@ namespace EdugameCloud.Lti.API
             // meeting parameter(second) is used for Blackboard calls of the below method.
             // BB has its own implementation of GetUser, so null can be passed here until we use meeting for retrieving user
             return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, extraData)
-                .FirstOrDefault(u => u.id == lmsUserId);
+                .FirstOrDefault(u => u.Id == lmsUserId);
         }
 
         public virtual bool CanRetrieveUsersFromApiForCompany(LmsCompany company)
@@ -62,14 +62,14 @@ namespace EdugameCloud.Lti.API
                     "reader", 
                     "guest",
                 };
-                users = users.GroupBy(u => u.id).Select(
+                users = users.GroupBy(u => u.Id).Select(
                     ug =>
                     {
                         foreach (string orderRole in order)
                         {
                             string role = orderRole;
                             LmsUserDTO userDTO =
-                                ug.FirstOrDefault(u => role.Equals(u.lms_role, StringComparison.OrdinalIgnoreCase));
+                                ug.FirstOrDefault(u => role.Equals(u.LmsRole, StringComparison.OrdinalIgnoreCase));
                             if (userDTO != null)
                             {
                                 return userDTO;

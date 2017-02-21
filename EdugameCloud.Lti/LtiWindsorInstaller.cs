@@ -5,6 +5,7 @@ using Castle.Windsor;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Telephony;
+using Esynctraining.AdobeConnect.Api.MeetingReports;
 
 namespace EdugameCloud.Lti
 {
@@ -19,7 +20,7 @@ namespace EdugameCloud.Lti
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<IUsersSetup>().ImplementedBy<UsersSetup>().Named("IUsersSetup"));
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
-            container.Register(Component.For<IReportService>().ImplementedBy<ReportService>());
+            container.Register(Component.For<IReportsService>().ImplementedBy<ReportsService>());
 
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
 

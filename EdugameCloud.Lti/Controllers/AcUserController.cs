@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web.Mvc;
+using System.Runtime.Serialization;
+using System.Web.Http;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect.Api.Meeting;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
@@ -22,27 +24,24 @@ using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    public class AcUserController : BaseController
+    public class AcUserController : BaseApiController
     {
+        [DataContract]
+        public sealed class AddUserDto : MeetingRequestDto
+        {
+            [Required]
+            [DataMember]
+            public PrincipalInputDto user { get; set; }
+            
+        }
+
         private readonly LmsUserModel lmsUserModel;
         private readonly UsersSetup usersSetup;
         private readonly IAdobeConnectUserService acUserService;
 
-        private LmsCourseMeetingModel LmsCourseMeetingModel
-        {
-            get
-            {
-                return IoC.Resolve<LmsCourseMeetingModel>();
-            }
-        }
+        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
-        private MeetingSetup MeetingSetup
-        {
-            get
-            {
-                return IoC.Resolve<MeetingSetup>();
-            }
-        }
+        private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 
         #region Constructors and Destructors
 
@@ -63,41 +62,41 @@ namespace EdugameCloud.Lti.Controllers
 
         #endregion
 
-        //lti/acNewUser
+        [Route("acNewUser")]
         [HttpPost]
-        public virtual ActionResult AddNewUser(string lmsProviderName, PrincipalInputDto user, int meetingId)
+        public virtual OperationResultWithData<LmsUserDTO> AddNewUser(AddUserDto request)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(lmsProviderName))
-                    throw new ArgumentException("Empty lmsProviderName", nameof(lmsProviderName));
-                if (user == null)
-                    throw new ArgumentNullException(nameof(user));
+                if (string.IsNullOrWhiteSpace(request.lmsProviderName))
+                    throw new ArgumentException("Empty lmsProviderName", nameof(request));
+                if (request.user == null)
+                    throw new ArgumentNullException(nameof(request));
 
-                var session = this.GetSession(lmsProviderName);
+                var session = this.GetReadOnlySession(request.lmsProviderName);
                 var credentials = session.LmsCompany;
                 
                 if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true))
-                    return Json(OperationResult.Error("Operation is not enabled."));
+                    return OperationResultWithData<LmsUserDTO>.Error("Operation is not enabled.");
 
                 var provider = GetAdobeConnectProvider(credentials);
                 Principal principal;
 
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(user.principal_id))
-                        principal = CreatePrincipal(user, credentials, provider);
+                    if (string.IsNullOrWhiteSpace(request.user.PrincipalId))
+                        principal = CreatePrincipal(request.user, credentials, provider);
                     else
-                        principal = provider.GetOneByPrincipalId(user.principal_id).PrincipalInfo.Principal;
+                        principal = provider.GetOneByPrincipalId(request.user.PrincipalId).PrincipalInfo.Principal;
                 }
                 catch (WarningMessageException ex)
                 {
-                    return Json(OperationResult.Error(ex.Message));
+                    return OperationResultWithData<LmsUserDTO>.Error(ex.Message);
                 }
 
                 var param = session.LtiSession.With(x => x.LtiParam);
                 // HACK: LmsMeetingType.Meeting param - not in use here
-                LmsCourseMeeting meeting = MeetingSetup.GetCourseMeeting(credentials, param.course_id, meetingId, LmsMeetingType.Meeting);
+                LmsCourseMeeting meeting = MeetingSetup.GetCourseMeeting(credentials, param.course_id, request.meetingId, LmsMeetingType.Meeting);
 
                 // TODO: review for user-sync mode
                 MeetingPermissionCollectionResult meetingEnrollments = provider.GetAllMeetingEnrollments(meeting.GetMeetingScoId());
@@ -108,14 +107,14 @@ namespace EdugameCloud.Lti.Controllers
                         meetingEnrollments.Status.Code, 
                         meetingEnrollments.Status.SubCode));
 
-                    return Json(OperationResult.Error(errorMessage));
+                    return OperationResultWithData<LmsUserDTO>.Error(errorMessage);
                 }
                 if (meetingEnrollments.Values.Any(x => x.PrincipalId == principal.PrincipalId))
                 {
-                    return Json(OperationResult.Error(Resources.Messages.UserIsAlreadyParticipant));
+                    return OperationResultWithData<LmsUserDTO>.Error(Resources.Messages.UserIsAlreadyParticipant);
                 }
 
-                AcRole role = AcRole.GetById(user.meetingRole);
+                AcRole role = AcRole.GetById(request.user.MeetingRole);
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), principal.PrincipalId, role.MeetingPermissionId);
 
                 // Add user as guest to DB
@@ -130,32 +129,33 @@ namespace EdugameCloud.Lti.Controllers
 
                 var result = new LmsUserDTO
                 {
-                    guest_id = guest.Id,
-                    ac_id = guest.PrincipalId,
-                    name = principal.Name,
-                    ac_role = user.meetingRole,
+                    GuestId = guest.Id,
+                    AcId = guest.PrincipalId,
+                    Name = principal.Name,
+                    AcRole = request.user.MeetingRole,
                 };
 
-                return Json(OperationResultWithData<LmsUserDTO>.Success(result));
+                return result.ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("AcUserController.AddNewUser", ex);
-                return Json(OperationResult.Error(errorMessage));
+                return OperationResultWithData<LmsUserDTO>.Error(errorMessage);
             }
         }
 
+        [Route("acSearchUser")]
         [HttpPost]
-        public virtual ActionResult SearchExistingUser(string lmsProviderName, string searchTerm)
+        public virtual OperationResultWithData<IEnumerable<PrincipalDto>> SearchExistingUser([FromBody]SearchRequestDto request)
         {
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = this.GetReadOnlySession(request.lmsProviderName);
                 var credentials = session.LmsCompany;
                 var provider = GetAdobeConnectProvider(credentials);
 
                 var result = new List<Principal>();
-                PrincipalCollectionResult byLogin = provider.GetAllByFieldLike("login", searchTerm);
+                PrincipalCollectionResult byLogin = provider.GetAllByFieldLike("login", request.searchTerm);
                 if (byLogin.Success)
                 {
                     result.AddRange(byLogin.Values);
@@ -165,7 +165,7 @@ namespace EdugameCloud.Lti.Controllers
                     // TODO: log error and return error!!
                 }
 
-                PrincipalCollectionResult byName = provider.GetAllByFieldLike("name", searchTerm);
+                PrincipalCollectionResult byName = provider.GetAllByFieldLike("name", request.searchTerm);
                 if (byName.Success)
                 {
                     result.AddRange(byName.Values);
@@ -182,36 +182,37 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (!foundPrincipals.Any())
                 {
-                    return Json(OperationResultWithData<IEnumerable<PrincipalDto>>.Success(new PrincipalDto[0]));
+                    return new PrincipalDto[0].AsEnumerable().ToSuccessResult();
                 }
 
-                return Json(OperationResultWithData<IEnumerable<PrincipalDto>>.Success(foundPrincipals
+                return foundPrincipals
                      .GroupBy(p => p.PrincipalId)
                      .Select(g => g.First())
-                     .Return(x => x.Select(PrincipalDto.Build), Enumerable.Empty<PrincipalDto>())));
+                     .Return(x => x.Select(PrincipalDto.Build), Enumerable.Empty<PrincipalDto>())
+                     .ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("AcUserController.SearchExistingUser", ex);
-                return Json(OperationResult.Error(errorMessage));
+                return OperationResultWithData<IEnumerable<PrincipalDto>>.Error(errorMessage);
             }
         }
 
 
         private static Principal CreatePrincipal(PrincipalInputDto user, LmsCompany credentials, IAdobeConnectProxy provider)
         {
-            string login = (credentials.ACUsesEmailAsLogin ?? false) ? null : user.login;
+            string login = (credentials.ACUsesEmailAsLogin ?? false) ? null : user.Login;
 
             var setup = new PrincipalSetup
             {
-                Email = user.email,
-                FirstName = user.firstName,
-                LastName = user.lastName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Login = login,
-                SendEmail = user.sendEmail,
+                SendEmail = user.SendEmail,
                 HasChildren = false,
                 Type = PrincipalType.user,
-                Password = user.password,
+                Password = user.Password,
                 //Name = NOTE: name is used for groups ONLY!!
             };
             
@@ -221,7 +222,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.duplicate)
                 {
-                    throw new WarningMessageException(string.Format(Resources.Messages.PrincipalValidateAlreadyInAc, login ?? user.email));
+                    throw new WarningMessageException(string.Format(Resources.Messages.PrincipalValidateAlreadyInAc, login ?? user.Email));
                 }
 
                 if (pu.Status.InvalidField == "name" && pu.Status.SubCode == StatusSubCodes.range)
@@ -239,7 +240,7 @@ namespace EdugameCloud.Lti.Controllers
                     throw new WarningMessageException(Resources.Messages.PrincipalValidateLoginLength);
                 }
 
-                string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", user.firstName, user.lastName, user.login, user.email);
+                string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", user.FirstName, user.LastName, user.Login, user.Email);
                 if (pu.Status.UnderlyingExceptionInfo != null)
                 {
                     throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Additional Data: {0}", additionalData), pu.Status.UnderlyingExceptionInfo);

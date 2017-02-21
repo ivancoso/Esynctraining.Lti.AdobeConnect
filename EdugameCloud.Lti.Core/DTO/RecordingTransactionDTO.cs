@@ -12,7 +12,7 @@
         [ScriptIgnore]
         public DateTime DateClosed { get; set; }
 
-        [DataMember(Name = "closedAt")]
+        [DataMember]
         public long? ClosedAt
         {
             get
@@ -28,10 +28,9 @@
 
         [IgnoreDataMember]
         [ScriptIgnore]
-
         public DateTime DateCreated { get; set; }
 
-        [DataMember(Name = "createdAt")]
+        [DataMember]
         public long CreatedAt
         {
             get
@@ -43,16 +42,16 @@
             }
         }
 
-        [DataMember(Name = "login")]
+        [DataMember]
         public string Login { get; set; }
 
-        [DataMember(Name = "recordingName")]
+        [DataMember]
         public string RecordingName { get; set; }
 
-        [DataMember(Name = "recordingScoId")]
+        [DataMember]
         public string RecordingScoId { get; set; }
 
-        [DataMember(Name = "userName")]
+        [DataMember]
         public string UserName { get; set; }
 
     }

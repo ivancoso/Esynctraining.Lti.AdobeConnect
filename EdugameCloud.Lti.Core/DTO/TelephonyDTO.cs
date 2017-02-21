@@ -26,7 +26,7 @@ namespace EdugameCloud.Lti.DTO
         public TelephonyDTO(LmsCompany instance)
         {
             if (instance == null)
-                throw new ArgumentNullException("instance");
+                throw new ArgumentNullException(nameof(instance));
             
 
             ActiveProfile = instance.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile);
@@ -49,23 +49,23 @@ namespace EdugameCloud.Lti.DTO
         }
 
 
-        [DataMember(Name = "activeProfile")]
+        [DataMember]
         public string ActiveProfile { get; set; }
         
-        [DataMember(Name = "courseMeetingOption")]
+        [DataMember]
         public int CourseMeetingOption { get; set; }
         
-        [DataMember(Name = "officeHoursOption")]
+        [DataMember]
         public int OfficeHoursOption { get; set; }
         
-        [DataMember(Name = "studyGroupOption")]
+        [DataMember]
         public int StudyGroupOption { get; set; }
 
 
-        [DataMember(Name = "meetingOne")]
+        [DataMember]
         public TelephonyMeetingOneDTO MeetingOne { get; set; }
 
-        [DataMember(Name = "arkadin")]
+        [DataMember]
         public TelephonyArkadinDTO Arkadin { get; set; }
 
     }

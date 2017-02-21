@@ -5,10 +5,8 @@ using System.Text;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO.Recordings;
-using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
@@ -22,20 +20,12 @@ namespace EdugameCloud.Lti.Controllers
 {
     public partial class LtiRecordingController : BaseController
     {
-        private IRecordingsService RecordingsService
-        {
-            get { return IoC.Resolve<IRecordingsService>(); }
-        }
+        private IRecordingsService RecordingsService => IoC.Resolve<IRecordingsService>();
 
-        private LmsCourseMeetingModel LmsCourseMeetingModel
-        {
-            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
-        }
+        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
-        private UsersSetup UsersSetup
-        {
-            get { return IoC.Resolve<UsersSetup>(); }
-        }
+        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
+
 
         public LtiRecordingController(
             LmsUserSessionModel userSessionModel,
@@ -57,8 +47,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 // TRICK: 1st to enable culture for thread
                 var session = GetReadOnlySession(dto.lmsProviderName);
-
-            
+                
                 ///
                 /// TODO: REUSE!!!!
                 ///
@@ -119,6 +108,7 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
+        // TODO: id -> recordingId
         [HttpPost]
         public virtual JsonResult DeleteRecording(string lmsProviderName, int meetingId, string id)
         {
@@ -147,7 +137,9 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-        
+
+        // TODO: remove type - we fetch meetingitem within RecordingsService.GetRecordings
+        // we can reuse that info to have type (change API)
         [HttpPost]
         public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId, int type)
         {
@@ -174,7 +166,7 @@ namespace EdugameCloud.Lti.Controllers
                     recordings = recordings.Where(x => x.Published);
                 }
                 
-                return Json(OperationResultWithData<IEnumerable<IRecordingDto>>.Success(recordings));
+                return Json(recordings.ToSuccessResult());
             }
             catch (Exception ex)
             {
@@ -184,7 +176,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public virtual JsonResult PublishRecording(string lmsProviderName, string recordingId, int meetingId)
+        public virtual JsonResult PublishRecording(string lmsProviderName, int meetingId, string recordingId)
         {
             LmsCompany lmsCompany = null;
             try
@@ -213,7 +205,7 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
-        public virtual JsonResult UnpublishRecording(string lmsProviderName, string recordingId, int meetingId)
+        public virtual JsonResult UnpublishRecording(string lmsProviderName, int meetingId, string recordingId)
         {
             LmsCompany lmsCompany = null;
             try
@@ -272,7 +264,7 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 string link = RecordingsService.UpdateRecording(lmsCompany, this.GetAdobeConnectProvider(lmsCompany), recordingId, isPublic, password);
 
-                return Json(OperationResultWithData<string>.Success(link));
+                return Json(link.ToSuccessResult());
             }
             catch (Exception ex)
             {
@@ -323,93 +315,93 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
-        [HttpPost]
-        public virtual JsonResult ConvertToMP4(string lmsProviderName, string recordingId, int meetingId)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
+        //[HttpPost]
+        //public virtual JsonResult ConvertToMP4(string lmsProviderName, int meetingId, string recordingId)
+        //{
+        //    LmsCompany lmsCompany = null;
+        //    try
+        //    {
+        //        var session = GetReadOnlySession(lmsProviderName);
+        //        lmsCompany = session.LmsCompany;
 
-                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
-                if (adobeConnectProvider == null)
-                {   
-                    throw new InvalidOperationException("Adobe connect provider");
-                }
+        //        var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
+        //        if (adobeConnectProvider == null)
+        //        {   
+        //            throw new InvalidOperationException("Adobe connect provider");
+        //        }
 
-                var recordingJob = adobeConnectProvider.ScheduleRecordingJob(recordingId);
-                if (recordingJob == null)
-                {
-                    throw new InvalidOperationException("Adobe connect provider. Cannot get recording job.");
-                }
+        //        var recordingJob = adobeConnectProvider.ScheduleRecordingJob(recordingId);
+        //        if (recordingJob == null)
+        //        {
+        //            throw new InvalidOperationException("Adobe connect provider. Cannot get recording job.");
+        //        }
 
-                if (!recordingJob.Success)
-                {
-                    return Json(GenerateErrorResult(recordingJob.Status));
-                }
+        //        if (!recordingJob.Success)
+        //        {
+        //            return Json(GenerateErrorResult(recordingJob.Status));
+        //        }
 
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
-                var scheduledRecording = GetScheduledRecording(recordingJob.RecordingJob.ScoId, meeting.GetMeetingScoId(), adobeConnectProvider);
-                if (scheduledRecording == null)
-                {
-                    throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
-                }
+        //        LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
+        //        var scheduledRecording = GetScheduledRecording(recordingJob.RecordingJob.ScoId, meeting.GetMeetingScoId(), adobeConnectProvider);
+        //        if (scheduledRecording == null)
+        //        {
+        //            throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
+        //        }
 
-                var timeZone = acAccountService.GetAccountDetails(adobeConnectProvider, IoC.Resolve<ICache>()).TimeZoneInfo;
-                var recording = new RecordingDTO(scheduledRecording, lmsCompany.AcServer, timeZone);
+        //        var timeZone = acAccountService.GetAccountDetails(adobeConnectProvider, IoC.Resolve<ICache>()).TimeZoneInfo;
+        //        var recording = new RecordingDto(scheduledRecording, lmsCompany.AcServer, timeZone);
 
-                return Json(OperationResultWithData<RecordingDTO>.Success(recording));
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("ConvertToMP4", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
+        //        return Json(recording.ToSuccessResult());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("ConvertToMP4", lmsCompany, ex);
+        //        return Json(OperationResult.Error(errorMessage));
+        //    }
+        //}
 
-        [HttpPost]
-        public virtual JsonResult CancelMP4Converting(string lmsProviderName, string recordingId, int meetingId)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
+        //[HttpPost]
+        //public virtual JsonResult CancelMP4Converting(string lmsProviderName, int meetingId, string recordingId)
+        //{
+        //    LmsCompany lmsCompany = null;
+        //    try
+        //    {
+        //        var session = GetReadOnlySession(lmsProviderName);
+        //        lmsCompany = session.LmsCompany;
 
-                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
-                if (adobeConnectProvider == null)
-                {
-                    throw new InvalidOperationException("Adobe connect provider");
-                }
+        //        var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
+        //        if (adobeConnectProvider == null)
+        //        {
+        //            throw new InvalidOperationException("Adobe connect provider");
+        //        }
 
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
-                var recording = GetScheduledRecording(recordingId, meeting.GetMeetingScoId(), adobeConnectProvider);
-                if (recording == null)
-                {
-                    return Json(OperationResult.Error(Resources.Messages.RecordingMissedMP4));
-                }
+        //        LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
+        //        var recording = GetScheduledRecording(recordingId, meeting.GetMeetingScoId(), adobeConnectProvider);
+        //        if (recording == null)
+        //        {
+        //            return Json(OperationResult.Error(Resources.Messages.RecordingMissedMP4));
+        //        }
 
-                if (recording.JobStatus == "job-queued")
-                {
-                    var recordingJob = adobeConnectProvider.CancelRecordingJob(recordingId);
-                    if (recordingJob == null)
-                    {
-                        throw new InvalidOperationException("Adobe connect provider");
-                    }
+        //        if (recording.JobStatus == "job-queued")
+        //        {
+        //            var recordingJob = adobeConnectProvider.CancelRecordingJob(recordingId);
+        //            if (recordingJob == null)
+        //            {
+        //                throw new InvalidOperationException("Adobe connect provider");
+        //            }
 
-                    return Json(OperationResult.Success());                    
-                }
+        //            return Json(OperationResult.Success());                    
+        //        }
 
-                return Json(OperationResult.Error(Resources.Messages.RecordingCantDeleteMP4Progress));
+        //        return Json(OperationResult.Error(Resources.Messages.RecordingCantDeleteMP4Progress));
 
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetRecordings", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("GetRecordings", lmsCompany, ex);
+        //        return Json(OperationResult.Error(errorMessage));
+        //    }
+        //}
 
         #endregion
 
@@ -429,16 +421,16 @@ namespace EdugameCloud.Lti.Controllers
             return this.View("~/Views/Lti/LoginToAC.cshtml");
         }
 
-        private static Recording GetScheduledRecording(string recordingScoId, string meetingScoId, Esynctraining.AdobeConnect.IAdobeConnectProxy adobeConnectProvider)
-        {
-            var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
-            if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any() )
-            {
-                return null;
-            }
+        //private static Recording GetScheduledRecording(string recordingScoId, string meetingScoId, Esynctraining.AdobeConnect.IAdobeConnectProxy adobeConnectProvider)
+        //{
+        //    var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
+        //    if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any() )
+        //    {
+        //        return null;
+        //    }
 
-            return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
-        }
+        //    return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
+        //}
 
         private static OperationResult GenerateErrorResult(StatusInfo status)
         {

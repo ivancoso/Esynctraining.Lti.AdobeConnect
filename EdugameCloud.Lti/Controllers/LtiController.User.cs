@@ -28,12 +28,12 @@ namespace EdugameCloud.Lti.Controllers
                 try
                 {
                     // TRICK: client-side passes 'email' but user.GetEmail() expects primary-email
-                    if (string.IsNullOrEmpty(user.primary_email) && !string.IsNullOrEmpty(user.email))
-                        user.primary_email = user.email;
+                    if (string.IsNullOrEmpty(user.PrimaryEmail) && !string.IsNullOrEmpty(user.email))
+                        user.PrimaryEmail = user.email;
 
                     LmsUserDTO updatedUser = null;
                     string error;
-                    if (user.guest_id.HasValue)
+                    if (user.GuestId.HasValue)
                     {
                         updatedUser = this.usersSetup.UpdateGuest(
                             credentials,
@@ -56,7 +56,7 @@ namespace EdugameCloud.Lti.Controllers
 
                     if (!string.IsNullOrEmpty(error))
                     {
-                        Logger.Error($"[UpdateUsers] {error}. UserId={user.id}, MeetingId={meetingId}");
+                        Logger.Error($"[UpdateUsers] {error}. UserId={user.Id}, MeetingId={meetingId}");
                         lastError = error;
                     }
                     else
@@ -68,12 +68,12 @@ namespace EdugameCloud.Lti.Controllers
                 catch (Exception ex)
                 {
                     lastError = GetOutputErrorMessage("UpdateUsers", credentials, ex);
-                    Logger.Error($"[RemoveUsers] UserId={user.id}, MeetingId={meetingId}, {lastError}", ex);
+                    Logger.Error($"[RemoveUsers] UserId={user.Id}, MeetingId={meetingId}, {lastError}", ex);
                 }
             }
 
             if (string.IsNullOrEmpty(lastError))
-                return Json(OperationResultWithData<IEnumerable<LmsUserDTO>>.Success(updatedUsers));
+                return Json(updatedUsers.ToSuccessResult());
 
             return Json(new OperationResultWithData<IEnumerable<LmsUserDTO>>
             {
@@ -105,15 +105,15 @@ namespace EdugameCloud.Lti.Controllers
             {
                 try
                 {
-                    if (user.guest_id.HasValue)
+                    if (user.GuestId.HasValue)
                     {
                         this.usersSetup.DeleteGuestFromAcMeeting(
                             credentials,
                             this.GetAdobeConnectProvider(credentials),
                             session.LtiSession.LtiParam,
-                            user.ac_id,
+                            user.AcId,
                             meetingId,
-                            user.guest_id.Value,
+                            user.GuestId.Value,
                             out error);
                     }
                     else
@@ -122,13 +122,13 @@ namespace EdugameCloud.Lti.Controllers
                             credentials,
                             this.GetAdobeConnectProvider(credentials),
                             session.LtiSession.LtiParam,
-                            user.ac_id,
+                            user.AcId,
                             meetingId,
                             out error);
                     }
                     if (!string.IsNullOrEmpty(error))
                     {
-                        Logger.Error($"[RemoveUsers] {error}. UserId={user.id}, MeetingId={meetingId}");
+                        Logger.Error($"[RemoveUsers] {error}. UserId={user.Id}, MeetingId={meetingId}");
                         lastError = error;
                     }
                     else
@@ -139,12 +139,12 @@ namespace EdugameCloud.Lti.Controllers
                 catch (Exception ex)
                 {
                     lastError = GetOutputErrorMessage("RemoveUsers", credentials, ex);
-                    Logger.Error($"[RemoveUsers] UserId={user.id}, MeetingId={meetingId}, {lastError}", ex);
+                    Logger.Error($"[RemoveUsers] UserId={user.Id}, MeetingId={meetingId}, {lastError}", ex);
                 }
             }
 
             if (string.IsNullOrEmpty(lastError))
-                return Json(OperationResultWithData<IEnumerable<LmsUserDTO>>.Success(removedUsers));
+                return Json(removedUsers.ToSuccessResult());
 
             return Json(new OperationResultWithData<IEnumerable<LmsUserDTO>>
             {

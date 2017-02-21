@@ -5,13 +5,13 @@ namespace EdugameCloud.Lti.Content.Host.Dto
     [DataContract]
     public class ScoShortcutDto
     {
-        [DataMember(Name = "sco_id")]
+        [DataMember]
         public string ScoId { get; set; }
 
-        [DataMember(Name = "type")]
+        [DataMember]
         public string Type { get; set; }
 
-        [DataMember(Name = "name")]
+        [DataMember]
         public string Name { get; set; }
 
     }

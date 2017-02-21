@@ -7,11 +7,11 @@ namespace EdugameCloud.Lti.Core.DTO
     [DataContract]
     public class MeetingAndLmsUsersDTO
     {
-        [DataMember(Name = "meeting")]
-        public MeetingDTO meeting { get; set; }
+        [DataMember]
+        public MeetingDTO Meeting { get; set; }
 
-        [DataMember(Name = "lmsUsers")]
-        public IEnumerable<LmsUserDTO> lmsUsers { get; set; }
+        [DataMember]
+        public IEnumerable<LmsUserDTO> LmsUsers { get; set; }
 
     }
 

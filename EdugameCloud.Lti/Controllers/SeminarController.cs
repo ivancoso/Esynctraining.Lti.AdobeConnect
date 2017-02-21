@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -13,6 +12,7 @@ using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Caching;
+using Esynctraining.AdobeConnect.Api.Seminar.Dto;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -21,20 +21,11 @@ namespace EdugameCloud.Lti.Controllers
         private readonly ISeminarService _seminarService;
 
 
-        private MeetingSetup MeetingSetup
-        {
-            get { return IoC.Resolve<MeetingSetup>(); }
-        }
+        private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 
-        private LmsCourseMeetingModel LmsCourseMeetingModel
-        {
-            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
-        }
+        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
-        private IAdobeConnectAccountService AcAccountService
-        {
-            get { return IoC.Resolve<IAdobeConnectAccountService>(); }
-        }
+        private IAdobeConnectAccountService AcAccountService => IoC.Resolve<IAdobeConnectAccountService>();
 
         #region Constructors and Destructors
 
@@ -78,14 +69,14 @@ namespace EdugameCloud.Lti.Controllers
         //}
 
         [HttpPost]
-        public virtual JsonResult Create(string lmsProviderName, string seminarLicenseId,  MeetingDTO meeting)
+        public virtual JsonResult Create(string lmsProviderName, string seminarLicenseId, MeetingDTOInput meeting)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
                 throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
             if (string.IsNullOrWhiteSpace(seminarLicenseId))
-                throw new ArgumentException("seminarLicenseId can't be empty", "seminarLicenseId");
+                throw new ArgumentException("seminarLicenseId can't be empty", nameof(seminarLicenseId));
             if (meeting == null)
-                throw new ArgumentNullException("meeting");
+                throw new ArgumentNullException(nameof(meeting));
 
             //TRICK:
             meeting.type = (int)LmsMeetingType.Seminar;
@@ -118,7 +109,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public virtual JsonResult Edit(string lmsProviderName, string seminarLicenseId, MeetingDTO meeting)
+        public virtual JsonResult Edit(string lmsProviderName, string seminarLicenseId, MeetingDTOInput meeting)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
                 throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
@@ -153,7 +144,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveSeminarSession(string lmsProviderName, SeminarSessionDto seminarSessionDto)
+        public JsonResult SaveSeminarSession(string lmsProviderName, SeminarSessionInputDto seminarSessionDto)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
                 throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
@@ -169,17 +160,16 @@ namespace EdugameCloud.Lti.Controllers
 
                 // TRICK: change record meeting id to meeting sco-id
                 var param = session.LtiSession.With(x => x.LtiParam);
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, param.course_id, long.Parse(seminarSessionDto.seminarRoomId));
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, param.course_id, long.Parse(seminarSessionDto.SeminarRoomId));
                 if (meeting == null)
                 {
                     return Json(OperationResult.Error(Resources.Messages.MeetingNotFound));
                 }
-
-                seminarSessionDto.ScoId = meeting.ScoId;
+                
                 ProcessQuota(ac, meeting.ScoId, seminarSessionDto);
 
                 var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;
-                var meetingUpdateResult = _seminarService.SaveSeminarSession(seminarSessionDto, ac, timeZone);
+                var meetingUpdateResult = _seminarService.SaveSeminarSession(seminarSessionDto, meeting.ScoId, ac, timeZone);
                 return Json(meetingUpdateResult);
             }
             catch (Exception ex)
@@ -189,7 +179,7 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
-        private void ProcessQuota(IAdobeConnectProxy ac, string meetingScoId, SeminarSessionDto seminarSessionDto)
+        private void ProcessQuota(IAdobeConnectProxy ac, string meetingScoId, SeminarSessionInputDto seminarSessionDto)
         {
             var seminar = ac.GetScoInfo(meetingScoId).ScoInfo;
             var license = _seminarService.GetSharedSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
@@ -215,7 +205,7 @@ namespace EdugameCloud.Lti.Controllers
             if (string.IsNullOrWhiteSpace(lmsProviderName))
                 throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
             if (string.IsNullOrWhiteSpace(lmsProviderName))
-                throw new ArgumentException("seminarSessionId can't be empty", "seminarSessionId");
+                throw new ArgumentException("seminarSessionId can't be empty", nameof(seminarSessionId));
 
             //TODO: CHECK permission for deletion
             //TODO: to service

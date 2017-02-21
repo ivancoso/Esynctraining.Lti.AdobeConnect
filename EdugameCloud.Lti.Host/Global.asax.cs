@@ -2,6 +2,8 @@
 using System.Configuration;
 using System.Linq;
 using System.Web.Configuration;
+using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Castle.Core.Resource;
@@ -15,6 +17,7 @@ using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.FluentValidation;
 using Esynctraining.Mvc;
+using Esynctraining.WebApi;
 using Esynctraining.Windsor;
 using FluentValidation;
 using FluentValidation.Mvc;
@@ -62,7 +65,13 @@ namespace EdugameCloud.Lti.Host
             MvcHandler.DisableMvcResponseHeader = true;
 
             AuthConfig.RegisterAuth(container.Resolve<ApplicationSettingsProvider>());
-            
+
+
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configuration.Services.Replace(
+                typeof(IHttpControllerActivator),
+                new ServiceLocatorControllerActivator(new WindsorServiceLocator(container)));
+
             // TRICK: remove all files on start
             CachePolicies.InvalidateCache();
         }

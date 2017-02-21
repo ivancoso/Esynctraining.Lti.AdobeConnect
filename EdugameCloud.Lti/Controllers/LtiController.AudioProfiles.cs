@@ -1,60 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web.Mvc;
+using System.Runtime.Serialization;
+using System.Web.Http;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.AdobeConnect.Api.AudioProfiles.Dto;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
-using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    public partial class LtiController
+    public partial class AudioProfileController : BaseApiController
     {
-        private IAudioProfilesService AudioProfileService
+        [DataContract]
+        public class AudioProfileRequestDto : RequestDto
         {
-            get { return IoC.Resolve<IAudioProfilesService>(); }
+            [Required]
+            [DataMember]
+            public int meetingType { get; set; }
+
         }
 
-        [HttpPost]
-        public JsonResult GetAudioProfiles(string lmsProviderName, int meetingType)
+        private IAudioProfilesService AudioProfileService => IoC.Resolve<IAudioProfilesService>();
+
+        private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
+
+
+        public AudioProfileController(
+            LmsUserSessionModel userSessionModel,
+            IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
         {
+        }
+
+
+        [Route("GetAudioProfiles")]
+        [HttpPost]
+        public OperationResultWithData<IEnumerable<AudioProfileDto>> GetAudioProfiles(AudioProfileRequestDto request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = GetReadOnlySession(request.lmsProviderName);
                 lmsCompany = session.LmsCompany;
 
-                TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meetingType);
+                TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)request.meetingType);
                 if (option != TelephonyProfileOption.ReuseExistingProfile)
                 {
                     Logger.Error($"TelephonyProfileOption {option} is not ReuseExistingProfile");
-                    return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
+                    return Enumerable.Empty<AudioProfileDto>().ToSuccessResult();
                 }
 
                 // NOTE: For None option - reuse can be active for every meeting type
-                if (((LmsMeetingType)meetingType != LmsMeetingType.OfficeHours)
+                if (((LmsMeetingType)request.meetingType != LmsMeetingType.OfficeHours)
                     && (lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) != TelephonyDTO.SupportedProfiles.None))
                 {
-                    Logger.Error($"Meeting type {meetingType} is not supported for audio-profile reuse");
-                    return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
+                    Logger.Error($"Meeting type {request.meetingType} is not supported for audio-profile reuse");
+                    return Enumerable.Empty<AudioProfileDto>().ToSuccessResult();
                 }
 
                 var provider = this.GetAdobeConnectProvider(lmsCompany);
                 var lmsUser = session.LmsUser ??
-                              lmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
+                              LmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
                 
                 var profiles = AudioProfileService.GetAudioProfiles(provider, lmsCompany, lmsUser.PrincipalId);
-                return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(profiles.Select(x => new LmsAudioProfileDTO(x)).ToList()));
+                return profiles.Select(x => new AudioProfileDto(x)).ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("GetAudioProfiles", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
+                return OperationResultWithData<IEnumerable<AudioProfileDto>>.Error(errorMessage);
             }
         }
 

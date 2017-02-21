@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web.Mvc;
+using System.Runtime.Serialization;
+using System.Web.Http;
 using System.Web.Security;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -20,13 +22,13 @@ using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    public class AcMeetingController : BaseController
+    public class AcMeetingController : BaseApiController
     {
         private readonly IAdobeConnectUserService acUserService;
-        private UsersSetup UsersSetup
-        {
-            get { return IoC.Resolve<UsersSetup>(); }
-        }
+
+
+        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
+
         #region Constructors and Destructors
 
         public AcMeetingController(
@@ -42,20 +44,21 @@ namespace EdugameCloud.Lti.Controllers
 
         #endregion
 
+        [Route("acSearchMeeting")]
         [HttpPost]
-        public virtual ActionResult SearchExistingMeeting(string lmsProviderName, string searchTerm)
+        public virtual OperationResultWithData<IEnumerable<MeetingItemDto>> SearchExistingMeeting([FromBody]SearchRequestDto request)
         {
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = this.GetReadOnlySession(request.lmsProviderName);
 
                 if (session.LmsUser == null)
-                    return Json(OperationResult.Error("Session doesn't contain LMS user."));
+                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error("Session doesn't contain LMS user.");
                 if (string.IsNullOrWhiteSpace(session.LmsUser.PrincipalId))
-                    return Json(OperationResult.Error("You don't have Adobe Connect account."));
+                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error("You don't have Adobe Connect account.");
 
                 if (!session.LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingReuse))
-                    return Json(OperationResult.Error("Operation is not enabled."));
+                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error("Operation is not enabled.");
 
                 var provider = GetAdobeConnectProvider(session.LmsCompany);
 
@@ -63,14 +66,14 @@ namespace EdugameCloud.Lti.Controllers
                 var userProvider = GetUserProvider(session.LmsCompany, session.LmsUser, principal, provider);
 
                 var myMeetings = userProvider.ReportMyMeetings(MeetingPermissionId.host).Values
-                    .Where(x => x.MeetingName.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >=0 || x.UrlPath.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
+                    .Where(x => x.MeetingName.IndexOf(request.searchTerm, StringComparison.OrdinalIgnoreCase) >=0 || x.UrlPath.IndexOf(request.searchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
                 
-                return Json(OperationResultWithData<IEnumerable<MeetingItemDto>>.Success(myMeetings.Select(MeetingItemDto.Build)));
+                return myMeetings.Select(MeetingItemDto.Build).ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("AcMeetingController.SearchExistingMeeting", ex);
-                return Json(OperationResult.Error(errorMessage));
+                return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error(errorMessage);
             }
         }
 
@@ -79,7 +82,6 @@ namespace EdugameCloud.Lti.Controllers
             Principal registeredUser, Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
             IAdobeConnectProxy userProvider = null;
-            string breezeToken = null;
             string generatedPassword = null;
             if (lmsUser.AcConnectionMode == AcConnectionMode.Overwrite && string.IsNullOrEmpty(lmsUser.ACPassword))
             {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.Caching;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -13,15 +12,13 @@ using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Content.Host.Dto;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Core.Utils;
 using EdugameCloud.Lti.Domain.Entities;
-using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
-using Esynctraining.AdobeConnect.WebApi;
-using Esynctraining.AdobeConnect.WebApi.Content.Controllers;
-using Esynctraining.AdobeConnect.WebApi.Content.Dto;
+using Esynctraining.AdobeConnect.Api;
+using Esynctraining.AdobeConnect.Api.Content.Controllers;
+using Esynctraining.AdobeConnect.Api.Content.Dto;
 using Esynctraining.Core;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
@@ -88,10 +85,10 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 {
                     ScoId = x.ScoId,
                     Type = x.Type,
-                    Name = Resources.ScoShortcutNames.ResourceManager.GetString(x.Type.Replace("-", "_")), // TRICK: AC trick to change my-content to my_content
+                    Name = Resources.ScoShortcutNames.ResourceManager.GetString(x.Type.Replace('-', '_')), // TRICK: AC trick to change my-content to my_content
                 });
 
-                return OperationResultWithData<IEnumerable<ScoShortcutDto>>.Success(result);
+                return result.ToSuccessResult();
             }
             catch (Exception ex)
             {
@@ -333,7 +330,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 //TRICK:
                 dto.ByteCount = fileSize;
 
-                string output = JsonConvert.SerializeObject(OperationResultWithData<ScoContentDto>.Success(dto));
+                string output = JsonConvert.SerializeObject(dto.ToSuccessResult());
                 var response = new HttpResponseMessage();
                 response.Content = new StringContent(output);
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");

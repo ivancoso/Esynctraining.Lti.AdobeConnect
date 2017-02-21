@@ -39,7 +39,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         public virtual async Task<OperationResult> Convert(RecordingActionRequestDto input)
         {
             if (input == null)
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
 
             LmsCompany lmsCompany = null;
             try
@@ -70,7 +70,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         public virtual async Task<OperationResult> ConvertWithSubtitles(RecordingActionRequestDto input)
         {
             if (input == null)
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
 
             LmsCompany lmsCompany = null;
             try

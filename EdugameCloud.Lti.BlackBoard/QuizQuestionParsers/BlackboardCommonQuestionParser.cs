@@ -250,7 +250,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                 {
                     int order = 0;
                     string questionText = null, answerText = null, lmsValue = null;
-                    byte[] matchingImage = null;
+                    //byte[] matchingImage = null;
                     string leftMatchingImageText = string.Empty;
                     string rightMatchingImageText = string.Empty;
 

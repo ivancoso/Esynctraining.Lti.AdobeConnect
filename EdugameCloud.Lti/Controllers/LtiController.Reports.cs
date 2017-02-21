@@ -2,11 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Web.Mvc;
+    using System.ComponentModel.DataAnnotations;
+    using System.Runtime.Serialization;
+    using System.Web.Http;
     using API.AdobeConnect;
     using Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using Esynctraining.AdobeConnect.Api.MeetingReports;
+    using Esynctraining.AdobeConnect.Api.MeetingReports.Dto;
     using Esynctraining.Core.Caching;
     using Esynctraining.Core.Domain;
     using Esynctraining.Core.Logging;
@@ -14,107 +18,132 @@
     using Esynctraining.Core.Utils;
     using Resources;
 
-    public partial class LtiReportController : BaseController
+    public partial class LtiReportController : BaseApiController
     {
-        private readonly IReportService meetingSetup;
-
-        private LmsCourseMeetingModel LmsCourseMeetingModel
+        [DataContract]
+        public class ReportRequestDto : MeetingRequestDto
         {
-            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
+            [DataMember]
+            public int startIndex { get; set; }
+
+            [DataMember]
+            public int limit { get; set; }
+
         }
+
+        private readonly IReportsService _reportService;
+
+
+        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
 
         public LtiReportController(
-            IReportService meetingSetup,
+            IReportsService reportService,
             LmsUserSessionModel userSessionModel,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, ICache cache)
             : base(userSessionModel, acAccountService, settings, logger, cache)
         {
-            this.meetingSetup = meetingSetup;
+            _reportService = reportService;
         }
 
 
-        public virtual JsonResult GetAttendanceReport(string lmsProviderName, int meetingId, int startIndex = 0, int limit = 0)
+        [Route("meeting/attendance")]
+        [HttpPost]
+        public virtual OperationResultWithData<IEnumerable<ACSessionParticipantDto>> GetAttendanceReport(ReportRequestDto request)
         {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
             LmsCompany credentials = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = GetReadOnlySession(request.lmsProviderName);
                 credentials = session.LmsCompany;
 
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, request.meetingId);
                 if (meeting == null)
-                    return Json(OperationResult.Error(Messages.MeetingNotFound));
+                    return OperationResultWithData<IEnumerable<ACSessionParticipantDto>>.Error(Messages.MeetingNotFound);
 
-                List<ACSessionParticipantDTO> report = this.meetingSetup.GetAttendanceReport(
+                IEnumerable<ACSessionParticipantDto> report = _reportService.GetAttendanceReports(
+                    meeting.ScoId,
                     this.GetAdobeConnectProvider(credentials),
-                    meeting,
-                    startIndex,
-                    limit);
+                    TimeZoneInfo.Utc,
+                    request.startIndex,
+                    request.limit);
 
-                return Json(OperationResultWithData<List<ACSessionParticipantDTO>>.Success(report), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+                return report.ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("GetAttendanceReport", credentials, ex);
-                return Json(OperationResult.Error(errorMessage), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+                return OperationResultWithData<IEnumerable<ACSessionParticipantDto>>.Error(errorMessage);
             }
         }
 
-        public virtual JsonResult GetSessionsReport(string lmsProviderName, int meetingId, int startIndex = 0, int limit = 0)
+        [Route("meeting/sessions")]
+        [HttpPost]
+        public virtual OperationResultWithData<IEnumerable<ACSessionDto>> GetSessionsReport(ReportRequestDto request)
         {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
             LmsCompany credentials = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = GetReadOnlySession(request.lmsProviderName);
                 credentials = session.LmsCompany;
                 
-                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, request.meetingId);
                 if (meeting == null)
-                    return Json(OperationResult.Error(Messages.MeetingNotFound));
+                    return OperationResultWithData<IEnumerable<ACSessionDto>>.Error(Messages.MeetingNotFound);
 
-                List<ACSessionDTO> report = this.meetingSetup.GetSessionsReport(
+                IEnumerable<ACSessionDto> report = _reportService.GetSessionsReports(
+                    meeting.ScoId,
                     this.GetAdobeConnectProvider(credentials),
-                    meeting,
-                    startIndex,
-                    limit);
+                    TimeZoneInfo.Utc,
+                    request.startIndex,
+                    request.limit);
 
-                return Json(OperationResultWithData<List<ACSessionDTO>>.Success(report), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+                return report.ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("GetSessionsReport", credentials, ex);
-                return Json(OperationResult.Error(errorMessage), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+                return OperationResultWithData<IEnumerable<ACSessionDto>>.Error(errorMessage);
             }
         }
 
-        public virtual JsonResult GetRecordingsReport(string lmsProviderName, int meetingId, int startIndex = 0, int limit = 0)
+        [Route("meeting/reports/by-recordings")]
+        [HttpPost]
+        public virtual OperationResultWithData<IEnumerable<RecordingTransactionDTO>> GetRecordingsReport(ReportRequestDto request)
         {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
             LmsCompany credentials = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = GetReadOnlySession(request.lmsProviderName);
                 credentials = session.LmsCompany;
 
-                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, request.meetingId);
                 if (meeting == null)
-                    return Json(OperationResult.Error(Messages.MeetingNotFound));
+                    return OperationResultWithData<IEnumerable<RecordingTransactionDTO>>.Error(Messages.MeetingNotFound);
 
-                IEnumerable<RecordingTransactionDTO> report = this.meetingSetup.GetRecordingsReport(
+                IEnumerable<RecordingTransactionDTO> report = new LtiReportService().GetRecordingsReport(
                     this.GetAdobeConnectProvider(credentials),
                     meeting,
-                    startIndex,
-                    limit);
+                    request.startIndex,
+                    request.limit);
 
-                return Json(OperationResultWithData<IEnumerable<RecordingTransactionDTO>>.Success(report), 
-                    this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+                return report.ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("GetRecordingsReport", credentials, ex);
-                return Json(OperationResult.Error(errorMessage), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+                return OperationResultWithData<IEnumerable<RecordingTransactionDTO>>.Error(errorMessage);
             }
         }
 
