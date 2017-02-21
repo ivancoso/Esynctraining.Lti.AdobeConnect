@@ -834,6 +834,8 @@ INSERT [dbo].[LmsMeetingType] ([lmsMeetingTypeId], [lmsMeetingTypeName]) VALUES(
 
 INSERT INTO [LmsMeetingType]  ([lmsMeetingTypeId], [lmsMeetingTypeName]) VALUES(4, 'Seminar')
 
+INSERT INTO [LmsMeetingType]  ([lmsMeetingTypeId], [lmsMeetingTypeName]) VALUES(5, 'Virtual Classroom')
+
 SET IDENTITY_INSERT [dbo].[LmsMeetingType] OFF
 
 GO
