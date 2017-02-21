@@ -131,9 +131,7 @@
         public override void ExecuteResult(ControllerContext context)
         {
             if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
+                throw new ArgumentNullException(nameof(context));
 
             HttpResponseBase response = context.HttpContext.Response;
             if (!string.IsNullOrEmpty(this.ContentType))

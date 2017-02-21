@@ -211,7 +211,6 @@
   <ItemGroup>
     <Compile Include="Attributes\CustomAuthorize.cs" />
     <Compile Include="Attributes\LocalizedDisplayNameAttribute.cs" />
-    <Compile Include="Attributes\LocalizedRequiredAttribute.cs" />
     <Compile Include="BaseController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
@@ -375,9 +374,7 @@
       <LastGenOutput>T4MVC.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="HtmlHelpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
