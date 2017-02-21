@@ -25,6 +25,7 @@ namespace EdugameCloud.ACEvents.Web.Models
         [Required]
         [MinLength(4)]
         public string VerifyPassword { get; set; }
+        [Required]
         public string State { get; set; }
         public string Country { get; set; }
         [Required]

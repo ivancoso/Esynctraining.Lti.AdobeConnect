@@ -63,7 +63,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 new SelectListItem()
                 {
                     Text = "Please select a state",
-                    Value = "0",
+                    Value = "",
                     Selected = true
                 }
             });
@@ -105,12 +105,14 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
 
             var httpClient = new HttpClient();
-            var eventRegisterUrl = apiUrl + "?action=event-register&sco-id=" + eventModel.EventScoId + "&login=" +
-                             eventModel.Email + "&password=" + eventModel.Password + "&password-verify=" +
+            
+            var eventRegisterUrl = acUrl + "/api/xml" + "?action=event-register&sco-id=" + eventModel.EventScoId + "&login=" +
+                             Url.Encode(eventModel.Email) + "&password=" + eventModel.Password + "&password-verify=" +
                              eventModel.VerifyPassword +
                              "&first-name=" + eventModel.FirstName + "&last-name=" + eventModel.LastName +
                              "&interaction-id=1763444230&response=" + eventModel.School;
             var result = await httpClient.GetAsync(eventRegisterUrl);
+            _logger.Info(result.Content.ToString());
             return true;
         }
 
