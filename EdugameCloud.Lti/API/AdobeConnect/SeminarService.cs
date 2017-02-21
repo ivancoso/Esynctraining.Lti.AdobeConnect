@@ -18,12 +18,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public class SeminarService : Esynctraining.AdobeConnect.SeminarService, ISeminarService
     {
+        // TODO: reuse from Esynctraining.AdobeConnect.SeminarService
+        private readonly ILogger _logger;
+
         private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
 
 
         public SeminarService(ILogger logger)
             : base(logger)
         {
+            _logger = logger;
         }
 
 
@@ -50,46 +54,38 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var licenseDtos = new List<SeminarLicenseDto>();
 
             var sharedLicenses = GetSharedSeminarLicenses(acProxy).Where(x => !x.IsExpired);
-
             foreach (var license in sharedLicenses)
             {
-                var seminars = GetSeminars(license.ScoId, acProxy);
-                var rooms = new List<SeminarDto>();
-                foreach (ScoContent seminar in seminars)
+                PopulateLicenseRooms(
+                    license.ScoId, license.Name,
+                    ref licenseDtos,
+                    acProxy,
+                    seminarRecords,
+                    lmsUser,
+                    param,
+                    lmsCompany,
+                    timeZone);
+            }
+
+            try
+            {
+                var userLicenses = GetUserSeminarLicenses(acProxy).Where(x => x.PrincipalId == lmsUser.PrincipalId);
+                foreach (var license in userLicenses)
                 {
-                    LmsCourseMeeting meetingRecord = seminarRecords.FirstOrDefault(x => x.ScoId == seminar.ScoId);
-                    if (meetingRecord == null)
-                        continue;
-
-                    var sessions = GetSeminarSessions(seminar.ScoId, acProxy);
-
-                    var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, meetingRecord, timeZone);
-                    room.Id = meetingRecord.Id; // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
-
-                    room.Sessions = sessions.Select(x => new SeminarSessionDto
-                    {
-                        Id = x.ScoId,
-
-                        Name = x.Name,
-                        StartTimeStamp = (long)x.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, x.BeginDate),
-                        Duration = (x.EndDate - x.BeginDate).ToString(@"h\:mm"),
-                        Summary = x.Description,
-                        AcRoomUrl = x.UrlPath.Trim('/'),
-                        IsEditable = true,
-
-                        // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
-                        SeminarRoomId = meetingRecord.Id.ToString(),
-                    }).ToArray();
-                    rooms.Add(room);
+                    PopulateLicenseRooms(
+                        license.ScoId, license.Name,
+                        ref licenseDtos,
+                        acProxy,
+                        seminarRecords,
+                        lmsUser,
+                        param,
+                        lmsCompany,
+                        timeZone);
                 }
-
-                var dto = new SeminarLicenseDto
-                {
-                    Id = license.ScoId,
-                    Name = license.Name,
-                    Rooms = rooms.ToArray(),
-                };
-                licenseDtos.Add(dto);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[GetUserSeminarLicenses] error", ex);
             }
 
             return licenseDtos;
@@ -147,6 +143,55 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 SeminarRoomId = seminarSessionDto.SeminarRoomId,
             };
             return newSessionDto.ToSuccessResult();
+        }
+
+        private void PopulateLicenseRooms(
+            string licenseScoId, string licenseName,
+            ref List<SeminarLicenseDto> licenseDtos,
+            IAdobeConnectProxy acProxy,
+            IEnumerable<LmsCourseMeeting> seminarRecords,
+            LmsUser lmsUser,
+            LtiParamDTO param,
+            LmsCompany lmsCompany,
+            TimeZoneInfo timeZone)
+        {
+            var seminars = GetSeminars(licenseScoId, acProxy);
+            var rooms = new List<SeminarDto>();
+            foreach (ScoContent seminar in seminars)
+            {
+                LmsCourseMeeting meetingRecord = seminarRecords.FirstOrDefault(x => x.ScoId == seminar.ScoId);
+                if (meetingRecord == null)
+                    continue;
+
+                var sessions = GetSeminarSessions(seminar.ScoId, acProxy);
+
+                var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, meetingRecord, timeZone);
+                room.Id = meetingRecord.Id; // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
+
+                room.Sessions = sessions.Select(x => new SeminarSessionDto
+                {
+                    Id = x.ScoId,
+
+                    Name = x.Name,
+                    StartTimeStamp = (long)x.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, x.BeginDate),
+                    Duration = (x.EndDate - x.BeginDate).ToString(@"h\:mm"),
+                    Summary = x.Description,
+                    AcRoomUrl = x.UrlPath.Trim('/'),
+                    IsEditable = true,
+
+                    // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
+                    SeminarRoomId = meetingRecord.Id.ToString(),
+                }).ToArray();
+                rooms.Add(room);
+            }
+
+            var dto = new SeminarLicenseDto
+            {
+                Id = licenseScoId,
+                Name = licenseName,
+                Rooms = rooms.ToArray(),
+            };
+            licenseDtos.Add(dto);
         }
 
         private SeminarDto GetDtoByScoInfo(
