@@ -235,10 +235,6 @@
     <Compile Include="HomeController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
-    <Compile Include="HtmlHelpers\ButtonExtention.cs" />
-    <Compile Include="HtmlHelpers\ElementFocusExtention.cs" />
-    <Compile Include="HtmlHelpers\UrlExtensions.cs" />
-    <Compile Include="HtmlHelpers\ValidatedLabelExtensions.cs" />
     <Compile Include="ModelBinders\BaseModelBinder.cs" />
     <Compile Include="ModelBinders\TimeSpanModelBinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -384,6 +380,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>T4MVC.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HtmlHelpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
