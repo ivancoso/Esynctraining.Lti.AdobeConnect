@@ -1,6 +1,3 @@
-USE [EduGameCloud]
-GO
-
 /****** Object:  Table [dbo].[QuizQuestionResultAnswer]    Script Date: 1/23/2017 10:29:23 AM ******/
 SET ANSI_NULLS ON
 GO
