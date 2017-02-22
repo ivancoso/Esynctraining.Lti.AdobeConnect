@@ -172,8 +172,9 @@ namespace Esynctraining.AC.Provider
             return CallPrincipalList(filter);
         }
 
+        //todo:rename or create separate method for filter-type=userS
         /// <summary>
-        /// Gets user with passed principal Id when this principal is member of the specified Group.
+        /// Gets principal with passed principal Id when this principal is member of the specified Group.
         /// </summary>
         /// <param name="groupId">
         /// The group id.
@@ -191,7 +192,7 @@ namespace Esynctraining.AC.Provider
             if (string.IsNullOrWhiteSpace(principalId))
                 throw new ArgumentException("Principal ID can't be empty", nameof(principalId));
 
-            string filter = string.Format(CommandParams.PrincipalGroupIdPrincipalIdUsersOnly, groupId, principalId);
+            string filter = string.Format(CommandParams.PrincipalGroupIdPrincipalId, groupId, principalId);
             return CallPrincipalList(filter);
         }
 

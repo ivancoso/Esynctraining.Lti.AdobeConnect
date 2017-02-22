@@ -86,7 +86,7 @@
         /// </summary>
         public const string PrincipalGroupIdUsersOnly = "group-id={0}&filter-type=user&filter-is-member=true";
 
-        public const string PrincipalGroupIdPrincipalIdUsersOnly = "group-id={0}&filter-type=user&filter-is-member=true&filter-principal-id={1}";
+        public const string PrincipalGroupIdPrincipalId = "group-id={0}&filter-is-member=true&filter-principal-id={1}";
 
         /// <summary>
         /// The principal by email
