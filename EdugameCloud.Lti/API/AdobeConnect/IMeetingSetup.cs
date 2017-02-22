@@ -3,6 +3,7 @@ using System.Text;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.API.AdobeConnect

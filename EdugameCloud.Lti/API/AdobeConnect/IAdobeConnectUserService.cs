@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {

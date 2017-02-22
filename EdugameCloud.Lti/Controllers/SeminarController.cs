@@ -13,26 +13,30 @@ using Esynctraining.Core.Utils;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Caching;
 using Esynctraining.AdobeConnect.Api.Seminar.Dto;
+using EdugameCloud.Core.Business;
+using System.Runtime.Caching;
+using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.Lti.Controllers
 {
     public class SeminarController : BaseController
     {
-        private readonly ISeminarService _seminarService;
+        protected readonly ObjectCache _cache = MemoryCache.Default;
+        private readonly API.AdobeConnect.ISeminarService _seminarService;
 
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 
         private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
-        private IAdobeConnectAccountService AcAccountService => IoC.Resolve<IAdobeConnectAccountService>();
+        private API.AdobeConnect.IAdobeConnectAccountService AcAccountService => IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>();
 
         #region Constructors and Destructors
 
         public SeminarController(
-            ISeminarService seminarService,
+            API.AdobeConnect.ISeminarService seminarService,
             LmsUserSessionModel userSessionModel,
-            IAdobeConnectAccountService acAccountService, 
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings,
             ILogger logger, ICache cache)
             : base(userSessionModel, acAccountService, settings, logger, cache)
@@ -93,7 +97,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 OperationResult ret = MeetingSetup.SaveMeeting(
                     credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    this.GetAdminProvider(credentials),
                     param,
                     meeting,
                     trace,
@@ -114,9 +118,9 @@ namespace EdugameCloud.Lti.Controllers
             if (string.IsNullOrWhiteSpace(lmsProviderName))
                 throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
             if (string.IsNullOrWhiteSpace(seminarLicenseId))
-                throw new ArgumentException("seminarLicenseId can't be empty", "seminarLicenseId");
+                throw new ArgumentException("seminarLicenseId can't be empty", nameof(seminarLicenseId));
             if (meeting == null)
-                throw new ArgumentNullException("meeting");
+                throw new ArgumentNullException(nameof(meeting));
 
             LmsCompany credentials = null;
             try
@@ -128,7 +132,7 @@ namespace EdugameCloud.Lti.Controllers
                 var fb = new SeminarFolderBuilder(seminarLicenseId);
                 OperationResult ret = MeetingSetup.SaveMeeting(
                     credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    this.GetAdminProvider(credentials),
                     param,
                     meeting,
                     trace,
@@ -149,14 +153,14 @@ namespace EdugameCloud.Lti.Controllers
             if (string.IsNullOrWhiteSpace(lmsProviderName))
                 throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
             if (seminarSessionDto == null)
-                throw new ArgumentNullException("seminarSessionDto");
+                throw new ArgumentNullException(nameof(seminarSessionDto));
 
             LmsCompany credentials = null;
             try
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
-                var ac = this.GetAdobeConnectProvider(credentials);
+                var ac = this.GetAdminProvider(credentials);
 
                 // TRICK: change record meeting id to meeting sco-id
                 var param = session.LtiSession.With(x => x.LtiParam);
@@ -214,7 +218,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
-                var ac = this.GetAdobeConnectProvider(credentials);
+                var ac = this.GetAdminProvider(credentials);
 
                 var result = ac.DeleteSco(seminarSessionId);
                 return Json(OperationResult.Success());
@@ -223,6 +227,59 @@ namespace EdugameCloud.Lti.Controllers
             {
                 string errorMessage = GetOutputErrorMessage("DeleteSeminarSession", credentials, ex);
                 return Json(OperationResult.Error(errorMessage));
+            }
+        }
+
+
+        protected IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)
+        {
+            string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
+            var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
+
+            if (provider == null)
+            {
+                string breezeSession = LoginCurrentUser(session);
+                var accService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(Logger);
+                provider = accService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
+
+                var sessionTimeout = accService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
+                _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
+            }
+
+            return provider;
+        }
+
+        private string LoginCurrentUser(LmsUserSession session)
+        {
+            LmsCompany lmsCompany = null;
+            try
+            {
+                lmsCompany = session.LmsCompany;
+                var param = session.LtiSession.LtiParam;
+                var LmsUserModel = IoC.Resolve<LmsUserModel>();
+                var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+                if (lmsUser == null)
+                {
+                    throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
+                }
+
+                if (lmsUser.PrincipalId == null)
+                {
+                    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
+                }
+
+                var ac = GetAdminProvider(session.LmsCompany);
+                var registeredUser = ac.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
+
+                var MeetingSetup = IoC.Resolve<MeetingSetup>();
+                string breezeToken = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, ac);
+
+                return breezeToken;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", lmsCompany, ex);
+                throw;
             }
         }
 

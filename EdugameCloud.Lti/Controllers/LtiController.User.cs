@@ -37,7 +37,7 @@ namespace EdugameCloud.Lti.Controllers
                     {
                         updatedUser = this.usersSetup.UpdateGuest(
                             credentials,
-                            this.GetAdobeConnectProvider(credentials),
+                            this.GetAdminProvider(credentials),
                             session.LtiSession.LtiParam,
                             user,
                             meetingId,
@@ -47,7 +47,7 @@ namespace EdugameCloud.Lti.Controllers
                     {
                         updatedUser = this.usersSetup.UpdateUser(
                             credentials,
-                            this.GetAdobeConnectProvider(credentials),
+                            this.GetAdminProvider(credentials),
                             session.LtiSession.LtiParam,
                             user,
                             meetingId,
@@ -109,7 +109,7 @@ namespace EdugameCloud.Lti.Controllers
                     {
                         this.usersSetup.DeleteGuestFromAcMeeting(
                             credentials,
-                            this.GetAdobeConnectProvider(credentials),
+                            this.GetAdminProvider(credentials),
                             session.LtiSession.LtiParam,
                             user.AcId,
                             meetingId,
@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.Controllers
                     {
                         this.usersSetup.DeleteUserFromAcMeeting(
                             credentials,
-                            this.GetAdobeConnectProvider(credentials),
+                            this.GetAdminProvider(credentials),
                             session.LtiSession.LtiParam,
                             user.AcId,
                             meetingId,

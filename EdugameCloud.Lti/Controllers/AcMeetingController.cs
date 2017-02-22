@@ -14,6 +14,7 @@ using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -33,7 +34,7 @@ namespace EdugameCloud.Lti.Controllers
 
         public AcMeetingController(
             LmsUserSessionModel userSessionModel,
-            IAdobeConnectAccountService acAccountService, 
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings,
             IAdobeConnectUserService acUserService,
             ILogger logger, ICache cache)
@@ -76,6 +77,7 @@ namespace EdugameCloud.Lti.Controllers
                 return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error(errorMessage);
             }
         }
+
 
         // copy-pasted from MeetingSetup.LoginToAC. Needs review
         private IAdobeConnectProxy GetUserProvider(LmsCompany lmsCompany, LmsUser lmsUser,

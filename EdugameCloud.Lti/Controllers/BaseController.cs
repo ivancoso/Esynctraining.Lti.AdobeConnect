@@ -12,6 +12,7 @@ using Esynctraining.Core.Utils;
 using Esynctraining.Core;
 using Esynctraining.Core.Caching;
 using EdugameCloud.Core.Business;
+using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -32,7 +33,7 @@ namespace EdugameCloud.Lti.Controllers
 
         protected ICache Cache { get; }
 
-        protected IAdobeConnectAccountService acAccountService { get; }
+        protected API.AdobeConnect.IAdobeConnectAccountService acAccountService { get; }
 
         protected bool IsDebug
         {
@@ -58,7 +59,7 @@ namespace EdugameCloud.Lti.Controllers
 
         public BaseController(
             LmsUserSessionModel userSessionModel,
-            IAdobeConnectAccountService acAccountService,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger,
             ICache cache)
@@ -93,7 +94,7 @@ namespace EdugameCloud.Lti.Controllers
             if (session == null)
             {
                 Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new WarningMessageException(Resources.Messages.SessionTimeOut);
+                throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
             }
 
             return session;
@@ -107,7 +108,7 @@ namespace EdugameCloud.Lti.Controllers
             if (session == null)
             {
                 Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new WarningMessageException(Resources.Messages.SessionTimeOut);
+                throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
             }
 
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
@@ -115,7 +116,7 @@ namespace EdugameCloud.Lti.Controllers
             return session;
         }
 
-        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
+        protected IAdobeConnectProxy GetAdminProvider(ILmsLicense lmsCompany)
         {
             string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(lmsCompany.Id);
             var provider = _acCache.Get(cacheKey) as IAdobeConnectProxy;

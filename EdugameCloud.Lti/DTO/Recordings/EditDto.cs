@@ -1,30 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 using Esynctraining.Core.Enums;
-using FluentValidation;
 using Esynctraining.FluentValidation;
+using FluentValidation;
 
 namespace EdugameCloud.Lti.DTO.Recordings
 {
+    [DataContract]
     public sealed class EditDto
     {
-//        [Required]
+        [DataMember]
+        //[Required]
         public string lmsProviderName { get; set; }
 
+        [DataMember]
         //[Required]
         public int meetingId { get; set; }
 
+        [DataMember]
         //[Required]
         public string id { get; set; }
 
+        [DataMember]
         //[Required]
         //[StringLength(60, ErrorMessageResourceType = typeof(Resources.Messages), ErrorMessageResourceName = "ValidateTitleLength")]
         public string name { get; set; }
 
+        [DataMember]
         //[StringLength(4000, ErrorMessageResourceType = typeof(Resources.Messages), ErrorMessageResourceName = "ValidateSummaryLength")]
         public string summary { get; set; }
 

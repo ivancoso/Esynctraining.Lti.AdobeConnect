@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
-using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;

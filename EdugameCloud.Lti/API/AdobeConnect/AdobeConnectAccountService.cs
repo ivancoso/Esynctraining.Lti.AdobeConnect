@@ -63,7 +63,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 principalId = result.User.UserId;
             }
 
-            return new AdobeConnectProxy(provider, _logger, apiUrl, principalId);
+            return new AdobeConnectProxy(provider, _logger, apiUrl);
         }
         
 

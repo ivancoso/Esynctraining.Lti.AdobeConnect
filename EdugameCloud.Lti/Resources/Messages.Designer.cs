@@ -61,6 +61,15 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not Authorized. Please check that account used to access Adobe Connect has sufficient permissions..
+        /// </summary>
+        public static string AdobeConnectDeniedErrorMessage {
+            get {
+                return ResourceManager.GetString("AdobeConnectDeniedErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive..
         /// </summary>
         public static string AdobeConnectMeetingHostQuota {

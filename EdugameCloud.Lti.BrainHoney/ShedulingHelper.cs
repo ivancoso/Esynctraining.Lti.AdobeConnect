@@ -8,6 +8,7 @@ using EdugameCloud.Lti.API.BrainHoney;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Extensions;
@@ -21,10 +22,10 @@ namespace EdugameCloud.Lti.BrainHoney
         private readonly IMeetingSetup _meetingSetup;
         private readonly IUsersSetup _usersSetup;
         private readonly LmsCompanyModel _lmsCompanyModel;
-        private IAdobeConnectAccountService _acAccountService;
+        private API.AdobeConnect.IAdobeConnectAccountService _acAccountService;
 
 
-        public ShedulingHelper(DlapAPI dlapApi, IMeetingSetup meetingSetup, IUsersSetup usersSetup, LmsCompanyModel lmsCompanyModel, IAdobeConnectAccountService acAccountService)
+        public ShedulingHelper(DlapAPI dlapApi, IMeetingSetup meetingSetup, IUsersSetup usersSetup, LmsCompanyModel lmsCompanyModel, API.AdobeConnect.IAdobeConnectAccountService acAccountService)
         {
             _dlapApi = dlapApi;
             _meetingSetup = meetingSetup;

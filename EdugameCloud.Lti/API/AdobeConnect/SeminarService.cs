@@ -7,6 +7,7 @@ using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.Meeting;
 using Esynctraining.AdobeConnect.Api.Seminar.Dto;
 using Esynctraining.Core.Domain;
@@ -91,7 +92,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return licenseDtos;
         }
 
-        public OperationResultWithData<SeminarSessionDto> SaveSeminarSession(SeminarSessionInputDto seminarSessionDto, 
+        public OperationResultWithData<Esynctraining.AdobeConnect.Api.Seminar.Dto.SeminarSessionDto> SaveSeminarSession(SeminarSessionInputDto seminarSessionDto, 
             string seminarScoId,
             IAdobeConnectProxy provider,
             TimeZoneInfo timeZone)
@@ -131,7 +132,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             var scoInfo = SaveSession(updateItem, provider);
-            var newSessionDto = new SeminarSessionDto
+            var newSessionDto = new Esynctraining.AdobeConnect.Api.Seminar.Dto.SeminarSessionDto
             {
                 Id = scoInfo.ScoId,
                 Name = scoInfo.Name,
@@ -168,7 +169,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, meetingRecord, timeZone);
                 room.Id = meetingRecord.Id; // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
 
-                room.Sessions = sessions.Select(x => new SeminarSessionDto
+                room.Sessions = sessions.Select(x => new Esynctraining.AdobeConnect.Api.Seminar.Dto.SeminarSessionDto
                 {
                     Id = x.ScoId,
 

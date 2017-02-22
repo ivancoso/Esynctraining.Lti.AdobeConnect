@@ -1,5 +1,6 @@
 ﻿using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {

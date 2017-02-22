@@ -42,6 +42,9 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         public virtual JsonResult EditRecording(EditDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             LmsCompany lmsCompany = null;
             try
             {
@@ -92,7 +95,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 OperationResult result = RecordingsService.EditRecording(
                     lmsCompany,
-                    this.GetAdobeConnectProvider(lmsCompany),
+                    this.GetAdminProvider(lmsCompany),
                     param.course_id,
                     dto.id,
                     dto.meetingId,
@@ -124,7 +127,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 OperationResult result = RecordingsService.RemoveRecording(
                     lmsCompany,
-                    this.GetAdobeConnectProvider(lmsCompany),
+                    this.GetAdminProvider(lmsCompany),
                     param.course_id,
                     id,
                     meetingId);
@@ -149,7 +152,7 @@ namespace EdugameCloud.Lti.Controllers
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
-                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                var ac = this.GetAdminProvider(lmsCompany);
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
                     () => new RoomTypeFactory(ac, (LmsMeetingType)type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
@@ -244,7 +247,7 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
-                var provider = GetAdobeConnectProvider(lmsCompany);
+                var provider = GetAdminProvider(lmsCompany);
                 string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, provider);
                 return this.LoginToAC(url, breezeSession, lmsCompany);
             }
@@ -262,7 +265,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
-                string link = RecordingsService.UpdateRecording(lmsCompany, this.GetAdobeConnectProvider(lmsCompany), recordingId, isPublic, password);
+                string link = RecordingsService.UpdateRecording(lmsCompany, this.GetAdminProvider(lmsCompany), recordingId, isPublic, password);
 
                 return Json(link.ToSuccessResult());
             }
@@ -283,7 +286,7 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
-                var provider = GetAdobeConnectProvider(lmsCompany);
+                var provider = GetAdminProvider(lmsCompany);
 
                 string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, provider, "edit");
                 return this.LoginToAC(url, breezeSession, lmsCompany);
@@ -304,7 +307,7 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
-                var provider = GetAdobeConnectProvider(lmsCompany);
+                var provider = GetAdminProvider(lmsCompany);
 
                 string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, provider, "offline");
                 return this.LoginToAC(url, breezeSession, lmsCompany);

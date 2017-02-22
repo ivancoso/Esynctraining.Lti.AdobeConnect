@@ -311,4 +311,7 @@
   <data name="LtiOauthInvalidParameters" xml:space="preserve">
     <value>Invalid OAuth parameters. Application Id and Application Key cannot be empty.</value>
   </data>
+  <data name="AdobeConnectDeniedErrorMessage" xml:space="preserve">
+    <value>Not Authorized. Please check that account used to access Adobe Connect has sufficient permissions.</value>
+  </data>
 </root>

@@ -3,7 +3,6 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
 {

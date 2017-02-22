@@ -14,6 +14,7 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.Meeting;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
@@ -48,7 +49,7 @@ namespace EdugameCloud.Lti.Controllers
         public AcUserController(
             LmsUserSessionModel userSessionModel,
             LmsUserModel lmsUserModel,
-            IAdobeConnectAccountService acAccountService, 
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings, 
             UsersSetup usersSetup,
             IAdobeConnectUserService acUserService,
@@ -89,7 +90,7 @@ namespace EdugameCloud.Lti.Controllers
                     else
                         principal = provider.GetOneByPrincipalId(request.user.PrincipalId).PrincipalInfo.Principal;
                 }
-                catch (WarningMessageException ex)
+                catch (Core.WarningMessageException ex)
                 {
                     return OperationResultWithData<LmsUserDTO>.Error(ex.Message);
                 }
@@ -222,22 +223,22 @@ namespace EdugameCloud.Lti.Controllers
             {
                 if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.duplicate)
                 {
-                    throw new WarningMessageException(string.Format(Resources.Messages.PrincipalValidateAlreadyInAc, login ?? user.Email));
+                    throw new Core.WarningMessageException(string.Format(Resources.Messages.PrincipalValidateAlreadyInAc, login ?? user.Email));
                 }
 
                 if (pu.Status.InvalidField == "name" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new WarningMessageException(Resources.Messages.PrincipalValidateNameLength);
+                    throw new Core.WarningMessageException(Resources.Messages.PrincipalValidateNameLength);
                 }
 
                 if (pu.Status.InvalidField == "email" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new WarningMessageException(Resources.Messages.PrincipalValidateEmailLength);
+                    throw new Core.WarningMessageException(Resources.Messages.PrincipalValidateEmailLength);
                 }
 
                 if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new WarningMessageException(Resources.Messages.PrincipalValidateLoginLength);
+                    throw new Core.WarningMessageException(Resources.Messages.PrincipalValidateLoginLength);
                 }
 
                 string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", user.FirstName, user.LastName, user.Login, user.Email);

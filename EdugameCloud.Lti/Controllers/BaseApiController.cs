@@ -6,6 +6,7 @@ using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
@@ -31,7 +32,7 @@ namespace EdugameCloud.Lti.Controllers
 
         protected ICache Cache { get; }
 
-        protected IAdobeConnectAccountService acAccountService { get; }
+        protected API.AdobeConnect.IAdobeConnectAccountService acAccountService { get; }
 
         protected bool IsDebug
         {
@@ -57,7 +58,7 @@ namespace EdugameCloud.Lti.Controllers
 
         public BaseApiController(
             LmsUserSessionModel userSessionModel,
-            IAdobeConnectAccountService acAccountService,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, 
             ICache cache)

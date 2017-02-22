@@ -59,7 +59,7 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error("Operation is not enabled."));
 
                 var param = session.LtiSession.With(x => x.LtiParam);
-                var provider = this.GetAdobeConnectProvider(credentials);
+                var provider = this.GetAdminProvider(credentials);
 
                 OperationResult result = meetingSetup.ReuseExistedAdobeConnectMeeting(credentials, session.LmsUser,
                     provider,
@@ -87,7 +87,7 @@ namespace EdugameCloud.Lti.Controllers
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var trace = new StringBuilder();
 
-                var ac = this.GetAdobeConnectProvider(credentials);
+                var ac = this.GetAdminProvider(credentials);
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
                 var fb = new MeetingFolderBuilder(credentials, ac, useLmsUserEmailForSearch);
 
@@ -119,7 +119,7 @@ namespace EdugameCloud.Lti.Controllers
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var trace = new StringBuilder();
 
-                var ac = this.GetAdobeConnectProvider(credentials);
+                var ac = this.GetAdminProvider(credentials);
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
                 var fb = new MeetingFolderBuilder(credentials, ac, useLmsUserEmailForSearch);
 
@@ -154,7 +154,7 @@ namespace EdugameCloud.Lti.Controllers
                 
                 OperationResult result = this.meetingSetup.DeleteMeeting(
                     lmsCompany,
-                    this.GetAdobeConnectProvider(lmsCompany),
+                    this.GetAdminProvider(lmsCompany),
                     param,
                     meetingId, softDelete.GetValueOrDefault());
 

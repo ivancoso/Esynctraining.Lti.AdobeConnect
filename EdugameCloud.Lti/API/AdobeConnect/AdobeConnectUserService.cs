@@ -8,6 +8,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Extensions;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
@@ -29,7 +30,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (principal == null && !denyUserCreation)
             {
                 if (searchByEmail && string.IsNullOrWhiteSpace(email))
-                    throw new WarningMessageException(Resources.Messages.CantCreatePrincipalWithEmptyEmail);
+                    throw new Core.WarningMessageException(Resources.Messages.CantCreatePrincipalWithEmptyEmail);
 
                 principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmail);
             }
@@ -63,7 +64,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (!denyUserCreation && (principal == null))
             {
                 if (searchByEmail && string.IsNullOrWhiteSpace(email))
-                    throw new WarningMessageException(Resources.Messages.CantCreatePrincipalWithEmptyEmail);
+                    throw new Core.WarningMessageException(Resources.Messages.CantCreatePrincipalWithEmptyEmail);
 
                 principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmail);
             }
@@ -117,11 +118,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                throw new WarningMessageException("Adobe Connect User's First Name can't be empty.");
+                throw new Core.WarningMessageException("Adobe Connect User's First Name can't be empty.");
             }
             if (string.IsNullOrWhiteSpace(lastName))
             {
-                throw new WarningMessageException("Adobe Connect User's Last Name can't be empty.");
+                throw new Core.WarningMessageException("Adobe Connect User's Last Name can't be empty.");
             }
 
             var setup = new PrincipalSetup
@@ -144,13 +145,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         UserCollectionResult guestsByEmail = provider.ReportGuestsByEmail(HttpUtilsInternal.UrlEncode(email));
                         if (guestsByEmail.Success && guestsByEmail.Values.Any())
-                            throw new WarningMessageException(string.Format(Messages.PrincipalEmailUsedForGuest, email));
+                            throw new Core.WarningMessageException(string.Format(Messages.PrincipalEmailUsedForGuest, email));
                     }
                     else
                     {
                         UserCollectionResult guestsByLogin = provider.ReportGuestsByLogin(login);
                         if (guestsByLogin.Success && guestsByLogin.Values.Any())
-                            throw new WarningMessageException(string.Format(Messages.PrincipalLoginUsedForGuest, login));
+                            throw new Core.WarningMessageException(string.Format(Messages.PrincipalLoginUsedForGuest, login));
                     }
                 }
             }

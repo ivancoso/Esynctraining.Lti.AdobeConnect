@@ -241,8 +241,6 @@
     <Compile Include="API\AdobeConnect\MeetingSessionService.cs" />
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectAccountService.cs" />
-    <Compile Include="API\AdobeConnect\AdobeConnectProxy.cs" />
-    <Compile Include="API\AdobeConnect\IAdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\IAudioProfilesService.cs" />
     <Compile Include="API\AdobeConnect\IMeetingSessionService.cs" />

@@ -60,7 +60,7 @@ namespace EdugameCloud.Lti.Controllers
                 if(!contextRoles.Any())
                     throw new LtiException(Resources.Messages.LtiValidationNoContextRole);
 
-                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
+                var adobeConnectProvider = this.GetAdminProvider(lmsCompany);
 
                 // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
                 param.ext_user_username = usersSetup.GetParamLogin(param, lmsCompany); // NOTE: is saved in session!

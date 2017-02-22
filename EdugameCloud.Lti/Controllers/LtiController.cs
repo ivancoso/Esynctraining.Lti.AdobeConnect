@@ -267,7 +267,7 @@ namespace EdugameCloud.Lti.Controllers
                 string breezeSession = null;
 
                 string url = this.meetingSetup.JoinMeeting(credentials, param, meetingId,
-                    ref breezeSession, this.GetAdobeConnectProvider(credentials));
+                    ref breezeSession, this.GetAdminProvider(credentials));
                 return this.LoginToAC(url, breezeSession, credentials);
             }
             catch (Core.WarningMessageException ex)
@@ -293,7 +293,7 @@ namespace EdugameCloud.Lti.Controllers
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
-                var provider = GetAdobeConnectProvider(lmsCompany);
+                var provider = GetAdminProvider(lmsCompany);
                 var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                 if (lmsUser == null)
                 {
@@ -410,7 +410,7 @@ namespace EdugameCloud.Lti.Controllers
                 ValidateIntegrationRequiredParameters(lmsCompany, param);
 
                 sw = Stopwatch.StartNew();
-                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
+                var adobeConnectProvider = this.GetAdminProvider(lmsCompany);
                 sw.Stop();
                 trace.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
 
@@ -803,7 +803,7 @@ namespace EdugameCloud.Lti.Controllers
                 
                 // TRICK: during loginwithprovider we redirect to Oauth before we create AC principal - so we need to do it here
                 Principal acPrincipal = acUserService.GetOrCreatePrincipal(
-                                this.GetAdobeConnectProvider(company),
+                                this.GetAdminProvider(company),
                                 param.lms_user_login,
                                 param.lis_person_contact_email_primary,
                                 param.PersonNameGiven,
@@ -948,7 +948,7 @@ namespace EdugameCloud.Lti.Controllers
             
             var credentials = session.LmsCompany;            
             var param = session.LtiSession.LtiParam;
-            var acProvider = this.GetAdobeConnectProvider(credentials);
+            var acProvider = this.GetAdminProvider(credentials);
 
             sw.Stop();
             trace?.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());

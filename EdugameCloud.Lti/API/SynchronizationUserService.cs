@@ -8,6 +8,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 
@@ -16,7 +17,7 @@ namespace EdugameCloud.Lti.API
     public class SynchronizationUserService : ISynchronizationUserService
     {
         private readonly LmsFactory lmsFactory;
-        private readonly IAdobeConnectAccountService acAccountService;
+        private readonly AdobeConnect.IAdobeConnectAccountService acAccountService;
         private readonly UsersSetup usersSetup;
         private readonly LmsUserModel lmsUserModel;
         private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
@@ -24,7 +25,7 @@ namespace EdugameCloud.Lti.API
         private readonly ILogger logger;
 
 
-        public SynchronizationUserService(LmsFactory lmsFactory, IAdobeConnectAccountService acAccountService, UsersSetup usersSetup,
+        public SynchronizationUserService(LmsFactory lmsFactory, AdobeConnect.IAdobeConnectAccountService acAccountService, UsersSetup usersSetup,
             LmsUserModel lmsUserModel, LmsCourseMeetingModel lmsCourseMeetingModel, IAdobeConnectUserService acUserService, ILogger logger)
         {
             this.lmsFactory = lmsFactory;

@@ -333,7 +333,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (currentMeeting == null)
             {
-                throw new Core.WarningMessageException(
+                throw new WarningMessageException(
                     $"No meeting for course {param.course_id} and id {meetingId} found.");
             }
 
@@ -681,11 +681,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             if (!result.Success || result.ScoInfo == null)
             {
+                if (!result.Success)
+                    Logger.Error($"[CreateSco\\UpdateSco error]: { result.Status.GetErrorInfo() }");
+
                 if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
                     return OperationResult.Error(Resources.Messages.NotUniqueName);
 
                 if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "url-path"))
                     return OperationResult.Error(Resources.Messages.MeetingNotUniqueUrlPath);
+                
+                if ((result.Status.SubCode == StatusSubCodes.denied))
+                    return OperationResult.Error(Resources.Messages.AdobeConnectDeniedErrorMessage);
 
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
