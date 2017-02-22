@@ -16,14 +16,18 @@ namespace EdugameCloud.ACEvents.Web.Models
         [EmailAddress]
         public string Email { get; set; }
         [Required]
+        [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage= "Should contain only letters or numbers")]
         public string FirstName { get; set; }
         [Required]
+        [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage = "Should contain only letters or numbers")]
         public string LastName { get; set; }
         [Required]
         [MinLength(4)]
+        [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage = "Should contain only letters or numbers")]
         public string Password { get; set; }
         [Required]
         [MinLength(4)]
+        [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage = "Should contain only letters or numbers")]
         public string VerifyPassword { get; set; }
         [Required]
         public string State { get; set; }

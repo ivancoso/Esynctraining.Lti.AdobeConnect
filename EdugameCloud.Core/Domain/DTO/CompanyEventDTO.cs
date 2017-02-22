@@ -21,9 +21,13 @@ namespace EdugameCloud.Core.Domain.DTO
         public string urlPath { get; set; }
         [DataMember]
         public DateTime dateBegin { get; set; }
+        [DataMember]
         public DateTime dateEnd { get; set; }
+        [DataMember]
         public DateTime dateCreated { get; set; }
+        [DataMember]
         public DateTime dateModified { get; set; }
+        [DataMember]
         public bool isSeminar { get; set; }
 
 
