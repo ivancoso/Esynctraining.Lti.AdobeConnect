@@ -7,7 +7,7 @@ namespace EdugameCloud.ACEvents.Web.Models
 {
     public class EventModel
     {
-        public string EventScoId { get; set; }
+        public int EventQuizMappingId { get; set; }
         public string EventName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

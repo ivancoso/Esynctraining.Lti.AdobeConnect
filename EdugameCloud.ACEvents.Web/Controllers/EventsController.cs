@@ -31,11 +31,18 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         public ActionResult Signup()
         {
             //if (Request.QueryString["licenseId"] == null || Request.QueryString["eventScoId"] == null)
-            if (Request.QueryString["eventScoId"] == null)
-                throw new InvalidOperationException("You should pass licenseId and eventId in queryString");
+            if (Request.QueryString["eventQuizMappingId"] == null)
+                throw new InvalidOperationException("You should pass eventQuizMappingId");
 
-            var eventScoId = Request.QueryString["eventScoId"];
-            var acUrl = "http://esynctraining.adobeconnect.com";
+            var eventQuizMappingId = Request.QueryString["eventQuizMappingId"];
+            var eventQuizMappingIdInt = int.Parse(eventQuizMappingId);
+            var companyEventsService = new edugamecloud.com1.CompanyEventsService();
+            var eventMapping = companyEventsService.GetById(eventQuizMappingIdInt, true);
+            if (eventMapping == null)
+                throw new InvalidOperationException("No eventQuizMapping with this id");
+            var acUrl = eventMapping.CompanyAcDomain.path;
+            var eventScoId = eventMapping.AcEventScoId;
+            //var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = new Uri(acUrl);
             _logger.Info("Signup started");
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), _logger, apiUrl);
@@ -47,7 +54,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 EventName = eventInfo.ScoInfo.Name,
                 StartDate = eventInfo.ScoInfo.BeginDate,
                 EndDate = eventInfo.ScoInfo.EndDate,
-                EventScoId = eventScoId
+                EventQuizMappingId = eventQuizMappingIdInt
             };
 
             //var lookupServiceClient = new LookupServiceClient.LookupServiceClient();
@@ -98,15 +105,19 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             {
                 return false;
             }
-            var servicesUrl = _settings.EgcServicesUrl;
-            var acUrl = "http://esynctraining.adobeconnect.com";
+            //var servicesUrl = _settings.EgcServicesUrl;
+            //var acUrl = "http://esynctraining.adobeconnect.com";
+            var eventQuizMapping = new edugamecloud.com1.CompanyEventsService();
+            var companyQuizEventMappingDto = eventQuizMapping.GetById(eventModel.EventQuizMappingId, true);
+            var acUrl = companyQuizEventMappingDto.CompanyAcDomain.path;
+            //var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = new Uri(acUrl);
             var logger = IoC.Resolve<ILogger>();
-            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
+            //var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
 
             var httpClient = new HttpClient();
             
-            var eventRegisterUrl = acUrl + "/api/xml" + "?action=event-register&sco-id=" + eventModel.EventScoId + "&login=" +
+            var eventRegisterUrl = acUrl + "/api/xml" + "?action=event-register&sco-id=" + eventModel.EventQuizMappingId + "&login=" +
                              Url.Encode(eventModel.Email) + "&password=" + eventModel.Password + "&password-verify=" +
                              eventModel.VerifyPassword +
                              "&first-name=" + eventModel.FirstName + "&last-name=" + eventModel.LastName +

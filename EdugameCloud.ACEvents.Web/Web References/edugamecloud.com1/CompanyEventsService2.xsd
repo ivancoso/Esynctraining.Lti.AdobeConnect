@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="CompanyQuizEventMappingDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AcEventScoId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CompanyAcDomain" nillable="true" type="tns:ACDomainDTO" />
+      <xs:element minOccurs="0" name="CompanyAcDomainId" type="xs:int" />
+      <xs:element minOccurs="0" name="EventQuizMappingId" type="xs:int" />
+      <xs:element minOccurs="0" name="PostQuizId" type="xs:int" />
+      <xs:element minOccurs="0" name="PreQuizId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CompanyQuizEventMappingDTO" nillable="true" type="tns:CompanyQuizEventMappingDTO" />
+  <xs:complexType name="ACDomainDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="companyId" type="xs:int" />
+      <xs:element minOccurs="0" name="domainId" type="xs:int" />
+      <xs:element minOccurs="0" name="isDefault" type="xs:boolean" />
+      <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="path" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ACDomainDTO" nillable="true" type="tns:ACDomainDTO" />
+  <xs:complexType name="ArrayOfCompanyEventDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CompanyEventDTO" nillable="true" type="tns:CompanyEventDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCompanyEventDTO" nillable="true" type="tns:ArrayOfCompanyEventDTO" />
+  <xs:complexType name="CompanyEventDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="companyId" type="xs:int" />
+      <xs:element minOccurs="0" name="dateBegin" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="desc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="scoId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="urlPath" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CompanyEventDTO" nillable="true" type="tns:CompanyEventDTO" />
+  <xs:complexType name="ArrayOfCompanyQuizEventMappingDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CompanyQuizEventMappingDTO" nillable="true" type="tns:CompanyQuizEventMappingDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCompanyQuizEventMappingDTO" nillable="true" type="tns:ArrayOfCompanyQuizEventMappingDTO" />
+</xs:schema>

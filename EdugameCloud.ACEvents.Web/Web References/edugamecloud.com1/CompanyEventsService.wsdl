@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="CompanyEventsService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ICompanyEventsService_GetById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetById" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetById_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q1:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompany_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventsByCompany" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompany_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventsByCompanyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompany_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q2:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompanyAcServer_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventsByCompanyAcServer" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompanyAcServer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventsByCompanyAcServerResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompanyAcServer_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q3:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappings_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventQuizMappings" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappings_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventQuizMappingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappings_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByCompanyId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventQuizMappingsByCompanyId" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByCompanyId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventQuizMappingsByCompanyIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByCompanyId_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q5:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByAcServerId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventQuizMappingsByAcServerId" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByAcServerId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventQuizMappingsByAcServerIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByAcServerId_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q6:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_DeleteById_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteById" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_DeleteById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_DeleteById_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q7="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q7:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_Save_InputMessage">
+    <wsdl:part name="parameters" element="tns:Save" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_Save_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_Save_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q8="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q8:Error" />
+  </wsdl:message>
+  <wsdl:portType name="ICompanyEventsService">
+    <wsdl:operation name="GetById">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetById" message="tns:ICompanyEventsService_GetById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetByIdResponse" message="tns:ICompanyEventsService_GetById_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetByIdErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetById_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompany">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompany" message="tns:ICompanyEventsService_GetEventsByCompany_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyResponse" message="tns:ICompanyEventsService_GetEventsByCompany_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetEventsByCompany_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompanyAcServer">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServer" message="tns:ICompanyEventsService_GetEventsByCompanyAcServer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerResponse" message="tns:ICompanyEventsService_GetEventsByCompanyAcServer_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetEventsByCompanyAcServer_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappings">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappings" message="tns:ICompanyEventsService_GetEventQuizMappings_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsResponse" message="tns:ICompanyEventsService_GetEventQuizMappings_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetEventQuizMappings_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappingsByCompanyId">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByCompanyId" message="tns:ICompanyEventsService_GetEventQuizMappingsByCompanyId_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByCompanyIdResponse" message="tns:ICompanyEventsService_GetEventQuizMappingsByCompanyId_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByCompanyIdErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetEventQuizMappingsByCompanyId_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappingsByAcServerId">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByAcServerId" message="tns:ICompanyEventsService_GetEventQuizMappingsByAcServerId_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByAcServerIdResponse" message="tns:ICompanyEventsService_GetEventQuizMappingsByAcServerId_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByAcServerIdErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetEventQuizMappingsByAcServerId_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/DeleteById" message="tns:ICompanyEventsService_DeleteById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/DeleteByIdResponse" message="tns:ICompanyEventsService_DeleteById_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/DeleteByIdErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_DeleteById_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/Save" message="tns:ICompanyEventsService_Save_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/SaveResponse" message="tns:ICompanyEventsService_Save_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/SaveErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_Save_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ICompanyEventsService" type="tns:ICompanyEventsService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetById">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompany">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventsByCompany" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompanyAcServer">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappings">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventQuizMappings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappingsByCompanyId">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByCompanyId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappingsByAcServerId">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByAcServerId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/DeleteById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/Save" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CustomBinding_ICompanyEventsService" type="tns:ICompanyEventsService">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetById">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompany">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventsByCompany" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompanyAcServer">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappings">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventQuizMappings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappingsByCompanyId">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByCompanyId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventQuizMappingsByAcServerId">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventQuizMappingsByAcServerId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/DeleteById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/Save" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CompanyEventsService">
+    <wsdl:port name="BasicHttpBinding_ICompanyEventsService" binding="tns:BasicHttpBinding_ICompanyEventsService">
+      <soap:address location="http://dev.edugamecloud.com/services/CompanyEventsService.svc" />
+    </wsdl:port>
+    <wsdl:port name="CustomBinding_ICompanyEventsService" binding="tns:CustomBinding_ICompanyEventsService">
+      <soap12:address location="http://dev.edugamecloud.com/services/CompanyEventsService.svc/amf" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

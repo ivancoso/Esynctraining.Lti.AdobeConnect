@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://dev.edugamecloud.com/services/CompanyEventsService.svc" filename="CompanyEventsService.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd4" filename="CompanyEventsService.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd0" filename="CompanyEventsService0.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd1" filename="CompanyEventsService1.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd2" filename="CompanyEventsService2.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd3" filename="CompanyEventsService3.xsd" />
+  </Results>
+</DiscoveryClientResultsFile>

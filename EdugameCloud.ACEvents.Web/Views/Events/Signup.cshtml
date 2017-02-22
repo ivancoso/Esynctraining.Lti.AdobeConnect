@@ -49,7 +49,7 @@
 
         @using (Html.BeginForm("EventRegister", "Events", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
         {
-            @Html.HiddenFor(x => x.EventScoId)
+            @Html.HiddenFor(x => x.EventQuizMappingId)
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
 

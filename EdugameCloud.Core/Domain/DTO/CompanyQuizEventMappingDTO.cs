@@ -13,6 +13,15 @@ namespace EdugameCloud.Core.Domain.DTO
             PostQuizId = entity.PostQuiz.Id;
             EventQuizMappingId = entity.Id;
             CompanyAcDomainId = entity.CompanyAcDomain.Id;
+            CompanyAcDomain = new ACDomainDTO()
+            {
+                companyId = entity.CompanyAcDomain.Company.Id,
+                password = entity.CompanyAcDomain.Password,
+                domainId = entity.CompanyAcDomain.Id,
+                isDefault = entity.CompanyAcDomain.IsDefault,
+                path = entity.CompanyAcDomain.AcServer,
+                user = entity.CompanyAcDomain.Username
+            };
         }
 
         [DataMember]
@@ -25,6 +34,9 @@ namespace EdugameCloud.Core.Domain.DTO
         public int CompanyAcDomainId { get; set; }
         [DataMember]
         public string AcEventScoId { get; set; }
+
+        [DataMember]
+        public ACDomainDTO CompanyAcDomain { get; set; } 
 
     }
 }

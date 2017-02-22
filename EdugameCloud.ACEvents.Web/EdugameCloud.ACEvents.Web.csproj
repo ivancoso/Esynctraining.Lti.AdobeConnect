@@ -191,6 +191,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Web References\edugamecloud.com1\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="Web References\edugamecloud.com\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -272,6 +277,32 @@
     <Content Include="Web References\edugamecloud.com\LookupAllDTO.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
+    <Content Include="Web References\edugamecloud.com1\CompanyEventDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\edugamecloud.com1\CompanyEventsService.wsdl" />
+    <None Include="Web References\edugamecloud.com1\CompanyEventsService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\edugamecloud.com1\CompanyEventsService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\edugamecloud.com1\CompanyEventsService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\edugamecloud.com1\CompanyEventsService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\edugamecloud.com1\CompanyEventsService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Web References\edugamecloud.com1\CompanyQuizEventMappingDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\edugamecloud.com1\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <None Include="Web References\edugamecloud.com\LookupService.wsdl">
       <SubType>Designer</SubType>
     </None>
@@ -347,6 +378,17 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
+    <WebReferenceUrl Include="http://dev.edugamecloud.com/services/CompanyEventsService.svc">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\edugamecloud.com1\</RelPath>
+      <UpdateFromURL>http://dev.edugamecloud.com/services/CompanyEventsService.svc</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>EdugameCloud_ACEvents_Web_edugamecloud_com1_CompanyEventsService</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://dev.edugamecloud.com/services/LookupService.svc">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\edugamecloud.com\</RelPath>
@@ -358,6 +400,9 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>EdugameCloud_ACEvents_Web_com_edugamecloud_dev_LookupService</CachedSettingsPropName>
     </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

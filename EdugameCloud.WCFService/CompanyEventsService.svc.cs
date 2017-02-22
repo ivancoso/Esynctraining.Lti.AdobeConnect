@@ -149,5 +149,11 @@ namespace EdugameCloud.WCFService
             var result = events.Select(x => new CompanyQuizEventMappingDTO(x)).ToArray();
             return result;
         }
+
+        public CompanyQuizEventMappingDTO GetById(int eventQuizMappingId)
+        {
+            var @event = CompanyEventQuizMappingModel.GetOneById(eventQuizMappingId).Value;
+            return new CompanyQuizEventMappingDTO(@event);
+        }
     }
 }
