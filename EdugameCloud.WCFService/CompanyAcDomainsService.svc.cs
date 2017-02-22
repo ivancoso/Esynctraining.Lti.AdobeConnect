@@ -1,6 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
+using System.Text;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
@@ -17,9 +21,21 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class CompanyAcDomainsService : BaseService, ICompanyAcDomainsService
     {
-        private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
+        /// <summary>
+        /// Gets the company model.
+        /// </summary>
+        private CompanyAcServerModel CompanyAcServerModel
+        {
+            get { return IoC.Resolve<CompanyAcServerModel>(); }
+        }
 
-        private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
+        /// <summary>
+        /// Gets the company model.
+        /// </summary>
+        private CompanyModel CompanyModel
+        {
+            get { return IoC.Resolve<CompanyModel>(); }
+        }
 
 
         public ACDomainDTO[] GetAllByCompany(int companyId)
@@ -136,6 +152,21 @@ namespace EdugameCloud.WCFService
                 companyAcServer.Password = acDomain.password;
             CompanyAcServerModel.RegisterSave(companyAcServer, true);
             return acDomain;
+        }
+
+        public ACDomainDTO GetById(int id)
+        {
+            var companyAcServer = CompanyAcServerModel.GetOneById(id).Value;
+            var result = new ACDomainDTO()
+            {
+                companyId = companyAcServer.Company.Id,
+                password = companyAcServer.Password,
+                domainId = companyAcServer.Id,
+                isDefault = companyAcServer.IsDefault,
+                path = companyAcServer.AcServer,
+                user = companyAcServer.Username
+            };
+            return result;
         }
     }
 }

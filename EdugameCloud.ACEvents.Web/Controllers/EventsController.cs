@@ -40,8 +40,10 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var eventMapping = companyEventsService.GetById(eventQuizMappingIdInt, true);
             if (eventMapping == null)
                 throw new InvalidOperationException("No eventQuizMapping with this id");
-            var acUrl = eventMapping.CompanyAcDomain.path;
-            var eventScoId = eventMapping.AcEventScoId;
+            var acService = new AcDomainsNamespace.CompanyAcDomainsService();
+            var acDomain = acService.GetById(eventMapping.companyAcDomainId, true);
+            var acUrl = acDomain.path;
+            var eventScoId = eventMapping.acEventScoId;
             //var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = new Uri(acUrl);
             _logger.Info("Signup started");
@@ -109,7 +111,10 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             //var acUrl = "http://esynctraining.adobeconnect.com";
             var eventQuizMapping = new edugamecloud.com1.CompanyEventsService();
             var companyQuizEventMappingDto = eventQuizMapping.GetById(eventModel.EventQuizMappingId, true);
-            var acUrl = companyQuizEventMappingDto.CompanyAcDomain.path;
+            var acService = new AcDomainsNamespace.CompanyAcDomainsService();
+            var acDomain = acService.GetById(companyQuizEventMappingDto.companyAcDomainId, true);
+            var acUrl = acDomain.path;
+            //var acUrl = companyQuizEventMappingDto.path;
             //var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = new Uri(acUrl);
             var logger = IoC.Resolve<ILogger>();

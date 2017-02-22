@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="CompanyAcDomainsService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ICompanyAcDomainsService_GetById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetById" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_GetById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_GetById_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q1:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_GetAllByCompany_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllByCompany" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_GetAllByCompany_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllByCompanyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_GetAllByCompany_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q2:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_DeleteById_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteById" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_DeleteById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_DeleteById_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q3:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_Save_InputMessage">
+    <wsdl:part name="parameters" element="tns:Save" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_Save_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyAcDomainsService_Save_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+  </wsdl:message>
+  <wsdl:portType name="ICompanyAcDomainsService">
+    <wsdl:operation name="GetById">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/GetById" message="tns:ICompanyAcDomainsService_GetById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/GetByIdResponse" message="tns:ICompanyAcDomainsService_GetById_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/GetByIdErrorFault" name="ErrorFault" message="tns:ICompanyAcDomainsService_GetById_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllByCompany">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/GetAllByCompany" message="tns:ICompanyAcDomainsService_GetAllByCompany_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/GetAllByCompanyResponse" message="tns:ICompanyAcDomainsService_GetAllByCompany_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/GetAllByCompanyErrorFault" name="ErrorFault" message="tns:ICompanyAcDomainsService_GetAllByCompany_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/DeleteById" message="tns:ICompanyAcDomainsService_DeleteById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/DeleteByIdResponse" message="tns:ICompanyAcDomainsService_DeleteById_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/DeleteByIdErrorFault" name="ErrorFault" message="tns:ICompanyAcDomainsService_DeleteById_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/Save" message="tns:ICompanyAcDomainsService_Save_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/SaveResponse" message="tns:ICompanyAcDomainsService_Save_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyAcDomainsService/SaveErrorFault" name="ErrorFault" message="tns:ICompanyAcDomainsService_Save_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ICompanyAcDomainsService" type="tns:ICompanyAcDomainsService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetById">
+      <soap:operation soapAction="http://tempuri.org/ICompanyAcDomainsService/GetById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllByCompany">
+      <soap:operation soapAction="http://tempuri.org/ICompanyAcDomainsService/GetAllByCompany" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <soap:operation soapAction="http://tempuri.org/ICompanyAcDomainsService/DeleteById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <soap:operation soapAction="http://tempuri.org/ICompanyAcDomainsService/Save" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CustomBinding_ICompanyAcDomainsService" type="tns:ICompanyAcDomainsService">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetById">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyAcDomainsService/GetById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllByCompany">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyAcDomainsService/GetAllByCompany" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyAcDomainsService/DeleteById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyAcDomainsService/Save" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CompanyAcDomainsService">
+    <wsdl:port name="BasicHttpBinding_ICompanyAcDomainsService" binding="tns:BasicHttpBinding_ICompanyAcDomainsService">
+      <soap:address location="http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc" />
+    </wsdl:port>
+    <wsdl:port name="CustomBinding_ICompanyAcDomainsService" binding="tns:CustomBinding_ICompanyAcDomainsService">
+      <soap12:address location="http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc/amf" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

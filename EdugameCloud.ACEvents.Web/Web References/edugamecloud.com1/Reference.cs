@@ -391,8 +391,6 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         
         private string acEventScoIdField;
         
-        private ACDomainDTO companyAcDomainField;
-        
         private int companyAcDomainIdField;
         
         private bool companyAcDomainIdFieldSpecified;
@@ -411,7 +409,7 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string AcEventScoId {
+        public string acEventScoId {
             get {
                 return this.acEventScoIdField;
             }
@@ -421,18 +419,7 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public ACDomainDTO CompanyAcDomain {
-            get {
-                return this.companyAcDomainField;
-            }
-            set {
-                this.companyAcDomainField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public int CompanyAcDomainId {
+        public int companyAcDomainId {
             get {
                 return this.companyAcDomainIdField;
             }
@@ -443,7 +430,7 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool CompanyAcDomainIdSpecified {
+        public bool companyAcDomainIdSpecified {
             get {
                 return this.companyAcDomainIdFieldSpecified;
             }
@@ -453,7 +440,7 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         }
         
         /// <remarks/>
-        public int EventQuizMappingId {
+        public int eventQuizMappingId {
             get {
                 return this.eventQuizMappingIdField;
             }
@@ -464,7 +451,7 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool EventQuizMappingIdSpecified {
+        public bool eventQuizMappingIdSpecified {
             get {
                 return this.eventQuizMappingIdFieldSpecified;
             }
@@ -474,7 +461,7 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         }
         
         /// <remarks/>
-        public int PostQuizId {
+        public int postQuizId {
             get {
                 return this.postQuizIdField;
             }
@@ -485,7 +472,7 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool PostQuizIdSpecified {
+        public bool postQuizIdSpecified {
             get {
                 return this.postQuizIdFieldSpecified;
             }
@@ -495,7 +482,7 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         }
         
         /// <remarks/>
-        public int PreQuizId {
+        public int preQuizId {
             get {
                 return this.preQuizIdField;
             }
@@ -506,135 +493,12 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool PreQuizIdSpecified {
+        public bool preQuizIdSpecified {
             get {
                 return this.preQuizIdFieldSpecified;
             }
             set {
                 this.preQuizIdFieldSpecified = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO")]
-    public partial class ACDomainDTO {
-        
-        private int companyIdField;
-        
-        private bool companyIdFieldSpecified;
-        
-        private int domainIdField;
-        
-        private bool domainIdFieldSpecified;
-        
-        private bool isDefaultField;
-        
-        private bool isDefaultFieldSpecified;
-        
-        private string passwordField;
-        
-        private string pathField;
-        
-        private string userField;
-        
-        /// <remarks/>
-        public int companyId {
-            get {
-                return this.companyIdField;
-            }
-            set {
-                this.companyIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool companyIdSpecified {
-            get {
-                return this.companyIdFieldSpecified;
-            }
-            set {
-                this.companyIdFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public int domainId {
-            get {
-                return this.domainIdField;
-            }
-            set {
-                this.domainIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool domainIdSpecified {
-            get {
-                return this.domainIdFieldSpecified;
-            }
-            set {
-                this.domainIdFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public bool isDefault {
-            get {
-                return this.isDefaultField;
-            }
-            set {
-                this.isDefaultField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool isDefaultSpecified {
-            get {
-                return this.isDefaultFieldSpecified;
-            }
-            set {
-                this.isDefaultFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string password {
-            get {
-                return this.passwordField;
-            }
-            set {
-                this.passwordField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string path {
-            get {
-                return this.pathField;
-            }
-            set {
-                this.pathField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string user {
-            get {
-                return this.userField;
-            }
-            set {
-                this.userField = value;
             }
         }
     }
@@ -656,6 +520,10 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         private bool dateBeginFieldSpecified;
         
         private string descField;
+        
+        private bool isMappedToQuizzesField;
+        
+        private bool isMappedToQuizzesFieldSpecified;
         
         private string nameField;
         
@@ -713,6 +581,27 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
             }
             set {
                 this.descField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool isMappedToQuizzes {
+            get {
+                return this.isMappedToQuizzesField;
+            }
+            set {
+                this.isMappedToQuizzesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool isMappedToQuizzesSpecified {
+            get {
+                return this.isMappedToQuizzesFieldSpecified;
+            }
+            set {
+                this.isMappedToQuizzesFieldSpecified = value;
             }
         }
         

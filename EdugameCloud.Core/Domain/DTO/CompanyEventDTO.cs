@@ -26,5 +26,9 @@ namespace EdugameCloud.Core.Domain.DTO
         public DateTime dateModified { get; set; }
         public bool isSeminar { get; set; }
 
+
+        [DataMember]
+        public bool isMappedToQuizzes { get; set; }
+
     }
 }

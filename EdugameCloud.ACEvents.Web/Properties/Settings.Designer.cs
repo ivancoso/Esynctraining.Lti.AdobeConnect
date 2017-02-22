@@ -42,5 +42,15 @@ namespace EdugameCloud.ACEvents.Web.Properties {
                 return ((string)(this["EdugameCloud_ACEvents_Web_edugamecloud_com1_CompanyEventsService"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc")]
+        public string EdugameCloud_ACEvents_Web_AcDomainsNamespace_CompanyAcDomainsService {
+            get {
+                return ((string)(this["EdugameCloud_ACEvents_Web_AcDomainsNamespace_CompanyAcDomainsService"]));
+            }
+        }
     }
 }

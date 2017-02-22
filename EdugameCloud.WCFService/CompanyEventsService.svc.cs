@@ -90,7 +90,8 @@ namespace EdugameCloud.WCFService
                     urlPath = content.UrlPath,
                     dateCreated = content.DateCreated,
                     dateModified = content.DateModified,
-                    isSeminar = content.IsSeminar
+                    isSeminar = content.IsSeminar,
+                    isMappedToQuizzes = CompanyEventQuizMappingModel.GetAllByCompanyId(defaultAcDomain.Company.Id).Any(x => x.AcEventScoId == content.ScoId)
                 });
             }
             return result.ToArray();
@@ -103,7 +104,7 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        public CompanyQuizEventMappingSaveDTO Save(CompanyQuizEventMappingSaveDTO eventQuizMapping)
+        public CompanyQuizEventMappingDTO Save(CompanyQuizEventMappingDTO eventQuizMapping)
         {
             var companyAcDomain = CompanyAcServerModel.GetOneById(eventQuizMapping.companyAcDomainId).Value;
             var preQuiz = QuizModel.GetOneById(eventQuizMapping.preQuizId).Value;

@@ -191,6 +191,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Web References\AcDomainsNamespace\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="Web References\edugamecloud.com1\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -280,6 +285,29 @@
     <Content Include="Web References\edugamecloud.com1\CompanyEventDTO.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
+    <Content Include="Web References\AcDomainsNamespace\ACDomainDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\AcDomainsNamespace\CompanyAcDomainsService.wsdl" />
+    <None Include="Web References\AcDomainsNamespace\CompanyAcDomainsService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\AcDomainsNamespace\CompanyAcDomainsService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\AcDomainsNamespace\CompanyAcDomainsService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\AcDomainsNamespace\CompanyAcDomainsService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\AcDomainsNamespace\CompanyAcDomainsService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\AcDomainsNamespace\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <None Include="Web References\edugamecloud.com1\CompanyEventsService.wsdl" />
     <None Include="Web References\edugamecloud.com1\CompanyEventsService.xsd">
       <SubType>Designer</SubType>
@@ -378,6 +406,17 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
+    <WebReferenceUrl Include="http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\AcDomainsNamespace\</RelPath>
+      <UpdateFromURL>http://dev.edugamecloud.com/services/CompanyAcDomainsService.svc</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>EdugameCloud_ACEvents_Web_AcDomainsNamespace_CompanyAcDomainsService</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://dev.edugamecloud.com/services/CompanyEventsService.svc">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\edugamecloud.com1\</RelPath>

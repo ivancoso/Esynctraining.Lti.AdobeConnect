@@ -10,6 +10,10 @@ namespace EdugameCloud.WCFService.Contracts
     {
         [OperationContract]
         [FaultContract(typeof(Error))]
+        ACDomainDTO GetById(int id);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
         //[WebGet(UriTemplate = "GetAllByCompany", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         [WebGet(UriTemplate = "GetAllByCompany?companyId={companyId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         ACDomainDTO[] GetAllByCompany(int companyId);
