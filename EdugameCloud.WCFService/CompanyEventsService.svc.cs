@@ -104,7 +104,7 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        public CompanyQuizEventMappingDTO Save(CompanyQuizEventMappingDTO eventQuizMapping)
+        public CompanyQuizEventMappingSaveDTO Save(CompanyQuizEventMappingSaveDTO eventQuizMapping)
         {
             var companyAcDomain = CompanyAcServerModel.GetOneById(eventQuizMapping.companyAcDomainId).Value;
             var preQuiz = QuizModel.GetOneById(eventQuizMapping.preQuizId).Value;

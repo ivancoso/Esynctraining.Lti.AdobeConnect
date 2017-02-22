@@ -182,6 +182,7 @@
     <Compile Include="Domain\DTO\AcDomainDTO.cs" />
     <Compile Include="Domain\DTO\CompanyEventDTO.cs" />
     <Compile Include="Domain\DTO\CompanyQuizEventMappingDTO.cs" />
+    <Compile Include="Domain\DTO\CompanyQuizEventMappingSaveDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordResultByACSessionFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordSessionDTO.cs" />
     <Compile Include="Domain\DTO\CompanyFlatDTO.cs" />

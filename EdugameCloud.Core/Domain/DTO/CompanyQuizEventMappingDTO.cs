@@ -3,9 +3,8 @@ using EdugameCloud.Core.Domain.Entities;
 
 namespace EdugameCloud.Core.Domain.DTO
 {
-    
     [DataContract]
-    public class CompanyQuizEventMappingDTO 
+    public class CompanyQuizEventMappingDTO : CompanyQuizEventMappingSaveDTO
     {
         public CompanyQuizEventMappingDTO(CompanyEventQuizMapping entity)
         {
@@ -25,16 +24,7 @@ namespace EdugameCloud.Core.Domain.DTO
             //};
         }
 
-        [DataMember]
-        public int eventQuizMappingId { get; set; }
-        [DataMember]
-        public int preQuizId { get; set; }
-        [DataMember]
-        public int postQuizId { get; set; }
-        [DataMember]
-        public int companyAcDomainId { get; set; }
-        [DataMember]
-        public string acEventScoId { get; set; }
+       
 
 
         //[DataMember]
