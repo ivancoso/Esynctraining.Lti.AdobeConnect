@@ -97,7 +97,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 OperationResult ret = MeetingSetup.SaveMeeting(
                     credentials,
-                    this.GetAdminProvider(credentials),
+                    this.GetCurrentUserProvider(session),
                     param,
                     meeting,
                     trace,
@@ -132,7 +132,7 @@ namespace EdugameCloud.Lti.Controllers
                 var fb = new SeminarFolderBuilder(seminarLicenseId);
                 OperationResult ret = MeetingSetup.SaveMeeting(
                     credentials,
-                    this.GetAdminProvider(credentials),
+                    this.GetCurrentUserProvider(session),
                     param,
                     meeting,
                     trace,
