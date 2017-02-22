@@ -8,12 +8,12 @@ namespace EdugameCloud.Core.Domain.DTO
     {
         public CompanyQuizEventMappingDTO(CompanyEventQuizMapping entity)
         {
-            AcEventScoId = entity.AcEventScoId;
-            PreQuizId = entity.PreQuiz.Id;
-            PostQuizId = entity.PostQuiz.Id;
-            EventQuizMappingId = entity.Id;
-            CompanyAcDomainId = entity.CompanyAcDomain.Id;
-            CompanyAcDomain = new ACDomainDTO()
+            acEventScoId = entity.AcEventScoId;
+            preQuizId = entity.PreQuiz.Id;
+            postQuizId = entity.PostQuiz.Id;
+            eventQuizMappingId = entity.Id;
+            companyAcDomainId = entity.CompanyAcDomain.Id;
+            companyAcDomain = new ACDomainDTO()
             {
                 companyId = entity.CompanyAcDomain.Company.Id,
                 password = entity.CompanyAcDomain.Password,
@@ -25,18 +25,18 @@ namespace EdugameCloud.Core.Domain.DTO
         }
 
         [DataMember]
-        public int EventQuizMappingId { get; set; }
+        public int eventQuizMappingId { get; set; }
         [DataMember]
-        public int PreQuizId { get; set; }
+        public int preQuizId { get; set; }
         [DataMember]
-        public int PostQuizId { get; set; }
+        public int postQuizId { get; set; }
         [DataMember]
-        public int CompanyAcDomainId { get; set; }
+        public int companyAcDomainId { get; set; }
         [DataMember]
-        public string AcEventScoId { get; set; }
+        public string acEventScoId { get; set; }
 
         [DataMember]
-        public ACDomainDTO CompanyAcDomain { get; set; } 
+        public ACDomainDTO companyAcDomain { get; set; } 
 
     }
 }

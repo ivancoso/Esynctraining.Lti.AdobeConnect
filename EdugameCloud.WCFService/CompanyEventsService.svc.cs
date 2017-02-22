@@ -46,6 +46,10 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<QuizModel>(); }
         }
 
+        private ILogger Logger
+        {
+            get { return IoC.Resolve<ILogger>(); }
+        }
 
         public CompanyEventDTO[] GetEventsByCompany(int companyId)
         {
@@ -101,19 +105,19 @@ namespace EdugameCloud.WCFService
 
         public CompanyQuizEventMappingDTO Save(CompanyQuizEventMappingDTO eventQuizMapping)
         {
-            var companyAcDomain = CompanyAcServerModel.GetOneById(eventQuizMapping.CompanyAcDomainId).Value;
-            var preQuiz = QuizModel.GetOneById(eventQuizMapping.PreQuizId).Value;
-            var postQuiz = QuizModel.GetOneById(eventQuizMapping.PostQuizId).Value;
+            var companyAcDomain = CompanyAcServerModel.GetOneById(eventQuizMapping.companyAcDomainId).Value;
+            var preQuiz = QuizModel.GetOneById(eventQuizMapping.preQuizId).Value;
+            var postQuiz = QuizModel.GetOneById(eventQuizMapping.postQuizId).Value;
             var companyEventQuizMapping = new CompanyEventQuizMapping()
             {
-                Id = eventQuizMapping.EventQuizMappingId,
+                Id = eventQuizMapping.eventQuizMappingId,
                 CompanyAcDomain = companyAcDomain,
                 PreQuiz = preQuiz,
                 PostQuiz = postQuiz,
-                AcEventScoId = eventQuizMapping.AcEventScoId
+                AcEventScoId = eventQuizMapping.acEventScoId
             };
             CompanyEventQuizMappingModel.RegisterSave(companyEventQuizMapping, true);
-            eventQuizMapping.EventQuizMappingId = companyEventQuizMapping.Id;
+            eventQuizMapping.eventQuizMappingId = companyEventQuizMapping.Id;
             return eventQuizMapping;
         }
 
