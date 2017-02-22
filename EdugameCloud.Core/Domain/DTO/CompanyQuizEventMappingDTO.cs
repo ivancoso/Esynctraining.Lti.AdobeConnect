@@ -25,7 +25,6 @@ namespace EdugameCloud.Core.Domain.DTO
                 user = entity.CompanyAcDomain.Username
             };
         }
-
         [DataMember]
         public int eventQuizMappingId { get; set; }
         [DataMember]
