@@ -36,6 +36,7 @@
             this.description = result.Description;
             this.quizName = result.QuizName;
             this.lmsQuizId = result.LmsQuizId ?? 0;
+            this.IsPostQuiz = result.IsPostQuiz;
         }
 
         #endregion
