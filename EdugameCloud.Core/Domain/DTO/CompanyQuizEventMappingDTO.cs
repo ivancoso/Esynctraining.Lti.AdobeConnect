@@ -3,7 +3,9 @@ using EdugameCloud.Core.Domain.Entities;
 
 namespace EdugameCloud.Core.Domain.DTO
 {
+    
     [DataContract]
+    [KnownType(typeof(ACDomainDTO))]
     public class CompanyQuizEventMappingDTO
     {
         public CompanyQuizEventMappingDTO(CompanyEventQuizMapping entity)
