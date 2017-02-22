@@ -293,7 +293,7 @@ namespace EdugameCloud.WCFService
                     throw new ArgumentNullException("principalIds");
 
                 LmsCompany currentLicence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
-                Lti.API.AdobeConnect.IAdobeConnectProxy currentLicenseProvider = null;
+                IAdobeConnectProxy currentLicenseProvider = null;
                 try
                 {
                     currentLicenseProvider = AdobeConnectAccountService.GetProvider(currentLicence.AcServer, new UserCredentials(login, password), true);
