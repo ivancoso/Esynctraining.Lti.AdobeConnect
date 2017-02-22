@@ -94,7 +94,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         {
             _logger.Info("Gettings states");
             var lookupWebService = new edugamecloud.com.LookupService();
-            _logger.Info("lookup url is "+lookupWebService.Url);
+            _logger.Info("lookup url is " + lookupWebService.Url);
             var schools = lookupWebService.GetSchools().Where(x => x.State.stateCode == stateCode);
             var stateSchools = schools.OrderBy(x => x.AccountName);
             return Json(stateSchools, JsonRequestBehavior.AllowGet);
@@ -118,21 +118,24 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             //var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = new Uri(acUrl);
             var logger = IoC.Resolve<ILogger>();
+            var scoId = companyQuizEventMappingDto.acEventScoId;
             //var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
 
             var httpClient = new HttpClient();
-            
-            var eventRegisterUrl = acUrl + "/api/xml" + "?action=event-register&sco-id=" + eventModel.EventQuizMappingId + "&login=" +
-                             Url.Encode(eventModel.Email) + "&password=" + eventModel.Password + "&password-verify=" +
-                             eventModel.VerifyPassword +
-                             "&first-name=" + eventModel.FirstName + "&last-name=" + eventModel.LastName +
-                             "&interaction-id=1763444230&response=" + eventModel.School;
+
+            //var interactionId = 1763444230;
+            var interactionId = 2921402;
+            var eventRegisterUrl = acUrl + "/api/xml" + "?action=event-register&sco-id=" + scoId + "&login=" +
+                      Url.Encode(eventModel.Email) + "&password=" + eventModel.Password + "&password-verify=" +
+                      eventModel.VerifyPassword +
+                      "&first-name=" + eventModel.FirstName + "&last-name=" + eventModel.LastName +
+                      "&interaction-id=" + interactionId + "&response=" + eventModel.School;
             var result = await httpClient.GetAsync(eventRegisterUrl);
             _logger.Info(result.Content.ToString());
             return true;
         }
 
-      
+
 
     }
 }
