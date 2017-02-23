@@ -131,7 +131,8 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                       "&first-name=" + eventModel.FirstName + "&last-name=" + eventModel.LastName +
                       "&interaction-id=" + interactionId + "&response=" + eventModel.School;
             var result = await httpClient.GetAsync(eventRegisterUrl);
-            _logger.Info(result.Content.ToString());
+            var content = result.Content.ReadAsStringAsync();
+            _logger.Info(content.Result);
             return true;
         }
 

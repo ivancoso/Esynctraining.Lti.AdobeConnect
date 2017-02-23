@@ -95,6 +95,9 @@
         [DataMember]
         public virtual int? lmsQuizId { get; set; }
 
+        [DataMember]
+        public virtual bool isPostQuiz { get; set; }
+
         #endregion
     }
 }

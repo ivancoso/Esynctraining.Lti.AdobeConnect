@@ -327,6 +327,9 @@
     <Content Include="Web References\edugamecloud.com1\CompanyQuizEventMappingDTO.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
+    <Content Include="Web References\edugamecloud.com1\CompanyQuizEventMappingSaveDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
     <None Include="Web References\edugamecloud.com1\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>

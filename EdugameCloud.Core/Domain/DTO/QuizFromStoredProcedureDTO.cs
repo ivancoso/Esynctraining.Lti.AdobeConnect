@@ -126,6 +126,9 @@
         [DataMember]
         public int? lmsQuizId { get; set; }
 
+        [DataMember]
+        public bool isPostQuiz { get; set; }
+
         #endregion
     }
 }

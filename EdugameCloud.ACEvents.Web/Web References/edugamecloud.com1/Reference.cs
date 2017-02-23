@@ -335,19 +335,19 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/ICompanyEventsService/Save", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         [return: System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public CompanyQuizEventMappingDTO Save([System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] CompanyQuizEventMappingDTO eventQuizMapping) {
+        public CompanyQuizEventMappingSaveDTO Save([System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] CompanyQuizEventMappingSaveDTO eventQuizMapping) {
             object[] results = this.Invoke("Save", new object[] {
                         eventQuizMapping});
-            return ((CompanyQuizEventMappingDTO)(results[0]));
+            return ((CompanyQuizEventMappingSaveDTO)(results[0]));
         }
         
         /// <remarks/>
-        public void SaveAsync(CompanyQuizEventMappingDTO eventQuizMapping) {
+        public void SaveAsync(CompanyQuizEventMappingSaveDTO eventQuizMapping) {
             this.SaveAsync(eventQuizMapping, null);
         }
         
         /// <remarks/>
-        public void SaveAsync(CompanyQuizEventMappingDTO eventQuizMapping, object userState) {
+        public void SaveAsync(CompanyQuizEventMappingSaveDTO eventQuizMapping, object userState) {
             if ((this.SaveOperationCompleted == null)) {
                 this.SaveOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSaveOperationCompleted);
             }
@@ -387,7 +387,266 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO")]
-    public partial class CompanyQuizEventMappingDTO {
+    public partial class CompanyQuizEventMappingDTO : CompanyQuizEventMappingSaveDTO {
+        
+        private CompanyEventDTO acEventInfoField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public CompanyEventDTO acEventInfo {
+            get {
+                return this.acEventInfoField;
+            }
+            set {
+                this.acEventInfoField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO")]
+    public partial class CompanyEventDTO {
+        
+        private int companyIdField;
+        
+        private bool companyIdFieldSpecified;
+        
+        private System.DateTime dateBeginField;
+        
+        private bool dateBeginFieldSpecified;
+        
+        private System.DateTime dateCreatedField;
+        
+        private bool dateCreatedFieldSpecified;
+        
+        private System.DateTime dateEndField;
+        
+        private bool dateEndFieldSpecified;
+        
+        private System.DateTime dateModifiedField;
+        
+        private bool dateModifiedFieldSpecified;
+        
+        private string descField;
+        
+        private bool isMappedToQuizzesField;
+        
+        private bool isMappedToQuizzesFieldSpecified;
+        
+        private bool isSeminarField;
+        
+        private bool isSeminarFieldSpecified;
+        
+        private string nameField;
+        
+        private string scoIdField;
+        
+        private string urlPathField;
+        
+        /// <remarks/>
+        public int companyId {
+            get {
+                return this.companyIdField;
+            }
+            set {
+                this.companyIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool companyIdSpecified {
+            get {
+                return this.companyIdFieldSpecified;
+            }
+            set {
+                this.companyIdFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public System.DateTime dateBegin {
+            get {
+                return this.dateBeginField;
+            }
+            set {
+                this.dateBeginField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool dateBeginSpecified {
+            get {
+                return this.dateBeginFieldSpecified;
+            }
+            set {
+                this.dateBeginFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public System.DateTime dateCreated {
+            get {
+                return this.dateCreatedField;
+            }
+            set {
+                this.dateCreatedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool dateCreatedSpecified {
+            get {
+                return this.dateCreatedFieldSpecified;
+            }
+            set {
+                this.dateCreatedFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public System.DateTime dateEnd {
+            get {
+                return this.dateEndField;
+            }
+            set {
+                this.dateEndField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool dateEndSpecified {
+            get {
+                return this.dateEndFieldSpecified;
+            }
+            set {
+                this.dateEndFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public System.DateTime dateModified {
+            get {
+                return this.dateModifiedField;
+            }
+            set {
+                this.dateModifiedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool dateModifiedSpecified {
+            get {
+                return this.dateModifiedFieldSpecified;
+            }
+            set {
+                this.dateModifiedFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string desc {
+            get {
+                return this.descField;
+            }
+            set {
+                this.descField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool isMappedToQuizzes {
+            get {
+                return this.isMappedToQuizzesField;
+            }
+            set {
+                this.isMappedToQuizzesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool isMappedToQuizzesSpecified {
+            get {
+                return this.isMappedToQuizzesFieldSpecified;
+            }
+            set {
+                this.isMappedToQuizzesFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool isSeminar {
+            get {
+                return this.isSeminarField;
+            }
+            set {
+                this.isSeminarField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool isSeminarSpecified {
+            get {
+                return this.isSeminarFieldSpecified;
+            }
+            set {
+                this.isSeminarFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string scoId {
+            get {
+                return this.scoIdField;
+            }
+            set {
+                this.scoIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string urlPath {
+            get {
+                return this.urlPathField;
+            }
+            set {
+                this.urlPathField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(CompanyQuizEventMappingDTO))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO")]
+    public partial class CompanyQuizEventMappingSaveDTO {
         
         private string acEventScoIdField;
         
@@ -499,142 +758,6 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
             }
             set {
                 this.preQuizIdFieldSpecified = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO")]
-    public partial class CompanyEventDTO {
-        
-        private int companyIdField;
-        
-        private bool companyIdFieldSpecified;
-        
-        private System.DateTime dateBeginField;
-        
-        private bool dateBeginFieldSpecified;
-        
-        private string descField;
-        
-        private bool isMappedToQuizzesField;
-        
-        private bool isMappedToQuizzesFieldSpecified;
-        
-        private string nameField;
-        
-        private string scoIdField;
-        
-        private string urlPathField;
-        
-        /// <remarks/>
-        public int companyId {
-            get {
-                return this.companyIdField;
-            }
-            set {
-                this.companyIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool companyIdSpecified {
-            get {
-                return this.companyIdFieldSpecified;
-            }
-            set {
-                this.companyIdFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public System.DateTime dateBegin {
-            get {
-                return this.dateBeginField;
-            }
-            set {
-                this.dateBeginField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool dateBeginSpecified {
-            get {
-                return this.dateBeginFieldSpecified;
-            }
-            set {
-                this.dateBeginFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string desc {
-            get {
-                return this.descField;
-            }
-            set {
-                this.descField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public bool isMappedToQuizzes {
-            get {
-                return this.isMappedToQuizzesField;
-            }
-            set {
-                this.isMappedToQuizzesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool isMappedToQuizzesSpecified {
-            get {
-                return this.isMappedToQuizzesFieldSpecified;
-            }
-            set {
-                this.isMappedToQuizzesFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string scoId {
-            get {
-                return this.scoIdField;
-            }
-            set {
-                this.scoIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string urlPath {
-            get {
-                return this.urlPathField;
-            }
-            set {
-                this.urlPathField = value;
             }
         }
     }
@@ -847,10 +970,10 @@ namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
         }
         
         /// <remarks/>
-        public CompanyQuizEventMappingDTO Result {
+        public CompanyQuizEventMappingSaveDTO Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((CompanyQuizEventMappingDTO)(this.results[0]));
+                return ((CompanyQuizEventMappingSaveDTO)(this.results[0]));
             }
         }
     }
