@@ -294,7 +294,7 @@
             instance = instance ?? new Quiz();
             instance.QuizName = itemDTO.quizName.With(x => x.Trim());
             instance.Description = itemDTO.description.With(x => x.Trim());
-            instance.IsPostQuiz = itemDTO.IsPostQuiz;
+            instance.IsPostQuiz = itemDTO.isPostQuiz;
             instance.SubModuleItem = itemDTO.subModuleItemId.HasValue ? this.SubModuleItemModel.GetOneById(itemDTO.subModuleItemId.Value).Value : null;
             instance.QuizFormat = itemDTO.quizFormatId.HasValue ? this.QuizFormatModel.GetOneById(itemDTO.quizFormatId.Value).Value ?? this.QuizFormatModel.GetOneById(1).Value : this.QuizFormatModel.GetOneById(1).Value;
             instance.ScoreType = itemDTO.scoreTypeId.HasValue ? this.ScoreTypeModel.GetOneById(itemDTO.scoreTypeId.Value).Value ?? this.ScoreTypeModel.GetOneById(1).Value : this.ScoreTypeModel.GetOneById(1).Value;

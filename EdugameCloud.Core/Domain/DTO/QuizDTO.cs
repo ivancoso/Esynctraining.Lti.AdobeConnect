@@ -36,7 +36,7 @@
             this.description = result.Description;
             this.quizName = result.QuizName;
             this.lmsQuizId = result.LmsQuizId ?? 0;
-            this.IsPostQuiz = result.IsPostQuiz;
+            this.isPostQuiz = result.IsPostQuiz;
         }
 
         #endregion
@@ -86,7 +86,7 @@
         public int lmsQuizId { get; set; }
         
         [DataMember]
-        public bool IsPostQuiz { get; set; }
+        public bool isPostQuiz { get; set; }
 
         #endregion
     }
