@@ -493,6 +493,8 @@
                             .WithAlias(() => dto.lastName)
                             .Select(() => u.FirstName)
                             .WithAlias(() => dto.firstName)
+                            .Select(() => q.IsPostQuiz)
+                            .WithAlias(() => dto.isPostQuiz)
                             .Select(() => u.Id)
                             .WithAlias(() => dto.userId)
                             .Select(() => u2.LastName)
