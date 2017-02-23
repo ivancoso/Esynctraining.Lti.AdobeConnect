@@ -39,16 +39,17 @@ GO
 ALTER TABLE [dbo].[CompanyEventQuizMapping] CHECK CONSTRAINT [FK_CompanyEventQuizMapping_CompanyAcDomains]
 GO
 
-ALTER TABLE [dbo].[CompanyEventQuizMapping]  WITH CHECK ADD  CONSTRAINT [FK_CompanyEventQuizMapping_Quiz] FOREIGN KEY([PostQuizId])
+ALTER TABLE [dbo].[CompanyEventQuizMapping]  WITH CHECK ADD  CONSTRAINT [FK_CompanyEventQuizMapping_Quiz] FOREIGN KEY([PreQuizId])
 REFERENCES [dbo].[Quiz] ([quizId])
 GO
 
 ALTER TABLE [dbo].[CompanyEventQuizMapping] CHECK CONSTRAINT [FK_CompanyEventQuizMapping_Quiz]
 GO
 
-ALTER TABLE [dbo].[CompanyEventQuizMapping]  WITH CHECK ADD  CONSTRAINT [FK_CompanyEventQuizMapping_Quiz1] FOREIGN KEY([PreQuizId])
+ALTER TABLE [dbo].[CompanyEventQuizMapping]  WITH CHECK ADD  CONSTRAINT [FK_CompanyEventQuizMapping_Quiz_Cascade] FOREIGN KEY([PostQuizId])
 REFERENCES [dbo].[Quiz] ([quizId])
+ON DELETE CASCADE
 GO
 
-ALTER TABLE [dbo].[CompanyEventQuizMapping] CHECK CONSTRAINT [FK_CompanyEventQuizMapping_Quiz1]
+ALTER TABLE [dbo].[CompanyEventQuizMapping] CHECK CONSTRAINT [FK_CompanyEventQuizMapping_Quiz_Cascade]
 GO
