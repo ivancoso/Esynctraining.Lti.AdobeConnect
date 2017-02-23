@@ -6,7 +6,7 @@ namespace EdugameCloud.Core.Domain.DTO
     [DataContract]
     public class CompanyQuizEventMappingDTO : CompanyQuizEventMappingSaveDTO
     {
-        public CompanyQuizEventMappingDTO(CompanyEventQuizMapping entity)
+        public CompanyQuizEventMappingDTO(CompanyEventQuizMapping entity, CompanyEventDTO eventDto = null)
         {
             acEventScoId = entity.AcEventScoId;
             preQuizId = entity.PreQuiz.Id;
@@ -22,11 +22,21 @@ namespace EdugameCloud.Core.Domain.DTO
             //    path = entity.CompanyAcDomain.AcServer,
             //    user = entity.CompanyAcDomain.Username
             //};
+            if (eventDto != null)
+            {
+                acEventInfo = new CompanyEventDTO()
+                {
+                    companyId = eventDto.companyId,
+                    dateEnd = eventDto.dateEnd,
+                    desc = eventDto.desc
+                };
+            }
         }
 
        
 
-
+        [DataMember]
+        public CompanyEventDTO acEventInfo { get; set; }
         //[DataMember]
         //public ACDomainDTO companyAcDomain { get; set; } 
 

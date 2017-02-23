@@ -144,14 +144,28 @@ namespace EdugameCloud.WCFService
         public CompanyQuizEventMappingDTO[] GetEventQuizMappingsByCompanyId(int companyId)
         {
             var events = CompanyEventQuizMappingModel.GetAllByCompanyId(companyId);
-            var result = events.Select(x => new CompanyQuizEventMappingDTO(x)).ToArray();
+            var defaultAcDomain = CompanyAcServerModel.GetAllByCompany(companyId).FirstOrDefault(x => x.IsDefault);
+            if (defaultAcDomain == null)
+            {
+                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+                return null;
+            }
+            var acEvents = GetAllEventsFromAcServer(defaultAcDomain);
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId))).ToArray();
             return result;
         }
 
         public CompanyQuizEventMappingDTO[] GetEventQuizMappingsByAcServerId(int acServerId)
         {
             var events = CompanyEventQuizMappingModel.GetAllByAcServerId(acServerId);
-            var result = events.Select(x => new CompanyQuizEventMappingDTO(x)).ToArray();
+            var defaultAcDomain = CompanyAcServerModel.GetOneById(acServerId).Value;
+            if (defaultAcDomain == null)
+            {
+                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+                return null;
+            }
+            var acEvents = GetAllEventsFromAcServer(defaultAcDomain);
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId))).ToArray();
             return result;
         }
 
