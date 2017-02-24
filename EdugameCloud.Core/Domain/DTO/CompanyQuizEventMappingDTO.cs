@@ -9,8 +9,8 @@ namespace EdugameCloud.Core.Domain.DTO
         public CompanyQuizEventMappingDTO(CompanyEventQuizMapping entity, CompanyEventDTO eventDto = null)
         {
             acEventScoId = entity.AcEventScoId;
-            preQuizId = entity.PreQuiz.Id;
-            postQuizId = entity.PostQuiz.Id;
+            preQuizId = entity.PreQuiz?.Id ?? 0;
+            postQuizId = entity.PostQuiz?.Id ?? 0;
             eventQuizMappingId = entity.Id;
             companyAcDomainId = entity.CompanyAcDomain.Id;
             //companyAcDomain = new ACDomainDTO()
