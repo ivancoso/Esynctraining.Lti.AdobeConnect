@@ -38,6 +38,7 @@
             this.subModuleItemId = dto.subModuleItemId;
             this.userId = dto.userId;
             this.lmsQuizId = dto.lmsQuizId;
+            isPostQuiz = dto.isPostQuiz;
         }
 
         #region Public Properties
