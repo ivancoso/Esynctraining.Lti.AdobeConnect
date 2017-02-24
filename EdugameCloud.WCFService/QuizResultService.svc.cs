@@ -33,6 +33,7 @@ namespace EdugameCloud.WCFService
         private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
 
         private QuizModel QuizModel => IoC.Resolve<QuizModel>();
+        private CompanyEventQuizMappingModel EventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
 
         #endregion
 
@@ -207,6 +208,8 @@ namespace EdugameCloud.WCFService
             instance.LmsId = resultDTO.lmsId;
             instance.LmsUserParametersId = resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null;
             instance.isCompleted = resultDTO.isCompleted;
+            if (resultDTO.eventQuizMappingId.HasValue)
+                instance.EventQuizMapping = EventQuizMappingModel.GetOneById(resultDTO.eventQuizMappingId.Value).Value;
             return instance;
         }
 

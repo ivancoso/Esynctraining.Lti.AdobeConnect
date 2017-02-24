@@ -28,6 +28,7 @@
             this.Map(x => x.LmsUserParametersId).Nullable();
 
             this.HasMany(x => x.Results).Cascade.Delete().ExtraLazyLoad().Inverse();
+            References(x => x.EventQuizMapping).Nullable();
             this.References(x => x.Quiz).Not.Nullable();
         }
 

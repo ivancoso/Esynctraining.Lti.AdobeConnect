@@ -54,6 +54,9 @@
         [DataMember]
         public CompanyLmsDTO[] companyLms { get; set; }
 
+        [DataMember]
+        public bool companyUseEventMapping { get; set; }
+
         #endregion
     }
 }

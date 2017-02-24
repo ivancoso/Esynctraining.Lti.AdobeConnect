@@ -31,9 +31,15 @@ namespace EdugameCloud.Core.Domain.DTO
                     desc = eventDto.desc
                 };
             }
+
+            if (eventQuizMappingId != 0)
+            {
+                registrationUrl = "http://dev.esynctraining.com:8066?eventQuizMappingId=" + eventQuizMappingId;
+            }
         }
 
-       
+        [DataMember]
+        public string registrationUrl { get; set; }
 
         [DataMember]
         public CompanyEventDTO acEventInfo { get; set; }

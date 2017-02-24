@@ -82,6 +82,8 @@
         /// </summary>
         public virtual int? LmsUserParametersId { get; set; }
 
+        public virtual CompanyEventQuizMapping EventQuizMapping { get; set; }
+
         #endregion
 
         public QuizResult()

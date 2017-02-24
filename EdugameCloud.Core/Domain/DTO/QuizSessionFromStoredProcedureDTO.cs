@@ -89,6 +89,9 @@
         [DataMember]
         public virtual int userId { get; set; }
 
+        [DataMember]
+        public int? eventQuizMappingId { get; set; }
+
         #endregion
     }
 }

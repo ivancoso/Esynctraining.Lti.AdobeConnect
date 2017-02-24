@@ -42,6 +42,7 @@
             this.lmsUserParametersId = result.LmsUserParametersId ?? 0;
             this.acEmail = result.ACEmail;
             this.isCompleted = result.isCompleted ?? false;
+            this.eventQuizMappingId = result.EventQuizMapping.Id;
         }
 
         #endregion
@@ -143,6 +144,9 @@
         /// </summary>
         [DataMember]
         public int inFocusIndex { get; set; }
+
+        [DataMember]
+        public int? eventQuizMappingId { get; set; }
 
 
         #endregion

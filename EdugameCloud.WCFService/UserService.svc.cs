@@ -551,6 +551,7 @@
             }
 
             var companyLms = this.LmsCompanyModel.GetAllByCompanyId(user.Company.Id);
+            
 
             if (dto.lmsUserParametersId != null)
             {
@@ -591,7 +592,7 @@
             }
 
             result.companyLms = companyLms.Select(c => new CompanyLmsDTO(c, LmsProviderModel.GetById(c.LmsProviderId), Settings)).ToArray();
-
+            result.companyUseEventMapping = user.Company.UseEventMapping;
             return result;
         }
 

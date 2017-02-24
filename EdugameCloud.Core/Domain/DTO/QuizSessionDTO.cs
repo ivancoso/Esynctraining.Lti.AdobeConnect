@@ -33,6 +33,7 @@
             this.totalParticipants = dto.totalParticipants;
             this.quizName = dto.quizName;
             this.subModuleItemId = dto.subModuleItemId;
+            this.eventQuizMappingId = dto.eventQuizMappingId;
         }
 
         #region Public Properties
@@ -42,7 +43,10 @@
         /// </summary>
         [DataMember]
         public string quizName { get; set; }
-                
+
+        [DataMember]
+        public int? eventQuizMappingId { get; set; }
+
         #endregion
 
     }

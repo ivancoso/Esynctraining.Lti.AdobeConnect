@@ -53,3 +53,21 @@ GO
 
 ALTER TABLE [dbo].[CompanyEventQuizMapping] CHECK CONSTRAINT [FK_CompanyEventQuizMapping_Quiz_Cascade]
 GO
+
+
+
+
+
+alter table dbo.QuizResult
+drop constraint FK_QuizResult_EventQuizMapping
+
+alter table dbo.QuizResult
+drop column EventQuizMappingId
+
+alter table dbo.QuizResult
+add EventQuizMappingId int
+GO
+alter table dbo.QuizResult
+ADD CONSTRAINT FK_QuizResult_EventQuizMapping FOREIGN KEY (EventQuizMappingId)     
+    REFERENCES dbo.CompanyEventQuizMapping (CompanyEventQuizMappingId)     
+   
