@@ -28,7 +28,15 @@ namespace EdugameCloud.Core.Domain.DTO
                 {
                     companyId = eventDto.companyId,
                     dateEnd = eventDto.dateEnd,
-                    desc = eventDto.desc
+                    desc = eventDto.desc,
+                    scoId = eventDto.scoId,
+                    name = eventDto.name,
+                    dateCreated = eventDto.dateCreated,
+                    dateBegin = eventDto.dateBegin,
+                    dateModified = eventDto.dateModified,
+                    urlPath = eventDto.urlPath,
+                    isMappedToQuizzes = eventDto.isMappedToQuizzes,
+                    isSeminar = eventDto.isSeminar
                 };
             }
 

@@ -54,9 +54,9 @@
         /// The repository.
         /// </param>
         public QuizModel(
-            FileModel fileModel, 
-            DistractorModel distractorModel, 
-            IRepository<User, int> userRepository, 
+            FileModel fileModel,
+            DistractorModel distractorModel,
+            IRepository<User, int> userRepository,
             IRepository<Quiz, int> repository)
             : base(repository)
         {
@@ -264,7 +264,7 @@
         {
             IEnumerable<QuestionFromStoredProcedureDTO> questions =
                 this.Repository.StoreProcedureForMany<QuestionFromStoredProcedureDTO>(
-                    "getSMIQuestionsBySMIId", 
+                    "getSMIQuestionsBySMIId",
                     new StoreProcedureParam<int>("subModuleItemId", smiId));
             List<Guid> imageIds = questions.Where(x => x.imageId.HasValue).Select(x => x.imageId.Value).ToList();
             if (imageIds.Any())
@@ -291,19 +291,19 @@
         public Dictionary<int, RecentReportDTO> GetQuizes(List<int> reportsIds)
         {
             RecentReportDTO dto = null;
-            return
-                this.Repository.FindAll<RecentReportDTO>(
-                    new DefaultQueryOver<Quiz, int>().GetQueryOver()
-                        .WhereRestrictionOn(x => x.SubModuleItem.Id)
-                        .IsIn(reportsIds)
-                        .SelectList(
-                            list =>
+            var recentReportDtos = this.Repository.FindAll<RecentReportDTO>(
+                new DefaultQueryOver<Quiz, int>().GetQueryOver()
+                    .WhereRestrictionOn(x => x.SubModuleItem.Id)
+                    .IsIn(reportsIds)
+                    .SelectList(
+                        list =>
                             list.Select(x => x.QuizName)
                                 .WithAlias(() => dto.name)
                                 .Select(x => x.SubModuleItem.Id)
                                 .WithAlias(() => dto.subModuleItemId))
-                        .TransformUsing(Transformers.AliasToBean<RecentReportDTO>()))
-                    .ToDictionary(x => x.subModuleItemId, x => x);
+                    .TransformUsing(Transformers.AliasToBean<RecentReportDTO>()));
+            return
+                recentReportDtos.ToDictionary(x => x.subModuleItemId, x => x);
         }
 
         /// <summary>
