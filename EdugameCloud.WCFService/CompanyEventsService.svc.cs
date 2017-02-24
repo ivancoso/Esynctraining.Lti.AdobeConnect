@@ -77,8 +77,10 @@ namespace EdugameCloud.WCFService
                 return null;
             var result = new List<CompanyEventDTO>();
             var eventsOnly = eventContent.Values.Where(x => x.Type == "event");
+
             foreach (var content in eventsOnly)
             {
+                
                 result.Add(new CompanyEventDTO()
                 {
                     companyId = defaultAcDomain.Company.Id,
@@ -91,8 +93,11 @@ namespace EdugameCloud.WCFService
                     dateCreated = content.DateCreated,
                     dateModified = content.DateModified,
                     isSeminar = content.IsSeminar,
-                    isMappedToQuizzes = CompanyEventQuizMappingModel.GetAllByCompanyId(defaultAcDomain.Company.Id).Any(x => x.AcEventScoId == content.ScoId)
+                    isMappedToQuizzes = CompanyEventQuizMappingModel.GetAllByCompanyId(defaultAcDomain.Company.Id).Any(x => x.AcEventScoId == content.ScoId),
+                    meetingUrl = acProxy.GetScoInfo(content.ScoId).ScoInfo?.SourceSco?.UrlPath
+                    //meetingUrl = content.ScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).Success ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).Success && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).ScoInfo.UrlPath : String.Empty : string.Empty,
                 });
+                
             }
             return result.ToArray();
         }

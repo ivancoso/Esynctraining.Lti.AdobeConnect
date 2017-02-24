@@ -34,5 +34,8 @@ namespace EdugameCloud.Core.Domain.DTO
         [DataMember]
         public bool isMappedToQuizzes { get; set; }
 
+        [DataMember]
+        public string meetingUrl { get; set; }
+
     }
 }

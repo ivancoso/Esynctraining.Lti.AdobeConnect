@@ -36,7 +36,8 @@ namespace EdugameCloud.Core.Domain.DTO
                     dateModified = eventDto.dateModified,
                     urlPath = eventDto.urlPath,
                     isMappedToQuizzes = eventDto.isMappedToQuizzes,
-                    isSeminar = eventDto.isSeminar
+                    isSeminar = eventDto.isSeminar,
+                    meetingUrl = eventDto.meetingUrl
                 };
             }
 
