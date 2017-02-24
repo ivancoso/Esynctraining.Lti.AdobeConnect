@@ -1,16 +1,16 @@
 {
-	"version": "1.0.1.15",
+	"version": "1.0.1.16",
 	"title": "Esynctraining.AdobeConnect",
 	"description": "Esynctraining AC DTO, Proxies, Services and Wrappers",
 	"copyright": "Copyright © 2016-2017 eSyncTraining.com",
 	"authors": [ "eSyncTraining.com" ],
 
-	"packOptions": {
-		"requireLicenseAcceptance": false,
-		"tags": [ "AC", "AdobeConnect" ],
-		"owners": [ "eSyncTraining.com" ],
-		"releaseNotes": "sco-contents - added filter by sco-type"
-	},
+  "packOptions": {
+    "requireLicenseAcceptance": false,
+    "tags": [ "AC", "AdobeConnect" ],
+    "owners": [ "eSyncTraining.com" ],
+    "releaseNotes": "+event-registration-details; +scoInfo.SourceSco"
+  },
 
 	"buildOptions": {
 			"embed": [
@@ -19,7 +19,7 @@
 	},
 
 	"dependencies": {
-		"Esynctraining.AC.Provider": "1.0.2.19",
+		"Esynctraining.AC.Provider": "1.0.2.21",
 		"Esynctraining.Core.Only": "1.0.0.27",
 		"NodaTime": "1.3.2"
 		//"NETStandard.Library": "1.6.0"

@@ -73,9 +73,15 @@
 
             var doc = this.requestProcessor.Process(Commands.Sco.Info, string.Format(CommandParams.ScoId, scoId), out status);
 
-            return ResponseIsOk(doc, status)
-                ? new ScoInfoResult(status, ScoInfoParser.Parse(doc.SelectSingleNode(ScoHome)))
-                : new ScoInfoResult(status);
+            if (ResponseIsOk(doc, status))
+            {
+                var mainSco = ScoInfoParser.Parse(doc.SelectSingleNode(ScoHome));
+                //todo: move to parser
+                mainSco.SourceSco = ScoInfoParser.Parse(doc.SelectSingleNode("//source-sco/source-sco"));
+                return new ScoInfoResult(status, mainSco);
+            }
+
+            return new ScoInfoResult(status);
         }
 
         /// <summary>

@@ -861,7 +861,7 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.ReportMeetingSessions(scoId, filter: filter, startIndex: startIndex, limit: limit); },
                 scoId);
         }
-
+        
         public MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0)
         {
             return Execute(() => { return _provider.ReportMyMeetings(startIndex, limit); });
@@ -876,6 +876,11 @@ namespace Esynctraining.AdobeConnect
         //{
         //    return Execute(() => { return _provider.ReportRecordingsPaged(totalLimit, filter, sort); });
         //}
+
+        public EventRegistrationDetails GetEventRegistrationDetails(string scoId)
+        {
+            return Execute(() => { return _provider.GetEventRegistrationDetails(scoId).Value; }, scoId);
+        }
 
         public ReportScoViewsContentCollectionResult ReportScoViews(string scoId)
         {

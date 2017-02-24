@@ -145,5 +145,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("meeting-passcode")]
         public string MeetingPasscode { get; set; }
+
+        public ScoInfo SourceSco { get; set; }
     }
 }

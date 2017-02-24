@@ -17,4 +17,14 @@
         {
         }
     }
+
+    public class GenericResult<T> : GenericResult
+    {
+        public GenericResult(StatusInfo status, T value) : base(status)
+        {
+            Value = value;
+        }
+
+        public T Value { get; private set; }
+    }
 }

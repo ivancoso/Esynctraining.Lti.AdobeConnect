@@ -158,6 +158,7 @@ namespace Esynctraining.AdobeConnect
         MeetingSessionCollectionResult ReportMeetingSessions(string scoId, string filter = null, int startIndex = 0, int limit = 0);
 
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
+        EventRegistrationDetails GetEventRegistrationDetails(string scoId);
 
         MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
 
