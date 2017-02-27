@@ -84,6 +84,11 @@
 
         public virtual CompanyEventQuizMapping EventQuizMapping { get; set; }
 
+        public virtual int AppInFocusTime { get; set; }
+
+        
+        public virtual int AppMaximizedTime { get; set; }
+
         #endregion
 
         public QuizResult()

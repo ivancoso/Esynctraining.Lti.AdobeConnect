@@ -43,6 +43,8 @@
             this.acEmail = result.ACEmail;
             this.isCompleted = result.isCompleted ?? false;
             this.eventQuizMappingId = result.EventQuizMapping.Id;
+            this.appInFocusTime = result.AppInFocusTime;
+            this.appMaximizedTime = result.AppMaximizedTime;
         }
 
         #endregion

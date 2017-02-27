@@ -36,6 +36,7 @@
             this.score = dto.score;
             this.startTime = dto.startTime.ConvertToUnixTimestamp();
             this.isCompleted = dto.isCompleted;
+            this.isParticipated = dto.appMaximizedTime == null || dto.appInFocusTime == null || ((dto.appMaximizedTime.Value > 95) && (dto.appInFocusTime.Value > 95));
         }
 
         #endregion

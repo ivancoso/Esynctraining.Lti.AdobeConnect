@@ -59,11 +59,17 @@
         [DataMember]
         public virtual DateTime startTime { get; set; }
 
+        [DataMember]
+        public virtual bool isCompleted { get; set; }
+
         /// <summary>
         /// Gets or sets a value indicating whether is completed.
         /// </summary>
         [DataMember]
-        public virtual bool isCompleted { get; set; }
+        public virtual int? appMaximizedTime { get; set; }
+
+        [DataMember]
+        public virtual int? appInFocusTime { get; set; }
 
 
         #endregion

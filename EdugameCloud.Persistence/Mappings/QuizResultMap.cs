@@ -26,6 +26,8 @@
             this.Map(x => x.LmsId).Nullable();
             this.Map(x => x.isCompleted).Nullable();
             this.Map(x => x.LmsUserParametersId).Nullable();
+            this.Map(x => x.AppMaximizedTime).Nullable();
+            this.Map(x => x.AppInFocusTime).Nullable();
 
             this.HasMany(x => x.Results).Cascade.Delete().ExtraLazyLoad().Inverse();
             References(x => x.EventQuizMapping).Column("EventQuizMappingId").Nullable();
