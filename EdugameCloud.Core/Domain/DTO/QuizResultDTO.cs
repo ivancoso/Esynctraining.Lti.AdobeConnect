@@ -143,7 +143,10 @@
         /// Gets or sets a value indicating whether is completed.
         /// </summary>
         [DataMember]
-        public int inFocusIndex { get; set; }
+        public int appInFocusTime { get; set; }
+
+        [DataMember]
+        public int appMaximizedTime { get; set; }
 
         [DataMember]
         public int? eventQuizMappingId { get; set; }
