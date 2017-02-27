@@ -9693,7 +9693,7 @@
             Gets or sets a value indicating whether is completed.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.inFocusIndex">
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.appInFocusTime">
             <summary>
             Gets or sets a value indicating whether is completed.
             </summary>
