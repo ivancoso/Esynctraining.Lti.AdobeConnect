@@ -24,6 +24,11 @@ namespace EdugameCloud.WCFService.Contracts
 
         [OperationContract]
         [FaultContract(typeof(Error))]
+        //[WebGet(UriTemplate = "GetEventsByCompanyAcServer?companyAcServerId={companyAcServerId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        CompanyEventDTO[] GetEventsByCompanyAcServerWithPastEvents(int companyAcServerId);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
         //[WebGet(UriTemplate = "GetEventQuizMappings", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         CompanyQuizEventMappingDTO[] GetEventQuizMappings();
 

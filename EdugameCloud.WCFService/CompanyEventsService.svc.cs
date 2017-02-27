@@ -63,7 +63,7 @@ namespace EdugameCloud.WCFService
             return GetAllEventsFromAcServer(defaultAcDomain);
         }
 
-        private CompanyEventDTO[] GetAllEventsFromAcServer(CompanyAcServer defaultAcDomain)
+        private CompanyEventDTO[] GetAllEventsFromAcServer(CompanyAcServer defaultAcDomain, bool isShowPastEvents = false)
         {
             var acUri = new Uri(defaultAcDomain.AcServer);
             var acProvider = new AdobeConnectProvider(new ConnectionDetails(acUri));
@@ -78,20 +78,25 @@ namespace EdugameCloud.WCFService
             var result = new List<CompanyEventDTO>();
             var eventsOnly = eventContent.Values.Where(x => x.Type == "event");
 
+            if (!isShowPastEvents)
+            {
+                eventsOnly = eventsOnly.Where(x => x.EndDateLocal >= DateTime.Now);
+            }
+
             foreach (var content in eventsOnly)
             {
                 
                 result.Add(new CompanyEventDTO()
                 {
                     companyId = defaultAcDomain.Company.Id,
-                    dateBegin = content.BeginDate,
-                    dateEnd = content.EndDate,
+                    dateBegin = DateTime.SpecifyKind(content.BeginDate, DateTimeKind.Utc),
+                    dateEnd = DateTime.SpecifyKind(content.EndDate, DateTimeKind.Utc),
                     name = content.Name,
                     desc = content.Description,
                     scoId = content.ScoId,
                     urlPath = content.UrlPath,
-                    dateCreated = content.DateCreated,
-                    dateModified = content.DateModified,
+                    dateCreated = DateTime.SpecifyKind(content.DateCreated, DateTimeKind.Utc),
+                    dateModified = DateTime.SpecifyKind(content.DateModified, DateTimeKind.Utc),
                     isSeminar = content.IsSeminar,
                     isMappedToQuizzes = CompanyEventQuizMappingModel.GetAllByCompanyId(defaultAcDomain.Company.Id).Any(x => x.AcEventScoId == content.ScoId),
                     meetingUrl = acProxy.GetScoInfo(content.ScoId).ScoInfo?.SourceSco?.UrlPath
@@ -178,6 +183,18 @@ namespace EdugameCloud.WCFService
         {
             var @event = CompanyEventQuizMappingModel.GetOneById(eventQuizMappingId).Value;
             return new CompanyQuizEventMappingDTO(@event);
+        }
+
+        public CompanyEventDTO[] GetEventsByCompanyAcServerWithPastEvents(int companyAcServerId)
+        {
+            var defaultAcDomain = CompanyAcServerModel.GetOneById(companyAcServerId).Value;
+            if (defaultAcDomain == null)
+            {
+                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+                return null;
+            }
+
+            return GetAllEventsFromAcServer(defaultAcDomain, true);
         }
     }
 }
