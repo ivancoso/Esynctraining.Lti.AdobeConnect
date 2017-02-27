@@ -156,7 +156,7 @@ namespace EdugameCloud.WCFService
                 return null;
             }
             var acEvents = GetAllEventsFromAcServer(defaultAcDomain);
-            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId))).ToArray();
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId), CompanyAcServerModel.GetOneById(x.CompanyAcDomain.Id).Value)).ToArray();
             return result;
         }
 
