@@ -210,7 +210,7 @@ namespace EdugameCloud.WCFService
             instance.LmsId = resultDTO.lmsId;
             instance.LmsUserParametersId = resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null;
             instance.isCompleted = resultDTO.isCompleted;
-            if (resultDTO.eventQuizMappingId.HasValue && resultDTO.eventQuizMappingId != 0)
+            if (resultDTO.eventQuizMappingId.HasValue && resultDTO.eventQuizMappingId.Value != 0)
                 instance.EventQuizMapping = EventQuizMappingModel.GetOneById(resultDTO.eventQuizMappingId.Value).Value;
             return instance;
         }
