@@ -101,7 +101,7 @@
         /// <returns>OperationResultDto</returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
-        OperationResultDto SendEventQuizResultEmail(EventReportEmailDto dto);
+        OperationResultDto SendEventQuizResultEmail(int[] quizResultIds);
 
         #endregion
     }

@@ -218,9 +218,9 @@ namespace EdugameCloud.WCFService
             return users.Select(u => new UserDTO(u)).ToArray();
         }
 
-        public OperationResultDto SendEventQuizResultEmail(EventReportEmailDto dto)
+        public OperationResultDto SendEventQuizResultEmail(int[] quizResultIds)
         {
-            var quizResults = QuizResultModel.GetAllByIds(dto.QuizResultIds.ToList());
+            var quizResults = QuizResultModel.GetAllByIds(quizResultIds.ToList());
             var mapping = quizResults.FirstOrDefault()?.EventQuizMapping;
             if(mapping == null)
                 return OperationResultDto.Error("There is no event for this result.");
