@@ -122,6 +122,14 @@ END
 
 
 
+alter table dbo.QuizResult
+add appMaximizedTime int
+
+alter table dbo.QuizResult
+add appInFocusTime int
+
+
+
 
 -- =============================================
 -- Author:		Eugene Baranovsky

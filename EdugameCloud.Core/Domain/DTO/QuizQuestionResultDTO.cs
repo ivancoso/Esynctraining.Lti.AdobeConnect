@@ -13,7 +13,7 @@
         /// <summary>
         /// The answer distractors field.
         /// </summary>
-        private int[] answerDistractorsField = { };
+        //private int[] answerDistractorsField = { };
 
         /// <summary>
         /// The answers field.
@@ -85,21 +85,21 @@
         [DataMember]
         public int quizResultId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the answer disctractors.
-        /// </summary>
-        [DataMember]
-        public int[] answerDistractors
-        {
-            get
-            {
-                return this.answerDistractorsField ?? new int[] { };
-            }
-            set
-            {
-                this.answerDistractorsField = value;
-            }
-        }
+        ///// <summary>
+        ///// Gets or sets the answer disctractors.
+        ///// </summary>
+        //[DataMember]
+        //public int[] answerDistractors
+        //{
+        //    get
+        //    {
+        //        return this.answerDistractorsField ?? new int[] { };
+        //    }
+        //    set
+        //    {
+        //        this.answerDistractorsField = value;
+        //    }
+        //}
 
         /// <summary>
         /// Gets or sets the answers.
