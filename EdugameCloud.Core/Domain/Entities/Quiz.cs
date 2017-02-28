@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-    using Iesi.Collections.Generic;
 
     /// <summary>
     ///     The quiz.
@@ -47,6 +46,8 @@
         public virtual int? LmsQuizId { get; set; }
 
         public virtual bool IsPostQuiz { get; set; }
+
+        public virtual int PassingScore { get; set; }
 
         #endregion
 

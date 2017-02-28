@@ -297,7 +297,9 @@
             instance.IsPostQuiz = itemDTO.isPostQuiz;
             instance.SubModuleItem = itemDTO.subModuleItemId.HasValue ? this.SubModuleItemModel.GetOneById(itemDTO.subModuleItemId.Value).Value : null;
             instance.QuizFormat = itemDTO.quizFormatId.HasValue ? this.QuizFormatModel.GetOneById(itemDTO.quizFormatId.Value).Value ?? this.QuizFormatModel.GetOneById(1).Value : this.QuizFormatModel.GetOneById(1).Value;
-            instance.ScoreType = itemDTO.scoreTypeId.HasValue ? this.ScoreTypeModel.GetOneById(itemDTO.scoreTypeId.Value).Value ?? this.ScoreTypeModel.GetOneById(1).Value : this.ScoreTypeModel.GetOneById(1).Value;
+            //hardcoded. 3=percentage, this value is not used at the moment but probably will be used in future
+            instance.ScoreType = ScoreTypeModel.GetOneById(3).Value; //itemDTO.scoreTypeId.HasValue ? this.ScoreTypeModel.GetOneById(itemDTO.scoreTypeId.Value).Value ?? this.ScoreTypeModel.GetOneById(1).Value : this.ScoreTypeModel.GetOneById(1).Value;
+            instance.PassingScore = itemDTO.PassingScore;
             if (instance.SubModuleItem != null)
             {
                 instance.SubModuleItem.DateModified = DateTime.Now;

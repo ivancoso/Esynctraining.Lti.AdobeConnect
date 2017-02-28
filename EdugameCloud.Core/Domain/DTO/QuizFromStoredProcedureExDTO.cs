@@ -98,6 +98,9 @@
         [DataMember]
         public virtual bool isPostQuiz { get; set; }
 
+        [DataMember(Name = "passingScore")]
+        public virtual int PassingScore { get; set; }
+
         #endregion
     }
 }

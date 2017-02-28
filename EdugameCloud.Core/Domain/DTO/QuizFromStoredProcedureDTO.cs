@@ -39,6 +39,7 @@
             this.userId = dto.userId;
             this.lmsQuizId = dto.lmsQuizId;
             isPostQuiz = dto.isPostQuiz;
+            PassingScore = dto.PassingScore;
         }
 
         #region Public Properties
@@ -129,6 +130,9 @@
 
         [DataMember]
         public bool isPostQuiz { get; set; }
+
+        [DataMember(Name = "passingScore")]
+        public virtual int PassingScore { get; set; }
 
         #endregion
     }

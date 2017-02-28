@@ -31,12 +31,13 @@
         {
             this.quizId = result.Id;
             this.subModuleItemId = result.SubModuleItem.Return(x => x.Id, (int?)null);
-            this.scoreTypeId = result.ScoreType.Return(x => x.Id, (int?)null);
+//            this.scoreTypeId = result.ScoreType.Return(x => x.Id, (int?)null); //not used
             this.quizFormatId = result.QuizFormat.Return(x => x.Id, (int?)null);
             this.description = result.Description;
             this.quizName = result.QuizName;
             this.lmsQuizId = result.LmsQuizId ?? 0;
             this.isPostQuiz = result.IsPostQuiz;
+            PassingScore = result.PassingScore;
         }
 
         #endregion
@@ -64,8 +65,8 @@
         /// <summary>
         /// Gets or sets the score type.
         /// </summary>
-        [DataMember]
-        public int? scoreTypeId { get; set; }
+//        [DataMember]
+//        public int? scoreTypeId { get; set; } // not used
 
         /// <summary>
         /// Gets or sets the sub module item.
@@ -87,6 +88,9 @@
         
         [DataMember]
         public bool isPostQuiz { get; set; }
+
+        [DataMember(Name = "passingScore")]
+        public int PassingScore { get; set; }
 
         #endregion
     }
