@@ -23,5 +23,4 @@ namespace Esynctraining.AC.Provider.DataObjects
         }
 
     }
-
 }

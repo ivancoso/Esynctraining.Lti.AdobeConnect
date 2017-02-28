@@ -1217,7 +1217,7 @@
           "lib/net45/xunit.runner.utility.desktop.dll": {}
         }
       },
-      "Esynctraining.AC.Provider/1.0.2.10": {
+      "Esynctraining.AC.Provider/1.0.2.22": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.6.1",
         "frameworkAssemblies": [
@@ -1231,11 +1231,11 @@
           "net461/Esynctraining.AC.Provider.dll": {}
         }
       },
-      "Esynctraining.AdobeConnect/1.0.1.9": {
+      "Esynctraining.AdobeConnect/1.0.1.17": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.6.1",
         "dependencies": {
-          "Esynctraining.AC.Provider": "1.0.2.10",
+          "Esynctraining.AC.Provider": "1.0.2.22",
           "Esynctraining.Core.Only": "1.0.0.27",
           "NodaTime": "1.3.2"
         },
@@ -4603,12 +4603,12 @@
         "xunit.runner.utility.nuspec"
       ]
     },
-    "Esynctraining.AC.Provider/1.0.2.10": {
+    "Esynctraining.AC.Provider/1.0.2.22": {
       "type": "project",
       "path": "../Esynctraining.AC.Provider/project.json",
       "msbuildProject": "../Esynctraining.AC.Provider/Esynctraining.AC.Provider.xproj"
     },
-    "Esynctraining.AdobeConnect/1.0.1.9": {
+    "Esynctraining.AdobeConnect/1.0.1.17": {
       "type": "project",
       "path": "../Esynctraining.AdobeConnect/project.json",
       "msbuildProject": "../Esynctraining.AdobeConnect/Esynctraining.AdobeConnect.xproj"

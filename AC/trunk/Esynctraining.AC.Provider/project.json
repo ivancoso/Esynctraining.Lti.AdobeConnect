@@ -1,55 +1,57 @@
 {
-	"version": "1.0.2.21",
-	"title": "Esynctraining.AC.Provider",
-	"description": "Provides Adobe Connect functionality for eSyncTraining projects",
-	"copyright": "Copyright © 2013-2017 eSyncTraining.com",
-	"authors": [ "eSyncTraining.com" ],
+  "version": "1.0.2.22",
+  "title": "Esynctraining.AC.Provider",
+  "description": "Provides Adobe Connect functionality for eSyncTraining projects",
+  "copyright": "Copyright © 2013-2017 eSyncTraining.com",
+  "authors": [ "eSyncTraining.com" ],
 
   "packOptions": {
     "requireLicenseAcceptance": false,
     "tags": [ "core", "AC", "AdobeConnect" ],
     "owners": [ "eSyncTraining.com" ],
-    "releaseNotes": "+event-registration-details; +scoInfo.SourceSco"
+    "releaseNotes": "+event-register"
   },
 
-	"dependencies": {
-		//"NETStandard.Library": "1.6.0"
-	},
+  "dependencies": {
+    //"NETStandard.Library": "1.6.0"
+  },
 
-	"frameworks": {
-		"net45": {
-			"frameworkAssemblies": {
-				//"System.Net": "",
-				"System.Net.Http": "",
-				"System.Xml": ""
-			}
-		},
-		"net461": {
-			"frameworkAssemblies": {
-				//"System.Net": "",
-				"System.Net.Http": "",
-				"System.Xml": ""
-			}
-		}
+  "frameworks": {
+    "net45": {
+      "frameworkAssemblies": {
+        //"System.Net": "",
+        "System.Net.Http": "",
+        "System.Xml": ""
+      }
+    },
+    "net461": {
+      "frameworkAssemblies": {
+        //"System.Net": "",
+        "System.Net.Http": "",
+        "System.Xml": ""
+      }
+    }
 
 
-		//"netstandard1.6": {
-		//	"imports": "dnxcore50",
-		//			"dependencies": {
-		//				"System.Net.Requests": "4.3.0",
-		//				"System.Xml.XmlSerializer": "4.3.0",
-		//				"System.Xml.XmlDocument": "4.3.0",
-		//				"system.xml.xpath.xmldocument": "4.3.0",
-		//				"System.Diagnostics.StackTrace": "4.3.0",
-		//				"system.net.http.winhttphandler": "4.3.0"
-		//			}
-		//}
-	},
+    //"netstandard1.6": {
+    //	"imports": "dnxcore50",
+    //			"dependencies": {
+    //				"System.Net.Requests": "4.3.0",
+    //				"System.Xml.XmlSerializer": "4.3.0",
+    //				"System.Xml.XmlDocument": "4.3.0",
+    //				"system.xml.xpath.xmldocument": "4.3.0",
+    //				"System.Diagnostics.StackTrace": "4.3.0",
+    //				"system.net.http.winhttphandler": "4.3.0"
+    //			}
+    //}
+  },
 
-	"scripts": {
-		"postcompile": [
-			"dotnet pack --no-build --configuration %compile:Configuration%"
-		]
-	}
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration%"
+      //"\"%project:Directory%\\..\\nuget.exe\" push \"%project:Directory%\\bin\\%compile:Configuration%\\%project:Name%.%project:Version%.nupkg\" -source https://nuget.esynctraining.com/nuget --api-key 1a4d6ac5-2fa1-4844-a42d-b95e432f00ee"
+    ]
+    
+  }
 
 }

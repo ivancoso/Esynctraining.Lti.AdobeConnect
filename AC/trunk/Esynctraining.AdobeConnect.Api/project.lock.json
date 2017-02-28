@@ -24,7 +24,7 @@
           "lib/net35-Client/NodaTime.dll": {}
         }
       },
-      "Esynctraining.AC.Provider/1.0.2.14": {
+      "Esynctraining.AC.Provider/1.0.2.19": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
         "frameworkAssemblies": [
@@ -38,11 +38,11 @@
           "net45/Esynctraining.AC.Provider.dll": {}
         }
       },
-      "Esynctraining.AdobeConnect/1.0.1.10": {
+      "Esynctraining.AdobeConnect/1.0.1.15": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
         "dependencies": {
-          "Esynctraining.AC.Provider": "1.0.2.12",
+          "Esynctraining.AC.Provider": "1.0.2.19",
           "Esynctraining.Core.Only": "1.0.0.27",
           "NodaTime": "1.3.2"
         },
@@ -80,7 +80,7 @@
           "lib/net35-Client/NodaTime.dll": {}
         }
       },
-      "Esynctraining.AC.Provider/1.0.2.14": {
+      "Esynctraining.AC.Provider/1.0.2.19": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.6.1",
         "frameworkAssemblies": [
@@ -94,11 +94,11 @@
           "net461/Esynctraining.AC.Provider.dll": {}
         }
       },
-      "Esynctraining.AdobeConnect/1.0.1.10": {
+      "Esynctraining.AdobeConnect/1.0.1.15": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.6.1",
         "dependencies": {
-          "Esynctraining.AC.Provider": "1.0.2.12",
+          "Esynctraining.AC.Provider": "1.0.2.19",
           "Esynctraining.Core.Only": "1.0.0.27",
           "NodaTime": "1.3.2"
         },
@@ -139,12 +139,12 @@
         "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+XamariniOS1/NodaTime.xml"
       ]
     },
-    "Esynctraining.AC.Provider/1.0.2.14": {
+    "Esynctraining.AC.Provider/1.0.2.19": {
       "type": "project",
       "path": "../Esynctraining.AC.Provider/project.json",
       "msbuildProject": "../Esynctraining.AC.Provider/Esynctraining.AC.Provider.xproj"
     },
-    "Esynctraining.AdobeConnect/1.0.1.10": {
+    "Esynctraining.AdobeConnect/1.0.1.15": {
       "type": "project",
       "path": "../Esynctraining.AdobeConnect/project.json",
       "msbuildProject": "../Esynctraining.AdobeConnect/Esynctraining.AdobeConnect.xproj"
@@ -152,8 +152,8 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Esynctraining.AC.Provider >= 1.0.2.14",
-      "Esynctraining.AdobeConnect >= 1.0.1.10"
+      "Esynctraining.AC.Provider >= 1.0.2.19",
+      "Esynctraining.AdobeConnect >= 1.0.1.15"
     ],
     ".NETFramework,Version=v4.5": [
       "System.ComponentModel.DataAnnotations",

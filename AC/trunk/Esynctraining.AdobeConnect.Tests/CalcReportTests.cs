@@ -162,7 +162,7 @@ namespace Esynctraining.AdobeConnect.Tests
                 return 0;
             }
 
-            var duration = rec1.Values.First().Duration;
+            var duration = rec1.Values.First().RecordingEditedDuration;
             if (string.IsNullOrEmpty(duration))
                 return 0;
 

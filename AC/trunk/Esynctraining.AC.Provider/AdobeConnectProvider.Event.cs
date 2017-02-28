@@ -1,4 +1,6 @@
-﻿using Esynctraining.AC.Provider.Constants;
+﻿using System.Linq;
+using Esynctraining.AC.Provider.Constants;
+using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.EntityParsing;
@@ -31,6 +33,25 @@ namespace Esynctraining.AC.Provider
             return ResponseIsOk(doc, status)
                 ? new GenericResult<EventRegistrationDetails>(status, EventRegistrationDetailsParser.Parse(doc.SelectSingleNode("//results")))
                 : new GenericResult<EventRegistrationDetails>(status, null);
+        }
+
+        public StatusInfo RegisterToEvent(EventRegistrationFormFields form)
+        {
+            // act: "event-register"
+            StatusInfo status;
+
+            var requestString = $"sco-id={form.ScoId}&login={UrlEncode(form.Email)}&password={form.Password}&password-verify={form.VerifyPassword}&first-name={form.FirstName}&last-name={form.LastName}";
+            if (form.AdditionalFields.Values.Any())
+            {
+                foreach (var key in form.AdditionalFields.Keys)
+                {
+                    requestString += $"&interaction-id={key}&response={form.AdditionalFields[key]}";
+                }
+            }
+
+            var doc = this.requestProcessor.Process("event-register", requestString, out status);
+
+            return status;
         }
     }
 }
