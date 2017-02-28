@@ -254,6 +254,7 @@
 
                 var parameters = new NameValueCollection
                                      {
+                                         { "grant_type", "authorization_code"}, //marked as required by Canvas but worked without it
                                          { "client_id", this.appId },
                                          { "redirect_uri", redirectUrl },
                                          { "client_secret", this.appSecret },
