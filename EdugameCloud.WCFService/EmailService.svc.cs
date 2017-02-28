@@ -1,4 +1,7 @@
 ﻿// ReSharper disable once CheckNamespace
+
+using EdugameCloud.WCFService.Mail.Models;
+
 namespace EdugameCloud.WCFService
 {
     using System;
@@ -33,6 +36,10 @@ namespace EdugameCloud.WCFService
     public class EmailService : BaseService, IEmailService
     {
         private NewsletterSubscriptionModel NewsletterSubscriptionModel => IoC.Resolve<NewsletterSubscriptionModel>();
+        private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
+        private QuizModel QuizModel => IoC.Resolve<QuizModel>();
+
+        private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
 
         #region Public Methods and Operators
 
@@ -209,6 +216,54 @@ namespace EdugameCloud.WCFService
             }
 
             return users.Select(u => new UserDTO(u)).ToArray();
+        }
+
+        public OperationResultDto SendEventQuizResultEmail(EventReportEmailDto dto)
+        {
+            var quizResults = QuizResultModel.GetAllByIds(dto.QuizResultIds.ToList());
+            var mapping = quizResults.FirstOrDefault()?.EventQuizMapping;
+            if(mapping == null)
+                return OperationResultDto.Error("There is no event for this result.");
+//            var mapping = CompanyEventQuizMappingModel.GetOneById(quizResults.First().EventQuizMappingId).Value;
+            List<string> emailsNotSend = new List<string>();
+            foreach (var quizResult in quizResults)
+            {
+                if (quizResult.Quiz.Id != mapping.PreQuiz.Id)
+                {
+                    throw new InvalidOperationException("Wrong quiz mapping");
+                }
+                if (string.IsNullOrEmpty(quizResult.ACEmail))
+                {
+                    Logger.Warn($"[SendEventQuizResultEmail] Email is empty. quizResultId={quizResult.Id}");
+                    emailsNotSend.Add(quizResult.ParticipantName);
+                    continue;
+                }
+                try
+                {
+                    //todo: create model based on success/unsuccess
+                    var model = new EventQuizResultSuccessModel(Settings)
+                    {
+                        Name = quizResult.ParticipantName,
+                        EventName = mapping.AcEventScoId, //todo: store or take from api
+                        MailSubject = "AC Event Post quiz result",
+                        PostQuizUrl = "https://app.edugamecloud.com"
+                    };
+                    bool sentSuccessfully = MailModel.SendEmailSync(quizResult.ParticipantName, quizResult.ACEmail,
+                        Emails.TrialSubject,
+                        model, Common.AppEmailName, Common.AppEmail);
+                    if (!sentSuccessfully)
+                    {
+                        emailsNotSend.Add(quizResult.ACEmail);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"[SendEventQuizResultEmail] error.", e);
+                    emailsNotSend.Add(quizResult.ACEmail);
+                }
+            }
+
+            return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
         }
 
         /// <summary>

@@ -183,8 +183,10 @@
     <Content Include="LmsService.svc" />
     <Content Include="Mail\Templates\ActivationLink.html" />
     <Content Include="Mail\Templates\ErrorMail.html" />
+    <Content Include="Mail\Templates\EventQuizResultUnsuccess.html" />
     <Content Include="Mail\Templates\LicenseUpgrade.html" />
     <Content Include="Mail\Templates\Enterprise.html" />
+    <Content Include="Mail\Templates\EventQuizResultSuccess.html" />
     <Content Include="Mail\Templates\Trial.html" />
     <Content Include="CompanyLmsService.svc" />
     <Content Include="EmailService.svc" />
@@ -311,6 +313,8 @@
     <Compile Include="Mail\Models\ChangePasswordModel.cs" />
     <Compile Include="Mail\Models\EnterpriseModel.cs" />
     <Compile Include="Mail\Models\ErrorMailModel.cs" />
+    <Compile Include="Mail\Models\EventQuizResultSuccessModel.cs" />
+    <Compile Include="Mail\Models\EventQuizResultUnsuccessModel.cs" />
     <Compile Include="Mail\Models\LicenseUpgradeModel.cs" />
     <Compile Include="Mail\Models\TrialModel.cs" />
     <Compile Include="CompanyLmsService.svc.cs">

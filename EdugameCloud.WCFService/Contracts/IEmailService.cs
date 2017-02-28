@@ -94,6 +94,15 @@
         [FaultContract(typeof(Error))]
         UserDTO[] SetUserUnsubscribed(string email);
 
+        /// <summary>
+        /// Send live quiz result email for goddard
+        /// </summary>
+        /// <param name="quizResultIds"></param>
+        /// <returns>OperationResultDto</returns>
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        OperationResultDto SendEventQuizResultEmail(EventReportEmailDto dto);
+
         #endregion
     }
 }
