@@ -6,26 +6,60 @@
 }
 
 <script type="text/javascript">
-    var onStateSelected = function (e) {
-        if ($('#State').val() !== "0") {
-            $('#School').removeAttr('disabled');
-            var stateCode = $('#State').val();
-            var getSchoolsUrl = '@Url.Action("GetSchoolPerState","Events")';
-            $.get(getSchoolsUrl + "?stateCode=" + stateCode).done(function (data) {
-                $('#School').empty();
-                $.each(data,
-                    function (index, school) {
-                        $("#School").append("<option value='" + school.SchoolNumber + "'>" + school.AccountName + "</option>");
-                    });
+    debugger;
 
-            }).fail(function (err) {
-                console.log('error occurred ' + err);
-            });
-        } else {
-            $('#School').attr('disabled', 'disabled');
+    $(document).ready(function() {
+
+        var onStateSelected = function (e) {
+            if ($('#State').val() !== "0") {
+                $('#School').removeAttr('disabled');
+                var stateCode = $('#State').val();
+                var getSchoolsUrl = '@Url.Action("GetSchoolPerState","Events")';
+                $.get(getSchoolsUrl + "?stateCode=" + stateCode).done(function (data) {
+                    $('#School').empty();
+                    $.each(data,
+                        function (index, school) {
+                            $("#School").append("<option value='" + school.SchoolNumber + "'>" + school.AccountName + "</option>");
+                        });
+
+                }).fail(function (err) {
+                    console.log('error occurred ' + err);
+                });
+            } else {
+                $('#School').attr('disabled', 'disabled');
+            }
+
         }
 
-    }
+
+        $('.alert .close').on('click', function (e) {
+            $(this).parent().hide();
+        });
+
+        $('#eventRegister').click(function (e) {
+            debugger;
+            var data = $('form').serialize();
+            var url = '@Url.Action("EventRegister", "Events")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: 'text',
+                success: function (result) {
+                    debugger;
+                    if (result.IsSuccess) {
+                        $('#success').show().fadeIn(100);
+                    } else {
+                        $('#errorMessage').html(result.Message);
+                    }
+                }
+            });
+        });
+    });
+
+
+   
+
 </script>
 
 <div class="row">
@@ -33,6 +67,15 @@
         @*<img src="~/Content/img/GSILogo-Tag-Blue.jpg" />*@
         <img src="~/Content/img/GSU-2012-560x230-01.jpg" />
     </div>
+</div>
+
+<div class="alert alert-success" id="success" style="display:none;">
+    <strong>Success!</strong> You have registered to the event!
+</div>
+
+<div class="alert fade in" style="display:none;">
+    <button type="button" class="close">×</button>
+    <span id="errorMessage"></span>
 </div>
 
 <div class="row">
@@ -121,7 +164,7 @@
 
             @*@Html.LinkButton("Register", new { @class = "btn btn-default" })*@
             <div class="col-lg-offset-9">
-                <input type="submit" value="Register" class="btn btn-default" />
+                <input id="eventRegister" type="submit" value="Register" class="btn btn-default" />
             </div>
         }
 

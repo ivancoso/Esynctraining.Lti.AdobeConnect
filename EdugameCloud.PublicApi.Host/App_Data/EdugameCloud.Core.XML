@@ -9570,11 +9570,6 @@
             Gets or sets the quiz name.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Core.Domain.DTO.QuizDTO.scoreTypeId">
-            <summary>
-            Gets or sets the score type.
-            </summary>
-        </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizDTO.subModuleItemId">
             <summary>
             Gets or sets the sub module item.
