@@ -50,6 +50,7 @@
     "postcompile": [
       "dotnet pack --no-build --configuration %compile:Configuration%"
       //"\"%project:Directory%\\..\\nuget.exe\" push \"%project:Directory%\\bin\\%compile:Configuration%\\%project:Name%.%project:Version%.nupkg\" -source https://nuget.esynctraining.com/nuget --api-key 1a4d6ac5-2fa1-4844-a42d-b95e432f00ee"
+      //..\.nuget\NuGet.exe push .\bin\Debug\Esynctraining.AC.Provider.1.0.2.22.nupkg -source https://nuget.esynctraining.com/nuget -ApiKey 1a4d6ac5-2fa1-4844-a42d-b95e432f00ee
     ]
     
   }
