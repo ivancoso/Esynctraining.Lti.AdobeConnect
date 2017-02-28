@@ -71,6 +71,8 @@
         [DataMember]
         public virtual int? appInFocusTime { get; set; }
 
+        [DataMember]
+        public virtual int passingScore { get; set; }
 
         #endregion
     }
