@@ -160,7 +160,7 @@ namespace EdugameCloud.WCFService
                 //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
                 return null;
             }
-            var acEvents = GetAllEventsFromAcServer(defaultAcDomain);
+            var acEvents = GetAllEventsFromAcServer(defaultAcDomain, true);
             var result = events.Select(x => new CompanyQuizEventMappingDTO(x, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId), CompanyAcServerModel.GetOneById(x.CompanyAcDomain.Id).Value)).ToArray();
             return result;
         }
@@ -174,7 +174,7 @@ namespace EdugameCloud.WCFService
                 //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
                 return null;
             }
-            var acEvents = GetAllEventsFromAcServer(defaultAcDomain);
+            var acEvents = GetAllEventsFromAcServer(defaultAcDomain, true);
             var result = events.Select(x => new CompanyQuizEventMappingDTO(x, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId))).ToArray();
             return result;
         }

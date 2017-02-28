@@ -3460,7 +3460,7 @@
             Gets or sets the start time.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerFromStoredProcedureDTO.isCompleted">
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerFromStoredProcedureDTO.appMaximizedTime">
             <summary>
             Gets or sets a value indicating whether is completed.
             </summary>
@@ -8855,11 +8855,6 @@
                 The quiz question result DTO.
             </summary>
         </member>
-        <member name="F:EdugameCloud.Core.Domain.DTO.QuizQuestionResultDTO.answerDistractorsField">
-            <summary>
-            The answer distractors field.
-            </summary>
-        </member>
         <member name="F:EdugameCloud.Core.Domain.DTO.QuizQuestionResultDTO.answersField">
             <summary>
             The answers field.
@@ -8906,11 +8901,6 @@
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizQuestionResultDTO.quizResultId">
             <summary>
             Gets or sets the quiz result id.
-            </summary>
-        </member>
-        <member name="P:EdugameCloud.Core.Domain.DTO.QuizQuestionResultDTO.answerDistractors">
-            <summary>
-            Gets or sets the answer disctractors.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizQuestionResultDTO.answers">
