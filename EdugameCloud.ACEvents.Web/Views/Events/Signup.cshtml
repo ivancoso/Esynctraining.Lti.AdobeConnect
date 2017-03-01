@@ -56,7 +56,7 @@
                     success: function (result) {
                         debugger;
                         if (result.IsSuccess) {
-                            $('#success').show().fadeIn(100);
+                            $('#success').show().fadeOut(20000);
                         } else {
                             //$('#errorMessage').html(result.Message);
                             $('#errorMessage').html("<span class='red'><b>" + result.Message + "</b></span>").closest('div').show().fadeOut(20000);
