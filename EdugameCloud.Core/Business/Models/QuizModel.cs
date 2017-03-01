@@ -544,6 +544,19 @@
             return result;
         }
 
+        public QuizDataDTO getQuizDataByQuizGuid(Guid key)
+        {
+            var queryOver = new DefaultQueryOver<Quiz, int>().GetQueryOver().Where(x => x.Guid == key).Take(1);
+            var quiz = Repository.FindOne(queryOver).Value;
+            var result = new QuizDataDTO { quizVO = new QuizDTO(quiz) };
+            if (result.quizVO != null && result.quizVO.subModuleItemId.HasValue)
+            {
+                result.questions = this.GetQuizQuestionsBySMIId(result.quizVO.subModuleItemId.Value).ToArray();
+                result.distractors = this.GetQuizDistractorsBySMIId(result.quizVO.subModuleItemId.Value).ToArray();
+            }
+            return result;
+        }
+
         #endregion
     }
 }

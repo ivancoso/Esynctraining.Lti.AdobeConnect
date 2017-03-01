@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Domain.Entities
+﻿using System;
+
+namespace EdugameCloud.Core.Domain.Entities
 {
     using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
@@ -48,6 +50,8 @@
         public virtual bool IsPostQuiz { get; set; }
 
         public virtual int PassingScore { get; set; }
+
+        public virtual Guid Guid { get; set; }
 
         #endregion
 

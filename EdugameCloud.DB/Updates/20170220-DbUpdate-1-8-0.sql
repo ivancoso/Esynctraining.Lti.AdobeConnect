@@ -167,3 +167,7 @@ WHERE    QR.acSessionId = @acSessionId
 END
 
 
+
+alter table dbo.Quiz
+add [guid] UNIQUEIDENTIFIER DEFAULT NEWID() NOT NULL
+GO

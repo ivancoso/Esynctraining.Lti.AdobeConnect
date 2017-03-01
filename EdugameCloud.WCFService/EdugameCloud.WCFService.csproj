@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CompanyAcDomainsService.svc" />
+    <Content Include="OfflineQuizService.svc" />
     <Content Include="CompanyEventsService.svc" />
     <Content Include="FileStorage\Export\ReadMe.txt" />
     <Content Include="FileStorage\Import\ReadMe.txt" />
@@ -244,6 +245,10 @@
     <Compile Include="Base\ExportService.cs" />
     <Compile Include="CompanyAcDomainsService.svc.cs">
       <DependentUpon>CompanyAcDomainsService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Contracts\IOfflineQuizService.cs" />
+    <Compile Include="OfflineQuizService.svc.cs">
+      <DependentUpon>OfflineQuizService.svc</DependentUpon>
     </Compile>
     <Compile Include="CompanyEventsService.svc.cs">
       <DependentUpon>CompanyEventsService.svc</DependentUpon>

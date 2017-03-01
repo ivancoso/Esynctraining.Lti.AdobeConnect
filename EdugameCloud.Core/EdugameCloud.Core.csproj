@@ -191,7 +191,9 @@
     <Compile Include="Domain\DTO\ExtendedReportResultDto.cs" />
     <Compile Include="Domain\DTO\OfflineQuiz\OfflineDistractorDTO.cs" />
     <Compile Include="Domain\DTO\OfflineQuiz\OfflineQuestionDTO.cs" />
+    <Compile Include="Domain\DTO\OfflineQuiz\OfflineQuizAnswerDTO.cs" />
     <Compile Include="Domain\DTO\OfflineQuiz\OfflineQuizDTO.cs" />
+    <Compile Include="Domain\DTO\OfflineQuiz\OfflineQuizResultDTO.cs" />
     <Compile Include="Domain\DTO\OfflineQuiz\ParticipantDTO.cs" />
     <Compile Include="Domain\DTO\OperationResultDto.cs" />
     <Compile Include="Domain\DTO\AdobeConnectSessionDtoBase.cs" />

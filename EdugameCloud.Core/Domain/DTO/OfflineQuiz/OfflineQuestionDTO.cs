@@ -36,6 +36,7 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
         [DataMember]
         public bool isMultipleChoice { get; set; }
 
+        [DataMember]
         public OfflineDistractorDTO[] distractors { get; set; }
 
     }

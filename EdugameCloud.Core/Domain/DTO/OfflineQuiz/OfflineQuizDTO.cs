@@ -11,8 +11,10 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
         [DataMember]
         public string description { get; set; }
 
+        [DataMember]
         public ParticipantDTO participant { get; set; }
 
+        [DataMember]
         public OfflineQuestionDTO[] questions { get; set; }
     }
 }

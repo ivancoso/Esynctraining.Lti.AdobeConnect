@@ -17,21 +17,4 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
         [DataMember]
         public string userName { get; set; }
     }
-
-    [DataContract]
-    public class OfflineQuizResultDTO
-    {
-        [DataMember]
-        public int score { get; set; }
-    }
-
-    [DataContract]
-    public class OfflineQuizAnswerDTO
-    {
-        [DataMember]
-        public int questionId { get; set; }
-
-        [DataMember]
-        public int[] answeredDistractorIds { get; set;  }
-    }
 }
