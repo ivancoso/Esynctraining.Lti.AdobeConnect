@@ -47,14 +47,13 @@
                 
                 var data = form.serialize();
                 var url = '@Url.Action("EventRegister", "Events")';
-                debugger;
+                
                 $.ajax({
                     type: "POST",
                     url: url,
                     data: data,
                     dataType: 'json',
                     success: function (result) {
-                        debugger;
                         if (result.IsSuccess) {
                             $('#success').show().fadeOut(20000);
                         } else {
@@ -63,7 +62,6 @@
                         }
                     },
                     error: function (e, a, b, ctx, d) {
-                        debugger;
                         console.log(e);
                     }
                 });
