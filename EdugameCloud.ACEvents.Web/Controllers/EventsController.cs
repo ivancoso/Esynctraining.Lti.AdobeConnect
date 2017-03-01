@@ -102,11 +102,12 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> EventRegister(EventModel eventModel)
+        public ActionResult EventRegister(EventModel eventModel)
         {
             if (!ModelState.IsValid) //Check for validation errors
             {
-                return new JsonResult {Data = new {IsSuccess = false, Message = "You didn't pass form validation"}};
+                return Json(new { IsSuccess = false, Message = "You didn't pass form validation" });
+                //return new JsonResult { Data = new { IsSuccess = false, Message = "You didn't pass form validation" } };
             }
             //var servicesUrl = _settings.EgcServicesUrl;
             //var acUrl = "http://esynctraining.adobeconnect.com";
@@ -119,7 +120,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             //var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = new Uri(acUrl);
             var logger = IoC.Resolve<ILogger>();
-            
+
             var scoId = companyQuizEventMappingDto.acEventScoId;
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
             var additionalFields = proxy.GetEventRegistrationDetails(scoId);
@@ -131,44 +132,39 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 if (string.Equals(eventRegistrationDetail.Description, "school", StringComparison.OrdinalIgnoreCase))
                     fields.Add(eventRegistrationDetail.InteractionId, eventModel.School);
             }
-            var status = proxy.RegisterToEvent(new EventRegistrationFormFields()
-            {
-                ScoId = scoId,
-                Password = eventModel.Password,
-                VerifyPassword = eventModel.VerifyPassword,
-                LastName = eventModel.LastName,
-                FirstName = eventModel.FirstName,
-                Email = eventModel.Email,
-                AdditionalFields = fields
-            });
 
-            if (status.Code != StatusCodes.ok)
+            try
             {
-                var message = $"{status.Code}  {status.InnerXml} {status.InvalidField} {status.UnderlyingExceptionInfo} ";
+                var status = proxy.RegisterToEvent(new EventRegistrationFormFields()
+                {
+                    ScoId = scoId,
+                    Password = eventModel.Password,
+                    VerifyPassword = eventModel.VerifyPassword,
+                    LastName = eventModel.LastName,
+                    FirstName = eventModel.FirstName,
+                    Email = eventModel.Email,
+                    AdditionalFields = fields
+                });
+
+                if (status.Code != StatusCodes.ok)
+                {
+                    var message = $"{status.Code}  {status.InnerXml} {status.InvalidField} {status.UnderlyingExceptionInfo} ";
+                    _logger.Error(message);
+                    //return message;
+                    return Json(new { IsSuccess = false, Message = status.UnderlyingExceptionInfo });
+                }
+
+            }
+            catch (Exception e)
+            {
+                var message = e.Message;
                 _logger.Error(message);
                 //return message;
-                return new JsonResult { Data = new { IsSuccess = false, Message = status.UnderlyingExceptionInfo } };
+                return Json(new {IsSuccess = false, Message = message});
+                //return new JsonResult { Data = new { IsSuccess = false, Message = message } };
             }
-
-
-
-
-            //var httpClient = new HttpClient();
-
-            ////var interactionId = 1763444230;
-            //var interactionId = 2921402;
-
-
-            //var eventRegisterUrl = acUrl + "/api/xml" + "?action=event-register&sco-id=" + scoId + "&login=" +
-            //          Url.Encode(eventModel.Email) + "&password=" + eventModel.Password + "&password-verify=" +
-            //          eventModel.VerifyPassword +
-            //          "&first-name=" + eventModel.FirstName + "&last-name=" + eventModel.LastName +
-            //          "&interaction-id=" + interactionId + "&response=" + eventModel.School;
-            //var result = await httpClient.GetAsync(eventRegisterUrl);
-            //var content = result.Content.ReadAsStringAsync();
-            //_logger.Info(content.Result);
-
-            return new JsonResult { Data = new { IsSuccess = false, Message = "You've successfully signed up for an event!" } };
+            return Json(new { IsSuccess = true, Message = "You've successfully signed up for an event!" } );
+            //return new JsonResult { Data = new { IsSuccess = true, Message = "You've successfully signed up for an event!" } };
         }
 
 

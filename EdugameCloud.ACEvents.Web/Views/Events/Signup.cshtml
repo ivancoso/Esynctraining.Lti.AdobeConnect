@@ -1,64 +1,78 @@
 ﻿@model EdugameCloud.ACEvents.Web.Models.EventModel
 
-@section Scripts
-{
-    @Scripts.Render("~/bundles/jqueryval")
-}
+@*@section Scripts
+    {
+        @Scripts.Render("~/bundles/jqueryval")
+    }*@
 
 <script type="text/javascript">
-    debugger;
 
-    $(document).ready(function() {
 
-        var onStateSelected = function (e) {
-            if ($('#State').val() !== "0") {
-                $('#School').removeAttr('disabled');
-                var stateCode = $('#State').val();
-                var getSchoolsUrl = '@Url.Action("GetSchoolPerState","Events")';
-                $.get(getSchoolsUrl + "?stateCode=" + stateCode).done(function (data) {
-                    $('#School').empty();
-                    $.each(data,
-                        function (index, school) {
-                            $("#School").append("<option value='" + school.SchoolNumber + "'>" + school.AccountName + "</option>");
-                        });
+    var onStateSelected = function (e) {
+        if ($('#State').val() !== "0") {
+            $('#School').removeAttr('disabled');
+            var stateCode = $('#State').val();
+            var getSchoolsUrl = '@Url.Action("GetSchoolPerState","Events")';
+            $.get(getSchoolsUrl + "?stateCode=" + stateCode).done(function (data) {
+                $('#School').empty();
+                $.each(data,
+                    function (index, school) {
+                        $("#School").append("<option value='" +
+                            school.SchoolNumber +
+                            "'>" +
+                            school.AccountName +
+                            "</option>");
+                    });
 
-                }).fail(function (err) {
-                    console.log('error occurred ' + err);
-                });
-            } else {
-                $('#School').attr('disabled', 'disabled');
-            }
-
+            }).fail(function (err) {
+                console.log('error occurred ' + err);
+            });
+        } else {
+            $('#School').attr('disabled', 'disabled');
         }
 
+    }
 
-        $('.alert .close').on('click', function (e) {
-            $(this).parent().hide();
-        });
+    $(document).ready(function () {
+        $('.alert .close').on('click',
+            function (e) {
+                $(this).parent().hide();
+            });
 
         $('#eventRegister').click(function (e) {
-            debugger;
-            var data = $('form').serialize();
-            var url = '@Url.Action("EventRegister", "Events")';
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: data,
-                dataType: 'text',
-                success: function (result) {
-                    debugger;
-                    if (result.IsSuccess) {
-                        $('#success').show().fadeIn(100);
-                    } else {
-                        $('#errorMessage').html(result.Message);
+            var form = $('form');
+            e.preventDefault();
+            form.validate();
+            if (form.valid()) {
+                
+                var data = form.serialize();
+                var url = '@Url.Action("EventRegister", "Events")';
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    dataType: 'json',
+                    success: function (result) {
+                        debugger;
+                        if (result.IsSuccess) {
+                            $('#success').show().fadeIn(100);
+                        } else {
+                            //$('#errorMessage').html(result.Message);
+                            $('#errorMessage').html("<span class='red'><b>" + result.Message + "</b></span>").closest('div').show().fadeOut(20000);
+                        }
+                    },
+                    error: function (e, a, b, ctx, d) {
+                        debugger;
+                        console.log(e);
                     }
-                }
-            });
+                });
+            }
         });
     });
 
 
-   
+
 
 </script>
 
@@ -90,16 +104,18 @@
             <br />
         </div>
 
-        @using (Html.BeginForm("EventRegister", "Events", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-        {
+        @*@using (Html.BeginForm("EventRegister", "Events", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+            {*@
+        <form class="form-horizontal">
+
             @Html.HiddenFor(x => x.EventQuizMappingId)
-            @Html.AntiForgeryToken()
+            @*@Html.AntiForgeryToken()*@
             @Html.ValidationSummary(true)
 
             <div class="form-group">
                 <label class="col-sm-5 control-label">Email address *</label>
                 <div class="col-sm-7">
-                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email", tabindex = 1 })
+                    @Html.TextBoxFor(m => m.Email, new {@class = "form-control", placeholder = "Email", tabindex = 1})
                     @Html.ValidationMessageFor(m => m.Email)
                 </div>
 
@@ -108,7 +124,7 @@
             <div class="form-group">
                 <label class="col-sm-5 control-label">First Name *</label>
                 <div class="col-sm-7">
-                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "First Name", tabindex = 1 })
+                    @Html.TextBoxFor(m => m.FirstName, new {@class = "form-control", placeholder = "First Name", tabindex = 1})
                     @Html.ValidationMessageFor(m => m.FirstName)
                 </div>
 
@@ -117,7 +133,7 @@
             <div class="form-group">
                 <label class="col-sm-5 control-label">Last Name *</label>
                 <div class="col-sm-7">
-                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Last Name", tabindex = 1 })
+                    @Html.TextBoxFor(m => m.LastName, new {@class = "form-control", placeholder = "Last Name", tabindex = 1})
                     @Html.ValidationMessageFor(m => m.LastName)
                 </div>
 
@@ -126,7 +142,7 @@
             <div class="form-group">
                 <label class="col-sm-5 control-label">Password *</label>
                 <div class="col-sm-7">
-                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password", tabindex = 1 })
+                    @Html.PasswordFor(m => m.Password, new {@class = "form-control", placeholder = "Password", tabindex = 1})
                     @Html.ValidationMessageFor(m => m.Password)
                 </div>
             </div>
@@ -134,22 +150,22 @@
             <div class="form-group">
                 <label class="col-sm-5 control-label">Verify Password *</label>
                 <div class="col-sm-7">
-                    @Html.PasswordFor(m => m.VerifyPassword, new { @class = "form-control", placeholder = "Verify Password", tabindex = 1 })
+                    @Html.PasswordFor(m => m.VerifyPassword, new {@class = "form-control", placeholder = "Verify Password", tabindex = 1})
                     @Html.ValidationMessageFor(m => m.VerifyPassword)
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="col-sm-5 control-label">Country</label>
-                <div class="col-sm-7">
-                    <label class="control-label">USA</label>
-                </div>
-            </div>
+            @*<div class="form-group">
+                    <label class="col-sm-5 control-label">Country</label>
+                    <div class="col-sm-7">
+                        <label class="control-label">USA</label>
+                    </div>
+                </div>*@
 
             <div class="form-group">
                 <label class="col-sm-5 control-label">State *</label>
                 <div class="col-sm-7">
-                    @Html.DropDownListFor(x => x.State, Model.States, new { @class = "form-control", onchange = "onStateSelected()" })
+                    @Html.DropDownListFor(x => x.State, Model.States, new {@class = "form-control", onchange = "onStateSelected()"})
                     @Html.ValidationMessageFor(m => m.State)
                 </div>
             </div>
@@ -157,7 +173,7 @@
             <div class="form-group">
                 <label class="col-sm-5 control-label">School *</label>
                 <div class="col-sm-7">
-                    @Html.DropDownListFor(x => x.School, Model.Schools, new { @class = "form-control", @disabled = "disabled" })
+                    @Html.DropDownListFor(x => x.School, Model.Schools, new {@class = "form-control", @disabled = "disabled"})
                     @Html.ValidationMessageFor(m => m.School)
                 </div>
             </div>
@@ -166,7 +182,7 @@
             <div class="col-lg-offset-9">
                 <input id="eventRegister" type="submit" value="Register" class="btn btn-default" />
             </div>
-        }
-
+        </form>
+        @*}*@
     </div>
 </div>

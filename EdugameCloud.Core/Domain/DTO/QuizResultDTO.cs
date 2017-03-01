@@ -42,7 +42,7 @@
             this.lmsUserParametersId = result.LmsUserParametersId ?? 0;
             this.acEmail = result.ACEmail;
             this.isCompleted = result.isCompleted ?? false;
-            this.eventQuizMappingId = result.EventQuizMapping.Id;
+            this.eventQuizMappingId = result.EventQuizMapping?.Id;
             this.appInFocusTime = result.AppInFocusTime;
             this.appMaximizedTime = result.AppMaximizedTime;
         }
