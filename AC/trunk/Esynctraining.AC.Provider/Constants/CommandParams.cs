@@ -111,7 +111,7 @@
         /// <summary>
         /// The report meeting attendance.
         /// </summary>
-        public const string ReportMeetingAttendance = "sco-id={0}";
+        //public const string ReportMeetingAttendance = "sco-id={0}";
 
         /// <summary>
         /// The meeting archives.

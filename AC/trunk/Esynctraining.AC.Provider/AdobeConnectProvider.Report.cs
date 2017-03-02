@@ -249,22 +249,45 @@ namespace Esynctraining.AC.Provider
 
         public CollectionResult<ReportBulkObjectItem> ReportBulkObjects(string filter, int startIndex = 0, int limit = 0)
         {
+            return DoCallReportBulkObjects(filter, startIndex, limit);
+        }
+
+
+        private CollectionResult<ReportBulkObjectItem> DoCallReportBulkObjects(string filter, int startIndex, int limit)
+        {
             StatusInfo status;
-            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, 
-                (filter ?? string.Empty).AppendPagingIfNeeded(startIndex, limit), 
-                out status);
+
+            var principals = this.requestProcessor.Process(Commands.ReportBulkObjects, filter.AppendPagingIfNeeded(startIndex, limit), out status);
+            bool okResponse = ResponseIsOk(principals, status);
+            if (!okResponse)
+            {
+                if (status.Code == StatusCodes.operation_size_error)
+                {
+                    int? actualAcLimit = status.TryGetSubCodeAsInt32();
+                    if (actualAcLimit.HasValue)
+                    {
+                        return DoCallReportBulkObjects(filter + "&sort-sco-id=asc", startIndex, actualAcLimit.Value);
+                    }
+                }
+                return new CollectionResult<ReportBulkObjectItem>(status);
+            }
 
             const string path = "//results/report-bulk-objects/row";
-
-            return ResponseIsOk(doc, status)
-                ? new CollectionResult<ReportBulkObjectItem>(status,
-                    doc.SelectNodes(path).Cast<XmlNode>()
+            List<ReportBulkObjectItem> data = principals.SelectNodes(path).Cast<XmlNode>()
                     .Select(ReportBulkObjectItemParser.Parse)
                     .Where(item => item != null)
-                    .ToArray())
-                : new CollectionResult<ReportBulkObjectItem>(status);
+                    .ToList();
+
+            if (data.Count() < limit)
+                return new CollectionResult<ReportBulkObjectItem>(status, data);
+
+            CollectionResult<ReportBulkObjectItem> nextPage = DoCallReportBulkObjects(filter, startIndex + limit, limit);
+            if (!nextPage.Success)
+                return nextPage;
+
+            return new CollectionResult<ReportBulkObjectItem>(status, data.Concat(nextPage.Values));
         }
-            
+
     }
 
 }

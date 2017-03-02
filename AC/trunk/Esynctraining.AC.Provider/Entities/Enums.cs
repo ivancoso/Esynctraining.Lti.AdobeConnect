@@ -153,6 +153,12 @@
         live_admins,
         seminar_admins,
         user,
+
+        /// <summary>
+        /// Name: Webinar 100 Managers
+        /// Description: Users with access to create and run seminars with 100 participants
+        /// </summary>
+        named_webinar_admins_100,
     }
 
     public enum SpecialPrincipalId
