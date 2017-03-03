@@ -567,6 +567,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error("Students are not allowed to create Study Groups.");
             }
 
+            var lmsUsers = new List<LmsUserDTO>();
+            string message = string.Empty;
+            LmsCourseMeeting meeting = null;
             var sw = Stopwatch.StartNew();
             
             FixDateTimeFields(meetingDTO);
@@ -577,210 +580,228 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, lmsCompany.Id));
             }
 
-            LmsCourseMeeting meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingDTO.Id, meetingDTO.GetMeetingType());
-            string meetingSco = meeting.GetMeetingScoId();
-
-            sw.Stop();
-            trace.AppendFormat("SaveMeeting: GetOneByUserIdAndCompanyLms+GetCourseMeeting: time: {0}.", sw.Elapsed.ToString());
-            sw = Stopwatch.StartNew();
-
-            OfficeHours officeHours = null;
-            if (meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours)
+            if (meetingDTO.Id == 0 && meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours)
             {
-                officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
-                if (string.IsNullOrEmpty(meetingSco) && (officeHours != null))
+                var meetings = LmsCourseMeetingModel.GetAllByCourseId(lmsCompany.Id, param.course_id);
+                var ohMeeting =
+                    meetings.FirstOrDefault(x => x.OfficeHours != null && x.OfficeHours.LmsUser.Id == lmsUser.Id);
+                if (ohMeeting != null)
                 {
-                    meetingSco = officeHours.ScoId;
-                    meeting.ScoId = officeHours.ScoId;
-                    //meetingDTO.id = meetingSco;
+                    meeting = ohMeeting;
+                    message = "There was already created Office Hours meeting";
                 }
             }
 
-            bool isNewMeeting = string.IsNullOrEmpty(meetingSco) || !provider.GetScoInfo(meetingSco).Success;
-
-            var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meetingSco };
-
-            var currentUserPrincipal = AcUserService.GetPrincipalByLoginOrEmail(
-                provider,
-                param.lms_user_login,
-                param.lis_person_contact_email_primary,
-                lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
-
-            sw.Stop();
-            trace.AppendFormat("SaveMeeting: GetScoInfo+GetPrincipalByLoginOrEmail: time: {0}.", sw.Elapsed.ToString());
-            sw = Stopwatch.StartNew();
-
-            //===========================================
-            var lmsUsers = new List<LmsUserDTO>();
-            if (isNewMeeting)
+            if(meeting == null)
             {
-                //NOTE: need to call before use GetMeetingFolder method;
-                // when we call group-membership-update api action ac create folder in the user-meetings directory called as user login;
-                this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new [] { currentUserPrincipal.PrincipalId });
+                meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingDTO.Id,
+                    meetingDTO.GetMeetingType());
+                string meetingSco = meeting.GetMeetingScoId();
 
                 sw.Stop();
-                trace.AppendFormat("SaveMeeting: AddUserToMeetingHostsGroup: time: {0}.", sw.Elapsed.ToString());
+                trace.AppendFormat("SaveMeeting: GetOneByUserIdAndCompanyLms+GetCourseMeeting: time: {0}.",
+                    sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
-                // NOTE: for meeting we need users to add to AC meeting;
-                // For StudyGroup - to be sure we can get them on 2nd tab (and reuse them if retrieveLmsUsers==true)
+                OfficeHours officeHours = null;
+                if (meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours)
+                {
+                    officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
+                    if (string.IsNullOrEmpty(meetingSco) && (officeHours != null))
+                    {
+                        meetingSco = officeHours.ScoId;
+                        meeting.ScoId = officeHours.ScoId;
+                        //meetingDTO.id = meetingSco;
+                    }
+                }
+
+                bool isNewMeeting = string.IsNullOrEmpty(meetingSco) || !provider.GetScoInfo(meetingSco).Success;
+
+                var updateItem = new MeetingUpdateItem {ScoId = isNewMeeting ? null : meetingSco};
+
+                var currentUserPrincipal = AcUserService.GetPrincipalByLoginOrEmail(
+                    provider,
+                    param.lms_user_login,
+                    param.lis_person_contact_email_primary,
+                    lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
+
+                sw.Stop();
+                trace.AppendFormat("SaveMeeting: GetScoInfo+GetPrincipalByLoginOrEmail: time: {0}.",
+                    sw.Elapsed.ToString());
+                sw = Stopwatch.StartNew();
+
+                //===========================================
+                if (isNewMeeting)
+                {
+                    //NOTE: need to call before use GetMeetingFolder method;
+                    // when we call group-membership-update api action ac create folder in the user-meetings directory called as user login;
+                    this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new[] {currentUserPrincipal.PrincipalId});
+
+                    sw.Stop();
+                    trace.AppendFormat("SaveMeeting: AddUserToMeetingHostsGroup: time: {0}.", sw.Elapsed.ToString());
+                    sw = Stopwatch.StartNew();
+
+                    // NOTE: for meeting we need users to add to AC meeting;
+                    // For StudyGroup - to be sure we can get them on 2nd tab (and reuse them if retrieveLmsUsers==true)
                 if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
                     || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom)
-                    || (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
-                    || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
-                {
-                    string error;
-                    lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
-                        meeting,
-                        param.lms_user_id,
-                        meeting.CourseId,
-                        out error,
-                        param);
-
-                    if (error != null)
+                        || (meeting.LmsMeetingType == (int) LmsMeetingType.StudyGroup)
+                        || (meeting.LmsMeetingType == (int) LmsMeetingType.Seminar))
                     {
-                        return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
+                        string error;
+                        lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
+                            meeting,
+                            param.lms_user_id,
+                            meeting.CourseId,
+                            out error,
+                            param);
+
+                        if (error != null)
+                        {
+                            return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
+                        }
+
+                        if (lmsCompany.UseSynchronizedUsers && lmsUsers.Count > Core.Utils.Constants.SyncUsersCountLimit)
+                        {
+                            meeting.EnableDynamicProvisioning = true;
+                        }
                     }
 
-                    if (lmsCompany.UseSynchronizedUsers && lmsUsers.Count > Core.Utils.Constants.SyncUsersCountLimit)
-                    {
-                        meeting.EnableDynamicProvisioning = true;
-                    }
+                    sw.Stop();
+                    trace.AppendFormat("SaveMeeting: UsersSetup.GetLMSUsers: time: {0}.", sw.Elapsed.ToString());
+                    sw = Stopwatch.StartNew();
                 }
+                //===========================================
+
+                string meetingFolder = fb.GetMeetingFolder(currentUserPrincipal);
 
                 sw.Stop();
-                trace.AppendFormat("SaveMeeting: UsersSetup.GetLMSUsers: time: {0}.", sw.Elapsed.ToString());
+                trace.AppendFormat("SaveMeeting: GetMeetingFolder: time: {0}.", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
-            }
-            //===========================================
-            
-            string meetingFolder = fb.GetMeetingFolder(currentUserPrincipal);
 
-            sw.Stop();
-            trace.AppendFormat("SaveMeeting: GetMeetingFolder: time: {0}.", sw.Elapsed.ToString());
-            sw = Stopwatch.StartNew();
+                SetMeetingUpdateItemFields(
+                    lmsCompany,
+                    meetingDTO,
+                    updateItem,
+                    meetingFolder,
+                    isNewMeeting);
 
-            SetMeetingUpdateItemFields(
-                lmsCompany,
-                meetingDTO,
-                updateItem,
-                meetingFolder,
-                isNewMeeting);
+                ProcessMeetingName(lmsCompany, param, meetingDTO, lmsUser,
+                    isNewMeeting, updateItem, meeting, officeHours);
 
-            ProcessMeetingName(lmsCompany, param, meetingDTO, lmsUser,
-                isNewMeeting, updateItem, meeting, officeHours);
+                sw.Stop();
+                trace.AppendFormat("SaveMeeting: ProcessMeetingName: time: {0}.", sw.Elapsed.ToString());
+                sw = Stopwatch.StartNew();
 
-            sw.Stop();
-            trace.AppendFormat("SaveMeeting: ProcessMeetingName: time: {0}.", sw.Elapsed.ToString());
-            sw = Stopwatch.StartNew();
+                ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
 
-            ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
+                sw.Stop();
+                trace.AppendFormat("SaveMeeting: CreateSco: time: {0}.", sw.Elapsed.ToString());
 
-            sw.Stop();
-            trace.AppendFormat("SaveMeeting: CreateSco: time: {0}.", sw.Elapsed.ToString());
-            
-            if (!result.Success || result.ScoInfo == null)
-            {
+                if (!result.Success || result.ScoInfo == null)
+                {
                 if (!result.Success)
                     Logger.Error($"[CreateSco\\UpdateSco error]: { result.Status.GetErrorInfo() }");
 
-                if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
-                    return OperationResult.Error(Resources.Messages.NotUniqueName);
+                    if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
+                        return OperationResult.Error(Resources.Messages.NotUniqueName);
 
-                if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "url-path"))
-                    return OperationResult.Error(Resources.Messages.MeetingNotUniqueUrlPath);
-                
+                    if ((result.Status.SubCode == StatusSubCodes.duplicate) &&
+                        (result.Status.InvalidField == "url-path"))
+                        return OperationResult.Error(Resources.Messages.MeetingNotUniqueUrlPath);
+
                 if ((result.Status.SubCode == StatusSubCodes.denied))
                     return OperationResult.Error(Resources.Messages.AdobeConnectDeniedErrorMessage);
 
-                return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
-            }
-
-            string message = string.Empty;
-            bool audioProfileProccesed = ProcessAudio(lmsCompany, param, isNewMeeting, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider);
-            if (!audioProfileProccesed)
-            {
-                message += "Meeting was created without audio profile. ";
-            }
-
-            if (isNewMeeting)
-            {
-                // newly created meeting
-                if (meeting.LmsMeetingType != (int)LmsMeetingType.OfficeHours)
-                {
-                    meeting.ScoId = result.ScoInfo.ScoId;
+                    return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
                 }
 
-                // NOTE: always add current user as host - then process others (for meeting)
-                // two extra calls for meeting type - but more secure (we always will have a meeting's host!)
-                provider.UpdateScoPermissionForPrincipal(
-                    result.ScoInfo.ScoId,
-                    currentUserPrincipal.PrincipalId,
-                    MeetingPermissionId.host);
-            }
-
-            bool attachToExistedOfficeHours = false;
-            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
-            {
-                officeHours = officeHours ?? new OfficeHours { LmsUser = lmsUser };
-                officeHours.Hours = meetingDTO.OfficeHours;
-                officeHours.ScoId = meeting.ScoId = result.ScoInfo.ScoId;                    
-                this.OfficeHoursModel.RegisterSave(officeHours);
-
-                meeting.OfficeHours = officeHours;
-                meeting.ScoId = null;
-                attachToExistedOfficeHours = !isNewMeeting && (meeting.Id == 0); // we attach existed office hours meeting for another course
-            }
-            else if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
-            {
-                meeting.Owner = lmsUser;
-            }
-
-            this.LmsCourseMeetingModel.RegisterSave(meeting);
-            this.LmsCourseMeetingModel.Flush();
-
-            SpecialPermissionId specialPermissionId = meetingDTO.GetPermissionId();
-            provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
-            
-            if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
-                && lmsUsers.Count <= Core.Utils.Constants.SyncUsersCountLimit)
-            {
-                string msg;
-                List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers, out msg);
-                message += msg;
-
-                sw = Stopwatch.StartNew();
-
-                this.UsersSetup.SetDefaultUsers(
-                    lmsCompany,
-                    meeting,
-                    provider,
-                    param.lms_user_id,
-                    meeting.CourseId,
-                    result.ScoInfo.ScoId,
-                    usersToAddToMeeting,
-                    param);
-
-                sw.Stop();
-                trace.AppendFormat("SaveMeeting: UsersSetup.SetDefaultUsers: time: {0}.", sw.Elapsed.ToString());
-            }
-                        
-            if (isNewMeeting || attachToExistedOfficeHours)
-            {
-                try
+                bool audioProfileProccesed = ProcessAudio(lmsCompany, param, isNewMeeting, meetingDTO, updateItem.Name,
+                    lmsUser, meeting, result.ScoInfo, provider);
+                if (!audioProfileProccesed)
                 {
-                    CreateAnnouncement(
-                        (LmsMeetingType)meeting.LmsMeetingType,
+                    message += "Meeting was created without audio profile. ";
+                }
+
+                if (isNewMeeting)
+                {
+                    // newly created meeting
+                    if (meeting.LmsMeetingType != (int) LmsMeetingType.OfficeHours)
+                    {
+                        meeting.ScoId = result.ScoInfo.ScoId;
+                    }
+
+                    // NOTE: always add current user as host - then process others (for meeting)
+                    // two extra calls for meeting type - but more secure (we always will have a meeting's host!)
+                    provider.UpdateScoPermissionForPrincipal(
+                        result.ScoInfo.ScoId,
+                        currentUserPrincipal.PrincipalId,
+                        MeetingPermissionId.host);
+                }
+
+                bool attachToExistedOfficeHours = false;
+                if (meeting.LmsMeetingType == (int) LmsMeetingType.OfficeHours)
+                {
+                    officeHours = officeHours ?? new OfficeHours {LmsUser = lmsUser};
+                    officeHours.Hours = meetingDTO.OfficeHours;
+                    officeHours.ScoId = meeting.ScoId = result.ScoInfo.ScoId;
+                    this.OfficeHoursModel.RegisterSave(officeHours);
+
+                    meeting.OfficeHours = officeHours;
+                    meeting.ScoId = null;
+                    attachToExistedOfficeHours = !isNewMeeting && (meeting.Id == 0); // we attach existed office hours meeting for another course
+                }
+                else if (meeting.LmsMeetingType == (int) LmsMeetingType.StudyGroup)
+                {
+                    meeting.Owner = lmsUser;
+                }
+
+                this.LmsCourseMeetingModel.RegisterSave(meeting);
+                this.LmsCourseMeetingModel.Flush();
+
+                SpecialPermissionId specialPermissionId = meetingDTO.GetPermissionId();
+                provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
+
+                if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
+                    && lmsUsers.Count <= Core.Utils.Constants.SyncUsersCountLimit)
+                {
+                    string msg;
+                    List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers,
+                        out msg);
+                    message += msg;
+
+                    sw = Stopwatch.StartNew();
+
+                    this.UsersSetup.SetDefaultUsers(
                         lmsCompany,
-                        param,
-                        meetingDTO);
+                        meeting,
+                        provider,
+                        param.lms_user_id,
+                        meeting.CourseId,
+                        result.ScoInfo.ScoId,
+                        usersToAddToMeeting,
+                        param);
+
+                    sw.Stop();
+                    trace.AppendFormat("SaveMeeting: UsersSetup.SetDefaultUsers: time: {0}.", sw.Elapsed.ToString());
                 }
-                catch (Exception)
+
+                if (isNewMeeting || attachToExistedOfficeHours)
                 {
-                    message += "Meeting was created without announcement. Please contact administrator. ";
+                    try
+                    {
+                        CreateAnnouncement(
+                            (LmsMeetingType) meeting.LmsMeetingType,
+                            lmsCompany,
+                            param,
+                            meetingDTO);
+                    }
+                    catch (Exception)
+                    {
+                        message += "Meeting was created without announcement. Please contact administrator. ";
+                    }
                 }
             }
-            
             sw = Stopwatch.StartNew();
 
             TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
@@ -835,7 +856,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         Meeting = updatedMeeting,
                         LmsUsers = users,
-                    }); ;
+                    });
 	        }
 
             return OperationResultWithData<MeetingDTO>.Success(message, updatedMeeting);
@@ -1711,7 +1732,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (meetingDTO.StartDate != null)
             {
                 meetingDTO.StartDate = meetingDTO.StartDate.Substring(6, 4) + "-" + meetingDTO.StartDate.Substring(0, 5);
-            }            
+            }
         }
 
         public LmsCourseMeeting GetCourseMeeting(LmsCompany lmsCompany, int courseId, long id, LmsMeetingType type)
@@ -1758,7 +1779,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             updateItem.Language = LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode;
             updateItem.Type = ScoType.meeting;
             updateItem.ScoTag = string.IsNullOrWhiteSpace(meetingDTO.ClassRoomId) ? null : meetingDTO.ClassRoomId;
-
+            
             if (isNew)
             {
                 updateItem.SourceScoId = meetingDTO.Template;
