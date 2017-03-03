@@ -119,6 +119,8 @@ namespace EdugameCloud.Lti.Sakai
                     string userId = member.XPathSelectElement("user_id").With(x => x.Value);
 
                     List<string> groupNames = new List<string>();
+                    // disabled "groups as custom roles" functionality as we don't have customers who use it. License option is needed
+                    /*
                     var groupsCollection = member.XPathSelectElement("groups");
                     if (groupsCollection != null)
                     {
@@ -129,6 +131,7 @@ namespace EdugameCloud.Lti.Sakai
                             groupNames.Add(groupName);
                         }
                     }
+                    */
                     if(!groupNames.Any())
                         groupNames.Add(role);
 
