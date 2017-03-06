@@ -16,11 +16,21 @@ using Esynctraining.AdobeConnect.Api.Seminar.Dto;
 using EdugameCloud.Core.Business;
 using System.Runtime.Caching;
 using Esynctraining.AdobeConnect;
+using EdugameCloud.Lti.Core.DTO;
+using AutoMapper;
 
 namespace EdugameCloud.Lti.Controllers
 {
     public class SeminarController : BaseController
     {
+        private static readonly IMapper mapper = new MapperConfiguration(cfg => cfg.CreateMap<MeetingDTO, SeminarDto>()).CreateMapper();
+
+        //// TRICK:
+        //public class SeminarMeetingDTO : MeetingDTO
+        //{
+        //}
+
+
         protected readonly ObjectCache _cache = MemoryCache.Default;
         private readonly API.AdobeConnect.ISeminarService _seminarService;
 
@@ -102,8 +112,8 @@ namespace EdugameCloud.Lti.Controllers
                     meeting,
                     trace,
                     fb);
-
-                return Json(ret);
+                
+                return TrickForSeminar(ret, seminarLicenseId);
             }
             catch (Exception ex)
             {
@@ -138,7 +148,7 @@ namespace EdugameCloud.Lti.Controllers
                     trace,
                     fb);
 
-                return Json(ret);
+                return TrickForSeminar(ret, seminarLicenseId);
             }
             catch (Exception ex)
             {
@@ -231,7 +241,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
 
-        protected IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)
+        private IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)
         {
             string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
             var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
@@ -247,6 +257,32 @@ namespace EdugameCloud.Lti.Controllers
             }
 
             return provider;
+        }
+
+        private JsonResult TrickForSeminar(OperationResult ret, string seminarLicenseId)
+        {
+            var res1 = ret as OperationResultWithData<MeetingDTO>;
+            if (res1 != null)
+            {
+                var resultDto = mapper.Map<SeminarDto>(res1.Data);
+                resultDto.SeminarLicenseId = seminarLicenseId;
+                return Json(resultDto.ToSuccessResult());
+            }
+
+
+            var res2 = ret as OperationResultWithData<MeetingAndLmsUsersDTO>;
+            if (res2 != null)
+            {
+                var seminarDto = mapper.Map<SeminarDto>(res2.Data.Meeting);
+                var result = new SeminarAndLmsUsersDTO
+                {
+                    Meeting = seminarDto,
+                    LmsUsers = res2.Data.LmsUsers,
+                };
+                return Json(result.ToSuccessResult());
+            }
+
+            return Json(ret);
         }
 
         private string LoginCurrentUser(LmsUserSession session)
