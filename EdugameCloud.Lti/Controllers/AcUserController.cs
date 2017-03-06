@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Web.Http;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
@@ -65,7 +64,7 @@ namespace EdugameCloud.Lti.Controllers
 
         [Route("acNewUser")]
         [HttpPost]
-        public virtual OperationResultWithData<LmsUserDTO> AddNewUser(AddUserDto request)
+        public virtual OperationResultWithData<LmsUserDTO> AddNewUser([FromBody]AddUserDto request)
         {
             try
             {
