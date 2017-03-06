@@ -26,13 +26,18 @@ namespace EdugameCloud.Lti.Controllers
 {
     public class AcUserController : BaseApiController
     {
+        // HACK: not great solution (
         [DataContract]
-        public sealed class AddUserDto : MeetingRequestDto
+        public sealed class AddUserDto : PrincipalInputDto
         {
             [Required]
             [DataMember]
-            public PrincipalInputDto user { get; set; }
-            
+            public string lmsProviderName { get; set; }
+
+            [Required]
+            [DataMember]
+            public int meetingId { get; set; }
+
         }
 
         private readonly LmsUserModel lmsUserModel;
@@ -68,11 +73,11 @@ namespace EdugameCloud.Lti.Controllers
         {
             try
             {
+                if (request == null)
+                    throw new ArgumentNullException(nameof(request));
                 if (string.IsNullOrWhiteSpace(request.lmsProviderName))
                     throw new ArgumentException("Empty lmsProviderName", nameof(request));
-                if (request.user == null)
-                    throw new ArgumentNullException(nameof(request));
-
+                
                 var session = this.GetReadOnlySession(request.lmsProviderName);
                 var credentials = session.LmsCompany;
                 
@@ -84,10 +89,10 @@ namespace EdugameCloud.Lti.Controllers
 
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(request.user.PrincipalId))
-                        principal = CreatePrincipal(request.user, credentials, provider);
+                    if (string.IsNullOrWhiteSpace(request.PrincipalId))
+                        principal = CreatePrincipal(request, credentials, provider);
                     else
-                        principal = provider.GetOneByPrincipalId(request.user.PrincipalId).PrincipalInfo.Principal;
+                        principal = provider.GetOneByPrincipalId(request.PrincipalId).PrincipalInfo.Principal;
                 }
                 catch (Core.WarningMessageException ex)
                 {
@@ -114,7 +119,7 @@ namespace EdugameCloud.Lti.Controllers
                     return OperationResultWithData<LmsUserDTO>.Error(Resources.Messages.UserIsAlreadyParticipant);
                 }
 
-                AcRole role = AcRole.GetById(request.user.MeetingRole);
+                AcRole role = AcRole.GetById(request.MeetingRole);
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), principal.PrincipalId, role.MeetingPermissionId);
 
                 // Add user as guest to DB
@@ -132,7 +137,7 @@ namespace EdugameCloud.Lti.Controllers
                     GuestId = guest.Id,
                     AcId = guest.PrincipalId,
                     Name = principal.Name,
-                    AcRole = request.user.MeetingRole,
+                    AcRole = request.MeetingRole,
                 };
 
                 return result.ToSuccessResult();
