@@ -63,6 +63,13 @@
             return this.Repository.FindOne(query);
         }
 
+        public IFutureValue<QuizResult> GetOneByGuid(Guid guid)
+        {
+            var query = new DefaultQueryOver<QuizResult, int>().GetQueryOver()
+                    .Where(x => x.Guid == guid);
+            return this.Repository.FindOne(query);
+        }
+
         /// <summary>
         /// The get quiz result by adobe connect session id.
         /// </summary>

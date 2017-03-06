@@ -48,6 +48,11 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<QuizModel>(); }
         }
 
+        private QuizResultModel QuizResultModel
+        {
+            get { return IoC.Resolve<QuizResultModel>(); }
+        }
+
         private ILogger Logger
         {
             get { return IoC.Resolve<ILogger>(); }
@@ -56,10 +61,12 @@ namespace EdugameCloud.WCFService
         public OfflineQuizDTO GetQuizByKey(string key)
         {
             var guid = Guid.Parse(key);
-            var quiz = QuizModel.getQuizDataByQuizGuid(guid);
-            
+            var quizResult = QuizResultModel.GetOneByGuid(guid).Value;
+
             var questions = new List<OfflineQuestionDTO>();
             var result = new OfflineQuizDTO();
+            //var quiz = QuizModel.GetOneById(quizResult.Quiz.Id).Value;
+            var quiz = QuizModel.getQuizDataByQuizGuid(quizResult.Quiz.Guid);
             if (quiz.questions == null || !quiz.questions.Any())
                 return result;
             foreach (var question in quiz.questions)
