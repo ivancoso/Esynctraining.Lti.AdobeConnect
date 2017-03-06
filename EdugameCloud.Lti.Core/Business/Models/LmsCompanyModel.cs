@@ -2,6 +2,7 @@
 using System.Linq;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.NHibernate;
@@ -142,19 +143,31 @@ namespace EdugameCloud.Lti.Core.Business.Models
             }
         }
 
-        public List<LmsCompany> GetEnabledForSynchronization()
+        public List<LmsCompany> GetEnabledForSynchronization(string consumerKey = null)
         {
             LmsCompany lc = null;
             LmsCompanySetting lcs = null;
+            OfficeHours oh = null;
             IList<LmsCourseMeeting> lcm = null;
+            IList<LmsUserMeetingRole> lumr = null;
+            IList<LmsUser> lu = null;
             LmsUser u = null;
             var defaultQuery = new DefaultQueryOver<LmsCompany, int>()
                 .GetQueryOver(() => lc)
-                .Where(x => x.IsActive)
-                .JoinAlias(() => lc.Settings, () => lcs, JoinType.InnerJoin)
-                .Where(() => lcs.Name == LmsCompanySettingNames.UseSynchronizedUsers && lcs.Value == "True")
-                .JoinAlias(() => lc.LmsCourseMeetings, () => lcm, JoinType.InnerJoin)
-                .JoinAlias(() => lc.AdminUser, () => u, JoinType.LeftOuterJoin)
+                .Where(x => x.IsActive);
+            if(!string.IsNullOrEmpty(consumerKey))
+                defaultQuery = defaultQuery.Where(x => x.ConsumerKey == consumerKey);
+            defaultQuery = defaultQuery
+//                .JoinAlias(() => lc.Settings, () => lcs)
+//                .Where(() => lcs.Name == LmsCompanySettingNames.UseSynchronizedUsers && lcs.Value == "True")
+                .JoinAlias(() => lc.LmsCourseMeetings, () => lcm)
+                .JoinAlias(() => lcm.First().OfficeHours, () => oh)
+                .JoinAlias(() => lcm.First().MeetingRoles, () => lumr)
+//                .Fetch(x => x.Settings).Eager
+                .Fetch(x => x.LmsCourseMeetings).Eager
+                .Fetch(x => x.LmsCourseMeetings.First().OfficeHours).Eager
+                .Fetch(x => x.LmsCourseMeetings.First().MeetingRoles).Eager
+                .Fetch(x => x.AdminUser).Eager
                 .TransformUsing(Transformers.DistinctRootEntity);
             return this.Repository.FindAll(defaultQuery).ToList();
         }

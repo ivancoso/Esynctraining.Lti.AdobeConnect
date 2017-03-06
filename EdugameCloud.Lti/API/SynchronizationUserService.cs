@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Domain.Entities;
@@ -51,11 +53,49 @@ namespace EdugameCloud.Lti.API
             }
 
             var acProvider = acAccountService.GetProvider(lmsCompany);
-            var groupedMeetings = lmsCompany.LmsCourseMeetings
+            var meetings = lmsCompany.LmsCourseMeetings.ToList();
+            var scoIds = new HashSet<string>(meetings.Select(x => x.GetMeetingScoId())).ToList();
+            var scos = acProvider.ReportBulkObjects(scoIds).Values;
+            var settings = lmsCompany.Settings.ToList();
+            var groupedMeetings = meetings
                 .Where(x =>
                     (meetingIds == null || meetingIds.Any(m => m == x.Id))
-                    && acProvider.GetScoInfo(x.GetMeetingScoId()).Status.Code == StatusCodes.ok)
+                    && scos.Any(s => s.ScoId == x.ScoId))
                 .GroupBy(y => y.CourseId);
+            List<LmsUser> users = lmsCompany.LmsUsers.ToList();//meetingIds == null ? lmsCompany.LmsUsers.ToList() : null;
+
+            object localLockObject = new object();
+            Dictionary<int, IEnumerable<LmsUserDTO>> licenseUsers = new Dictionary<int, IEnumerable<LmsUserDTO>>();
+//            var input = meetings.Select(x => new Tuple<LmsCourseMeeting, string>(x, x.GetMeetingScoId())).ToList();
+            var timer = Stopwatch.StartNew();
+            Parallel.ForEach<int, Dictionary<int, IEnumerable<LmsUserDTO>>>(
+                  groupedMeetings.Select(x => x.Key),
+                  () => new Dictionary<int, IEnumerable<LmsUserDTO>>(),
+                  (courseId, state, localDictionary) =>
+                  {
+                  var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseId);
+                      if (opResult.IsSuccess)
+                      {
+                          localDictionary.Add(courseId, opResult.Data);
+                      }
+                      else
+                      {
+                          localDictionary.Add(courseId, new List<LmsUserDTO>());
+                      }
+
+                      return localDictionary;
+                  },
+                  (finalResult) =>
+                  {
+                      lock (localLockObject)
+                          foreach (var item in finalResult)
+                          {
+                              licenseUsers.Add(item.Key, item.Value);
+                          }
+                  }
+            );
+            timer.Stop();
+            logger.Warn($"Users from API elapsed seconds:{timer.Elapsed.ToString()}");
             foreach (var courseGroup in groupedMeetings)
             {
                logger.InfoFormat("Retrieving users for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}; MeetingIds:{3}",
@@ -63,10 +103,10 @@ namespace EdugameCloud.Lti.API
                 try
                 {
                     //todo: set extra data param
-                    var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseGroup.Key);
-                    if (opResult.IsSuccess)
-                    {
-                        var usersCount = opResult.Data.Count;
+//                    var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseGroup.Key);
+//                    if (opResult.IsSuccess)
+//                    {
+                        var usersCount = licenseUsers[courseGroup.Key].Count();
                         if (usersCount == 0)
                         {
                             //todo: take all users (meeting.Users) and make foreach trying to retrieve
@@ -88,19 +128,19 @@ namespace EdugameCloud.Lti.API
                         }
                         else
                         {
-                            var userIds = opResult.Data.Select(x => x.LtiId ?? x.Id);
-                            logger.InfoFormat("API user ids: {0}", String.Join(",", userIds));
-                            var existedDbUsers =
-                                lmsUserModel.GetByUserIdAndCompanyLms(userIds.ToArray(),
-                                    lmsCompany.Id).GroupBy(x => x.UserId).Select(x=> x.OrderBy(u=> u.Id).First());
+                            var userIds = licenseUsers[courseGroup.Key].Select(x => x.LtiId ?? x.Id);
+//                        logger.InfoFormat("API user ids: {0}", String.Join(",", userIds));
+                            var existedDbUsers = users?.Where(x => licenseUsers[courseGroup.Key].Any(u => (u.LtiId ?? u.Id) == x.UserId)) 
+                                ?? lmsUserModel.GetByUserIdAndCompanyLms(userIds.ToArray(), lmsCompany.Id);
 
-                            var newUsers = UpdateDbUsers(opResult.Data, lmsCompany, existedDbUsers, acProvider);
+                            var newUsers = UpdateDbUsers(licenseUsers[courseGroup.Key].ToList(), lmsCompany, users, acProvider);
                                 
                             // merge results;
                             foreach (var meeting in courseGroup)
                             {
+                                var existedUserIds = existedDbUsers.Select(x => x.Id).ToList();
                                 var userRolesToDelete =
-                                    meeting.MeetingRoles.Where(x => existedDbUsers.All(u => u.Id != x.User.Id)).ToList();
+                                    meeting.MeetingRoles.Where(x => existedUserIds.All(u => u != x.User.Id)).ToList();
 
                                 var usersToAddToMeeting = new List<LmsUser>(newUsers);
                                 usersToAddToMeeting.AddRange(
@@ -127,7 +167,9 @@ namespace EdugameCloud.Lti.API
                                 {
                                     Meeting = meeting,
                                     User = x,
-                                    LmsRole = opResult.Data.First(dto => x.UserId == (dto.LtiId ?? dto.Id)).LmsRole
+                                    LmsRole =
+                                        licenseUsers[courseGroup.Key].First(dto => x.UserId == (dto.LtiId ?? dto.Id))
+                                            .LmsRole
                                 }));
                                 meeting.EnableDynamicProvisioning = false;
                                 lmsCourseMeetingModel.RegisterSave(meeting, true);
@@ -149,7 +191,7 @@ namespace EdugameCloud.Lti.API
                                 }
                             }
                         }
-                    }
+//                    }
                 }
 
                 catch (Exception e)

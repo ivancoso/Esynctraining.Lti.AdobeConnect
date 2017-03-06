@@ -351,12 +351,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 //when users where not synchronized yet
                 if (!lmsUsers.Any())
                 {
-                    lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id).GroupBy(x => x.UserId).Select(x => x.OrderBy(u => u.Id).First());
+                    lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
                 }
             }
             else
             {
-                lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id).GroupBy(x => x.UserId).Select(x => x.OrderBy(u => u.Id).First());
+                lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
             }
 
             var usersCount = users.Count;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using EdugameCloud.Core.Business.Models;
@@ -38,15 +39,16 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     LmsFactory lmsFactory = IoC.Resolve<LmsFactory>();
                     var lmsCompanyModel = IoC.Resolve<LmsCompanyModel>();
                     var syncService = IoC.Resolve<ISynchronizationUserService>();
-
-                    var companies = lmsCompanyModel.GetEnabledForSynchronization();
-                    if (parameters.ContainsKey(ConsumerKeyParameterName))
+                    //var timer = Stopwatch.StartNew();
+                    IEnumerable<LmsCompany> companies = lmsCompanyModel.GetEnabledForSynchronization(parameters.ContainsKey(ConsumerKeyParameterName) 
+                        ? parameters[ConsumerKeyParameterName]
+                        : null);
+                    //timer.Stop();
+                    //logger.Warn($"Retrieve companies elapsed time: {timer.Elapsed.ToString()}");
+                    if (parameters.ContainsKey(ConsumerKeyOutParameterName))
                     {
-                        companies = companies.Where(x => x.ConsumerKey == parameters[ConsumerKeyParameterName]).ToList();
-                    }
-                    else if (parameters.ContainsKey(ConsumerKeyOutParameterName))
-                    {
-                        companies = companies.Where(x => x.ConsumerKey != parameters[ConsumerKeyOutParameterName]).ToList();
+                        companies =
+                            companies.Where(x => x.ConsumerKey != parameters[ConsumerKeyOutParameterName]).ToList();
                     }
 
                     companies = companies.Where(x => !LicenseExpired(x) 
