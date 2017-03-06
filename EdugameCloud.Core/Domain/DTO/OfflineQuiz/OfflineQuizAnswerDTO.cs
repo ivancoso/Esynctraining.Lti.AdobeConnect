@@ -6,6 +6,9 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
     public class OfflineQuizAnswerDTO
     {
         [DataMember]
+        public int eventQuizMappingId { get; set; }
+
+        [DataMember]
         public int questionId { get; set; }
 
         [DataMember]

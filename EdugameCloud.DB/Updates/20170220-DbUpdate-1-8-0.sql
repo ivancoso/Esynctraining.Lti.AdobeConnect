@@ -171,3 +171,8 @@ END
 alter table dbo.Quiz
 add [guid] UNIQUEIDENTIFIER DEFAULT NEWID() NOT NULL
 GO
+
+
+ALTER TABLE dbo.QuizResult
+  ADD guid UNIQUEIDENTIFIER
+  CONSTRAINT Default_constraint_guid DEFAULT (newid()) WITH VALUES

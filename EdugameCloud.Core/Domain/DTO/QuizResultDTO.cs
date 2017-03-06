@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Domain.DTO
+﻿using System;
+
+namespace EdugameCloud.Core.Domain.DTO
 {
     using System.Runtime.Serialization;
 
@@ -45,6 +47,7 @@
             this.eventQuizMappingId = result.EventQuizMapping?.Id;
             this.appInFocusTime = result.AppInFocusTime;
             this.appMaximizedTime = result.AppMaximizedTime;
+            this.guid = result.Guid;
         }
 
         #endregion
@@ -152,6 +155,9 @@
 
         [DataMember]
         public int? eventQuizMappingId { get; set; }
+
+        [DataMember]
+        public Guid guid { get; set; }
 
 
         #endregion

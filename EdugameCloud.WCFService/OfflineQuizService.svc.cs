@@ -19,6 +19,7 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
+using FluentValidation.Results;
 
 namespace EdugameCloud.WCFService
 {
@@ -102,7 +103,22 @@ namespace EdugameCloud.WCFService
 
         public OfflineQuizResultDTO SendAnswers(OfflineQuizAnswerDTO[] answers)
         {
-            throw new NotImplementedException();
+            ValidationResult validationResult;
+            if (this.IsValid(appletResultDTO, out validationResult))
+            {
+                var sessionModel = this.QuizResultModel;
+                var isTransient = appletResultDTO.quizResultId == 0;
+                var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.quizResultId).Value;
+                appletResult = this.ConvertDto(appletResultDTO, appletResult);
+                sessionModel.RegisterSave(appletResult);
+                created.Add(appletResult);
+            }
+            else
+            {
+                faults.AddRange(this.UpdateResultToString(validationResult));
+            }
+
+
         }
     }
 }

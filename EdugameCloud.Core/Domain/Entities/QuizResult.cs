@@ -86,8 +86,9 @@
 
         public virtual int AppInFocusTime { get; set; }
 
-        
         public virtual int AppMaximizedTime { get; set; }
+
+        public virtual Guid Guid { get; set; }
 
         #endregion
 

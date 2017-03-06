@@ -204,6 +204,7 @@ namespace EdugameCloud.WCFService
 
             instance.AppInFocusTime = resultDTO.appInFocusTime;
             instance.AppMaximizedTime = resultDTO.appMaximizedTime;
+            instance.Guid = resultDTO.guid;
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
             instance.Quiz = this.QuizModel.GetOneById(resultDTO.quizId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
