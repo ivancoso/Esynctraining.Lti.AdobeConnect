@@ -3,7 +3,7 @@
 namespace EdugameCloud.Lti.Core.DTO
 {
     [DataContract]
-    public sealed class PrincipalInputDto
+    public class PrincipalInputDto
     {
         [DataMember]
         public string PrincipalId { get; set; }
