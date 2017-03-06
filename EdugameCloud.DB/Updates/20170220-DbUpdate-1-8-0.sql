@@ -129,6 +129,9 @@ alter table dbo.QuizResult
 add appInFocusTime int
 
 
+ALTER TABLE Quiz
+ADD passingScore INT NOT NULL 
+CONSTRAINT DF_Quiz_passingScore DEFAULT 0
 
 
 -- =============================================
@@ -143,7 +146,7 @@ ALTER PROCEDURE [dbo].[getQuizResultByACSessionId]
 AS
 BEGIN
 select sub.quizResultId, sub.participantName, sub.acEmail, sub.score, sub.TotalQuestion, sub.startTime, sub.endTime, 
-		 ROW_NUMBER() OVER (ORDER BY sub.score desc, sub.dateDifference asc) AS position, sub.isCompleted from (
+		 ROW_NUMBER() OVER (ORDER BY sub.score desc, sub.dateDifference asc) AS position, sub.isCompleted, sub.appMaximizedTime, sub.appInFocusTime, sub.passingScore from (
 SELECT   QR.quizResultId,
 		 QR.participantName,	
 		 QR.acEmail,	 
@@ -154,7 +157,8 @@ SELECT   QR.quizResultId,
 		 DATEDIFF(second, QR.startTime, QR.endTime) as dateDifference,
 		 QR.isCompleted,
 		 QR.appMaximizedTime as appMaximizedTime,
-		 QR.appInFocusTime as appInFocusTime
+		 QR.appInFocusTime as appInFocusTime,
+		 Q.passingScore as passingScore
 		 
 		    
 FROM     Quiz Q INNER JOIN
@@ -166,7 +170,51 @@ WHERE    QR.acSessionId = @acSessionId
 
 END
 
+GO
 
+ALTER PROCEDURE [dbo].[getQuizResultByACSessionIdAcEmail]
+(
+	@acSessionId		INT,
+	@subModuleItemID	INT,
+	@acEmail			NVARCHAR(500)
+) 
+AS
+BEGIN
+
+SELECT
+	sub.quizResultId, 
+	sub.participantName,
+	sub.acEmail,
+	sub.score,
+	sub.TotalQuestion, -- TRICK: TotalQuestion
+	sub.startTime,
+	sub.endTime, 
+	ROW_NUMBER() OVER (ORDER BY sub.score desc, sub.dateDifference asc) AS position,
+	sub.isCompleted,
+	sub.appInFocusTime,
+	sub.appMaximizedTime,
+	sub.passingScore
+FROM
+(
+	SELECT  QR.quizResultId,
+			QR.participantName,	
+			QR.acEmail,	 
+			QR.score,
+			(SELECT Count(Q.questionid) FROM Question Q WHERE Q.subModuleItemId = @subModuleItemID) AS TotalQuestion, -- TRICK: TotalQuestion
+			QR.startTime,
+			QR.endTime,
+			DATEDIFF(second, QR.startTime, QR.endTime) AS dateDifference,
+			QR.isCompleted,
+		    QR.appMaximizedTime as appMaximizedTime,
+			QR.appInFocusTime as appInFocusTime,
+			Qz.passingScore as passingScore
+	FROM Quiz Qz
+		INNER JOIN         QuizResult QR ON Qz.quizId = QR.quizId
+	WHERE QR.acSessionId = @acSessionId AND QR.acEmail = @acEmail
+) AS sub
+
+
+END
 
 alter table dbo.Quiz
 add [guid] UNIQUEIDENTIFIER DEFAULT NEWID() NOT NULL
