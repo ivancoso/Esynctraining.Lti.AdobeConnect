@@ -18,7 +18,7 @@
             this.Map(x => x.Description).Nullable();
             this.Map(x => x.IsPostQuiz);
             this.Map(x => x.PassingScore);
-            this.Map(x => x.Guid);
+            this.Map(x => x.Guid).Generated.Insert();
 
             this.HasMany(x => x.Results).ExtraLazyLoad().Cascade.Delete().Inverse();
 
