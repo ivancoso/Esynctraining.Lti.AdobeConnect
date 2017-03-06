@@ -210,7 +210,8 @@ namespace EdugameCloud.Lti.Canvas
                         var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
                         if (errorData != null && errorData.errors != null && errorData.errors.Any())
                         {
-                            _logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}, domain:{3}.", response.StatusCode, response.StatusDescription, link, domain);
+                            _logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}, domain:{3}.", 
+                                response.StatusCode, response.StatusDescription, link, domain);
                             foreach (var error in errorData.errors)
                             {
                                 _logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);

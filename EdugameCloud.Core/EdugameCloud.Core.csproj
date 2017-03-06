@@ -441,6 +441,7 @@
     <Compile Include="Domain\Entities\UserRole.cs" />
     <Compile Include="Domain\Entities\File.cs" />
     <Compile Include="Domain\Entities\User.cs" />
+    <Compile Include="IJsonSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RTMP\NotificationType.cs">
       <SubType>Code</SubType>

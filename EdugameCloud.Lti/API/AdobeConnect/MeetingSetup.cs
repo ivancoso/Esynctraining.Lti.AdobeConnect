@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Security;
+using EdugameCloud.Core;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Controllers;
 using EdugameCloud.Lti.Core.Business;
@@ -28,7 +29,6 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -58,72 +58,36 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private static readonly string AcDateFormat = "yyyy-MM-ddTHH:mm"; // AdobeConnectProviderConstants.DateFormat
 
         #region Properties
-        
-        private LmsCourseMeetingModel LmsCourseMeetingModel
-        {
-            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
-        }
 
-        private OfficeHoursModel OfficeHoursModel
-        {
-            get { return IoC.Resolve<OfficeHoursModel>(); }
-        }
+        private IJsonSerializer JsonSerializer => IoC.Resolve<IJsonSerializer>();
 
-        private LmsUserModel LmsUserModel
-        {
-            get { return IoC.Resolve<LmsUserModel>(); }
-        }
+        private IMeetingNameFormatterFactory MeetingNameFormatterFactory => IoC.Resolve<IMeetingNameFormatterFactory>();
 
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get { return IoC.Resolve<LmsUserParametersModel>(); }
-        }
+        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
-        private LmsCompanyModel LmsСompanyModel
-        {
-            get { return IoC.Resolve<LmsCompanyModel>(); }
-        }
+        private OfficeHoursModel OfficeHoursModel => IoC.Resolve<OfficeHoursModel>();
 
-        private UsersSetup UsersSetup
-        {
-            get { return IoC.Resolve<UsersSetup>(); }
-        }
+        private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
 
-        private LmsFactory LmsFactory
-        {
-            get { return IoC.Resolve<LmsFactory>(); }
-        }
+        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
 
-        private LmsProviderModel LmsProviderModel
-        {
-            get { return IoC.Resolve<LmsProviderModel>(); }
-        }
+        private LmsCompanyModel LmsСompanyModel => IoC.Resolve<LmsCompanyModel>();
 
+        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
 
-        private LanguageModel LanguageModel
-        {
-            get { return IoC.Resolve<LanguageModel>(); }
-        }
+        private LmsFactory LmsFactory => IoC.Resolve<LmsFactory>();
 
-        private IAdobeConnectUserService AcUserService
-        {
-            get { return IoC.Resolve<IAdobeConnectUserService>(); }
-        }
+        private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
-        private IAdobeConnectAccountService AcAccountService
-        {
-            get { return IoC.Resolve<IAdobeConnectAccountService>(); }
-        }
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
-        private IAudioProfilesService AudioProfileService
-        {
-            get { return IoC.Resolve<IAudioProfilesService>(); }
-        }
+        private IAdobeConnectUserService AcUserService => IoC.Resolve<IAdobeConnectUserService>();
 
-        private ILogger Logger
-        {
-            get { return IoC.Resolve<ILogger>(); }
-        }
+        private IAdobeConnectAccountService AcAccountService => IoC.Resolve<IAdobeConnectAccountService>();
+
+        private IAudioProfilesService AudioProfileService => IoC.Resolve<IAudioProfilesService>();
+
+        private ILogger Logger => IoC.Resolve<ILogger>();
 
         #endregion
 
@@ -880,7 +844,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCourseMeeting originalMeeting = this.LmsCourseMeetingModel.GetLtiCreatedByCompanyAndScoId(credentials, dto.ScoId);
             int? sourceLtiCreatedMeetingId = originalMeeting?.Id;
             
-            var json = JsonConvert.SerializeObject(new MeetingNameInfo
+            var json = JsonSerializer.JsonSerialize(new MeetingNameInfo
             {
                 reusedMeetingName = meetingSco.ScoInfo.Name,
             });
@@ -917,10 +881,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(originalMeeting.MeetingNameJson)
                     ? new MeetingNameInfo()
-                    : JsonConvert.DeserializeObject<MeetingNameInfo>(originalMeeting.MeetingNameJson);
+                    : JsonSerializer.JsonDeserialize<MeetingNameInfo>(originalMeeting.MeetingNameJson);
 
                 nameInfo.reusedMeetingName = meetingSco.ScoInfo.Name;
-                originalMeeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+                originalMeeting.MeetingNameJson = JsonSerializer.JsonSerialize(nameInfo);
                 LmsCourseMeetingModel.RegisterSave(originalMeeting);
             }
             LmsCourseMeetingModel.RegisterSave(meeting);
@@ -1211,7 +1175,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 updateItem.Name = acMeetingName;
 
                 // TODO: move TO formatter base?
-                var json = JsonConvert.SerializeObject(new MeetingNameInfo
+                var json = JsonSerializer.JsonSerialize(new MeetingNameInfo
                 {
                     courseId = courseId,
                     courseNum = param.context_label,
@@ -1228,7 +1192,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 updateItem.Name = acMeetingName;
 
                 // TODO: move TO formatter base?
-                var json = JsonConvert.SerializeObject(new MeetingNameInfo
+                var json = JsonSerializer.JsonSerialize(new MeetingNameInfo
                 {
                     courseId = courseId,
                     courseNum = param.context_label,
@@ -1258,23 +1222,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     //var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId());
                     foreach (LmsCourseMeeting m in thisScoMeetings)
                     {
-                        MeetingNameInfo name = JsonConvert.DeserializeObject<MeetingNameInfo>(m.MeetingNameJson);
+                        MeetingNameInfo name = JsonSerializer.JsonDeserialize<MeetingNameInfo>(m.MeetingNameJson);
                         name.reusedMeetingName = meetingDTO.Name;
-                        m.MeetingNameJson = JsonConvert.SerializeObject(name);
+                        m.MeetingNameJson = JsonSerializer.JsonSerialize(name);
                         LmsCourseMeetingModel.RegisterSave(m);
                     }
-                    MeetingNameInfo currentMeetingName = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+                    MeetingNameInfo currentMeetingName = JsonSerializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
                     currentMeetingName.reusedMeetingName = meetingDTO.Name;
-                    meeting.MeetingNameJson = JsonConvert.SerializeObject(currentMeetingName);
+                    meeting.MeetingNameJson = JsonSerializer.JsonSerialize(currentMeetingName);
                     LmsCourseMeetingModel.RegisterSave(meeting);  // not required for current ?
                 }
                 else
                 {
                     if (meeting.Reused.GetValueOrDefault())
                     {
-                        MeetingNameInfo currentMeetingName = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+                        MeetingNameInfo currentMeetingName = JsonSerializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
                         currentMeetingName.reusedMeetingName = meetingDTO.Name;
-                        meeting.MeetingNameJson = JsonConvert.SerializeObject(currentMeetingName);
+                        meeting.MeetingNameJson = JsonSerializer.JsonSerialize(currentMeetingName);
                     }
 
                     string acMeetingName = formatter.UpdateName(meeting, meetingDTO.Name);
@@ -1288,9 +1252,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 foreach (LmsCourseMeeting officeHoursMeeting in coursesWithThisOfficeHours.
                     Where(x => !string.IsNullOrWhiteSpace(x.MeetingNameJson)))
                 {
-                    MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(officeHoursMeeting.MeetingNameJson);
+                    MeetingNameInfo nameInfo = JsonSerializer.JsonDeserialize<MeetingNameInfo>(officeHoursMeeting.MeetingNameJson);
                     nameInfo.meetingName = meetingDTO.Name;
-                    officeHoursMeeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+                    officeHoursMeeting.MeetingNameJson = JsonSerializer.JsonSerialize(nameInfo);
                     LmsCourseMeetingModel.RegisterSave(officeHoursMeeting);
                 }
             }
@@ -1611,7 +1575,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         ? 0
                         : bracketIndex + 2);
 
-                string js = JsonConvert.SerializeObject(new MeetingNameInfo
+                string js = JsonSerializer.JsonSerialize(new MeetingNameInfo
                 {
                     courseId = param.course_id.ToString(),
                     courseNum = param.context_label,
@@ -1625,7 +1589,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             else
             {
                 MeetingNameInfo nameInfo =
-                    JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.DbRecord.MeetingNameJson);
+                    JsonSerializer.JsonDeserialize<MeetingNameInfo>(meeting.DbRecord.MeetingNameJson);
                 // NOTE: it is reused meeting or source of reusing
                 meetingName = string.IsNullOrWhiteSpace(nameInfo.reusedMeetingName) ? nameInfo.meetingName : nameInfo.reusedMeetingName;
             }

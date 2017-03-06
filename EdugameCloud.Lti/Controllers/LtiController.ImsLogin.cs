@@ -9,7 +9,6 @@ using EdugameCloud.Lti.Models;
 using Esynctraining.AC.Provider.Entities;
 using LtiLibrary.Core.Common;
 using LtiLibrary.Core.Outcomes;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -35,7 +34,7 @@ namespace EdugameCloud.Lti.Controllers
                 else
                 {
                     Logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.",
-                        JsonConvert.SerializeObject(param, Formatting.Indented));
+                        JsonSerializer.JsonSerialize(param));
                     throw new LtiException(Resources.Messages.LtiValidationNoSetup);
                 }
 
@@ -129,7 +128,7 @@ namespace EdugameCloud.Lti.Controllers
             catch (Core.WarningMessageException ex)
             {
                 Logger.WarnFormat("[WarningMessageException] param:{0}.",
-                    JsonConvert.SerializeObject(param, Formatting.Indented));
+                    JsonSerializer.JsonSerialize(param));
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }

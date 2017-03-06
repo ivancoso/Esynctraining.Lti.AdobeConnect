@@ -64,7 +64,9 @@ namespace EdugameCloud.WCFService
         private LmsCompanyRoleMappingModel LmsCompanyRoleMappingModel => IoC.Resolve<LmsCompanyRoleMappingModel>();
 
         private Lti.API.AdobeConnect.IAdobeConnectAccountService AdobeConnectAccountService => IoC.Resolve<Lti.API.AdobeConnect.IAdobeConnectAccountService>();
-        
+
+        private IMeetingNameFormatterFactory MeetingNameFormatterFactory => IoC.Resolve<IMeetingNameFormatterFactory>();
+
         #endregion
 
         #region Public Methods and Operators
@@ -188,7 +190,6 @@ namespace EdugameCloud.WCFService
 
         public IdNamePairDTO[] GetMeetingNameFormatters() 
         {
-            // TODO: DI
             return MeetingNameFormatterFactory.GetFormatters().Select(x => new IdNamePairDTO 
             {
                 Id = x.Key,

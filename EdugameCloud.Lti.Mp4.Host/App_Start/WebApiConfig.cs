@@ -1,11 +1,9 @@
 ﻿using System.Web.Http;
 using Bmbsqd.JilMediaFormatter;
-using Jil;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Mp4.Host
 {
-    public static class WebApiConfig
+    internal static class WebApiConfig
     {
         public static void Register(HttpConfiguration config)
         {
@@ -17,11 +15,7 @@ namespace EdugameCloud.Lti.Mp4.Host
             config.Formatters.Remove(config.Formatters.XmlFormatter);
             config.Formatters.Remove(config.Formatters.JsonFormatter);
 
-            var options = new Options(false, true, false, Jil.DateTimeFormat.MillisecondsSinceUnixEpoch, true,
-                UnspecifiedDateTimeKindBehavior.IsUTC,
-                SerializationNameFormat.CamelCase);
-
-            var jsonFormatter = new JilMediaTypeFormatter(options);
+            var jsonFormatter = new JilMediaTypeFormatter(JilSerializer.JilOptions);
             //var mp = jsonFormatter.SupportedMediaTypes;
             config.Formatters.Add(jsonFormatter);
 

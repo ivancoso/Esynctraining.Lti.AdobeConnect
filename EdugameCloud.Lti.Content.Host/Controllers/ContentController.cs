@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Description;
+using EdugameCloud.Core;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Content.Host.Dto;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -26,6 +27,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.WebApi.Formatting;
+using Jil;
 using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Content.Host.Controllers
@@ -38,15 +40,11 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         private readonly LmsUserModel _lmsUserModel;
 
 
-        private MeetingSetup MeetingSetup
-        {
-            get { return IoC.Resolve<MeetingSetup>(); }
-        }
+        private IJsonSerializer JsonSerializer => IoC.Resolve<IJsonSerializer>();
 
-        private LmsUserModel LmsUserModel
-        {
-            get { return IoC.Resolve<LmsUserModel>(); }
-        }
+        private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
+
+        private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
 
 
         public ContentController(
@@ -330,7 +328,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 //TRICK:
                 dto.ByteCount = fileSize;
 
-                string output = JsonConvert.SerializeObject(dto.ToSuccessResult());
+                string output = JsonSerializer.JsonSerialize(dto.ToSuccessResult());
                 var response = new HttpResponseMessage();
                 response.Content = new StringContent(output);
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
@@ -341,7 +339,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 IUserMessageException userError = ex as IUserMessageException;
                 if (userError != null)
                 {
-                    string output = JsonConvert.SerializeObject(OperationResultWithData<ScoContentDto>.Error(ex.Message));
+                    string output = JsonSerializer.JsonSerialize(OperationResultWithData<ScoContentDto>.Error(ex.Message));
+                    //JsonConvert.SerializeObject(OperationResultWithData<ScoContentDto>.Error(ex.Message));
                     var response = new HttpResponseMessage();
                     response.Content = new StringContent(output);
                     response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");

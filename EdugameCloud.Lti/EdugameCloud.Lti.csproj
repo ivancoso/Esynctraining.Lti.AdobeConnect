@@ -287,6 +287,7 @@
     <Compile Include="Controllers\LtiControllerApi.cs" />
     <Compile Include="Controllers\LtiController.ImsLogin.cs" />
     <Compile Include="DTO\ApiLti.cs" />
+    <Compile Include="JsonSerializer.cs" />
     <Compile Include="Models\OutcomeModel.cs" />
     <Compile Include="Controllers\SeminarController.cs" />
     <Compile Include="Controllers\AcMeetingController.cs" />

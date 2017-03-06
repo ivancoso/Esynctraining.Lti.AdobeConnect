@@ -1,16 +1,26 @@
 ﻿using System;
+using EdugameCloud.Core;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
 {
     // MeetingTitle
     internal sealed class StraightMeetingNameFormatter : IMeetingNameFormatter
     {
+        private readonly IJsonSerializer _nameInfoSerializer;
+
+
         public string FormatName { get { return "[Meeting Title]"; } }
+
+
+        public StraightMeetingNameFormatter(IJsonSerializer nameInfoSerializer)
+        {
+            if (nameInfoSerializer == null)
+                throw new ArgumentNullException(nameof(nameInfoSerializer));
+            _nameInfoSerializer = nameInfoSerializer;
+        }
 
 
         public string BuildName(MeetingDTO meeting, LtiParamDTO param, string courseId)
@@ -32,9 +42,9 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             if (string.IsNullOrWhiteSpace(lmsMeetingTitle))
                 throw new ArgumentException("Meeting Title is required", nameof(lmsMeetingTitle));
 
-            MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+            MeetingNameInfo nameInfo = _nameInfoSerializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
             nameInfo.meetingName = lmsMeetingTitle;
-            meeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+            meeting.MeetingNameJson = _nameInfoSerializer.JsonSerialize(nameInfo);
 
             return lmsMeetingTitle.TruncateIfMoreThen(60);
         }

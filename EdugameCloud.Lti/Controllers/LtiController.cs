@@ -13,6 +13,7 @@ namespace EdugameCloud.Lti.Controllers
     using System.Web.Helpers;
     using System.Web.Mvc;
     using DotNetOpenAuth.AspNet;
+    using EdugameCloud.Core;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.Canvas;
@@ -61,11 +62,10 @@ namespace EdugameCloud.Lti.Controllers
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
         private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
-        
-        private LmsProviderModel LmsProviderModel
-        {
-            get { return _lmsProviderModel ?? (_lmsProviderModel = IoC.Resolve<LmsProviderModel>()); }
-        }
+
+        private IJsonSerializer JsonSerializer => IoC.Resolve<IJsonSerializer>();
+
+        private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
         private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
@@ -380,7 +380,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
                 else
                 {
-                    Logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
+                    Logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonSerializer.JsonSerialize(param));
                     throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationNoSetup}");
                 }
 
@@ -577,7 +577,7 @@ namespace EdugameCloud.Lti.Controllers
             catch (Core.WarningMessageException ex)
             {
                 Logger.WarnFormat("[WarningMessageException] param:{0}.",
-                    JsonConvert.SerializeObject(param, Formatting.Indented));
+                    JsonSerializer.JsonSerialize(param));
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
@@ -630,7 +630,7 @@ namespace EdugameCloud.Lti.Controllers
 //            }
 //            else
 //            {
-//                logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
+//                logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonUtility.JsonSerialize(param));
 //                return string.Format(Resources.Messages.LtiValidationNoSetup);
 //            }
 
@@ -1047,7 +1047,7 @@ namespace EdugameCloud.Lti.Controllers
             var session = (lmsUser == null) ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(lmsUser.Id, param.course_id).Value;
             session = session ?? new LmsUserSession { LmsCompany = company, LmsUser = lmsUser, LmsCourseId = param.course_id };
             var sessionData = new LtiSessionDTO { LtiParam = param };
-            session.SessionData = JsonConvert.SerializeObject(sessionData);
+            session.SessionData = JsonSerializer.JsonSerialize(sessionData);
             this.userSessionModel.RegisterSave(session, flush: true);
 
             return session;

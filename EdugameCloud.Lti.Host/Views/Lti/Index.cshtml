@@ -1,11 +1,9 @@
 ﻿@model EdugameCloud.Lti.DTO.LtiViewModelDto
 @using Jil;
 @{
-    Layout = null;
+	Layout = null;
 
-    var options = new Options(false, true, false, Jil.DateTimeFormat.MillisecondsSinceUnixEpoch, true,
-                UnspecifiedDateTimeKindBehavior.IsUTC,
-                SerializationNameFormat.CamelCase);
+	var options = EdugameCloud.Lti.JilSerializer.JilOptions;
 }
 <!DOCTYPE html>
 <html>
