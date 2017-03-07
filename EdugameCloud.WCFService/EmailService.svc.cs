@@ -1,6 +1,10 @@
 ﻿// ReSharper disable once CheckNamespace
 
+using EdugameCloud.Core.Business.Models;
 using EdugameCloud.WCFService.Mail.Models;
+using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.WCFService
 {
@@ -37,6 +41,7 @@ namespace EdugameCloud.WCFService
     {
         private NewsletterSubscriptionModel NewsletterSubscriptionModel => IoC.Resolve<NewsletterSubscriptionModel>();
         private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
+        private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
         private QuizModel QuizModel => IoC.Resolve<QuizModel>();
 
         private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
@@ -101,7 +106,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public EmailHistoryDTO[] GetHistoryByCompanyId(int companyId)
         {
-            var result = 
+            var result =
                 this.EmailHistoryModel.GetAll()
                     .Where(x => (x != null && x.User != null && x.User.Company != null ? x.User.Company.Id : 0) == companyId)
                     .ToList()
@@ -150,7 +155,7 @@ namespace EdugameCloud.WCFService
                 newHistoryItem.body = item.Body;
                 newHistoryItem.date = DateTime.Now.ConvertToUnixTimestamp();
                 newHistoryItem.emailHistoryId = 0;
-                
+
                 return this.SaveHistory(newHistoryItem);
             }
 
@@ -222,9 +227,9 @@ namespace EdugameCloud.WCFService
         {
             var quizResults = QuizResultModel.GetAllByIds(quizResultIds.ToList());
             var mapping = quizResults.FirstOrDefault()?.EventQuizMapping;
-            if(mapping == null)
+            if (mapping == null)
                 return OperationResultDto.Error("There is no event for this result.");
-//            var mapping = CompanyEventQuizMappingModel.GetOneById(quizResults.First().EventQuizMappingId).Value;
+            //            var mapping = CompanyEventQuizMappingModel.GetOneById(quizResults.First().EventQuizMappingId).Value;
             List<string> emailsNotSend = new List<string>();
             foreach (var quizResult in quizResults)
             {
@@ -240,13 +245,14 @@ namespace EdugameCloud.WCFService
                 }
                 try
                 {
-                    //todo: create model based on success/unsuccess
+                    //todo: create model based on success/fail
                     var model = new EventQuizResultSuccessModel(Settings)
                     {
                         Name = quizResult.ParticipantName,
                         EventName = mapping.AcEventScoId, //todo: store or take from api
                         MailSubject = "AC Event Post quiz result",
-                        PostQuizUrl = "https://app.edugamecloud.com"
+                        PostQuizUrl = "http://dev.esynctraining.com:8066/quizResultGuid=" + quizResult.Guid
+                        //PostQuizUrl = "https://app.edugamecloud.com"
                     };
                     bool sentSuccessfully = MailModel.SendEmailSync(quizResult.ParticipantName, quizResult.ACEmail,
                         Emails.TrialSubject,
@@ -262,6 +268,53 @@ namespace EdugameCloud.WCFService
                     emailsNotSend.Add(quizResult.ACEmail);
                 }
             }
+
+            return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
+        }
+
+
+        public OperationResultDto SendRegistrationEmail(EventRegistrationDTO registrationInfo)
+        {
+            var mapping = CompanyEventQuizMappingModel.GetOneById(registrationInfo.eventQuizMappingId).Value;
+            if (mapping == null)
+                return OperationResultDto.Error("There is no event for this info.");
+            var acDomain = CompanyAcServerModel.GetOneById(mapping.CompanyAcDomain.Id).Value;
+            var acUrl = acDomain.AcServer;
+            var apiUrl = new Uri(acUrl);
+
+            var scoId = mapping.AcEventScoId;
+            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), Logger, apiUrl);
+            var eventInfo = proxy.GetScoInfo(scoId);
+            if (!eventInfo.Success)
+                throw new InvalidOperationException("");
+            List<string> emailsNotSend = new List<string>();
+            try
+            {
+                //todo: create model based on success/fail
+                var model = new EventQuizRegistrationModel(Settings)
+                {
+                    FirstName = registrationInfo.FirstName,
+                    LastName = registrationInfo.LastName,
+                    EventName = eventInfo.ScoInfo.Name,
+                    EventStartDate = eventInfo.ScoInfo.BeginDate,
+                    EventEndDate = eventInfo.ScoInfo.BeginDate,
+                    MailSubject = Emails.RegistrationSubject,
+                    MeetingUrl = eventInfo.ScoInfo.SourceSco.UrlPath,
+                };
+                var sentSuccessfully = MailModel.SendEmailSync($"{model.FirstName} {model.LastName}", model.Email,
+                    Emails.RegistrationSubject,
+                    model, Common.AppEmailName, Common.AppEmail);
+                if (!sentSuccessfully)
+                {
+                    emailsNotSend.Add(model.Email);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"[SendRegistrationEmail] error.", e);
+                emailsNotSend.Add(registrationInfo.Email);
+            }
+
 
             return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
         }

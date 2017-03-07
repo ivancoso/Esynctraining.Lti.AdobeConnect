@@ -141,4 +141,7 @@
   <data name="ErrorSubject" xml:space="preserve">
     <value>An error occured in EduGame Cloud</value>
   </data>
+  <data name="RegistrationSubject" xml:space="preserve">
+    <value>You've successfully registered to the event!</value>
+  </data>
 </root>

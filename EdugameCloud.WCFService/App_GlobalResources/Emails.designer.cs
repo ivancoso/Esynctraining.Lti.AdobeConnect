@@ -97,6 +97,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You&apos;ve successfully registered to the event!.
+        /// </summary>
+        internal static string RegistrationSubject {
+            get {
+                return ResourceManager.GetString("RegistrationSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Welcome to EduGame Cloud!.
         /// </summary>
         internal static string TrialSubject {

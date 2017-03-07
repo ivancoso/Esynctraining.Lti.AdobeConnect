@@ -107,17 +107,12 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             if (!ModelState.IsValid) //Check for validation errors
             {
                 return Json(new { IsSuccess = false, Message = "You didn't pass form validation" });
-                //return new JsonResult { Data = new { IsSuccess = false, Message = "You didn't pass form validation" } };
             }
-            //var servicesUrl = _settings.EgcServicesUrl;
-            //var acUrl = "http://esynctraining.adobeconnect.com";
             var eventQuizMapping = new edugamecloud.com1.CompanyEventsService();
             var companyQuizEventMappingDto = eventQuizMapping.GetById(eventModel.EventQuizMappingId, true);
             var acService = new AcDomainsNamespace.CompanyAcDomainsService();
             var acDomain = acService.GetById(companyQuizEventMappingDto.companyAcDomainId, true);
             var acUrl = acDomain.path;
-            //var acUrl = companyQuizEventMappingDto.path;
-            //var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = new Uri(acUrl);
             var logger = IoC.Resolve<ILogger>();
 
@@ -150,7 +145,6 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 {
                     var message = $"{status.Code}  {status.InnerXml} {status.InvalidField} {status.UnderlyingExceptionInfo} ";
                     _logger.Error(message);
-                    //return message;
                     return Json(new { IsSuccess = false, Message = status.UnderlyingExceptionInfo });
                 }
 
@@ -159,12 +153,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             {
                 var message = e.Message;
                 _logger.Error(message);
-                //return message;
                 return Json(new {IsSuccess = false, Message = message});
-                //return new JsonResult { Data = new { IsSuccess = false, Message = message } };
             }
             return Json(new { IsSuccess = true, Message = "You've successfully signed up for an event!" } );
-            //return new JsonResult { Data = new { IsSuccess = true, Message = "You've successfully signed up for an event!" } };
         }
 
 

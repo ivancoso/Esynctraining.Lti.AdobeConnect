@@ -247,6 +247,7 @@
       <DependentUpon>CompanyAcDomainsService.svc</DependentUpon>
     </Compile>
     <Compile Include="Contracts\IOfflineQuizService.cs" />
+    <Compile Include="Mail\Models\EventQuizRegistrationModel.cs" />
     <Compile Include="OfflineQuizService.svc.cs">
       <DependentUpon>OfflineQuizService.svc</DependentUpon>
     </Compile>

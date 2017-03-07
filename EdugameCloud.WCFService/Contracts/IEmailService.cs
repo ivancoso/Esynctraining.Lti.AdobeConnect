@@ -103,6 +103,15 @@
         [FaultContract(typeof(Error))]
         OperationResultDto SendEventQuizResultEmail(int[] quizResultIds);
 
+        /// <summary>
+        /// Send email about registration to a user for goddard
+        /// </summary>
+        /// <param name="registrationInfo"></param>
+        /// <returns>OperationResultDto</returns>
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        OperationResultDto SendRegistrationEmail(EventRegistrationDTO registrationInfo);
+
         #endregion
     }
 }
