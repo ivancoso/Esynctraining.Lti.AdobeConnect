@@ -1657,7 +1657,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ReusedByAnotherMeeting = usedByAnotherMeeting,
 
                 AudioProfileId = meeting.DbRecord.AudioProfileId, // TODO: use meetingSco.TelephonyProfile
-                Sessions = sessions.ToArray(),
+                Sessions = sessions,
             };
 
             if (meeting.AudioProfile?.TelephonyProfile != null)
