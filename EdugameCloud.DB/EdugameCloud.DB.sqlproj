@@ -208,8 +208,10 @@
     <Build Include="dbo\Tables\LmsMeetingSession.sql" />
     <Build Include="dbo\Tables\School.sql" />
     <Build Include="dbo\Tables\QuizQuestionResultAnswer.sql" />
-    <None Include="Updates\20170207-DbUpdate-1-8-0.sql" />
-    <None Include="Updates\20170220-DbUpdate-1-8-0.sql" />
+    <Build Include="Updates\20170207-DbUpdate-1-8-1-0.sql" />
+    <Build Include="Updates\20170220-DbUpdate-1-8-1-0.sql" />
+    <Build Include="Updates\20170221-DbUpdate-1-8-1-0.sql" />
+    <Build Include="dbo\Tables\CompanyEventQuizMapping.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
