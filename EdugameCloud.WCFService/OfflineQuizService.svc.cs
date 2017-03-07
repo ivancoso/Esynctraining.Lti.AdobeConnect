@@ -48,9 +48,34 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<QuizModel>(); }
         }
 
+        private CompanyEventQuizMappingModel EventQuizMappingModel
+        {
+            get { return IoC.Resolve<CompanyEventQuizMappingModel>(); }
+        }
+
         private QuizResultModel QuizResultModel
         {
             get { return IoC.Resolve<QuizResultModel>(); }
+        }
+
+        private DistractorModel DistractorModel
+        {
+            get { return IoC.Resolve<DistractorModel>(); }
+        }
+
+        private QuizQuestionResultModel QuizQuestionResultModel
+        {
+            get { return IoC.Resolve<QuizQuestionResultModel>(); }
+        }
+
+        private QuizQuestionResultAnswerModel QuizQuestionResultAnswerModel
+        {
+            get { return IoC.Resolve<QuizQuestionResultAnswerModel>(); }
+        }
+
+        private QuestionModel QuestionModel
+        {
+            get { return IoC.Resolve<QuestionModel>(); }
         }
 
         private ILogger Logger
@@ -108,24 +133,78 @@ namespace EdugameCloud.WCFService
             return result;
         }
 
-        public OfflineQuizResultDTO SendAnswers(OfflineQuizAnswerDTO[] answers)
+        public OfflineQuizResultDTO SendAnswers(OfflineQuizAnswerContainerDTO answerContainer)
         {
-            //ValidationResult validationResult;
-            //if (this.IsValid(appletResultDTO, out validationResult))
-            //{
-            //    var sessionModel = this.QuizResultModel;
-            //    var isTransient = appletResultDTO.quizResultId == 0;
-            //    var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.quizResultId).Value;
-            //    appletResult = this.ConvertDto(appletResultDTO, appletResult);
-            //    sessionModel.RegisterSave(appletResult);
-            //    created.Add(appletResult);
-            //}
-            //else
-            //{
-            //    faults.AddRange(this.UpdateResultToString(validationResult));
-            //}
+            var quizResultGuid = answerContainer.quizResultGuid;
+            var quizResult = QuizResultModel.GetOneByGuid(quizResultGuid).Value;
+            var quizData = QuizModel.getQuizDataByQuizGuid(quizResult.Quiz.Guid);
+            var quizEventMapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
+            var postQuizId = quizEventMapping.PostQuiz.Id;
+            var postQuizResult = new QuizResult
+            {
+                isCompleted = true,
+                StartTime = answerContainer.startTime,
+                EndTime = answerContainer.endTime,
+                ACEmail = quizResult.ACEmail,
+                Email = quizResult.Email,
+                ACSessionId = quizResult.ACSessionId,
+                ParticipantName = quizResult.ParticipantName,
+                Quiz = QuizModel.GetOneById(postQuizId).Value
+            };
 
-            return null;
+            postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, quizData);
+            QuizResultModel.RegisterSave(postQuizResult);
+
+            return new OfflineQuizResultDTO()
+            {
+                score = postQuizResult.Score,
+                certificateUrl = "no one yet"
+            };
+        }
+
+        private int CalcScoreAndSaveQuestionResult(OfflineQuizAnswerDTO[] answers, QuizDataDTO quizData)
+        {
+            var score = 0;
+            foreach (var answer in answers)
+            {
+                var questionResult = new QuizQuestionResult();
+                var question = quizData.questions.First(x => x.questionId == answer.questionId);
+                //var distractors = quizData.questions.Where(x => x.questionId == answer.questionId).ToList();
+                var distractors = DistractorModel.GetAllByQuestionId(answer.questionId).ToList();
+                if (answer.trueFalseAnswer != null)
+                {
+                    var shouldBeOneDistrctor = distractors.FirstOrDefault();
+                    if (shouldBeOneDistrctor == null)
+                        throw new InvalidOperationException("There should be a distractor for true/false question");
+                    var isCorrect = answer.trueFalseAnswer.answer == (shouldBeOneDistrctor.IsCorrect ?? false);
+                    if (isCorrect)
+                    {
+                        score++;
+                    }
+                    questionResult.IsCorrect = isCorrect;
+                }
+
+                if (answer.singleChoiceAnswer != null)
+                {
+                    var quizDistractorAnswer = DistractorModel.GetOneById(answer.singleChoiceAnswer.answeredDistractorId).Value;
+                    var quizQuestionResultAnswer = new QuizQuestionResultAnswer()
+                    {
+                        QuizQuestionResult = questionResult,
+                        Value = quizDistractorAnswer.DistractorName,
+                        QuizDistractorAnswer = quizDistractorAnswer
+                    };
+                    questionResult.IsCorrect = distractors.First(x => x.Id == quizDistractorAnswer.Id).IsCorrect ?? false;
+                    QuizQuestionResultAnswerModel.RegisterSave(quizQuestionResultAnswer);
+                }
+
+                questionResult.Question = question.question;
+                var questionObj = QuestionModel.GetOneById(question.questionId).Value;
+                questionResult.QuestionRef = questionObj;
+                questionResult.QuestionType = questionObj.QuestionType;
+                QuizQuestionResultModel.RegisterSave(questionResult, true);
+            }
+
+            return score;
         }
     }
 }

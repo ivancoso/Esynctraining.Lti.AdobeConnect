@@ -15,6 +15,6 @@ namespace EdugameCloud.WCFService.Contracts
 
         [OperationContract]
         [FaultContract(typeof(Error))]
-        OfflineQuizResultDTO SendAnswers(OfflineQuizAnswerDTO[] answers);
+        OfflineQuizResultDTO SendAnswers(OfflineQuizAnswerContainerDTO answerContainer);
     }
 }

@@ -1,12 +1,26 @@
+using System;
 using System.Runtime.Serialization;
 
 namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
 {
     [DataContract]
-    public class OfflineQuizAnswerDTO
+    public class OfflineQuizAnswerContainerDTO
     {
         [DataMember]
-        public int eventQuizMappingId { get; set; }
+        public Guid quizResultGuid { get; set; }
+
+        [DataMember]
+        public DateTime startTime { get; set; }
+
+        [DataMember]
+        public DateTime endTime { get; set; }
+
+        public OfflineQuizAnswerDTO[] answers { get; set; }
+    }
+
+    [DataContract]
+    public class OfflineQuizAnswerDTO
+    {
 
         [DataMember]
         public int questionId { get; set; }
@@ -18,7 +32,7 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
         public OfflineMultiChoiceAnswerDTO multiChoiceAnswer { get; set; }
 
         [DataMember]
-        public OfflineMultiChoiceAnswerDTO singleChoiceAnswer { get; set; }
+        public OfflineSingleChoiceAnswerDTO singleChoiceAnswer { get; set; }
     }
 
     [DataContract]
