@@ -222,5 +222,5 @@ GO
 
 
 ALTER TABLE dbo.QuizResult
-  ADD guid UNIQUEIDENTIFIER
+  ADD guid UNIQUEIDENTIFIER NOT NULL
   CONSTRAINT Default_constraint_guid DEFAULT (newid()) WITH VALUES
