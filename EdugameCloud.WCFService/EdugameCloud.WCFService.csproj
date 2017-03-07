@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CompanyAcDomainsService.svc" />
+    <Content Include="Mail\Templates\EventQuizRegistration.html" />
     <Content Include="OfflineQuizService.svc" />
     <Content Include="CompanyEventsService.svc" />
     <Content Include="FileStorage\Export\ReadMe.txt" />
