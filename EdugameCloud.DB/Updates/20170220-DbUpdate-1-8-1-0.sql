@@ -57,13 +57,6 @@ GO
 
 
 
-
-alter table dbo.QuizResult
-drop constraint FK_QuizResult_EventQuizMapping
-
-alter table dbo.QuizResult
-drop column EventQuizMappingId
-
 alter table dbo.QuizResult
 add EventQuizMappingId int
 GO
