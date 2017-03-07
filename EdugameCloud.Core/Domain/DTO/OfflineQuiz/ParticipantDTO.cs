@@ -9,12 +9,6 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
         public string email { get; set; }
 
         [DataMember]
-        public string firstName { get; set; }
-
-        [DataMember]
-        public string lastName { get; set; }
-
-        [DataMember]
-        public string userName { get; set; }
+        public string participantName { get; set; }
     }
 }

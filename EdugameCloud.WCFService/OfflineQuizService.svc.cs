@@ -129,7 +129,13 @@ namespace EdugameCloud.WCFService
             result.questions = questions.ToArray();
             result.description = quiz.quizVO.description;
             result.quizName = quiz.quizVO.quizName;
-            //result.participant
+            var quizResultObj = QuizResultModel.GetOneById(quiz.quizVO.quizId).Value;
+
+            result.participant = new ParticipantDTO()
+            {
+                email = quizResultObj?.Email,
+                participantName = quizResultObj?.ParticipantName
+            };
             return result;
         }
 
