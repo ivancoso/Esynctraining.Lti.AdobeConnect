@@ -231,7 +231,30 @@ namespace EdugameCloud.WCFService
                     QuizQuestionResultAnswerModel.RegisterSave(quizQuestionResultAnswer);
                 }
 
+                if (answer.multiChoiceAnswer != null)
+                {
+                    var correctDistractors = distractors.Where(x => x.IsCorrect ?? false).Select(x => x.Id);
+                    var isCorrect = correctDistractors.SequenceEqual(answer.multiChoiceAnswer.answeredDistractorIds);
+                    if (isCorrect)
+                    {
+                        score++;
+                    }
+                    questionResult.IsCorrect = isCorrect;
 
+                    QuizQuestionResultModel.RegisterSave(questionResult, true);
+
+                    foreach (var answeredDistractorId in answer.multiChoiceAnswer.answeredDistractorIds)
+                    {
+                        var distrator = distractors.First(x => x.Id == answeredDistractorId);
+                        var quizQuestionResultAnswer = new QuizQuestionResultAnswer()
+                        {
+                            QuizQuestionResult = questionResult,
+                            Value = distrator.DistractorName,
+                            QuizDistractorAnswer = distrator
+                        };
+                        QuizQuestionResultAnswerModel.RegisterSave(quizQuestionResultAnswer);
+                    }
+                }
             }
 
             return score;

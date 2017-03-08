@@ -251,7 +251,7 @@ namespace EdugameCloud.WCFService
                         Name = quizResult.ParticipantName,
                         EventName = mapping.AcEventScoId, //todo: store or take from api
                         MailSubject = "AC Event Post quiz result",
-                        PostQuizUrl = "http://dev.esynctraining.com:8066/quizResultGuid=" + quizResult.Guid
+                        PostQuizUrl = "http://dev.esynctraining.com:8066/UI/index.html?quizResultGuid=" + quizResult.Guid
                         //PostQuizUrl = "https://app.edugamecloud.com"
                     };
                     bool sentSuccessfully = MailModel.SendEmailSync(quizResult.ParticipantName, quizResult.ACEmail,
