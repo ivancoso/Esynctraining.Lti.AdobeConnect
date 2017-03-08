@@ -10,11 +10,12 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
         public Guid quizResultGuid { get; set; }
 
         [DataMember]
-        public DateTime startTime { get; set; }
+        public string startTime { get; set; }
 
         [DataMember]
-        public DateTime endTime { get; set; }
+        public string endTime { get; set; }
 
+        [DataMember]
         public OfflineQuizAnswerDTO[] answers { get; set; }
     }
 

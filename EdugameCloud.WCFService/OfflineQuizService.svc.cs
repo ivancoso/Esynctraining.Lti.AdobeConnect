@@ -144,21 +144,36 @@ namespace EdugameCloud.WCFService
             var quizResultGuid = answerContainer.quizResultGuid;
             var quizResult = QuizResultModel.GetOneByGuid(quizResultGuid).Value;
             var quizData = QuizModel.getQuizDataByQuizGuid(quizResult.Quiz.Guid);
+            DateTime startTime, endTime;
+            var isDateCorrect = DateTime.TryParse(answerContainer.startTime, out startTime);
+            isDateCorrect = isDateCorrect && DateTime.TryParse(answerContainer.endTime, out endTime);
+
+            if (!isDateCorrect)
+            {
+                throw new InvalidOperationException("Date is not in correct format");
+            }
+
             var quizEventMapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
+            if (quizEventMapping.PostQuiz == null)
+                throw new InvalidOperationException("Post quiz can't be null in mapping");
             var postQuizId = quizEventMapping.PostQuiz.Id;
             var postQuizResult = new QuizResult
             {
                 isCompleted = true,
-                StartTime = answerContainer.startTime,
-                EndTime = answerContainer.endTime,
+                StartTime = startTime,
+                EndTime = startTime,
                 ACEmail = quizResult.ACEmail,
                 Email = quizResult.Email,
                 ACSessionId = quizResult.ACSessionId,
                 ParticipantName = quizResult.ParticipantName,
-                Quiz = QuizModel.GetOneById(postQuizId).Value
+                Quiz = QuizModel.GetOneById(postQuizId).Value,
+                EventQuizMapping = quizEventMapping,
+                DateCreated = DateTime.Now,
+                Guid = Guid.NewGuid()
             };
 
-            postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, quizData);
+            postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, quizData, quizResult);
+
             QuizResultModel.RegisterSave(postQuizResult);
 
             return new OfflineQuizResultDTO()
@@ -168,7 +183,7 @@ namespace EdugameCloud.WCFService
             };
         }
 
-        private int CalcScoreAndSaveQuestionResult(OfflineQuizAnswerDTO[] answers, QuizDataDTO quizData)
+        private int CalcScoreAndSaveQuestionResult(OfflineQuizAnswerDTO[] answers, QuizDataDTO quizData, QuizResult quizResult)
         {
             var score = 0;
             foreach (var answer in answers)
@@ -177,6 +192,12 @@ namespace EdugameCloud.WCFService
                 var question = quizData.questions.First(x => x.questionId == answer.questionId);
                 //var distractors = quizData.questions.Where(x => x.questionId == answer.questionId).ToList();
                 var distractors = DistractorModel.GetAllByQuestionId(answer.questionId).ToList();
+                questionResult.Question = question.question;
+                var questionObj = QuestionModel.GetOneById(question.questionId).Value;
+                questionResult.QuestionRef = questionObj;
+                questionResult.QuestionType = questionObj.QuestionType;
+                questionResult.QuizResult = quizResult;
+
                 if (answer.trueFalseAnswer != null)
                 {
                     var shouldBeOneDistrctor = distractors.FirstOrDefault();
@@ -199,15 +220,18 @@ namespace EdugameCloud.WCFService
                         Value = quizDistractorAnswer.DistractorName,
                         QuizDistractorAnswer = quizDistractorAnswer
                     };
-                    questionResult.IsCorrect = distractors.First(x => x.Id == quizDistractorAnswer.Id).IsCorrect ?? false;
+                    var isCorrect = distractors.First(x => x.Id == quizDistractorAnswer.Id).IsCorrect ?? false;
+                    if (isCorrect)
+                    {
+                        score++;
+                    }
+                    questionResult.IsCorrect = isCorrect;
+
+                    QuizQuestionResultModel.RegisterSave(questionResult, true);
                     QuizQuestionResultAnswerModel.RegisterSave(quizQuestionResultAnswer);
                 }
 
-                questionResult.Question = question.question;
-                var questionObj = QuestionModel.GetOneById(question.questionId).Value;
-                questionResult.QuestionRef = questionObj;
-                questionResult.QuestionType = questionObj.QuestionType;
-                QuizQuestionResultModel.RegisterSave(questionResult, true);
+
             }
 
             return score;
