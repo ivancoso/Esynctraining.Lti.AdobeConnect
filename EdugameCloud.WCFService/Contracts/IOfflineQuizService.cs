@@ -18,6 +18,7 @@ namespace EdugameCloud.WCFService.Contracts
         [FaultContract(typeof(Error))]
         [WebInvoke(UriTemplate = "QuizAnswers", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
+        [return: MessageParameter(Name = "result")]
         OfflineQuizResultDTO SendAnswers(OfflineQuizAnswerContainerDTO answerContainer);
     }
 }
