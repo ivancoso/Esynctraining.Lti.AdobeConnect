@@ -1,4 +1,5 @@
-﻿using EdugameCloud.Lti.Constants;
+﻿using EdugameCloud.Core.Business;
+using EdugameCloud.Lti.Constants;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -68,6 +69,8 @@ namespace EdugameCloud.Lti.Controllers
         private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
         private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
+        private IBuildVersionProcessor VersionProcessor => IoC.Resolve<IBuildVersionProcessor>();
+        private ICache PersistantCache => IoC.Resolve<ICache>(CachePolicies.Names.PersistantCache);
 
         #region Constructors and Destructors
 
@@ -1000,13 +1003,19 @@ namespace EdugameCloud.Lti.Controllers
             string userFullName = param.lis_person_name_full ?? param.lis_person_name_given + " " + param.lis_person_name_family;
             var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), Cache);
 
-            string version = typeof(LtiController).Assembly.GetName().Version.ToString();
-            version = version.Substring(0, version.LastIndexOf('.'));
+            var filePattern = (string) Settings.JsBuildSelector;
+            var path = Server.MapPath("~/extjs/");
+            var versionFileJs = CacheUtility.GetCachedItem<Version>(PersistantCache, CachePolicies.Keys.VersionFileName(filePattern), () =>
+                VersionProcessor.ProcessVersion(path, filePattern));
+
+//            string version = typeof(LtiController).Assembly.GetName().Version.ToString();
+//            version = version.Substring(0, version.LastIndexOf('.'));
 
             var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
             return new LtiViewModelDto
             {
-                LtiVersion = version,
+                FullVersion = versionFileJs,
+//                LtiVersion = version,
 
                 // TRICK:
                 // BB contains: lis_person_name_full:" Blackboard  Administrator"

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.Meeting;
@@ -8,8 +9,10 @@ namespace EdugameCloud.Lti.DTO
     [DataContract]
     public class LtiViewModelDto
     {
+        public Version FullVersion { get; set; }
+
         [DataMember(Name = "version")]
-        public string LtiVersion { get; set; }
+        public string LtiVersion => FullVersion.ToString(3);
 
         [DataMember(Name = "currentUserName")]
         public string CurrentUserName { get; set; }

@@ -19,12 +19,8 @@
 		var EsyncLti = @Html.Raw(JSON.Serialize(Model, options));
 		var Ext = Ext || {};
 		Ext.manifest = {
-			"js": [{ "path": "extjs/app.js" }],
-			"css": [{ "path": "extjs/resources/MeetingSetup-all.css" }],
-			"loader": {
-				"cache": "@Model.LtiVersion",
-				"cacheParam": "_dc"
-			}
+		    "js": [{ "path": "extjs/app_@(Model.FullVersion.ToString()).js" }],
+		    "css": [{ "path": "extjs/resources/MeetingSetup-all_@(Model.FullVersion.ToString()).css" }]
 		};
 	</script>
 	

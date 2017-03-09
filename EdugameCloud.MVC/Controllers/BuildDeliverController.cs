@@ -28,6 +28,7 @@
         private readonly AuthenticationModel authenticationModel;
         private readonly UserModel userModel;
         private readonly ILogger logger;
+        private readonly IBuildVersionProcessor versionProcessor;
 
 
         private User CurrentUser
@@ -44,13 +45,14 @@
             UserModel userModel,
             AuthenticationModel authenticationModel,
             ApplicationSettingsProvider settings,
-            ILogger logger)
+            ILogger logger, IBuildVersionProcessor versionProcessor)
             : base(settings)
         {
             this.fileModel = fileModel;
             this.userModel = userModel;
             this.authenticationModel = authenticationModel;
             this.logger = logger;
+            this.versionProcessor = versionProcessor;
         }
 
 
@@ -105,13 +107,17 @@
                 var user = this.CurrentUser;
                 if ((user != null) && (user.Company != null))
                 {
-                    string publicBuild = this.ProcessVersion(PublicFolderPath, (string)this.Settings.PublicBuildSelector);
-                    if (string.IsNullOrEmpty(publicBuild))
+                    var filePattern = (string)Settings.PublicBuildSelector;
+                    var path = Server.MapPath(PublicFolderPath);
+                    Version version = versionProcessor.ProcessVersion(path,
+                        filePattern);
+                    if (version == null)
                     {
                         logger.Warn("Could'n find any POD build");
                         return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                     }
 
+                    var publicBuild = filePattern.Replace("*", version.ToString());
                     string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
                     Company company = user.Company;
                     if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && (company.Theme != null) && System.IO.File.Exists(physicalPath))
@@ -170,13 +176,16 @@
                 var user = this.CurrentUser;
                 if ((user != null) && (user.Company != null))
                 {
-                    string publicBuild = BuildVersionProcessor.ProcessVersion(PublicFolderPath, (string)this.Settings.MobileBuildSelector);
-                    if (string.IsNullOrEmpty(publicBuild))
+                    var filePattern = (string)Settings.MobileBuildSelector;
+                    var path = Server.MapPath(PublicFolderPath);
+                    var version = versionProcessor.ProcessVersion(path, filePattern);
+                    if (version == null)
                     {
                         logger.Warn("Could'n find any mobile POD build");
                         return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                     }
 
+                    var publicBuild = filePattern.Replace("*", version.ToString());
                     string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
                     Company company = user.Company;
                     if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise)

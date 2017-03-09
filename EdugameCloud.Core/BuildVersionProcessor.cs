@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using Esynctraining.Core.Comparers;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Core
 {
-    public static class BuildVersionProcessor
+    public class BuildVersionProcessor : IBuildVersionProcessor
     {
-        public static string ProcessVersion(string swfFolder, string buildSelector)
+        private ILogger _logger;
+
+        public BuildVersionProcessor(ILogger logger)
         {
-            var folder = HttpContext.Current.Server.MapPath(swfFolder);
+            _logger = logger;
+        }
+
+        public Version ProcessVersion(string folder, string buildSelector)
+        {
             if (Directory.Exists(folder))
             {
                 var versions = new List<KeyValuePair<Version, string>>();
@@ -25,13 +31,16 @@ namespace EdugameCloud.Core
                 }
 
                 versions.Sort(new BuildVersionComparer());
-                return versions.FirstOrDefault().With(x => x.Value);
+                var latestVersionFileName = versions.FirstOrDefault();
+                _logger.Info(
+                    $"[ProcessVersion] Selector={buildSelector}, FileName={latestVersionFileName.Value}.");
+                return latestVersionFileName.Key;
             }
 
+            _logger.Warn($"[ProcessVersion] Directory {folder} not found.");
+            //throw?
             return null;
         }
-
     }
-
 }
 

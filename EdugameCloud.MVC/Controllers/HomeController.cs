@@ -1,29 +1,35 @@
-﻿namespace EdugameCloud.MVC.Controllers
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Web.Mvc;
+using System.Web.UI;
+using EdugameCloud.Core;
+using EdugameCloud.Core.Business;
+using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Core.Domain.Entities;
+using EdugameCloud.MVC.ViewModels;
+using Esynctraining.Core.Caching;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
+
+namespace EdugameCloud.MVC.Controllers
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Web.Mvc;
-    using System.Web.UI;
-
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.MVC.ViewModels;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Providers;
-
     [HandleError]
     public partial class HomeController : BaseController
     {
 
         private readonly UserActivationModel userActivationModel;
         private readonly UserModel userModel;
+        private readonly IBuildVersionProcessor versionProcessor;
 
+        private ICache Cache => IoC.Resolve<ICache>(CachePolicies.Names.PersistantCache);
 
-        public HomeController(UserModel userModel, UserActivationModel userActivationModel, ApplicationSettingsProvider settings)
+        public HomeController(UserModel userModel, UserActivationModel userActivationModel, ApplicationSettingsProvider settings, IBuildVersionProcessor versionProcessor)
             : base(settings)
         {
             this.userModel = userModel;
             this.userActivationModel = userActivationModel;
+            this.versionProcessor = versionProcessor;
         }
         
 
@@ -42,7 +48,11 @@
             }
             else
             {
-                string versionFileSwf = this.ProcessVersion("~/Content/swf/admin", (string)this.Settings.BuildSelector);
+                var filePattern = (string) Settings.BuildSelector;
+                var path = Server.MapPath("~/Content/swf/admin");
+                var version = CacheUtility.GetCachedItem(Cache, CachePolicies.Keys.VersionFileName(filePattern), () =>
+                    versionProcessor.ProcessVersion(path, filePattern));
+                var versionFileSwf = filePattern.Replace("*", version.ToString());
                 return this.View(
                     EdugameCloudT4.Home.Views.Admin,
                     new HomeViewModel(this) { BuildUrl = Links.Content.swf.admin.Url(versionFileSwf) });

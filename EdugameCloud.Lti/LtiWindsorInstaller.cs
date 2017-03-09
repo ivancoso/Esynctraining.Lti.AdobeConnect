@@ -3,11 +3,13 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using EdugameCloud.Core;
+using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Telephony;
 using Esynctraining.AdobeConnect.Api.MeetingReports;
+using Esynctraining.Core.Caching;
 
 namespace EdugameCloud.Lti
 {
@@ -23,6 +25,8 @@ namespace EdugameCloud.Lti
             container.Register(Component.For<IUsersSetup>().ImplementedBy<UsersSetup>().Named("IUsersSetup"));
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             container.Register(Component.For<IReportsService>().ImplementedBy<ReportsService>());
+            container.Register(Component.For<ICache>().ImplementedBy<PersistantCacheWrapper>().LifestyleSingleton().Named(CachePolicies.Names.PersistantCache));
+            container.Register(Component.For<IBuildVersionProcessor>().ImplementedBy<BuildVersionProcessor>().LifestyleSingleton());
 
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Component.For<IJsonSerializer>().ImplementedBy<JilSerializer>());

@@ -17,6 +17,10 @@ namespace EdugameCloud.Core.Business
             _cacheDependencyFolderPath = _cacheDependencyFolderPath.TrimEnd('\\');
         }
 
+        public static class Names
+        {
+            public const string PersistantCache = "PersistantCache";
+        }
 
         public static class Keys
         {
@@ -124,6 +128,11 @@ namespace EdugameCloud.Core.Business
             public static string LmsProviders()
             {
                 return "LP_";
+            }
+
+            public static string VersionFileName(string pattern)
+            {
+                return $"Version_{pattern}";
             }
 
         }

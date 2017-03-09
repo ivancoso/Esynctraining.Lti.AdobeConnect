@@ -1,4 +1,6 @@
-﻿// ReSharper disable once CheckNamespace
+﻿using System.ServiceModel.Channels;
+using System.Web.Hosting;
+
 namespace EdugameCloud.WCFService
 {
     using System;
@@ -66,6 +68,7 @@ namespace EdugameCloud.WCFService
         private Lti.API.AdobeConnect.IAdobeConnectAccountService AdobeConnectAccountService => IoC.Resolve<Lti.API.AdobeConnect.IAdobeConnectAccountService>();
 
         private IMeetingNameFormatterFactory MeetingNameFormatterFactory => IoC.Resolve<IMeetingNameFormatterFactory>();
+        private IBuildVersionProcessor VersionProcessor => IoC.Resolve<IBuildVersionProcessor>();
 
         #endregion
 
@@ -551,8 +554,10 @@ namespace EdugameCloud.WCFService
 
             // TRICK: dup with FileController
             const string PublicFolderPath = "~/../Content/swf/pub";
-            string publicBuild = BuildVersionProcessor.ProcessVersion(PublicFolderPath, (string)this.Settings.MobileBuildSelector);
-
+            var filePattern = (string)Settings.MobileBuildSelector;
+            var path = HostingEnvironment.MapPath(PublicFolderPath);
+            var version = VersionProcessor.ProcessVersion(path, filePattern);
+            var publicBuild = filePattern.Replace("*", version.ToString());
             result.downloadUrl = string.Format("{0}file/get-mobile-build", (string)this.Settings.PortalUrl);
             result.fileName = publicBuild;
             result.title = "Desktop + Mobile (Requires Connect 9.4.2+)";
