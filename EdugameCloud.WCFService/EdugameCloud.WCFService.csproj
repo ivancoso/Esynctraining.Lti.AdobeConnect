@@ -157,6 +157,10 @@
     <Reference Include="System.ServiceModel.Discovery" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
@@ -248,6 +252,13 @@
       <DependentUpon>CompanyAcDomainsService.svc</DependentUpon>
     </Compile>
     <Compile Include="Contracts\IOfflineQuizService.cs" />
+    <Compile Include="CORS\CorsConstants.cs" />
+    <Compile Include="CORS\CorsEnabledAttribute.cs" />
+    <Compile Include="CORS\CorsEnabledMessageInspector.cs" />
+    <Compile Include="CORS\CorsEnabledServiceHostFactory.cs" />
+    <Compile Include="CORS\EnableCorsEndpointBehavior.cs" />
+    <Compile Include="CORS\PreflightOperationBehavior.cs" />
+    <Compile Include="CORS\PreflightOperationInvoker.cs" />
     <Compile Include="Mail\Models\EventQuizRegistrationModel.cs" />
     <Compile Include="OfflineQuizService.svc.cs">
       <DependentUpon>OfflineQuizService.svc</DependentUpon>
@@ -585,6 +596,7 @@
       <Name>EdugameCloud.Persistence</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

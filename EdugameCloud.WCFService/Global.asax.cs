@@ -28,6 +28,20 @@
             IoC.Resolve<ILogger>().Error("Unhandled exception: ", this.Server.GetLastError());
         }
 
+        protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+            // for dev only to allo preflight requests (on jquery, angular etc)
+            if (HttpContext.Current.Request.HttpMethod == "OPTIONS" && HttpContext.Current.Request.UrlReferrer != null && (HttpContext.Current.Request.UrlReferrer.DnsSafeHost.StartsWith("dev") || HttpContext.Current.Request.UrlReferrer.DnsSafeHost.StartsWith("localhost")))
+            {
+                HttpContext.Current.Response.AddHeader("Access-Control-Allow-Methods", "POST, PUT, DELETE");
+
+                HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+                HttpContext.Current.Response.AddHeader("Access-Control-Max-Age", "1728000");
+                HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", "*");
+                HttpContext.Current.Response.End();
+            }
+        }
+
         /// <summary>
         /// The application_ start.
         /// </summary>

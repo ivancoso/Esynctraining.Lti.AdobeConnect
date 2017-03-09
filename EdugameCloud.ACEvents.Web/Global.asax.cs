@@ -39,6 +39,15 @@ namespace EdugameCloud.ACEvents.Web
             SetControllerFactory(container);
         }
 
+        protected void Application_BeginRequest()
+        {
+            //for CORS
+            if (Request.Headers.AllKeys.Contains("Origin") && Request.HttpMethod == "OPTIONS")
+            {
+                Response.Flush();
+            }
+        }
+
         public sealed class ControllersInstaller : IWindsorInstaller
         {
             private readonly string assemblyName;

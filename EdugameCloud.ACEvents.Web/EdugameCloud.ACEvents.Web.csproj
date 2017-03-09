@@ -93,6 +93,10 @@
       <HintPath>..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -180,10 +184,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\EventsController.cs" />
+    <Compile Include="Controllers\QuizCertificateController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\EventModel.cs" />
+    <Compile Include="Models\ProjectCertificateInfo.cs" />
+    <Compile Include="Models\QuizMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -388,7 +395,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="App_Data\Pdf\" />
+    <Folder Include="App_Data\Template\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -399,6 +407,10 @@
     <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj">
       <Project>{2c718c51-fa6e-47df-8260-e1f085b3bc48}</Project>
       <Name>EdugameCloud.Core.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
+      <Project>{4E419CD8-BE17-40E0-B71B-CCA30699D758}</Project>
+      <Name>EdugameCloud.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
       <Project>{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}</Project>
