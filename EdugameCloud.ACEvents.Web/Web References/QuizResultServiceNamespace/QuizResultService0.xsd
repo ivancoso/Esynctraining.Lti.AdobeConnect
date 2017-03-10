@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://dev.edugamecloud.com/services/QuizResultService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://dev.edugamecloud.com/services/QuizResultService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="ArrayOfQuizResultDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="QuizResultDTO" nillable="true" type="tns:QuizResultDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfQuizResultDTO" nillable="true" type="tns:ArrayOfQuizResultDTO" />
+  <xs:complexType name="QuizResultDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="acEmail" nillable="true" type="xs:string" />
+      <xs:element name="acSessionId" type="xs:int" />
+      <xs:element minOccurs="0" name="appInFocusTime" type="xs:int" />
+      <xs:element minOccurs="0" name="appMaximizedTime" type="xs:int" />
+      <xs:element name="companyId" type="xs:int" />
+      <xs:element minOccurs="0" name="dateCreated" type="xs:double" />
+      <xs:element minOccurs="0" name="email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="endTime" type="xs:double" />
+      <xs:element minOccurs="0" name="eventQuizMappingId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="guid" type="ser:guid" />
+      <xs:element minOccurs="0" name="isArchive" type="xs:boolean" />
+      <xs:element minOccurs="0" name="isCompleted" type="xs:boolean" />
+      <xs:element minOccurs="0" name="lmsId" type="xs:int" />
+      <xs:element minOccurs="0" name="lmsUserParametersId" type="xs:int" />
+      <xs:element minOccurs="0" name="participantName" nillable="true" type="xs:string" />
+      <xs:element name="quizId" type="xs:int" />
+      <xs:element minOccurs="0" name="quizResultId" type="xs:int" />
+      <xs:element minOccurs="0" name="score" type="xs:int" />
+      <xs:element minOccurs="0" name="startTime" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="QuizResultDTO" nillable="true" type="tns:QuizResultDTO" />
+  <xs:complexType name="QuizResultSaveAllDTO">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="faults" nillable="true" type="q1:ArrayOfstring" />
+      <xs:element minOccurs="0" name="saved" nillable="true" type="tns:ArrayOfQuizResultDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="QuizResultSaveAllDTO" nillable="true" type="tns:QuizResultSaveAllDTO" />
+</xs:schema>

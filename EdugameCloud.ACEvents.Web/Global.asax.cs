@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.Services.Protocols;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -36,6 +37,7 @@ namespace EdugameCloud.ACEvents.Web
             //container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
             //container.Register(Classes.FromAssemblyNamed("EdugameCloud.ACEvents.Web").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
             //container.Register(Classes.FromThisAssembly().BasedOn<BaseController>().LifestylePerWebRequest());
+            container.Register(Classes.FromThisAssembly().BasedOn<SoapHttpClientProtocol>().LifestylePerWebRequest());
             SetControllerFactory(container);
         }
 

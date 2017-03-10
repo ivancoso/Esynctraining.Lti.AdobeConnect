@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="QuizResultService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/QuizResultService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/QuizResultService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/QuizResultService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/QuizResultService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/QuizResultService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IQuizResultService_GetAll_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAll" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_GetAll_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllResponse" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_GetAll_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q1:Error" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_DeleteById_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteById" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_DeleteById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_DeleteById_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q2:Error" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_GetById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetById" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_GetById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_GetById_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q3:Error" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_Save_InputMessage">
+    <wsdl:part name="parameters" element="tns:Save" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_Save_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_Save_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_SaveAll_InputMessage">
+    <wsdl:part name="parameters" element="tns:SaveAll" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_SaveAll_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveAllResponse" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_SaveAll_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q5:Error" />
+  </wsdl:message>
+  <wsdl:portType name="IQuizResultService">
+    <wsdl:operation name="GetAll">
+      <wsdl:input wsaw:Action="http://tempuri.org/IQuizResultService/GetAll" message="tns:IQuizResultService_GetAll_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IQuizResultService/GetAllResponse" message="tns:IQuizResultService_GetAll_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IQuizResultService/GetAllErrorFault" name="ErrorFault" message="tns:IQuizResultService_GetAll_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <wsdl:input wsaw:Action="http://tempuri.org/IQuizResultService/DeleteById" message="tns:IQuizResultService_DeleteById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IQuizResultService/DeleteByIdResponse" message="tns:IQuizResultService_DeleteById_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IQuizResultService/DeleteByIdErrorFault" name="ErrorFault" message="tns:IQuizResultService_DeleteById_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <wsdl:input wsaw:Action="http://tempuri.org/IQuizResultService/GetById" message="tns:IQuizResultService_GetById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IQuizResultService/GetByIdResponse" message="tns:IQuizResultService_GetById_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IQuizResultService/GetByIdErrorFault" name="ErrorFault" message="tns:IQuizResultService_GetById_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <wsdl:input wsaw:Action="http://tempuri.org/IQuizResultService/Save" message="tns:IQuizResultService_Save_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IQuizResultService/SaveResponse" message="tns:IQuizResultService_Save_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IQuizResultService/SaveErrorFault" name="ErrorFault" message="tns:IQuizResultService_Save_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveAll">
+      <wsdl:input wsaw:Action="http://tempuri.org/IQuizResultService/SaveAll" message="tns:IQuizResultService_SaveAll_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IQuizResultService/SaveAllResponse" message="tns:IQuizResultService_SaveAll_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IQuizResultService/SaveAllErrorFault" name="ErrorFault" message="tns:IQuizResultService_SaveAll_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IQuizResultService" type="tns:IQuizResultService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetAll">
+      <soap:operation soapAction="http://tempuri.org/IQuizResultService/GetAll" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <soap:operation soapAction="http://tempuri.org/IQuizResultService/DeleteById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <soap:operation soapAction="http://tempuri.org/IQuizResultService/GetById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <soap:operation soapAction="http://tempuri.org/IQuizResultService/Save" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SaveAll">
+      <soap:operation soapAction="http://tempuri.org/IQuizResultService/SaveAll" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CustomBinding_IQuizResultService" type="tns:IQuizResultService">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetAll">
+      <soap12:operation soapAction="http://tempuri.org/IQuizResultService/GetAll" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteById">
+      <soap12:operation soapAction="http://tempuri.org/IQuizResultService/DeleteById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <soap12:operation soapAction="http://tempuri.org/IQuizResultService/GetById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Save">
+      <soap12:operation soapAction="http://tempuri.org/IQuizResultService/Save" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SaveAll">
+      <soap12:operation soapAction="http://tempuri.org/IQuizResultService/SaveAll" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="QuizResultService">
+    <wsdl:port name="BasicHttpBinding_IQuizResultService" binding="tns:BasicHttpBinding_IQuizResultService">
+      <soap:address location="http://dev.edugamecloud.com/services/QuizResultService.svc" />
+    </wsdl:port>
+    <wsdl:port name="CustomBinding_IQuizResultService" binding="tns:CustomBinding_IQuizResultService">
+      <soap12:address location="http://dev.edugamecloud.com/services/QuizResultService.svc/amf" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -52,5 +52,35 @@ namespace EdugameCloud.ACEvents.Web.Properties {
                 return ((string)(this["EdugameCloud_ACEvents_Web_AcDomainsNamespace_CompanyAcDomainsService"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://dev.edugamecloud.com/services/QuizResultService.svc")]
+        public string EdugameCloud_ACEvents_Web_QuizResultServiceNamespace_QuizResultService {
+            get {
+                return ((string)(this["EdugameCloud_ACEvents_Web_QuizResultServiceNamespace_QuizResultService"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://dev.edugamecloud.com/services/FileService.svc")]
+        public string EdugameCloud_ACEvents_Web_FileServiceNamespace_FileService {
+            get {
+                return ((string)(this["EdugameCloud_ACEvents_Web_FileServiceNamespace_FileService"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://dev.edugamecloud.com/services/EmailService.svc")]
+        public string EdugameCloud_ACEvents_Web_EmailServiceNamespace_EmailService {
+            get {
+                return ((string)(this["EdugameCloud_ACEvents_Web_EmailServiceNamespace_EmailService"]));
+            }
+        }
     }
 }

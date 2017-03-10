@@ -34,10 +34,6 @@
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.21\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.NHibernate.1.0.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Esynctraining.PdfProcessor, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.PdfProcessor.1.0.0.3\lib\net40\Esynctraining.PdfProcessor.dll</HintPath>
       <Private>True</Private>

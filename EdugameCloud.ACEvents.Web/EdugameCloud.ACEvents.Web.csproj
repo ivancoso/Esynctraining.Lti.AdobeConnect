@@ -213,6 +213,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="Web References\EmailServiceNamespace\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\FileServiceNamespace\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\QuizResultServiceNamespace\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -235,6 +250,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="App_Data\Pdf\Template\MD Webinar Certificate Template-2017.pdf" />
     <None Include="Properties\PublishProfiles\Local.pubxml" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -259,7 +275,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -393,17 +411,99 @@
     <Content Include="Web References\edugamecloud.com\UserRoleDTO.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
+    <Content Include="Web References\QuizResultServiceNamespace\QuizResultDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\QuizResultServiceNamespace\QuizResultSaveAllDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\FileServiceNamespace\FileDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\EmailServiceNamespace\EmailHistoryDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\EmailServiceNamespace\EmailService.wsdl" />
+    <None Include="Web References\EmailServiceNamespace\EmailService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\EmailServiceNamespace\EmailService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\EmailServiceNamespace\EmailService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\EmailServiceNamespace\EmailService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\EmailServiceNamespace\EmailService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Web References\EmailServiceNamespace\NewsletterSubscriptionDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\EmailServiceNamespace\OperationResultDto.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\EmailServiceNamespace\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="Web References\EmailServiceNamespace\UserDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\FileServiceNamespace\FileService.wsdl" />
+    <None Include="Web References\FileServiceNamespace\FileService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\FileServiceNamespace\FileService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\FileServiceNamespace\FileService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\FileServiceNamespace\FileService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\FileServiceNamespace\FileService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Web References\FileServiceNamespace\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <None Include="Web References\QuizResultServiceNamespace\QuizResultService.wsdl" />
+    <None Include="Web References\QuizResultServiceNamespace\QuizResultService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\QuizResultServiceNamespace\QuizResultService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\QuizResultServiceNamespace\QuizResultService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\QuizResultServiceNamespace\QuizResultService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\QuizResultServiceNamespace\QuizResultService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Web References\QuizResultServiceNamespace\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\Pdf\" />
-    <Folder Include="App_Data\Template\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Certificates\EdugameCloud.Certificates.csproj">
+      <Project>{4e3cf784-c2bc-4e72-8fa0-555cf98bfc35}</Project>
+      <Name>EdugameCloud.Certificates</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj">
       <Project>{2c718c51-fa6e-47df-8260-e1f085b3bc48}</Project>
       <Name>EdugameCloud.Core.Logging</Name>
@@ -443,6 +543,28 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>EdugameCloud_ACEvents_Web_edugamecloud_com1_CompanyEventsService</CachedSettingsPropName>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://dev.edugamecloud.com/services/EmailService.svc">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\EmailServiceNamespace\</RelPath>
+      <UpdateFromURL>http://dev.edugamecloud.com/services/EmailService.svc</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>EdugameCloud_ACEvents_Web_EmailServiceNamespace_EmailService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://dev.edugamecloud.com/services/FileService.svc">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\FileServiceNamespace\</RelPath>
+      <UpdateFromURL>http://dev.edugamecloud.com/services/FileService.svc</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>EdugameCloud_ACEvents_Web_FileServiceNamespace_FileService</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://dev.edugamecloud.com/services/LookupService.svc">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\edugamecloud.com\</RelPath>
@@ -453,6 +575,17 @@
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>EdugameCloud_ACEvents_Web_com_edugamecloud_dev_LookupService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://dev.edugamecloud.com/services/QuizResultService.svc">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\QuizResultServiceNamespace\</RelPath>
+      <UpdateFromURL>http://dev.edugamecloud.com/services/QuizResultService.svc</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>EdugameCloud_ACEvents_Web_QuizResultServiceNamespace_QuizResultService</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
