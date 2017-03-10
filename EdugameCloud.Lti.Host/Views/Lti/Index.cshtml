@@ -17,6 +17,63 @@
 }
 	<script type="text/javascript">
 		var EsyncLti = @Html.Raw(JSON.Serialize(Model, options));
+		EsyncLti.ActionUrls = {
+			"getMP4Recordings": "lti-mp4/Recordings",
+			"convertRecording": "lti-mp4/mp4/convert",
+			"convertRecordingWithSubtitles": "lti-mp4/mp4/convertWithSubtitles",
+			"getRecordingStatus": "lti-mp4/recordings/status",
+
+			"deleteRecording": "lti/Recordings/Delete/{0}",
+			"getMP4Recordings": "lti/Recordings",
+			"publishRecording": "lti/Recordings/publish",
+			"unpublishRecording": "lti/Recordings/unpublish",
+			"editRecording": "lti/Recordings/Edit/{0}",
+			"shareRecording": "lti/Recordings/Share",
+
+			"createACUser": "lti/acNewUser",
+			"searchACUser": "lti/acSearchUser",
+			"getUsersForMeeting": "lti/Users",
+			"setDefaultACRoles": "lti/Meeting/SetDefaultACRoles",
+			"setUserRole": "lti/Users/Update",
+			"removeUserFromMeeting": "lti/users/removefrommeeting",
+
+			"createEventsBatch": "lti/calendar/createBatch",
+			"getEvents": "lti/calendar/getevents",
+			"creatEevent": "lti/calendar/createevent",
+			"savEevent": "lti/calendar/saveevent",
+			"deleteEvent": "lti/calendar/deleteevent",
+
+			"getContentShortcuts": "lti-my-content/{0}/shortcuts",
+			"getFolderContent": "lti-my-content/{0}/content/{1}",
+			"downloadContent": "lti-my-content/{0}/content/{1}/download",
+			"deleteContent": "lti-my-content/{0}/content/{1}/delete",
+			"editContent": "lti-my-content/{0}/content/{1}/edit",
+			"moveContent": "lti-my-content/{0}/content/{1}/move-to/{2}",
+			"createContentFolder": "lti-my-content/{0}/content/{1}/create-sub-folder",
+
+			"checkSettingsPasword": "lti/Settings/CheckPass",
+			"saveSettings": "lti/Settings/Save",
+
+			"joinToMeeting": "lti/Meeting/Join",
+			"deleteMeeting": "lti/Meeting/Delete",
+			"leaveMeeting": "lti/Meeting/Leave",
+			"saveMeetingAndGetUsers": "lti/Meeting/UpdateAndReturnLmsUsers",
+			"saveMeeting": "lti/Meeting/Update",
+			"saveSeminar": "lti/seminars/edit",
+			"createSeminar": "lti/seminars/create",
+			"useExistingMeeting": "lti/useExistingMeeting",
+			"getTemplates": "lti/Templates",
+			"getAudioProfiles": "lti/GetAudioProfiles",
+			"searchACMeetings": "lti/acSearchMeeting",
+			"createSeminarSession": "lti/seminars/sessions/create",
+			"saveSeminarSession": "lti/seminars/sessions/edit",
+			"deleteSeminarSession": "lti/seminars/sessions/delete",
+
+			"reportByRecordings": "lti/meeting/reports/by-recordings",
+			"reportByRecordings": "lti/Meeting/Sessions",
+			"reportByAttendance": "lti/Meeting/Attendance"
+		};
+
 		var Ext = Ext || {};
 		Ext.manifest = {
 		    "js": [{ "path": "extjs/app_@(Model.FullVersion.ToString()).js" }],
