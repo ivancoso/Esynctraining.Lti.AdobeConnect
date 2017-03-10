@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using EdugameCloud.ACEvents.Web.EmailServiceNamespace;
 using EdugameCloud.ACEvents.Web.Models;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
@@ -21,9 +22,11 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         //private readonly ILogger _logger;
         private readonly ILogger _logger;
         private readonly dynamic _settings;
+        private EmailService _emailService;
 
-        public EventsController(ILogger logger, ApplicationSettingsProvider settings)
+        public EventsController(ILogger logger, ApplicationSettingsProvider settings, EmailService emailService)
         {
+            _emailService = emailService;
             _settings = settings;
             _logger = logger;
             //  _logger = logger;
@@ -148,6 +151,20 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                     return Json(new { IsSuccess = false, Message = status.UnderlyingExceptionInfo });
                 }
 
+                var eventRegistrationDto = new EventRegistrationDTO()
+                {
+                    Email = eventModel.Email,
+                    FirstName = eventModel.FirstName,
+                    LastName = eventModel.LastName,
+                    EventEndDate = eventModel.EndDate,
+                    EventName = eventModel.EventName,
+                    EventStartDate = eventModel.StartDate,
+                    EventEndDateSpecified = true,
+                    EventStartDateSpecified = true,
+                    eventQuizMappingId = eventModel.EventQuizMappingId,
+                    eventQuizMappingIdSpecified = true
+                };
+                _emailService.SendRegistrationEmail(eventRegistrationDto);
             }
             catch (Exception e)
             {

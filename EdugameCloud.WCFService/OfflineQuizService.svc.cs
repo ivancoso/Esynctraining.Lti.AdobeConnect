@@ -176,10 +176,31 @@ namespace EdugameCloud.WCFService
 
             QuizResultModel.RegisterSave(postQuizResult);
 
+            var acDomain = CompanyAcServerModel.GetOneById(quizEventMapping.CompanyAcDomain.Id).Value;
+            var acUrl = acDomain.AcServer;
+            var apiUrl = new Uri(acUrl);
+            var logger = IoC.Resolve<ILogger>();
+
+            var scoId = quizEventMapping.AcEventScoId;
+            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
+            var additionalFields = proxy.GetEventRegistrationDetails(scoId);
+            var userState = string.Empty;
+            //foreach (var eventRegistrationDetail in additionalFields.EventFields)
+            //{
+            //    if (string.Equals(eventRegistrationDetail.Description, "state", StringComparison.OrdinalIgnoreCase))
+            //        userState = additionalFields.UserFields.ToList().Where(x => x.Name == )
+
+            //}
+
+            var eventScoInfo = proxy.GetScoInfo(scoId);
+            var teacher = proxy.GetScoByUrl2(eventScoInfo.ScoInfo.UrlPath).ScoInfo.Owner;
+
+
+
             return new OfflineQuizResultDTO()
             {
                 score = postQuizResult.Score,
-                certificateUrl = "no one yet"
+                certificateDownloadUrl = "no one yet"
             };
         }
 
