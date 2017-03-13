@@ -99,16 +99,18 @@ namespace EdugameCloud.WCFService
             var guid = Guid.Parse(key);
             var quizResult = QuizResultModel.GetOneByGuid(guid).Value;
 
+            var mapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
+
             var questions = new List<OfflineQuestionDTO>();
             var result = new OfflineQuizDTO();
             //var quiz = QuizModel.GetOneById(quizResult.Quiz.Id).Value;
-            var quiz = QuizModel.getQuizDataByQuizGuid(quizResult.Quiz.Guid);
-            if (quiz.questions == null || !quiz.questions.Any())
+            var postQuiz = QuizModel.getQuizDataByQuizID(mapping.PostQuiz.Id);
+            if (postQuiz.questions == null || !postQuiz.questions.Any())
                 return result;
-            foreach (var question in quiz.questions)
+            foreach (var question in postQuiz.questions)
             {
                 var distractors = new List<OfflineDistractorDTO>();
-                var quizDistractors = quiz.distractors.Where(x => x.questionId == question.questionId).ToArray();
+                var quizDistractors = postQuiz.distractors.Where(x => x.questionId == question.questionId).ToArray();
                 if (!quizDistractors.Any())
                     continue;
                 foreach (var quizDistractor in quizDistractors)
@@ -138,9 +140,9 @@ namespace EdugameCloud.WCFService
                 });
             }
             result.questions = questions.ToArray();
-            result.description = quiz.quizVO.description;
-            result.quizName = quiz.quizVO.quizName;
-            var quizResultObj = QuizResultModel.GetOneById(quiz.quizVO.quizId).Value;
+            result.description = postQuiz.quizVO.description;
+            result.quizName = postQuiz.quizVO.quizName;
+            var quizResultObj = QuizResultModel.GetOneById(postQuiz.quizVO.quizId).Value;
 
             result.participant = new ParticipantDTO()
             {
@@ -184,15 +186,17 @@ namespace EdugameCloud.WCFService
                 Guid = Guid.NewGuid()
             };
 
-            var passingScore = postQuizResult.Quiz.PassingScore;
+            var quizPassingScoreInPercents = postQuizResult.Quiz.PassingScore / 100;
+            var totalQuestions = quizData.questions.Length;
+            var scoreInPercents = postQuizResult.Score / totalQuestions;
             postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, quizData, quizResult);
 
             QuizResultModel.RegisterSave(postQuizResult);
 
             return new OfflineQuizResultDTO()
             {
-                score = postQuizResult.Score / postQuizResult.Quiz.PassingScore,
-                isSuccess = postQuizResult.Score >= postQuizResult.Quiz.PassingScore,
+                score = scoreInPercents,
+                isSuccess = scoreInPercents >= quizPassingScoreInPercents,
                 certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={quizResultGuid}",
                 certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={quizResultGuid}"
             };
