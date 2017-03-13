@@ -5,7 +5,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using EdugameCloud.ACEvents.Web.AcDomainsNamespace;
+using EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace;
 using EdugameCloud.ACEvents.Web.EmailServiceNamespace;
+using EdugameCloud.ACEvents.Web.LookupServiceNamespace;
 using EdugameCloud.ACEvents.Web.Models;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
@@ -23,9 +26,16 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         private readonly ILogger _logger;
         private readonly dynamic _settings;
         private EmailService _emailService;
+        private readonly LookupService _lookupService;
+        private readonly CompanyEventsService _companyEventsService;
+        private readonly CompanyAcDomainsService _companyAcDomainsService;
 
-        public EventsController(ILogger logger, ApplicationSettingsProvider settings, EmailService emailService)
+        public EventsController(ILogger logger, ApplicationSettingsProvider settings, EmailService emailService, 
+            CompanyEventsService companyEventsService, LookupService lookupService, CompanyAcDomainsService companyAcDomainsService)
         {
+            _companyAcDomainsService = companyAcDomainsService;
+            _companyEventsService = companyEventsService;
+            _lookupService = lookupService;
             _emailService = emailService;
             _settings = settings;
             _logger = logger;
@@ -40,11 +50,11 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             var eventQuizMappingId = Request.QueryString["eventQuizMappingId"];
             var eventQuizMappingIdInt = int.Parse(eventQuizMappingId);
-            var companyEventsService = new edugamecloud.com1.CompanyEventsService();
+            var companyEventsService = _companyEventsService;
             var eventMapping = companyEventsService.GetById(eventQuizMappingIdInt, true);
             if (eventMapping == null)
                 throw new InvalidOperationException("No eventQuizMapping with this id");
-            var acService = new AcDomainsNamespace.CompanyAcDomainsService();
+            var acService = _companyAcDomainsService;
             var acDomain = acService.GetById(eventMapping.companyAcDomainId, true);
             var acUrl = acDomain.path;
             var eventScoId = eventMapping.acEventScoId;
@@ -64,7 +74,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             };
 
             //var lookupServiceClient = new LookupServiceClient.LookupServiceClient();
-            var lookupWebService = new edugamecloud.com.LookupService();
+            var lookupWebService = _lookupService;
             var states = lookupWebService.GetStates();
 
             model.States = states.Select(x => new SelectListItem()
@@ -97,7 +107,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         public ActionResult GetSchoolPerState(string stateCode)
         {
             _logger.Info("Gettings states");
-            var lookupWebService = new edugamecloud.com.LookupService();
+            var lookupWebService = _lookupService;
             _logger.Info("lookup url is " + lookupWebService.Url);
             var schools = lookupWebService.GetSchools().Where(x => x.State.stateCode == stateCode);
             var stateSchools = schools.OrderBy(x => x.AccountName);
@@ -111,9 +121,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             {
                 return Json(new { IsSuccess = false, Message = "You didn't pass form validation" });
             }
-            var eventQuizMapping = new edugamecloud.com1.CompanyEventsService();
+            var eventQuizMapping = _companyEventsService;
             var companyQuizEventMappingDto = eventQuizMapping.GetById(eventModel.EventQuizMappingId, true);
-            var acService = new AcDomainsNamespace.CompanyAcDomainsService();
+            var acService = _companyAcDomainsService;
             var acDomain = acService.GetById(companyQuizEventMappingDto.companyAcDomainId, true);
             var acUrl = acDomain.path;
             var apiUrl = new Uri(acUrl);

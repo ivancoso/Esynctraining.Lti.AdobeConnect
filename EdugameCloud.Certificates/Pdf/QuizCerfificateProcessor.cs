@@ -32,7 +32,7 @@ namespace EdugameCloud.Certificates.Pdf
         {
             Check.Argument.IsNotNull(fields, "fields");
 
-            string outputFilePath = BuildPdfPath(fields["ParticipantId"]);
+            string outputFilePath = BuildPdfPath(fields["ParticipantName"]);
             RenderPdfFile(outputFilePath, fields);
             return outputFilePath;
         }
@@ -41,7 +41,7 @@ namespace EdugameCloud.Certificates.Pdf
         {
             Check.Argument.IsNotNull(fields, "fields");
 
-            string generatedPdfPath = BuildPdfPath(fields["ParticipantId"]);
+            string generatedPdfPath = BuildPdfPath(fields["ParticipantName"]);
             string imageFilePath = generatedPdfPath + FileExtensionFromEncoder(format);
             if (File.Exists(imageFilePath))
                 return imageFilePath;
@@ -96,7 +96,7 @@ namespace EdugameCloud.Certificates.Pdf
 
                     foreach (var item in quizCertificateDetails)
                     {
-                        if ((item.Key == "CourseName") || (item.Key == "PortalName"))
+                        if ((item.Key == "CourseName"))
                             testForm.SetFieldProperty(item.Key, "textsize", 0f, null);
 
                         testForm.SetField(item.Key, item.Value);
@@ -105,9 +105,9 @@ namespace EdugameCloud.Certificates.Pdf
             }
         }
 
-        private string BuildPdfPath(string participantId)
+        private string BuildPdfPath(string participantName)
         {
-            string fileName = string.Format("{0}_{1}.pdf", _templateToken, participantId);
+            string fileName = string.Format("{0}_{1}.pdf", _templateToken, participantName);
 
             string setting = ConfigurationManager.AppSettings["PdfOutputFolder"];
             string folder = setting.StartsWith("~")

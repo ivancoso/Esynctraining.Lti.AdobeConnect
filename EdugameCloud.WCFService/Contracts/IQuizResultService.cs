@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.WCFService.Contracts
+﻿using System;
+
+namespace EdugameCloud.WCFService.Contracts
 {
     using System.ServiceModel;
 
@@ -49,6 +51,10 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         QuizResultDTO GetById(int id);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        QuizResultDTO GetByGuid(Guid guid);
 
         /// <summary>
         /// The save.

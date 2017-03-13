@@ -93,6 +93,10 @@
       <HintPath>..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ghostscript.NET, Version=1.2.0.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ghostscript.NET.1.2.0\lib\net40\Ghostscript.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
       <Private>True</Private>
@@ -108,6 +112,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NodaTime, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
@@ -183,13 +191,14 @@
     <Compile Include="App_Start\DIConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Certificates\CertTemplateBuilder.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\QuizCertificateController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\EventModel.cs" />
-    <Compile Include="Models\ProjectCertificateInfo.cs" />
+    <Compile Include="Certificates\QuizCertificateInfo.cs" />
     <Compile Include="Models\QuizMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -203,12 +212,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\edugamecloud.com1\Reference.cs">
+    <Compile Include="Web References\CompanyEventsServiceNamespace\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\edugamecloud.com\Reference.cs">
+    <Compile Include="Web References\LookupServiceNamespace\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -289,27 +298,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Events\Signup.cshtml" />
-    <Content Include="Web References\edugamecloud.com\BuildVersionTypeDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\CountryDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\EGCVersionsDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\GeoResultDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\LanguageDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\LookupAllDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com1\CompanyEventDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
     <Content Include="Web References\AcDomainsNamespace\ACDomainDTO.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
@@ -333,83 +321,74 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\edugamecloud.com1\CompanyEventsService.wsdl" />
-    <None Include="Web References\edugamecloud.com1\CompanyEventsService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\edugamecloud.com1\CompanyEventsService0.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\edugamecloud.com1\CompanyEventsService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\edugamecloud.com1\CompanyEventsService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\edugamecloud.com1\CompanyEventsService3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Web References\edugamecloud.com1\CompanyQuizEventMappingDTO.datasource">
+    <Content Include="Web References\CompanyEventsServiceNamespace\CompanyEventDTO1.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
-    <Content Include="Web References\edugamecloud.com1\CompanyQuizEventMappingSaveDTO.datasource">
+    <None Include="Web References\CompanyEventsServiceNamespace\CompanyEventsService.wsdl" />
+    <None Include="Web References\CompanyEventsServiceNamespace\CompanyEventsService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\CompanyEventsServiceNamespace\CompanyEventsService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\CompanyEventsServiceNamespace\CompanyEventsService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\CompanyEventsServiceNamespace\CompanyEventsService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\CompanyEventsServiceNamespace\CompanyEventsService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Web References\CompanyEventsServiceNamespace\CompanyQuizEventMappingDTO1.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
-    <None Include="Web References\edugamecloud.com1\Reference.map">
+    <Content Include="Web References\CompanyEventsServiceNamespace\CompanyQuizEventMappingSaveDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\CompanyEventsServiceNamespace\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\edugamecloud.com\LookupService.wsdl">
+    <Content Include="Web References\LookupServiceNamespace\BuildVersionTypeDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\CountryDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\EGCVersionsDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\GeoResultDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\LanguageDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\LookupAllDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\LookupServiceNamespace\LookupService.wsdl">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Web References\edugamecloud.com\LookupService.xsd">
+    <None Include="Web References\LookupServiceNamespace\LookupService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Web References\edugamecloud.com\LookupService0.xsd">
+    <None Include="Web References\LookupServiceNamespace\LookupService0.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Web References\edugamecloud.com\LookupService1.xsd">
+    <None Include="Web References\LookupServiceNamespace\LookupService1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Web References\edugamecloud.com\LookupService2.xsd">
+    <None Include="Web References\LookupServiceNamespace\LookupService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Web References\edugamecloud.com\LookupService3.xsd">
+    <None Include="Web References\LookupServiceNamespace\LookupService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Web References\edugamecloud.com\Reference.map">
+    <Content Include="Web References\LookupServiceNamespace\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\QuestionTypeDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\QuizFormatDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\SchoolDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\ScoreTypeDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\SNMapProviderDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\SNServiceDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\StateDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\SurveyGroupingTypeDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\TimeZoneDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </Content>
-    <Content Include="Web References\edugamecloud.com\UserRoleDTO.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
     </Content>
     <Content Include="Web References\QuizResultServiceNamespace\QuizResultDTO.datasource">
       <DependentUpon>Reference.map</DependentUpon>
@@ -468,9 +447,39 @@
     <None Include="Web References\FileServiceNamespace\FileService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Web References\FileServiceNamespace\Reference.map">
+    <None Include="Web References\FileServiceNamespace\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Web References\LookupServiceNamespace\QuestionTypeDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\QuizFormatDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\SchoolDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\ScoreTypeDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\SNMapProviderDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\SNServiceDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\StateDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\SurveyGroupingTypeDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\TimeZoneDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\LookupServiceNamespace\UserRoleDTO1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
     </Content>
     <None Include="Web References\QuizResultServiceNamespace\QuizResultService.wsdl" />
     <None Include="Web References\QuizResultServiceNamespace\QuizResultService.xsd">
@@ -488,12 +497,14 @@
     <None Include="Web References\QuizResultServiceNamespace\QuizResultService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Web References\QuizResultServiceNamespace\Reference.map">
+    <None Include="Web References\QuizResultServiceNamespace\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
-    </Content>
+    </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\Pdf\Shared\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
@@ -503,14 +514,6 @@
     <ProjectReference Include="..\EdugameCloud.Certificates\EdugameCloud.Certificates.csproj">
       <Project>{4e3cf784-c2bc-4e72-8fa0-555cf98bfc35}</Project>
       <Name>EdugameCloud.Certificates</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj">
-      <Project>{2c718c51-fa6e-47df-8260-e1f085b3bc48}</Project>
-      <Name>EdugameCloud.Core.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
-      <Project>{4E419CD8-BE17-40E0-B71B-CCA30699D758}</Project>
-      <Name>EdugameCloud.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
       <Project>{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}</Project>
@@ -534,7 +537,7 @@
     </WebReferenceUrl>
     <WebReferenceUrl Include="http://dev.edugamecloud.com/services/CompanyEventsService.svc">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\edugamecloud.com1\</RelPath>
+      <RelPath>Web References\CompanyEventsServiceNamespace\</RelPath>
       <UpdateFromURL>http://dev.edugamecloud.com/services/CompanyEventsService.svc</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
@@ -567,7 +570,7 @@
     </WebReferenceUrl>
     <WebReferenceUrl Include="http://dev.edugamecloud.com/services/LookupService.svc">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\edugamecloud.com\</RelPath>
+      <RelPath>Web References\LookupServiceNamespace\</RelPath>
       <UpdateFromURL>http://dev.edugamecloud.com/services/LookupService.svc</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>

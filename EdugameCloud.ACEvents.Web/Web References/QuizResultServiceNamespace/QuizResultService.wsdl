@@ -36,6 +36,15 @@
   <wsdl:message name="IQuizResultService_GetById_ErrorFault_FaultMessage">
     <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q3:Error" />
   </wsdl:message>
+  <wsdl:message name="IQuizResultService_GetByGuid_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetByGuid" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_GetByGuid_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByGuidResponse" />
+  </wsdl:message>
+  <wsdl:message name="IQuizResultService_GetByGuid_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+  </wsdl:message>
   <wsdl:message name="IQuizResultService_Save_InputMessage">
     <wsdl:part name="parameters" element="tns:Save" />
   </wsdl:message>
@@ -43,7 +52,7 @@
     <wsdl:part name="parameters" element="tns:SaveResponse" />
   </wsdl:message>
   <wsdl:message name="IQuizResultService_Save_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q5:Error" />
   </wsdl:message>
   <wsdl:message name="IQuizResultService_SaveAll_InputMessage">
     <wsdl:part name="parameters" element="tns:SaveAll" />
@@ -52,7 +61,7 @@
     <wsdl:part name="parameters" element="tns:SaveAllResponse" />
   </wsdl:message>
   <wsdl:message name="IQuizResultService_SaveAll_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q5:Error" />
+    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q6:Error" />
   </wsdl:message>
   <wsdl:portType name="IQuizResultService">
     <wsdl:operation name="GetAll">
@@ -69,6 +78,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IQuizResultService/GetById" message="tns:IQuizResultService_GetById_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IQuizResultService/GetByIdResponse" message="tns:IQuizResultService_GetById_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/IQuizResultService/GetByIdErrorFault" name="ErrorFault" message="tns:IQuizResultService_GetById_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetByGuid">
+      <wsdl:input wsaw:Action="http://tempuri.org/IQuizResultService/GetByGuid" message="tns:IQuizResultService_GetByGuid_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IQuizResultService/GetByGuidResponse" message="tns:IQuizResultService_GetByGuid_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IQuizResultService/GetByGuidErrorFault" name="ErrorFault" message="tns:IQuizResultService_GetByGuid_ErrorFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="Save">
       <wsdl:input wsaw:Action="http://tempuri.org/IQuizResultService/Save" message="tns:IQuizResultService_Save_InputMessage" />
@@ -109,6 +123,18 @@
     </wsdl:operation>
     <wsdl:operation name="GetById">
       <soap:operation soapAction="http://tempuri.org/IQuizResultService/GetById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetByGuid">
+      <soap:operation soapAction="http://tempuri.org/IQuizResultService/GetByGuid" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -172,6 +198,18 @@
     </wsdl:operation>
     <wsdl:operation name="GetById">
       <soap12:operation soapAction="http://tempuri.org/IQuizResultService/GetById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetByGuid">
+      <soap12:operation soapAction="http://tempuri.org/IQuizResultService/GetByGuid" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

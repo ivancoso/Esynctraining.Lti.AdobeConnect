@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace EdugameCloud.ACEvents.Web.edugamecloud.com1 {
+namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
     using System;
     using System.Web.Services;
     using System.Diagnostics;

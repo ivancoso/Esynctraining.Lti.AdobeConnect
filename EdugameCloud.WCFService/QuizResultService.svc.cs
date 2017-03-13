@@ -216,6 +216,19 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
+        public QuizResultDTO GetByGuid(Guid guid)
+        {
+            QuizResult quizResult;
+            if ((quizResult = this.QuizResultModel.GetOneByGuid(guid).Value) == null)
+            {
+                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
+                this.LogError("QuizResult.GetById", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+
+            return new QuizResultDTO(quizResult);
+        }
+
         #endregion
     }
 }

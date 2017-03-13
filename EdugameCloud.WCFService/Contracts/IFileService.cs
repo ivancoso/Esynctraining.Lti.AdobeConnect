@@ -27,6 +27,10 @@
         [FaultContract(typeof(Error))]
         FileDTO FileUploadEnd(string webOrbId);
 
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        FileDTO GetById(Guid id);
+
         /// <summary>
         /// Should remove uploaded file file if any and instance from DB
         /// </summary>

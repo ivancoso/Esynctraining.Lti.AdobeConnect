@@ -236,6 +236,13 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
+        public FileDTO GetById(Guid id)
+        {
+            var file = FileModel.GetOneById(id).Value;
+            var result = new FileDTO(file);
+            return result;
+        }
+
         #endregion
     }
 }

@@ -18,6 +18,7 @@ using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using FluentValidation.Results;
 
@@ -38,6 +39,11 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<CompanyAcServerModel>(); }
         }
 
+        protected dynamic Settings
+        {
+            get { return IoC.Resolve<ApplicationSettingsProvider>(); }
+        }
+
         private CompanyEventQuizMappingModel CompanyEventQuizMappingModel
         {
             get { return IoC.Resolve<CompanyEventQuizMappingModel>(); }
@@ -46,6 +52,11 @@ namespace EdugameCloud.WCFService
         private QuizModel QuizModel
         {
             get { return IoC.Resolve<QuizModel>(); }
+        }
+
+        private ACSessionModel ACSessionModel
+        {
+            get { return IoC.Resolve<ACSessionModel>(); }
         }
 
         private CompanyEventQuizMappingModel EventQuizMappingModel
@@ -153,6 +164,7 @@ namespace EdugameCloud.WCFService
                 throw new InvalidOperationException("Date is not in correct format");
             }
 
+            var acSession = ACSessionModel.GetOneById(quizResult.ACSessionId);
             var quizEventMapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
             if (quizEventMapping.PostQuiz == null)
                 throw new InvalidOperationException("Post quiz can't be null in mapping");
@@ -176,31 +188,11 @@ namespace EdugameCloud.WCFService
 
             QuizResultModel.RegisterSave(postQuizResult);
 
-            var acDomain = CompanyAcServerModel.GetOneById(quizEventMapping.CompanyAcDomain.Id).Value;
-            var acUrl = acDomain.AcServer;
-            var apiUrl = new Uri(acUrl);
-            var logger = IoC.Resolve<ILogger>();
-
-            var scoId = quizEventMapping.AcEventScoId;
-            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
-            var additionalFields = proxy.GetEventRegistrationDetails(scoId);
-            var userState = string.Empty;
-            //foreach (var eventRegistrationDetail in additionalFields.EventFields)
-            //{
-            //    if (string.Equals(eventRegistrationDetail.Description, "state", StringComparison.OrdinalIgnoreCase))
-            //        userState = additionalFields.UserFields.ToList().Where(x => x.Name == )
-
-            //}
-
-            var eventScoInfo = proxy.GetScoInfo(scoId);
-            var teacher = proxy.GetScoByUrl2(eventScoInfo.ScoInfo.UrlPath).ScoInfo.Owner;
-
-
-
             return new OfflineQuizResultDTO()
             {
                 score = postQuizResult.Score,
-                certificateDownloadUrl = "no one yet"
+                certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={quizResultGuid}",
+                certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={quizResultGuid}"
             };
         }
 

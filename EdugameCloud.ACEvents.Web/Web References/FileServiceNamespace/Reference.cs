@@ -31,6 +31,8 @@ namespace EdugameCloud.ACEvents.Web.FileServiceNamespace {
         
         private System.Threading.SendOrPostCallback FileUploadEndOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetByIdOperationCompleted;
+        
         private System.Threading.SendOrPostCallback FileUploadFailedOperationCompleted;
         
         private System.Threading.SendOrPostCallback InitializeFileUploadOperationCompleted;
@@ -79,6 +81,9 @@ namespace EdugameCloud.ACEvents.Web.FileServiceNamespace {
         public event FileUploadEndCompletedEventHandler FileUploadEndCompleted;
         
         /// <remarks/>
+        public event GetByIdCompletedEventHandler GetByIdCompleted;
+        
+        /// <remarks/>
         public event FileUploadFailedCompletedEventHandler FileUploadFailedCompleted;
         
         /// <remarks/>
@@ -114,6 +119,36 @@ namespace EdugameCloud.ACEvents.Web.FileServiceNamespace {
             if ((this.FileUploadEndCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.FileUploadEndCompleted(this, new FileUploadEndCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/IFileService/GetById", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public FileDTO GetById(string id) {
+            object[] results = this.Invoke("GetById", new object[] {
+                        id});
+            return ((FileDTO)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetByIdAsync(string id) {
+            this.GetByIdAsync(id, null);
+        }
+        
+        /// <remarks/>
+        public void GetByIdAsync(string id, object userState) {
+            if ((this.GetByIdOperationCompleted == null)) {
+                this.GetByIdOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetByIdOperationCompleted);
+            }
+            this.InvokeAsync("GetById", new object[] {
+                        id}, this.GetByIdOperationCompleted, userState);
+        }
+        
+        private void OnGetByIdOperationCompleted(object arg) {
+            if ((this.GetByIdCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetByIdCompleted(this, new GetByIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -426,6 +461,32 @@ namespace EdugameCloud.ACEvents.Web.FileServiceNamespace {
         private object[] results;
         
         internal FileUploadEndCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public FileDTO Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((FileDTO)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    public delegate void GetByIdCompletedEventHandler(object sender, GetByIdCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetByIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetByIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

@@ -9,6 +9,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <_PublishTargetUrl>C:\Temp\Goddard</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
+    <File Include="App_Data/Pdf/Template/MD Webinar Certificate Template-2017.pdf">
+      <publishTime>03/09/2017 23:24:35</publishTime>
+    </File>
     <File Include="bin/Antlr3.Runtime.dll">
       <publishTime>02/22/2013 08:43:40</publishTime>
     </File>
@@ -61,13 +64,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/19/2016 01:14:44</publishTime>
     </File>
     <File Include="bin/EdugameCloud.ACEvents.Web.dll">
-      <publishTime>03/01/2017 12:25:28</publishTime>
+      <publishTime>03/13/2017 14:46:15</publishTime>
     </File>
     <File Include="bin/EdugameCloud.ACEvents.Web.XmlSerializers.dll">
-      <publishTime>03/01/2017 12:25:30</publishTime>
+      <publishTime>03/13/2017 14:46:18</publishTime>
+    </File>
+    <File Include="bin/EdugameCloud.Certificates.dll">
+      <publishTime>03/13/2017 14:46:09</publishTime>
     </File>
     <File Include="bin/EdugameCloud.Core.dll">
-      <publishTime>03/01/2017 12:25:11</publishTime>
+      <publishTime>03/10/2017 18:36:36</publishTime>
     </File>
     <File Include="bin/EdugameCloud.Core.Logging.dll">
       <publishTime>03/01/2017 12:25:10</publishTime>
@@ -76,13 +82,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/10/2017 12:40:57</publishTime>
     </File>
     <File Include="bin/EdugameCloud.Lti.Core.dll">
-      <publishTime>03/01/2017 12:25:13</publishTime>
+      <publishTime>03/10/2017 18:36:38</publishTime>
     </File>
     <File Include="bin/EdugameCloud.Lti.dll">
       <publishTime>02/02/2017 18:58:15</publishTime>
     </File>
     <File Include="bin/EdugameCloud.Lti.Persistence.dll">
-      <publishTime>03/01/2017 12:25:23</publishTime>
+      <publishTime>03/10/2017 18:36:46</publishTime>
     </File>
     <File Include="bin/EdugameCloud.Lti.Telephony.dll">
       <publishTime>02/02/2017 18:58:13</publishTime>
@@ -94,7 +100,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/02/2017 18:58:23</publishTime>
     </File>
     <File Include="bin/EdugameCloud.Persistence.dll">
-      <publishTime>03/01/2017 12:25:24</publishTime>
+      <publishTime>03/10/2017 18:36:47</publishTime>
     </File>
     <File Include="bin/EPPlus.dll">
       <publishTime>01/08/2016 14:38:42</publishTime>
@@ -150,6 +156,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="bin/Esynctraining.NHibernate.dll">
       <publishTime>11/27/2015 02:51:50</publishTime>
     </File>
+    <File Include="bin/Esynctraining.PdfProcessor.dll">
+      <publishTime>09/16/2015 01:18:28</publishTime>
+    </File>
     <File Include="bin/Esynctraining.Persistence.dll">
       <publishTime>01/19/2016 00:28:38</publishTime>
     </File>
@@ -171,11 +180,17 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="bin/fr/FluentValidation.resources.dll">
       <publishTime>02/26/2016 09:50:52</publishTime>
     </File>
+    <File Include="bin/Ghostscript.NET.dll">
+      <publishTime>02/05/2015 12:05:06</publishTime>
+    </File>
     <File Include="bin/Iesi.Collections.dll">
       <publishTime>02/10/2013 10:44:52</publishTime>
     </File>
     <File Include="bin/it/FluentValidation.resources.dll">
       <publishTime>02/26/2016 09:50:52</publishTime>
+    </File>
+    <File Include="bin/itextsharp.dll">
+      <publishTime>10/10/2016 06:51:26</publishTime>
     </File>
     <File Include="bin/ko/FluentValidation.resources.dll">
       <publishTime>02/26/2016 09:50:52</publishTime>
@@ -223,7 +238,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/13/2016 23:06:14</publishTime>
     </File>
     <File Include="bin/NHibernate.dll">
-      <publishTime>02/21/2017 14:28:56</publishTime>
+      <publishTime>08/17/2015 23:18:30</publishTime>
     </File>
     <File Include="bin/nl/FluentValidation.resources.dll">
       <publishTime>02/26/2016 09:50:52</publishTime>
@@ -238,7 +253,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/26/2016 09:50:52</publishTime>
     </File>
     <File Include="bin/Properties/Settings.Designer.cs">
-      <publishTime>02/22/2017 13:11:48</publishTime>
+      <publishTime>03/10/2017 00:06:11</publishTime>
     </File>
     <File Include="bin/pt/FluentValidation.resources.dll">
       <publishTime>02/26/2016 09:50:52</publishTime>
@@ -439,7 +454,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/02/2017 22:54:44</publishTime>
     </File>
     <File Include="packages.config">
-      <publishTime>02/28/2017 16:25:54</publishTime>
+      <publishTime>03/13/2017 14:31:50</publishTime>
     </File>
     <File Include="Scripts/bootstrap.js">
       <publishTime>01/31/2017 19:08:25</publishTime>
@@ -481,7 +496,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/31/2017 19:08:26</publishTime>
     </File>
     <File Include="Views/Events/Signup.cshtml">
-      <publishTime>03/01/2017 10:06:05</publishTime>
+      <publishTime>03/01/2017 12:37:11</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>01/31/2017 18:00:47</publishTime>
@@ -497,6 +512,15 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Web References/AcDomainsNamespace/ACDomainDTO.datasource">
       <publishTime>02/23/2017 11:38:28</publishTime>
+    </File>
+    <File Include="Web References/CompanyEventsServiceNamespace/CompanyEventDTO1.datasource">
+      <publishTime>03/12/2017 01:33:19</publishTime>
+    </File>
+    <File Include="Web References/CompanyEventsServiceNamespace/CompanyQuizEventMappingDTO1.datasource">
+      <publishTime>03/12/2017 01:33:19</publishTime>
+    </File>
+    <File Include="Web References/CompanyEventsServiceNamespace/CompanyQuizEventMappingSaveDTO1.datasource">
+      <publishTime>03/12/2017 01:33:20</publishTime>
     </File>
     <File Include="Web References/edugamecloud.com/BuildVersionTypeDTO.datasource">
       <publishTime>02/02/2017 17:18:16</publishTime>
@@ -558,8 +582,83 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Web References/edugamecloud.com1/CompanyQuizEventMappingSaveDTO.datasource">
       <publishTime>02/23/2017 11:38:36</publishTime>
     </File>
+    <File Include="Web References/EmailServiceNamespace/EmailHistoryDTO.datasource">
+      <publishTime>03/09/2017 23:59:55</publishTime>
+    </File>
+    <File Include="Web References/EmailServiceNamespace/NewsletterSubscriptionDTO.datasource">
+      <publishTime>03/09/2017 23:59:55</publishTime>
+    </File>
+    <File Include="Web References/EmailServiceNamespace/OperationResultDto.datasource">
+      <publishTime>03/09/2017 23:59:55</publishTime>
+    </File>
+    <File Include="Web References/EmailServiceNamespace/Reference.map">
+      <publishTime>03/09/2017 23:59:52</publishTime>
+    </File>
+    <File Include="Web References/EmailServiceNamespace/UserDTO.datasource">
+      <publishTime>03/09/2017 23:59:55</publishTime>
+    </File>
+    <File Include="Web References/FileServiceNamespace/FileDTO.datasource">
+      <publishTime>03/13/2017 11:59:11</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/BuildVersionTypeDTO1.datasource">
+      <publishTime>03/12/2017 01:35:30</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/CountryDTO1.datasource">
+      <publishTime>03/12/2017 01:35:32</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/EGCVersionsDTO1.datasource">
+      <publishTime>03/12/2017 01:35:31</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/GeoResultDTO1.datasource">
+      <publishTime>03/12/2017 01:35:30</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/LanguageDTO1.datasource">
+      <publishTime>03/12/2017 01:35:32</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/LookupAllDTO1.datasource">
+      <publishTime>03/12/2017 01:35:30</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/QuestionTypeDTO1.datasource">
+      <publishTime>03/12/2017 01:35:32</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/QuizFormatDTO1.datasource">
+      <publishTime>03/12/2017 01:35:32</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/Reference.map">
+      <publishTime>02/02/2017 17:07:18</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/SchoolDTO1.datasource">
+      <publishTime>03/12/2017 01:35:32</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/ScoreTypeDTO1.datasource">
+      <publishTime>03/12/2017 01:35:31</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/SNMapProviderDTO1.datasource">
+      <publishTime>03/12/2017 01:35:32</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/SNServiceDTO1.datasource">
+      <publishTime>03/12/2017 01:35:31</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/StateDTO1.datasource">
+      <publishTime>03/12/2017 01:35:31</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/SurveyGroupingTypeDTO1.datasource">
+      <publishTime>03/12/2017 01:35:31</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/TimeZoneDTO1.datasource">
+      <publishTime>03/12/2017 01:35:31</publishTime>
+    </File>
+    <File Include="Web References/LookupServiceNamespace/UserRoleDTO1.datasource">
+      <publishTime>03/12/2017 01:35:31</publishTime>
+    </File>
+    <File Include="Web References/QuizResultServiceNamespace/QuizResultDTO.datasource">
+      <publishTime>03/13/2017 01:23:54</publishTime>
+    </File>
+    <File Include="Web References/QuizResultServiceNamespace/QuizResultSaveAllDTO.datasource">
+      <publishTime>03/13/2017 01:23:54</publishTime>
+    </File>
     <File Include="Web.config">
-      <publishTime>03/01/2017 12:25:30</publishTime>
+      <publishTime>03/13/2017 14:46:18</publishTime>
     </File>
   </ItemGroup>
 </Project>

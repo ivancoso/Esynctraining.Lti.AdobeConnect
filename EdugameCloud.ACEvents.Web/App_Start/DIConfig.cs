@@ -29,8 +29,8 @@ namespace EdugameCloud.ACEvents.Web
             //.DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings))
             //.LifestyleSingleton());
 
-            container.Install(new NHibernateWindsorInstaller());
-            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWebRequest);
+            //container.Install(new NHibernateWindsorInstaller());
+            //container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWebRequest);
 
             //container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWcfOperation());
 
@@ -38,7 +38,7 @@ namespace EdugameCloud.ACEvents.Web
                     .DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings))
                     .DynamicParameters((k, d) => d.Add("globalizationSection", ConfigurationManager.GetSection("system.web/globalization") as GlobalizationSection)).LifeStyle.Singleton);
 
-            container.RegisterEgcComponents();
+            //container.RegisterEgcComponents();
         }
 
     }

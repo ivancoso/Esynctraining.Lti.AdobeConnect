@@ -18,6 +18,15 @@
   <wsdl:message name="IFileService_FileUploadEnd_ErrorFault_FaultMessage">
     <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q1:Error" />
   </wsdl:message>
+  <wsdl:message name="IFileService_GetById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetById" />
+  </wsdl:message>
+  <wsdl:message name="IFileService_GetById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileService_GetById_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q2:Error" />
+  </wsdl:message>
   <wsdl:message name="IFileService_FileUploadFailed_InputMessage">
     <wsdl:part name="parameters" element="tns:FileUploadFailed" />
   </wsdl:message>
@@ -25,7 +34,7 @@
     <wsdl:part name="parameters" element="tns:FileUploadFailedResponse" />
   </wsdl:message>
   <wsdl:message name="IFileService_FileUploadFailed_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q2:Error" />
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q3:Error" />
   </wsdl:message>
   <wsdl:message name="IFileService_InitializeFileUpload_InputMessage">
     <wsdl:part name="parameters" element="tns:InitializeFileUpload" />
@@ -34,7 +43,7 @@
     <wsdl:part name="parameters" element="tns:InitializeFileUploadResponse" />
   </wsdl:message>
   <wsdl:message name="IFileService_InitializeFileUpload_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q3:Error" />
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
   </wsdl:message>
   <wsdl:message name="IFileService_Save_InputMessage">
     <wsdl:part name="parameters" element="tns:Save" />
@@ -43,13 +52,18 @@
     <wsdl:part name="parameters" element="tns:SaveResponse" />
   </wsdl:message>
   <wsdl:message name="IFileService_Save_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q5:Error" />
   </wsdl:message>
   <wsdl:portType name="IFileService">
     <wsdl:operation name="FileUploadEnd">
       <wsdl:input wsaw:Action="http://tempuri.org/IFileService/FileUploadEnd" message="tns:IFileService_FileUploadEnd_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IFileService/FileUploadEndResponse" message="tns:IFileService_FileUploadEnd_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/IFileService/FileUploadEndErrorFault" name="ErrorFault" message="tns:IFileService_FileUploadEnd_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileService/GetById" message="tns:IFileService_GetById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileService/GetByIdResponse" message="tns:IFileService_GetById_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IFileService/GetByIdErrorFault" name="ErrorFault" message="tns:IFileService_GetById_ErrorFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="FileUploadFailed">
       <wsdl:input wsaw:Action="http://tempuri.org/IFileService/FileUploadFailed" message="tns:IFileService_FileUploadFailed_InputMessage" />
@@ -71,6 +85,18 @@
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="FileUploadEnd">
       <soap:operation soapAction="http://tempuri.org/IFileService/FileUploadEnd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <soap:operation soapAction="http://tempuri.org/IFileService/GetById" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -122,6 +148,18 @@
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="FileUploadEnd">
       <soap12:operation soapAction="http://tempuri.org/IFileService/FileUploadEnd" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetById">
+      <soap12:operation soapAction="http://tempuri.org/IFileService/GetById" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

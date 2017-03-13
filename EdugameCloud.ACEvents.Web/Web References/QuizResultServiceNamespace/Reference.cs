@@ -35,6 +35,8 @@ namespace EdugameCloud.ACEvents.Web.QuizResultServiceNamespace {
         
         private System.Threading.SendOrPostCallback GetByIdOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetByGuidOperationCompleted;
+        
         private System.Threading.SendOrPostCallback SaveOperationCompleted;
         
         private System.Threading.SendOrPostCallback SaveAllOperationCompleted;
@@ -85,6 +87,9 @@ namespace EdugameCloud.ACEvents.Web.QuizResultServiceNamespace {
         
         /// <remarks/>
         public event GetByIdCompletedEventHandler GetByIdCompleted;
+        
+        /// <remarks/>
+        public event GetByGuidCompletedEventHandler GetByGuidCompleted;
         
         /// <remarks/>
         public event SaveCompletedEventHandler SaveCompleted;
@@ -182,6 +187,36 @@ namespace EdugameCloud.ACEvents.Web.QuizResultServiceNamespace {
             if ((this.GetByIdCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetByIdCompleted(this, new GetByIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/IQuizResultService/GetByGuid", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public QuizResultDTO GetByGuid(string guid) {
+            object[] results = this.Invoke("GetByGuid", new object[] {
+                        guid});
+            return ((QuizResultDTO)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetByGuidAsync(string guid) {
+            this.GetByGuidAsync(guid, null);
+        }
+        
+        /// <remarks/>
+        public void GetByGuidAsync(string guid, object userState) {
+            if ((this.GetByGuidOperationCompleted == null)) {
+                this.GetByGuidOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetByGuidOperationCompleted);
+            }
+            this.InvokeAsync("GetByGuid", new object[] {
+                        guid}, this.GetByGuidOperationCompleted, userState);
+        }
+        
+        private void OnGetByGuidOperationCompleted(object arg) {
+            if ((this.GetByGuidCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetByGuidCompleted(this, new GetByGuidCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -770,6 +805,32 @@ namespace EdugameCloud.ACEvents.Web.QuizResultServiceNamespace {
         private object[] results;
         
         internal GetByIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public QuizResultDTO Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((QuizResultDTO)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    public delegate void GetByGuidCompletedEventHandler(object sender, GetByGuidCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetByGuidCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetByGuidCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }
