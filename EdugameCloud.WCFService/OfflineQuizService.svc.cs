@@ -187,10 +187,10 @@ namespace EdugameCloud.WCFService
                 Guid = Guid.NewGuid()
             };
 
-            float quizPassingScoreInPercents = postQuizResult.Quiz.PassingScore / 100;
+            var quizPassingScoreInPercents = (float)postQuizResult.Quiz.PassingScore / 100;
             var totalQuestions = postQuizData.questions.Length;
             postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, postQuizData, quizResult);
-            float scoreInPercents = postQuizResult.Score / totalQuestions;
+            var scoreInPercents = (float)postQuizResult.Score / totalQuestions;
 
             QuizResultModel.RegisterSave(postQuizResult);
 
