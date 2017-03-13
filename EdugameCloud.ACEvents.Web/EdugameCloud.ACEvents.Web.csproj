@@ -260,6 +260,8 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="App_Data\Pdf\Template\MD Webinar Certificate Template-2017.pdf" />
+    <Content Include="App_Data\Pdf\Template\A1757137-7522-483A-B34D-BAE970F9616D.pdf" />
+    <Content Include="App_Data\Pdf\Template\States with no approval system Webinar Certificate Template-2017.docx" />
     <None Include="Properties\PublishProfiles\Local.pubxml" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -608,7 +610,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>48482</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
