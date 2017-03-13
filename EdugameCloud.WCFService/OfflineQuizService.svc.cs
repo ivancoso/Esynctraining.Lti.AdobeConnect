@@ -142,12 +142,12 @@ namespace EdugameCloud.WCFService
             result.questions = questions.ToArray();
             result.description = postQuiz.quizVO.description;
             result.quizName = postQuiz.quizVO.quizName;
-            var quizResultObj = QuizResultModel.GetOneById(postQuiz.quizVO.quizId).Value;
+            //var quizResultObj = QuizResultModel.GetOneById(postQuiz.quizVO.quizId).Value;
 
             result.participant = new ParticipantDTO()
             {
-                email = quizResultObj?.Email,
-                participantName = quizResultObj?.ParticipantName
+                email = quizResult.ACEmail,
+                participantName = quizResult.ParticipantName
             };
             return result;
         }
@@ -156,7 +156,8 @@ namespace EdugameCloud.WCFService
         {
             var quizResultGuid = answerContainer.quizResultGuid;
             var quizResult = QuizResultModel.GetOneByGuid(quizResultGuid).Value;
-            var quizData = QuizModel.getQuizDataByQuizGuid(quizResult.Quiz.Guid);
+            var mapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
+            var postQuizData = QuizModel.getQuizDataByQuizID(mapping.PostQuiz.Id);
             DateTime startTime, endTime;
             var isDateCorrect = DateTime.TryParse(answerContainer.startTime, out startTime);
             isDateCorrect = isDateCorrect && DateTime.TryParse(answerContainer.endTime, out endTime);
@@ -187,8 +188,8 @@ namespace EdugameCloud.WCFService
             };
 
             float quizPassingScoreInPercents = postQuizResult.Quiz.PassingScore / 100;
-            var totalQuestions = quizData.questions.Length;
-            postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, quizData, quizResult);
+            var totalQuestions = postQuizData.questions.Length;
+            postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, postQuizData, quizResult);
             float scoreInPercents = postQuizResult.Score / totalQuestions;
 
             QuizResultModel.RegisterSave(postQuizResult);
