@@ -300,6 +300,7 @@ namespace EdugameCloud.WCFService
                     EventEndDate = eventInfo.ScoInfo.BeginDate,
                     MailSubject = Emails.RegistrationSubject,
                     MeetingUrl = eventInfo.ScoInfo.SourceSco.UrlPath,
+                    Email = registrationInfo.Email
                 };
                 var sentSuccessfully = MailModel.SendEmailSync($"{model.FirstName} {model.LastName}", model.Email,
                     Emails.RegistrationSubject,
