@@ -186,16 +186,16 @@ namespace EdugameCloud.WCFService
                 Guid = Guid.NewGuid()
             };
 
-            var quizPassingScoreInPercents = postQuizResult.Quiz.PassingScore / 100;
+            float quizPassingScoreInPercents = postQuizResult.Quiz.PassingScore / 100;
             var totalQuestions = quizData.questions.Length;
-            var scoreInPercents = postQuizResult.Score / totalQuestions;
             postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, quizData, quizResult);
+            float scoreInPercents = postQuizResult.Score / totalQuestions;
 
             QuizResultModel.RegisterSave(postQuizResult);
 
             return new OfflineQuizResultDTO()
             {
-                score = scoreInPercents,
+                score = (int)(scoreInPercents * 100),
                 isSuccess = scoreInPercents >= quizPassingScoreInPercents,
                 certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={quizResultGuid}",
                 certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={quizResultGuid}"
