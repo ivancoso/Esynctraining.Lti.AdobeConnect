@@ -194,13 +194,19 @@ namespace EdugameCloud.WCFService
 
             QuizResultModel.RegisterSave(postQuizResult);
 
-            return new OfflineQuizResultDTO()
+            var isSuccess = scoreInPercents >= quizPassingScoreInPercents;
+            var resultDto = new OfflineQuizResultDTO()
             {
                 score = (int)(scoreInPercents * 100),
-                isSuccess = scoreInPercents >= quizPassingScoreInPercents,
-                certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={quizResultGuid}",
-                certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={quizResultGuid}"
+                isSuccess = isSuccess,
             };
+            if (isSuccess)
+            {
+                resultDto.certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={quizResultGuid}";
+                resultDto.certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={quizResultGuid}";
+            }
+
+            return resultDto;
         }
 
         private int CalcScoreAndSaveQuestionResult(OfflineQuizAnswerDTO[] answers, QuizDataDTO quizData, QuizResult quizResult)
