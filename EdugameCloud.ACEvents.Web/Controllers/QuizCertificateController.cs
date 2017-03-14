@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -88,7 +89,17 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 }
 
                 string filePath = GetCertProcessor(quizResult).RenderPdfDocument(BuildTemplateData(quizResult));
-                return File(filePath, "application/pdf", "Certificate.pdf");
+                //var contentDisposition = new ContentDisposition()
+                //{
+                //    FileName = filePath,
+                //    Inline = true
+                //};
+                //Response.Headers.Add("Content-Disposition", contentDisposition.ToString() );
+                return new FilePathResultEx(filePath, System.Web.MimeMapping.GetMimeMapping(filePath))
+                {
+                    FileDownloadName = filePath,
+                    Inline = true
+                };
             }
             catch (Exception ex)
             {
@@ -255,5 +266,4 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         }
 
     }
-
 }
