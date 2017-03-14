@@ -101,6 +101,16 @@ namespace EdugameCloud.WCFService
 
             var mapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
 
+            var postQuizId = mapping.PostQuiz.Id;
+            var postQuizResults = QuizResultModel.GetQuizResultsByQuizIds(new[] {postQuizId}.ToList());
+            if (postQuizResults.Any(x => x.ACEmail == quizResult.ACEmail))
+            {
+                return new OfflineQuizDTO()
+                {
+                    errorMessage = "You've already passed this post quiz!"
+                };
+            }
+
             var questions = new List<OfflineQuestionDTO>();
             var result = new OfflineQuizDTO();
             //var quiz = QuizModel.GetOneById(quizResult.Quiz.Id).Value;
