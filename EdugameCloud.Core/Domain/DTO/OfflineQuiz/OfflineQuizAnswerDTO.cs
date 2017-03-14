@@ -39,6 +39,7 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
     [DataContract]
     public class OfflineTrueFalseAnswerDTO
     {
+        [DataMember]
         public bool answer { get; set; }
     }
 
