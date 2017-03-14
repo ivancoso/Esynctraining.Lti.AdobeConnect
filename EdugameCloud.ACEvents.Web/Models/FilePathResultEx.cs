@@ -2,7 +2,7 @@ using System.IO;
 using System.Web;
 using System.Web.Mvc;
 
-namespace EdugameCloud.ACEvents.Web.Controllers
+namespace EdugameCloud.ACEvents.Web.Models
 {
     public class FilePathResultEx : FilePathResult
     {

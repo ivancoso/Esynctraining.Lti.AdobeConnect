@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -202,14 +204,20 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var stateNode = questions?.FirstOrDefault(x => x.Attribute("description").Value.ToString().ToLower().Equals("state", StringComparison.OrdinalIgnoreCase));
             var schoolNode = questions?.FirstOrDefault(x => x.Attribute("description").Value.ToString().ToLower().Equals("school", StringComparison.OrdinalIgnoreCase));
 
-            var state = stateNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
-            var school = schoolNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
+            var stateQuestionId = stateNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
+            var schoolQuestionId = schoolNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
             //foreach (var eventRegistrationDetail in additionalFields.EventFields)
             //{
             //    if (string.Equals(eventRegistrationDetail.Description, "state", StringComparison.OrdinalIgnoreCase))
             //        userState = additionalFields.UserFields.ToList().Where(x => x.Name == )
 
             //}
+
+            var userAnswers = doc.Root?.Descendants("user_list").Descendants("user").ToList();
+            var userAnswer = userAnswers?.FirstOrDefault(x => x.Attribute("login").Value.ToString().ToLower().Equals(quizResult.acEmail, StringComparison.OrdinalIgnoreCase));
+            var state = userAnswer?.Attribute("registration_question_" + stateQuestionId)?.Value ?? String.Empty;
+            var school = userAnswer?.Attribute("registration_question_" + schoolQuestionId)?.Value ?? String.Empty;
+
             var userEmail = quizResult.acEmail;
             //var userInfo = proxy.GetPrincipalInfo(userEmail);
             var participantName = quizResult.participantName;
@@ -226,7 +234,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             {
                 ParticipantName = participantName,
                 KnowledgeArea = "Core Knowledge Area",
-                State = state,
+                State = stateQuestionId,
                 Duration = $"{hours} clock hour{hoursEnding}",
                 CourseTitle = eventScoInfo.ScoInfo.Name,
                 TrainerName = teacherName,
@@ -239,6 +247,8 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
         private static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
+            CultureInfo en = new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentCulture = en;
             // Unix timestamp is seconds past epoch
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp/1000).ToLocalTime();

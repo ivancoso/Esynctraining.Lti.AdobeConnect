@@ -1,7 +1,7 @@
 using System.Web;
 using System.Web.Mvc;
 
-namespace EdugameCloud.ACEvents.Web.Controllers
+namespace EdugameCloud.ACEvents.Web.Models
 {
     /// <summary>
     /// Add to FileContentResult some properties for specifying file name without forcing a download and specifying size.
