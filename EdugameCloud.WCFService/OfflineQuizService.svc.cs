@@ -226,10 +226,10 @@ namespace EdugameCloud.WCFService
 
                 if (answer.trueFalseAnswer != null)
                 {
-                    var shouldBeOneDistrctor = distractors.FirstOrDefault();
-                    if (shouldBeOneDistrctor == null)
+                    var shouldBeOneDistractor = distractors.FirstOrDefault();
+                    if (shouldBeOneDistractor == null)
                         throw new InvalidOperationException("There should be a distractor for true/false question");
-                    var isCorrect = answer.trueFalseAnswer.answer == (shouldBeOneDistrctor.IsCorrect ?? false);
+                    var isCorrect = answer.trueFalseAnswer.answer == (shouldBeOneDistractor.IsCorrect ?? false);
                     if (isCorrect)
                     {
                         score++;
