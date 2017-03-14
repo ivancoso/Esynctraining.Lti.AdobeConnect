@@ -140,101 +140,64 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-
-        // TODO: remove type - we fetch meetingitem within RecordingsService.GetRecordings
-        // we can reuse that info to have type (change API)
+        
         //[HttpPost]
-        //public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId, int type)
+        //public virtual JsonResult PublishRecording(string lmsProviderName, int meetingId, string recordingId)
         //{
         //    LmsCompany lmsCompany = null;
         //    try
         //    {
         //        var session = GetReadOnlySession(lmsProviderName);
         //        lmsCompany = session.LmsCompany;
-        //        var param = session.LtiSession.LtiParam;
-        //        var ac = this.GetAdminProvider(lmsCompany);
 
-        //        Func<IRoomTypeFactory> getRoomTypeFactory =
-        //            () => new RoomTypeFactory(ac, (LmsMeetingType)type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
-
-        //        IEnumerable<IRecordingDto> recordings = RecordingsService.GetRecordings(
-        //            lmsCompany,
-        //            ac,
-        //            param.course_id,
-        //            meetingId,
-        //            getRoomTypeFactory);
-
-        //        if (!UsersSetup.IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
-        //        {
-        //            recordings = recordings.Where(x => x.Published);
-        //        }
+        //        if (lmsCompany.AutoPublishRecordings)
+        //            throw new Core.WarningMessageException("Publishing is not allowed by LMS license settings");
                 
-        //        return Json(recordings.ToSuccessResult());
+        //        LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
+        //        var recording = new LmsCourseMeetingRecording
+        //        {
+        //            LmsCourseMeeting = meeting,
+        //            ScoId = recordingId,
+        //        };
+        //        meeting.MeetingRecordings.Add(recording);
+        //        LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
+
+        //        return Json(OperationResult.Success());
         //    }
         //    catch (Exception ex)
         //    {
-        //        string errorMessage = GetOutputErrorMessage("GetRecordings", lmsCompany, ex);
+        //        string errorMessage = GetOutputErrorMessage("PublishRecording", lmsCompany, ex);
         //        return Json(OperationResult.Error(errorMessage));
         //    }
         //}
 
-        [HttpPost]
-        public virtual JsonResult PublishRecording(string lmsProviderName, int meetingId, string recordingId)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
+        //public virtual JsonResult UnpublishRecording(string lmsProviderName, int meetingId, string recordingId)
+        //{
+        //    LmsCompany lmsCompany = null;
+        //    try
+        //    {
+        //        var session = GetReadOnlySession(lmsProviderName);
+        //        lmsCompany = session.LmsCompany;
 
-                if (lmsCompany.AutoPublishRecordings)
-                    throw new Core.WarningMessageException("Publishing is not allowed by LMS license settings");
+        //        if (lmsCompany.AutoPublishRecordings)
+        //            throw new Core.WarningMessageException("UnPublishing is not allowed by LMS license settings");
+
+        //        LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
+        //        var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == recordingId);
+        //        if (recording != null)
+        //        {
+        //            meeting.MeetingRecordings.Remove(recording);
+        //            LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
+        //        }
                 
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
-                var recording = new LmsCourseMeetingRecording
-                {
-                    LmsCourseMeeting = meeting,
-                    ScoId = recordingId,
-                };
-                meeting.MeetingRecordings.Add(recording);
-                LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
-
-                return Json(OperationResult.Success());
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("PublishRecording", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-
-        public virtual JsonResult UnpublishRecording(string lmsProviderName, int meetingId, string recordingId)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-
-                if (lmsCompany.AutoPublishRecordings)
-                    throw new Core.WarningMessageException("UnPublishing is not allowed by LMS license settings");
-
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
-                var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == recordingId);
-                if (recording != null)
-                {
-                    meeting.MeetingRecordings.Remove(recording);
-                    LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
-                }
-                
-                return Json(OperationResult.Success());
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("PublishRecording", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
+        //        return Json(OperationResult.Success());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("PublishRecording", lmsCompany, ex);
+        //        return Json(OperationResult.Error(errorMessage));
+        //    }
+        //}
 
 
         [HttpGet]

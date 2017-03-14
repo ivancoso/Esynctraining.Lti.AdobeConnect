@@ -28,7 +28,7 @@ namespace EdugameCloud.Lti.DTO
     {
         [Required]
         [DataMember]
-        public int recordingId { get; set; }
+        public string recordingId { get; set; }
 
     }
 

@@ -124,8 +124,8 @@
             routes.MapLowercaseRoute("editrecording", "recordings/edit/{recordingId}", new { controller = "LtiRecording", action = "EditRecording", recordingId = UrlParameter.Optional });
             routes.MapLowercaseRoute("getrecordingflv", "recordings/GetFlv/{recordingUrl}", new { controller = "LtiRecording", action = "GetRecordingFlv", recordingUrl = UrlParameter.Optional });
             routes.MapLowercaseRoute("updaterecording", "recordings/share/{recordingUrl}", new { controller = "LtiRecording", action = "ShareRecording", recordingUrl = UrlParameter.Optional });
-            routes.MapLowercaseRoute("publishrecording", "recordings/publish", new { controller = "LtiRecording", action = "PublishRecording" });
-            routes.MapLowercaseRoute("unpublishrecording", "recordings/unpublish", new { controller = "LtiRecording", action = "UnpublishRecording" });
+            //routes.MapLowercaseRoute("publishrecording", "recordings/publish", new { controller = "LtiRecording", action = "PublishRecording" });
+            //routes.MapLowercaseRoute("unpublishrecording", "recordings/unpublish", new { controller = "LtiRecording", action = "UnpublishRecording" });
 
             //routes.MapLowercaseRoute("gettemplates", "templates", new { controller = "AcTemplate", action = "GetTemplates" });
 
