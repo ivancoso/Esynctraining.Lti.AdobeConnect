@@ -17,6 +17,7 @@ using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.WCFService
@@ -49,6 +50,11 @@ namespace EdugameCloud.WCFService
         private ILogger Logger
         {
             get { return IoC.Resolve<ILogger>(); }
+        }
+
+        protected dynamic Settings
+        {
+            get { return IoC.Resolve<ApplicationSettingsProvider>(); }
         }
 
         public CompanyEventDTO[] GetEventsByCompany(int companyId)
@@ -147,7 +153,7 @@ namespace EdugameCloud.WCFService
         public CompanyQuizEventMappingDTO[] GetEventQuizMappings()
         {
             var events = CompanyEventQuizMappingModel.GetAll();
-            var result = events.Select(x => new CompanyQuizEventMappingDTO(x)).ToArray();
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, Settings)).ToArray();
             return result;
         }
 
@@ -161,7 +167,7 @@ namespace EdugameCloud.WCFService
                 return null;
             }
             var acEvents = GetAllEventsFromAcServer(defaultAcDomain, true);
-            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId), CompanyAcServerModel.GetOneById(x.CompanyAcDomain.Id).Value)).ToArray();
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, Settings, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId), CompanyAcServerModel.GetOneById(x.CompanyAcDomain.Id).Value)).ToArray();
             return result;
         }
 
@@ -175,14 +181,14 @@ namespace EdugameCloud.WCFService
                 return null;
             }
             var acEvents = GetAllEventsFromAcServer(defaultAcDomain, true);
-            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId))).ToArray();
+            var result = events.Select(x => new CompanyQuizEventMappingDTO(x, Settings, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId))).ToArray();
             return result;
         }
 
         public CompanyQuizEventMappingDTO GetById(int eventQuizMappingId)
         {
             var @event = CompanyEventQuizMappingModel.GetOneById(eventQuizMappingId).Value;
-            return new CompanyQuizEventMappingDTO(@event);
+            return new CompanyQuizEventMappingDTO(@event, Settings);
         }
 
         public CompanyEventDTO[] GetEventsByCompanyAcServerWithPastEvents(int companyAcServerId)
