@@ -5,6 +5,7 @@ using EdugameCloud.WCFService.Mail.Models;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AdobeConnect;
+using Esynctraining.Core.Providers;
 
 namespace EdugameCloud.WCFService
 {
@@ -43,6 +44,7 @@ namespace EdugameCloud.WCFService
         private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
         private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
         private QuizModel QuizModel => IoC.Resolve<QuizModel>();
+        protected dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
 
         private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
 
@@ -251,7 +253,7 @@ namespace EdugameCloud.WCFService
                         Name = quizResult.ParticipantName,
                         EventName = mapping.AcEventScoId, //todo: store or take from api
                         MailSubject = "AC Event Post quiz result",
-                        PostQuizUrl = "http://dev.esynctraining.com:8066/UI/index.html?quizResultGuid=" + quizResult.Guid
+                        PostQuizUrl = Settings.CertificatesUrl + "/UI/#/?quizResultGuid=" + quizResult.Guid
                         //PostQuizUrl = "https://app.edugamecloud.com"
                     };
                     bool sentSuccessfully = MailModel.SendEmailSync(quizResult.ParticipantName, quizResult.ACEmail,

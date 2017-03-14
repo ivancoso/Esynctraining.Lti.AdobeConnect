@@ -131,6 +131,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             var scoId = companyQuizEventMappingDto.acEventScoId;
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
+            var loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
+            if (!loginResult.Success)
+                throw new InvalidOperationException($"Can't login to AC url {apiUrl} user {acDomain.user}");
             var additionalFields = proxy.GetEventRegistrationDetails(scoId);
             var fields = new Dictionary<string, string>();
             foreach (var eventRegistrationDetail in additionalFields.EventFields)
@@ -179,6 +182,10 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             catch (Exception e)
             {
                 var message = e.Message;
+                if (message.Contains("duplicate"))
+                    message = "There is already a user registered with this email";
+                if (message.Contains("already-registered"))
+                    message = "You have already registered to the event!";
                 _logger.Error(message);
                 return Json(new {IsSuccess = false, Message = message});
             }
