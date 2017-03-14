@@ -31,7 +31,7 @@
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
             // for dev only to allo preflight requests (on jquery, angular etc)
-            if (HttpContext.Current.Request.HttpMethod == "OPTIONS" && HttpContext.Current.Request.UrlReferrer != null && (HttpContext.Current.Request.UrlReferrer.DnsSafeHost.StartsWith("dev") || HttpContext.Current.Request.UrlReferrer.DnsSafeHost.StartsWith("localhost")))
+            if (HttpContext.Current.Request.HttpMethod == "OPTIONS" && HttpContext.Current.Request.UrlReferrer != null && (HttpContext.Current.Request.UrlReferrer.DnsSafeHost.StartsWith("dev") || HttpContext.Current.Request.UrlReferrer.DnsSafeHost.StartsWith("localhost") || HttpContext.Current.Request.UrlReferrer.DnsSafeHost.StartsWith("goddard")))
             {
                 HttpContext.Current.Response.AddHeader("Access-Control-Allow-Methods", "POST, PUT, DELETE");
 
