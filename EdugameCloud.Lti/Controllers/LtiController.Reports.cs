@@ -49,7 +49,7 @@
         }
 
 
-        [Route("meeting/attendance")]
+        [Route("meeting/reports/by-attendance")]
         [HttpPost]
         public virtual OperationResultWithData<IEnumerable<ACSessionParticipantDto>> GetAttendanceReport(ReportRequestDto request)
         {
@@ -82,7 +82,7 @@
             }
         }
 
-        [Route("meeting/sessions")]
+        [Route("meeting/reports/by-sessions")]
         [HttpPost]
         public virtual OperationResultWithData<IEnumerable<ACSessionDto>> GetSessionsReport(ReportRequestDto request)
         {

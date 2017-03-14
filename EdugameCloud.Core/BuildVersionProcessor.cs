@@ -8,39 +8,46 @@ using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Core
 {
-    public class BuildVersionProcessor : IBuildVersionProcessor
+    public sealed class BuildVersionProcessor : IBuildVersionProcessor
     {
-        private ILogger _logger;
+        private readonly ILogger _logger;
+
 
         public BuildVersionProcessor(ILogger logger)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
 
         public Version ProcessVersion(string folder, string buildSelector)
         {
-            if (Directory.Exists(folder))
+            if (string.IsNullOrWhiteSpace(folder))
+                throw new ArgumentException("Non-empty value expected", nameof(folder));
+            if (string.IsNullOrWhiteSpace(buildSelector))
+                throw new ArgumentException("Non-empty value expected", nameof(buildSelector));
+
+            if (!Directory.Exists(folder))
             {
-                var versions = new List<KeyValuePair<Version, string>>();
-
-                foreach (var file in Directory.GetFiles(folder, buildSelector))
-                {
-                    var fileName = Path.GetFileName(file);
-                    var version = fileName.GetBuildVersion();
-                    versions.Add(new KeyValuePair<Version, string>(version, fileName));
-                }
-
-                versions.Sort(new BuildVersionComparer());
-                var latestVersionFileName = versions.FirstOrDefault();
-                _logger.Info(
-                    $"[ProcessVersion] Selector={buildSelector}, FileName={latestVersionFileName.Value}.");
-                return latestVersionFileName.Key;
+                _logger.Warn($"[ProcessVersion] Directory {folder} not found.");
+                throw new InvalidOperationException($"[ProcessVersion] Directory {folder} not found.");
             }
 
-            _logger.Warn($"[ProcessVersion] Directory {folder} not found.");
-            //throw?
-            return null;
+            var versions = new List<KeyValuePair<Version, string>>();
+            foreach (var file in Directory.GetFiles(folder, buildSelector))
+            {
+                var fileName = Path.GetFileName(file);
+                var version = fileName.GetBuildVersion();
+                versions.Add(new KeyValuePair<Version, string>(fileName.GetBuildVersion(), fileName));
+            }
+
+            versions.Sort(new BuildVersionComparer());
+            var latestVersionFileName = versions.FirstOrDefault();
+            _logger.Info(
+                $"[ProcessVersion] Selector={buildSelector}, FileName={latestVersionFileName.Value}.");
+            return latestVersionFileName.Key;
         }
+
     }
+
 }
 

@@ -1,18 +1,17 @@
-﻿using EdugameCloud.Lti.Core.Constants;
+﻿using System;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Web.Mvc;
+using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Domain;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    using System;
-    using System.Runtime.Serialization;
-    using System.Text;
-    using System.Web.Mvc;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using Esynctraining.Core.Domain;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Utils;
-
     // TODO: move
     [DataContract]
     public class MeetingReuseDTO

@@ -28,7 +28,7 @@ namespace EdugameCloud.Lti.Controllers
         // TODO: Add caching
         // TODO: copy DTO validation from SSO
         [HttpPost]
-        [Route("Templates")]
+        [Route("templates")]
         public virtual OperationResultWithData<IEnumerable<TemplateDto>> GetTemplates([FromBody]RequestDto request)
         {
             LmsCompany credentials = null;

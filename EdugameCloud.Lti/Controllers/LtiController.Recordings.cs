@@ -143,40 +143,40 @@ namespace EdugameCloud.Lti.Controllers
 
         // TODO: remove type - we fetch meetingitem within RecordingsService.GetRecordings
         // we can reuse that info to have type (change API)
-        [HttpPost]
-        public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId, int type)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
-                var ac = this.GetAdminProvider(lmsCompany);
+        //[HttpPost]
+        //public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId, int type)
+        //{
+        //    LmsCompany lmsCompany = null;
+        //    try
+        //    {
+        //        var session = GetReadOnlySession(lmsProviderName);
+        //        lmsCompany = session.LmsCompany;
+        //        var param = session.LtiSession.LtiParam;
+        //        var ac = this.GetAdminProvider(lmsCompany);
 
-                Func<IRoomTypeFactory> getRoomTypeFactory =
-                    () => new RoomTypeFactory(ac, (LmsMeetingType)type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
+        //        Func<IRoomTypeFactory> getRoomTypeFactory =
+        //            () => new RoomTypeFactory(ac, (LmsMeetingType)type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
-                IEnumerable<IRecordingDto> recordings = RecordingsService.GetRecordings(
-                    lmsCompany,
-                    ac,
-                    param.course_id,
-                    meetingId,
-                    getRoomTypeFactory);
+        //        IEnumerable<IRecordingDto> recordings = RecordingsService.GetRecordings(
+        //            lmsCompany,
+        //            ac,
+        //            param.course_id,
+        //            meetingId,
+        //            getRoomTypeFactory);
 
-                if (!UsersSetup.IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
-                {
-                    recordings = recordings.Where(x => x.Published);
-                }
+        //        if (!UsersSetup.IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
+        //        {
+        //            recordings = recordings.Where(x => x.Published);
+        //        }
                 
-                return Json(recordings.ToSuccessResult());
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetRecordings", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
+        //        return Json(recordings.ToSuccessResult());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("GetRecordings", lmsCompany, ex);
+        //        return Json(OperationResult.Error(errorMessage));
+        //    }
+        //}
 
         [HttpPost]
         public virtual JsonResult PublishRecording(string lmsProviderName, int meetingId, string recordingId)

@@ -18,23 +18,24 @@
 	<script type="text/javascript">
 		var EsyncLti = @Html.Raw(JSON.Serialize(Model, options));
 		EsyncLti.ActionUrls = {
-			"getMP4Recordings": "lti-mp4/Recordings",
+			"getMP4Recordings": "lti-mp4/recordings",
 			"convertRecording": "lti-mp4/mp4/convert",
 			"convertRecordingWithSubtitles": "lti-mp4/mp4/convertWithSubtitles",
 			"getRecordingStatus": "lti-mp4/recordings/status",
 
-			"deleteRecording": "lti/Recordings/Delete/{0}",
-			"getMP4Recordings": "lti/Recordings",
-			"publishRecording": "lti/Recordings/publish",
-			"unpublishRecording": "lti/Recordings/unpublish",
-			"editRecording": "lti/Recordings/Edit/{0}",
-			"shareRecording": "lti/Recordings/Share",
+			
+			"getMP4Recordings": "lti/recordings",
+			"publishRecording": "lti/recordings/publish",
+			"unpublishRecording": "lti/recordings/unpublish",
+			"shareRecording": "lti/recordings/share",
+			"editRecording": "lti/recordings/edit/{0}",
+			"deleteRecording": "lti/recordings/delete/{0}",
 
+			"getUsersForMeeting": "lti/users",
 			"createACUser": "lti/acNewUser",
 			"searchACUser": "lti/acSearchUser",
-			"getUsersForMeeting": "lti/Users",
 			"setDefaultACRoles": "lti/Meeting/SetDefaultACRoles",
-			"setUserRole": "lti/Users/Update",
+			"setUserRole": "lti/users/Update",
 			"removeUserFromMeeting": "lti/users/removefrommeeting",
 
 			"createEventsBatch": "lti/calendar/createBatch",
@@ -51,27 +52,29 @@
 			"moveContent": "lti-my-content/{0}/content/{1}/move-to/{2}",
 			"createContentFolder": "lti-my-content/{0}/content/{1}/create-sub-folder",
 
-			"checkSettingsPasword": "lti/Settings/CheckPass",
-			"saveSettings": "lti/Settings/Save",
+			"checkSettingsPasword": "lti/settings/CheckPass",
+			"saveSettings": "lti/settings/Save",
 
-			"joinToMeeting": "lti/Meeting/Join",
-			"deleteMeeting": "lti/Meeting/Delete",
-			"leaveMeeting": "lti/Meeting/Leave",
-			"saveMeetingAndGetUsers": "lti/Meeting/UpdateAndReturnLmsUsers",
-			"saveMeeting": "lti/Meeting/Update",
-			"saveSeminar": "lti/seminars/edit",
-			"createSeminar": "lti/seminars/create",
+			"joinToMeeting": "lti/meeting/join",
+			"leaveMeeting": "lti/meeting/leave",
+			"deleteMeeting": "lti/meeting/delete",
+			"saveMeetingAndGetUsers": "lti/meeting/UpdateAndReturnLmsUsers",
+			"saveMeeting": "lti/meeting/Update",
+			
 			"useExistingMeeting": "lti/useExistingMeeting",
-			"getTemplates": "lti/Templates",
+			"getTemplates": "lti/templates",
 			"getAudioProfiles": "lti/GetAudioProfiles",
 			"searchACMeetings": "lti/acSearchMeeting",
+
+			"saveSeminar": "lti/seminars/edit",
+			"createSeminar": "lti/seminars/create",
 			"createSeminarSession": "lti/seminars/sessions/create",
 			"saveSeminarSession": "lti/seminars/sessions/edit",
 			"deleteSeminarSession": "lti/seminars/sessions/delete",
 
 			"reportByRecordings": "lti/meeting/reports/by-recordings",
-			"reportByRecordings": "lti/Meeting/Sessions",
-			"reportByAttendance": "lti/Meeting/Attendance"
+			"reportBySessions": "lti/meeting/reports/by-sessions",
+			"reportByAttendance": "lti/meeting/reports/by-attendance"
 		};
 
 		var Ext = Ext || {};

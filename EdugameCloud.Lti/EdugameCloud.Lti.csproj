@@ -288,6 +288,7 @@
     <Compile Include="Controllers\AcTemplateController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\RecordingController.cs" />
     <Compile Include="Controllers\LtiControllerApi.cs" />
     <Compile Include="Controllers\LtiController.ImsLogin.cs" />
     <Compile Include="DTO\ApiLti.cs" />

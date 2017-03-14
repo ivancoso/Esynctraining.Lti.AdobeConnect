@@ -22,6 +22,17 @@ namespace EdugameCloud.Lti.DTO
 
     }
 
+
+    [DataContract]
+    public class RecordingRequestDto : MeetingRequestDto
+    {
+        [Required]
+        [DataMember]
+        public int recordingId { get; set; }
+
+    }
+
+
     [DataContract]
     public sealed class SearchRequestDto : RequestDto
     {
