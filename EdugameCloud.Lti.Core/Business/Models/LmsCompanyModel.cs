@@ -158,15 +158,15 @@ namespace EdugameCloud.Lti.Core.Business.Models
             if(!string.IsNullOrEmpty(consumerKey))
                 defaultQuery = defaultQuery.Where(x => x.ConsumerKey == consumerKey);
             defaultQuery = defaultQuery
-//                .JoinAlias(() => lc.Settings, () => lcs)
-//                .Where(() => lcs.Name == LmsCompanySettingNames.UseSynchronizedUsers && lcs.Value == "True")
+                .JoinAlias(() => lc.Settings, () => lcs)
+                .Where(() => lcs.Name == LmsCompanySettingNames.UseSynchronizedUsers && lcs.Value == "True")
                 .JoinAlias(() => lc.LmsCourseMeetings, () => lcm)
-                .JoinAlias(() => lcm.First().OfficeHours, () => oh)
-                .JoinAlias(() => lcm.First().MeetingRoles, () => lumr)
+                .JoinAlias(() => lcm.First().OfficeHours, () => oh, JoinType.LeftOuterJoin)
+//                .JoinAlias(() => lcm.First().MeetingRoles, () => lumr)
 //                .Fetch(x => x.Settings).Eager
                 .Fetch(x => x.LmsCourseMeetings).Eager
                 .Fetch(x => x.LmsCourseMeetings.First().OfficeHours).Eager
-                .Fetch(x => x.LmsCourseMeetings.First().MeetingRoles).Eager
+//                .Fetch(x => x.LmsCourseMeetings.First().MeetingRoles).Eager
                 .Fetch(x => x.AdminUser).Eager
                 .TransformUsing(Transformers.DistinctRootEntity);
             return this.Repository.FindAll(defaultQuery).ToList();

@@ -6,6 +6,7 @@ using System.Threading;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
@@ -43,12 +44,14 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     IEnumerable<LmsCompany> companies = lmsCompanyModel.GetEnabledForSynchronization(parameters.ContainsKey(ConsumerKeyParameterName) 
                         ? parameters[ConsumerKeyParameterName]
                         : null);
+                    logger.Warn($"[Companies to sync] {string.Join(",", companies.Select(x=> x.Id))}");
                     //timer.Stop();
                     //logger.Warn($"Retrieve companies elapsed time: {timer.Elapsed.ToString()}");
                     if (parameters.ContainsKey(ConsumerKeyOutParameterName))
                     {
+                        var excludeKeys = parameters[ConsumerKeyOutParameterName].Split(new[] {',', ';'});
                         companies =
-                            companies.Where(x => x.ConsumerKey != parameters[ConsumerKeyOutParameterName]).ToList();
+                            companies.Where(x => excludeKeys.All(ek => ek != x.ConsumerKey)).ToList();
                     }
 
                     companies = companies.Where(x => !LicenseExpired(x) 
@@ -65,7 +68,10 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                             {
                                 try
                                 {
+                                    var timer = Stopwatch.StartNew();
                                     syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
+                                    timer.Stop();
+                                    logger.Warn($"[Sync time] LicenseId={lmsCompany.Id}, Time={timer.Elapsed.ToString()}");
                                 }
                                 catch (Exception ex)
                                 {

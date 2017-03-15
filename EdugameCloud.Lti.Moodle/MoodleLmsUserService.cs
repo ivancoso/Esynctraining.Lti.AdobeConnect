@@ -34,11 +34,11 @@ namespace EdugameCloud.Lti.Moodle
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
-            if (lmsUser == null)
-                throw new ArgumentNullException(nameof(lmsUser));
+//            if (lmsUser == null)
+//                throw new ArgumentNullException(nameof(lmsUser));
 
             string error;
-            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error);
+            var users = GetUsersOldStyle(lmsCompany, lmsUser?.UserId, courseId, out error);
             return error != null
                 ? OperationResultWithData<List<LmsUserDTO>>.Error(error)
                 : users.ToSuccessResult();
