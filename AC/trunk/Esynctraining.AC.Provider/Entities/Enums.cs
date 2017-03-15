@@ -159,6 +159,9 @@
         /// Description: Users with access to create and run seminars with 100 participants
         /// </summary>
         named_webinar_admins_100,
+        event_super_admins,
+        admins_limited,
+        named_vc_admins, //Virtual Classroom Managers
     }
 
     public enum SpecialPrincipalId

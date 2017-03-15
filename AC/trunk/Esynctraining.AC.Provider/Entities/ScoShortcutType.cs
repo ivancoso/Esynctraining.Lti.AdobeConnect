@@ -58,7 +58,8 @@
         user_events,
         training_catalog,
         forced_archives,
-        chat_transcripts
+        chat_transcripts,
+        user_courses
     }
 
     //public static class ScoShortcutTypes
