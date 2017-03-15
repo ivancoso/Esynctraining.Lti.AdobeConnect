@@ -10,7 +10,13 @@ namespace EdugameCloud.Lti.DTO
         [Required]
         [DataMember]
         public string lmsProviderName { get; set; }
+    }
 
+    [DataContract]
+    public class TemplatesRequestDto : RequestDto
+    {
+        [DataMember]
+        public int LmsMeetingType { get; set; }
     }
 
     [DataContract]

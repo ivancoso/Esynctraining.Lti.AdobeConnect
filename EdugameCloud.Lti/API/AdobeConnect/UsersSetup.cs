@@ -96,23 +96,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #region Public Methods and Operators
 
         /// <summary>
-        /// The add user to meeting hosts group.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="principalId">
-        /// The principal id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public void AddUserToMeetingHostsGroup(IAdobeConnectProxy provider, string principalId)
-        {
-            provider.AddToGroupByType(principalId, PrincipalType.live_admins);
-        }
-
-        /// <summary>
         /// The add users to meeting hosts group.
         /// </summary>
         /// <param name="provider">
@@ -124,17 +107,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public void AddUsersToMeetingHostsGroup(IAdobeConnectProxy provider, IEnumerable<string> principalIds)
+        public void AddUsersToMeetingHostsGroup(IAdobeConnectProxy provider, IEnumerable<string> principalIds, PrincipalType principalType = PrincipalType.live_admins)
         {
             if (principalIds.Any())
             {
-                var groupPrincipal = provider.GetGroupsByType(PrincipalType.live_admins).Values.Single();
+                var groupPrincipal = provider.GetGroupsByType(principalType).Values.Single();
                 var groupParticipants = provider.GetGroupUsers(groupPrincipal.PrincipalId);
                 var usersToAdd = principalIds.Where(x => groupParticipants.Values.All(gp => gp.PrincipalId != x));
                 try
                 {
                     if(usersToAdd.Any())
-                        provider.AddToGroupByType(usersToAdd, PrincipalType.live_admins);
+                        provider.AddToGroupByType(usersToAdd, principalType);
                 }
                 catch (AdobeConnectException ex)
                 {
@@ -145,7 +128,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         {
                             try
                             {
-                                provider.AddToGroupByType(principal, PrincipalType.live_admins);
+                                provider.AddToGroupByType(principal, principalType);
                             }
                             catch (AdobeConnectException)
                             {
@@ -817,7 +800,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);
+            var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
+            this.AddUsersToMeetingHostsGroup(provider, hostPrincipals, hostGroup);
 
             return result;
         }
@@ -982,48 +966,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             var sw2 = Stopwatch.StartNew();
-
-            this.ProcessUsersInAC(lmsCompany, provider, meetingScoId, users, principalCache, lmsUsers, true);
+            //check if meeting != null or provide LmsMeetingType as separate parameter
+            this.ProcessUsersInAC(lmsCompany, provider, meetingScoId, users, principalCache, lmsUsers, true, (LmsMeetingType)meeting.LmsMeetingType);
 
             sw2.Stop();
             logger.InfoFormat("SaveMeeting: SetDefaultUsers.ProcessUsersInAC: time: {0}.", sw2.Elapsed.ToString());
-        }
-
-        /// <summary>
-        /// The set LMS user default AC permissions.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="meetingScoId">
-        /// The meeting SCO id.
-        /// </param>
-        /// <param name="u">
-        /// The user.
-        /// </param>
-        /// <param name="principalId">
-        /// The principal Id.
-        /// </param>
-        /// <param name="ignoreAC">
-        /// The ignore AC
-        /// </param>
-        public void SetLMSUserDefaultACPermissions(
-            IAdobeConnectProxy provider,
-            LmsCompany lmsCompany, 
-            string meetingScoId, 
-            LmsUserDTO u, 
-            string principalId)
-        {
-            var permission = new RoleMappingService().SetAcRole(lmsCompany, u);
-
-            if (!string.IsNullOrWhiteSpace(principalId) && !string.IsNullOrWhiteSpace(meetingScoId))
-            {
-                provider.UpdateScoPermissionForPrincipal(meetingScoId, principalId, permission);
-                if (permission == MeetingPermissionId.host)
-                {
-                    this.AddUsersToMeetingHostsGroup(provider, new []{ principalId });
-                }
-            }
         }
 
         /// <summary>
@@ -1191,7 +1138,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (permission == MeetingPermissionId.host)
             {
-                this.AddUsersToMeetingHostsGroup(provider, new[] { user.AcId });
+                var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
+                this.AddUsersToMeetingHostsGroup(provider, new[] { user.AcId }, hostGroup);
             }
 
             return skipReturningUsers
@@ -1268,7 +1216,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (permission == MeetingPermissionId.host)
             {
-                AddUsersToMeetingHostsGroup(provider, new[] { user.AcId });
+                var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
+                AddUsersToMeetingHostsGroup(provider, new[] { user.AcId }, hostGroup);
             }
 
             return new LmsUserDTO
@@ -1650,7 +1599,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             List<LmsUserDTO> users, 
             IEnumerable<Principal> principalCache, 
             IEnumerable<LmsUser> lmsUsers, 
-            bool reRunOnError)
+            bool reRunOnError, LmsMeetingType meetingType)
         {
             var meetingPermissions = new List<MeetingPermissionUpdateTrio>();
             var hostPrincipals = new List<string>();
@@ -1704,10 +1653,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         hostPrincipals);
                 }
             }
-            var sw3 = Stopwatch.StartNew();
+//            var sw3 = Stopwatch.StartNew();
 
             // TRICK: do not move down to chunk part!
-            this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);
+            this.AddUsersToMeetingHostsGroup(provider, hostPrincipals, MeetingTypeFactory.HostGroup(meetingType));
 
             foreach (var chunk in meetingPermissions.Chunk(provider.GetPermissionChunk()))
             {
@@ -1731,7 +1680,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             users, 
                             refreshedPrincipalCache, 
                             lmsUsers, 
-                            false);
+                            false,
+                            meetingType);
                         return;
                     }
                     else

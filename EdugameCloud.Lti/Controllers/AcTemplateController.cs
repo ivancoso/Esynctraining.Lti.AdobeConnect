@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Http;
+using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.AdobeConnect.Api.Meeting;
 using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
@@ -29,14 +31,21 @@ namespace EdugameCloud.Lti.Controllers
         // TODO: copy DTO validation from SSO
         [HttpPost]
         [Route("templates")]
-        public virtual OperationResultWithData<IEnumerable<TemplateDto>> GetTemplates([FromBody]RequestDto request)
+        public virtual OperationResultWithData<IEnumerable<TemplateDto>> GetTemplates([FromBody]TemplatesRequestDto request)
         {
             LmsCompany credentials = null;
             try
             {
                 var session = GetReadOnlySession(request.lmsProviderName);
                 credentials = session.LmsCompany;
-                IEnumerable<TemplateDto> templates = acAccountService.GetSharedMeetingTemplates(this.GetAdobeConnectProvider(credentials), Cache);
+                var scoShortcut =
+                    MeetingTypeFactory.GetTemplatesShortcut(request.LmsMeetingType > 0
+                        ? (LmsMeetingType) request.LmsMeetingType
+                        : LmsMeetingType.Meeting);
+                var api = this.GetAdobeConnectProvider(credentials);
+                IEnumerable<TemplateDto> templates = new MeetingTemplateService(Logger).GetSharedMeetingTemplates(api, Cache,
+                    () => CachePolicies.Keys.SharedMeetingTemplates(api.AdobeConnectRoot.ToString(), scoShortcut.ToString()));
+                    acAccountService.GetSharedMeetingTemplates(this.GetAdobeConnectProvider(credentials), Cache);
 
                 return templates.ToSuccessResult();
             }

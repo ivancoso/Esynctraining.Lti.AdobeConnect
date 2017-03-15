@@ -253,6 +253,7 @@
     <Compile Include="API\AdobeConnect\IRecordingsService.cs" />
     <Compile Include="API\AdobeConnect\ISeminarService.cs" />
     <Compile Include="API\AdobeConnect\IUsersSetup.cs" />
+    <Compile Include="API\AdobeConnect\MeetingTypeFactory.cs" />
     <Compile Include="API\AdobeConnect\RecordingDtoBuilder.cs" />
     <Compile Include="API\AdobeConnect\ReportService.cs" />
     <Compile Include="API\AdobeConnect\RoomTypeFactory.cs" />

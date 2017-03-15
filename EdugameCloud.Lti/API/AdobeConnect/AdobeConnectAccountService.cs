@@ -183,7 +183,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            return new MeetingTemplateService(_logger).GetSharedMeetingTemplates(provider, cache, () => CachePolicies.Keys.SharedMeetingTemplates(provider.AdobeConnectRoot.ToString()));
+            return new MeetingTemplateService(_logger).GetSharedMeetingTemplates(provider, cache, () => CachePolicies.Keys.SharedMeetingTemplates(provider.AdobeConnectRoot.ToString(), ScoShortcutType.shared_meeting_templates.ToString()));
         }
         
     }

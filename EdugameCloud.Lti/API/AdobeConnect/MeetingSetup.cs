@@ -593,13 +593,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 trace.AppendFormat("SaveMeeting: GetScoInfo+GetPrincipalByLoginOrEmail: time: {0}.",
                     sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
-
+                var hostGroup = MeetingTypeFactory.HostGroup(meetingDTO.GetMeetingType());
                 //===========================================
                 if (isNewMeeting)
                 {
                     //NOTE: need to call before use GetMeetingFolder method;
                     // when we call group-membership-update api action ac create folder in the user-meetings directory called as user login;
-                    this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new[] {currentUserPrincipal.PrincipalId});
+                    this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new[] {currentUserPrincipal.PrincipalId}, hostGroup);
 
                     sw.Stop();
                     trace.AppendFormat("SaveMeeting: AddUserToMeetingHostsGroup: time: {0}.", sw.Elapsed.ToString());

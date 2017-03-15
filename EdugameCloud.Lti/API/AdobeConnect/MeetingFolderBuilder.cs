@@ -4,6 +4,7 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AC.Provider.Utils;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
@@ -15,7 +16,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private readonly LmsCompany _credentials;
         private readonly IAdobeConnectProxy _provider;
         private readonly bool _useLmsUserEmailForSearch;
-
+        private readonly LmsMeetingType _lmsMeetingType;
 
         private LmsProviderModel LmsProviderModel
         {
@@ -28,7 +29,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         
-        public MeetingFolderBuilder(LmsCompany credentials, IAdobeConnectProxy provider, bool useLmsUserEmailForSearch)
+        public MeetingFolderBuilder(LmsCompany credentials, IAdobeConnectProxy provider, bool useLmsUserEmailForSearch, LmsMeetingType lmsMeetingType = LmsMeetingType.Meeting)
         {
             if (credentials == null)
                 throw new ArgumentNullException(nameof(credentials));
@@ -38,6 +39,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             _credentials = credentials;
             _provider = provider;
             _useLmsUserEmailForSearch = useLmsUserEmailForSearch;
+            _lmsMeetingType = lmsMeetingType;
         }
 
 
@@ -75,7 +77,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private static string SetupUserMeetingsFolder(LmsCompany credentials, IAdobeConnectProxy provider,
             Principal user, bool useLmsUserEmailForSearch)
         {
-            var shortcut = provider.GetShortcutByType("user-meetings");
+            var shortcutName = MeetingTypeFactory.GetMeetingFolderShortcut(LmsMeetingType.Meeting, true).GetACEnum();
+            var shortcut = provider.GetShortcutByType(shortcutName);
 
             var userFolderName = credentials.ACUsesEmailAsLogin.GetValueOrDefault() ? user.Email : user.Login;
             
@@ -125,7 +128,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (ltiFolderSco == null)
             {
-                ScoContentCollectionResult sharedMeetings = provider.GetContentsByType("meetings");
+                var shortcutName = MeetingTypeFactory.GetMeetingFolderShortcut(LmsMeetingType.Meeting, false).GetACEnum();
+                ScoContentCollectionResult sharedMeetings = provider.GetContentsByType(shortcutName);
                 if (sharedMeetings.ScoId != null && sharedMeetings.Values != null)
                 {
                     ScoContent existingFolder = sharedMeetings.Values.FirstOrDefault(v => v.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && v.IsFolder);

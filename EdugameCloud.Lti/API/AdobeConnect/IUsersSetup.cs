@@ -9,13 +9,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     /// </summary>
     public interface IUsersSetup
     {
-        void SetLMSUserDefaultACPermissions(
-            IAdobeConnectProxy provider,
-            LmsCompany lmsCompany,
-            string meetingScoId,
-            LmsUserDTO user,
-            string principalId);
-
         LmsUserDTO UpdateUser(
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider,

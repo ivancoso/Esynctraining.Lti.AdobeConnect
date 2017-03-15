@@ -100,9 +100,9 @@ namespace EdugameCloud.Core.Business
                 return apiUrl;
             }
 
-            public static string SharedMeetingTemplates(string apiUrl)
+            public static string SharedMeetingTemplates(string apiUrl, string type)
             {
-                return string.Concat("SMT_", apiUrl);
+                return $"SMT_{apiUrl}_{type}";
             }
 
             public static string IsActiveCompany(int companyId)
