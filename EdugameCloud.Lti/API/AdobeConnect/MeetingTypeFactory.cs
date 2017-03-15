@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             switch (meetingType)
             {
                 case LmsMeetingType.VirtualClassroom:
-                    return PrincipalType.course_admins;
+                    return PrincipalType.named_vc_admins;
                 default:
                     return PrincipalType.live_admins;
 
@@ -21,8 +21,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             switch (meetingType)
             {
-//                case LmsMeetingType.VirtualClassroom:
-//                    return isUserFolder ? ;
+                case LmsMeetingType.VirtualClassroom:
+                    return isUserFolder ? ScoShortcutType.user_courses : ScoShortcutType.courses;
                 default:
                     return isUserFolder ? ScoShortcutType.user_meetings : ScoShortcutType.meetings;
 

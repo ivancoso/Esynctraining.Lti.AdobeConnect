@@ -269,7 +269,7 @@ namespace EdugameCloud.Lti.BrainHoney
                     result.AddRange(courseEnrolledUsers);
                 }
 
-                throw new NotImplementedException("TODO: it seems this API doesnt work ans nobody calls it");
+                throw new NotImplementedException("TODO: it seems this API doesnt work and nobody calls it");
 
                 var startDate = DateTime.Parse(course.StartDate);
                 var trace = new StringBuilder();
@@ -389,7 +389,7 @@ namespace EdugameCloud.Lti.BrainHoney
                                 Id = enrollment.UserId,
                                 IsEditable = true,
                             };
-                            this._usersSetup.SetLMSUserDefaultACPermissions(provider, brainHoneyCompany, null, lmsUser, null);
+                            //this._usersSetup.SetLMSUserDefaultACPermissions(provider, brainHoneyCompany, null, lmsUser, null);
                             this._usersSetup.UpdateUser(
                                 brainHoneyCompany,
                                 provider,

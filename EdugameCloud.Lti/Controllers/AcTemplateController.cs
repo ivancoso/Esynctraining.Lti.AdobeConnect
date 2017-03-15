@@ -43,9 +43,8 @@ namespace EdugameCloud.Lti.Controllers
                         ? (LmsMeetingType) request.LmsMeetingType
                         : LmsMeetingType.Meeting);
                 var api = this.GetAdobeConnectProvider(credentials);
-                IEnumerable<TemplateDto> templates = new MeetingTemplateService(Logger).GetSharedMeetingTemplates(api, Cache,
-                    () => CachePolicies.Keys.SharedMeetingTemplates(api.AdobeConnectRoot.ToString(), scoShortcut.ToString()));
-                    acAccountService.GetSharedMeetingTemplates(this.GetAdobeConnectProvider(credentials), Cache);
+                IEnumerable<TemplateDto> templates = new MeetingTemplateService(Logger).GetCachedTemplates(api, Cache,
+                    () => CachePolicies.Keys.SharedMeetingTemplates(api.AdobeConnectRoot.ToString(), scoShortcut.ToString()), scoShortcut);
 
                 return templates.ToSuccessResult();
             }
