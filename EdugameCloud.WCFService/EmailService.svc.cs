@@ -1,11 +1,19 @@
 ﻿// ReSharper disable once CheckNamespace
 
+using System.Globalization;
+using System.IO;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.WCFService.Mail.Models;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Providers;
+using Esynctraining.Mail;
+using Ical.Net;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
+using Ical.Net.Serialization.iCalendar.Serializers;
+using Calendar = Ical.Net.Calendar;
 
 namespace EdugameCloud.WCFService
 {
@@ -298,15 +306,58 @@ namespace EdugameCloud.WCFService
                     FirstName = registrationInfo.FirstName,
                     LastName = registrationInfo.LastName,
                     EventName = eventInfo.ScoInfo.Name,
+                    EventDesc = eventInfo.ScoInfo.Description,
+                    EventScoId = eventInfo.ScoInfo.ScoId,
                     EventStartDate = eventInfo.ScoInfo.BeginDate,
-                    EventEndDate = eventInfo.ScoInfo.BeginDate,
+                    EventEndDate = eventInfo.ScoInfo.EndDate,
                     MailSubject = Emails.RegistrationSubject,
-                    MeetingUrl = eventInfo.ScoInfo.SourceSco.UrlPath,
+                    MeetingUrl = acDomain.AcServer.TrimEnd('/') + "/" + eventInfo.ScoInfo.SourceSco.UrlPath.TrimStart('/'),
                     Email = registrationInfo.Email
                 };
+
+                var attachments = new List<Attachment>();
+
+                //var duration = model.EventEndDate - model.EventStartDate;
+
+                string description = model.EventDesc;
+                //string description = this.TemplateProvider.GetTemplate<EventQuizRegistrationModel>().TransformTemplate(model);
+
+                var e = new Event
+                {
+                    DtStart = new CalDateTime(model.EventStartDate),
+                    DtEnd = new CalDateTime(model.EventEndDate),
+                    Summary = $"You've successfully registered to the event \"{model.EventName}\"! ",
+                    Description = description,
+                    Url = new Uri(model.MeetingUrl)
+                };
+
+                var calendar = new Calendar();
+                calendar.Events.Add(e);
+
+                var serializer = new CalendarSerializer(new SerializationContext());
+                var serializedCalendar = serializer.SerializeToString(calendar);
+                Logger.Debug(serializedCalendar);
+
+                //var ms = new MemoryStream();
+                //using (var writer = new StreamWriter(ms))
+                //{
+                //    writer.Write(serializedCalendar);
+                //    writer.Flush();                    
+                //}
+                //ms.Position = 0;
+                byte[] bytes = new byte[serializedCalendar.Length * sizeof(char)];
+                Buffer.BlockCopy(serializedCalendar.ToCharArray(), 0, bytes, 0, bytes.Length);
+
+                var contype = new System.Net.Mime.ContentType("text/calendar");
+                contype.Parameters.Add("method", "REQUEST");
+                contype.Parameters.Add("name", "EventInformation.ics");
+                var calendarItem = new Attachment(new MemoryStream(bytes), contype);
+                calendarItem.TransferEncoding = System.Net.Mime.TransferEncoding.Base64;
+                attachments.Add(calendarItem);
+
                 var sentSuccessfully = MailModel.SendEmailSync($"{model.FirstName} {model.LastName}", model.Email,
                     Emails.RegistrationSubject,
-                    model, Common.AppEmailName, Common.AppEmail);
+                    model, Common.AppEmailName, Common.AppEmail, attachments: attachments);
                 if (!sentSuccessfully)
                 {
                     emailsNotSend.Add(model.Email);

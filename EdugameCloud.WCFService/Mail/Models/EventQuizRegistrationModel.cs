@@ -15,6 +15,8 @@ namespace EdugameCloud.WCFService.Mail.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public string EventName { get; set; }
+        public string EventDesc { get; set; }
+        public string EventScoId { get; set; }
 
         public DateTime EventStartDate { get; set; }
 

@@ -30,7 +30,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         private readonly CompanyEventsService _companyEventsService;
         private readonly CompanyAcDomainsService _companyAcDomainsService;
 
-        public EventsController(ILogger logger, ApplicationSettingsProvider settings, EmailService emailService, 
+        public EventsController(ILogger logger, ApplicationSettingsProvider settings, EmailService emailService,
             CompanyEventsService companyEventsService, LookupService lookupService, CompanyAcDomainsService companyAcDomainsService)
         {
             _companyAcDomainsService = companyAcDomainsService;
@@ -156,6 +156,32 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                     Email = eventModel.Email,
                     AdditionalFields = fields
                 });
+                try
+                {
+                    loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
+                    if (!loginResult.Success)
+                        throw new InvalidOperationException($"Can't login to AC url {apiUrl} user {acDomain.user}");
+
+                    var byLogin = proxy.GetAllByLogin(eventModel.Email);
+                    if (byLogin.Success)
+                    {
+                        var principalId = byLogin.Values.ToList()[0].PrincipalId;
+
+                        proxy.UpdateScoPermissions(new List<IPermissionUpdateTrio>
+                        {
+                            new MeetingPermissionUpdateTrio
+                            {
+                                PermissionId = MeetingPermissionId.view,
+                                PrincipalId = principalId,
+                                ScoId = scoId
+                            }
+                        });
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.Error("Error on adding user as a participant to an event", e);
+                }
 
                 if (status.Code != StatusCodes.ok)
                 {
@@ -187,9 +213,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 if (message.Contains("already-registered"))
                     message = "You have already registered to the event!";
                 _logger.Error(message);
-                return Json(new {IsSuccess = false, Message = message});
+                return Json(new { IsSuccess = false, Message = message });
             }
-            return Json(new { IsSuccess = true, Message = "You've successfully signed up for an event!" } );
+            return Json(new { IsSuccess = true, Message = "You've successfully signed up for an event!" });
         }
 
 

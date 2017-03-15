@@ -22,6 +22,7 @@ using EdugameCloud.ACEvents.Web.QuizResultServiceNamespace;
 using EdugameCloud.Certificates.Pdf;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
@@ -38,7 +39,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
     {
         private static readonly object _locker = new object();
         private readonly QuizResultService _quizResultService;
-        
+
         private readonly FileService _fileService;
         private readonly CompanyAcDomainsService _companyAcDomainsService;
         private readonly CompanyEventsService _companyEventsService;
@@ -50,7 +51,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             _companyEventsService = companyEventsService;
             _companyAcDomainsService = domainsService;
             _fileService = fileService;
-            
+
             _quizResultService = quizResultService;
         }
 
@@ -189,7 +190,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             var userStateSchoolAnswersUrl =
                 $"{acUrl}/api/xml?action=report-event-participants-complete-information&sco-id={scoId}&session={loginResult.Status.SessionInfo}";
-           
+
             var reply = string.Empty;
 
             using (var client = new HttpClient())
@@ -223,10 +224,23 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var participantName = quizResult.participantName;
             //var participantName = $"{userInfo.PrincipalInfo.Principal.Name}";
 
-            
             var eventScoInfo = proxy.GetScoInfo(scoId);
-            var teacher = proxy.GetScoByUrl2(eventScoInfo.ScoInfo.UrlPath).ScoInfo.Owner;
-            var teacherName = teacher.Name;
+            var eventParticipants = proxy.GetAllMeetingEnrollments(scoId);
+
+            var teacherName = String.Empty;
+            if (eventParticipants.Success)
+            {
+                var host = eventParticipants.Values.FirstOrDefault(x => x.PermissionId == MeetingPermissionId.host);
+                if (host != null)
+                {
+                    teacherName = host.Name;
+                }
+            }
+            else
+            {
+                var teacher = proxy.GetScoByUrl2(eventScoInfo.ScoInfo.UrlPath).ScoInfo.Owner;
+                teacherName = teacher.Name;
+            }
 
             var hours = (eventScoInfo.ScoInfo.EndDate - eventScoInfo.ScoInfo.BeginDate).Hours;
             var hoursEnding = hours > 1 ? "s" : string.Empty;
@@ -251,7 +265,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             Thread.CurrentThread.CurrentCulture = en;
             // Unix timestamp is seconds past epoch
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp/1000).ToLocalTime();
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp / 1000).ToLocalTime();
             return dtDateTime;
         }
 

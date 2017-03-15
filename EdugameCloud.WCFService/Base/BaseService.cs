@@ -163,7 +163,7 @@
             get { return IoC.Resolve<ACSessionModel>(); }
         }
         
-        private ITemplateProvider TemplateProvider
+        protected ITemplateProvider TemplateProvider
         {
             get { return IoC.Resolve<ITemplateProvider>(); }
         }
