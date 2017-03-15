@@ -22,8 +22,8 @@ namespace Esynctraining.AC.Provider.Tests
         public void WillGetUserTrainingsTaken()
         {
             var principalId = "1004370065";
-            var acApiUrl = "http://rhi.adobeconnect.com/api/xml";
-            var con = new ConnectionDetails(acApiUrl) ;
+            var acApiUrl = "http://rhi.adobeconnect.com/";
+            var con = new ConnectionDetails(new Uri(acApiUrl)) ;
             var acProvider = new AdobeConnectProvider(con);
             var loginResult = acProvider.Login(new UserCredentials("mike@esynctraining.com", "e$ync123RHI"));
             if (!loginResult.Success) throw new InvalidOperationException("Can't login as admin");

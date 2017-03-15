@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>TBD</Description>
+    <Copyright>Copyright © 2013-2017 eSyncTraining.com</Copyright>
+    <AssemblyTitle>Esynctraining.AdobeConnect.OwinSecurity</AssemblyTitle>
+    <VersionPrefix>1.0.0.13</VersionPrefix>
+    <Authors>eSyncTraining.com</Authors>
+    <TargetFrameworks>net45;net461</TargetFrameworks>
+    <AssemblyName>Esynctraining.AdobeConnect.OwinSecurity</AssemblyName>
+    <PackageId>Esynctraining.AdobeConnect.OwinSecurity</PackageId>
+    <PackageTags>AC;AdobeConnect;owin</PackageTags>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ConnectExtensions.Services.Client" Version="1.0.0.7" />
+    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="3.0.1" />
+    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.Configuration" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <Target Name="PostcompileScript" AfterTargets="Build" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
+    <Exec Command="dotnet pack --no-build --configuration $(Configuration)" />
+  </Target>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <Reference Include="System.Configuration" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>

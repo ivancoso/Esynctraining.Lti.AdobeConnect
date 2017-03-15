@@ -18,7 +18,7 @@ namespace Esynctraining.AdobeConnect.Tests
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main1(string[] args)
         {
             var d = new DateTime(1482489280536);
 
@@ -93,7 +93,7 @@ namespace Esynctraining.AdobeConnect.Tests
             ////var resDelete = seminarService.DeleteSeminar("1406519", ac);
         }
 
-        static void RunUmdRecordingsReport()
+        void RunUmdRecordingsReport()
         {
             var container = new WindsorContainer();
             WindsorIoC.Initialize(container);
@@ -109,7 +109,7 @@ namespace Esynctraining.AdobeConnect.Tests
             var provider = new AdobeConnectProvider(connectionDetails);
             LoginResult loginResult = provider.Login(new UserCredentials("mike+umd@esynctraining.com", "e$ync123UMD"));
 
-            var recordings = provider.ReportRecordings();
+            var recordings = provider.GetRecordingsList(null); //some id here
 
             //            var recordingsWithoutCreate = recordings.Values.Where(x => x.DateCreated == default(DateTime)).ToList();
             //            var recordingsWithoutCreateWithEnd = recordingsWithoutCreate.Where(x => x.EndDate != default(DateTime)).ToList();

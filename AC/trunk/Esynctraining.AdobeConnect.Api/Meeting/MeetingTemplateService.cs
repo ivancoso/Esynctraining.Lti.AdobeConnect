@@ -24,18 +24,22 @@ namespace Esynctraining.AdobeConnect.Api.Meeting
         }
 
 
-        public IEnumerable<TemplateDto> GetSharedMeetingTemplates(IAdobeConnectProxy provider, ICache cache, Func<string> cacheKeyFactory)
+        public IEnumerable<TemplateDto> GetCachedTemplates(IAdobeConnectProxy api, ICache cache, Func<string> cacheKeyFactory, ScoShortcutType scoShortcut)
         {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
+            if (api == null)
+                throw new ArgumentNullException(nameof(api));
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            //CachePolicies.Keys.SharedMeetingTemplates(provider.ApiUrl)
             var item = CacheUtility.GetCachedItem<IEnumerable<TemplateDto>>(cache, cacheKeyFactory(),
-                () => GetShortcutContentsFromApi(provider, ScoShortcutType.shared_meeting_templates.GetACEnum()));
+                () => GetShortcutContentsFromApi(api, scoShortcut.GetACEnum()));
 
             return item;
+        }
+
+        public IEnumerable<TemplateDto> GetSharedMeetingTemplates(IAdobeConnectProxy api, ICache cache, Func<string> cacheKeyFactory)
+        {
+            return GetCachedTemplates(api, cache, cacheKeyFactory, ScoShortcutType.shared_meeting_templates);
         }
 
         public IEnumerable<TemplateDto> GetSharedMeetingTemplates(IAdobeConnectProxy api)
