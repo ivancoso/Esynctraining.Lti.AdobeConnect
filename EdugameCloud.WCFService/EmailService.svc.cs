@@ -326,7 +326,7 @@ namespace EdugameCloud.WCFService
                 {
                     DtStart = new CalDateTime(model.EventStartDate),
                     DtEnd = new CalDateTime(model.EventEndDate),
-                    Summary = $"You've successfully registered to the event \"{model.EventName}\"! ",
+                    Summary = $"{model.EventName}",
                     Description = description,
                     Url = new Uri(model.MeetingUrl)
                 };
