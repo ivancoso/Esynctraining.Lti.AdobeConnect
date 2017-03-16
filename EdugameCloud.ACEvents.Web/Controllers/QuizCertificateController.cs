@@ -88,7 +88,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 if (Request.Browser.IsMobileDevice)
                 {
                     string imagePath = GetCertProcessor(quizResult).RenderPreview(ImageFormat.Png, BuildTemplateData(quizResult), resize: false);
-                    return File(imagePath, "image/png", "Certificate.png");
+                    return File(imagePath, "image/png", $"Certificate_{quizResult.ParticipantName}.png");
                 }
 
                 string filePath = GetCertProcessor(quizResult).RenderPdfDocument(BuildTemplateData(quizResult));
@@ -98,11 +98,12 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 //    Inline = true
                 //};
                 //Response.Headers.Add("Content-Disposition", contentDisposition.ToString() );
-                return new FilePathResultEx(filePath, System.Web.MimeMapping.GetMimeMapping(filePath))
-                {
-                    FileDownloadName = filePath,
-                    Inline = true
-                };
+                return File(filePath, "application/pdf", $"Certificate_{quizResult.ParticipantName}.pdf");
+                //return new FilePathResultEx(filePath, System.Web.MimeMapping.GetMimeMapping(filePath))
+                //{
+                //    FileDownloadName = filePath,
+                //    Inline = true
+                //};
             }
             catch (Exception ex)
             {

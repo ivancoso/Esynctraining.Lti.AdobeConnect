@@ -256,7 +256,10 @@ namespace EdugameCloud.WCFService
                         Value = quizDistractorAnswer.DistractorName,
                         QuizDistractorAnswer = quizDistractorAnswer
                     };
-                    var isCorrect = distractors.First(x => x.Id == quizDistractorAnswer.Id).IsCorrect ?? false;
+                    var distractor = distractors.FirstOrDefault(x => x.Id == quizDistractorAnswer.Id);
+                    if (distractor == null)
+                        throw new InvalidOperationException("How come answered distractor id is not present in question distractors???");
+                    var isCorrect = distractor.IsCorrect ?? false;
                     if (isCorrect)
                     {
                         score++;
