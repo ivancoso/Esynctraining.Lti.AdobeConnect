@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Xml.Serialization;
+using System.Text;
 
 namespace Esynctraining.AdobeConnect
 {
@@ -93,8 +94,11 @@ namespace Esynctraining.AdobeConnect
 
                 try
                 {
-                    var chat = (ChatTranscript)Serializer.Deserialize(chatXmlFileStream);
-                    return chat;
+                    using (var sr = new StreamReader(chatXmlFileStream, Encoding.UTF8))
+                    {
+                        var chat = (ChatTranscript)Serializer.Deserialize(sr);
+                        return chat;
+                    }
                 }
                 catch (Exception ex)
                 {
