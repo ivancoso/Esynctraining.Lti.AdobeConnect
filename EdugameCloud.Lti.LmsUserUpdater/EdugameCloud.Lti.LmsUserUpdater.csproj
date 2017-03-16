@@ -73,8 +73,8 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.24, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.24\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.25, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.25\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.CastleLog4Net.1.0.0.2\lib\net45\Esynctraining.CastleLog4Net.dll</HintPath>
