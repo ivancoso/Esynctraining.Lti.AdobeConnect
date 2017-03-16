@@ -213,7 +213,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 if (message.Contains("already-registered"))
                     message = "You have already registered to the event!";
                 if (message.Contains("denied"))
-                    message = "You are not able to register to an event. Probably it's not yet published.";
+                    message = "The registration cannot be completed. Please contact your Administrator.";
                 _logger.Error(message);
                 return Json(new { IsSuccess = false, Message = message });
             }
