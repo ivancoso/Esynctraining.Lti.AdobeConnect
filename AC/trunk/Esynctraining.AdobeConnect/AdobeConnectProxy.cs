@@ -806,7 +806,7 @@ namespace Esynctraining.AdobeConnect
                 throw new ArgumentNullException(nameof(scoIds));
 
             var result = new List<ReportBulkObjectItem>();
-            foreach (var chunk in scoIds.Chunk(50))
+            foreach (var chunk in scoIds.Chunk(AdobeConnectProviderConstants.ChunkOperationSize))
             {
                 var filter = string.Join("&", chunk.Select(x => string.Format("filter-sco-id={0}", x)));
                 var chunkResult = Execute(() => { return _provider.ReportBulkObjects(filter); }, filter);
@@ -818,7 +818,7 @@ namespace Esynctraining.AdobeConnect
             return new CollectionResult<ReportBulkObjectItem>(new StatusInfo { Code = StatusCodes.ok }, result);
         }
 
-        public CollectionResult<ReportBulkObjectItem> ReportBulkObjectsByType(IEnumerable<string> types, int startIndex = 0, int limit = 0)
+        public CollectionResult<ReportBulkObjectItem> ReportBulkObjectsByType(IEnumerable<string> types, int startIndex = 0, int limit = AdobeConnectProviderConstants.MaxOperationSize)
         {
             if (types == null)
                 throw new ArgumentNullException(nameof(types));

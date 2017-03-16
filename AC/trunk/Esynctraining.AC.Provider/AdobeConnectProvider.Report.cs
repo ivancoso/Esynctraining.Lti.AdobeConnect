@@ -247,7 +247,7 @@ namespace Esynctraining.AC.Provider
                 : new CollectionResult<QuizQuestionDistributionItem>(status);
         }
 
-        public CollectionResult<ReportBulkObjectItem> ReportBulkObjects(string filter, int startIndex = 0, int limit = 0)
+        public CollectionResult<ReportBulkObjectItem> ReportBulkObjects(string filter, int startIndex = 0, int limit = AdobeConnectProviderConstants.MaxOperationSize)
         {
             return DoCallReportBulkObjects(filter, startIndex, limit);
         }
@@ -255,6 +255,9 @@ namespace Esynctraining.AC.Provider
 
         private CollectionResult<ReportBulkObjectItem> DoCallReportBulkObjects(string filter, int startIndex, int limit)
         {
+            if(limit <= 0 || limit > AdobeConnectProviderConstants.MaxOperationSize)
+                throw new ArgumentOutOfRangeException(nameof(limit));
+
             StatusInfo status;
 
             var principals = this.requestProcessor.Process(Commands.ReportBulkObjects, filter.AppendPagingIfNeeded(startIndex, limit), out status);

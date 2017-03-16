@@ -37,6 +37,16 @@
         /// The http client timeout for content download/upload requests
         /// </summary>
         public const int DefaultHttpContentRequestTimeout = 10000*60; //10 min
+
+        /// <summary>
+        /// The maximum number of returned objects for api calls
+        /// </summary>
+        public const int MaxOperationSize = 20000;
+        
+        /// <summary>
+        /// The maximum number of returned objects for chunked requests. Not related to api, internal usage only
+        /// </summary>
+        public const int ChunkOperationSize = 50;
     }
 
 }
