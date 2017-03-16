@@ -22,16 +22,9 @@ namespace Esynctraining.AdobeConnect
 
         public ChatTranscriptService(IAdobeConnectProxy proxy, IContentService contentService, ILogger logger)
         {
-            if (proxy == null)
-                throw new ArgumentNullException(nameof(proxy));
-            if (contentService == null)
-                throw new ArgumentNullException(nameof(contentService));
-            if (logger == null)
-                throw new ArgumentNullException(nameof(logger));
-
-            _contentService = contentService;
-            _proxy = proxy;
-            _logger = logger;
+            _contentService = contentService ?? throw new ArgumentNullException(nameof(contentService));
+            _proxy = proxy ?? throw new ArgumentNullException(nameof(proxy));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -86,7 +79,7 @@ namespace Esynctraining.AdobeConnect
                         }
                         catch (Exception ex)
                         {
-                            throw new InvalidOperationException("Error parsing chat transcription. No transcript file found.", ex);
+                            throw new InvalidOperationException($"Error parsing chat transcription. No transcript file found. ChatFile sco-id:{chatFileScoId}.", ex);
                         }
 
                         using (var zipEntryStream = zipEntry.Open())
@@ -105,7 +98,7 @@ namespace Esynctraining.AdobeConnect
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error parsing chat transcription. MeetingScoId:'{meetingScoId}'. {_proxy.AdobeConnectRoot}.", ex);
+                    _logger.Error($"Error parsing chat transcription. MeetingScoId:'{meetingScoId}'. ChatFile sco-id:{chatFileScoId}. {_proxy.AdobeConnectRoot}.", ex);
                     throw new InvalidOperationException("Error parsing chat transcription.", ex);
                 }
             }
