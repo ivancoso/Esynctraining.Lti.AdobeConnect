@@ -303,6 +303,7 @@
     <Content Include="Web References\AcDomainsNamespace\ACDomainDTO.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
+    <Content Include="Views\Events\SuccessPage.cshtml" />
     <None Include="Web References\AcDomainsNamespace\CompanyAcDomainsService.wsdl" />
     <None Include="Web References\AcDomainsNamespace\CompanyAcDomainsService.xsd">
       <SubType>Designer</SubType>

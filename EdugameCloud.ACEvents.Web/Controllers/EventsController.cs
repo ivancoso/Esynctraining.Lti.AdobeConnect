@@ -217,10 +217,13 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 _logger.Error(message);
                 return Json(new { IsSuccess = false, Message = message });
             }
-            return Json(new { IsSuccess = true, Message = "You've successfully signed up for an event!" });
+            return Json(new { IsSuccess = true, Message = "You've successfully signed up for an event!", RedirectUrl = Url.Action("SuccessPage") });
         }
 
-
+        public ActionResult SuccessPage()
+        {
+            return View();
+        }
 
     }
 }

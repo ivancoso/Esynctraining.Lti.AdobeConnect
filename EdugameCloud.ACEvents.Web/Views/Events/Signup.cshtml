@@ -55,7 +55,8 @@
                     dataType: 'json',
                     success: function (result) {
                         if (result.IsSuccess) {
-                            $('#success').show().fadeOut(20000);
+                            //$('#success').show().fadeOut(20000);
+                            window.location = result.RedirectUrl;
                         } else {
                             //$('#errorMessage').html(result.Message);
                             $('#errorMessage').html("<span class='red'><b>" + result.Message + "</b></span>").closest('div').show().fadeOut(20000);
