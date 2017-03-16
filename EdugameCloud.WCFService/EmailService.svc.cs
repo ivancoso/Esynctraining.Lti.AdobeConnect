@@ -240,6 +240,17 @@ namespace EdugameCloud.WCFService
             if (mapping == null)
                 return OperationResultDto.Error("There is no event for this result.");
             //            var mapping = CompanyEventQuizMappingModel.GetOneById(quizResults.First().EventQuizMappingId).Value;
+
+            var acDomain = CompanyAcServerModel.GetOneById(mapping.CompanyAcDomain.Id).Value;
+            var acUrl = acDomain.AcServer;
+            var apiUrl = new Uri(acUrl);
+
+            var scoId = mapping.AcEventScoId;
+            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), Logger, apiUrl);
+            var eventInfo = proxy.GetScoInfo(scoId);
+            if (!eventInfo.Success)
+                throw new InvalidOperationException("");
+            
             List<string> emailsNotSend = new List<string>();
             foreach (var quizResult in quizResults)
             {
@@ -259,7 +270,7 @@ namespace EdugameCloud.WCFService
                     var model = new EventQuizResultSuccessModel(Settings)
                     {
                         Name = quizResult.ParticipantName,
-                        EventName = mapping.AcEventScoId, //todo: store or take from api
+                        EventName = eventInfo.ScoInfo?.Name ?? scoId,
                         MailSubject = "AC Event Post quiz result",
                         PostQuizUrl = Settings.CertificatesUrl + "/UI/#/?quizResultGuid=" + quizResult.Guid
                         //PostQuizUrl = "https://app.edugamecloud.com"
