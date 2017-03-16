@@ -148,7 +148,7 @@ namespace EdugameCloud.WCFService
             companyAcServer.Username = acDomain.user;
             companyAcServer.AcServer = acDomain.path;
 
-            if (acDomain.password != null)
+            if (!string.IsNullOrEmpty(acDomain.password))
                 companyAcServer.Password = acDomain.password;
             CompanyAcServerModel.RegisterSave(companyAcServer, true);
             return acDomain;
