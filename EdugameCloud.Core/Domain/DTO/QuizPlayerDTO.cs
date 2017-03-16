@@ -38,7 +38,7 @@
             this.isCompleted = dto.isCompleted;
             this.isParticipated = 
                 dto.appMaximizedTime == null || dto.appInFocusTime == null 
-                || ((dto.appMaximizedTime.Value > 95) && (dto.appInFocusTime.Value > 95) && (float)dto.score/dto.TotalQuestion >= (float)dto.passingScore/100);
+                || ((dto.appMaximizedTime.Value >= 95) && (dto.appInFocusTime.Value >= 95) && (dto.passingScore == 0 || dto.TotalQuestion <= 0 || (float)dto.score/dto.TotalQuestion >= (float)dto.passingScore/ 100));
         }
 
         #endregion
