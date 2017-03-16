@@ -105,10 +105,10 @@ namespace EdugameCloud.WCFService
             var postQuizResults = QuizResultModel.GetQuizResultsByQuizIds(new[] {postQuizId}.ToList());
             if (postQuizResults.Any(x => x.ACEmail == quizResult.ACEmail))
             {
-                return new OfflineQuizDTO()
-                {
-                    errorMessage = "You've already passed this post quiz!"
-                };
+                //return new OfflineQuizDTO()
+                //{
+                //    errorMessage = "You've already passed this post quiz!"
+                //};
             }
 
             var questions = new List<OfflineQuestionDTO>();
