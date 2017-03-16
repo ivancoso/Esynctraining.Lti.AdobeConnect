@@ -4,22 +4,21 @@
     <Description>Esynctraining AC DTO, Proxies, Services and Wrappers</Description>
     <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.AdobeConnect</AssemblyTitle>
-    <VersionPrefix>1.0.1.17</VersionPrefix>
+    <VersionPrefix>1.0.1.19</VersionPrefix>
     <Authors>eSyncTraining.com</Authors>
     <TargetFrameworks>net45;net461</TargetFrameworks>
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>ChatTranscriptService logging</PackageReleaseNotes>
+    <PackageReleaseNotes>fixed ReportBulkObject</PackageReleaseNotes>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <Version>1.0.1.18</Version>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-  </PropertyGroup>
+    <Version>1.0.1.19</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>  </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Windsor.xml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
