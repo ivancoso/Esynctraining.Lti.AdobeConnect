@@ -2214,7 +2214,7 @@
             The distractor repository.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuizResultModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuizResult,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuizResultModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuizResult,System.Int32},Esynctraining.Core.Providers.ApplicationSettingsProvider)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuizResultModel"/> class. 
             </summary>
