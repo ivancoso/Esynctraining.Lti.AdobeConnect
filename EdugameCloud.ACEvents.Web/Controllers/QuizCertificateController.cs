@@ -169,15 +169,6 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
         private QuizCertificateInfo FindCompletedQuizResult(Guid quizResultGuid)
         {
-            //if ((projectId <= 0) || (token == Guid.Empty))
-            //    return null;
-
-            //AccountSession session = _sessionModel.GetParticipantByToken(token);
-            //if (session == null)
-            //    return null;
-
-            //return _projectModel.FindInfoByProjectUser(projectId, session.AccountId);
-
             var quizResult = _quizResultService.GetByGuid(quizResultGuid.ToString());
             var eventMapping = _companyEventsService.GetById(quizResult.eventQuizMappingId ?? 0, true);
             var acDomain = _companyAcDomainsService.GetById(eventMapping.companyAcDomainId, true);

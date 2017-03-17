@@ -107,7 +107,7 @@ namespace EdugameCloud.WCFService
             {
                 return new OfflineQuizDTO()
                 {
-                    errorMessage = "You've already passed this post quiz!"
+                    errorMessage = "You have already passed this Quiz!"
                 };
             }
 
