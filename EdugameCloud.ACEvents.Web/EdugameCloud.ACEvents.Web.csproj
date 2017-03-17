@@ -237,6 +237,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="Web References\QuizServiceNamespace\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -504,6 +509,44 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Content Include="Web References\QuizServiceNamespace\PagedQuizDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\QuizServiceNamespace\QuizDataDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\QuizServiceNamespace\QuizDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\QuizServiceNamespace\QuizFromStoredProcedureDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\QuizServiceNamespace\QuizService.wsdl" />
+    <None Include="Web References\QuizServiceNamespace\QuizService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\QuizServiceNamespace\QuizService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\QuizServiceNamespace\QuizService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\QuizServiceNamespace\QuizService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\QuizServiceNamespace\QuizService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Web References\QuizServiceNamespace\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="Web References\QuizServiceNamespace\SMICategoriesFromStoredProcedureDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\QuizServiceNamespace\SubModuleItemDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Pdf\Shared\" />
@@ -592,6 +635,17 @@
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>EdugameCloud_ACEvents_Web_QuizResultServiceNamespace_QuizResultService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://dev.edugamecloud.com/services/QuizService.svc">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\QuizServiceNamespace\</RelPath>
+      <UpdateFromURL>http://dev.edugamecloud.com/services/QuizService.svc</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>EdugameCloud_ACEvents_Web_QuizServiceNamespace_QuizService</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>

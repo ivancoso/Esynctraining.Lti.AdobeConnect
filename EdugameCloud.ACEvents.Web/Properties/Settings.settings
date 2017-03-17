@@ -20,5 +20,8 @@
     <Setting Name="EdugameCloud_ACEvents_Web_EmailServiceNamespace_EmailService" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">http://dev.edugamecloud.com/services/EmailService.svc</Value>
     </Setting>
+    <Setting Name="EdugameCloud_ACEvents_Web_QuizServiceNamespace_QuizService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://dev.edugamecloud.com/services/QuizService.svc</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

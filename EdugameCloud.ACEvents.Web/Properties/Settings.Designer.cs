@@ -12,7 +12,7 @@ namespace EdugameCloud.ACEvents.Web.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.0.1.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -80,6 +80,16 @@ namespace EdugameCloud.ACEvents.Web.Properties {
         public string EdugameCloud_ACEvents_Web_EmailServiceNamespace_EmailService {
             get {
                 return ((string)(this["EdugameCloud_ACEvents_Web_EmailServiceNamespace_EmailService"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://dev.edugamecloud.com/services/QuizService.svc")]
+        public string EdugameCloud_ACEvents_Web_QuizServiceNamespace_QuizService {
+            get {
+                return ((string)(this["EdugameCloud_ACEvents_Web_QuizServiceNamespace_QuizService"]));
             }
         }
     }

@@ -19,6 +19,7 @@ using EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace;
 using EdugameCloud.ACEvents.Web.FileServiceNamespace;
 using EdugameCloud.ACEvents.Web.Models;
 using EdugameCloud.ACEvents.Web.QuizResultServiceNamespace;
+using EdugameCloud.ACEvents.Web.QuizServiceNamespace;
 using EdugameCloud.Certificates.Pdf;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
@@ -43,11 +44,14 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         private readonly FileService _fileService;
         private readonly CompanyAcDomainsService _companyAcDomainsService;
         private readonly CompanyEventsService _companyEventsService;
+        private readonly QuizService _quizService;
         //private readonly FileModel _fileModel;
 
 
-        public QuizCertificateController(QuizResultService quizResultService, FileService fileService, CompanyAcDomainsService domainsService, CompanyEventsService companyEventsService)
+        public QuizCertificateController(QuizResultService quizResultService, FileService fileService, CompanyAcDomainsService domainsService, 
+            CompanyEventsService companyEventsService, QuizService quizService)
         {
+            _quizService = quizService;
             _companyEventsService = companyEventsService;
             _companyAcDomainsService = domainsService;
             _fileService = fileService;
@@ -186,8 +190,23 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
             if (!loginResult.Success)
                 throw new InvalidOperationException("Can't login to AC");
-            //var additionalFields = proxy.GetEventRegistrationDetails(scoId);
-            //var userState = string.Empty;
+            
+            if (eventMapping.postQuizId != quizResult.eventQuizMappingId)
+            {
+                // it should be postQuiz result (that is the same as in mapping)
+                return null;
+            }
+
+            var quiz = _quizService.GetById(eventMapping.postQuizId, true);
+            if (!quiz.isPostQuiz)
+                return null;
+            var quizPassingScoreInPercents = (float)quiz.passingScore / 100;
+            var quizData = _quizService.GetQuizDataByQuizId(eventMapping.postQuizId, true);
+            var totalQuestions = quizData.questions.Length;
+            var scoreInPercents = (float)quizResult.score / totalQuestions;
+            var isSuccess = scoreInPercents >= quizPassingScoreInPercents;
+            if (!isSuccess)
+                return null;
 
             var userStateSchoolAnswersUrl =
                 $"{acUrl}/api/xml?action=report-event-participants-complete-information&sco-id={scoId}&session={loginResult.Status.SessionInfo}";
@@ -208,13 +227,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             var stateQuestionId = stateNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
             var schoolQuestionId = schoolNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
-            //foreach (var eventRegistrationDetail in additionalFields.EventFields)
-            //{
-            //    if (string.Equals(eventRegistrationDetail.Description, "state", StringComparison.OrdinalIgnoreCase))
-            //        userState = additionalFields.UserFields.ToList().Where(x => x.Name == )
-
-            //}
-
+            
             var userAnswers = doc.Root?.Descendants("user_list").Descendants("user").ToList();
             var userAnswer = userAnswers?.FirstOrDefault(x => x.Attribute("login").Value.ToString().ToLower().Equals(quizResult.acEmail, StringComparison.OrdinalIgnoreCase));
             var state = userAnswer?.Attribute("registration_question_" + stateQuestionId)?.Value ?? String.Empty;
