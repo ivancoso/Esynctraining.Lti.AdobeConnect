@@ -127,7 +127,7 @@
     <value>License upgrade is requested.</value>
   </data>
   <data name="TrialSubject" xml:space="preserve">
-    <value>Welcome to EduGame Cloud!</value>
+    <value>Pass this quiz to get your Goddard Systems certificate</value>
   </data>
   <data name="UserCreatedSubject" xml:space="preserve">
     <value>Welcome to the Team {0}!</value>

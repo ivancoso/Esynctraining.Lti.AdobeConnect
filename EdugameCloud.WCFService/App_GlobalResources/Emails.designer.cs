@@ -115,7 +115,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome to EduGame Cloud!.
+        ///   Looks up a localized string similar to Pass this quiz to get your Goddard Systems certificate.
         /// </summary>
         internal static string TrialSubject {
             get {

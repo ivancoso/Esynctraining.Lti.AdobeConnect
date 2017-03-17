@@ -171,9 +171,12 @@
         /// <summary>
         /// TODO: make different types for single and multiple choice questions, remove this property
         /// Currently is needed for Moodle (single choice which can have multiple correct answers)
+        /// AA: added protected set as when WCF service is consumer as web service it throughs an error - http://stackoverflow.com/questions/2323277/wcf-chokes-on-properties-with-no-set-any-workaround
         /// </summary>
         [DataMember]
-        public bool isMultipleChoice { get { return restrictions != null && restrictions.Contains("multi_choice"); } }
+        public bool isMultipleChoice { get { return restrictions != null && restrictions.Contains("multi_choice"); }
+            protected set { }
+        }
 
         #endregion
     }
