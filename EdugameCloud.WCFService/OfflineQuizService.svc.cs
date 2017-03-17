@@ -212,8 +212,8 @@ namespace EdugameCloud.WCFService
             };
             if (isSuccess)
             {
-                resultDto.certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={quizResultGuid}";
-                resultDto.certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={quizResultGuid}";
+                resultDto.certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={postQuizResult.Guid}";
+                resultDto.certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={postQuizResult.Guid}";
             }
 
             return resultDto;

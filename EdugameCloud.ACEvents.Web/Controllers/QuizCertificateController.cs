@@ -190,7 +190,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
             if (!loginResult.Success)
                 throw new InvalidOperationException("Can't login to AC");
-            
+
             if (eventMapping.postQuizId != quizResult.eventQuizMappingId)
             {
                 // it should be postQuiz result (that is the same as in mapping)

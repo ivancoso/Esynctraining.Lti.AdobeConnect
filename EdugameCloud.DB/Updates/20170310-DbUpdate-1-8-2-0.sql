@@ -40,7 +40,7 @@ ALTER PROCEDURE [dbo].[getQuizResultByACSessionId]
 AS
 BEGIN
 select sub.quizResultId, sub.participantName, sub.acEmail, sub.score, sub.TotalQuestion, sub.startTime, sub.endTime, 
-		 ROW_NUMBER() OVER (ORDER BY sub.score desc, sub.dateDifference asc) AS position, sub.isCompleted, sub.appMaximizedTime, sub.appInFocusTime, sub.passingScore from (
+		 ROW_NUMBER() OVER (ORDER BY sub.score desc, sub.dateDifference asc) AS position, sub.isCompleted, sub.appMaximizedTime, sub.appInFocusTime, sub.passingScore, sub.isPostQuiz, sub.quizResultGuid from (
 SELECT   QR.quizResultId,
 		 QR.participantName,	
 		 QR.acEmail,	 
