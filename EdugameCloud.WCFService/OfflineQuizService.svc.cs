@@ -168,7 +168,8 @@ namespace EdugameCloud.WCFService
             var quizResultGuid = answerContainer.quizResultGuid;
             var quizResult = QuizResultModel.GetOneByGuid(quizResultGuid).Value;
             var mapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
-            var postQuizData = QuizModel.getQuizDataByQuizID(mapping.PostQuiz.Id);
+            var postQuizId = mapping.PostQuiz.Id;
+            var postQuizData = QuizModel.getQuizDataByQuizID(postQuizId);
             DateTime startTime, endTime;
             var isDateCorrect = DateTime.TryParse(answerContainer.startTime, out startTime);
             isDateCorrect = isDateCorrect && DateTime.TryParse(answerContainer.endTime, out endTime);
@@ -178,7 +179,7 @@ namespace EdugameCloud.WCFService
                 throw new InvalidOperationException("Date is not in correct format");
             }
 
-            var existingPostQuizResult = QuizResultModel.GetQuizResultsByQuizIds(new List<int> {quizResult.Quiz.Id});
+            var existingPostQuizResult = QuizResultModel.GetQuizResultsByQuizIds(new List<int> { postQuizId });
             var existing = existingPostQuizResult.FirstOrDefault(x => x.ACEmail == quizResult.ACEmail && x.Quiz.IsPostQuiz);
             if (existing!=null)
                 return new OfflineQuizResultDTO() { errorMessage = "You have already passed this Quiz!" };
@@ -187,7 +188,6 @@ namespace EdugameCloud.WCFService
             var quizEventMapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
             if (quizEventMapping.PostQuiz == null)
                 throw new InvalidOperationException("Post quiz can't be null in mapping");
-            var postQuizId = quizEventMapping.PostQuiz.Id;
             var postQuizResult = new QuizResult
             {
                 isCompleted = true,
@@ -220,6 +220,9 @@ namespace EdugameCloud.WCFService
             {
                 resultDto.certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={postQuizResult.Guid}";
                 resultDto.certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={postQuizResult.Guid}";
+
+                var emailService = new EmailService();
+                emailService.SendCertificate(postQuizResult.Guid.ToString());
             }
 
             return resultDto;

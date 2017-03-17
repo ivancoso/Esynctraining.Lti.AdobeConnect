@@ -233,6 +233,39 @@ namespace EdugameCloud.WCFService
             return users.Select(u => new UserDTO(u)).ToArray();
         }
 
+        public OperationResultDto SendCertificate(string postQuizResultGuid)
+        {
+            Guid guid;
+            var canParse = Guid.TryParse(postQuizResultGuid, out guid);
+            if (!canParse)
+            {
+                var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, ErrorsTexts.GetResultError_NotFound, "No item with such id found");
+                this.LogError("EmailService.SendCertificate", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+            var postQuizResult = QuizResultModel.GetOneByGuid(guid).Value;
+            var emailsNotSend = new List<string>();
+            if (string.IsNullOrEmpty(postQuizResult.ACEmail))
+            {
+                Logger.Warn($"[SendCertificate] Email is empty. quizResultId={postQuizResult.Id}");
+                emailsNotSend.Add(postQuizResult.ParticipantName);
+            }
+
+            var model = new CertificateEmailModel(Settings)
+            {
+                CertificateLink = Settings.CertificatesUrl + "/UI/#/?quizResultGuid=" + postQuizResult.Guid,
+                ParticipantName = postQuizResult.ParticipantName
+            };
+            bool sentSuccessfully = MailModel.SendEmailSync(postQuizResult.ParticipantName, postQuizResult.ACEmail,
+                        Emails.CertificateSubject,
+                        model, Common.AppEmailName, Common.AppEmail);
+            if (!sentSuccessfully)
+            {
+                emailsNotSend.Add(postQuizResult.ACEmail);
+            }
+            return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
+        }
+
         public OperationResultDto SendEventQuizResultEmail(int[] quizResultIds)
         {
             var quizResults = QuizResultModel.GetAllByIds(quizResultIds.ToList());
@@ -250,7 +283,7 @@ namespace EdugameCloud.WCFService
             var eventInfo = proxy.GetScoInfo(scoId);
             if (!eventInfo.Success)
                 throw new InvalidOperationException("");
-            
+
             List<string> emailsNotSend = new List<string>();
             foreach (var quizResult in quizResults)
             {

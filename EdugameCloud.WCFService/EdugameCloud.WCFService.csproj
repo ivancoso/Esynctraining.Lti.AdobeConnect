@@ -187,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CompanyAcDomainsService.svc" />
+    <Content Include="Mail\Templates\CertificateEmail.html" />
     <Content Include="Mail\Templates\EventQuizRegistration.html" />
     <Content Include="OfflineQuizService.svc" />
     <Content Include="CompanyEventsService.svc" />
@@ -270,6 +271,7 @@
     <Compile Include="CORS\EnableCorsEndpointBehavior.cs" />
     <Compile Include="CORS\PreflightOperationBehavior.cs" />
     <Compile Include="CORS\PreflightOperationInvoker.cs" />
+    <Compile Include="Mail\Models\CertificateEmailModel.cs" />
     <Compile Include="Mail\Models\EventQuizRegistrationModel.cs" />
     <Compile Include="OfflineQuizService.svc.cs">
       <DependentUpon>OfflineQuizService.svc</DependentUpon>
