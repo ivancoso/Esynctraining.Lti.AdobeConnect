@@ -7,6 +7,7 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Text;
+using Castle.Components.DictionaryAdapter;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.DTO.OfflineQuiz;
@@ -176,6 +177,11 @@ namespace EdugameCloud.WCFService
             {
                 throw new InvalidOperationException("Date is not in correct format");
             }
+
+            var existingPostQuizResult = QuizResultModel.GetQuizResultsByQuizIds(new List<int> {quizResult.Quiz.Id});
+            var existing = existingPostQuizResult.FirstOrDefault(x => x.ACEmail == quizResult.ACEmail && x.Quiz.IsPostQuiz);
+            if (existing!=null)
+                return new OfflineQuizResultDTO() { errorMessage = "You have already passed this Quiz!" };
 
             var acSession = ACSessionModel.GetOneById(quizResult.ACSessionId);
             var quizEventMapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;

@@ -16,5 +16,8 @@ namespace EdugameCloud.Core.Domain.DTO.OfflineQuiz
 
         [DataMember]
         public string certificatePreviewUrl { get; set; }
+
+        [DataMember]
+        public string errorMessage { get; set; }
     }
 }
