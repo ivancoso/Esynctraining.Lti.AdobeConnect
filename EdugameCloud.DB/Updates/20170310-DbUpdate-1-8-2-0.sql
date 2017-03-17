@@ -52,7 +52,9 @@ SELECT   QR.quizResultId,
 		 QR.isCompleted,
 		 QR.appMaximizedTime as appMaximizedTime,
 		 QR.appInFocusTime as appInFocusTime,
-		 Q.passingScore as passingScore
+		 Q.passingScore as passingScore,
+		 q.isPostQuiz,
+		 QR.[guid] as quizResultGuid
 		 
 		    
 FROM     Quiz Q INNER JOIN

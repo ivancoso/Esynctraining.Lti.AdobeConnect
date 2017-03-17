@@ -74,6 +74,12 @@
         [DataMember]
         public virtual int passingScore { get; set; }
 
+        [DataMember]
+        public bool isPostQuiz { get; set; }
+
+        [DataMember]
+        public Guid quizResultGuid { get; set; }
+
         #endregion
     }
 }

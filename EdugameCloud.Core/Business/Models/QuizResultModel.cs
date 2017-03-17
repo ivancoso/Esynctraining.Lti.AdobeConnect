@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using Esynctraining.Core.Providers;
+
+namespace EdugameCloud.Core.Business.Models
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +23,8 @@
         /// </summary>
         private readonly IRepository<Distractor, int> distractorRepository;
 
+        private readonly dynamic _settings;
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -32,9 +36,10 @@
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public QuizResultModel(IRepository<Distractor, int> distractorRepository, IRepository<QuizResult, int> repository)
+        public QuizResultModel(IRepository<Distractor, int> distractorRepository, IRepository<QuizResult, int> repository, ApplicationSettingsProvider settings)
             : base(repository)
         {
+            _settings = settings;
             this.distractorRepository = distractorRepository;
         }
 
@@ -114,6 +119,16 @@
                     .Where(x => x.Question.Id == questionForAdminDTO.questionId)
                     .Select(x => new DistractorDTO(x))
                     .ToArray();
+            }
+
+            foreach (var playerDto in res.players)
+            {
+                if (playerDto.isPostQuiz)
+                {
+                    var certurl = _settings.CertificatesUrl;
+                    playerDto.certDownloadUrl = $"{certurl}/QuizCertificate/Download?quizResultGuid={playerDto.quizResultGuid}";
+                    playerDto.certPreviewUrl = $"{certurl}/QuizCertificate/Preview?quizResultGuid={playerDto.quizResultGuid}";
+                }
             }
 
             return res;

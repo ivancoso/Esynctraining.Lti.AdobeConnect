@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Domain.DTO
+﻿using System;
+
+namespace EdugameCloud.Core.Domain.DTO
 {
     using System.Runtime.Serialization;
 
@@ -104,6 +106,15 @@
         /// </summary>
         [DataMember]
         public bool isParticipated { get; set; }
+        public bool isPostQuiz { get; set; }
+
+        [DataMember]
+        public Guid quizResultGuid { get; set; }
+
+        [DataMember]
+        public string certDownloadUrl { get; set; }
+        [DataMember]
+        public string certPreviewUrl { get; set; }
 
         #endregion
 
