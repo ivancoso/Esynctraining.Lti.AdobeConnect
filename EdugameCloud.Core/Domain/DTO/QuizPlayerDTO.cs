@@ -38,6 +38,8 @@ namespace EdugameCloud.Core.Domain.DTO
             this.score = dto.score;
             this.startTime = dto.startTime.ConvertToUnixTimestamp();
             this.isCompleted = dto.isCompleted;
+            this.isPostQuiz = dto.isPostQuiz;
+            this.quizResultGuid = dto.quizResultGuid;
             this.isParticipated = 
                 dto.appMaximizedTime == null || dto.appInFocusTime == null 
                 || ((dto.appMaximizedTime.Value >= 95) && (dto.appInFocusTime.Value >= 95) && (dto.passingScore == 0 || dto.TotalQuestion <= 0 || (float)dto.score/dto.TotalQuestion >= (float)dto.passingScore/ 100));
