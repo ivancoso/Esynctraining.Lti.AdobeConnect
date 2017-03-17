@@ -5,6 +5,8 @@
       <xs:extension base="tns:CompanyQuizEventMappingSaveDTO">
         <xs:sequence>
           <xs:element minOccurs="0" name="acEventInfo" nillable="true" type="tns:CompanyEventDTO" />
+          <xs:element minOccurs="0" name="companyAcDomain" nillable="true" type="tns:ACDomainDTO" />
+          <xs:element minOccurs="0" name="registrationUrl" nillable="true" type="xs:string" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -30,12 +32,24 @@
       <xs:element minOccurs="0" name="desc" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="isMappedToQuizzes" type="xs:boolean" />
       <xs:element minOccurs="0" name="isSeminar" type="xs:boolean" />
+      <xs:element minOccurs="0" name="meetingUrl" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="scoId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="urlPath" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CompanyEventDTO" nillable="true" type="tns:CompanyEventDTO" />
+  <xs:complexType name="ACDomainDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="companyId" type="xs:int" />
+      <xs:element minOccurs="0" name="domainId" type="xs:int" />
+      <xs:element minOccurs="0" name="isDefault" type="xs:boolean" />
+      <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="path" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="user" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ACDomainDTO" nillable="true" type="tns:ACDomainDTO" />
   <xs:complexType name="ArrayOfCompanyEventDTO">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="CompanyEventDTO" nillable="true" type="tns:CompanyEventDTO" />

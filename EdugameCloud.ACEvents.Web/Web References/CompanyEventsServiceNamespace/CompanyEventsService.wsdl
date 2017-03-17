@@ -36,6 +36,15 @@
   <wsdl:message name="ICompanyEventsService_GetEventsByCompanyAcServer_ErrorFault_FaultMessage">
     <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q3:Error" />
   </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompanyAcServerWithPastEvents_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventsByCompanyAcServerWithPastEvents" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompanyAcServerWithPastEvents_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEventsByCompanyAcServerWithPastEventsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetEventsByCompanyAcServerWithPastEvents_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+  </wsdl:message>
   <wsdl:message name="ICompanyEventsService_GetEventQuizMappings_InputMessage">
     <wsdl:part name="parameters" element="tns:GetEventQuizMappings" />
   </wsdl:message>
@@ -43,7 +52,7 @@
     <wsdl:part name="parameters" element="tns:GetEventQuizMappingsResponse" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_GetEventQuizMappings_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q5:Error" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByCompanyId_InputMessage">
     <wsdl:part name="parameters" element="tns:GetEventQuizMappingsByCompanyId" />
@@ -52,7 +61,7 @@
     <wsdl:part name="parameters" element="tns:GetEventQuizMappingsByCompanyIdResponse" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByCompanyId_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q5:Error" />
+    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q6:Error" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByAcServerId_InputMessage">
     <wsdl:part name="parameters" element="tns:GetEventQuizMappingsByAcServerId" />
@@ -61,7 +70,7 @@
     <wsdl:part name="parameters" element="tns:GetEventQuizMappingsByAcServerIdResponse" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_GetEventQuizMappingsByAcServerId_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q6:Error" />
+    <wsdl:part xmlns:q7="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q7:Error" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_DeleteById_InputMessage">
     <wsdl:part name="parameters" element="tns:DeleteById" />
@@ -70,7 +79,16 @@
     <wsdl:part name="parameters" element="tns:DeleteByIdResponse" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_DeleteById_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q7="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q7:Error" />
+    <wsdl:part xmlns:q8="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q8:Error" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetByGuid_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetByGuid" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetByGuid_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByGuidResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICompanyEventsService_GetByGuid_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q9:Error" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_Save_InputMessage">
     <wsdl:part name="parameters" element="tns:Save" />
@@ -79,7 +97,7 @@
     <wsdl:part name="parameters" element="tns:SaveResponse" />
   </wsdl:message>
   <wsdl:message name="ICompanyEventsService_Save_ErrorFault_FaultMessage">
-    <wsdl:part xmlns:q8="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q8:Error" />
+    <wsdl:part xmlns:q10="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q10:Error" />
   </wsdl:message>
   <wsdl:portType name="ICompanyEventsService">
     <wsdl:operation name="GetById">
@@ -96,6 +114,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServer" message="tns:ICompanyEventsService_GetEventsByCompanyAcServer_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerResponse" message="tns:ICompanyEventsService_GetEventsByCompanyAcServer_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetEventsByCompanyAcServer_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompanyAcServerWithPastEvents">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerWithPastEvents" message="tns:ICompanyEventsService_GetEventsByCompanyAcServerWithPastEvents_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerWithPastEventsResponse" message="tns:ICompanyEventsService_GetEventsByCompanyAcServerWithPastEvents_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerWithPastEventsErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetEventsByCompanyAcServerWithPastEvents_ErrorFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetEventQuizMappings">
       <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetEventQuizMappings" message="tns:ICompanyEventsService_GetEventQuizMappings_InputMessage" />
@@ -116,6 +139,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/DeleteById" message="tns:ICompanyEventsService_DeleteById_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/DeleteByIdResponse" message="tns:ICompanyEventsService_DeleteById_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/DeleteByIdErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_DeleteById_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetByGuid">
+      <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/GetByGuid" message="tns:ICompanyEventsService_GetByGuid_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ICompanyEventsService/GetByGuidResponse" message="tns:ICompanyEventsService_GetByGuid_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ICompanyEventsService/GetByGuidErrorFault" name="ErrorFault" message="tns:ICompanyEventsService_GetByGuid_ErrorFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="Save">
       <wsdl:input wsaw:Action="http://tempuri.org/ICompanyEventsService/Save" message="tns:ICompanyEventsService_Save_InputMessage" />
@@ -151,6 +179,18 @@
     </wsdl:operation>
     <wsdl:operation name="GetEventsByCompanyAcServer">
       <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompanyAcServerWithPastEvents">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerWithPastEvents" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -199,6 +239,18 @@
     </wsdl:operation>
     <wsdl:operation name="DeleteById">
       <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/DeleteById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetByGuid">
+      <soap:operation soapAction="http://tempuri.org/ICompanyEventsService/GetByGuid" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -260,6 +312,18 @@
         <soap12:fault use="literal" name="ErrorFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
+    <wsdl:operation name="GetEventsByCompanyAcServerWithPastEvents">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerWithPastEvents" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
     <wsdl:operation name="GetEventQuizMappings">
       <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetEventQuizMappings" style="document" />
       <wsdl:input>
@@ -298,6 +362,18 @@
     </wsdl:operation>
     <wsdl:operation name="DeleteById">
       <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/DeleteById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetByGuid">
+      <soap12:operation soapAction="http://tempuri.org/ICompanyEventsService/GetByGuid" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

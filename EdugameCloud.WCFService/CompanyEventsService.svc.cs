@@ -202,5 +202,11 @@ namespace EdugameCloud.WCFService
 
             return GetAllEventsFromAcServer(defaultAcDomain, true);
         }
+
+        public CompanyQuizEventMappingDTO GetByGuid(Guid id)
+        {
+            var entity = CompanyEventQuizMappingModel.GetByGuid(id);
+            return new CompanyQuizEventMappingDTO(entity, Settings);
+        }
     }
 }

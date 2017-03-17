@@ -35,6 +35,8 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
         
         private System.Threading.SendOrPostCallback GetEventsByCompanyAcServerOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetEventsByCompanyAcServerWithPastEventsOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetEventQuizMappingsOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetEventQuizMappingsByCompanyIdOperationCompleted;
@@ -42,6 +44,8 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
         private System.Threading.SendOrPostCallback GetEventQuizMappingsByAcServerIdOperationCompleted;
         
         private System.Threading.SendOrPostCallback DeleteByIdOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetByGuidOperationCompleted;
         
         private System.Threading.SendOrPostCallback SaveOperationCompleted;
         
@@ -93,6 +97,9 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
         public event GetEventsByCompanyAcServerCompletedEventHandler GetEventsByCompanyAcServerCompleted;
         
         /// <remarks/>
+        public event GetEventsByCompanyAcServerWithPastEventsCompletedEventHandler GetEventsByCompanyAcServerWithPastEventsCompleted;
+        
+        /// <remarks/>
         public event GetEventQuizMappingsCompletedEventHandler GetEventQuizMappingsCompleted;
         
         /// <remarks/>
@@ -103,6 +110,9 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
         
         /// <remarks/>
         public event DeleteByIdCompletedEventHandler DeleteByIdCompleted;
+        
+        /// <remarks/>
+        public event GetByGuidCompletedEventHandler GetByGuidCompleted;
         
         /// <remarks/>
         public event SaveCompletedEventHandler SaveCompleted;
@@ -202,6 +212,40 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
             if ((this.GetEventsByCompanyAcServerCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetEventsByCompanyAcServerCompleted(this, new GetEventsByCompanyAcServerCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/ICompanyEventsService/GetEventsByCompanyAcServerWithPastEvents" +
+            "", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [return: System.Xml.Serialization.XmlArrayItemAttribute(Namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO")]
+        public CompanyEventDTO[] GetEventsByCompanyAcServerWithPastEvents(int companyAcServerId, [System.Xml.Serialization.XmlIgnoreAttribute()] bool companyAcServerIdSpecified) {
+            object[] results = this.Invoke("GetEventsByCompanyAcServerWithPastEvents", new object[] {
+                        companyAcServerId,
+                        companyAcServerIdSpecified});
+            return ((CompanyEventDTO[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetEventsByCompanyAcServerWithPastEventsAsync(int companyAcServerId, bool companyAcServerIdSpecified) {
+            this.GetEventsByCompanyAcServerWithPastEventsAsync(companyAcServerId, companyAcServerIdSpecified, null);
+        }
+        
+        /// <remarks/>
+        public void GetEventsByCompanyAcServerWithPastEventsAsync(int companyAcServerId, bool companyAcServerIdSpecified, object userState) {
+            if ((this.GetEventsByCompanyAcServerWithPastEventsOperationCompleted == null)) {
+                this.GetEventsByCompanyAcServerWithPastEventsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEventsByCompanyAcServerWithPastEventsOperationCompleted);
+            }
+            this.InvokeAsync("GetEventsByCompanyAcServerWithPastEvents", new object[] {
+                        companyAcServerId,
+                        companyAcServerIdSpecified}, this.GetEventsByCompanyAcServerWithPastEventsOperationCompleted, userState);
+        }
+        
+        private void OnGetEventsByCompanyAcServerWithPastEventsOperationCompleted(object arg) {
+            if ((this.GetEventsByCompanyAcServerWithPastEventsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetEventsByCompanyAcServerWithPastEventsCompleted(this, new GetEventsByCompanyAcServerWithPastEventsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -333,6 +377,36 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/ICompanyEventsService/GetByGuid", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public CompanyQuizEventMappingDTO GetByGuid(string id) {
+            object[] results = this.Invoke("GetByGuid", new object[] {
+                        id});
+            return ((CompanyQuizEventMappingDTO)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetByGuidAsync(string id) {
+            this.GetByGuidAsync(id, null);
+        }
+        
+        /// <remarks/>
+        public void GetByGuidAsync(string id, object userState) {
+            if ((this.GetByGuidOperationCompleted == null)) {
+                this.GetByGuidOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetByGuidOperationCompleted);
+            }
+            this.InvokeAsync("GetByGuid", new object[] {
+                        id}, this.GetByGuidOperationCompleted, userState);
+        }
+        
+        private void OnGetByGuidOperationCompleted(object arg) {
+            if ((this.GetByGuidCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetByGuidCompleted(this, new GetByGuidCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/ICompanyEventsService/Save", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         [return: System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public CompanyQuizEventMappingSaveDTO Save([System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] CompanyQuizEventMappingSaveDTO eventQuizMapping) {
@@ -391,6 +465,10 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
         
         private CompanyEventDTO acEventInfoField;
         
+        private ACDomainDTO companyAcDomainField;
+        
+        private string registrationUrlField;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public CompanyEventDTO acEventInfo {
@@ -399,6 +477,28 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
             }
             set {
                 this.acEventInfoField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public ACDomainDTO companyAcDomain {
+            get {
+                return this.companyAcDomainField;
+            }
+            set {
+                this.companyAcDomainField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string registrationUrl {
+            get {
+                return this.registrationUrlField;
+            }
+            set {
+                this.registrationUrlField = value;
             }
         }
     }
@@ -440,6 +540,8 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
         private bool isSeminarField;
         
         private bool isSeminarFieldSpecified;
+        
+        private string meetingUrlField;
         
         private string nameField;
         
@@ -607,6 +709,17 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string meetingUrl {
+            get {
+                return this.meetingUrlField;
+            }
+            set {
+                this.meetingUrlField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string name {
             get {
                 return this.nameField;
@@ -635,6 +748,129 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
             }
             set {
                 this.urlPathField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO")]
+    public partial class ACDomainDTO {
+        
+        private int companyIdField;
+        
+        private bool companyIdFieldSpecified;
+        
+        private int domainIdField;
+        
+        private bool domainIdFieldSpecified;
+        
+        private bool isDefaultField;
+        
+        private bool isDefaultFieldSpecified;
+        
+        private string passwordField;
+        
+        private string pathField;
+        
+        private string userField;
+        
+        /// <remarks/>
+        public int companyId {
+            get {
+                return this.companyIdField;
+            }
+            set {
+                this.companyIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool companyIdSpecified {
+            get {
+                return this.companyIdFieldSpecified;
+            }
+            set {
+                this.companyIdFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int domainId {
+            get {
+                return this.domainIdField;
+            }
+            set {
+                this.domainIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool domainIdSpecified {
+            get {
+                return this.domainIdFieldSpecified;
+            }
+            set {
+                this.domainIdFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool isDefault {
+            get {
+                return this.isDefaultField;
+            }
+            set {
+                this.isDefaultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool isDefaultSpecified {
+            get {
+                return this.isDefaultFieldSpecified;
+            }
+            set {
+                this.isDefaultFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string password {
+            get {
+                return this.passwordField;
+            }
+            set {
+                this.passwordField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string path {
+            get {
+                return this.pathField;
+            }
+            set {
+                this.pathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string user {
+            get {
+                return this.userField;
+            }
+            set {
+                this.userField = value;
             }
         }
     }
@@ -842,6 +1078,32 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    public delegate void GetEventsByCompanyAcServerWithPastEventsCompletedEventHandler(object sender, GetEventsByCompanyAcServerWithPastEventsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetEventsByCompanyAcServerWithPastEventsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetEventsByCompanyAcServerWithPastEventsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CompanyEventDTO[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CompanyEventDTO[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
     public delegate void GetEventQuizMappingsCompletedEventHandler(object sender, GetEventQuizMappingsCompletedEventArgs e);
     
     /// <remarks/>
@@ -948,6 +1210,32 @@ namespace EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((bool)(this.results[1]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    public delegate void GetByGuidCompletedEventHandler(object sender, GetByGuidCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetByGuidCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetByGuidCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CompanyQuizEventMappingDTO Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CompanyQuizEventMappingDTO)(this.results[0]));
             }
         }
     }

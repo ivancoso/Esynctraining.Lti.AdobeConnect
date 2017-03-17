@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 using EdugameCloud.Core.Domain.Entities;
 using Esynctraining.Core.Providers;
@@ -10,6 +11,7 @@ namespace EdugameCloud.Core.Domain.DTO
         public CompanyQuizEventMappingDTO(CompanyEventQuizMapping entity, dynamic settings, CompanyEventDTO eventDto = null, CompanyAcServer acServer = null)
         {
             acEventScoId = entity.AcEventScoId;
+            guid = entity.Guid;
             preQuizId = entity.PreQuiz?.Id ?? 0;
             postQuizId = entity.PostQuiz?.Id ?? 0;
             eventQuizMappingId = entity.Id;
@@ -54,12 +56,15 @@ namespace EdugameCloud.Core.Domain.DTO
 
             if (eventQuizMappingId != 0)
             {
-                registrationUrl = settings.CertificatesUrl + "?eventQuizMappingId=" + eventQuizMappingId;
+                registrationUrl = settings.CertificatesUrl + "?eventQuizMappingId=" + entity.Guid;
             }
         }
 
         [DataMember]
         public string registrationUrl { get; set; }
+
+        [DataMember]
+        public Guid guid { get; set; }
 
         [DataMember]
         public CompanyEventDTO acEventInfo { get; set; }

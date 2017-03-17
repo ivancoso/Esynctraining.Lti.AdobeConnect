@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" />
+  <xs:import schemaLocation="http://dev.edugamecloud.com/services/CompanyEventsService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:element name="GetById">
     <xs:complexType>
       <xs:sequence>
@@ -43,6 +44,20 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="GetEventsByCompanyAcServerWithPastEvents">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="companyAcServerId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetEventsByCompanyAcServerWithPastEventsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetEventsByCompanyAcServerWithPastEventsResult" nillable="true" type="q4:ArrayOfCompanyEventDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="GetEventQuizMappings">
     <xs:complexType>
       <xs:sequence />
@@ -51,7 +66,7 @@
   <xs:element name="GetEventQuizMappingsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetEventQuizMappingsResult" nillable="true" type="q4:ArrayOfCompanyQuizEventMappingDTO" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetEventQuizMappingsResult" nillable="true" type="q5:ArrayOfCompanyQuizEventMappingDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -65,7 +80,7 @@
   <xs:element name="GetEventQuizMappingsByCompanyIdResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetEventQuizMappingsByCompanyIdResult" nillable="true" type="q5:ArrayOfCompanyQuizEventMappingDTO" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetEventQuizMappingsByCompanyIdResult" nillable="true" type="q6:ArrayOfCompanyQuizEventMappingDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -79,7 +94,7 @@
   <xs:element name="GetEventQuizMappingsByAcServerIdResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetEventQuizMappingsByAcServerIdResult" nillable="true" type="q6:ArrayOfCompanyQuizEventMappingDTO" />
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetEventQuizMappingsByAcServerIdResult" nillable="true" type="q7:ArrayOfCompanyQuizEventMappingDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -97,17 +112,31 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="GetByGuid">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="id" type="q8:guid" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetByGuidResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetByGuidResult" nillable="true" type="q9:CompanyQuizEventMappingDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="Save">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="eventQuizMapping" nillable="true" type="q7:CompanyQuizEventMappingSaveDTO" />
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="eventQuizMapping" nillable="true" type="q10:CompanyQuizEventMappingSaveDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="SaveResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="SaveResult" nillable="true" type="q8:CompanyQuizEventMappingSaveDTO" />
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="SaveResult" nillable="true" type="q11:CompanyQuizEventMappingSaveDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

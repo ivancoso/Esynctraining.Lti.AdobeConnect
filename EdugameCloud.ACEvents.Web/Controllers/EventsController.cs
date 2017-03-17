@@ -49,9 +49,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 throw new InvalidOperationException("You should pass eventQuizMappingId");
 
             var eventQuizMappingId = Request.QueryString["eventQuizMappingId"];
-            var eventQuizMappingIdInt = int.Parse(eventQuizMappingId);
+            var eventQuizMappingIdGuid = Guid.Parse(eventQuizMappingId);
             var companyEventsService = _companyEventsService;
-            var eventMapping = companyEventsService.GetById(eventQuizMappingIdInt, true);
+            var eventMapping = companyEventsService.GetByGuid(eventQuizMappingIdGuid.ToString());
             if (eventMapping == null)
                 throw new InvalidOperationException("No eventQuizMapping with this id");
             var acService = _companyAcDomainsService;
@@ -70,7 +70,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 EventName = eventInfo.ScoInfo.Name,
                 StartDate = eventInfo.ScoInfo.BeginDate,
                 EndDate = eventInfo.ScoInfo.EndDate,
-                EventQuizMappingId = eventQuizMappingIdInt
+                EventQuizMappingId = eventMapping.eventQuizMappingId
             };
 
             //var lookupServiceClient = new LookupServiceClient.LookupServiceClient();

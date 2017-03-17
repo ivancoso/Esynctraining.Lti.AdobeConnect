@@ -66,3 +66,9 @@ WHERE    QR.acSessionId = @acSessionId and Q.submoduleItemId = @subModuleItemID
 
 
 END
+
+GO
+
+alter table dbo.CompanyEventQuizMapping
+add [guid] UNIQUEIDENTIFIER DEFAULT NEWID() NOT NULL
+GO

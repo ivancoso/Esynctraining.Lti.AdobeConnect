@@ -10,6 +10,7 @@ namespace EdugameCloud.Persistence.Mappings
         {
             Table("CompanyEventQuizMapping");
             this.Map(x => x.AcEventScoId).Length(50);
+            this.Map(x => x.Guid);
 
             this.References(x => x.PreQuiz).Column("PreQuizId").Nullable();
             this.References(x => x.PostQuiz).Column("PostQuizId").Nullable();

@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 using System.ServiceModel.Web;
 using EdugameCloud.Core.Domain.DTO;
 using Esynctraining.Core.Domain.Entities;
@@ -45,6 +46,10 @@ namespace EdugameCloud.WCFService.Contracts
         [OperationContract]
         [FaultContract(typeof(Error))]
         int DeleteById(int id);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        CompanyQuizEventMappingDTO GetByGuid(Guid id);
 
         [OperationContract]
         [FaultContract(typeof(Error))]

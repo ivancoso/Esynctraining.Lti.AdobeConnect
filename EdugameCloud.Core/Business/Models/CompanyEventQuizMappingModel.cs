@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,11 @@ namespace EdugameCloud.Core.Business.Models
             var eventMappings = GetAll();
             var items = eventMappings.Where(x => x.CompanyAcDomain.Company.Id == companyId);
             return items;
+        }
+
+        public CompanyEventQuizMapping GetByGuid(Guid guid)
+        {
+            return GetAll(x => x.Guid == guid).FirstOrDefault();
         }
     }
 }
