@@ -253,7 +253,7 @@ namespace EdugameCloud.WCFService
 
             var model = new CertificateEmailModel(Settings)
             {
-                CertificateLink = Settings.CertificatesUrl + "/UI/#/?quizResultGuid=" + postQuizResult.Guid,
+                CertificateLink = Settings.CertificatesUrl + "/QuizCertificate/Download?quizResultGuid=" + postQuizResult.Guid,
                 ParticipantName = postQuizResult.ParticipantName
             };
             bool sentSuccessfully = MailModel.SendEmailSync(postQuizResult.ParticipantName, postQuizResult.ACEmail,
