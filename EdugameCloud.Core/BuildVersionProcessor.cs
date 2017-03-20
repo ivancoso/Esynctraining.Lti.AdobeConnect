@@ -36,7 +36,6 @@ namespace EdugameCloud.Core
             foreach (var file in Directory.GetFiles(folder, buildSelector))
             {
                 var fileName = Path.GetFileName(file);
-                var version = fileName.GetBuildVersion();
                 versions.Add(new KeyValuePair<Version, string>(fileName.GetBuildVersion(), fileName));
             }
 

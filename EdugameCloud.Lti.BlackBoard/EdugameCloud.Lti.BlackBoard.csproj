@@ -44,9 +44,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BbWsClient, Version=1.0.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BbWsClient.1.0.0.9\lib\net45\BbWsClient.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="BbWsClient, Version=1.0.0.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BbWsClient.1.0.0.10\lib\net45\BbWsClient.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.27, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.27\lib\net45\Esynctraining.Core.dll</HintPath>
