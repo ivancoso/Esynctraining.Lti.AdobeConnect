@@ -108,6 +108,7 @@ namespace EdugameCloud.Core.Domain.DTO
         /// </summary>
         [DataMember]
         public bool isParticipated { get; set; }
+        [DataMember]
         public bool isPostQuiz { get; set; }
 
         [DataMember]
