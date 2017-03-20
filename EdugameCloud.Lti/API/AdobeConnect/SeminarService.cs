@@ -58,7 +58,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             foreach (var license in sharedLicenses)
             {
                 PopulateLicenseRooms(
-                    license.ScoId, license.Name,
+                    license.ScoId, license.Name, true,
                     ref licenseDtos,
                     acProxy,
                     seminarRecords,
@@ -70,11 +70,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             try
             {
-                var userLicenses = GetUserSeminarLicenses(acProxy).Where(x => x.PrincipalId == lmsUser.PrincipalId);
+                var userLicenses = GetUserSeminarLicenses(acProxy);//.Where(x => x.PrincipalId == lmsUser.PrincipalId);
                 foreach (var license in userLicenses)
                 {
                     PopulateLicenseRooms(
-                        license.ScoId, license.Name,
+                        license.ScoId, license.Name, license.PrincipalId == lmsUser.PrincipalId,
                         ref licenseDtos,
                         acProxy,
                         seminarRecords,
@@ -91,6 +91,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return licenseDtos;
         }
+
+        //public bool CheckEditPermissions(string licenseId, LtiParamDTO param, IAdobeConnectProxy acProxy, LmsUser lmsUser)
+        //{
+        //    if (!UsersSetup.IsTeacher(param))
+        //    {
+        //        return false;
+        //    }
+
+        //    return GetSharedSeminarLicenses(acProxy).Any(x => !x.IsExpired && x.ScoId == licenseId)
+        //           ||
+        //           GetUserSeminarLicenses(acProxy)
+        //               .Any(x => x.PrincipalId == lmsUser.PrincipalId && x.ScoId == licenseId && x.LicenseQuota > 0);
+        //}
 
         public OperationResultWithData<Esynctraining.AdobeConnect.Api.Seminar.Dto.SeminarSessionDto> SaveSeminarSession(SeminarSessionInputDto seminarSessionDto, 
             string seminarScoId,
@@ -147,7 +160,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private void PopulateLicenseRooms(
-            string licenseScoId, string licenseName,
+            string licenseScoId, string licenseName, bool canAddSeminars,
             ref List<SeminarLicenseDto> licenseDtos,
             IAdobeConnectProxy acProxy,
             IEnumerable<LmsCourseMeeting> seminarRecords,
@@ -178,7 +191,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     Duration = (x.EndDate - x.BeginDate).ToString(@"h\:mm"),
                     Summary = x.Description,
                     AcRoomUrl = x.UrlPath.Trim('/'),
-                    IsEditable = true,
+                    IsEditable = room.IsEditable,
 
                     // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
                     SeminarRoomId = meetingRecord.Id.ToString(),
@@ -191,6 +204,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 Id = licenseScoId,
                 Name = licenseName,
                 Rooms = rooms.ToArray(),
+                CanAddSeminars = canAddSeminars
             };
             licenseDtos.Add(dto);
         }
@@ -314,7 +328,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return 0;
         }
-        
     }
 
 }

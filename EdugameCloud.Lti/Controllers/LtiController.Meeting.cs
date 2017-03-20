@@ -88,7 +88,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 var ac = this.GetAdminProvider(credentials);
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
-                var fb = new MeetingFolderBuilder(credentials, ac, useLmsUserEmailForSearch);
+                var fb = new MeetingFolderBuilder(credentials, ac, useLmsUserEmailForSearch, meeting.GetMeetingType());
 
                 OperationResult ret = this.meetingSetup.SaveMeeting(
                     credentials,
@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 var ac = this.GetAdminProvider(credentials);
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
-                var fb = new MeetingFolderBuilder(credentials, ac, useLmsUserEmailForSearch);
+                var fb = new MeetingFolderBuilder(credentials, ac, useLmsUserEmailForSearch, meeting.GetMeetingType());
 
                 var ret = this.meetingSetup.SaveMeeting(
                     credentials,

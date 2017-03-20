@@ -98,6 +98,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany credentials = null;
             try
             {
+                //seminarService.CheckEditPermissions
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
@@ -197,20 +198,17 @@ namespace EdugameCloud.Lti.Controllers
         {
             var seminar = ac.GetScoInfo(meetingScoId).ScoInfo;
             var license = _seminarService.GetSharedSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
-            if (license != null)
+            if (license != null && !license.IsExpired)
             {
-                if (license.QuotaId == "concurrent-user-per-meeting-quota")
-                    seminarSessionDto.ExpectedLoad = license.Quota.Value;
+                seminarSessionDto.ExpectedLoad = license.Quota.Value;
                 return;
             }
 
-            // NOTE: it looks like we do not support users licenses for seminars.
             var userLicense = _seminarService.GetUserSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
 
             if (userLicense == null)
                 throw new InvalidOperationException($"Not found seminar license for seminar '{seminar.Name}'({seminar.ScoId}).");
-            if (userLicense.QuotaId == "concurrent-user-per-meeting-quota")
-                seminarSessionDto.ExpectedLoad = userLicense.Quota.Value;
+            seminarSessionDto.ExpectedLoad = userLicense.LicenseQuota;
         }
 
         [HttpPost]

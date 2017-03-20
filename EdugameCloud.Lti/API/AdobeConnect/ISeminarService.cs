@@ -22,6 +22,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider,
             TimeZoneInfo timeZone);
 
+        //bool CheckEditPermissions(string licenseId, LtiParamDTO param, IAdobeConnectProxy acProxy, LmsUser lmsUser);
+
     }
 
 }

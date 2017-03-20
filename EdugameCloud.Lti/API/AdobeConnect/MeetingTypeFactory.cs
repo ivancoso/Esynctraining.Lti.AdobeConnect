@@ -40,5 +40,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             }
         }
+
+        public static bool UseDbMeetingFolderId(LmsMeetingType meetingType)
+        {
+            switch (meetingType)
+            {
+                case LmsMeetingType.VirtualClassroom:
+                    return false;
+                default:
+                    return true;
+
+            }
+        }
     }
 }
