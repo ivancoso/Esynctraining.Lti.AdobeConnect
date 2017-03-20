@@ -47,6 +47,11 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<QuizModel>(); }
         }
 
+        private QuizResultModel QuizResultModel
+        {
+            get { return IoC.Resolve<QuizResultModel>(); }
+        }
+
         private ILogger Logger
         {
             get { return IoC.Resolve<ILogger>(); }
@@ -116,6 +121,9 @@ namespace EdugameCloud.WCFService
         public int DeleteById(int id)
         {
             var item = CompanyEventQuizMappingModel.GetOneById(id).Value;
+            var quizResults = QuizResultModel.GetAll(x => x.EventQuizMapping.Id == id);
+            if (quizResults.Any())
+                return 0;
             CompanyEventQuizMappingModel.RegisterDelete(item,true);
             return id;
         }
