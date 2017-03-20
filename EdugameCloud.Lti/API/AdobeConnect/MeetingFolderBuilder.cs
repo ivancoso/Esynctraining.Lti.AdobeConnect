@@ -133,7 +133,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (sharedMeetings.ScoId != null && sharedMeetings.Values != null)
                 {
                     ScoContent existingFolder = sharedMeetings.Values.FirstOrDefault(v => v.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && v.IsFolder);
-                    if (existingFolder != null && useDbFolderId)
+                    if (existingFolder != null)
                     {
                         ltiFolderSco = existingFolder.ScoId;
                     }
