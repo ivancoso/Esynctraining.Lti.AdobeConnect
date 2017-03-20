@@ -171,6 +171,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             var seminars = GetSeminars(licenseScoId, acProxy);
             var rooms = new List<SeminarDto>();
+            bool isEditable = canAddSeminars && UsersSetup.IsTeacher(param);
             foreach (ScoContent seminar in seminars)
             {
                 LmsCourseMeeting meetingRecord = seminarRecords.FirstOrDefault(x => x.ScoId == seminar.ScoId);
@@ -179,7 +180,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 var sessions = GetSeminarSessions(seminar.ScoId, acProxy);
 
-                var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, meetingRecord, timeZone);
+                var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, meetingRecord, timeZone, isEditable);
                 room.Id = meetingRecord.Id; // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
 
                 room.Sessions = sessions.Select(x => new Esynctraining.AdobeConnect.Api.Seminar.Dto.SeminarSessionDto
@@ -217,6 +218,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             ScoContent seminar,
             LmsCourseMeeting seminarMeeting,
             TimeZoneInfo timeZone,
+            bool isEditable,
             StringBuilder trace = null)
         {
             var psw = Stopwatch.StartNew();
@@ -233,7 +235,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (!meetingExistsInAC)
                 return null;
 
-            bool isEditable = this.UsersSetup.IsTeacher(param);
             var canJoin = this.CanJoin(lmsUser, permission) || GetGuestAuditRoleMappings(lmsCompany, param).Any()
                 || (lmsCompany.UseSynchronizedUsers && seminarMeeting.EnableDynamicProvisioning);
 
