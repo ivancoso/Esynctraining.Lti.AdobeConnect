@@ -83,53 +83,53 @@ namespace EdugameCloud.WCFService
                     CompanyAcServerModel.RegisterSave(defaultDomain, true);
                 }
             }
-           
+
             return id;
         }
 
         public ACDomainDTO Save(ACDomainDTO acDomain)
         {
-            if (acDomain.isDefault)
-            {
-                var defaultDomain =
-                    CompanyAcServerModel.GetAllByCompany(acDomain.companyId).FirstOrDefault(x => x.IsDefault);
-                if (defaultDomain != null)
-                {
-                    defaultDomain.IsDefault = false;
-                    CompanyAcServerModel.RegisterSave(defaultDomain, true);
-                }
-            }
-            else
-            {
-                // for update
-                if (acDomain.domainId != 0)
-                {
-                    // you can't uncheck default if there is only one record
-                    if (CompanyAcServerModel.GetAllByCompany(acDomain.companyId).Count() == 1)
-                        return acDomain;
+            //if (acDomain.isDefault)
+            //{
+            //    var defaultDomain =
+            //        CompanyAcServerModel.GetAllByCompany(acDomain.companyId).FirstOrDefault(x => x.IsDefault);
+            //    if (defaultDomain != null)
+            //    {
+            //        defaultDomain.IsDefault = false;
+            //        CompanyAcServerModel.RegisterSave(defaultDomain, true);
+            //    }
+            //}
+            //else
+            //{
+            //    // for update
+            //    if (acDomain.domainId != 0)
+            //    {
+            //        // you can't uncheck default if there is only one record
+            //        if (CompanyAcServerModel.GetAllByCompany(acDomain.companyId).Count() == 1)
+            //            return acDomain;
 
-                    if (CompanyAcServerModel.GetAllByCompany(acDomain.companyId).Count() > 1)
-                    {
-                        var firstAcServer =
-                            CompanyAcServerModel.GetAllByCompany(acDomain.companyId)
-                                .FirstOrDefault(x => x.Id != acDomain.domainId);
-                        if (firstAcServer != null)
-                        {
-                            firstAcServer.IsDefault = true;
-                            CompanyAcServerModel.RegisterSave(firstAcServer, true);
-                        }
-                    }
-                }
-                else
-                {
-                    var existing = CompanyAcServerModel.GetAllByCompany(acDomain.companyId).FirstOrDefault();
-                    if (existing != null)
-                    {
-                        existing.IsDefault = true;
-                        CompanyAcServerModel.RegisterSave(existing, true);
-                    }
-                }
-            }
+            //        if (CompanyAcServerModel.GetAllByCompany(acDomain.companyId).Count() > 1)
+            //        {
+            //            var firstAcServer =
+            //                CompanyAcServerModel.GetAllByCompany(acDomain.companyId)
+            //                    .FirstOrDefault(x => x.Id != acDomain.domainId);
+            //            if (firstAcServer != null)
+            //            {
+            //                firstAcServer.IsDefault = true;
+            //                CompanyAcServerModel.RegisterSave(firstAcServer, true);
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        var existing = CompanyAcServerModel.GetAllByCompany(acDomain.companyId).FirstOrDefault();
+            //        if (existing != null)
+            //        {
+            //            existing.IsDefault = true;
+            //            CompanyAcServerModel.RegisterSave(existing, true);
+            //        }
+            //    }
+            //}
             var company = CompanyModel.GetOneById(acDomain.companyId).Value;
             CompanyAcServer companyAcServer;
             if (acDomain.domainId != 0)
@@ -151,6 +151,32 @@ namespace EdugameCloud.WCFService
             if (!string.IsNullOrEmpty(acDomain.password))
                 companyAcServer.Password = acDomain.password;
             CompanyAcServerModel.RegisterSave(companyAcServer, true);
+
+            //uncheck if another isDefault=true exists
+            if (acDomain.isDefault)
+            {
+                var firstAcServer =
+                    CompanyAcServerModel.GetAllByCompany(acDomain.companyId)
+                        .FirstOrDefault(x => x.Id != acDomain.domainId && x.IsDefault);
+                if (firstAcServer != null)
+                {
+                    firstAcServer.IsDefault = false;
+                    CompanyAcServerModel.RegisterSave(firstAcServer, true);
+                }
+            }
+
+            //select first isDefault if no default at all
+            if (!acDomain.isDefault)
+            {
+                var firstAcServer =
+                    CompanyAcServerModel.GetAllByCompany(acDomain.companyId)
+                        .FirstOrDefault(x => x.IsDefault);
+                if (firstAcServer == null)
+                {
+                    companyAcServer.IsDefault = true;
+                    CompanyAcServerModel.RegisterSave(companyAcServer, true);
+                }
+            }
             return acDomain;
         }
 
