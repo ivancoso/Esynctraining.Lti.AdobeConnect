@@ -171,7 +171,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
-                var ac = this.GetAdminProvider(credentials);
+                var ac = GetCurrentUserProvider(session);
 
                 // TRICK: change record meeting id to meeting sco-id
                 var param = session.LtiSession.With(x => x.LtiParam);
@@ -226,7 +226,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
-                var ac = this.GetAdminProvider(credentials);
+                var ac = GetCurrentUserProvider(session);
 
                 var result = ac.DeleteSco(seminarSessionId);
                 return Json(OperationResult.Success());
