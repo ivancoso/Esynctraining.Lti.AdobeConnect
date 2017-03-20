@@ -155,13 +155,13 @@ namespace EdugameCloud.WCFService
             //uncheck if another isDefault=true exists
             if (acDomain.isDefault)
             {
-                var firstAcServer =
+                var otherDefaultServers =
                     CompanyAcServerModel.GetAllByCompany(acDomain.companyId)
-                        .FirstOrDefault(x => x.Id != acDomain.domainId && x.IsDefault);
-                if (firstAcServer != null)
+                        .Where(x => x.Id != acDomain.domainId && x.IsDefault).ToList();
+                foreach (var acServer in otherDefaultServers)
                 {
-                    firstAcServer.IsDefault = false;
-                    CompanyAcServerModel.RegisterSave(firstAcServer, true);
+                    acServer.IsDefault = false;
+                    CompanyAcServerModel.RegisterSave(acServer, true);
                 }
             }
 
