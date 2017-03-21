@@ -62,9 +62,9 @@
         [DataMember]
         public string quizName { get; set; }
 
-        /// <summary>
-        /// Gets or sets the score type.
-        /// </summary>
+        // <summary>
+        // Gets or sets the score type.
+        // </summary>
 //        [DataMember]
 //        public int? scoreTypeId { get; set; } // not used
 

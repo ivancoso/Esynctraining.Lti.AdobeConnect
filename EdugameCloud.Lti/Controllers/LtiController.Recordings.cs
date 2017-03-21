@@ -40,7 +40,8 @@ namespace EdugameCloud.Lti.Controllers
 
         // TODO: create DTO with validation!!
         [HttpPost]
-        public virtual JsonResult EditRecording(EditDto dto)
+        [LmsAuthorizeBase]
+        public virtual JsonResult EditRecording(EditDto dto, LmsUserSession session)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -48,9 +49,6 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                // TRICK: 1st to enable culture for thread
-                var session = GetReadOnlySession(dto.lmsProviderName);
-                
                 ///
                 /// TODO: REUSE!!!!
                 ///
@@ -113,12 +111,12 @@ namespace EdugameCloud.Lti.Controllers
 
         // TODO: id -> recordingId
         [HttpPost]
-        public virtual JsonResult DeleteRecording(string lmsProviderName, int meetingId, string id)
+        [LmsAuthorizeBase]
+        public virtual JsonResult DeleteRecording(LmsUserSession session, int meetingId, string id)
         {
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
 
@@ -141,65 +139,6 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
         
-        //[HttpPost]
-        //public virtual JsonResult PublishRecording(string lmsProviderName, int meetingId, string recordingId)
-        //{
-        //    LmsCompany lmsCompany = null;
-        //    try
-        //    {
-        //        var session = GetReadOnlySession(lmsProviderName);
-        //        lmsCompany = session.LmsCompany;
-
-        //        if (lmsCompany.AutoPublishRecordings)
-        //            throw new Core.WarningMessageException("Publishing is not allowed by LMS license settings");
-                
-        //        LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
-        //        var recording = new LmsCourseMeetingRecording
-        //        {
-        //            LmsCourseMeeting = meeting,
-        //            ScoId = recordingId,
-        //        };
-        //        meeting.MeetingRecordings.Add(recording);
-        //        LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
-
-        //        return Json(OperationResult.Success());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = GetOutputErrorMessage("PublishRecording", lmsCompany, ex);
-        //        return Json(OperationResult.Error(errorMessage));
-        //    }
-        //}
-
-        //public virtual JsonResult UnpublishRecording(string lmsProviderName, int meetingId, string recordingId)
-        //{
-        //    LmsCompany lmsCompany = null;
-        //    try
-        //    {
-        //        var session = GetReadOnlySession(lmsProviderName);
-        //        lmsCompany = session.LmsCompany;
-
-        //        if (lmsCompany.AutoPublishRecordings)
-        //            throw new Core.WarningMessageException("UnPublishing is not allowed by LMS license settings");
-
-        //        LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
-        //        var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == recordingId);
-        //        if (recording != null)
-        //        {
-        //            meeting.MeetingRecordings.Remove(recording);
-        //            LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
-        //        }
-                
-        //        return Json(OperationResult.Success());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = GetOutputErrorMessage("PublishRecording", lmsCompany, ex);
-        //        return Json(OperationResult.Error(errorMessage));
-        //    }
-        //}
-
-
         [HttpGet]
         public virtual ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
         {
@@ -217,25 +156,6 @@ namespace EdugameCloud.Lti.Controllers
             catch (Exception ex)
             {
                 return RecordingsError("JoinRecording", lmsProviderName, ex);
-            }
-        }
-        
-        [HttpPost]
-        public virtual ActionResult ShareRecording(string lmsProviderName, string recordingId, bool isPublic, string password)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                string link = RecordingsService.UpdateRecording(lmsCompany, this.GetAdminProvider(lmsCompany), recordingId, isPublic, password);
-
-                return Json(link.ToSuccessResult());
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("ShareRecording", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
             }
         }
         

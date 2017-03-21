@@ -8,7 +8,7 @@ namespace EdugameCloud.Lti.API.Moodle
     public interface IMoodleApi
     {
         List<LmsUserDTO> GetUsersForCourse(
-            LmsCompany company,
+            ILmsLicense company,
             int courseid,
             out string error);
 

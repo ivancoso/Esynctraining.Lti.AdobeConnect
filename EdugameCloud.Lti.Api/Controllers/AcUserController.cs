@@ -75,7 +75,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true))
                     return OperationResultWithData<LmsUserDTO>.Error("Operation is not enabled.");
 
-                var provider = GetAdobeConnectProvider();
+                var provider = GetAdminProvider();
                 Principal principal;
 
                 try
@@ -145,7 +145,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                var provider = GetAdobeConnectProvider();
+                var provider = GetAdminProvider();
 
                 var result = new List<Principal>();
                 PrincipalCollectionResult byLogin = provider.GetAllByFieldLike("login", request.searchTerm);

@@ -50,10 +50,7 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
-        private LanguageModel LanguageModel
-        {
-            get { return IoC.Resolve<LanguageModel>(); }
-        }
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
         #region Constructors and Destructors
 

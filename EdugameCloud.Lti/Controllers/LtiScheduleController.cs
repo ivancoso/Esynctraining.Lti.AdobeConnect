@@ -10,7 +10,7 @@
     using Esynctraining.Core.Providers;
 
     /// <summary>
-    ///     The schedule controller.
+    /// The schedule controller.
     /// </summary>
     [HandleError]
     public class LtiScheduleController : Controller

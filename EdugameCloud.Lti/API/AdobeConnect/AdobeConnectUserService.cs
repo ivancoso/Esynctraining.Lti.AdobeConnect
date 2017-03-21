@@ -20,8 +20,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string login, 
             string email, 
             string firstName, 
-            string lastName, 
-            LmsCompany lmsCompany)
+            string lastName,
+            ILmsLicense lmsCompany)
         {
             bool searchByEmail = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
             bool denyUserCreation = lmsCompany.DenyACUserCreation;
@@ -44,7 +44,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string email,
             string firstName,
             string lastName,
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IEnumerable<Principal> principalCache)
         {
             bool searchByEmail = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();

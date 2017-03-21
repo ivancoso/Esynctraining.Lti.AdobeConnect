@@ -11,10 +11,6 @@ namespace EdugameCloud.Lti.DTO.Recordings
     {
         [DataMember]
         //[Required]
-        public string lmsProviderName { get; set; }
-
-        [DataMember]
-        //[Required]
         public int meetingId { get; set; }
 
         [DataMember]
@@ -37,7 +33,6 @@ namespace EdugameCloud.Lti.DTO.Recordings
         public EditDtoValidator()
         {
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
-            this.RuleFor(model => model.lmsProviderName).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Session is empty");
             this.RuleFor(model => model.meetingId).GreaterThan(0);
             this.RuleFor(model => model.id).NotEmpty();
 

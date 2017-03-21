@@ -74,7 +74,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
             try
             {
-                var ac = GetAdobeConnectProvider();
+                var ac = GetAdminProvider();
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
                     () => new RoomTypeFactory(ac, (LmsMeetingType)request.type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
@@ -293,7 +293,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                string link = RecordingsService.UpdateRecording(LmsCompany, GetAdobeConnectProvider(), request.recordingId, request.isPublic, request.password);
+                string link = RecordingsService.UpdateRecording(LmsCompany, GetAdminProvider(), request.recordingId, request.isPublic, request.password);
 
                 return link.ToSuccessResult();
             }

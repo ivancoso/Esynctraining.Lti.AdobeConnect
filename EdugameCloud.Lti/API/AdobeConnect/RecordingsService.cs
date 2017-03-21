@@ -39,7 +39,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
 
-        public IEnumerable<IRecordingDto> GetRecordings(LmsCompany lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
+        public IEnumerable<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
             int courseId, 
             int id,
             Func<IRoomTypeFactory> getRoomTypeFactory)
@@ -122,7 +122,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private static void ProcessPublishedFlag(LmsCompany lmsCompany, LmsCourseMeeting meeting, IEnumerable<IRecordingDto> records)
+        private static void ProcessPublishedFlag(ILmsLicense lmsCompany, LmsCourseMeeting meeting, IEnumerable<IRecordingDto> records)
         {
             if (lmsCompany.AutoPublishRecordings)
             {
@@ -136,7 +136,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public string UpdateRecording(LmsCompany lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic, string password)
+        public string UpdateRecording(ILmsLicense lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic, string password)
         {
             var recording = provider.GetScoInfo(id).ScoInfo;
 
@@ -156,7 +156,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return recordingUrl;
         }
 
-        public string JoinRecording(LmsCompany lmsCompany, LtiParamDTO param, string recordingUrl,
+        public string JoinRecording(ILmsLicense lmsCompany, LtiParamDTO param, string recordingUrl,
             ref string breezeSession, IAdobeConnectProxy provider, string mode = null)
         {
             var breezeToken = string.Empty;
@@ -223,7 +223,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public OperationResult EditRecording(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             int courseId,
             string recordingId,
@@ -267,7 +267,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public OperationResult RemoveRecording(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             int courseId,
             string recordingId,

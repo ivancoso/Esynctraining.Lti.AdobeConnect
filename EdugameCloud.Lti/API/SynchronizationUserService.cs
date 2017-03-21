@@ -22,25 +22,28 @@ namespace EdugameCloud.Lti.API
         private readonly AdobeConnect.IAdobeConnectAccountService acAccountService;
         private readonly UsersSetup usersSetup;
         private readonly LmsUserModel lmsUserModel;
+        private readonly LmsCompanyModel lmsCompanyModel;
         private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
         private readonly IAdobeConnectUserService acUserService;
         private readonly ILogger logger;
 
 
         public SynchronizationUserService(LmsFactory lmsFactory, AdobeConnect.IAdobeConnectAccountService acAccountService, UsersSetup usersSetup,
-            LmsUserModel lmsUserModel, LmsCourseMeetingModel lmsCourseMeetingModel, IAdobeConnectUserService acUserService, ILogger logger)
+            LmsUserModel lmsUserModel, LmsCompanyModel lmsCompanyModel,
+            LmsCourseMeetingModel lmsCourseMeetingModel, IAdobeConnectUserService acUserService, ILogger logger)
         {
             this.lmsFactory = lmsFactory;
             this.acAccountService = acAccountService;
             this.usersSetup = usersSetup;
             this.lmsUserModel = lmsUserModel;
+            this.lmsCompanyModel = lmsCompanyModel;
             this.lmsCourseMeetingModel = lmsCourseMeetingModel;
             this.acUserService = acUserService;
             this.logger = logger;
         }
 
 
-        public void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null)
+        public void SynchronizeUsers(ILmsLicense lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null)
         {
             LmsUserServiceBase service = null;
             if ((LmsProviderEnum)lmsCompany.LmsProviderId == LmsProviderEnum.Desire2Learn)
@@ -72,7 +75,7 @@ namespace EdugameCloud.Lti.API
             foreach (var groupedMeeting in groupedMeetings)
             {
                 var courseId = groupedMeeting.Key;
-                var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseId);
+                var opResult = service.GetUsers(lmsCompany, courseId);
                 if (opResult.IsSuccess)
                 {
                     licenseUsers.Add(courseId, opResult.Data);
@@ -222,10 +225,13 @@ namespace EdugameCloud.Lti.API
         }
 
 
-        private IEnumerable<LmsUser> UpdateDbUsers(List<LmsUserDTO> lmsUserDtos, LmsCompany lmsCompany,
+        private IEnumerable<LmsUser> UpdateDbUsers(List<LmsUserDTO> lmsUserDtos, ILmsLicense lmsCompany,
             IEnumerable<LmsUser> existedDbUsers, IAdobeConnectProxy provider)
         {
             var newUsers = new List<LmsUser>();
+
+            var company = lmsCompanyModel.GetOneById(lmsCompany.Id).Value;
+
             foreach (var lmsUserDto in lmsUserDtos)
             {
                 var dbUser = existedDbUsers.FirstOrDefault(u =>
@@ -249,7 +255,7 @@ namespace EdugameCloud.Lti.API
 
                     dbUser = new LmsUser
                     {
-                        LmsCompany = lmsCompany,
+                        LmsCompany = company,
                         Username = login.Substring(0, loginLength), // hack: to escape GenericADOException when name>50 //todo: review lmsUserDto.GetLogin() and lmsUser.Username usage
                         UserId = lmsUserDto.LtiId ?? lmsUserDto.Id,
                         PrincipalId = principal?.PrincipalId,
@@ -269,7 +275,7 @@ namespace EdugameCloud.Lti.API
             return newUsers;
         }
 
-        private void UpdateACRoles(LmsCompany lmsCompany, LmsCourseMeeting meeting,
+        private void UpdateACRoles(ILmsLicense lmsCompany, LmsCourseMeeting meeting,
             IAdobeConnectProxy acProvider, List<MeetingPermissionInfo> enrollments)
         {
             string error = null;

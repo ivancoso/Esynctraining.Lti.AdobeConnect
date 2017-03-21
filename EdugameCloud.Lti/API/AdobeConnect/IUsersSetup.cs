@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     public interface IUsersSetup
     {
         LmsUserDTO UpdateUser(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             LmsUserDTO user,

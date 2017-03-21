@@ -13,7 +13,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //void SetupFolders(LmsCompany credentials, IAdobeConnectProxy provider);
 
         OperationResult SaveMeeting(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             MeetingDTOInput meetingDTO,
@@ -22,13 +22,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool retrieveLmsUsers = false);
 
         List<string> DeleteMeeting(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             int id,
             out string error);
         
-        string ACLogin(LmsCompany lmsCompany,
+        string ACLogin(ILmsLicense lmsCompany,
             LtiParamDTO param, 
             LmsUser lmsUser,
             Principal registeredUser,

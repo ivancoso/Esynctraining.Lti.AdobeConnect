@@ -12,10 +12,7 @@ namespace EdugameCloud.Lti.API
 
         public LmsRoleService(ApplicationSettingsProvider settings)
         {
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
-
-            this.settings = settings;
+            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
 

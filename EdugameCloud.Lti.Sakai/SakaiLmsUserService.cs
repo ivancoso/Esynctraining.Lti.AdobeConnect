@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
@@ -14,20 +15,19 @@ namespace EdugameCloud.Lti.Sakai
 
         public SakaiLmsUserService(ILogger logger, LTI2Api lti2Api) : base(logger)
         {
-            this.lti2Api = lti2Api;
+            this.lti2Api = lti2Api ?? throw new ArgumentNullException(nameof(lti2Api));
         }
 
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, 
-            LmsUser lmsUser, int courseId, object extraData = null)
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany, 
+            int courseId, LtiParamDTO extraData = null)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, extraData);
+            var users = GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
             return error != null ? users.ToSuccessResult() : OperationResultWithData<List<LmsUserDTO>>.Error(error);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string lmsUserId, 
-            int courseId, out string error, object param = null)
+        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,  int courseId, out string error, LtiParamDTO param = null)
         {
             var paramDto = param as LtiParamDTO;
             if (paramDto != null)

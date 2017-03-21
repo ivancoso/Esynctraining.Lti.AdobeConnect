@@ -18,15 +18,15 @@ namespace EdugameCloud.Lti.Canvas
 
         public CanvasLmsUserService(IEGCEnabledCanvasAPI canvasApi, ILogger logger) : base(logger)
         {
-            this.canvasApi = canvasApi;
+            this.canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
         }
 
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany,
-            string lmsUserId, int courseId, out string error, object extraData = null)
+        public override LmsUserDTO GetUser(ILmsLicense lmsCompany,
+            string lmsUserId, int courseId, out string error, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
-                throw new ArgumentNullException("lmsCompany");
+                throw new ArgumentNullException(nameof(lmsCompany));
 
             if (lmsCompany.AdminUser == null)
             {
@@ -51,13 +51,11 @@ namespace EdugameCloud.Lti.Canvas
             return user;
         }
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
-            LmsUser lmsUser, int courseId, object extraData = null)
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
-                throw new ArgumentNullException("lmsCompany");
-            if (lmsUser == null)
-                throw new ArgumentNullException("lmsUser");
+                throw new ArgumentNullException(nameof(lmsCompany));
 
             if (lmsCompany.AdminUser == null)
             {
@@ -77,15 +75,18 @@ namespace EdugameCloud.Lti.Canvas
             return users.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, object param = null)
+        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, out string error, LtiParamDTO param = null)
         {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
             error = null;
             return GroupUsers(users);
         }
 
 
-        private List<LmsUserDTO> FetchUsers(LmsCompany lmsCompany, int courseId)
+        private List<LmsUserDTO> FetchUsers(ILmsLicense lmsCompany, int courseId)
         {
             string token = lmsCompany.AdminUser.Token;
             List<LmsUserDTO> users = canvasApi.GetUsersForCourse(

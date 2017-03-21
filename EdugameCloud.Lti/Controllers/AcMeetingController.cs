@@ -94,7 +94,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
                 else
                 {
-                    generatedPassword = Membership.GeneratePassword(8, 2);
+                    generatedPassword = Password.Generate(8, 2);
                     var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
                     if (resetPasswordResult.Success)
                     {
@@ -116,7 +116,7 @@ namespace EdugameCloud.Lti.Controllers
                     if (userProvider == null && generatedPassword == null && lmsUser.AcConnectionMode == AcConnectionMode.Overwrite)
                     {
                         // trying to login with new generated password (in case, for example, when user changed his AC password manually)
-                        generatedPassword = Membership.GeneratePassword(8, 2);
+                        generatedPassword = Password.Generate(8, 2);
                         var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
                         if (resetPasswordResult.Success)
                         {

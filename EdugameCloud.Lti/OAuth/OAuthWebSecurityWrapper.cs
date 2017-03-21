@@ -47,7 +47,7 @@ namespace EdugameCloud.Lti.OAuth
         }
 
         //todo: move to companyLms/settings service?
-        public static KeyValuePair<string, string> GetOAuthSettings(LmsCompany lmsCompany, string globalAppId, string globalAppKey)
+        public static KeyValuePair<string, string> GetOAuthSettings(ILmsLicense lmsCompany, string globalAppId, string globalAppKey)
         {
             string appId = null;
             string appKey = null;

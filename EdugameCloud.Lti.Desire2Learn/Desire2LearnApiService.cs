@@ -29,7 +29,7 @@ namespace EdugameCloud.Lti.Desire2Learn
             this.settings = settings;
         }
 
-        public Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl, LmsCompany company)
+        public Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl, ILmsLicense company)
         {
             var m_valenceHost = new HostSpec("https", hostUrl, 443);
             var oAuthSettings = GetOAuthSettings(company);
@@ -37,14 +37,14 @@ namespace EdugameCloud.Lti.Desire2Learn
             return context.CreateUrlForAuthentication(m_valenceHost, returnUrl);
         }
 
-        public T GetApiObjects<T>(Uri urlWithAuthParams, string hostUrl, string apiUrl, LmsCompany company) where T : new()
+        public T GetApiObjects<T>(Uri urlWithAuthParams, string hostUrl, string apiUrl, ILmsLicense company) where T : new()
         {
             var oAuthSettings = GetOAuthSettings(company);
             var userContext = GetUserContext(oAuthSettings, urlWithAuthParams, hostUrl);
             return MakeApiCall<T>(userContext, hostUrl, apiUrl);
         }
 
-        public T GetApiObjects<T>(string userId, string userKey, string hostUrl, string apiUrl, LmsCompany company) where T : new()
+        public T GetApiObjects<T>(string userId, string userKey, string hostUrl, string apiUrl, ILmsLicense company) where T : new()
         {
             var oAuthSettings = GetOAuthSettings(company);
             var userContext = GetUserContext(oAuthSettings, userId, userKey, hostUrl);
@@ -97,9 +97,11 @@ namespace EdugameCloud.Lti.Desire2Learn
             return new D2LAppContextFactory().Create(oAuthSettings.Key, oAuthSettings.Value);
         }
 
-        private KeyValuePair<string, string> GetOAuthSettings(LmsCompany company)
+        private KeyValuePair<string, string> GetOAuthSettings(ILmsLicense company)
         {
             return OAuthWebSecurityWrapper.GetOAuthSettings(company, (string)settings.BrightspaceAppId, (string)settings.BrightspaceAppKey);
         }
+
     }
+
 }

@@ -107,7 +107,7 @@ namespace EdugameCloud.Lti.Canvas
             return response.Data.quiz_submissions.Single();
         }
 
-        public LmsUserDTO GetCourseUser(string userId, LmsCompany lmsCompany, string userToken, int courseId)
+        public LmsUserDTO GetCourseUser(string userId, ILmsLicense lmsCompany, string userToken, int courseId)
         {
             try
             {

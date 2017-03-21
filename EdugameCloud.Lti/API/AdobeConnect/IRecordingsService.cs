@@ -9,20 +9,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IRecordingsService
     {
-        IEnumerable<IRecordingDto> GetRecordings(LmsCompany lmsCompany, 
+        IEnumerable<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, 
             Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
             int courseId, 
             int id,
             Func<IRoomTypeFactory> getRoomTypeFactory);
 
-        string UpdateRecording(LmsCompany lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic,
+        string UpdateRecording(ILmsLicense lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic,
             string password);
 
-        string JoinRecording(LmsCompany lmsCompany, LtiParamDTO param, string recordingUrl,
+        string JoinRecording(ILmsLicense lmsCompany, LtiParamDTO param, string recordingUrl,
             ref string breezeSession, IAdobeConnectProxy adobeConnectProvider, string mode = null);
 
         OperationResult EditRecording(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             int courseId,
             string recordingId,
@@ -31,7 +31,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string summary);
 
         OperationResult RemoveRecording(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             int courseId,
             string recordingId,

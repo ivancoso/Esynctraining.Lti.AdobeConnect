@@ -34,7 +34,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                IEnumerable<TemplateDto> templates = acAccountService.GetSharedMeetingTemplates(GetAdobeConnectProvider(), Cache);
+                IEnumerable<TemplateDto> templates = acAccountService.GetSharedMeetingTemplates(GetAdminProvider(), Cache);
                 return templates.ToSuccessResult();
             }
             catch (Exception ex)

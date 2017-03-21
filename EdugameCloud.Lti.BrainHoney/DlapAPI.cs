@@ -43,7 +43,7 @@
 
         #region Public Methods and Operators
 
-        internal Session BeginBatch(out string error, LmsCompany lmsCompany)
+        internal Session BeginBatch(out string error, ILmsLicense lmsCompany)
         {
             var lmsUser = lmsCompany.AdminUser;
 
@@ -129,7 +129,7 @@
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
-            LmsCompany company, 
+            ILmsLicense company, 
             int courseid, 
             out string error, 
             object extraData)
@@ -618,7 +618,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private T LoginIfNecessary<T>(Session session, Func<Session, T> action, LmsCompany lmsCompany, out string error)
+        private T LoginIfNecessary<T>(Session session, Func<Session, T> action, ILmsLicense lmsCompany, out string error)
         {
             error = null;
             session = session ?? this.BeginBatch(out error, lmsCompany);

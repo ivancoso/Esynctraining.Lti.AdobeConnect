@@ -150,8 +150,8 @@ namespace EdugameCloud.Lti.Core.Business.Models
             OfficeHours oh = null;
             IList<LmsCourseMeeting> lcm = null;
             IList<LmsUserMeetingRole> lumr = null;
-            IList<LmsUser> lu = null;
-            LmsUser u = null;
+            //IList<LmsUser> lu = null;
+            //LmsUser u = null;
             var defaultQuery = new DefaultQueryOver<LmsCompany, int>()
                 .GetQueryOver(() => lc)
                 .Where(x => x.IsActive);

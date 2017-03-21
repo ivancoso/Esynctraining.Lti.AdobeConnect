@@ -7,7 +7,7 @@ namespace EdugameCloud.Lti.API.BrainHoney
     public interface IBrainHoneyApi
     {
         List<LmsUserDTO> GetUsersForCourse(
-            LmsCompany company,
+            ILmsLicense company,
             int courseid,
             out string error,
             object session = null);

@@ -31,7 +31,7 @@ namespace EdugameCloud.Lti.Telephony
         }
 
 
-        public TelephonyProfile CreateProfile(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
+        public TelephonyProfile CreateProfile(ILmsLicense lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -105,7 +105,7 @@ namespace EdugameCloud.Lti.Telephony
             }
         }
 
-        public void DeleteProfile(LmsCompany lmsCompany, TelephonyProfileInfoResult profile)
+        public void DeleteProfile(ILmsLicense lmsCompany, TelephonyProfileInfoResult profile)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));

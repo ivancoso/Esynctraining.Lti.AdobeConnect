@@ -63,6 +63,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
+        private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
+
         #region Constructors and Destructors
 
         public UsersSetup(
@@ -144,7 +146,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public bool SetACPassword(IAdobeConnectProxy provider, LmsCompany lmsCompany, 
+        public bool SetACPassword(IAdobeConnectProxy provider, ILmsLicense lmsCompany, 
             LmsUser lmsUser, LtiParamDTO param, string adobeConnectPassword)
         {
             if (!string.IsNullOrWhiteSpace(adobeConnectPassword))
@@ -187,12 +189,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public List<LmsUserDTO> GetLMSUsers(
-            LmsCompany lmsCompany, 
+            ILmsLicense lmsCompany, 
             LmsCourseMeeting meeting, 
             string lmsUserId, 
             int courseId, 
-            out string error, 
-            object extraData = null)
+            out string error,
+            LtiParamDTO extraData = null)
         {
             if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null
                 && !meeting.EnableDynamicProvisioning)
@@ -217,7 +219,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
             LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
-            var serviceResult = service.GetUsers(lmsCompany, lmsUser ?? new LmsUser { UserId = lmsUserId }, courseId, extraData);
+            var serviceResult = service.GetUsers(lmsCompany, courseId, extraData);
             if (serviceResult.IsSuccess)
             {
                 error = null;
@@ -225,7 +227,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, lmsUserId={2}, " +
                 "courseId={3}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), lmsUserId, courseId);
-            var users = service.GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, extraData);
+            var users = service.GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
             return error == null ? users : new List<LmsUserDTO>();
         }
 
@@ -275,7 +277,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public IList<LmsUserDTO> GetUsers(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             long id, 
@@ -356,6 +358,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 string message;
                 List<LmsUserDTO> usersToAddToMeeting = GetUsersToAddToMeeting(lmsCompany, users, out message);
 
+                var company = LmsCompanyModel.GetOneById(lmsCompany.Id).Value;
+
                 foreach (LmsUserDTO user in users)
                 {
                     string login = user.GetLogin();
@@ -366,7 +370,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         {
                             lmsUser = new LmsUser
                             {
-                                LmsCompany = lmsCompany,
+                                LmsCompany = company,
                                 Username = login,
                                 UserId = user.LtiId ?? user.Id,
                             };
@@ -487,7 +491,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public LmsUserDTO GetOrCreateUserWithAcRole(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             LmsCourseMeeting meeting,
@@ -529,14 +533,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return null;
         }
 
-        private void ProcessLmsUserDtoAcInfo(LmsUserDTO user, LmsUser lmsDbUser, LmsCompany lmsCompany,
+        private void ProcessLmsUserDtoAcInfo(LmsUserDTO user, LmsUser lmsDbUser, ILmsLicense lmsCompany,
             IEnumerable<Principal> principalCache, IAdobeConnectProxy provider, ref bool uncommitedChangesInLms,
             HashSet<string> nonEditable, MeetingAttendees attendees)
         {
             string login = user.GetLogin();
             lmsDbUser = lmsDbUser ?? new LmsUser
             {
-                LmsCompany = lmsCompany,
+                LmsCompany = LmsCompanyModel.GetOneById(lmsCompany.Id).Value,
                 Username = login,
                 UserId = user.LtiId ?? user.Id,
             };
@@ -617,7 +621,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LmsCourseMeeting meeting,
             IEnumerable<LmsUserDTO> users,
@@ -636,12 +640,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             List<LmsUserDTO> usersToAddToMeeting = GetUsersToAddToMeeting(lmsCompany, users, out error);
 
+            var company = LmsCompanyModel.GetOneById(lmsCompany.Id).Value;
+
             foreach (LmsUserDTO lmsUserDto in usersToAddToMeeting)
             {
                 // TRICK: we can filter by 'UserId' - cause we sync it in 'getUsersByLmsCompanyId' SP
                 string id = lmsUserDto.LtiId ?? lmsUserDto.Id;
                 LmsUser dbUser = lmsDbUsers.FirstOrDefault(x => x.UserId == id)
-                    ?? new LmsUser { LmsCompany = lmsCompany, Username = lmsUserDto.GetLogin(), UserId = id, };
+                    ?? new LmsUser { LmsCompany = company, Username = lmsUserDto.GetLogin(), UserId = id, };
 
                 if (string.IsNullOrEmpty(dbUser.PrincipalId))
                 {
@@ -807,7 +813,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private Principal CreatePrincipalAndUpdateLmsUserPrincipalId(IAdobeConnectProxy provider,
-            LmsUserDTO lmsUserDto, LmsUser dbUser, LmsCompany lmsCompany, out string error)
+            LmsUserDTO lmsUserDto, LmsUser dbUser, ILmsLicense lmsCompany, out string error)
         {
             error = string.Empty;
             Principal principal = null;
@@ -841,7 +847,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             int id, 
@@ -891,7 +897,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return SetDefaultRolesForNonParticipants(lmsCompany, provider, meeting, users, lmsDbUsers, enrollments, ref error);
         }
 
-        public List<LmsUserDTO> GetUsersToAddToMeeting(LmsCompany lmsCompany, IEnumerable<LmsUserDTO> lmsUsers, out string message)
+        public List<LmsUserDTO> GetUsersToAddToMeeting(ILmsLicense lmsCompany, IEnumerable<LmsUserDTO> lmsUsers, out string message)
         {
             message = string.Empty;
             List<LmsUserDTO> usersToAddToMeeting = lmsUsers.ToList();
@@ -935,7 +941,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public void SetDefaultUsers(
-            LmsCompany lmsCompany, 
+            ILmsLicense lmsCompany, 
             LmsCourseMeeting meeting,
             IAdobeConnectProxy provider, 
             string lmsUserId, 
@@ -992,7 +998,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The host principals.
         /// </param>
         public void SetLMSUserDefaultACPermissions2(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             string meetingScoId, 
             LmsUserDTO u, 
             string principalId, 
@@ -1022,7 +1028,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public LmsUserDTO UpdateUser(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             LmsUserDTO user,
@@ -1545,7 +1551,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
         
         private IEnumerable<Principal> GetAllPrincipals(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider, 
             List<LmsUserDTO> users)
         {
@@ -1593,7 +1599,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private void ProcessUsersInAC(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider, 
             string meetingScoId, 
             List<LmsUserDTO> users, 
@@ -1603,6 +1609,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             var meetingPermissions = new List<MeetingPermissionUpdateTrio>();
             var hostPrincipals = new List<string>();
+
+            var company = LmsCompanyModel.GetOneById(lmsCompany.Id).Value;
 
             foreach (LmsUserDTO u in users)
             {
@@ -1632,7 +1640,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         {
                             lmsUser = new LmsUser 
                             {
-                                LmsCompany = lmsCompany, 
+                                LmsCompany = company, 
                                 UserId = id, 
                                 Username = login, 
                                 // TODO: email??

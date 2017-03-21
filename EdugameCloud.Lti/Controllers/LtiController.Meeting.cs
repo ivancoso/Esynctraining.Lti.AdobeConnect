@@ -41,17 +41,15 @@ namespace EdugameCloud.Lti.Controllers
 
 
         [HttpPost]
-        public virtual JsonResult ReuseExistedAdobeConnectMeeting(string lmsProviderName, MeetingReuseDTO dto, bool? retrieveLmsUsers)
+        [LmsAuthorizeBase]
+        public virtual JsonResult ReuseExistedAdobeConnectMeeting(LmsUserSession session, MeetingReuseDTO dto, bool? retrieveLmsUsers)
         {
-            if (string.IsNullOrWhiteSpace(lmsProviderName))
-                return Json(OperationResult.Error("Session not found."));
             if (string.IsNullOrWhiteSpace(dto.ScoId))
                 return Json(OperationResult.Error("Source AdobeConnect meeting is not selected."));
 
             LmsCompany credentials = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
 
                 if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingReuse))
@@ -76,12 +74,12 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public virtual JsonResult UpdateMeeting(string lmsProviderName, MeetingDTOInput meeting)
+        [LmsAuthorizeBase]
+        public virtual JsonResult UpdateMeeting(LmsUserSession session, MeetingDTOInput meeting)
         {
             LmsCompany credentials = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var trace = new StringBuilder();
@@ -108,12 +106,12 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public virtual JsonResult UpdateMeetingAndReturnLmsUsers(string lmsProviderName, MeetingDTOInput meeting)
+        [LmsAuthorizeBase]
+        public virtual JsonResult UpdateMeetingAndReturnLmsUsers(LmsUserSession session, MeetingDTOInput meeting)
         {
             LmsCompany credentials = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var trace = new StringBuilder();
@@ -141,13 +139,13 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public virtual JsonResult DeleteMeeting(string lmsProviderName, int meetingId, bool? remove = false)
+        [LmsAuthorizeBase]
+        public virtual JsonResult DeleteMeeting(LmsUserSession session, int meetingId, bool? remove = false)
         {
             bool? softDelete = remove;
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 

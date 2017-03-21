@@ -14,95 +14,48 @@ namespace EdugameCloud.Lti.BlackBoard
 {
     public class BlackboardLmsUserService : LmsUserServiceBase
     {
-//        private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
         private readonly IBlackBoardApi soapApi;
+
 
         public BlackboardLmsUserService(ILogger logger, IBlackBoardApi soapApi) : base(logger)
         {
-            this.soapApi = soapApi; 
+            this.soapApi = soapApi ?? throw new ArgumentNullException(nameof(soapApi)); 
         }
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object extraData = null)
+
+        public override LmsUserDTO GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, out string error, LtiParamDTO extraData = null)
         {
             Guid guid;
-            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error)
+            return GetUsersOldStyle(lmsCompany, courseId, out error)
                 .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.LtiId : u.Id));
         }
-
-        //public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, 
-        //    string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
-        //{
-        //    //Guid guid;
-        //    //return GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate)
-        //    //    .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
-
-        //    string[] userIds = null;
-        //    if (!string.IsNullOrWhiteSpace(lmsUserId))
-        //        userIds = new string[] { lmsUserId };
-
-        //    WebserviceWrapper client = null;
-        //    List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
-        //        lmsCompany,
-        //        courseId,
-        //        userIds,
-        //        out error,
-        //        ref client);
-
-        //    if ((users.Count == 0)
-        //        && error.Return(x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, false))
-        //    {
-        //        logger.Warn("BlackboardLmsUserService.GetUser.AccessDenied. " + error);
-
-        //        if (client != null)
-        //            client.logout();
-        //        // NOTE: set to null to re-create session.
-        //        client = null;
-        //        users = this.soapApi.GetUsersForCourse(
-        //            lmsCompany,
-        //            courseId,
-        //            userIds,
-        //            out error,
-        //            ref client);
-        //    }
-
-        //    Guid guid;
-        //    return users
-        //        .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
-        //}
-
-        public override bool CanRetrieveUsersFromApiForCompany(LmsCompany lmsCompany)
+        
+        public override bool CanRetrieveUsersFromApiForCompany(ILmsLicense lmsCompany)
         {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
             return lmsCompany.AdminUser != null || (lmsCompany.EnableProxyToolMode.GetValueOrDefault() && lmsCompany.ProxyToolSharedPassword != null);
         }
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
-            LmsUser lmsUser, int courseId, object extraData = null)
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO extraData = null)
         {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
             string error;
-            var users = GetUsersOldStyle(lmsCompany, lmsUser != null ? lmsUser.UserId : null, courseId, out error);
+            var users = GetUsersOldStyle(lmsCompany, courseId, out error);
             return users.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,
-            string userId, int courseId, out string error, object param = null)
+        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,
+            int courseId, out string error, LtiParamDTO param = null)
         {
-            //TimeSpan timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
-            //string key = lmsCompany.LmsDomain + ".course." + courseId;
-            error = null;
-            //List<LmsUserDTO> cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
-            //if (cachedUsers == null)
-            //{
-            //object lockMe = GetLocker(key);
-            //lock (lockMe)
-            //{
-            //if (meeting != null)
-            //{
-            //lmsCourseMeetingModel.Refresh(ref meeting);
-            //}
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
 
-            //cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
-            //if (cachedUsers == null)
-            //{
+            error = null;
             string[] userIds = null;
 
             WebserviceWrapper client = null;
@@ -136,47 +89,9 @@ namespace EdugameCloud.Lti.BlackBoard
             if (client != null)
                 client.logout();
 
-            //if (string.IsNullOrWhiteSpace(error) && (meeting != null))
-            //{
-            //    meeting.AddedToCache = DateTime.Now;
-            //    meeting.CachedUsers = JsonConvert.SerializeObject(users);
-            //    lmsCourseMeetingModel.RegisterSave(meeting, true);
-            //}
-            //else if ((users.Count == 0)
-            //         && error.Return(
-            //             x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0,
-            //             false))
-            //{
-            //    users = CheckCachedUsers(meeting, false, timeout) ?? new List<LmsUserDTO>();
-            //}
-
-            //cachedUsers = users;
-            //}
-            //}
-            //}
-
             return GroupUsers(users);
         }
-
-        //private static List<LmsUserDTO> CheckCachedUsers(LmsCourseMeeting meeting, bool forceUpdate, TimeSpan timeout)
-        //{
-        //    return forceUpdate ? null : meeting.Return(x => x.CachedUsersParsed(timeout), null);
-        //}
-
-        //private static object GetLocker(string lockerKey)
-        //{
-        //    if (!locker.ContainsKey(lockerKey))
-        //    {
-        //        lock (locker)
-        //        {
-        //            if (!locker.ContainsKey(lockerKey))
-        //            {
-        //                locker.Add(lockerKey, new object());
-        //            }
-        //        }
-        //    }
-
-        //    return locker[lockerKey];
-        //}
+        
     }
+
 }

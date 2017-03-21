@@ -18,12 +18,14 @@ namespace EdugameCloud.Lti.Controllers
     {
         private readonly LmsFactory lmsFactory;
 
+
         public CalendarController(LmsUserSessionModel userSessionModel, IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings, ILogger logger, LmsFactory lmsFactory, ICache cache)
             : base(userSessionModel, acAccountService, settings, logger, cache)
         {
-            this.lmsFactory = lmsFactory;
+            this.lmsFactory = lmsFactory ?? throw new ArgumentNullException(nameof(lmsFactory));
         }
+
 
         [HttpPost]
         [LmsAuthorize]
@@ -44,11 +46,11 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetEvents(int meetingId, string lmsProviderName)
+        [LmsAuthorizeBase]
+        public ActionResult GetEvents(LmsUserSession session, int meetingId)
         {
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 var result = meetingSessionService.GetSessions(meetingId);
                 return Json(result.ToSuccessResult());
@@ -113,5 +115,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
+
     }
+
 }

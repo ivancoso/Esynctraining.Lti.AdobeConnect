@@ -54,7 +54,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 if (string.IsNullOrWhiteSpace(session.LmsUser.PrincipalId))
                     return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error("You don't have Adobe Connect account.");
                 
-                var provider = GetAdobeConnectProvider();
+                var provider = GetAdminProvider();
 
                 var principal = provider.GetOneByPrincipalId(session.LmsUser.PrincipalId).PrincipalInfo.Principal;
                 var userProvider = GetUserProvider(session.LmsCompany, session.LmsUser, principal, provider);

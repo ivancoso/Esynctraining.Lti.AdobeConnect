@@ -21,12 +21,30 @@ namespace EdugameCloud.Lti.Controllers
     [RoutePrefix("recordings")]
     public partial class RecordingController : BaseApiController
     {
+        // TODO: remove type - we fetch meetingitem within RecordingsService.GetRecordings
+        // we can reuse that info to have type (change API)
         [DataContract]
         public class TypeMeetingRequestDto : MeetingRequestDto
         {
             [Required]
             [DataMember]
             public int type { get; set; }
+
+        }
+
+        [DataContract]
+        public class ShareRecordingRequestDto : RequestDto
+        {
+            [Required]
+            [DataMember]
+            public string recordingId { get; set; }
+
+            [Required]
+            [DataMember]
+            public bool isPublic { get; set; }
+            
+            [DataMember]
+            public string password { get; set; }
 
         }
 
@@ -45,8 +63,6 @@ namespace EdugameCloud.Lti.Controllers
             : base(userSessionModel, acAccountService, settings, logger, cache)
         {
         }
-
-        #region Public Methods and Operators
 
         // TODO: remove type - we fetch meetingitem within RecordingsService.GetRecordings
         // we can reuse that info to have type (change API)
@@ -282,24 +298,25 @@ namespace EdugameCloud.Lti.Controllers
         //    }
         //}
 
-        //[HttpPost]
-        //public virtual ActionResult ShareRecording(string lmsProviderName, string recordingId, bool isPublic, string password)
-        //{
-        //    LmsCompany lmsCompany = null;
-        //    try
-        //    {
-        //        var session = GetReadOnlySession(lmsProviderName);
-        //        lmsCompany = session.LmsCompany;
-        //        string link = RecordingsService.UpdateRecording(lmsCompany, this.GetAdminProvider(lmsCompany), recordingId, isPublic, password);
+        [Route("share")]
+        [HttpPost]
+        public virtual OperationResultWithData<string> ShareRecording(ShareRecordingRequestDto request)
+        {
+            LmsCompany lmsCompany = null;
+            try
+            {
+                var session = GetReadOnlySession(request.lmsProviderName);
+                lmsCompany = session.LmsCompany;
+                string link = RecordingsService.UpdateRecording(lmsCompany, GetAdobeConnectProvider(lmsCompany), request.recordingId, request.isPublic, request.password);
 
-        //        return Json(link.ToSuccessResult());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = GetOutputErrorMessage("ShareRecording", lmsCompany, ex);
-        //        return Json(OperationResult.Error(errorMessage));
-        //    }
-        //}
+                return link.ToSuccessResult();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("ShareRecording", lmsCompany, ex);
+                return OperationResultWithData<string>.Error(errorMessage);
+            }
+        }
 
         //[HttpGet]
         //public virtual ActionResult EditRecording(string lmsProviderName, string recordingUrl)
@@ -342,30 +359,6 @@ namespace EdugameCloud.Lti.Controllers
         //        return RecordingsError("GetRecordingFlv", lmsProviderName, ex);
         //    }
         //}
-
-        #endregion
-
-        #region methods
-
-        private static OperationResult GenerateErrorResult(StatusInfo status)
-        {
-            if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.invalid_recording_job_in_progress)
-            {
-                return OperationResult.Error(Resources.Messages.RecordingAlreadyHasMP4);
-            }
-            if (status.Code == StatusCodes.no_access && status.SubCode == StatusSubCodes.denied)
-            {
-                return OperationResult.Error(Resources.Messages.RecordingDisabledMP4);
-            }
-            if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.duplicate)
-            {
-                return OperationResult.Error(Resources.Messages.RecordingDuplicateMP4);
-            }
-
-            return OperationResult.Error("Unexpected error");
-        }
-        
-        #endregion
 
     }
 

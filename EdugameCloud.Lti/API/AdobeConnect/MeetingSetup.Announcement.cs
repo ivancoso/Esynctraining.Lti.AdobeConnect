@@ -43,7 +43,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private void CreateAnnouncement(
             LmsMeetingType meetingType,
-            LmsCompany lmsCompany, 
+            ILmsLicense lmsCompany, 
             LtiParamDTO param,
             MeetingDTOInput meetingDto)
         {
@@ -137,7 +137,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private void CreateAnnouncement(
             LmsMeetingType meetingType,
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             LtiParamDTO param,
             MeetingDTO meetingDto,
             DateTime startDate)

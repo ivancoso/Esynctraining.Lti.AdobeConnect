@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.Core.Business
 {
     public sealed class RoleMappingService
     {
-        public MeetingPermissionId SetAcRole(LmsCompany lmsCompany, LmsUserDTO u, bool ignoreEmptyACRole = false)
+        public MeetingPermissionId SetAcRole(ILmsLicense lmsCompany, LmsUserDTO u, bool ignoreEmptyACRole = false)
         {
             string role = u.LmsRole != null ? u.LmsRole.ToLower() : string.Empty;
 
@@ -60,7 +60,7 @@ namespace EdugameCloud.Lti.Core.Business
             return permission;
         }
 
-        public void CheckAndSetNoneACMapping(LmsUserDTO user, LmsCompany lmsCompany)
+        public void CheckAndSetNoneACMapping(LmsUserDTO user, ILmsLicense lmsCompany)
         {
             LmsCompanyRoleMapping mapping = lmsCompany.RoleMappings
                         .FirstOrDefault(x => x.LmsRoleName.Equals(user.LmsRole, StringComparison.OrdinalIgnoreCase));

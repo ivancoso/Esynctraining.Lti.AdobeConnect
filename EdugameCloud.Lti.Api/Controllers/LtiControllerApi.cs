@@ -85,7 +85,7 @@
 
                 if (acConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
                 {
-                    var provider = GetAdobeConnectProvider();
+                    var provider = GetAdminProvider();
                     var couldSavePassword = usersSetup.SetACPassword(provider, LmsCompany, lmsUser, param, settings.password);
                     if (!couldSavePassword)
                     {
@@ -160,7 +160,7 @@
                 string error;
                 IList<LmsUserDTO> users = this.usersSetup.GetUsers(
                     LmsCompany,
-                    GetAdobeConnectProvider(),
+                    GetAdminProvider(),
                     Session?.LtiSession?.LtiParam,
                     request.meetingId,
                     out error,
@@ -199,7 +199,7 @@
             try
             {
                 var param = Session.LtiSession.LtiParam;
-                OperationResult result = this.meetingSetup.LeaveMeeting(LmsCompany, param, request.meetingId, GetAdobeConnectProvider());
+                OperationResult result = this.meetingSetup.LeaveMeeting(LmsCompany, param, request.meetingId, GetAdminProvider());
                 return result;
             }
             catch (Exception ex)
@@ -219,7 +219,7 @@
                 string error = null;
                 List<LmsUserDTO> updatedUsers = this.usersSetup.SetDefaultRolesForNonParticipants(
                     LmsCompany,
-                    this.GetAdobeConnectProvider(),
+                    this.GetAdminProvider(),
                     param,
                     request.meetingId,
                     out error);

@@ -164,7 +164,7 @@ namespace EdugameCloud.Lti.BlackBoard
         }
 
         public List<LmsUserDTO> GetUsersForCourse(
-            LmsCompany company,
+            ILmsLicense company,
             int courseId,
             string[] userIds,
             out string error,
@@ -391,7 +391,7 @@ namespace EdugameCloud.Lti.BlackBoard
         /// <returns>
         /// The <see cref="RestClient"/>.
         /// </returns>
-        private WebserviceWrapper BeginBatch(out string error, LmsCompany lmsCompany)
+        private WebserviceWrapper BeginBatch(out string error, ILmsLicense lmsCompany)
         {
             var lmsUser = lmsCompany.AdminUser;
 
@@ -535,7 +535,7 @@ namespace EdugameCloud.Lti.BlackBoard
         /// The <see cref="bool"/>.
         /// </returns>
         // ReSharper disable once UnusedMember.Local
-        public T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, LmsCompany lmsCompany, out string error)
+        public T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, ILmsLicense lmsCompany, out string error)
         {
             error = null;
             client = client ?? this.BeginBatch(out error, lmsCompany);
@@ -568,7 +568,7 @@ namespace EdugameCloud.Lti.BlackBoard
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, Tuple<T, string>> action, LmsCompany lmsCompany, out string error)
+        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, Tuple<T, string>> action, ILmsLicense lmsCompany, out string error)
         {
             error = null;
             client = client ?? this.BeginBatch(out error, lmsCompany);
@@ -617,7 +617,7 @@ namespace EdugameCloud.Lti.BlackBoard
             return false;
         }
 
-        public string[] CreateAnnouncement(int courseId, string userUuid, LmsCompany lmsCompany, string announcementTitle, string announcementMessage)
+        public string[] CreateAnnouncement(int courseId, string userUuid, ILmsLicense lmsCompany, string announcementTitle, string announcementMessage)
         {
             string error;
             var courseIdFixed = string.Format("_{0}_1", courseId);

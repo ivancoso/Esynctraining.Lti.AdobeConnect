@@ -539,7 +539,7 @@ namespace EdugameCloud.Lti.Controllers
                             {
                                 LmsCompany = lmsCompany,
                                 UserId = param.lms_user_id,
-                                Username = GetUserNameOrEmail(param),
+                                Username = param.GetUserNameOrEmail(),
                                 PrincipalId = acPrincipal?.PrincipalId,
                             };
                             this.lmsUserModel.RegisterSave(lmsUser);
@@ -701,16 +701,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             return roles;
         }
-
-        /// <summary>
-        /// The fix extra data issue.
-        /// </summary>
-        /// <param name="keyToFix">
-        /// The key to fix.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         private static string FixExtraDataIssue(string keyToFix)
         {
             if (keyToFix != null && keyToFix.Contains(","))
@@ -722,11 +713,6 @@ namespace EdugameCloud.Lti.Controllers
             return keyToFix;
         }
         
-        private static string GetUserNameOrEmail(LtiParamDTO param)
-        {
-            return string.IsNullOrWhiteSpace(param.lms_user_login) ? param.lis_person_contact_email_primary : param.lms_user_login;
-        }
-
         private bool ValidateLMSDomainAndSaveIfNeeded(LtiParamDTO param, LmsCompany credentials)
         {
             if (string.IsNullOrWhiteSpace(credentials.LmsDomain))
@@ -797,7 +783,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 if (string.IsNullOrWhiteSpace(username))
-                    userName = GetUserNameOrEmail(param);
+                    userName = param.GetUserNameOrEmail();
 
                 lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value 
                     ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };

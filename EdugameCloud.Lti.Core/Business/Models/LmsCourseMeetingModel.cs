@@ -52,7 +52,7 @@
             return this.Repository.FindOne(defaultQuery).Value;
         }
 
-        public bool ContainsByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
+        public bool ContainsByCompanyAndScoId(ILmsLicense lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -65,7 +65,7 @@
             return this.Repository.FindOne(defaultQuery).Value != null;
         }
 
-        public int CourseCountByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
+        public int CourseCountByCompanyAndScoId(ILmsLicense lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -81,7 +81,7 @@
             return this.Repository.FindOne<int>(rowCountQuery).Value;
         }
 
-        public IEnumerable<LmsCourseMeeting> GetByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
+        public IEnumerable<LmsCourseMeeting> GetByCompanyAndScoId(ILmsLicense lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -92,7 +92,7 @@
             return this.Repository.FindAll(defaultQuery);
         }
 
-        private QueryOver<LmsCourseMeeting, LmsCourseMeeting> GetByCompanyAndScoIdQuery(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
+        private QueryOver<LmsCourseMeeting, LmsCourseMeeting> GetByCompanyAndScoIdQuery(ILmsLicense lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -121,7 +121,7 @@
             return defaultQuery;
         }
 
-        public IEnumerable<LmsCourseMeeting> GetByCompanyWithAudioProfiles(LmsCompany lmsCompany)
+        public IEnumerable<LmsCourseMeeting> GetByCompanyWithAudioProfiles(ILmsLicense lmsCompany)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -146,7 +146,7 @@
         }
 
 
-        public LmsCourseMeeting GetLtiCreatedByCompanyAndScoId(LmsCompany lmsCompany, string scoId)
+        public LmsCourseMeeting GetLtiCreatedByCompanyAndScoId(ILmsLicense lmsCompany, string scoId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));

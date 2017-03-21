@@ -282,25 +282,17 @@
     <Compile Include="API\TestConnectionService.cs" />
     <Compile Include="Constants\LtiParameterFriendlyNames.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
-    <Compile Include="Controllers\AcTemplateController.cs" />
-    <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
-    <Compile Include="Controllers\RecordingController.cs" />
-    <Compile Include="Controllers\LtiControllerApi.cs" />
     <Compile Include="Controllers\LtiController.ImsLogin.cs" />
     <Compile Include="DTO\ApiLti.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="Models\OutcomeModel.cs" />
     <Compile Include="Controllers\SeminarController.cs" />
-    <Compile Include="Controllers\AcMeetingController.cs" />
-    <Compile Include="Controllers\AcUserController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\LtiController.AudioProfiles.cs" />
     <Compile Include="Controllers\LtiController.User.cs" />
     <Compile Include="Controllers\LtiController.ProxyTool.cs" />
     <Compile Include="Controllers\LtiController.Meeting.cs" />
     <Compile Include="Controllers\LtiController.OfficeHoursPod.cs" />
-    <Compile Include="Controllers\LtiController.Reports.cs" />
     <Compile Include="Controllers\LtiController.Recordings.cs" />
     <Compile Include="Controllers\LtiController.cs" />
     <Compile Include="Controllers\LtiScheduleController.cs" />
@@ -347,6 +339,7 @@
     <Compile Include="OAuth\Desire2Learn\WhoAmIUser.cs" />
     <Compile Include="OAuth\LtiOpenAuthSecurityManager.cs" />
     <Compile Include="OAuth\OAuthWebSecurityWrapper.cs" />
+    <Compile Include="Password.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Messages.es.Designer.cs">
       <DependentUpon>Messages.es.resx</DependentUpon>

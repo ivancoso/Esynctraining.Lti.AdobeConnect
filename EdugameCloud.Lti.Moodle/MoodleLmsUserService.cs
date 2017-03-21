@@ -21,7 +21,7 @@ namespace EdugameCloud.Lti.Moodle
         }
 
 
-        public override bool CanRetrieveUsersFromApiForCompany(LmsCompany lmsCompany)
+        public override bool CanRetrieveUsersFromApiForCompany(ILmsLicense lmsCompany)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -29,8 +29,8 @@ namespace EdugameCloud.Lti.Moodle
             return lmsCompany.AdminUser != null || !string.IsNullOrEmpty(lmsCompany.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken));
         }
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
-            LmsUser lmsUser, int courseId, object extraData = null)
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -38,13 +38,13 @@ namespace EdugameCloud.Lti.Moodle
 //                throw new ArgumentNullException(nameof(lmsUser));
 
             string error;
-            var users = GetUsersOldStyle(lmsCompany, lmsUser?.UserId, courseId, out error);
+            var users = GetUsersOldStyle(lmsCompany, courseId, out error);
             return error != null
                 ? OperationResultWithData<List<LmsUserDTO>>.Error(error)
                 : users.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object param = null)
+        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, out string error, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));

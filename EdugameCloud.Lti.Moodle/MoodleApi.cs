@@ -75,14 +75,14 @@ namespace EdugameCloud.Lti.Moodle
         #region Public Methods and Operators
 
         public List<LmsUserDTO> GetUsersForCourse(
-            LmsCompany company, 
+            ILmsLicense company, 
             int courseId, 
             out string error)
         {
             try
             {
                 if (company == null)
-                    throw new ArgumentNullException("company");
+                    throw new ArgumentNullException(nameof(company));
 
                 MoodleSession token = null;
                 error = null;
@@ -125,7 +125,7 @@ namespace EdugameCloud.Lti.Moodle
             }
         }
 
-        private List<LmsUserDTO> GetUsers(string token, int courseId, LmsCompany lmsCompany, out string resp)
+        private List<LmsUserDTO> GetUsers(string token, int courseId, ILmsLicense lmsCompany, out string resp)
         {
             var pairs = new NameValueCollection
             {
@@ -269,7 +269,7 @@ namespace EdugameCloud.Lti.Moodle
         /// <returns>
         /// The <see cref="MoodleSession"/>.
         /// </returns>
-        private MoodleSession BeginBatch(out string error, LmsCompany lmsCompany)
+        private MoodleSession BeginBatch(out string error, ILmsLicense lmsCompany)
         {
             if (lmsCompany == null)
             {
@@ -394,7 +394,7 @@ namespace EdugameCloud.Lti.Moodle
         internal T LoginIfNecessary<T>(
             MoodleSession session,
             Func<MoodleSession, T> action,
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             out string error)
         {
             error = null;
@@ -431,7 +431,7 @@ namespace EdugameCloud.Lti.Moodle
         internal T LoginIfNecessary<T>(
             MoodleSession session,
             Func<MoodleSession, Tuple<T, string>> action,
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             out string error)
         {
             error = null;

@@ -13,7 +13,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string email,
             string firstName,
             string lastName,
-            LmsCompany lmsCompany);
+            ILmsLicense lmsCompany);
 
         Principal GetOrCreatePrincipal2(
             IAdobeConnectProxy provider,
@@ -21,7 +21,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string email,
             string firstName,
             string lastName,
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IEnumerable<Principal> principalCache);
 
         Principal GetPrincipalByLoginOrEmail(

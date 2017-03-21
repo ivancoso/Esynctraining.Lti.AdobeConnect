@@ -12,9 +12,9 @@ namespace EdugameCloud.Lti.Telephony
         /// <summary>
         /// Returns null if profile wasn't created.
         /// </summary>
-        TelephonyProfile CreateProfile(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy);
+        TelephonyProfile CreateProfile(ILmsLicense lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy);
 
-        void DeleteProfile(LmsCompany lmsCompany, TelephonyProfileInfoResult profile);
+        void DeleteProfile(ILmsLicense lmsCompany, TelephonyProfileInfoResult profile);
 
     }
 

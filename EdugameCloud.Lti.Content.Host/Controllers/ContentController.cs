@@ -27,8 +27,6 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.WebApi.Formatting;
-using Jil;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Content.Host.Controllers
 {

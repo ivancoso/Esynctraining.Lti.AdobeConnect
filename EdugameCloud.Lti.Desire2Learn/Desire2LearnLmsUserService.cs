@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using EdugameCloud.Lti.API;
@@ -29,9 +30,11 @@ namespace EdugameCloud.Lti.Desire2Learn
             this.settings = settings;
         }
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object extraData = null)
+        public override LmsUserDTO GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, out string error, LtiParamDTO extraData = null)
         {
-            
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
             if (!CanRetrieveUsersFromApiForCompany(lmsCompany))
             {
                 var param = extraData as LtiParamDTO;
@@ -50,21 +53,27 @@ namespace EdugameCloud.Lti.Desire2Learn
                 }
             }
 
-            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, extraData)
+            return GetUsersOldStyle(lmsCompany, courseId, out error, extraData)
                 .FirstOrDefault(u => u.Id == lmsUserId);
         }
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
-            LmsUser lmsUser, int courseId, object extraData = null)
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO extraData = null)
         {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
             string error;
-            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, extraData);
+            var users = GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
             return users.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,
-            string lmsUserId, int courseId, out string error, object param = null)
+        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,
+            int courseId, out string error, LtiParamDTO param = null)
         {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
             error = null; // todo: set when something is wrong
             LmsUser lmsUser = lmsCompany.AdminUser;
             if (lmsUser == null)
@@ -122,10 +131,12 @@ namespace EdugameCloud.Lti.Desire2Learn
                 } while (enrollments.PagingInfo.HasMoreItems && !string.IsNullOrEmpty(enrollments.PagingInfo.Bookmark));
 
 
-                // current is not enrolled to this course (user is admin) -> add him to user list
-                if (AllowAdminAdditionToCourse && classlistEnrollments.All(x => x.Identifier != lmsUserId))
+                string currentLmsUserId = param?.lms_user_id;
+
+                // current user is not enrolled to this course (user is admin) -> add him to user list
+                if (AllowAdminAdditionToCourse && classlistEnrollments.All(x => x.Identifier != currentLmsUserId))
                 {
-                    var currentLmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
+                    var currentLmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(currentLmsUserId, lmsCompany.Id).Value;
 
                     if ((currentLmsUser != null) && !string.IsNullOrEmpty(currentLmsUser.Token))
                     {

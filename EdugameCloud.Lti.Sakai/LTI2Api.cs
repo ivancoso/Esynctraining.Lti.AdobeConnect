@@ -71,7 +71,7 @@ namespace EdugameCloud.Lti.Sakai
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
-            LmsCompany company, 
+            ILmsLicense company, 
             string servicePattern, 
             string lis_result_sourcedid, 
             out string error, 
@@ -163,7 +163,7 @@ namespace EdugameCloud.Lti.Sakai
         #region Methods
         
         private static XElement CreateSignedRequestAndGetResponse(
-            LmsCompany company, 
+            ILmsLicense company, 
             string serviceUrl, 
             string lis_result_sourcedid, 
             string ltiVersion)

@@ -90,7 +90,7 @@ namespace EdugameCloud.Lti.Controllers
                             {
                                 LmsCompany = lmsCompany,
                                 UserId = param.lms_user_id,
-                                Username = GetUserNameOrEmail(param),
+                                Username = param.GetUserNameOrEmail(),
                                 PrincipalId = acPrincipal?.PrincipalId,
                             };
                             this.lmsUserModel.RegisterSave(lmsUser);

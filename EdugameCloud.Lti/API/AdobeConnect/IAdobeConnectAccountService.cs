@@ -23,7 +23,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         IEnumerable<TemplateDto> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache);
 
         string LoginIntoAC(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             LtiParamDTO param,
             Principal registeredUser,
             string password,

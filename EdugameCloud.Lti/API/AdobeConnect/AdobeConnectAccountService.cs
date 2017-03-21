@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public string LoginIntoAC(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             LtiParamDTO param,
             Principal registeredUser,
             string password,

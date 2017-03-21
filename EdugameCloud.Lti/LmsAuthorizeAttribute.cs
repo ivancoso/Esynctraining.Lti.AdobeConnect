@@ -10,10 +10,9 @@ using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti
 {
-    public class LmsAuthorizeAttribute : ActionFilterAttribute
+    internal class LmsAuthorizeBaseAttribute : ActionFilterAttribute
     {
         private readonly LmsUserSessionModel _userSessionModel;
-        private readonly LmsRoleService _lmsRoleService;
         private readonly ILogger _logger;
 
         private LanguageModel LanguageModel
@@ -21,12 +20,13 @@ namespace EdugameCloud.Lti
             get { return IoC.Resolve<LanguageModel>(); }
         }
 
-        public LmsAuthorizeAttribute()
+        
+        public LmsAuthorizeBaseAttribute()
         {
             _userSessionModel = IoC.Resolve<LmsUserSessionModel>();
-            _lmsRoleService = IoC.Resolve<LmsRoleService>();
             _logger = IoC.Resolve<ILogger>();
         }
+
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -37,7 +37,7 @@ namespace EdugameCloud.Lti
                 //SlugIds.TryGetValue(slug, out id);
                 //filterContext.ActionParameters["id"] = id;
                 //LmsCompany lmsCompany = null;
-                var session = GetReadOnlySession(sessionKey);
+                LmsUserSession session = GetReadOnlySession(sessionKey);
 
                 if (session == null)
                 {
@@ -48,14 +48,12 @@ namespace EdugameCloud.Lti
                 }
                 else
                 {
-                    var isTeacher = _lmsRoleService.IsTeacher(session.LtiSession.LtiParam);
+                    ActionResult notAllowedResult;
+                    var allowed = IsAllowed(session, out notAllowedResult);
 
-                    if (!isTeacher)
+                    if (!allowed)
                     {
-                        filterContext.Result = new JsonNetResult
-                        {
-                            Data = OperationResult.Error("Operation is not enabled."),
-                        };
+                        filterContext.Result = notAllowedResult;
                     }
                     else
                     {
@@ -73,6 +71,13 @@ namespace EdugameCloud.Lti
             base.OnActionExecuting(filterContext);
         }
 
+
+        protected virtual bool IsAllowed(LmsUserSession session, out ActionResult notAllowedResult)
+        {
+            notAllowedResult = null;
+            return true;
+        }
+
         protected LmsUserSession GetReadOnlySession(string key)
         {
             Guid uid;
@@ -87,6 +92,38 @@ namespace EdugameCloud.Lti
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
 
             return session;
+        }
+
+    }
+
+    internal sealed class LmsAuthorizeAttribute : LmsAuthorizeBaseAttribute
+    {
+        private readonly LmsRoleService _lmsRoleService;
+
+
+        public LmsAuthorizeAttribute()
+        {
+            _lmsRoleService = IoC.Resolve<LmsRoleService>();
+        }
+
+
+        protected override bool IsAllowed(LmsUserSession session, out ActionResult notAllowedResult)
+        {
+            var isTeacher = _lmsRoleService.IsTeacher(session.LtiSession.LtiParam);
+
+            if (!isTeacher)
+            {
+                notAllowedResult = new JsonNetResult
+                {
+                    Data = OperationResult.Error("Operation is not enabled."),
+                };
+                return false;
+            }
+            else
+            {
+                notAllowedResult = null;
+                return true;
+            }
         }
 
     }

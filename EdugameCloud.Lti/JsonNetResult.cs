@@ -4,7 +4,7 @@ using Jil;
 
 namespace EdugameCloud.Lti
 {
-    public class JsonNetResult : JsonResult
+    internal class JsonNetResult : JsonResult
     {
         private static readonly string AppJsonContentType = "application/json";
 

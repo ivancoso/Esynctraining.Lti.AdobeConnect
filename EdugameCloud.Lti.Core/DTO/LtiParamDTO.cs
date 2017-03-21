@@ -353,6 +353,11 @@ namespace EdugameCloud.Lti.DTO
             return providerName;
         }
 
+        public string GetUserNameOrEmail()
+        {
+            return string.IsNullOrWhiteSpace(lms_user_login) ? lis_person_contact_email_primary : lms_user_login;
+        }
+
         #endregion
 
         #region Methods

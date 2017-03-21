@@ -71,7 +71,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     return Enumerable.Empty<AudioProfileDto>().ToSuccessResult();
                 }
 
-                var provider = this.GetAdobeConnectProvider();
+                var provider = this.GetAdminProvider();
                 var lmsUser = session.LmsUser ??
                               LmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, LmsCompany.Id).Value;
                 

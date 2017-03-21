@@ -49,7 +49,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        protected LmsUserSession Session
+        internal LmsUserSession Session
         {
             get
             {
@@ -63,9 +63,9 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        protected ILmsLicense LmsCompany { get; set; }
+        internal ILmsLicense LmsCompany { get; set; }
 
-        protected int CourseId { get; set; }
+        internal int CourseId { get; set; }
 
         #region Constructors and Destructors
 
@@ -85,12 +85,12 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         #endregion
 
-        protected IAdobeConnectProxy GetAdobeConnectProvider()
+        protected IAdobeConnectProxy GetAdminProvider()
         {
-            return GetAdobeConnectProvider(LmsCompany);
+            return GetAdminProvider(LmsCompany);
         }
 
-        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
+        protected IAdobeConnectProxy GetAdminProvider(ILmsLicense lmsCompany)
         {
             string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(lmsCompany.Id);
             var provider = _acCache.Get(cacheKey) as IAdobeConnectProxy;

@@ -7,9 +7,9 @@ namespace EdugameCloud.Lti.DTO
     [DataContract]
     public class RequestDto
     {
-        [Required]
-        [DataMember]
-        public string lmsProviderName { get; set; }
+        //[Required]
+        //[DataMember]
+        //public string lmsProviderName { get; set; }
     }
 
     [DataContract]

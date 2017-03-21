@@ -96,7 +96,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
         public OperationResult DeleteMeeting(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             int id,
@@ -173,7 +173,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Error(result.InnerXml);
         }
 
-        public IEnumerable<MeetingDTO> GetMeetings(LmsCompany lmsCompany, LmsUser lmsUser, IAdobeConnectProxy provider, LtiParamDTO param, StringBuilder trace)
+        public IEnumerable<MeetingDTO> GetMeetings(ILmsLicense lmsCompany, LmsUser lmsUser, IAdobeConnectProxy provider, LtiParamDTO param, StringBuilder trace)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -415,7 +415,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public string ACLogin(LmsCompany lmsCompany, LtiParamDTO param, LmsUser lmsUser,
+        public string ACLogin(ILmsLicense lmsCompany, LtiParamDTO param, LmsUser lmsUser,
             Principal registeredUser, Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
             string breezeToken = null;
@@ -429,7 +429,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 else
                 { 
-                    generatedPassword = Membership.GeneratePassword(8, 2);
+                    generatedPassword = Password.Generate(8, 2);
                     var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
                     if (resetPasswordResult.Success)
                     {
@@ -467,7 +467,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return breezeToken;
         }
 
-        public OperationResult LeaveMeeting(LmsCompany lmsCompany, LtiParamDTO param, int id, IAdobeConnectProxy provider)
+        public OperationResult LeaveMeeting(ILmsLicense lmsCompany, LtiParamDTO param, int id, IAdobeConnectProxy provider)
         {
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, param.course_id, id);
@@ -505,7 +505,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
         
         public OperationResult SaveMeeting(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param,
             MeetingDTOInput meetingDTO,
@@ -803,7 +803,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     provider,
                     param,
                     updatedMeeting.Id,
+                    //param.course_id,
                     out error,
+                    //param,
                     lmsUsers);
 
                 sw.Stop();
@@ -827,7 +829,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
         
         // TODO: move MeetingReuseDTO
-        public OperationResult ReuseExistedAdobeConnectMeeting(LmsCompany credentials,
+        public OperationResult ReuseExistedAdobeConnectMeeting(ILmsLicense credentials,
             LmsUser lmsUser,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
@@ -986,7 +988,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public List<string> DeleteMeeting(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             int id,
@@ -1158,7 +1160,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
         #region Methods
-        private void ProcessMeetingName(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, LmsUser lmsUser,
+        private void ProcessMeetingName(ILmsLicense lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, LmsUser lmsUser,
             bool isNewMeeting, MeetingUpdateItem updateItem, LmsCourseMeeting meeting, OfficeHours officeHours)
         {
             string courseId = meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours
@@ -1260,7 +1262,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private bool ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, bool isNewMeeting, 
+        private bool ProcessAudio(ILmsLicense lmsCompany, LtiParamDTO param, bool isNewMeeting, 
             MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
             LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
         {
@@ -1327,7 +1329,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return false;
         }
 
-        private void DeleteAudioProfile(LmsCompany lmsCompany, LmsCourseMeeting meeting, IAdobeConnectProxy provider)
+        private void DeleteAudioProfile(ILmsLicense lmsCompany, LmsCourseMeeting meeting, IAdobeConnectProxy provider)
         {
             if (string.IsNullOrWhiteSpace(meeting.AudioProfileId))
                 return;
@@ -1431,7 +1433,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 .Any();
         }
 
-        private IEnumerable<LmsCompanyRoleMapping> GetGuestAuditRoleMappings(LmsCompany lmsCompany, LtiParamDTO param)
+        private IEnumerable<LmsCompanyRoleMapping> GetGuestAuditRoleMappings(ILmsLicense lmsCompany, LtiParamDTO param)
         {
             if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry))
                 return Enumerable.Empty<LmsCompanyRoleMapping>();
@@ -1445,7 +1447,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return customRoles.Where(x => currentUserLtiRoles.Any(lr => lr.Equals(x.LmsRoleName)));
         }
 
-        public void ProcessGuestAuditUsers(IAdobeConnectProxy provider, LmsCompany lmsCompany, string scoId, 
+        public void ProcessGuestAuditUsers(IAdobeConnectProxy provider, ILmsLicense lmsCompany, string scoId, 
             string principalId, LtiParamDTO param, Func<IEnumerable<LmsCourseMeeting>> retrieveMeetings)
         {
 
@@ -1480,7 +1482,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public void ProcessDynamicProvisioning(IAdobeConnectProxy provider, LmsCompany lmsCompany, LmsCourseMeeting courseMeeting, LmsUser lmsUser, LmsUserDTO lmsUserDto)
+        public void ProcessDynamicProvisioning(IAdobeConnectProxy provider, ILmsLicense lmsCompany, LmsCourseMeeting courseMeeting, LmsUser lmsUser, LmsUserDTO lmsUserDto)
         {
             if(lmsUser !=null && lmsUser.PrincipalId != null)
             { 
@@ -1540,7 +1542,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private MeetingDTO BuildDto(
             LmsUser lmsUser,
             LtiParamDTO param,
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             MeetingInfo meeting,
             TimeZoneInfo timeZone,
             StringBuilder trace = null)
@@ -1699,7 +1701,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public LmsCourseMeeting GetCourseMeeting(LmsCompany lmsCompany, int courseId, long id, LmsMeetingType type)
+        public LmsCourseMeeting GetCourseMeeting(ILmsLicense lmsCompany, int courseId, long id, LmsMeetingType type)
         {
             LmsCourseMeeting meeting = null;
 
@@ -1732,7 +1734,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private void SetMeetingUpdateItemFields(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             MeetingDTOInput meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 

@@ -31,7 +31,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
 
-        public IEnumerable<TelephonyProfile> GetAudioProfiles(IAdobeConnectProxy provider, LmsCompany lmsCompany, string principalId)
+        public IEnumerable<TelephonyProfile> GetAudioProfiles(IAdobeConnectProxy provider, ILmsLicense lmsCompany, string principalId)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));

@@ -61,7 +61,7 @@
 
                 IEnumerable<ACSessionParticipantDto> report = _reportService.GetAttendanceReports(
                     meeting.ScoId,
-                    this.GetAdobeConnectProvider(),
+                    this.GetAdminProvider(),
                     TimeZoneInfo.Utc,
                     request.startIndex,
                     request.limit);
@@ -90,7 +90,7 @@
 
                 IEnumerable<ACSessionDto> report = _reportService.GetSessionsReports(
                     meeting.ScoId,
-                    GetAdobeConnectProvider(),
+                    GetAdminProvider(),
                     TimeZoneInfo.Utc,
                     request.startIndex,
                     request.limit);
@@ -118,7 +118,7 @@
                     return OperationResultWithData<IEnumerable<RecordingTransactionDTO>>.Error(Messages.MeetingNotFound);
 
                 IEnumerable<RecordingTransactionDTO> report = new LtiReportService().GetRecordingsReport(
-                    GetAdobeConnectProvider(),
+                    GetAdminProvider(),
                     meeting,
                     request.startIndex,
                     request.limit);
