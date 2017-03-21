@@ -56,6 +56,9 @@
             info.TelephonyProfile = xml.SelectSingleNodeValue("telephony-profile/text()");
             info.ScoTag = xml.SelectSingleNodeValue("sco-tag/text()");
             info.MeetingPasscode = xml.SelectSingleNodeValue("meeting-passcode/text()");
+            info.EventGuestPolicy = xml.SelectSingleNodeValue("event-guest-policy/text()");
+            info.UpdateLinkedItem = xml.ParseNodeBool("update-linked-item/text()");
+            info.EventTemplateScoId = xml.SelectSingleNodeValue("event-template/text()");
         }
 
     }

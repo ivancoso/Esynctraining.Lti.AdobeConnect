@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1.19",
+  "version": "1.0.1.20",
   "title": "Esynctraining.AdobeConnect",
   "description": "Esynctraining AC DTO, Proxies, Services and Wrappers",
   "copyright": "Copyright © 2016-2017 eSyncTraining.com",
@@ -19,7 +19,7 @@
   },
 
   "dependencies": {
-    "Esynctraining.AC.Provider": "1.0.2.22",
+    "Esynctraining.AC.Provider": "1.0.2.25",
     "Esynctraining.Core.Only": "1.0.0.27",
     "NodaTime": "1.3.2"
     //"NETStandard.Library": "1.6.0"
@@ -60,6 +60,7 @@
   "scripts": {
     "postcompile": [
       "dotnet pack --no-build --configuration %compile:Configuration%"
+      //..\.nuget\NuGet.exe push .\bin\Debug\Esynctraining.Provider.1.0.1.20.nupkg -source https://nuget.esynctraining.com/nuget -ApiKey 1a4d6ac5-2fa1-4844-a42d-b95e432f00ee
     ]
   }
 

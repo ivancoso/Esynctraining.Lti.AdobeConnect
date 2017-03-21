@@ -4,20 +4,19 @@
     <Description>Provides Adobe Connect functionality for eSyncTraining projects</Description>
     <Copyright>Copyright � 2013-2017 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.AC.Provider</AssemblyTitle>
-    <VersionPrefix>1.0.2.25</VersionPrefix>
+    <VersionPrefix>1.0.2.22</VersionPrefix>
     <Authors>eSyncTraining.com</Authors>
     <TargetFrameworks>net45;net461</TargetFrameworks>
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>fixed ReportBulkObjects</PackageReleaseNotes>
+    <PackageReleaseNotes>+event fields in sco-info</PackageReleaseNotes>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>1.0.2.25</Version>
   </PropertyGroup>
 

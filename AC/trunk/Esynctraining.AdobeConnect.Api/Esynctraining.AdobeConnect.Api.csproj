@@ -4,21 +4,19 @@
     <Description>Provides Adobe Connect high-level DTO and services</Description>
     <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.Provider.Api</AssemblyTitle>
-    <VersionPrefix>1.0.0.12</VersionPrefix>
+    <VersionPrefix>1.0.0.11</VersionPrefix>
     <Authors>eSyncTraining.com</Authors>
     <TargetFrameworks>net45;net461</TargetFrameworks>
     <AssemblyName>Esynctraining.AdobeConnect.Api</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect.Api</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>added IMeetingTemplateService.GetCachedTemplates (to retrieve training templates)</PackageReleaseNotes>
+    <PackageReleaseNotes>adapted ContentHelper to sco-content filter</PackageReleaseNotes>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <Version>1.0.0.12</Version>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
