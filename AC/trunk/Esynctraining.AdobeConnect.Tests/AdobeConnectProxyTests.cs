@@ -11,6 +11,19 @@ namespace Esynctraining.AdobeConnect.Tests
 {
     public class AdobeConnectProxyTests
     {
+        [Test]
+        public void WillGetEventInfo()
+        {
+            var acApiUrl = new Uri("http://connect.esynctraining.com");
+            var con = new ConnectionDetails(acApiUrl);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), acApiUrl, String.Empty);
+            //proxy.report
+            proxy.Login(new UserCredentials("nastya@esynctraining.com", "tratata"));//admin
+            var eventInfo = proxy.GetScoInfo("2957329");
+            Assert.Equals(eventInfo.ScoInfo.EventTemplateScoId, 56489);
+        }
+
 
         [Test]
         public void WillReportUserTrainingsTaken()
