@@ -97,6 +97,10 @@ namespace Esynctraining.AdobeConnect
                     using (var sr = new StreamReader(chatXmlFileStream, Encoding.UTF8))
                     {
                         var chat = (ChatTranscript)Serializer.Deserialize(sr);
+
+                        if (chat.Messages.Any(x => x.To == null))
+                            _logger.Error($"Message with To==null. MeetingScoId:'{meetingScoId}'. ChatFile sco-id:{chatFileScoId}.");
+
                         return chat;
                     }
                 }
