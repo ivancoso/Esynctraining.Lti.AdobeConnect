@@ -46,24 +46,18 @@ namespace Esynctraining.AdobeConnect
             ScoShortcut chatsFolder = GetChatTranscriptsFolder(accountId);
 
             IEnumerable<ScoContent> chatScoList = _contentService.GetFolderContent(chatsFolder.ScoId, meetingScoId);
-
-            // HACK: 
-            //if (chatScoList.Count() != 1)
-            //    throw new NotImplementedException();
-
-            //(StartA <= EndB) and (EndA >= StartB)
-
-            var chatFile = chatScoList.Where(x => x.BeginDate <= sessionDateEnd && x.EndDate >= sessionDateCreated).SingleOrDefault();
-            if (chatFile == null)
+            var sessionChatFiles = chatScoList.Where(x => x.BeginDate >= sessionDateCreated && x.EndDate <= sessionDateEnd);
+            if (sessionChatFiles.Count() == 0)
                 //TODO: what to do
                 return null;
 
-            var chatFileScoId = chatFile.ScoId;
+            if (sessionChatFiles.Count() > 1)
+            {
+                string message = $"Several files found: { string.Join(", ", sessionChatFiles.Select(x => x.ScoId)) }. MeetingScoId:'{meetingScoId}'. sessionDateCreated:{sessionDateCreated}. sessionDateEnd:{sessionDateEnd}.";
+                throw new InvalidOperationException(message);
+            }
 
-            // HACK: 
-            //var chatFileScoId = chatScoList.Single().ScoId;
-            //var chatFileScoId = chatScoList.Last().ScoId;
-
+            var chatFileScoId = sessionChatFiles.Single().ScoId;
             string err;
             byte[] zipContent = _proxy.GetContent(chatFileScoId, out err);
 
@@ -80,7 +74,7 @@ namespace Esynctraining.AdobeConnect
                         }
                         catch (Exception ex)
                         {
-                            throw new InvalidOperationException($"Error parsing chat transcription. No transcript file found. ChatFile sco-id:{chatFileScoId}.", ex);
+                            throw new InvalidOperationException($"Error parsing chat transcription. No transcript file found. MeetingScoId:'{meetingScoId}'. ChatFile sco-id:{chatFileScoId}.", ex);
                         }
 
                         using (var zipEntryStream = zipEntry.Open())
