@@ -251,7 +251,7 @@ namespace EdugameCloud.Lti.Controllers
                 var accService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(Logger);
                 provider = accService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
 
-                var sessionTimeout = accService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
+                var sessionTimeout = accService.GetAccountDetails(GetAdminProvider(session.LmsCompany)).SessionTimeout - 1; //-1 is to be sure 
                 _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
 
