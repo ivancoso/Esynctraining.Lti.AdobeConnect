@@ -22,7 +22,6 @@ namespace EdugameCloud.Lti.Api.Host
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
                 .Build();
 
             host.Run();
