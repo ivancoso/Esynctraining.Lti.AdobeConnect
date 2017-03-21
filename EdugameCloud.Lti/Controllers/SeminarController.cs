@@ -171,6 +171,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
+                //save under admin account doesn't work for user license
                 var ac = GetCurrentUserProvider(session);
 
                 // TRICK: change record meeting id to meeting sco-id

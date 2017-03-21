@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using Esynctraining.Core.Logging;
 using D2L.Extensibility.AuthSdk;
-using D2L.Extensibility.AuthSdk.Restsharp;
 using EdugameCloud.Lti.OAuth;
 using EdugameCloud.Lti.API.Desire2Learn;
 using EdugameCloud.Lti.Core.Constants;
