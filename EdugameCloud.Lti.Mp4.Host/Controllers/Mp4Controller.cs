@@ -36,6 +36,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("convert")]
+        [LmsAuthorizeBase]
         public virtual async Task<OperationResult> Convert(RecordingActionRequestDto input)
         {
             if (input == null)
@@ -44,7 +45,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(input.LmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 string licenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
@@ -75,7 +76,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(input.LmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 string licenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
@@ -107,10 +108,10 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
-                var ac = this.GetAdobeConnectProvider(session);
+                var ac = this.GetAdminProvider(lmsCompany);
                 string breezeToken;
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
@@ -148,11 +149,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 string breezeToken;
-                var ac = this.GetAdobeConnectProvider(session);
+                var ac = GetAdminProvider(lmsCompany);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).AccessVttFile(scoId,
@@ -178,7 +179,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 lmsCompany = session.LmsCompany;
 
                 string breezeToken;
-                var ac = this.GetAdobeConnectProvider(session);
+                var ac = this.GetAdminProvider(lmsCompany);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
@@ -197,11 +198,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 string breezeToken;
-                var ac = this.GetAdobeConnectProvider(session);
+                var ac = this.GetAdminProvider(lmsCompany);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
@@ -217,10 +218,10 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
         public Task<FileUploadResultDto> PostVttFile(string fileScoId, [FromUri]string lmsProviderName)
         {
-            var session = GetReadOnlySession(lmsProviderName);
+            var session = Session;
             var lmsCompany = session.LmsCompany;
 
-            var ac = this.GetAdobeConnectProvider(session);
+            var ac = GetAdminProvider(lmsCompany);
 
             return new SubtitleUtility(ac, Logger, this).PostVttFile(fileScoId);
         }

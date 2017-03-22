@@ -24,7 +24,7 @@ using Esynctraining.Mp4Service.Tasks.Client.Dto;
 namespace EdugameCloud.Lti.Mp4.Host.Controllers
 {
     [RoutePrefix("recordings")]
-    [EnableCors(origins: "*", headers: "*", methods: "*")] //POST,OPTIONS
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class RecordingsController : BaseController
     {
         private static readonly MapperConfiguration mapConfig = new MapperConfiguration(cfg => cfg.CreateMap<RecordingDto, RecordingWithMp4Dto>());
@@ -56,10 +56,10 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(input.LmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
-                var ac = this.GetAdobeConnectProvider(session);
+                var ac = GetAdminProvider(lmsCompany);
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
                     () => new RoomTypeFactory(ac, (LmsMeetingType)input.LmsMeetingType, IoC.Resolve<API.AdobeConnect.ISeminarService>());
@@ -113,7 +113,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(input.LmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 Guid mp4;

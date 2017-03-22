@@ -34,7 +34,6 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "post")]
     public class ContentController : BaseController
     {
-        
         private readonly LmsUserModel _lmsUserModel;
 
 
@@ -63,18 +62,18 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<IEnumerable<ScoShortcutDto>>.Error("Operation is not enabled.");
 
                 var param = session.LtiSession.LtiParam;
-                var ac = this.GetAdobeConnectProvider(session);
+                var ac = this.GetUserProvider(session);
 
                 var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
-                var contentService = new ContentService(logger, ac);
+                var contentService = new ContentService(Logger, ac);
                 IEnumerable<ScoShortcut> shortcuts = contentService.GetShortcuts(new ScoShortcutType[] { ScoShortcutType.content, ScoShortcutType.my_content });
 
                 var result = shortcuts.Select(x => new ScoShortcutDto
@@ -103,15 +102,15 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<IEnumerable<ScoContentDto>>.Error("Operation is not enabled.");
 
-                var ac = this.GetAdobeConnectProvider(session);
-                var contentService = new ContentService(logger, ac);
-                var helper = new ContentControllerHelper<ScoContentDto>(logger, contentService, new ScoContentDtoMapper());
+                var ac = this.GetUserProvider(session);
+                var contentService = new ContentService(Logger, ac);
+                var helper = new ContentControllerHelper<ScoContentDto>(Logger, contentService, new ScoContentDtoMapper());
                 return await helper.GetFolderContent(folderScoId, new NullDtoProcessor<ScoContentDto>());
             }
             catch (Exception ex)
@@ -137,14 +136,14 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 // TRICK:
                 dto.FolderId = folderScoId;
 
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<FolderDto>.Error("Operation is not enabled.");
 
-                var ac = this.GetAdobeConnectProvider(session);
-                var helper = new ContentEditControllerHelper(logger, ac);
+                var ac = this.GetUserProvider(session);
+                var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.CreateFolder(dto);
             }
             catch (Exception ex)
@@ -164,15 +163,15 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetAdobeConnectProvider(session);
-                var contentService = new ContentService(logger, ac);
-                var helper = new ContentControllerHelper<ScoContentDto>(logger, contentService, new ScoContentDtoMapper());
+                var ac = this.GetUserProvider(session);
+                var contentService = new ContentService(Logger, ac);
+                var helper = new ContentControllerHelper<ScoContentDto>(Logger, contentService, new ScoContentDtoMapper());
 
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
@@ -209,15 +208,15 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetAdobeConnectProvider(session);
-                var contentService = new ContentService(logger, ac);
-                var helper = new ContentEditControllerHelper(logger, ac);
+                var ac = this.GetUserProvider(session);
+                var contentService = new ContentService(Logger, ac);
+                var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.DeleteSco(scoId);
             }
             catch (Exception ex)
@@ -237,14 +236,14 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetAdobeConnectProvider(session);
-                var helper = new ContentEditControllerHelper(logger, ac);
+                var ac = this.GetUserProvider(session);
+                var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.EditSco(scoId, dto);
             }
             catch (Exception ex)
@@ -261,15 +260,15 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = Session;
                 lmsCompany = session.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetAdobeConnectProvider(session);
-                var contentService = new ContentService(logger, ac);
-                var helper = new ContentEditControllerHelper(logger, ac);
+                var ac = this.GetUserProvider(session);
+                var contentService = new ContentService(Logger, ac);
+                var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.MoveSco(scoId, destinationFolderScoId);
             }
             catch (Exception ex)
@@ -312,12 +311,12 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             {
                 string fileName = provider.FileStreams.First().Key;
                 MultipartFormDataMemoryStreamProvider.FileContent stream = provider.FileStreams.First().Value;
-                
-                var session = GetReadOnlySession(lmsProviderName);
+
+                var session = Session;
                 lmsCompany = session.LmsCompany;
-                var ac = this.GetAdobeConnectProvider(session);
-                var contentService = new ContentService(logger, ac);
-                var helper = new ContentEditControllerHelper(logger, ac);
+                var ac = this.GetUserProvider(session);
+                var contentService = new ContentService(Logger, ac);
+                var helper = new ContentEditControllerHelper(Logger, ac);
                 int fileSize;
                 ScoInfoResult createdFile = helper.UploadFile(folderScoId, name, description, customUrl, fileName, stream.ContentType, stream.Stream, out fileSize);
                 

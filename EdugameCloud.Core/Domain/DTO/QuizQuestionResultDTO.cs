@@ -10,9 +10,9 @@
     [DataContract]
     public class QuizQuestionResultDTO
     {
-        /// <summary>
-        /// The answer distractors field.
-        /// </summary>
+        // <summary>
+        // The answer distractors field.
+        // </summary>
         //private int[] answerDistractorsField = { };
 
         /// <summary>

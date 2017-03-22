@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Runtime.Caching;
 using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.Http.Filters;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
@@ -9,6 +14,7 @@ using EdugameCloud.Lti.Core.Utils;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
@@ -26,14 +32,15 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         private static bool? isDebug;
 
         private readonly LmsUserSessionModel userSessionModel;
+        private LmsUserSession _session;
 
         #endregion
 
         protected dynamic Settings { get; private set; }
 
-        protected ILogger logger { get; private set; }
+        protected ILogger Logger { get; private set; }
 
-        protected IAdobeConnectAccountService acAccountService { get; private set; }
+        protected IAdobeConnectAccountService AcAccountService { get; private set; }
 
         protected bool IsDebug
         {
@@ -50,6 +57,20 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             }
         }
 
+        internal LmsUserSession Session
+        {
+            get
+            {
+                if (_session == null)
+                    throw new WarningMessageException(Resources.Messages.SessionTimeOut);
+                return _session;
+            }
+            set
+            {
+                _session = value;
+            }
+        }
+
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
         #region Constructors and Destructors
@@ -61,31 +82,14 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             ILogger logger)
         {
             this.userSessionModel = userSessionModel;
-            this.acAccountService = acAccountService;
+            this.AcAccountService = acAccountService;
             this.Settings = settings;
-            this.logger = logger;
+            this.Logger = logger;
         }
 
         #endregion
-
-
-        protected LmsUserSession GetReadOnlySession(string key)
-        {
-            Guid uid;
-            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
-
-            if (session == null)
-            {
-                logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
-            }
-
-            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
-
-            return session;
-        }
-
-        protected IAdobeConnectProxy GetAdobeConnectProvider(LmsUserSession session)
+        
+        protected IAdobeConnectProxy GetUserProvider(LmsUserSession session)
         {
             string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
             var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
@@ -93,9 +97,9 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             if (provider == null)
             {
                 string breezeSession = LoginCurrentUser(session);
-                provider = acAccountService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
+                provider = AcAccountService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
 
-                var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
+                var sessionTimeout = AcAccountService.GetAccountDetails(GetAdminProvider(session.LmsCompany)).SessionTimeout - 1; //-1 is to be sure 
                 _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
 
@@ -121,7 +125,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                     throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
                 }
 
-                var ac = GetAdminAdobeConnectProvider(session);
+                var ac = GetAdminProvider(lmsCompany);
                 var registeredUser = ac.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
 
                 var MeetingSetup = IoC.Resolve<MeetingSetup>();
@@ -136,16 +140,15 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             }
         }
 
-        private IAdobeConnectProxy GetAdminAdobeConnectProvider(LmsUserSession session)
+        private IAdobeConnectProxy GetAdminProvider(ILmsLicense lmsCompany)
         {
-            var lmsCompany = session.LmsCompany;
             string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(lmsCompany.Id);
 
             var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
             if (provider == null)
             {
-                provider = acAccountService.GetProvider(new AdobeConnectAccess(new Uri(lmsCompany.AcServer), lmsCompany.AcUsername, lmsCompany.AcPassword), true);
-                var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
+                provider = AcAccountService.GetProvider(new AdobeConnectAccess(new Uri(lmsCompany.AcServer), lmsCompany.AcUsername, lmsCompany.AcPassword), true);
+                var sessionTimeout = AcAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
                 _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
 
@@ -158,7 +161,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 ? string.Format(" LmsCompany ID: {0}. Lms License Title: {1}. Lms Domain: {2}. AC Server: {3}.", credentials.Id, credentials.Title, credentials.LmsDomain, credentials.AcServer)
                 : string.Empty;
 
-            logger.Error(methodName + lmsInfo, ex);
+            Logger.Error(methodName + lmsInfo, ex);
 
             var forcePassMessage = ex as IUserMessageException;
             if (forcePassMessage != null)
@@ -167,6 +170,122 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + ex.ToString()
                 : Resources.Messages.ExceptionMessage;
+        }
+
+    }
+
+    internal class LmsAuthorizeBaseAttribute : ActionFilterAttribute
+    {
+        private static readonly string HeaderName = "Authorization";
+        private static readonly string ltiAuthScheme = "lti ";
+        private static readonly string apiAuthScheme = "ltiapi ";
+
+        private readonly LmsUserSessionModel _userSessionModel;
+        private readonly ILogger _logger;
+        
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
+
+
+        public LmsAuthorizeBaseAttribute()
+        {
+            _userSessionModel = IoC.Resolve<LmsUserSessionModel>();
+            _logger = IoC.Resolve<ILogger>();
+        }
+
+
+        public override void OnActionExecuting(HttpActionContext filterContext)
+        {
+            string mode;
+            Guid sessionKey = FetchToken(filterContext.ControllerContext.Request, out mode);
+
+            if (sessionKey != Guid.Empty)
+            {
+                LmsUserSession session = GetReadOnlySession(sessionKey);
+                if (session == null)
+                {
+                    filterContext.Response =
+                    filterContext.ControllerContext.Request.CreateResponse<OperationResult>(OperationResult.Error(Resources.Messages.SessionTimeOut));
+                }
+                else
+                {
+                    HttpResponseMessage notAllowedResult;
+                    var allowed = IsAllowed(session, out notAllowedResult);
+
+                    if (!allowed)
+                    {
+                        filterContext.Response = notAllowedResult;
+                    }
+                    else
+                    {
+                        var api = filterContext.ControllerContext.Controller as BaseController;
+                        api.Session = session;
+                        //api.LmsCompany = session.LmsCompany;
+                        //api.CourseId = session.LmsCourseId;
+                        //filterContext.ActionArguments["session"] = session;
+                    }
+                }
+            }
+            else
+            {
+                filterContext.Response =
+                    filterContext.ControllerContext.Request.CreateResponse<OperationResult>(OperationResult.Error("Necessary arguments were not provided."));
+            }
+            base.OnActionExecuting(filterContext);
+        }
+
+
+        protected virtual bool IsAllowed(LmsUserSession session, out HttpResponseMessage notAllowedResult)
+        {
+            notAllowedResult = null;
+            return true;
+        }
+
+        protected LmsUserSession GetReadOnlySession(Guid key)
+        {
+            var session = _userSessionModel.GetByIdWithRelated(key).Value;
+            if (session == null)
+            {
+                _logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
+                return null;
+            }
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
+            return session;
+        }
+
+        private static Guid FetchToken(HttpRequestMessage req, out string mode)
+        {
+            string authHeader = null;
+            IEnumerable<string> values;
+            if (req.Headers.TryGetValues(HeaderName, out values))
+            {
+                authHeader = values.First();
+            }
+
+            if ((authHeader != null) && authHeader.StartsWith(ltiAuthScheme, StringComparison.OrdinalIgnoreCase))
+            {
+                string token = authHeader.Substring(ltiAuthScheme.Length).Trim();
+                Guid uid;
+                if (Guid.TryParse(token, out uid))
+                {
+                    mode = ltiAuthScheme;
+                    return uid;
+                }
+            }
+
+            if ((authHeader != null) && authHeader.StartsWith(apiAuthScheme, StringComparison.OrdinalIgnoreCase))
+            {
+                string token = authHeader.Substring(apiAuthScheme.Length).Trim();
+
+                Guid uid;
+                if (Guid.TryParse(token, out uid))
+                {
+                    mode = apiAuthScheme;
+                    return uid;
+                }
+            }
+
+            mode = null;
+            return Guid.Empty;
         }
 
     }
