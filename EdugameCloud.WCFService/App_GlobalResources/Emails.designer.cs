@@ -70,7 +70,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Certificate.
+        ///   Looks up a localized string similar to Goddard Systems Certificate.
         /// </summary>
         internal static string CertificateSubject {
             get {

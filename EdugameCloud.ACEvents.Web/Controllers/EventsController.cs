@@ -134,6 +134,16 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
             if (!loginResult.Success)
                 throw new InvalidOperationException($"Can't login to AC url {apiUrl} user {acDomain.user}");
+
+            var eventInfo = proxy.GetScoInfo(scoId);
+            if (!eventInfo.Success)
+                throw new InvalidOperationException("Can't get event info");
+
+            if (eventInfo.ScoInfo.EventGuestPolicy == "guest")
+            {
+                return Json(new { IsSuccess = false, Message = "Registration should not be allowed to guests. Please contact system administrator" });
+            }
+
             var additionalFields = proxy.GetEventRegistrationDetails(scoId);
             var fields = new Dictionary<string, string>();
             foreach (var eventRegistrationDetail in additionalFields.EventFields)

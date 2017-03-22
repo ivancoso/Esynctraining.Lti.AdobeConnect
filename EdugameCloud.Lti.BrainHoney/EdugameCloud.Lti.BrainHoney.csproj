@@ -47,8 +47,8 @@
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.25, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.25\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.19, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.19\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.24, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.24\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.12\lib\net45\Esynctraining.AdobeConnect.Api.dll</HintPath>
