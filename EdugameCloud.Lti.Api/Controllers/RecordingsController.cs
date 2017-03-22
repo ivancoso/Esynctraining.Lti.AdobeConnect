@@ -66,6 +66,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         // we can reuse that info to have type (change API)
         [HttpPost]
         [Route("")]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public OperationResultWithData<IEnumerable<IRecordingDto>> GetRecordings([FromBody]TypeMeetingRequestDto request)
         {
             if (request == null)

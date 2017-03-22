@@ -50,6 +50,7 @@
 
         [Route("by-attendance")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<ACSessionParticipantDto>> GetAttendanceReport(ReportRequestDto request)
         {
             if (request == null)
@@ -79,6 +80,7 @@
 
         [Route("by-sessions")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<ACSessionDto>> GetSessionsReport(ReportRequestDto request)
         {
             if (request == null)
@@ -108,6 +110,7 @@
 
         [Route("by-recordings")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<RecordingTransactionDTO>> GetRecordingsReport(ReportRequestDto request)
         {
             if (request == null)
