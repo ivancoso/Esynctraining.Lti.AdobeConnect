@@ -240,6 +240,7 @@
     <Content Include="App_Data\Pdf\Template\States with no approval system Webinar Certificate Template-2017.docx" />
     <Content Include="App_Data\Pdf\Template\EF827C2B-C711-4E55-B57B-B01D1807CBEB.pdf" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\PublishToFolder.pubxml" />
     <None Include="Properties\PublishProfiles\Local.pubxml" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
