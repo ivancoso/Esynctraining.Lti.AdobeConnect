@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace EdugameCloud.Lti.Api.Filters
 {
-    internal class LmsAuthorizeBaseAttribute : ActionFilterAttribute
+    public class LmsAuthorizeBaseAttribute : ActionFilterAttribute, IApiEnableAttribute
     {
         private static readonly string HeaderName = "Authorization";
         private static readonly string ltiAuthScheme = "lti ";
@@ -28,6 +28,9 @@ namespace EdugameCloud.Lti.Api.Filters
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
 
+        public bool ApiCallEnabled { get; set; }
+
+
         public LmsAuthorizeBaseAttribute()
         {
             //_userSessionModel = IoC.Resolve<LmsUserSessionModel>();
@@ -40,13 +43,13 @@ namespace EdugameCloud.Lti.Api.Filters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string mode;
-            Guid sessionKey = FetchToken(filterContext.HttpContext.Request, out mode);
-            if (sessionKey != Guid.Empty)
+            Guid token = FetchToken(filterContext.HttpContext.Request, out mode);
+            if (token != Guid.Empty)
             {
                 if (mode == ltiAuthScheme)
                 {
                     // TODO: try\catch?
-                    LmsUserSession session = GetReadOnlySession(sessionKey);
+                    LmsUserSession session = GetReadOnlySession(token);
 
                     if (session == null)
                     {
@@ -72,30 +75,36 @@ namespace EdugameCloud.Lti.Api.Filters
                 }
                 else
                 {
-                    LmsCompany license = GetLicense(sessionKey);
-
-                    if (license == null)
+                    if (!ApiCallEnabled)
                     {
-                        // TODO: better msg
-                        filterContext.Result = new JsonResult(OperationResult.Error(Resources.Messages.SessionTimeOut));
+                        filterContext.Result = new JsonResult(OperationResult.Error("External calls are not permitted"));
                     }
                     else
                     {
-                        // TODO: ENABLED API FLAG!! company license level + action level
-
-                        //ActionResult notAllowedResult;
-                        //var allowed = IsAllowed(session, out notAllowedResult);
-
-                        //if (!allowed)
-                        //{
-                        //    filterContext.Result = notAllowedResult;
-                        //}
-                        //else
+                        LmsCompany license = GetLicense(token);
+                        if (license == null)
                         {
-                            var api = filterContext.Controller as BaseApiController;
-                            api.LmsCompany = license;
-                            // HACK another header??
-                            //api.CourseId = session.LmsCourseId; // TODO: !!!
+                            // TODO: better msg
+                            filterContext.Result = new JsonResult(OperationResult.Error(Resources.Messages.SessionTimeOut));
+                        }
+                        else
+                        {
+                            // TODO: ENABLED API FLAG!! company license level + action level
+
+                            //ActionResult notAllowedResult;
+                            //var allowed = IsAllowed(session, out notAllowedResult);
+
+                            //if (!allowed)
+                            //{
+                            //    filterContext.Result = notAllowedResult;
+                            //}
+                            //else
+                            {
+                                var api = filterContext.Controller as BaseApiController;
+                                api.LmsCompany = license;
+                                // HACK another header??
+                                //api.CourseId = session.LmsCourseId; // TODO: !!!
+                            }
                         }
                     }
                 }

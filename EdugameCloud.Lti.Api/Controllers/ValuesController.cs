@@ -21,6 +21,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         // GET api/values
         [HttpGet]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public IEnumerable<TestDto> Get()
         {
             return new TestDto[] { new TestDto { Id = 1, Description = "test" }, new TestDto { Id = 2 } };

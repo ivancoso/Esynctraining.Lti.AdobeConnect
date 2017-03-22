@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EdugameCloud.Lti.Api.Host.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore;
 using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EdugameCloud.Lti.Api.Host
 {
@@ -59,6 +55,8 @@ namespace EdugameCloud.Lti.Api.Host
                 //c.DescribeAllParametersInCamelCase();
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
+
+                c.DocumentFilter<HideNonApiFilter>();
 
                 // c.IncludeXmlComments(String.Format(@"{0}\SO.WebServices.XML", AppDomain.CurrentDomain.BaseDirectory)); // Use xml comments for Swagger documentation
 
