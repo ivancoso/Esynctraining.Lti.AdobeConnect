@@ -35,14 +35,14 @@ namespace EdugameCloud.Lti.Api.Controllers
         private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
 
 
-        //public AudioProfilesController(
-        //    LmsUserSessionModel userSessionModel,
-        //    IAdobeConnectAccountService acAccountService,
-        //    ApplicationSettingsProvider settings,
-        //    ILogger logger, ICache cache)
-        //    : base(userSessionModel, acAccountService, settings, logger, cache)
-        //{
-        //}
+        public AudioProfilesController(
+            LmsUserSessionModel userSessionModel,
+            IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
+        {
+        }
 
 
         [Route("audioprofiles")]

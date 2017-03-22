@@ -19,11 +19,19 @@ namespace EdugameCloud.Lti.Api.Filters
         private static readonly string ltiAuthScheme = "lti ";
         private static readonly string apiAuthScheme = "ltiapi ";
 
+        private LmsUserSessionModel _userSessionModel
+        {
+            get { return IoC.Resolve<LmsUserSessionModel>(); }
+        }
 
-        private readonly LmsUserSessionModel _userSessionModel;
-        private readonly LmsCompanyModel _licenseModel;
-        private readonly LmsRoleService _lmsRoleService;
-        private readonly ILogger _logger;
+        private LmsCompanyModel _licenseModel
+        {
+            get { return IoC.Resolve<LmsCompanyModel>(); }
+        }
+        private ILogger _logger
+        {
+            get { return IoC.Resolve<ILogger>(); }
+        }
 
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
@@ -33,10 +41,7 @@ namespace EdugameCloud.Lti.Api.Filters
 
         public LmsAuthorizeBaseAttribute()
         {
-            //_userSessionModel = IoC.Resolve<LmsUserSessionModel>();
-            //_lmsRoleService = IoC.Resolve<LmsRoleService>();
-            //_licenseModel = IoC.Resolve<LmsCompanyModel>();
-            //_logger = IoC.Resolve<ILogger>();
+
         }
 
 

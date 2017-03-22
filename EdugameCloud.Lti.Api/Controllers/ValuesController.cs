@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.API.AdobeConnect;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Caching;
+using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -17,6 +22,17 @@ namespace EdugameCloud.Lti.Api.Controllers
             public int Id { get; set; }
 
             public string Description { get; set; }
+        }
+        
+        public ValuesController(
+           LmsUserSessionModel userSessionModel,
+           IAdobeConnectAccountService acAccountService,
+           ApplicationSettingsProvider settings,
+           ILogger logger,
+           ICache cache
+        )
+            : base(userSessionModel, acAccountService, settings, logger, cache)
+        {
         }
 
         // GET api/values

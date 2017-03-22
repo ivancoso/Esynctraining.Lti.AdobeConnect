@@ -14,6 +14,10 @@ using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
+using EdugameCloud.Lti.Core.Business.Models;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Caching;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -26,16 +30,16 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         #region Constructors and Destructors
 
-        //public AcMeetingController(
-        //    LmsUserSessionModel userSessionModel,
-        //    API.AdobeConnect.IAdobeConnectAccountService acAccountService, 
-        //    ApplicationSettingsProvider settings,
-        //    IAdobeConnectUserService acUserService,
-        //    ILogger logger, ICache cache)
-        //    : base(userSessionModel, acAccountService, settings, logger, cache)
-        //{
-        //    this.acUserService = acUserService;
-        //}
+        public AcMeetingController(
+            LmsUserSessionModel userSessionModel,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            IAdobeConnectUserService acUserService,
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
+        {
+            this.acUserService = acUserService;
+        }
 
         #endregion
 

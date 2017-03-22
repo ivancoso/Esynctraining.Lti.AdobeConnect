@@ -13,6 +13,9 @@
     using Esynctraining.Core.Utils;
     using Microsoft.AspNetCore.Mvc;
     using Resources;
+    using Esynctraining.Core.Providers;
+    using Esynctraining.Core.Caching;
+    using Esynctraining.Core.Logging;
 
     [Route("meeting/reports")]
     public partial class ReportsController : BaseApiController
@@ -34,16 +37,16 @@
         private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
 
-        //public ReportsController(
-        //    IReportsService reportService,
-        //    LmsUserSessionModel userSessionModel,
-        //    API.AdobeConnect.IAdobeConnectAccountService acAccountService,
-        //    ApplicationSettingsProvider settings,
-        //    ILogger logger, ICache cache)
-        //    : base(userSessionModel, acAccountService, settings, logger, cache)
-        //{
-        //    _reportService = reportService;
-        //}
+        public ReportsController(
+            IReportsService reportService,
+            LmsUserSessionModel userSessionModel,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
+        {
+            _reportService = reportService;
+        }
 
 
         [Route("by-attendance")]

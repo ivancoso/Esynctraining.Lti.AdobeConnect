@@ -43,20 +43,20 @@
 
         #region Constructors and Destructors
 
-        //public LtiApiController(
-        //    LmsUserSessionModel userSessionModel,
-        //    LmsUserModel lmsUserModel, 
-        //    MeetingSetup meetingSetup, 
-        //    ApplicationSettingsProvider settings, 
-        //    UsersSetup usersSetup,
-        //    IAdobeConnectAccountService acAccountService,
-        //    ILogger logger,
-        //    ICache cache) :base(userSessionModel, acAccountService, settings, logger, cache)
-        //{
-        //    this.lmsUserModel = lmsUserModel;
-        //    this.meetingSetup = meetingSetup;
-        //    this.usersSetup = usersSetup;
-        //}
+        public LtiApiController(
+            LmsUserSessionModel userSessionModel,
+            LmsUserModel lmsUserModel,
+            MeetingSetup meetingSetup,
+            ApplicationSettingsProvider settings,
+            UsersSetup usersSetup,
+            IAdobeConnectAccountService acAccountService,
+            ILogger logger,
+            ICache cache) :base(userSessionModel, acAccountService, settings, logger, cache)
+        {
+            this.lmsUserModel = lmsUserModel;
+            this.meetingSetup = meetingSetup;
+            this.usersSetup = usersSetup;
+        }
 
         #endregion
 

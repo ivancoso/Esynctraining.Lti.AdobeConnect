@@ -69,19 +69,20 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         #region Constructors and Destructors
 
-        //public BaseApiController(
-        //    LmsUserSessionModel userSessionModel,
-        //    API.AdobeConnect.IAdobeConnectAccountService acAccountService,
-        //    ApplicationSettingsProvider settings,
-        //    ILogger logger, 
-        //    ICache cache)
-        //{
-        //    this.userSessionModel = userSessionModel;
-        //    this.acAccountService = acAccountService;
-        //    this.Settings = settings;
-        //    this.Logger = logger;
-        //    Cache = cache;
-        //}
+        public BaseApiController(
+            LmsUserSessionModel userSessionModel,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            ILogger logger, 
+            ICache cache
+        )
+        {
+            this.userSessionModel = userSessionModel;
+            this.acAccountService = acAccountService;
+            this.Settings = settings;
+            this.Logger = logger;
+            Cache = cache;
+        }
 
         #endregion
 

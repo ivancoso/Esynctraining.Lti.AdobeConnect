@@ -54,14 +54,14 @@ namespace EdugameCloud.Lti.Api.Controllers
         private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
 
 
-        //public RecordingsController(
-        //    LmsUserSessionModel userSessionModel,
-        //    API.AdobeConnect.IAdobeConnectAccountService acAccountService,
-        //    ApplicationSettingsProvider settings,
-        //    ILogger logger, ICache cache)
-        //    : base(userSessionModel, acAccountService, settings, logger, cache)
-        //{
-        //}
+        public RecordingsController(
+            LmsUserSessionModel userSessionModel,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
+        {
+        }
 
         // TODO: remove type - we fetch meetingitem within RecordingsService.GetRecordings
         // we can reuse that info to have type (change API)

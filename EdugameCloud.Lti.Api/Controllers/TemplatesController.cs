@@ -15,14 +15,16 @@ namespace EdugameCloud.Lti.Api.Controllers
 {
     public class TemplatesController : BaseApiController
     {
-        //public AcTemplateController(
-        //    LmsUserSessionModel userSessionModel,
-        //    IAdobeConnectAccountService acAccountService,
-        //    ApplicationSettingsProvider settings,
-        //    ILogger logger, ICache cache)
-        //    : base(userSessionModel, acAccountService, settings, logger, cache)
-        //{
-        //}
+        public TemplatesController(
+            LmsUserSessionModel userSessionModel,
+            IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            ILogger logger, 
+            ICache cache
+        )
+            : base(userSessionModel, acAccountService, settings, logger, cache)
+        {
+        }
 
 
         // TODO: Add caching

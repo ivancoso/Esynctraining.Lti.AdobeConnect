@@ -6,10 +6,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="log4net.cfg.xml" />
+    <Content Include="nhibernate.cfg.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Castle.Windsor" Version="3.4.0" />
+    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="1.3.1" />
+    <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.0.27" />
+    <PackageReference Include="Esynctraining.Windsor" Version="1.0.0.1" />
+    <PackageReference Include="FluentValidation" Version="6.4.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
@@ -20,9 +33,17 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Api\EdugameCloud.Lti.Api.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
