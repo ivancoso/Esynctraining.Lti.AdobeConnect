@@ -1154,7 +1154,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public void DeleteUserFromAcMeeting(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             string principalId,
@@ -1186,7 +1186,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public LmsUserDTO UpdateGuest(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             LmsUserDTO user,
@@ -1237,7 +1237,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public void DeleteGuestFromAcMeeting(
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             string principalId,

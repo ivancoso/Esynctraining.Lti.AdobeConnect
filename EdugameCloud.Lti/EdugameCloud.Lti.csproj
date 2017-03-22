@@ -289,7 +289,6 @@
     <Compile Include="Models\OutcomeModel.cs" />
     <Compile Include="Controllers\SeminarController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\LtiController.User.cs" />
     <Compile Include="Controllers\LtiController.ProxyTool.cs" />
     <Compile Include="Controllers\LtiController.Meeting.cs" />
     <Compile Include="Controllers\LtiController.OfficeHoursPod.cs" />

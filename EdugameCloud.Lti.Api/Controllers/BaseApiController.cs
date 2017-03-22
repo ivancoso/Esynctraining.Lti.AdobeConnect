@@ -91,7 +91,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             return GetAdminProvider(LmsCompany);
         }
 
-        protected IAdobeConnectProxy GetAdminProvider(ILmsLicense lmsCompany)
+        private IAdobeConnectProxy GetAdminProvider(ILmsLicense lmsCompany)
         {
             string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(lmsCompany.Id);
             var provider = _acCache.Get(cacheKey) as IAdobeConnectProxy;

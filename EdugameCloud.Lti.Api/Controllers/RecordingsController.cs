@@ -86,7 +86,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                     request.meetingId,
                     getRoomTypeFactory);
 
-                if (!UsersSetup.IsTeacher(Session.LtiSession.LtiParam) && !LmsCompany.AutoPublishRecordings)
+                // TRICK: for API UNIR uses AutoPublishRecordings==true; So no access to Session for them.
+                if (!LmsCompany.AutoPublishRecordings && !UsersSetup.IsTeacher(Session.LtiSession.LtiParam))
                 {
                     recordings = recordings.Where(x => x.Published);
                 }

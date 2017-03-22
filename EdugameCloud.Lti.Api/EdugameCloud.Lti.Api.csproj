@@ -173,12 +173,14 @@
     <Compile Include="Controllers\AcMeetingController.cs" />
     <Compile Include="Controllers\AcUserController.cs" />
     <Compile Include="Controllers\AudioProfilesController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\TemplatesController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\LtiControllerApi.cs" />
     <Compile Include="Controllers\RecordingsController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Filters\IApiEnableAttribute.cs" />
     <Compile Include="Filters\LmsAuthorizeAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
