@@ -213,7 +213,7 @@ namespace EdugameCloud.WCFService
             var isSuccess = scoreInPercents >= quizPassingScoreInPercents;
             var resultDto = new OfflineQuizResultDTO()
             {
-                score = (int)(scoreInPercents * 100),
+                score = (int) Math.Round(scoreInPercents * 100),
                 isSuccess = isSuccess,
             };
             if (isSuccess)

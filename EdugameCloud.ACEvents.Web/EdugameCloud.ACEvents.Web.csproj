@@ -262,6 +262,7 @@
     <Content Include="App_Data\Pdf\Template\A1757137-7522-483A-B34D-BAE970F9616D.pdf" />
     <Content Include="App_Data\Pdf\Template\States with no approval system Webinar Certificate Template-2017.docx" />
     <Content Include="App_Data\Pdf\Template\EF827C2B-C711-4E55-B57B-B01D1807CBEB.pdf" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\Local.pubxml" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -547,7 +548,9 @@
     <Folder Include="App_Data\Pdf\Shared\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
