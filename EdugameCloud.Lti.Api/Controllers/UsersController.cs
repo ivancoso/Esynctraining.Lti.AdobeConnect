@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
@@ -19,6 +21,14 @@ namespace EdugameCloud.Lti.Api.Controllers
     public partial class UsersController : BaseApiController
     {
         [DataContract]
+        public class MeetingRequestDtoEx : MeetingRequestDto
+        {
+            [DataMember]
+            public bool ForceUpdate { get; set; }
+
+        }
+
+        [DataContract]
         public class CourseUsersDto : RequestDto
         {
             [Required]
@@ -30,6 +40,8 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         }
 
+        private LmsFactory LmsFactory => IoC.Resolve<LmsFactory>();
+        private ISynchronizationUserService SynchronizationUserService => IoC.Resolve<ISynchronizationUserService>();
         private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
 
 
@@ -38,6 +50,47 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
         }
 
+        [Route("")]
+        [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        public virtual OperationResultWithData<IList<LmsUserDTO>> GetUsers([FromBody]MeetingRequestDtoEx request)
+        {
+            try
+            {
+                var service = LmsFactory.GetUserService((LmsProviderEnum)LmsCompany.LmsProviderId);
+
+                if (request.ForceUpdate && LmsCompany.UseSynchronizedUsers
+                    && service != null
+                    && service.CanRetrieveUsersFromApiForCompany(LmsCompany)
+                    && LmsCompany.LmsCourseMeetings != null)
+                {
+                    SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false, meetingIds: new[] { request.meetingId });
+                }
+
+                string error;
+                IList<LmsUserDTO> users = this.UsersSetup.GetUsers(
+                    LmsCompany,
+                    GetAdminProvider(),
+                    CourseId,
+                    // TRICK: used for D2L only! to add admin to meeting
+                    SessionSave?.LtiSession?.LtiParam,
+                    request.meetingId,
+                    out error,
+                    null);
+
+                if (string.IsNullOrWhiteSpace(error))
+                {
+                    return users.ToSuccessResult();
+                }
+
+                return OperationResultWithData<IList<LmsUserDTO>>.Error(error);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("GetUsers", ex);
+                return OperationResultWithData<IList<LmsUserDTO>>.Error(errorMessage);
+            }
+        }
 
         [Route("update")]
         [HttpPost]

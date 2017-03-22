@@ -19,14 +19,6 @@
     [Route("")]
     public class LtiApiController : BaseApiController
     {
-        [DataContract]
-        public class MeetingRequestDtoEx : MeetingRequestDto
-        {
-            [DataMember]
-            public bool ForceUpdate { get; set; }
-
-        }
-
         #region Fields
 
         private readonly LmsUserModel lmsUserModel;
@@ -37,7 +29,7 @@
 
         private ISynchronizationUserService SynchronizationUserService => IoC.Resolve<ISynchronizationUserService>();
 
-        private LmsFactory LmsFactory => IoC.Resolve<LmsFactory>();
+        //private LmsFactory LmsFactory => IoC.Resolve<LmsFactory>();
 
         private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 
@@ -141,44 +133,44 @@
             }
         }
 
-        [Route("users")]
-        [HttpPost]
-        public virtual OperationResultWithData<IList<LmsUserDTO>> GetUsers([FromBody]MeetingRequestDtoEx request)
-        {
-            try
-            {
-                var service = LmsFactory.GetUserService((LmsProviderEnum)LmsCompany.LmsProviderId);
+        //[Route("users")]
+        //[HttpPost]
+        //public virtual OperationResultWithData<IList<LmsUserDTO>> GetUsers([FromBody]MeetingRequestDtoEx request)
+        //{
+        //    try
+        //    {
+        //        var service = LmsFactory.GetUserService((LmsProviderEnum)LmsCompany.LmsProviderId);
 
-                if (request.ForceUpdate && LmsCompany.UseSynchronizedUsers
-                    && service != null
-                    && service.CanRetrieveUsersFromApiForCompany(LmsCompany)
-                    && LmsCompany.LmsCourseMeetings != null)
-                {
-                    SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false, meetingIds: new[] { request.meetingId });
-                }
+        //        if (request.ForceUpdate && LmsCompany.UseSynchronizedUsers
+        //            && service != null
+        //            && service.CanRetrieveUsersFromApiForCompany(LmsCompany)
+        //            && LmsCompany.LmsCourseMeetings != null)
+        //        {
+        //            SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false, meetingIds: new[] { request.meetingId });
+        //        }
 
-                string error;
-                IList<LmsUserDTO> users = this.usersSetup.GetUsers(
-                    LmsCompany,
-                    GetAdminProvider(),
-                    Session?.LtiSession?.LtiParam,
-                    request.meetingId,
-                    out error,
-                    null);
+        //        string error;
+        //        IList<LmsUserDTO> users = this.usersSetup.GetUsers(
+        //            LmsCompany,
+        //            GetAdminProvider(),
+        //            Session?.LtiSession?.LtiParam,
+        //            request.meetingId,
+        //            out error,
+        //            null);
 
-                if (string.IsNullOrWhiteSpace(error))
-                {
-                    return users.ToSuccessResult();
-                }
+        //        if (string.IsNullOrWhiteSpace(error))
+        //        {
+        //            return users.ToSuccessResult();
+        //        }
 
-                return OperationResultWithData<IList<LmsUserDTO>>.Error(error);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetUsers", ex);
-                return OperationResultWithData<IList<LmsUserDTO>>.Error(errorMessage);
-            }
-        }
+        //        return OperationResultWithData<IList<LmsUserDTO>>.Error(error);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("GetUsers", ex);
+        //        return OperationResultWithData<IList<LmsUserDTO>>.Error(errorMessage);
+        //    }
+        //}
         
         [Route("meeting/leave")]
         [HttpPost]

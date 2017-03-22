@@ -191,7 +191,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public List<LmsUserDTO> GetLMSUsers(
             ILmsLicense lmsCompany, 
             LmsCourseMeeting meeting, 
-            string lmsUserId, 
             int courseId, 
             out string error,
             LtiParamDTO extraData = null)
@@ -218,15 +217,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
             var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
-            LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             var serviceResult = service.GetUsers(lmsCompany, courseId, extraData);
             if (serviceResult.IsSuccess)
             {
                 error = null;
                 return serviceResult.Data;
             }
-            logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, lmsUserId={2}, " +
-                "courseId={3}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), lmsUserId, courseId);
+            logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, " +
+                "courseId={2}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), courseId);
             var users = service.GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
             return error == null ? users : new List<LmsUserDTO>();
         }
@@ -278,22 +276,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public IList<LmsUserDTO> GetUsers(
             ILmsLicense lmsCompany,
-            IAdobeConnectProxy provider, 
+            IAdobeConnectProxy provider,
+            int courseId,
             LtiParamDTO param, 
             long id, 
             out string error,
             List<LmsUserDTO> users = null)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
-                lmsCompany.Id, 
-                param.course_id, 
+                lmsCompany.Id,
+                courseId, 
                 id);
 
             if (meeting == null)
             {
                 logger.ErrorFormat("[GetUsers] Meeting not found in DB. LmsCompanyID: {0}. CourseID: {1}. ID: {2}.", 
                     lmsCompany.Id,
-                    param.course_id,
+                    courseId,
                     id);
 
                 error = Resources.Messages.MeetingNotFound;
@@ -310,8 +309,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 users = this.GetLMSUsers(
                 lmsCompany,
                 meeting,
-                param.lms_user_id,
-                param.course_id,
+                courseId,
                 out error,
                 param).ToList();
 
@@ -867,7 +865,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             List<LmsUserDTO> users = this.GetLMSUsers(
                 lmsCompany, 
                 meeting, 
-                param.lms_user_id, 
                 param.course_id, 
                 out error, 
                 param);

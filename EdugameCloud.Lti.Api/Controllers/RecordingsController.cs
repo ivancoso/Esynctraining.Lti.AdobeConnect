@@ -217,8 +217,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 if (LmsCompany.AutoPublishRecordings)
                     throw new Core.WarningMessageException("Publishing is not allowed by LMS license settings");
 
-                var session = Session;
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, session.LtiSession.LtiParam.course_id, request.meetingId);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.meetingId);
                 var recording = new LmsCourseMeetingRecording
                 {
                     LmsCourseMeeting = meeting,
@@ -248,8 +247,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 if (LmsCompany.AutoPublishRecordings)
                     throw new Core.WarningMessageException("UnPublishing is not allowed by LMS license settings");
 
-                var session = Session;                
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, session.LtiSession.LtiParam.course_id, request.meetingId);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.meetingId);
                 var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == request.recordingId);
                 if (recording != null)
                 {

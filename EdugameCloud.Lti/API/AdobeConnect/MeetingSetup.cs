@@ -615,7 +615,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         string error;
                         lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
                             meeting,
-                            param.lms_user_id,
                             meeting.CourseId,
                             out error,
                             param);
@@ -801,6 +800,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 string error;
                 var users = this.UsersSetup.GetUsers(lmsCompany,
                     provider,
+                    param.course_id,
                     param,
                     updatedMeeting.Id,
                     //param.course_id,
@@ -869,7 +869,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 string error;
                 lmsUsers = this.UsersSetup.GetLMSUsers(credentials,
                         meeting,
-                        param.lms_user_id,
                         meeting.CourseId,
                         out error,
                         param);
@@ -968,6 +967,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 string error;
                 var users = this.UsersSetup.GetUsers(credentials,
                     provider,
+                    param.course_id,
                     param,
                     updatedMeeting.Id,
                     out error,

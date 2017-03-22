@@ -45,7 +45,7 @@ namespace EdugameCloud.Lti.BlackBoard
                 throw new ArgumentNullException(nameof(lmsCompany));
 
             string error;
-            var users = GetUsersOldStyle(lmsCompany, courseId, out error);
+            var users = GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
             return users.ToSuccessResult();
         }
 

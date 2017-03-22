@@ -62,6 +62,15 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// TRICK: do not use in most of your code.
+        /// </summary>
+        internal LmsUserSession SessionSave
+        {
+            get { return _session; }
+            set { _session = value; }
+        }
+
         internal ILmsLicense LmsCompany { get; set; }
 
         internal int CourseId { get; set; }
