@@ -24,19 +24,19 @@
 			"getRecordingStatus": "lti-mp4/recordings/status",
 
 			
-			"getMP4Recordings": "lti/recordings",
-			"publishRecording": "lti/recordings/publish",
-			"unpublishRecording": "lti/recordings/unpublish",
-			"shareRecording": "lti/recordings/share",
+			"getMP4Recordings": "lti/recordings", // API
+            "publishRecording": "lti/recordings/publish", // API
+            "unpublishRecording": "lti/recordings/unpublish", // API
+            "shareRecording": "lti/recordings/share", // API
 			"editRecording": "lti/recordings/edit/{0}",
 			"deleteRecording": "lti/recordings/delete/{0}",
 
-			"getUsersForMeeting": "lti/users",
-			"createACUser": "lti/acNewUser",
-			"searchACUser": "lti/acSearchUser",
-			"setDefaultACRoles": "lti/Meeting/SetDefaultACRoles",
-			"setUserRole": "lti/users/Update",
-			"removeUserFromMeeting": "lti/users/removefrommeeting",
+			"getUsersForMeeting": "lti/users", // API
+			"createACUser": "lti/acNewUser", // API
+            "searchACUser": "lti/acSearchUser", // API
+			"setDefaultACRoles": "lti/meeting/SetDefaultACRoles", //API
+            "setUserRole": "lti/users/update", // API
+			"removeUserFromMeeting": "lti/users/removefrommeeting", // API
 
 			"createEventsBatch": "lti/calendar/createBatch",
 			"getEvents": "lti/calendar/getevents",
@@ -52,20 +52,20 @@
 			"moveContent": "lti-my-content/{0}/content/{1}/move-to/{2}",
 			"createContentFolder": "lti-my-content/{0}/content/{1}/create-sub-folder",
 
-			"checkSettingsPasword": "lti/settings/CheckPass",
-			"saveSettings": "lti/settings/Save",
+			"checkSettingsPasword": "lti/settings/checkpass", // API
+			"saveSettings": "lti/settings/save", // API
 
 			"joinToMeeting": "lti/meeting/join",
 			"joinToMeetingMobile": "lti/meeting/joinmobile",
-			"leaveMeeting": "lti/meeting/leave",
+			"leaveMeeting": "lti/meeting/leave", // API
 			"deleteMeeting": "lti/meeting/delete",
 			"saveMeetingAndGetUsers": "lti/meeting/UpdateAndReturnLmsUsers",
 			"saveMeeting": "lti/meeting/Update",
 			
 			"useExistingMeeting": "lti/useExistingMeeting",
-			"getTemplates": "lti/templates",
-			"getAudioProfiles": "lti/AudioProfiles",
-			"searchACMeetings": "lti/acSearchMeeting",
+			"getTemplates": "lti/templates", // API
+			"getAudioProfiles": "lti/AudioProfiles", // API
+			"searchACMeetings": "lti/acSearchMeeting", // API
 
 			"saveSeminar": "lti/seminars/edit",
 			"createSeminar": "lti/seminars/create",
@@ -73,9 +73,9 @@
 			"saveSeminarSession": "lti/seminars/sessions/edit",
 			"deleteSeminarSession": "lti/seminars/sessions/delete",
 
-			"reportByRecordings": "lti/meeting/reports/by-recordings",
-			"reportBySessions": "lti/meeting/reports/by-sessions",
-			"reportByAttendance": "lti/meeting/reports/by-attendance"
+            "reportByRecordings": "lti/meeting/reports/by-recordings", // API
+            "reportBySessions": "lti/meeting/reports/by-sessions", // API
+            "reportByAttendance": "lti/meeting/reports/by-attendance" // API
 		};
 
 		var Ext = Ext || {};
