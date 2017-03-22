@@ -5,7 +5,7 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Providers;
-
+using Esynctraining.CastleLog4Net;
 
 namespace EdugameCloud.ACEvents.Web
 {

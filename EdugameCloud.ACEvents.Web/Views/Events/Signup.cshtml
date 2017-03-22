@@ -116,14 +116,7 @@
             @*@Html.AntiForgeryToken()*@
             @Html.ValidationSummary(true)
 
-            <div class="form-group">
-                <label class="col-sm-5 control-label">Email address *</label>
-                <div class="col-sm-7">
-                    @Html.TextBoxFor(m => m.Email, new {@class = "form-control", placeholder = "Email", tabindex = 1})
-                    @Html.ValidationMessageFor(m => m.Email)
-                </div>
-
-            </div>
+            
 
             <div class="form-group">
                 <label class="col-sm-5 control-label">First Name *</label>
@@ -139,6 +132,15 @@
                 <div class="col-sm-7">
                     @Html.TextBoxFor(m => m.LastName, new {@class = "form-control", placeholder = "Last Name", tabindex = 1})
                     @Html.ValidationMessageFor(m => m.LastName)
+                </div>
+
+            </div>
+            
+            <div class="form-group">
+                <label class="col-sm-5 control-label">Email address *</label>
+                <div class="col-sm-7">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email", tabindex = 1 })
+                    @Html.ValidationMessageFor(m => m.Email)
                 </div>
 
             </div>
