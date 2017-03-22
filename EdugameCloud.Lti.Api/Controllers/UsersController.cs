@@ -6,7 +6,10 @@ using System.Runtime.Serialization;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +31,12 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
 
         private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
+
+
+        public UsersController(IAdobeConnectAccountService acAccountService, ApplicationSettingsProvider settings, ILogger logger, ICache cache)
+            : base(acAccountService, settings, logger, cache)
+        {
+        }
 
 
         [Route("update")]

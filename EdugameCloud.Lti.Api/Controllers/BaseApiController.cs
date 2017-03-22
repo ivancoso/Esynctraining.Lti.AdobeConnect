@@ -21,7 +21,6 @@ namespace EdugameCloud.Lti.Api.Controllers
         private static bool? isDebug;
 
         private readonly IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
-        private readonly LmsUserSessionModel userSessionModel;
         private LmsUserSession _session;
 
         #endregion
@@ -70,14 +69,12 @@ namespace EdugameCloud.Lti.Api.Controllers
         #region Constructors and Destructors
 
         public BaseApiController(
-            LmsUserSessionModel userSessionModel,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, 
             ICache cache
         )
         {
-            this.userSessionModel = userSessionModel;
             this.acAccountService = acAccountService;
             this.Settings = settings;
             this.Logger = logger;

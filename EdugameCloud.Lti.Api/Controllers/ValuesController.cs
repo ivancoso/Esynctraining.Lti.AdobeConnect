@@ -25,13 +25,12 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
         
         public ValuesController(
-           LmsUserSessionModel userSessionModel,
            IAdobeConnectAccountService acAccountService,
            ApplicationSettingsProvider settings,
            ILogger logger,
            ICache cache
         )
-            : base(userSessionModel, acAccountService, settings, logger, cache)
+            : base(acAccountService, settings, logger, cache)
         {
         }
 

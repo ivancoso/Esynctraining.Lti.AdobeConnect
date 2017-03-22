@@ -31,12 +31,11 @@ namespace EdugameCloud.Lti.Api.Controllers
         #region Constructors and Destructors
 
         public AcMeetingController(
-            LmsUserSessionModel userSessionModel,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             IAdobeConnectUserService acUserService,
             ILogger logger, ICache cache)
-            : base(userSessionModel, acAccountService, settings, logger, cache)
+            : base( acAccountService, settings, logger, cache)
         {
             this.acUserService = acUserService;
         }

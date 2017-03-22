@@ -39,11 +39,10 @@
 
         public ReportsController(
             IReportsService reportService,
-            LmsUserSessionModel userSessionModel,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, ICache cache)
-            : base(userSessionModel, acAccountService, settings, logger, cache)
+            : base(acAccountService, settings, logger, cache)
         {
             _reportService = reportService;
         }
