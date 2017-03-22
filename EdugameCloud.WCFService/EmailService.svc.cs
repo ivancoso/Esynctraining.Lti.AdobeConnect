@@ -309,7 +309,7 @@ namespace EdugameCloud.WCFService
                         //PostQuizUrl = "https://app.edugamecloud.com"
                     };
                     bool sentSuccessfully = MailModel.SendEmailSync(quizResult.ParticipantName, quizResult.ACEmail,
-                        Emails.TrialSubject,
+                        Emails.GoddardPostQuizSubject,
                         model, Common.AppEmailName, Common.AppEmail);
                     if (!sentSuccessfully)
                     {

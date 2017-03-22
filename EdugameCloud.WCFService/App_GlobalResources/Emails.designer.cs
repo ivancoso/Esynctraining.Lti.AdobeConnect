@@ -97,6 +97,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pass this quiz to get your Goddard Systems certificate.
+        /// </summary>
+        internal static string GoddardPostQuizSubject {
+            get {
+                return ResourceManager.GetString("GoddardPostQuizSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License upgrade is requested..
         /// </summary>
         internal static string LicenseUpgradeRequested {
@@ -115,7 +124,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pass this quiz to get your Goddard Systems certificate.
+        ///   Looks up a localized string similar to Welcome to EduGame Cloud!.
         /// </summary>
         internal static string TrialSubject {
             get {
