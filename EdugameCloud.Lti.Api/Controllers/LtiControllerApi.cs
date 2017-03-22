@@ -23,7 +23,8 @@
         public class MeetingRequestDtoEx : MeetingRequestDto
         {
             [DataMember]
-            public bool forceUpdate { get; set; }
+            public bool ForceUpdate { get; set; }
+
         }
 
         #region Fields
@@ -149,7 +150,7 @@
             {
                 var service = LmsFactory.GetUserService((LmsProviderEnum)LmsCompany.LmsProviderId);
 
-                if (request.forceUpdate && LmsCompany.UseSynchronizedUsers
+                if (request.ForceUpdate && LmsCompany.UseSynchronizedUsers
                     && service != null
                     && service.CanRetrieveUsersFromApiForCompany(LmsCompany)
                     && LmsCompany.LmsCourseMeetings != null)
@@ -180,18 +181,6 @@
             }
         }
         
-        /// <summary>
-        /// The leave meeting.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS provider name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
         [Route("meeting/leave")]
         [HttpPost]
         public virtual OperationResult LeaveMeeting([FromBody]MeetingRequestDto request)
