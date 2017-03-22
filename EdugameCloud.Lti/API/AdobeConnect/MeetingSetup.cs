@@ -1407,7 +1407,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return meeting.Owner.UserId.Equals(param.lms_user_id);
             }
 
-            return this.UsersSetup.IsTeacher(param);
+            return UsersSetup.IsTeacher(param);
         }
         
         private bool CanJoin(
@@ -1643,9 +1643,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 Summary = meeting.Sco.Description,
                 ClassRoomId = meeting.Sco.ScoTag,
                 Template = meeting.Sco.SourceScoId,
-                // HACK: localization
-                //start_date = meeting.Sco.BeginDate.ToString("yyyy-MM-dd"),
-                //start_time = meeting.Sco.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
                 StartTimeStamp =
                     (long) meeting.Sco.BeginDate.ConvertToUnixTimestamp() +
                     (long) GetTimezoneShift(timeZone, meeting.Sco.BeginDate),
