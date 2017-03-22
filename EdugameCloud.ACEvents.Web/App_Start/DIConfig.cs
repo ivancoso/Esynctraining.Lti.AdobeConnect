@@ -3,8 +3,6 @@ using System.Web.Configuration;
 using Castle.Core.Resource;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using EdugameCloud.Persistence;
-using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Providers;
 
