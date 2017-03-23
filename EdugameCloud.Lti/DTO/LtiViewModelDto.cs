@@ -33,7 +33,7 @@ namespace EdugameCloud.Lti.DTO
                 public string GetRecordingFLV { get; set; } = "lti/recordings/getFlv/{0}"; // get
 
                 public string GetUsersForMeeting { get; set; } = RestWebApiBaseUrl + "users"; // API
-                public string VreateACUser { get; set; } = RestWebApiBaseUrl + "acNewUser"; // API
+                public string CreateACUser { get; set; } = RestWebApiBaseUrl + "acNewUser"; // API
                 public string SearchACUser { get; set; } = RestWebApiBaseUrl + "acSearchUser"; // API
                 public string SetDefaultACRoles { get; set; } = RestWebApiBaseUrl + "meeting/SetDefaultACRoles"; // API
                 public string SetUserRole { get; set; } = RestWebApiBaseUrl + "users/update"; // API
