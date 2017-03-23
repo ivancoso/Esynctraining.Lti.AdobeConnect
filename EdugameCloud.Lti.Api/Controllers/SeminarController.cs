@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("sessions/edit")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
-        public OperationResult SaveSeminarSession(SeminarSessionInputDto seminarSessionDto)
+        public OperationResult SaveSeminarSession([FromBody]SeminarSessionInputDto seminarSessionDto)
         {
             if (seminarSessionDto == null)
                 throw new ArgumentNullException(nameof(seminarSessionDto));
@@ -154,17 +154,17 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("sessions/delete")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
-        public OperationResult DeleteSeminarSession(string seminarSessionId)
+        public OperationResult DeleteSeminarSession([FromBody]DeleteSeminarSessionDto model)
         {
-            if (string.IsNullOrWhiteSpace(seminarSessionId))
-                throw new ArgumentException("seminarSessionId can't be empty", nameof(seminarSessionId));
+            if (string.IsNullOrWhiteSpace(model.seminarSessionId))
+                throw new ArgumentException("seminarSessionId can't be empty", nameof(model.seminarSessionId));
 
             //TODO: CHECK permission for deletion
             //TODO: to service
             try
             {
                 var ac = GetCurrentUserProvider(Session);
-                var result = ac.DeleteSco(seminarSessionId);
+                var result = ac.DeleteSco(model.seminarSessionId);
 
                 return OperationResult.Success();
             }
