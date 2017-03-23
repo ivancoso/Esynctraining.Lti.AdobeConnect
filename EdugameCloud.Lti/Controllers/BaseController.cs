@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Runtime.Caching;
 using System.Web.Mvc;
-using Esynctraining.Core.Logging;
-using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core;
+using EdugameCloud.Core.Business;
+using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
-using Esynctraining.Core.Providers;
-using EdugameCloud.Core.Business.Models;
-using Esynctraining.Core.Utils;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core;
 using Esynctraining.Core.Caching;
-using EdugameCloud.Core.Business;
-using Esynctraining.AdobeConnect;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {

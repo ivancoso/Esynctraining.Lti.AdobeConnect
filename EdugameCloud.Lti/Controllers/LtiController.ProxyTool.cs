@@ -29,7 +29,6 @@
         }
 
 
-        [ActionName("register-proxy-tool")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         [HttpGet]
         public virtual ActionResult RegisterProxyTool(string lmsDomain)
@@ -55,7 +54,6 @@
                 });
         }
         
-        [ActionName("register-proxy-tool")]
         [HttpPost]
         public virtual ActionResult RegisterProxyTool(ProxyToolPasswordModel model)
         {
@@ -70,7 +68,7 @@
         }
 
         #region Methods
-        
+
         private bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
         {
             var pass = (string)settings.InitialBBPassword;

@@ -1,6 +1,4 @@
-﻿using EdugameCloud.Core.Business;
-using EdugameCloud.Lti.Constants;
-
+﻿
 namespace EdugameCloud.Lti.Controllers
 {
     using System;
@@ -15,10 +13,12 @@ namespace EdugameCloud.Lti.Controllers
     using System.Web.Mvc;
     using DotNetOpenAuth.AspNet;
     using EdugameCloud.Core;
+    using EdugameCloud.Core.Business;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Desire2Learn;
+    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Core.OAuth;
@@ -38,7 +38,6 @@ namespace EdugameCloud.Lti.Controllers
     using Esynctraining.Core.Utils;
     using LtiLibrary.Core.Common;
     using Microsoft.Web.WebPages.OAuth;
-    using Newtonsoft.Json;
 
     public partial class LtiController : BaseController
     {
@@ -143,7 +142,7 @@ namespace EdugameCloud.Lti.Controllers
 
                     string username = null;
                     var company = s.With(x => x.LmsCompany);
-                    var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.BrightspaceApiVersion), company);
+                    var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, string.Format(d2lService.WhoAmIUrlFormat, (string)Settings.BrightspaceApiVersion), company);
                     if (string.IsNullOrEmpty(user.UniqueName))
                     {
                         var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
@@ -167,8 +166,8 @@ namespace EdugameCloud.Lti.Controllers
                     else
                     {
                         Logger.ErrorFormat("[AuthenticationCallback] UserId:{0}, UserKey:{1}", userId, userKey);
-                        this.ViewBag.Error = Resources.Messages.CanSaveToDb;
-                        return this.View("Error");
+                        ViewBag.Error = Resources.Messages.CanSaveToDb;
+                        return View("Error");
                     }
 
                     return AuthCallbackSave(session, provider, token, user.Identifier, username, "Error");
@@ -220,7 +219,7 @@ namespace EdugameCloud.Lti.Controllers
                         Logger.ErrorFormat(ex, "[AuthenticationCallback] Application exception. SessionKey:{0}, Message:{1}", session, ex.Message);
                         ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                         ViewBag.Message = ex.Message;
-                        return this.View("~/Views/Lti/LtiError.cshtml");
+                        return View("~/Views/Lti/LtiError.cshtml");
                     }
                 }
 
@@ -229,14 +228,14 @@ namespace EdugameCloud.Lti.Controllers
             catch (Core.WarningMessageException ex)
             {
                 Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", session);
-                this.ViewBag.Message = ex.Message;
-                return this.View("~/Views/Lti/LtiError.cshtml");
+                ViewBag.Message = ex.Message;
+                return View("~/Views/Lti/LtiError.cshtml");
             }
             catch (Exception ex)
             {
                 Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", session);
-                this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
-                return this.View("~/Views/Lti/LtiError.cshtml");
+                ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
+                return View("~/Views/Lti/LtiError.cshtml");
             }
         }
 
