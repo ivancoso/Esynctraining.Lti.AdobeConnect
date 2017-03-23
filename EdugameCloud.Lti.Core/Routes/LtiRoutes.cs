@@ -90,7 +90,9 @@
 
             // ??? routes.MapLowercaseRoute("DefaultLti", "", new { controller = "Lti", action = "Index" });
             // ??? routes.MapLowercaseRoute("DefaultLtitabbed", "Lti/tabbed", new { controller = "Lti", action = "Index" });
-            // ??? routes.MapLowercaseRoute("UserParameters", "Lti/GetAuthenticationParameters", new { controller = "Lti", action = "GetAuthenticationParameters" });
+            // ??? 
+            routes.MapLowercaseRoute("UserParameters", "Lti/GetAuthenticationParameters", 
+                new { controller = "OfficeHoursPod", action = "GetAuthenticationParameters" });
 
             routes.MapLowercaseRoute("scheduled", "scheduled-actions/{action}", new { controller = "LtiSchedule" });
             //routes.MapLowercaseRoute("getusers", "users", new { controller = "Lti", action = "GetUsers" });
@@ -137,7 +139,7 @@
             //routes.MapLowercaseRoute("searchExistingMeeting", "acSearchMeeting", new { controller = "AcMeeting", action = "SearchExistingMeeting" });
             routes.MapLowercaseRoute("reuseAdobeConnectMeeting", "useExistingMeeting", new { controller = "Lti", action = "ReuseExistedAdobeConnectMeeting" });
 
-            routes.MapLowercaseRoute("register-proxy-tool", "register-proxy-tool", new { controller = "LtiProxyTool", action = "register-proxy-tool" });
+            routes.MapLowercaseRoute("register-proxy-tool", "register-proxy-tool", new { controller = "LtiProxyTool", action = "RegisterProxyTool" });
             
             //routes.MapLowercaseRoute("seminarsAll", "seminars", new { controller = "Seminar", action = "GetAll" });
             //routes.MapLowercaseRoute("seminarsCreate", "seminars/create", new { controller = "Seminar", action = "Create" });
