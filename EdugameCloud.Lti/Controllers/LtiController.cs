@@ -95,7 +95,7 @@ namespace EdugameCloud.Lti.Controllers
         
         #region Public Methods and Operators
 
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here."),
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here.")]
         [AllowAnonymous]
         public virtual ActionResult AuthenticationCallback(
             // ReSharper disable once InconsistentNaming
@@ -180,7 +180,7 @@ namespace EdugameCloud.Lti.Controllers
                         AuthenticationResult result;
                         if (param.GetLtiProviderName(provider) == LmsProviderNames.Canvas)
                         {
-                            var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(session.LmsCompany, (string)Settings.CanvasClientId, (string)Settings.CanvasClientSecret);
+                            var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(s.LmsCompany, (string)Settings.CanvasClientId, (string)Settings.CanvasClientSecret);
                             result = OAuthWebSecurityWrapper.VerifyLtiAuthentication(HttpContext, oAuthSettings);
                         }
                         else
