@@ -119,6 +119,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("sessions/create")]
         [Route("sessions/edit")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResult SaveSeminarSession(SeminarSessionInputDto seminarSessionDto)
         {
             if (seminarSessionDto == null)
@@ -152,6 +153,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("sessions/delete")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResult DeleteSeminarSession(string seminarSessionId)
         {
             if (string.IsNullOrWhiteSpace(seminarSessionId))

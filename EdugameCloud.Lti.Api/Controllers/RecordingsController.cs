@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.DTO.Recordings;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
@@ -41,7 +43,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             [Required]
             [DataMember]
             public bool isPublic { get; set; }
-            
+
             [DataMember]
             public string password { get; set; }
 
@@ -102,110 +104,112 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
 
 
-        //// TODO: create DTO with validation!!
-        //[HttpPost]
-        //public virtual OperationResult EditRecording(EditDto dto)
-        //{
-        //    if (dto == null)
-        //        throw new ArgumentNullException(nameof(dto));
+        // TODO: create DTO with validation!!
+        // NOTE: quick fix. defined 2 routes due to http://stackoverflow.com/questions/35011192/how-to-define-an-optional-parameter-in-path-using-swagger
+        [Route("edit")]
+        [Route("edit/{id}")]
+        [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        public virtual OperationResult EditRecording([FromBody]EditDto dto)
+        {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
 
-        //    LmsCompany lmsCompany = null;
-        //    try
-        //    {
-        //        // TRICK: 1st to enable culture for thread
-        //        var session = GetReadOnlySession(dto.lmsProviderName);
+            try
+            {
+                ///
+                /// TODO: REUSE!!!!
+                ///
+                foreach (var key in ModelState.Keys.ToList().Where(key => ModelState.ContainsKey(key)))
+                {
+                    ModelState[key].Errors.Clear();
+                }
 
-        //        ///
-        //        /// TODO: REUSE!!!!
-        //        ///
-        //        foreach (var key in ModelState.Keys.ToList().Where(key => ModelState.ContainsKey(key)))
-        //        {
-        //            ModelState[key].Errors.Clear();
-        //        }
-        //        TryValidateModel(dto);
-        //        if (!ModelState.IsValid)
-        //        {
-        //            var errorMessage = new StringBuilder();
-        //            if (ModelState != null)
-        //            {
-        //                foreach (var msgSet in ModelState.Values)
-        //                    foreach (var msg in msgSet.Errors)
-        //                    {
-        //                        string txt = msg.ErrorMessage;
-        //                        if (!string.IsNullOrWhiteSpace(txt) && txt.Contains("#_#"))
-        //                        {
-        //                            var errorDetails = txt.Split(new[] { "#_#" }, StringSplitOptions.RemoveEmptyEntries);
-        //                            int errorCode;
-        //                            if (errorDetails.FirstOrDefault() == null || !int.TryParse(errorDetails.FirstOrDefault(), out errorCode))
-        //                            {
-        //                                txt = errorDetails.FirstOrDefault();
-        //                            }
-        //                            else
-        //                            {
-        //                                txt = errorDetails.ElementAtOrDefault(1);
-        //                            }
-        //                        }
+                TryValidateModel(dto);
 
-        //                        errorMessage.Append(txt);
-        //                        errorMessage.Append(" ");
-        //                    }
-        //            }
+                if (!ModelState.IsValid)
+                {
+                    var errorMessage = new StringBuilder();
+                    if (ModelState != null)
+                    {
+                        foreach (var msgSet in ModelState.Values)
+                            foreach (var msg in msgSet.Errors)
+                            {
+                                string txt = msg.ErrorMessage;
+                                if (!string.IsNullOrWhiteSpace(txt) && txt.Contains("#_#"))
+                                {
+                                    var errorDetails = txt.Split(new[] { "#_#" }, StringSplitOptions.RemoveEmptyEntries);
+                                    int errorCode;
+                                    if (errorDetails.FirstOrDefault() == null || !int.TryParse(errorDetails.FirstOrDefault(), out errorCode))
+                                    {
+                                        txt = errorDetails.FirstOrDefault();
+                                    }
+                                    else
+                                    {
+                                        txt = errorDetails.ElementAtOrDefault(1);
+                                    }
+                                }
 
-        //            return Json(OperationResult.Error(errorMessage.ToString()));
-        //        }
+                                errorMessage.Append(txt);
+                                errorMessage.Append(" ");
+                            }
+                    }
 
-        //        lmsCompany = session.LmsCompany;
-        //        var param = session.LtiSession.With(x => x.LtiParam);
+                    return OperationResult.Error(errorMessage.ToString());
+                }
 
-        //        OperationResult result = RecordingsService.EditRecording(
-        //            lmsCompany,
-        //            this.GetAdminProvider(lmsCompany),
-        //            param.course_id,
-        //            dto.id,
-        //            dto.meetingId,
-        //            dto.name,
-        //            dto.summary);
+                var lmsCompany = Session.LmsCompany;
+                var param = Session.LtiSession.LtiParam;
 
-        //        return Json(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = GetOutputErrorMessage("EditRecording", lmsCompany, ex);
-        //        return Json(OperationResult.Error(errorMessage));
-        //    }
-        //}
+                OperationResult result = RecordingsService.EditRecording(
+                    lmsCompany,
+                    this.GetAdminProvider(),
+                    param.course_id,
+                    dto.id,
+                    dto.meetingId,
+                    dto.name,
+                    dto.summary);
 
-        //// TODO: id -> recordingId
-        //[HttpPost]
-        //public virtual JsonResult DeleteRecording(string lmsProviderName, int meetingId, string id)
-        //{
-        //    LmsCompany lmsCompany = null;
-        //    try
-        //    {
-        //        var session = GetReadOnlySession(lmsProviderName);
-        //        lmsCompany = session.LmsCompany;
-        //        var param = session.LtiSession.With(x => x.LtiParam);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("EditRecording", ex);
+                return OperationResult.Error(errorMessage);
+            }
+        }
 
-        //        if (!lmsCompany.CanRemoveRecordings)
-        //            throw new Core.WarningMessageException("Recording deletion is not enabled for the LMS license");
+        // NOTE: quick fix. defined 2 routes due to http://stackoverflow.com/questions/35011192/how-to-define-an-optional-parameter-in-path-using-swagger
+        [Route("delete")]
+        [Route("delete/{id}")]
+        [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        public virtual OperationResult DeleteRecording(int meetingId, string id)
+        {
+            try
+            {
+                var lmsCompany = Session.LmsCompany;
+                var param = Session.LtiSession.LtiParam;
 
-        //        OperationResult result = RecordingsService.RemoveRecording(
-        //            lmsCompany,
-        //            this.GetAdminProvider(lmsCompany),
-        //            param.course_id,
-        //            id,
-        //            meetingId);
+                if (!lmsCompany.CanRemoveRecordings)
+                    throw new Core.WarningMessageException("Recording deletion is not enabled for the LMS license");
 
-        //        return Json(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = GetOutputErrorMessage("DeleteRecording", lmsCompany, ex);
-        //        return Json(OperationResult.Error(errorMessage));
-        //    }
-        //}
+                OperationResult result = RecordingsService.RemoveRecording(
+                    lmsCompany,
+                    this.GetAdminProvider(),
+                    param.course_id,
+                    id,
+                    meetingId);
 
-
+                return result;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("DeleteRecording", ex);
+                return OperationResult.Error(errorMessage);
+            }
+        }
+        
         [Route("publish")]
         [HttpPost]
         public OperationResult PublishRecording(RecordingRequestDto request)

@@ -115,9 +115,9 @@
             routes.MapLowercaseRoute("joinmeetingmobile", "meeting/JoinMobile", new { controller = "Lti", action = "JoinMeetingMobile" });
 
             //routes.MapLowercaseRoute("getrecordings", "recordings", new { controller = "LtiRecording", action = "GetRecordings" });
-            routes.MapLowercaseRoute("editrecording2", "recordings/edit/{id}", new { controller = "LtiRecording", action = "EditRecording", id = UrlParameter.Optional },
-                new { httpMethod = new HttpMethodConstraint("POST") });
-            routes.MapLowercaseRoute("deleterecording", "recordings/delete/{id}", new { controller = "LtiRecording", action = "DeleteRecording", id = UrlParameter.Optional });
+            //routes.MapLowercaseRoute("editrecording2", "recordings/edit/{id}", new { controller = "LtiRecording", action = "EditRecording", id = UrlParameter.Optional },
+            //    new { httpMethod = new HttpMethodConstraint("POST") });
+            //routes.MapLowercaseRoute("deleterecording", "recordings/delete/{id}", new { controller = "LtiRecording", action = "DeleteRecording", id = UrlParameter.Optional });
 
             routes.MapLowercaseRoute("converttoMP4", "recordings/MakeMP4", new { controller = "LtiRecording", action = "ConvertToMP4" });
 
