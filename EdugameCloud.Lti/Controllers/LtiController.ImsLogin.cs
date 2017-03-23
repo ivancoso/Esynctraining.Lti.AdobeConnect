@@ -113,7 +113,7 @@ namespace EdugameCloud.Lti.Controllers
                     throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
                 }
 
-                return this.RedirectToExtJs(session, lmsUser, key, null);
+                return this.RedirectToExtJs(session, lmsUser);
             }
             catch (LtiException ex)
             {

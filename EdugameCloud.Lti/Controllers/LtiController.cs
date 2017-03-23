@@ -53,9 +53,6 @@ namespace EdugameCloud.Lti.Controllers
         private readonly UsersSetup usersSetup;
         private readonly IAdobeConnectUserService acUserService;
 
-        /// NOTE: use property only, not this field
-        private LmsProviderModel _lmsProviderModel;
-
         #endregion
 
         private ICanvasAPI CanvasApi => IoC.Resolve<ICanvasAPI>();
@@ -99,7 +96,6 @@ namespace EdugameCloud.Lti.Controllers
         #region Public Methods and Operators
 
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here."),
-        ActionName("callback")]
         [AllowAnonymous]
         public virtual ActionResult AuthenticationCallback(
             // ReSharper disable once InconsistentNaming
@@ -108,7 +104,7 @@ namespace EdugameCloud.Lti.Controllers
             string __sid__ = null,
             string code = null,
             string state = null,
-            string providerKey = null)
+            string session = null)
         {
             try
             {
@@ -119,11 +115,11 @@ namespace EdugameCloud.Lti.Controllers
                     return this.View("Error");
                 }
                 __provider__ = FixExtraDataIssue(__provider__);
-                if (string.IsNullOrEmpty(providerKey))
+                if (string.IsNullOrEmpty(session))
                 {
                     if (Request.Cookies.AllKeys.Contains(ProviderKeyCookieName))
                     {
-                        providerKey = Request.Cookies[ProviderKeyCookieName].Value;
+                        session = Request.Cookies[ProviderKeyCookieName].Value;
                     }
                     else
                     {
@@ -132,10 +128,10 @@ namespace EdugameCloud.Lti.Controllers
                         return this.View("Error");
                     }
                 }
-                providerKey = FixExtraDataIssue(providerKey);
+                session = FixExtraDataIssue(session);
                 string provider = __provider__;
-                LmsUserSession session = GetSession(providerKey);
-                var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
+                LmsUserSession s = GetSession(session);
+                var param = s.With(x => x.LtiSession).With(x => x.LtiParam);
 
                 if (param.GetLtiProviderName(provider) == LmsProviderNames.Brightspace)
                 {
@@ -146,7 +142,7 @@ namespace EdugameCloud.Lti.Controllers
                     var hostUrl = authority.Replace(scheme, string.Empty);
 
                     string username = null;
-                    var company = session.With(x => x.LmsCompany);
+                    var company = s.With(x => x.LmsCompany);
                     var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.BrightspaceApiVersion), company);
                     if (string.IsNullOrEmpty(user.UniqueName))
                     {
@@ -175,7 +171,7 @@ namespace EdugameCloud.Lti.Controllers
                         return this.View("Error");
                     }
 
-                    return AuthCallbackSave(providerKey, provider, token, user.Identifier, username, "Error");
+                    return AuthCallbackSave(session, provider, token, user.Identifier, username, "Error");
                 }
                 else
                 {
@@ -200,7 +196,7 @@ namespace EdugameCloud.Lti.Controllers
                                     throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
                             }
 
-                            return AuthCallbackSave(providerKey, provider,
+                            return AuthCallbackSave(session, provider,
                                 result.ExtraData.ContainsKey("accesstoken")
                                     ? result.ExtraData["accesstoken"]
                                     : null,
@@ -221,7 +217,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                     catch (ApplicationException ex)
                     {
-                        Logger.ErrorFormat(ex, "[AuthenticationCallback] Application exception. SessionKey:{0}, Message:{1}", providerKey, ex.Message);
+                        Logger.ErrorFormat(ex, "[AuthenticationCallback] Application exception. SessionKey:{0}, Message:{1}", session, ex.Message);
                         ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                         ViewBag.Message = ex.Message;
                         return this.View("~/Views/Lti/LtiError.cshtml");
@@ -232,41 +228,42 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Core.WarningMessageException ex)
             {
-                Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
+                Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", session);
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
             catch (Exception ex)
             {
-                Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
+                Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", session);
                 this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }
-        
-        public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode, bool disableCacheBuster = true)
+
+        [HttpGet]
+        public virtual ActionResult GetExtJsPage(string primaryColor, string session, int acConnectionMode, bool disableCacheBuster = true)
         {
-            LtiViewModelDto model = TempData["lti-index-model"] as LtiViewModelDto;
+            var model = TempData["lti-index-model"] as LtiViewModelDto;
 
             // TRICK: to change lang inside
-            LmsUserSession session = GetReadOnlySession(lmsProviderName);
+            LmsUserSession s = GetReadOnlySession(session);
 
             if (model == null)
             {
-                model = BuildModel(session);
-            }
-            
+                model = BuildModel(s);
+            }            
             return View("Index", model);
         }
         
-        public virtual ActionResult JoinMeeting(string lmsProviderName, int meetingId)
+        [HttpGet]
+        public virtual ActionResult JoinMeeting(string session, int meetingId)
         {
             LmsCompany credentials = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
-                credentials = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
+                var s = GetReadOnlySession(session);
+                credentials = s.LmsCompany;
+                var param = s.LtiSession.LtiParam;
                 string breezeSession = null;
 
                 string url = this.meetingSetup.JoinMeeting(credentials, param, meetingId,
@@ -282,20 +279,21 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                Logger.ErrorFormat(ex, "JoinMeeting exception. Id:{0}. SessionID: {1}.", meetingId, lmsProviderName);
+                Logger.ErrorFormat(ex, "JoinMeeting exception. Id:{0}. SessionID: {1}.", meetingId, session);
                 this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }
 
-        public virtual ActionResult JoinMeetingMobile(string lmsProviderName)
+        [HttpGet]
+        public virtual ActionResult JoinMeetingMobile(string session)
         {
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
+                var s = GetReadOnlySession(session);
+                lmsCompany = s.LmsCompany;
+                var param = s.LtiSession.LtiParam;
                 var provider = GetAdminProvider(lmsCompany);
                 var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                 if (lmsUser == null)
@@ -336,7 +334,7 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
         
-        [ActionName("login")]
+        [HttpPost]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
         {
@@ -433,7 +431,7 @@ namespace EdugameCloud.Lti.Controllers
                 sw = Stopwatch.StartNew();
 
                 LmsUserSession session = this.SaveSession(lmsCompany, param, lmsUser);
-                var key = session.Id.ToString();
+                var sessionKey = session.Id.ToString();
 
                 sw.Stop();
                 trace.AppendFormat("SaveSession: time: {0}.\r\n", sw.Elapsed.ToString());
@@ -455,7 +453,7 @@ namespace EdugameCloud.Lti.Controllers
                         if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
                             CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
                         {
-                            this.StartOAuth2Authentication(lmsCompany, provider, key, param);
+                            this.StartOAuth2Authentication(lmsCompany, provider, sessionKey, param);
                             return null;
                         }
 
@@ -499,7 +497,7 @@ namespace EdugameCloud.Lti.Controllers
                                 "Lti",
                                 new {__provider__ = provider},
                                 schema);
-                            Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
+                            Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, sessionKey));
                             return Redirect(
                                 d2lService
                                     .GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain, lmsCompany)
@@ -565,7 +563,7 @@ namespace EdugameCloud.Lti.Controllers
                     throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
                 }
 
-                return this.RedirectToExtJs(session, lmsUser, key, trace);
+                return this.RedirectToExtJs(session, lmsUser, trace);
             }
             catch (LtiException ex)
             {
@@ -730,14 +728,14 @@ namespace EdugameCloud.Lti.Controllers
             //return param.lms_domain.ToLower().Replace("www.", string.Empty).Equals(credentials.LmsDomain.Replace("www.", string.Empty), StringComparison.OrdinalIgnoreCase);
         }
 
-        private void StartOAuth2Authentication(LmsCompany lmsCompany, string provider, string providerKey, LtiParamDTO model)
+        private void StartOAuth2Authentication(LmsCompany lmsCompany, string provider, string session, LtiParamDTO model)
         {
             string schema = Request.GetScheme();
 
             string returnUrl = this.Url.AbsoluteAction(
-                        "callback",
+                        "AuthenticationCallback",
                         "Lti",
-                        new { __provider__ = provider, providerKey },
+                        new { __provider__ = provider, session },
                         schema);
             switch (provider)
             {
@@ -745,7 +743,7 @@ namespace EdugameCloud.Lti.Controllers
                     returnUrl = UriBuilderExtensions.AddQueryStringParameter(
                         returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
 
-                    returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
+                    returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
                     var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsCompany, (string)Settings.CanvasClientId, (string)Settings.CanvasClientSecret);
                     if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))
                     {
@@ -869,14 +867,14 @@ namespace EdugameCloud.Lti.Controllers
                     }
                 }
                 
-                return this.RedirectToExtJs(session, lmsUser, providerKey);
+                return this.RedirectToExtJs(session, lmsUser);
             }
 
             this.ViewBag.Error = string.Format("Credentials not found");
             return View(viewName);
         }
 
-        private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName, StringBuilder trace = null)
+        private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, StringBuilder trace = null)
         {
             var request = Request;
             var form = new FormCollection(request.Unvalidated().Form);
@@ -921,7 +919,7 @@ namespace EdugameCloud.Lti.Controllers
             return RedirectToAction("GetExtJsPage", "Lti", new
             {
                 primaryColor = primaryColor,
-                lmsProviderName = providerName,
+                session = session.Id.ToString(),
                 acConnectionMode = (int)lmsUser.AcConnectionMode,
                 disableCacheBuster = true,
                 tab = tab,

@@ -19,31 +19,15 @@
         private readonly ILogger logger;
         private readonly dynamic settings;
         
-        #region Constructors and Destructors
 
         public LtiProxyToolController(
             ApplicationSettingsProvider settings,
             ILogger logger)
         {
-            this.settings = settings;
-            this.logger = logger;
+            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        #endregion
-
-        protected override JsonResult Json(object data, string contentType,
-                System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)
-        {
-            return new JsonNetResult
-            {
-                Data = data,
-                ContentType = contentType,
-                ContentEncoding = contentEncoding,
-                JsonRequestBehavior = behavior,
-            };
-        }
-
-        #region Public Methods and Operators
 
         [ActionName("register-proxy-tool")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
@@ -52,8 +36,8 @@
         {
             if (string.IsNullOrWhiteSpace(lmsDomain))
             {
-                this.ViewBag.Error = Resources.Messages.BlackboardDomainMissing;
-                return this.View("Error");
+                ViewBag.Error = Resources.Messages.BlackboardDomainMissing;
+                return View("Error");
             }
 
             lmsDomain = lmsDomain.TrimEnd(@"\/".ToCharArray());
@@ -76,16 +60,14 @@
         public virtual ActionResult RegisterProxyTool(ProxyToolPasswordModel model)
         {
             string error;
-            if (!this.TryRegisterEGCTool(model, out error))
+            if (!TryRegisterEGCTool(model, out error))
             {
-                this.ViewBag.Error = error;
-                return this.View("Error");
+                ViewBag.Error = error;
+                return View("Error");
             }
 
-            return this.View("ProxyToolRegistrationSucceeded", model);
+            return View("ProxyToolRegistrationSucceeded", model);
         }
-        
-        #endregion
 
         #region Methods
         
