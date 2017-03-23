@@ -1,22 +1,28 @@
 ﻿using System;
-using EdugameCloud.Lti.Api.Host.Swagger;
+using System.Collections.Specialized;
+using System.Net;
+using Castle.Core.Resource;
+using Castle.MicroKernel.Lifestyle;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using Castle.Windsor.MsDependencyInjection;
+using EdugameCloud.Lti.Api.Filters;
+using EdugameCloud.Persistence;
+using Esynctraining.CastleLog4Net;
+using Esynctraining.Core.Domain;
+using Esynctraining.Core.Providers;
+using Esynctraining.Windsor;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
-using Castle.Windsor;
-using Esynctraining.Windsor;
-using EdugameCloud.Persistence;
-using Castle.Core.Resource;
-using Castle.MicroKernel.Registration;
-using FluentValidation;
-using Castle.Windsor.MsDependencyInjection;
-using Esynctraining.CastleLog4Net;
-using Esynctraining.Core.Providers;
-using Castle.MicroKernel.Lifestyle;
-using System.Collections.Specialized;
 
 namespace EdugameCloud.Lti.Api.Host
 {
@@ -24,9 +30,16 @@ namespace EdugameCloud.Lti.Api.Host
     {
         public IConfigurationRoot Configuration { get; }
 
+        public ILoggerFactory LoggerFactory { get; }
 
-        public Startup(IHostingEnvironment env)
+        public IHostingEnvironment HostingEnvironment { get; }
+
+
+        public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            HostingEnvironment = env;
+            LoggerFactory = loggerFactory;
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -43,7 +56,9 @@ namespace EdugameCloud.Lti.Api.Host
             services
                 .AddMvcCore(setup =>
                 {
-                    //setup.
+                    //setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
+                    //setup.Filters.Add(new ValidateModelAttribute());
+                    //setup.Filters.Add(new CheckModelForNullAttribute());
                 })
                 .AddApplicationPart(typeof(EdugameCloud.Lti.Api.Controllers.BaseApiController).Assembly)
                 .AddControllersAsServices()
@@ -91,7 +106,9 @@ namespace EdugameCloud.Lti.Api.Host
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
 
-                c.DocumentFilter<HideNonApiFilter>();
+                // HACK: umcomment for prod.
+                //if (HostingEnvironment.IsProduction())
+                //    c.DocumentFilter<HideNonApiFilter>();
 
                 // c.IncludeXmlComments(String.Format(@"{0}\SO.WebServices.XML", AppDomain.CurrentDomain.BaseDirectory)); // Use xml comments for Swagger documentation
 
@@ -121,16 +138,28 @@ namespace EdugameCloud.Lti.Api.Host
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(next =>
-            {
-                return ctx =>
-                {
-                    ctx.Response.Headers.Remove("Server");
-                    return next(ctx);
-                };
-            });
+            //app.Use(next =>
+            //{
+            //    return ctx =>
+            //    {
+            //        ctx.Response.Headers.Remove("Server");
+            //        return next(ctx);
+            //    };
+            //});
 
-
+            //app.UseExceptionHandler(
+            //    builder =>
+            //    {
+            //        builder.Run(
+            //        async context =>
+            //        {
+            //            context.Response.StatusCode = (int)HttpStatusCode.OK;
+            //            var ex = context.Features.Get<IExceptionHandlerFeature>();
+            //            if (ex != null)
+            //            { 
+            //            }
+            //        });
+            //    });
             app.UseMvc();
 
             //app.UseCors("ALL");

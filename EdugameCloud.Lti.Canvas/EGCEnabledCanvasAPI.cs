@@ -167,7 +167,7 @@ namespace EdugameCloud.Lti.Canvas
                 var result = response.Data;
                 if (result != null)
                 {
-                    result.PrimaryEmail = result.email;
+                    result.PrimaryEmail = result.Email;
                     SetRole(result, courseId);
                 }
 
@@ -231,7 +231,7 @@ namespace EdugameCloud.Lti.Canvas
                         u =>
                         {
                             SetRole(u, courseId); //u.lms_role = role;
-                            u.PrimaryEmail = u.email; // todo: create separate canvas api class and map it to LmsUserDTO
+                            u.PrimaryEmail = u.Email; // todo: create separate canvas api class and map it to LmsUserDTO
                         });
 
                     result.AddRange(us);

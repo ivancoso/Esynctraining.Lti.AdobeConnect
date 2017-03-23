@@ -55,6 +55,7 @@
 
         [Route("settings/save")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResultWithData<LmsUserSettingsDTO> SaveSettings([FromBody]LmsUserSettingsDTO settings)
         {
             try
@@ -102,6 +103,7 @@
         
         [Route("settings/checkpass")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResultWithData<bool> CheckPasswordBeforeJoin()
         {
             try
@@ -173,6 +175,7 @@
         
         [Route("meeting/leave")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResult LeaveMeeting([FromBody]MeetingRequestDto request)
         {
             try
@@ -190,6 +193,7 @@
         
         [Route("meeting/SetDefaultACRoles")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResultWithData<List<LmsUserDTO>> SetDefaultRolesForNonParticipants([FromBody]MeetingRequestDto request)
         {
             try

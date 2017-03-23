@@ -67,7 +67,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 IEnumerable<IRecordingDto> rawRecordings = RecordingsService.GetRecordings(
                     lmsCompany,
                     ac,
-                    param.course_id,
+                    session.LmsCourseId,
                     input.MeetingId,
                     getRoomTypeFactory);
 

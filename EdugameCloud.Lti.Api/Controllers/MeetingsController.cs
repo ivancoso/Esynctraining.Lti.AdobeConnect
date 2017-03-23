@@ -35,7 +35,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("meetings")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<MeetingDTO>> GetCourseMeetings()
         {
             StringBuilder trace = null;

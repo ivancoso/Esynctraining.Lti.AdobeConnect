@@ -46,6 +46,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("audioprofiles")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResultWithData<IEnumerable<AudioProfileDto>> GetAudioProfiles([FromBody]AudioProfileRequestDto request)
         {
             if (request == null)

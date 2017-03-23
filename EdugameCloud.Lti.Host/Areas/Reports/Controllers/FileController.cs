@@ -65,7 +65,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var credentials = session.LmsCompany;
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
-                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LmsCourseId, meetingId);
 
                 var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                 var acServer = credentials.AcServer;
@@ -144,7 +144,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
-                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LmsCourseId, meetingId);
 
                 var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                 var acMeetingUrl = credentials.AcServer + acMeeting.ScoInfo.UrlPath;
@@ -243,7 +243,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var credentials = session.LmsCompany;
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
-                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LmsCourseId, meetingId);
 
                 var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                 var acServer = credentials.AcServer;

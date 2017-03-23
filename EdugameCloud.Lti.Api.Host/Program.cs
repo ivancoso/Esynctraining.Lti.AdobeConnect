@@ -18,7 +18,10 @@ namespace EdugameCloud.Lti.Api.Host
             //RegisterLtiComponents(container);
 
             var host = new WebHostBuilder()
-                .UseKestrel()
+                .UseKestrel(opt => 
+                {
+                    opt.AddServerHeader = false;
+                })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()

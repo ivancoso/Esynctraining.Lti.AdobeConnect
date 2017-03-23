@@ -44,7 +44,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("acSearchMeeting")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = false)]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResultWithData<IEnumerable<MeetingItemDto>> SearchExistingMeeting([FromBody]SearchRequestDto request)
         {
             try
