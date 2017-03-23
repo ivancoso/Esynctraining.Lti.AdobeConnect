@@ -213,7 +213,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         
         [Route("publish")]
         [HttpPost]
-        public OperationResult PublishRecording(RecordingRequestDto request)
+        public OperationResult PublishRecording([FromBody]RecordingRequestDto request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -243,7 +243,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("unpublish")]
         [HttpPost]
-        public OperationResult UnpublishRecording(RecordingRequestDto request)
+        public OperationResult UnpublishRecording([FromBody]RecordingRequestDto request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -293,7 +293,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("share")]
         [HttpPost]
-        public virtual OperationResultWithData<string> ShareRecording(ShareRecordingRequestDto request)
+        public virtual OperationResultWithData<string> ShareRecording([FromBody]ShareRecordingRequestDto request)
         {
             try
             {
