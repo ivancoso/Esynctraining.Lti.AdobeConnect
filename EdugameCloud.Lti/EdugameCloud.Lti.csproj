@@ -282,7 +282,6 @@
     <Compile Include="API\TestConnectionService.cs" />
     <Compile Include="Constants\LtiParameterFriendlyNames.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
-    <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\LtiController.ImsLogin.cs" />
     <Compile Include="DTO\ApiLti.cs" />
     <Compile Include="JsonSerializer.cs" />

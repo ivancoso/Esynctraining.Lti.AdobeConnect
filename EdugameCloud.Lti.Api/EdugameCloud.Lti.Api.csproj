@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=6.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.6.0.2\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.26, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.26\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
@@ -156,6 +159,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.3.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -174,6 +178,11 @@
     <Compile Include="Controllers\AcMeetingController.cs" />
     <Compile Include="Controllers\AcUserController.cs" />
     <Compile Include="Controllers\AudioProfilesController.cs" />
+    <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Models\CreateSeminarDto.cs" />
+    <Compile Include="Models\DeleteMeetingEventDto.cs" />
+    <Compile Include="Models\SaveMeetingEventDto.cs" />
+    <Compile Include="Controllers\SeminarController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\TemplatesController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />

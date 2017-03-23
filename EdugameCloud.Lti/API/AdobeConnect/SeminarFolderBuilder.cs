@@ -2,7 +2,7 @@
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
-    internal sealed class SeminarFolderBuilder : IFolderBuilder
+    public sealed class SeminarFolderBuilder : IFolderBuilder
     {
         private readonly string _seminarLicenseScoId;
 
