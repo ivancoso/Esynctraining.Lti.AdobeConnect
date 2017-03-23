@@ -18,13 +18,12 @@
 	<script type="text/javascript">
 		var EsyncLti = @Html.Raw(JSON.Serialize(Model, options));
 		EsyncLti.ActionUrls = {
-			"getMP4Recordings": "lti-mp4/recordings",
+			//"getMP4Recordings": "lti-mp4/recordings",
 			"convertRecording": "lti-mp4/mp4/convert",
 			"convertRecordingWithSubtitles": "lti-mp4/mp4/convertWithSubtitles",
 			"getRecordingStatus": "lti-mp4/recordings/status",
-
-			
-			"getMP4Recordings": "lti/recordings", // API
+            
+            "getRecordings": "lti/recordings", // API   + "lti-mp4/recordings"
             "publishRecording": "lti/recordings/publish", // API
             "unpublishRecording": "lti/recordings/unpublish", // API
             "shareRecording": "lti/recordings/share", // API
