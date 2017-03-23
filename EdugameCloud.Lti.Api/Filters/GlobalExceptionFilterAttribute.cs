@@ -29,6 +29,7 @@ namespace EdugameCloud.Lti.Api.Filters
         {
             string message = string.Empty;
             var userMessage = context.Exception as IUserMessageException;
+
             if (userMessage != null)
             {
                 message = context.Exception.Message;
@@ -38,8 +39,8 @@ namespace EdugameCloud.Lti.Api.Filters
                 this._logger.LogError("GlobalExceptionFilter", context.Exception);
 
                 message = _isDevelopment
-                ? Resources.Messages.ExceptionOccured + context.Exception.ToString()
-                : Resources.Messages.ExceptionMessage;
+                    ? Resources.Messages.ExceptionOccured + context.Exception.ToString()
+                    : Resources.Messages.ExceptionMessage;
             }
 
             context.Result = new JsonResult(OperationResult.Error(message));

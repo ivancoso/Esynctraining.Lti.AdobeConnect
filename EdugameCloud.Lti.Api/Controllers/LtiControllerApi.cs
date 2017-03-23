@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Core.Business.Models;
@@ -28,8 +27,6 @@
         #endregion
 
         private ISynchronizationUserService SynchronizationUserService => IoC.Resolve<ISynchronizationUserService>();
-
-        //private LmsFactory LmsFactory => IoC.Resolve<LmsFactory>();
 
         private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 

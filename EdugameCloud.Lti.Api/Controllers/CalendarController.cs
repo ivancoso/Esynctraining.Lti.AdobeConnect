@@ -1,4 +1,6 @@
-﻿using EdugameCloud.Lti.Api.Models;
+﻿using System;
+using System.Collections.Generic;
+using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.DTO;
@@ -9,8 +11,6 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -18,6 +18,7 @@ namespace EdugameCloud.Lti.Api.Controllers
     public partial class CalendarController : BaseApiController
     {
         private readonly LmsFactory _lmsFactory;
+
 
         public CalendarController(
             IAdobeConnectAccountService acAccountService,
@@ -30,6 +31,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             _lmsFactory = lmsFactory ?? throw new ArgumentNullException(nameof(lmsFactory));
         }
+
 
         [Route("createBatch")]
         [HttpPost]
@@ -125,5 +127,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResult.Error(errorMessage);
             }
         }
+
     }
+
 }

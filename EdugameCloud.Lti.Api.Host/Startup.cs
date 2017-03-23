@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Net;
+using System.Threading.Tasks;
 using Castle.Core.Resource;
 using Castle.MicroKernel.Lifestyle;
 using Castle.MicroKernel.Registration;
@@ -56,14 +57,16 @@ namespace EdugameCloud.Lti.Api.Host
             services
                 .AddMvcCore(setup =>
                 {
-                    //setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
-                    //setup.Filters.Add(new ValidateModelAttribute());
-                    //setup.Filters.Add(new CheckModelForNullAttribute());
+                    setup.Filters.Add(new CheckModelForNullAttribute());
+                    setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
+                    setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                 })
-                .AddApplicationPart(typeof(EdugameCloud.Lti.Api.Controllers.BaseApiController).Assembly)
+                .AddApplicationPart(typeof(Controllers.BaseApiController).Assembly)
                 .AddControllersAsServices()
                 .AddJsonFormatters()
-                .AddApiExplorer();
+                .AddApiExplorer()
+                //.AddCors()
+                .AddDataAnnotations();
 
             var container = new WindsorContainer();
 
@@ -109,10 +112,10 @@ namespace EdugameCloud.Lti.Api.Host
                 // HACK: umcomment for prod.
                 //if (HostingEnvironment.IsProduction())
                 //    c.DocumentFilter<HideNonApiFilter>();
-
-                // c.IncludeXmlComments(String.Format(@"{0}\SO.WebServices.XML", AppDomain.CurrentDomain.BaseDirectory)); // Use xml comments for Swagger documentation
-
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme()
+                
+                //c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Api.xml", HostingEnvironment.WebRootPath)); 
+                
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "Authorization header using the Bearer scheme. Example: \"Authorization: lti {token}\"",
                     Name = "Authorization",
@@ -138,14 +141,23 @@ namespace EdugameCloud.Lti.Api.Host
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.Use(next =>
-            //{
-            //    return ctx =>
-            //    {
-            //        ctx.Response.Headers.Remove("Server");
-            //        return next(ctx);
-            //    };
-            //});
+            app.Use(next =>
+            {
+                return ctx =>
+                {
+                    ctx.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+                    ctx.Response.Headers.Add("Access-Control-Allow-Headers", new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" });
+                    ctx.Response.Headers.Add("Access-Control-Allow-Methods", new[] { "POST" });
+                    ctx.Response.Headers.Add("Access-Control-Max-Age", new[] { "1728000" });
+
+                    if (ctx.Request.Method == "OPTIONS")
+                    {
+                        return Task.FromResult(0);
+                    }
+
+                    return next(ctx);
+                };
+            });
 
             //app.UseExceptionHandler(
             //    builder =>
@@ -160,7 +172,9 @@ namespace EdugameCloud.Lti.Api.Host
             //            }
             //        });
             //    });
-            app.UseMvc();
+            app.UseMvc(cfg => 
+            {
+            });
 
             //app.UseCors("ALL");
 
