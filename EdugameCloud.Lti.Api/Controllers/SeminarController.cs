@@ -7,6 +7,7 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AdobeConnect;
+using Esynctraining.AdobeConnect.Api.Seminar.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -30,9 +31,15 @@ namespace EdugameCloud.Lti.Api.Controllers
         // TODO: ask if we need it or use base.Cache
         protected readonly ObjectCache _cache = System.Runtime.Caching.MemoryCache.Default;
 
+        private readonly API.AdobeConnect.ISeminarService _seminarService;
+
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
+        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
+
+        private API.AdobeConnect.IAdobeConnectAccountService AcAccountService => IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>();
 
         public SeminarController(
+            API.AdobeConnect.ISeminarService seminarService,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger,
@@ -40,9 +47,10 @@ namespace EdugameCloud.Lti.Api.Controllers
         )
             : base(acAccountService, settings, logger, cache)
         {
-
+            _seminarService = seminarService;
         }
 
+        [Route("create")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResult Create([FromBody]CreateSeminarDto model)
@@ -76,6 +84,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
+        [Route("edit")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResult Edit([FromBody]EditSeminarDto model)
@@ -105,6 +114,55 @@ namespace EdugameCloud.Lti.Api.Controllers
                 string errorMessage = GetOutputErrorMessage("Edit", ex);
                 return OperationResult.Error(errorMessage);
             }
+        }
+
+        [HttpPost]
+        public OperationResult SaveSeminarSession(SeminarSessionInputDto seminarSessionDto)
+        {
+            if (seminarSessionDto == null)
+                throw new ArgumentNullException(nameof(seminarSessionDto));
+
+            try
+            {
+                //save under admin account doesn't work for user license
+                var ac = GetCurrentUserProvider(Session);
+
+                // TRICK: change record meeting id to meeting sco-id
+                LtiParamDTO param = Session.LtiSession.LtiParam;
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(Session.LmsCompany.Id, param.course_id, long.Parse(seminarSessionDto.SeminarRoomId));
+                if (meeting == null)
+                {
+                    return OperationResult.Error(Resources.Messages.MeetingNotFound);
+                }
+
+                ProcessQuota(ac, meeting.ScoId, seminarSessionDto);
+
+                var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;
+                var meetingUpdateResult = _seminarService.SaveSeminarSession(seminarSessionDto, meeting.ScoId, ac, timeZone);
+                return meetingUpdateResult;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("SaveSeminarSession", ex);
+                return OperationResult.Error(errorMessage);
+            }
+        }
+
+        private void ProcessQuota(IAdobeConnectProxy ac, string meetingScoId, SeminarSessionInputDto seminarSessionDto)
+        {
+            var seminar = ac.GetScoInfo(meetingScoId).ScoInfo;
+            var license = _seminarService.GetSharedSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
+            if (license != null && !license.IsExpired)
+            {
+                seminarSessionDto.ExpectedLoad = license.Quota.Value;
+                return;
+            }
+
+            var userLicense = _seminarService.GetUserSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
+            if (userLicense == null)
+                throw new InvalidOperationException($"Not found seminar license for seminar '{seminar.Name}'({seminar.ScoId}).");
+
+            seminarSessionDto.ExpectedLoad = userLicense.LicenseQuota;
         }
 
         private IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)

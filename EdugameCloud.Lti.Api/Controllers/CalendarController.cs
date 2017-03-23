@@ -31,6 +31,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             _lmsFactory = lmsFactory ?? throw new ArgumentNullException(nameof(lmsFactory));
         }
 
+        [Route("createBatch")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResultWithData<IEnumerable<MeetingSessionDTO>> CreateBatch([FromBody]CreateMeetingSessionsBatchDto dto)
@@ -50,6 +51,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
+        [Route("getevents")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResultWithData<IEnumerable<MeetingSessionDTO>> GetEvents(int meetingId)
@@ -67,6 +69,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
+        [Route("createevent")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResultWithData<MeetingSessionDTO> CreateEvent(int meetingId)
@@ -85,6 +88,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
+        [Route("saveevent")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResultWithData<MeetingSessionDTO> SaveEvent([FromBody]SaveMeetingEventDto model)
@@ -103,6 +107,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
+        [Route("deleteevent")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResult DeleteEvent([FromBody]DeleteMeetingEventDto model)

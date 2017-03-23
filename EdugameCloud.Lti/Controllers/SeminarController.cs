@@ -83,60 +83,6 @@ namespace EdugameCloud.Lti.Controllers
         //}
 
         [HttpPost]
-        public JsonResult SaveSeminarSession(string lmsProviderName, SeminarSessionInputDto seminarSessionDto)
-        {
-            if (string.IsNullOrWhiteSpace(lmsProviderName))
-                throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
-            if (seminarSessionDto == null)
-                throw new ArgumentNullException(nameof(seminarSessionDto));
-
-            LmsCompany credentials = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                credentials = session.LmsCompany;
-                //save under admin account doesn't work for user license
-                var ac = GetCurrentUserProvider(session);
-
-                // TRICK: change record meeting id to meeting sco-id
-                var param = session.LtiSession.With(x => x.LtiParam);
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, param.course_id, long.Parse(seminarSessionDto.SeminarRoomId));
-                if (meeting == null)
-                {
-                    return Json(OperationResult.Error(Resources.Messages.MeetingNotFound));
-                }
-                
-                ProcessQuota(ac, meeting.ScoId, seminarSessionDto);
-
-                var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;
-                var meetingUpdateResult = _seminarService.SaveSeminarSession(seminarSessionDto, meeting.ScoId, ac, timeZone);
-                return Json(meetingUpdateResult);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("SaveSeminarSession", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-
-        private void ProcessQuota(IAdobeConnectProxy ac, string meetingScoId, SeminarSessionInputDto seminarSessionDto)
-        {
-            var seminar = ac.GetScoInfo(meetingScoId).ScoInfo;
-            var license = _seminarService.GetSharedSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
-            if (license != null && !license.IsExpired)
-            {
-                seminarSessionDto.ExpectedLoad = license.Quota.Value;
-                return;
-            }
-
-            var userLicense = _seminarService.GetUserSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
-
-            if (userLicense == null)
-                throw new InvalidOperationException($"Not found seminar license for seminar '{seminar.Name}'({seminar.ScoId}).");
-            seminarSessionDto.ExpectedLoad = userLicense.LicenseQuota;
-        }
-
-        [HttpPost]
         public JsonResult DeleteSeminarSession(string lmsProviderName, string seminarSessionId)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
