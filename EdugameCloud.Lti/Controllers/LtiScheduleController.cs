@@ -7,11 +7,7 @@
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
-    using Esynctraining.Core.Providers;
 
-    /// <summary>
-    /// The schedule controller.
-    /// </summary>
     [HandleError]
     public class LtiScheduleController : Controller
     {
@@ -20,12 +16,6 @@
         private readonly LmsCompanyModel lmsCompanyModel;
         
         private readonly LmsUserSessionModel lmsSessionModel;
-        
-        private readonly IBrainHoneyApi dlapApi;
-        
-        private readonly MeetingSetup meetingSetup;
-        
-        private readonly UsersSetup usersSetup;
         
         private readonly ScheduleModel scheduleModel;
 
@@ -36,50 +26,24 @@
         #region Constructors and Destructors
         
         public LtiScheduleController(
-            IBrainHoneyApi dlapApi, 
-            MeetingSetup meetingSetup, 
             LmsCompanyModel lmsCompanyModel, 
             LmsUserSessionModel lmsSessionModel,
             ScheduleModel scheduleModel, 
-            ApplicationSettingsProvider settings, 
-            UsersSetup usersSetup,
             IBrainHoneyScheduling bhScheduling)
         {
-            this.dlapApi = dlapApi;
-            this.meetingSetup = meetingSetup;
             this.lmsCompanyModel = lmsCompanyModel;
             this.lmsSessionModel = lmsSessionModel;
             this.scheduleModel = scheduleModel;
-            this.Settings = settings;
-            this.usersSetup = usersSetup;
             _bhScheduling = bhScheduling;
         }
 
         #endregion
-
-        #region Public Properties
         
-        public dynamic Settings { get; private set; }
-
-        #endregion
-
-        protected override JsonResult Json(object data, string contentType,
-                System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)
-        {
-            return new JsonNetResult
-            {
-                Data = data,
-                ContentType = contentType,
-                ContentEncoding = contentEncoding,
-                JsonRequestBehavior = behavior,
-            };
-        }
-
         #region Public Methods and Operators
 
         [HttpGet]
         [ActionName("force-update")]
-        public virtual ActionResult ForceUpdate(int meetingId)
+        public virtual ContentResult ForceUpdate(int meetingId)
         {
             string result = null;
             IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
@@ -106,12 +70,12 @@
                           + (res ? "' task succedded; Errors: " + error : "' task failed; Errors: " + error);
             }
 
-            return this.Content(result ?? "Tasks not found");
+            return Content(result ?? "Tasks not found");
         }
         
         [HttpGet]
         [ActionName("update-if-necessary")]
-        public virtual ActionResult UpdateIfNecessary(int meetingId)
+        public virtual ContentResult UpdateIfNecessary(int meetingId)
         {
             string result = null;
             IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
@@ -136,7 +100,7 @@
                 result += "'" + schedule.ScheduleDescriptor + (res ? "' task succedded; " : "' task failed; ");
             }
 
-            return this.Content(result ?? "Tasks not found");
+            return Content(result ?? "Tasks not found");
         }
 
         #endregion

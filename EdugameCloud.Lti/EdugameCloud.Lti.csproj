@@ -289,7 +289,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\LtiController.ProxyTool.cs" />
     <Compile Include="Controllers\LtiController.Meeting.cs" />
-    <Compile Include="Controllers\LtiController.OfficeHoursPod.cs" />
+    <Compile Include="Controllers\OfficeHoursPodController.cs" />
     <Compile Include="Controllers\LtiController.Recordings.cs" />
     <Compile Include="Controllers\LtiController.cs" />
     <Compile Include="Controllers\LtiScheduleController.cs" />

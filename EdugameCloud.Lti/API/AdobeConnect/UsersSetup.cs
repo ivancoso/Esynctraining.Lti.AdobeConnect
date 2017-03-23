@@ -450,7 +450,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 users.ForEach(x => 
                 {
-                    x.email = x.PrimaryEmail;
+                    x.Email = x.PrimaryEmail;
                 });
             }
             
@@ -930,7 +930,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 usersToAddToMeeting.ForEach(x =>
                 {
-                    x.email = x.PrimaryEmail;
+                    x.Email = x.PrimaryEmail;
                 });
             }
 
