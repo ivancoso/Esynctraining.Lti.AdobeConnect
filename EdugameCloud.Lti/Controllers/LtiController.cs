@@ -250,7 +250,8 @@ namespace EdugameCloud.Lti.Controllers
             if (model == null)
             {
                 model = BuildModel(s);
-            }            
+            }
+
             return View("Index", model);
         }
         
@@ -991,8 +992,10 @@ namespace EdugameCloud.Lti.Controllers
             var versionFileJs = CacheUtility.GetCachedItem<Version>(PersistantCache, CachePolicies.Keys.VersionFileName(filePattern), () =>
                 VersionProcessor.ProcessVersion(path, filePattern));
 
-//            string version = typeof(LtiController).Assembly.GetName().Version.ToString();
-//            version = version.Substring(0, version.LastIndexOf('.'));
+            //            string version = typeof(LtiController).Assembly.GetName().Version.ToString();
+            //            version = version.Substring(0, version.LastIndexOf('.'));
+
+            LtiViewModelDto.SettingsInfo.ActionUrls.RestWebApiBaseUrl = (string)Settings.LtiRestWebApiBaseUrl;
 
             var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
             return new LtiViewModelDto
