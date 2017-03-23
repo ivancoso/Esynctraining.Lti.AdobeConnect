@@ -39,14 +39,14 @@ namespace EdugameCloud.Lti.Controllers
         #region Public Methods and Operators
                 
         [HttpGet]
-        public virtual ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
+        public virtual ActionResult JoinRecording(string session, string recordingUrl)
         {
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
+                var s = GetReadOnlySession(session);
+                lmsCompany = s.LmsCompany;
+                var param = s.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
                 var provider = GetAdminProvider(lmsCompany);
                 string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, provider);
@@ -54,19 +54,19 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                return RecordingsError("JoinRecording", lmsProviderName, ex);
+                return RecordingsError("JoinRecording", session, ex);
             }
         }
         
         [HttpGet]
-        public virtual ActionResult EditRecording(string lmsProviderName, string recordingUrl)
+        public virtual ActionResult EditRecording(string session, string recordingUrl)
         {
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
+                var s = GetReadOnlySession(session);
+                lmsCompany = s.LmsCompany;
+                var param = s.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
                 var provider = GetAdminProvider(lmsCompany);
 
@@ -75,19 +75,19 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                return RecordingsError("EditRecording", lmsProviderName, ex);
+                return RecordingsError("EditRecording", session, ex);
             }
         }
         
         [HttpGet]
-        public virtual ActionResult GetRecordingFlv(string lmsProviderName, string recordingUrl)
+        public virtual ActionResult GetRecordingFlv(string session, string recordingUrl)
         {
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
+                var s = GetReadOnlySession(session);
+                lmsCompany = s.LmsCompany;
+                var param = s.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
                 var provider = GetAdminProvider(lmsCompany);
 
@@ -96,7 +96,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                return RecordingsError("GetRecordingFlv", lmsProviderName, ex);
+                return RecordingsError("GetRecordingFlv", session, ex);
             }
         }
 
