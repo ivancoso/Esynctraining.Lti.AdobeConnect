@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Esynctraining.AdobeConnect.Api.AudioProfiles.Dto
 {
@@ -32,9 +33,11 @@ namespace Esynctraining.AdobeConnect.Api.AudioProfiles.Dto
 
         //public string name { get; set; }
 
+        [Required]
         [DataMember]
         public string ProfileId { get; set; }
 
+        [Required]
         [DataMember]
         public string ProfileName { get; set; }
 

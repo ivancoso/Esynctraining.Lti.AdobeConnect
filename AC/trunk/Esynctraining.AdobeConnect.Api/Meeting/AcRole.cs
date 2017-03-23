@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Esynctraining.AdobeConnect.Api.Meeting
 {
@@ -13,12 +14,15 @@ namespace Esynctraining.AdobeConnect.Api.Meeting
         public static readonly AcRole Participant = new AcRole { Id = 3, Name = "Participant", MeetingPermissionId = MeetingPermissionId.view };
 
 
+        [Required]
         [DataMember]
         public int Id { get; set; }
 
+        [Required]
         [DataMember(Name = "systemName")]
         public string Name { get; set; }
 
+        [Required]
         [DataMember(Name = "name")]
         public string LocalizableName
         {
@@ -28,6 +32,7 @@ namespace Esynctraining.AdobeConnect.Api.Meeting
             }
         }
 
+        [IgnoreDataMember]
         public MeetingPermissionId MeetingPermissionId { get; set; }
 
 

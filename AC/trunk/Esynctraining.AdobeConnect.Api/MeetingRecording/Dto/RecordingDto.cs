@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Esynctraining.AdobeConnect.Api.MeetingRecording.Dto
 {
@@ -13,7 +14,8 @@ namespace Esynctraining.AdobeConnect.Api.MeetingRecording.Dto
         {
             Id = recording.ScoId;
             Name = recording.Name;
-            Summary = recording.Description;
+            // TRICK: cleanup not to output empty strings in json
+            Summary = string.IsNullOrWhiteSpace(recording.Description) ? null: recording.Description;
             BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timezone, recording.BeginDate);
             Duration = GetDurationWithoutMilliseconds(recording.Duration);
             Url = GenerateJoinLink(recording.UrlPath);
@@ -26,7 +28,8 @@ namespace Esynctraining.AdobeConnect.Api.MeetingRecording.Dto
         {
             Id = recording.ScoId;
             Name = recording.Name;
-            Summary = recording.Description;
+            // TRICK: cleanup not to output empty strings in json
+            Summary = string.IsNullOrWhiteSpace(recording.Description) ? null : recording.Description;
             BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
             Duration = ConvertSecondsToTimeFormat(recording.Duration) + (long)GetTimezoneShift(timezone, recording.BeginDate);
             Url = GenerateJoinLink(recording.UrlPath);
@@ -50,28 +53,34 @@ namespace Esynctraining.AdobeConnect.Api.MeetingRecording.Dto
         [DataMember]
         public string status { get; set; }
 
-        // AC disabled creation of mp4 on their side, but mp4's are still there for a lot of users (as they used their api too). That flag indicates that this rec was converted to mp4 on their side
+        // AC disabled creation of mp4 on their side, but mp4's are still there for a lot of users (as they used their api too). 
+        // That flag indicates that this rec was converted to mp4 on their side
         [DataMember(Name = "isMp4")]
         public bool IsAdobeMp4 { get; set; }
 
+        [Required]
         [DataMember]
         public long BeginAt { get; set; }
 
         [DataMember]
         public string Duration { get; set; }
 
+        [Required]
         [DataMember]
         public string Id { get; set; }
 
+        [Required]
         [DataMember]
         public string Name { get; set; }
 
         [DataMember]
         public string Summary { get; set; }
 
+        [Required]
         [DataMember]
         public string Url { get; set; }
 
+        [Required]
         [DataMember]
         public bool IsPublic { get; set; }
 
@@ -113,7 +122,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingRecording.Dto
 
         private static string GenerateJoinLink(string recordingUrlPath)
         {
-            return recordingUrlPath.Trim("/".ToCharArray());
+            return recordingUrlPath.Trim('/');
         }
 
         private static string GenerateDownloadLink(string accountUrl, string recordingPath, string recordingName)
@@ -123,12 +132,11 @@ namespace Esynctraining.AdobeConnect.Api.MeetingRecording.Dto
 
         private static string GetDurationWithoutMilliseconds(string date)
         {
-            var index = date.IndexOf(".", StringComparison.OrdinalIgnoreCase);
+            var index = date.IndexOf('.');
             if (index > 0)
             {
                 return date.Substring(0, index);
             }
-
             return date;
         }
 
