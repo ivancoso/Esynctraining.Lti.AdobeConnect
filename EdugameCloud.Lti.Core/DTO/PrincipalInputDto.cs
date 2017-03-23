@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace EdugameCloud.Lti.Core.DTO
 {
@@ -30,6 +31,7 @@ namespace EdugameCloud.Lti.Core.DTO
         [DataMember]
         public bool PromptPassword { get; set; }
 
+        [Required]
         [DataMember]
         public int MeetingRole { get; set; }
 
