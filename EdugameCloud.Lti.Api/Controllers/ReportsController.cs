@@ -51,7 +51,7 @@
         [Route("by-attendance")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual OperationResultWithData<IEnumerable<ACSessionParticipantDto>> GetAttendanceReport(ReportRequestDto request)
+        public virtual OperationResultWithData<IEnumerable<ACSessionParticipantDto>> GetAttendanceReport([FromBody]ReportRequestDto request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -81,7 +81,7 @@
         [Route("by-sessions")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual OperationResultWithData<IEnumerable<ACSessionDto>> GetSessionsReport(ReportRequestDto request)
+        public virtual OperationResultWithData<IEnumerable<ACSessionDto>> GetSessionsReport([FromBody]ReportRequestDto request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -111,7 +111,7 @@
         [Route("by-recordings")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual OperationResultWithData<IEnumerable<RecordingTransactionDTO>> GetRecordingsReport(ReportRequestDto request)
+        public virtual OperationResultWithData<IEnumerable<RecordingTransactionDTO>> GetRecordingsReport([FromBody]ReportRequestDto request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
