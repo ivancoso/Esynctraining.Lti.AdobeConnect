@@ -83,41 +83,6 @@ namespace EdugameCloud.Lti.Controllers
         //}
 
         [HttpPost]
-        public virtual JsonResult Edit(string lmsProviderName, string seminarLicenseId, MeetingDTOInput meeting)
-        {
-            if (string.IsNullOrWhiteSpace(lmsProviderName))
-                throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
-            if (string.IsNullOrWhiteSpace(seminarLicenseId))
-                throw new ArgumentException("seminarLicenseId can't be empty", nameof(seminarLicenseId));
-            if (meeting == null)
-                throw new ArgumentNullException(nameof(meeting));
-
-            LmsCompany credentials = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                credentials = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                var trace = new StringBuilder();
-                var fb = new SeminarFolderBuilder(seminarLicenseId);
-                OperationResult ret = MeetingSetup.SaveMeeting(
-                    credentials,
-                    this.GetCurrentUserProvider(session),
-                    param,
-                    meeting,
-                    trace,
-                    fb);
-
-                return TrickForSeminar(ret, seminarLicenseId);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("Edit", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-
-        [HttpPost]
         public JsonResult SaveSeminarSession(string lmsProviderName, SeminarSessionInputDto seminarSessionDto)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
