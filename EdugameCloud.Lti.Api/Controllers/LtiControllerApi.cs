@@ -59,7 +59,6 @@
         {
             try
             {
-                var lmsProviderName = settings.lmsProviderName;
                 var param = Session.LtiSession.LtiParam;
                 var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, LmsCompany.Id).Value;
                 if (lmsUser == null)
@@ -103,7 +102,7 @@
         
         [Route("settings/checkpass")]
         [HttpPost]
-        public virtual OperationResultWithData<bool> CheckPasswordBeforeJoin([FromBody]RequestDto request)
+        public virtual OperationResultWithData<bool> CheckPasswordBeforeJoin()
         {
             try
             {

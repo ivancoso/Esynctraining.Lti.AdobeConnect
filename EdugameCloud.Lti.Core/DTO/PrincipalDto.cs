@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.Core.DTO
@@ -6,15 +7,18 @@ namespace EdugameCloud.Lti.Core.DTO
     [DataContract]
     public sealed class PrincipalDto
     {
+        [Required]
         [DataMember]
         public string Login { get; set; }
 
         [DataMember]
         public string Email { get; set; }
 
+        [Required]
         [DataMember]
         public string Name { get; set; }
-        
+
+        [Required]
         [DataMember]
         public string PrincipalId { get; set; }
 

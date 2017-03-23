@@ -33,10 +33,10 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             [Required]
             [DataMember]
-            public int meetingId { get; set; }
+            public int MeetingId { get; set; }
 
             [DataMember]
-            public LmsUserDTO[] users { get; set; }
+            public LmsUserDTO[] Users { get; set; }
 
         }
 
@@ -72,7 +72,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     LmsCompany,
                     GetAdminProvider(),
                     CourseId,
-                    // TRICK: used for D2L only! to add admin to meeting
+                    // TRICK: used for D2L only! to add admin to meeting. It's OK to pass null for API here.
                     SessionSave?.LtiSession?.LtiParam,
                     request.meetingId,
                     out error,
@@ -94,7 +94,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("update")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [Filters.LmsAuthorizeBase]
         public OperationResultWithData<IEnumerable<LmsUserDTO>> UpdateUser([FromBody]CourseUsersDto request)
         {
             if (request == null)
@@ -103,13 +103,13 @@ namespace EdugameCloud.Lti.Api.Controllers
             var credentials = LmsCompany;
             string lastError = null;
             var updatedUsers = new List<LmsUserDTO>();
-            foreach (var user in request.users)
+            foreach (var user in request.Users)
             {
                 try
                 {
                     // TRICK: client-side passes 'email' but user.GetEmail() expects primary-email
-                    if (string.IsNullOrEmpty(user.PrimaryEmail) && !string.IsNullOrEmpty(user.email))
-                        user.PrimaryEmail = user.email;
+                    if (string.IsNullOrEmpty(user.PrimaryEmail) && !string.IsNullOrEmpty(user.Email))
+                        user.PrimaryEmail = user.Email;
 
                     LmsUserDTO updatedUser = null;
                     string error;
@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                             this.GetAdminProvider(),
                             Session.LtiSession.LtiParam,
                             user,
-                            request.meetingId,
+                            request.MeetingId,
                             out error);
                     }
                     else
@@ -130,13 +130,13 @@ namespace EdugameCloud.Lti.Api.Controllers
                             this.GetAdminProvider(),
                             Session.LtiSession.LtiParam,
                             user,
-                            request.meetingId,
+                            request.MeetingId,
                             out error);
                     }
 
                     if (!string.IsNullOrEmpty(error))
                     {
-                        Logger.Error($"[UpdateUsers] {error}. UserId={user.Id}, MeetingId={request.meetingId}");
+                        Logger.Error($"[UpdateUsers] {error}. UserId={user.Id}, MeetingId={request.MeetingId}");
                         lastError = error;
                     }
                     else
@@ -148,7 +148,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 catch (Exception ex)
                 {
                     lastError = GetOutputErrorMessage("UpdateUsers", ex);
-                    Logger.Error($"[RemoveUsers] UserId={user.Id}, MeetingId={request.meetingId}, {lastError}", ex);
+                    Logger.Error($"[RemoveUsers] UserId={user.Id}, MeetingId={request.MeetingId}, {lastError}", ex);
                 }
             }
 
@@ -177,7 +177,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             string error;
             string lastError = null;
             List<LmsUserDTO> removedUsers = new List<LmsUserDTO>();
-            foreach (var user in request.users)
+            foreach (var user in request.Users)
             {
                 try
                 {
@@ -188,7 +188,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                             this.GetAdminProvider(),
                             Session.LtiSession.LtiParam,
                             user.AcId,
-                            request.meetingId,
+                            request.MeetingId,
                             user.GuestId.Value,
                             out error);
                     }
@@ -199,12 +199,12 @@ namespace EdugameCloud.Lti.Api.Controllers
                             this.GetAdminProvider(),
                             Session.LtiSession.LtiParam,
                             user.AcId,
-                            request.meetingId,
+                            request.MeetingId,
                             out error);
                     }
                     if (!string.IsNullOrEmpty(error))
                     {
-                        Logger.Error($"[RemoveUsers] {error}. UserId={user.Id}, MeetingId={request.meetingId}");
+                        Logger.Error($"[RemoveUsers] {error}. UserId={user.Id}, MeetingId={request.MeetingId}");
                         lastError = error;
                     }
                     else
@@ -215,7 +215,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 catch (Exception ex)
                 {
                     lastError = GetOutputErrorMessage("RemoveUsers", ex);
-                    Logger.Error($"[RemoveUsers] UserId={user.Id}, MeetingId={request.meetingId}, {lastError}", ex);
+                    Logger.Error($"[RemoveUsers] UserId={user.Id}, MeetingId={request.MeetingId}, {lastError}", ex);
                 }
             }
 

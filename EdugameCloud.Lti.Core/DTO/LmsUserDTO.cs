@@ -11,9 +11,6 @@
         private string _name;
 
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LmsUserDTO"/> class.
-        /// </summary>
         public LmsUserDTO()
         {
             this.IsEditable = true;
@@ -65,7 +62,7 @@
         public string LtiId { get; set; }
 
         [DataMember]
-        public string email { get; set; }
+        public string Email { get; set; }
         
         [DataMember]
         public int? GuestId { get; set; }
@@ -73,7 +70,7 @@
         #endregion
 
         #region Methods
-        
+
         public string GetLogin()
         {
             return this.LoginId ?? this.Name;

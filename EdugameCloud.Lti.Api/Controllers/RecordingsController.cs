@@ -29,7 +29,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             [Required]
             [DataMember]
-            public int type { get; set; }
+            public int Type { get; set; }
 
         }
 
@@ -38,14 +38,15 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             [Required]
             [DataMember]
-            public string recordingId { get; set; }
+            public string RecordingId { get; set; }
 
             [Required]
             [DataMember]
-            public bool isPublic { get; set; }
+            public bool IsPublic { get; set; }
 
+            // TODO: is it used??
             [DataMember]
-            public string password { get; set; }
+            public string Password { get; set; }
 
         }
 
@@ -79,7 +80,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var ac = GetAdminProvider();
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
-                    () => new RoomTypeFactory(ac, (LmsMeetingType)request.type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
+                    () => new RoomTypeFactory(ac, (LmsMeetingType)request.Type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
                 IEnumerable<IRecordingDto> recordings = RecordingsService.GetRecordings(
                     LmsCompany,
@@ -296,7 +297,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                string link = RecordingsService.UpdateRecording(LmsCompany, GetAdminProvider(), request.recordingId, request.isPublic, request.password);
+                string link = RecordingsService.UpdateRecording(LmsCompany, GetAdminProvider(), request.RecordingId, request.IsPublic, request.Password);
 
                 return link.ToSuccessResult();
             }

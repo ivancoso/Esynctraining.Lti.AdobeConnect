@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
@@ -24,13 +21,11 @@ namespace EdugameCloud.Lti.Api.Controllers
             : base(acAccountService, settings, logger, cache)
         {
         }
+        
 
-
-        // TODO: Add caching
-        // TODO: copy DTO validation from SSO
         [HttpPost]
         [Route("templates")]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [Filters.LmsAuthorizeBase]
         public virtual OperationResultWithData<IEnumerable<TemplateDto>> GetTemplates()
         {
             try

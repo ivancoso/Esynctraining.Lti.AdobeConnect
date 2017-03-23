@@ -26,7 +26,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             [Required]
             [DataMember]
-            public int meetingType { get; set; }
+            public int MeetingType { get; set; }
 
         }
 
@@ -46,7 +46,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("audioprofiles")]
         [HttpPost]
-        public OperationResultWithData<IEnumerable<AudioProfileDto>> GetAudioProfiles(AudioProfileRequestDto request)
+        public OperationResultWithData<IEnumerable<AudioProfileDto>> GetAudioProfiles([FromBody]AudioProfileRequestDto request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -55,7 +55,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 var session = Session;
 
-                TelephonyProfileOption option = LmsCompany.GetTelephonyOption((LmsMeetingType)request.meetingType);
+                TelephonyProfileOption option = LmsCompany.GetTelephonyOption((LmsMeetingType)request.MeetingType);
                 if (option != TelephonyProfileOption.ReuseExistingProfile)
                 {
                     Logger.Error($"TelephonyProfileOption {option} is not ReuseExistingProfile");
@@ -63,10 +63,10 @@ namespace EdugameCloud.Lti.Api.Controllers
                 }
 
                 // NOTE: For None option - reuse can be active for every meeting type
-                if (((LmsMeetingType)request.meetingType != LmsMeetingType.OfficeHours)
+                if (((LmsMeetingType)request.MeetingType != LmsMeetingType.OfficeHours)
                     && (LmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) != TelephonyDTO.SupportedProfiles.None))
                 {
-                    Logger.Error($"Meeting type {request.meetingType} is not supported for audio-profile reuse");
+                    Logger.Error($"Meeting type {request.MeetingType} is not supported for audio-profile reuse");
                     return Enumerable.Empty<AudioProfileDto>().ToSuccessResult();
                 }
 

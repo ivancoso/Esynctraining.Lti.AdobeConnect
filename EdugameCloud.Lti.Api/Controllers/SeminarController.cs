@@ -132,7 +132,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
                 // TRICK: change record meeting id to meeting sco-id
                 LtiParamDTO param = Session.LtiSession.LtiParam;
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(Session.LmsCompany.Id, param.course_id, long.Parse(seminarSessionDto.SeminarRoomId));
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(Session.LmsCompany.Id, CourseId, long.Parse(seminarSessionDto.SeminarRoomId));
                 if (meeting == null)
                 {
                     return OperationResult.Error(Resources.Messages.MeetingNotFound);

@@ -32,7 +32,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             [Required]
             [DataMember]
-            public int meetingId { get; set; }
+            public int MeetingId { get; set; }
 
         }
 
@@ -90,7 +90,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 }
 
                 // HACK: LmsMeetingType.Meeting param - not in use here
-                LmsCourseMeeting meeting = MeetingSetup.GetCourseMeeting(LmsCompany, CourseId, request.meetingId, LmsMeetingType.Meeting);
+                LmsCourseMeeting meeting = MeetingSetup.GetCourseMeeting(LmsCompany, CourseId, request.MeetingId, LmsMeetingType.Meeting);
 
                 // TODO: review for user-sync mode
                 MeetingPermissionCollectionResult meetingEnrollments = provider.GetAllMeetingEnrollments(meeting.GetMeetingScoId());

@@ -34,17 +34,21 @@
     [DataContract]
     public class MeetingDTOLtiBase<TSession> : MeetingDtoBase
     {
+        [Required]
         [DataMember]
         public long Id { get; set; }
 
         #region Public Properties
 
+        [Required]
         [DataMember]
         public int Type { get; set; }
         
+        [Obsolete("TRICK: to hide from Swagger only. UNIR don't use OfficeHours")]
         [DataMember]
         public string OfficeHours { get; set; }
 
+        [Obsolete("TRICK: to hide from Swagger only. UNIR don't use OfficeHours")]
         [DataMember]
         public bool IsDisabledForThisCourse { get; set; }
 

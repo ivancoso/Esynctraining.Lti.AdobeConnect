@@ -24,10 +24,10 @@
         public class ReportRequestDto : MeetingRequestDto
         {
             [DataMember]
-            public int startIndex { get; set; }
+            public int StartIndex { get; set; }
 
             [DataMember]
-            public int limit { get; set; }
+            public int Limit { get; set; }
 
         }
 
@@ -66,8 +66,8 @@
                     meeting.ScoId,
                     this.GetAdminProvider(),
                     TimeZoneInfo.Utc,
-                    request.startIndex,
-                    request.limit);
+                    request.StartIndex,
+                    request.Limit);
 
                 return report.ToSuccessResult();
             }
@@ -96,8 +96,8 @@
                     meeting.ScoId,
                     GetAdminProvider(),
                     TimeZoneInfo.Utc,
-                    request.startIndex,
-                    request.limit);
+                    request.StartIndex,
+                    request.Limit);
 
                 return report.ToSuccessResult();
             }
@@ -125,8 +125,8 @@
                 IEnumerable<RecordingTransactionDTO> report = new LtiReportService().GetRecordingsReport(
                     GetAdminProvider(),
                     meeting,
-                    request.startIndex,
-                    request.limit);
+                    request.StartIndex,
+                    request.Limit);
 
                 return report.ToSuccessResult();
             }

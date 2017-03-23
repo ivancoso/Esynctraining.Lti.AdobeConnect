@@ -26,10 +26,6 @@
         [DataMember]
         public string primaryColor { get; set; }
 
-        /// <summary>
-        /// Gets or sets the LMS provider name.
-        /// </summary>
-        [DataMember]
-        public string lmsProviderName { get; set; }
     }
+
 }

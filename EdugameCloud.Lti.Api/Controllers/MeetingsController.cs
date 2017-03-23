@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             StringBuilder trace = null;
             var acProvider = this.GetAdminProvider();
-            
+
             // TODO: implement. will be use be External API only
             //IEnumerable<MeetingDTO> meetings = MeetingSetup.GetMeetings(
             //       LmsCompany,
