@@ -53,19 +53,15 @@ namespace EdugameCloud.Lti.Api.Controllers
             //TRICK:
             model.Type = (int)LmsMeetingType.Seminar;
 
-            LmsCompany credentials = null;
             try
             {
-                var session = Session;
                 LtiParamDTO param = Session.LtiSession.LtiParam;
-
                 var trace = new StringBuilder();
-
                 var fb = new SeminarFolderBuilder(model.seminarLicenseId);
 
                 OperationResult ret = MeetingSetup.SaveMeeting(
-                    credentials,
-                    this.GetCurrentUserProvider(session),
+                    Session.LmsCompany,
+                    this.GetCurrentUserProvider(Session),
                     param,
                     model,
                     trace,
@@ -80,40 +76,36 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        //[HttpPost]
-        //public virtual JsonResult Edit(string lmsProviderName, string seminarLicenseId, MeetingDTOInput meeting)
-        //{
-        //    if (string.IsNullOrWhiteSpace(lmsProviderName))
-        //        throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
-        //    if (string.IsNullOrWhiteSpace(seminarLicenseId))
-        //        throw new ArgumentException("seminarLicenseId can't be empty", nameof(seminarLicenseId));
-        //    if (meeting == null)
-        //        throw new ArgumentNullException(nameof(meeting));
+        [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        public virtual OperationResult Edit([FromBody]EditSeminarDto model)
+        {
+            if (string.IsNullOrWhiteSpace(model.lmsProviderName))
+                throw new ArgumentException("lmsProviderName can't be empty", nameof(model.lmsProviderName));
+            if (string.IsNullOrWhiteSpace(model.seminarLicenseId))
+                throw new ArgumentException("seminarLicenseId can't be empty", nameof(model.seminarLicenseId));
+        
+            try
+            {
+                LtiParamDTO param = Session.LtiSession.LtiParam;
+                var trace = new StringBuilder();
+                var fb = new SeminarFolderBuilder(model.seminarLicenseId);
+                OperationResult ret = MeetingSetup.SaveMeeting(
+                    Session.LmsCompany,
+                    this.GetCurrentUserProvider(Session),
+                    param,
+                    model,
+                    trace,
+                    fb);
 
-        //    LmsCompany credentials = null;
-        //    try
-        //    {
-        //        var session = GetReadOnlySession(lmsProviderName);
-        //        credentials = session.LmsCompany;
-        //        var param = session.LtiSession.With(x => x.LtiParam);
-        //        var trace = new StringBuilder();
-        //        var fb = new SeminarFolderBuilder(seminarLicenseId);
-        //        OperationResult ret = MeetingSetup.SaveMeeting(
-        //            credentials,
-        //            this.GetCurrentUserProvider(session),
-        //            param,
-        //            meeting,
-        //            trace,
-        //            fb);
-
-        //        return TrickForSeminar(ret, seminarLicenseId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = GetOutputErrorMessage("Edit", credentials, ex);
-        //        return OperationResult.Error(errorMessage);
-        //    }
-        //}
+                return TrickForSeminar(ret, model.seminarLicenseId);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("Edit", ex);
+                return OperationResult.Error(errorMessage);
+            }
+        }
 
         private IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)
         {
