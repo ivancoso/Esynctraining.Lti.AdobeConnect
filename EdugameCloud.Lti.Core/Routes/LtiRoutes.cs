@@ -139,18 +139,18 @@
 
             routes.MapLowercaseRoute("register-proxy-tool", "register-proxy-tool", new { controller = "LtiProxyTool", action = "register-proxy-tool" });
             
-            routes.MapLowercaseRoute("seminarsAll", "seminars", new { controller = "Seminar", action = "GetAll" });
-            routes.MapLowercaseRoute("seminarsCreate", "seminars/create", new { controller = "Seminar", action = "Create" });
-            routes.MapLowercaseRoute("seminarsEdit", "seminars/edit", new { controller = "Seminar", action = "Edit" });
-            routes.MapLowercaseRoute("seminarsSessionCreate", "seminars/sessions/create", new { controller = "Seminar", action = "SaveSeminarSession" });
-            routes.MapLowercaseRoute("seminarsSessionEdit", "seminars/sessions/edit", new { controller = "Seminar", action = "SaveSeminarSession" });
-            routes.MapLowercaseRoute("seminarsSessionDelete", "seminars/sessions/delete", new { controller = "Seminar", action = "DeleteSeminarSession" });
+            //routes.MapLowercaseRoute("seminarsAll", "seminars", new { controller = "Seminar", action = "GetAll" });
+            //routes.MapLowercaseRoute("seminarsCreate", "seminars/create", new { controller = "Seminar", action = "Create" });
+            //routes.MapLowercaseRoute("seminarsEdit", "seminars/edit", new { controller = "Seminar", action = "Edit" });
+            //routes.MapLowercaseRoute("seminarsSessionCreate", "seminars/sessions/create", new { controller = "Seminar", action = "SaveSeminarSession" });
+            //routes.MapLowercaseRoute("seminarsSessionEdit", "seminars/sessions/edit", new { controller = "Seminar", action = "SaveSeminarSession" });
+            //routes.MapLowercaseRoute("seminarsSessionDelete", "seminars/sessions/delete", new { controller = "Seminar", action = "DeleteSeminarSession" });
 
-            routes.MapLowercaseRoute("calendarCreateBatch", "calendar/createbatch", new { controller = "Calendar", action = "CreateBatch" });
-            routes.MapLowercaseRoute("calendarGetEvents", "calendar/getevents", new { controller = "Calendar", action = "GetEvents" });
-            routes.MapLowercaseRoute("calendarCreateEvent", "calendar/createevent", new { controller = "Calendar", action = "CreateEvent" });
-            routes.MapLowercaseRoute("calendarSaveEvent", "calendar/saveevent", new { controller = "Calendar", action = "SaveEvent" });
-            routes.MapLowercaseRoute("calendarDeleteEvent", "calendar/deleteevent", new { controller = "Calendar", action = "DeleteEvent" });
+            //routes.MapLowercaseRoute("calendarCreateBatch", "calendar/createbatch", new { controller = "Calendar", action = "CreateBatch" });
+            //routes.MapLowercaseRoute("calendarGetEvents", "calendar/getevents", new { controller = "Calendar", action = "GetEvents" });
+            //routes.MapLowercaseRoute("calendarCreateEvent", "calendar/createevent", new { controller = "Calendar", action = "CreateEvent" });
+            //routes.MapLowercaseRoute("calendarSaveEvent", "calendar/saveevent", new { controller = "Calendar", action = "SaveEvent" });
+            //routes.MapLowercaseRoute("calendarDeleteEvent", "calendar/deleteevent", new { controller = "Calendar", action = "DeleteEvent" });
 
 
             //routes.MapLowercaseRoute("GetAudioProfiles", "GetAudioProfiles", new { controller = "Lti", action = "GetAudioProfiles" });

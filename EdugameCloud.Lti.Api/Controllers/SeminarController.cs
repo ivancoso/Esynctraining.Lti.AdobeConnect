@@ -116,6 +116,8 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
+        [Route("sessions/create")]
+        [Route("sessions/edit")]
         [HttpPost]
         public OperationResult SaveSeminarSession(SeminarSessionInputDto seminarSessionDto)
         {
@@ -144,6 +146,29 @@ namespace EdugameCloud.Lti.Api.Controllers
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("SaveSeminarSession", ex);
+                return OperationResult.Error(errorMessage);
+            }
+        }
+
+        [Route("sessions/delete")]
+        [HttpPost]
+        public OperationResult DeleteSeminarSession(string seminarSessionId)
+        {
+            if (string.IsNullOrWhiteSpace(seminarSessionId))
+                throw new ArgumentException("seminarSessionId can't be empty", nameof(seminarSessionId));
+
+            //TODO: CHECK permission for deletion
+            //TODO: to service
+            try
+            {
+                var ac = GetCurrentUserProvider(Session);
+                var result = ac.DeleteSco(seminarSessionId);
+
+                return OperationResult.Success();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("DeleteSeminarSession", ex);
                 return OperationResult.Error(errorMessage);
             }
         }
