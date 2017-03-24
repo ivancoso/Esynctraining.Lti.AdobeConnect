@@ -279,10 +279,10 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         {
             var fields = new Dictionary<string, string>
                 {
-                    { "ParticipantName", certInfo.ParticipantName },
-                    { "CourseTitle", certInfo.CourseTitle },
+                    { "ParticipantName", AlignText(certInfo.ParticipantName, 33) },//hardcoded values in pdf template (length of custom fields)
+                    { "CourseTitle", AlignText(certInfo.CourseTitle, 40) },//hardcoded values in pdf template (length of custom fields)
                     { "CtoNumber", certInfo.CtoNumber },
-                    { "Duration", certInfo.Duration },
+                    { "Duration", AlignText(certInfo.Duration, 23) },//hardcoded values in pdf template (length of custom fields)
                     { "Date",  certInfo.Date },
                     { "ExpiresDate",  certInfo.ExpiresDate },
                     { "KnowledgeArea",  certInfo.KnowledgeArea },
@@ -292,6 +292,16 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 };
 
             return fields;
+        }
+
+        private static string AlignText(string value, int fieldLength)
+        {
+            var fieldValueLength = value.ToCharArray().Length;
+            var difference = fieldLength - fieldValueLength;
+            var offset = fieldLength > fieldValueLength ? difference / 2 : 0;
+            value = fieldValueLength > fieldLength ? value.Take(fieldLength).ToString() : value;
+            var result = new String(' ', offset) + value + (offset % 2 > 0 ? new String(' ', offset + 1) : new String(' ', offset));
+            return result;
         }
 
     }
