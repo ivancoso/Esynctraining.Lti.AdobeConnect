@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.IO.Compression;
     using System.Linq;
     using System.Net;
     using System.Web.Mvc;
@@ -14,7 +15,6 @@
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Wrappers;
     using File = EdugameCloud.Core.Domain.Entities.File;
 
     [HandleError]
@@ -120,24 +120,26 @@
                     var publicBuild = filePattern.Replace("*", version.ToString());
                     string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
                     Company company = user.Company;
-                    if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && (company.Theme != null) && System.IO.File.Exists(physicalPath))
+                    if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) 
+                        && (company.Theme != null) 
+                        && System.IO.File.Exists(physicalPath))
                     {
                         // NOTE: current POD size is about 960kb
                         var ms = new MemoryStream(960 * 1024);
 
-                        using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                        using (var archive = ZipFile.OpenRead(physicalPath))
                         {
-                            using (var arc = ZipArchive.OpenOnStream(ms))
+                            using (var arc = new ZipArchive(ms))
                             {
-                                foreach (var file in archive.Files.Where(x => x.Name != "config.xml"))
+                                foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
                                 {
-                                    using (Stream fs = arc.AddFile(file.Name).GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                    using (Stream fs = arc.CreateEntry(file.Name).Open())
                                     {
-                                        file.GetStream().CopyTo(fs);
+                                        file.Open().CopyTo(fs);
                                     }
                                 }
 
-                                using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                using (var fs = arc.CreateEntry("config.xml").Open())
                                 {
                                     var xml = string.Format("<config><themeId>{0}</themeId><gateway>{1}</gateway></config>",
                                         company.Theme.With(x => x.Id),
@@ -195,19 +197,19 @@
                         // NOTE: current POD size is about 960kb
                         var ms = new MemoryStream(960 * 1024);
 
-                        using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                        using (var archive = ZipFile.OpenRead(physicalPath))
                         {
-                            using (var arc = ZipArchive.OpenOnStream(ms))
+                            using (var arc = new ZipArchive(ms))
                             {
-                                foreach (var file in archive.Files.Where(x => x.Name != "config.xml"))
+                                foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
                                 {
-                                    using (Stream fs = arc.AddFile(file.Name).GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                    using (Stream fs = arc.CreateEntry(file.Name).Open())
                                     {
-                                        file.GetStream().CopyTo(fs);
+                                        file.Open().CopyTo(fs);
                                     }
                                 }
 
-                                using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                using (var fs = arc.CreateEntry("config.xml").Open())
                                 {
                                     var xml = string.Format("<config><themeId>{0}</themeId><gateway>{1}</gateway></config>",
                                         company.Theme.With(x => x.Id),
@@ -249,18 +251,18 @@
             }
 
             int fileCount;
-            using (var archive = ZipArchive.OpenOnFile(physicalPath))
+            using (var archive = ZipFile.OpenRead(physicalPath))
             {
-                fileCount = archive.Files.Count();
+                fileCount = archive.Entries.Count();
             }
             // NOTE: swf + config
             if (fileCount != 2)
             {
                 lock (_publicBuildZipLocker)
                 {
-                    using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                    using (var archive = ZipFile.OpenRead(physicalPath))
                     {
-                        fileCount = archive.Files.Count();
+                        fileCount = archive.Entries.Count();
                     }
 
                     if (fileCount != 2)
@@ -268,19 +270,19 @@
                         try
                         {
                             var ms = new MemoryStream();
-                            using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                            using (var archive = ZipFile.OpenRead(physicalPath))
                             {
-                                using (var arc = ZipArchive.OpenOnStream(ms))
+                                using (var arc = new ZipArchive(ms))
                                 {
-                                    foreach (var file in archive.Files.Where(x => x.Name != "config.xml"))
+                                    foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
                                     {
-                                        using (Stream fs = arc.AddFile(file.Name).GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                        using (Stream fs = arc.CreateEntry(file.Name).Open())
                                         {
-                                            file.GetStream().CopyTo(fs);
+                                            file.Open().CopyTo(fs);
                                         }
                                     }
 
-                                    using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                    using (var fs = arc.CreateEntry("config.xml").Open())
                                     {
                                         var xml = string.Format("<config><gateway>{0}</gateway></config>", Settings.BaseServiceUrl);
                                         var xmlBuffer = System.Text.Encoding.ASCII.GetBytes(xml);
