@@ -23,7 +23,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
         }
 
 
-        public string BuildName(MeetingDTO meeting, LtiParamDTO param, string courseId)
+        public string BuildName(MeetingDTOLtiBase<MeetingSessionDTO> meeting, LtiParamDTO param, string courseId)
         {
             if (meeting == null)
                 throw new ArgumentNullException(nameof(meeting));

@@ -7,7 +7,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting
     {
         string FormatName { get; }
 
-        string BuildName(MeetingDTO meeting, LtiParamDTO param, string courseId);
+        string BuildName(MeetingDTOLtiBase<MeetingSessionDTO> meeting, LtiParamDTO param, string courseId);
 
         string UpdateName(LmsCourseMeeting meeting, string lmsMeetingTitle);
 
