@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
     using System.Web.Script.Serialization;
     using Esynctraining.Core.Extensions;
@@ -30,6 +31,7 @@
         [ScriptIgnore]
         public DateTime DateCreated { get; set; }
 
+        [Required]
         [DataMember]
         public long CreatedAt
         {
@@ -42,15 +44,19 @@
             }
         }
 
+        [Required]
         [DataMember]
         public string Login { get; set; }
 
+        [Required]
         [DataMember]
         public string RecordingName { get; set; }
 
+        [Required]
         [DataMember]
         public string RecordingScoId { get; set; }
 
+        [Required]
         [DataMember]
         public string UserName { get; set; }
 

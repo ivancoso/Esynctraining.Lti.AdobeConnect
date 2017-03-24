@@ -109,6 +109,18 @@ namespace EdugameCloud.Lti.Api.Host
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
 
+                c.MapType<DateTime?>(() =>
+                    new Schema
+                    {
+                        Type = "integer",
+                        Format = "int64",
+                        Example = (long)DateTime.Now.ConvertToUnixTimestamp(),
+                        Description = "MillisecondsSinceUnixEpoch",
+                        //Default = (long)DateTime.Now.ConvertToUnixTimestamp(),
+                        //Pattern = "pattern",
+                    }
+                );
+
                 c.MapType<DateTime>(() =>
                     new Schema
                     {
@@ -116,9 +128,13 @@ namespace EdugameCloud.Lti.Api.Host
                         Format = "int64",
                         Example = (long)DateTime.Now.ConvertToUnixTimestamp(),
                         Description = "MillisecondsSinceUnixEpoch",
+                        //Default = (long)DateTime.Now.ConvertToUnixTimestamp(),
+                        //Pattern = "pattern",
                     }
                 );
+
                 
+
                 // HACK: umcomment for prod.
                 //if (HostingEnvironment.IsProduction())
                 //    c.DocumentFilter<HideNonApiFilter>();
