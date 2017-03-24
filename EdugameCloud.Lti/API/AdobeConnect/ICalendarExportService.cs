@@ -6,6 +6,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     public interface ICalendarExportService
     {
         IEnumerable<string> DeleteEvents(IEnumerable<string> eventIds, LtiParamDTO param);
+
         IEnumerable<MeetingSessionDTO> SaveEvents(int meetingId, IEnumerable<MeetingSessionDTO> eventDtos, LtiParamDTO param);
+
     }
+
 }
