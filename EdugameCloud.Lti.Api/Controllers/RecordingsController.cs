@@ -213,6 +213,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         
         [Route("publish")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResult PublishRecording([FromBody]RecordingRequestDto request)
         {
             if (request == null)
@@ -243,6 +244,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("unpublish")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResult UnpublishRecording([FromBody]RecordingRequestDto request)
         {
             if (request == null)
@@ -293,6 +295,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("share")]
         [HttpPost]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResultWithData<string> ShareRecording([FromBody]ShareRecordingRequestDto request)
         {
             try

@@ -10,6 +10,7 @@ using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Host.Formatters;
 using EdugameCloud.Persistence;
 using Esynctraining.CastleLog4Net;
+using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Providers;
 using Esynctraining.Windsor;
 using FluentValidation;
@@ -108,12 +109,22 @@ namespace EdugameCloud.Lti.Api.Host
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
 
+                c.MapType<DateTime>(() =>
+                    new Schema
+                    {
+                        Type = "integer",
+                        Format = "int64",
+                        Example = (long)DateTime.Now.ConvertToUnixTimestamp(),
+                        Description = "MillisecondsSinceUnixEpoch",
+                    }
+                );
+                
                 // HACK: umcomment for prod.
                 //if (HostingEnvironment.IsProduction())
                 //    c.DocumentFilter<HideNonApiFilter>();
-                
+
                 //c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Api.xml", HostingEnvironment.WebRootPath)); 
-                
+
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "Authorization header using the Bearer scheme. Example: \"Authorization: lti {token}\"",

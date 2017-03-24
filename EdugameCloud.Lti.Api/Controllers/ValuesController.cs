@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
-using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
-using Esynctraining.Core.Providers;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -16,12 +16,21 @@ namespace EdugameCloud.Lti.Api.Controllers
     [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
     public class ValuesController : BaseApiController
     {
+        public class InputDto
+        {
+            [StringLength(100, MinimumLength = 50)]
+            [Required]
+            public string MeetingId { get; set; }
+        }
+
         public class TestDto
         {
             [Required]
             public int Id { get; set; }
 
             public string Description { get; set; }
+
+            public DateTime Date { get; set; }
         }
         
         public ValuesController(
@@ -35,11 +44,11 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
 
         // GET api/values
-        [HttpGet]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
-        public IEnumerable<TestDto> Get()
+        [HttpPost]
+        //[EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        public IEnumerable<TestDto> Get2([FromBody]InputDto request)
         {
-            return new TestDto[] { new TestDto { Id = 1, Description = "test" }, new TestDto { Id = 2 } };
+            return new TestDto[] { new TestDto { Id = 1, Description = "test", Date = DateTime.Now }, new TestDto { Id = 2, Date = DateTime.Today } };
         }
 
         //// GET api/values/5

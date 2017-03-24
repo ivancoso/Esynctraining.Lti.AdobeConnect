@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace EdugameCloud.Lti.Api.Host.Formatters
 {
+    // https://www.codefluff.com/write-your-own-asp-net-core-mvc-formatters/
     public class JilOutputFormatter : IOutputFormatter
     {
 
