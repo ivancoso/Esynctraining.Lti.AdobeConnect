@@ -74,13 +74,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("createevent")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
-        public OperationResultWithData<MeetingSessionDTO> CreateEvent(int meetingId)
+        public OperationResultWithData<MeetingSessionDTO> CreateEvent([FromBody]CreateEventDto model)
         {
             try
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
                 var meetingSessionService = _lmsFactory.GetMeetingSessionService((LmsProviderEnum)Session.LmsCompany.LmsProviderId);
-                var eve = meetingSessionService.CreateSession(meetingId, param);
+                var eve = meetingSessionService.CreateSession(model.meetingId, param);
                 return eve.ToSuccessResult();
             }
             catch (Exception ex)
