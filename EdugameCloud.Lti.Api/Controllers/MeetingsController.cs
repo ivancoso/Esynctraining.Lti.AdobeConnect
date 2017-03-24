@@ -6,7 +6,6 @@ using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.DTO;
-using EdugameCloud.Lti.Models;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -179,6 +178,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResult.Error(errorMessage);
             }
         }
+
     }
 
 }
