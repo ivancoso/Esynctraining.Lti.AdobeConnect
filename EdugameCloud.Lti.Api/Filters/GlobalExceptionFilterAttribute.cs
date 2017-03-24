@@ -36,7 +36,7 @@ namespace EdugameCloud.Lti.Api.Filters
             }
             else
             {
-                this._logger.LogError("GlobalExceptionFilter", context.Exception);
+                this._logger.LogError("GlobalExceptionFilter. {0}.", context.Exception);
 
                 message = _isDevelopment
                     ? Resources.Messages.ExceptionOccured + context.Exception.ToString()

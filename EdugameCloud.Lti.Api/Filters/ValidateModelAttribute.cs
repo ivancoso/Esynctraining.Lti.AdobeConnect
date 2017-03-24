@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Serialization;
+using EdugameCloud.Core;
 using Esynctraining.Core.Domain;
+using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -36,18 +38,17 @@ namespace EdugameCloud.Lti.Api.Filters
         public class ValidationErrorModel : OperationResult
         {
             [DataMember]
-            public ValidationError[] Errors { get; }
+            public ValidationError[] Errors { get; set; }
 
 
-            public ValidationErrorModel(ModelStateDictionary modelState, bool isDevelopment)
+            public ValidationErrorModel(ModelStateDictionary modelState)
             {
                 if (modelState == null)
                     throw new ArgumentNullException(nameof(modelState));
 
                 IsSuccess = false;
                 Message = "Validation Failed";
-
-                if (isDevelopment)
+                
                 Errors = modelState.Keys
                         .SelectMany(key => modelState[key].Errors.Select(x => new ValidationError(key, x.ErrorMessage)))
                         .ToArray();
@@ -73,9 +74,13 @@ namespace EdugameCloud.Lti.Api.Filters
         {
             if (!context.ModelState.IsValid)
             {
-                var validationErrorModel = new ValidationErrorModel(context.ModelState, _isDevelopment);
+                var validationErrorModel = new ValidationErrorModel(context.ModelState);
 
-                _logger.LogError("ModelValidation", validationErrorModel);
+                // TODO: DI!!!
+                _logger.LogError("ModelValidation. {0}.", IoC.Resolve<IJsonSerializer>().JsonSerialize( validationErrorModel));
+
+                if (!_isDevelopment)
+                    validationErrorModel.Errors = null;
 
                 context.Result = new ObjectResult(validationErrorModel);
             }
