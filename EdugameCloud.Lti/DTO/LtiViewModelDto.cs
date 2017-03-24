@@ -77,6 +77,11 @@ namespace EdugameCloud.Lti.DTO
                 public string ReportByRecordings { get; set; } = RestWebApiBaseUrl + "meeting/reports/by-recordings"; // API
                 public string ReportBySessions { get; set; } = RestWebApiBaseUrl + "meeting/reports/by-sessions"; // API
                 public string ReportByAttendance { get; set; } = RestWebApiBaseUrl + "meeting/reports/by-attendance"; // API
+
+                public string ReportByRecordingsFile { get; set; } = "meeting-recordings-report"; // lti.host
+                public string ReportBySessionsFile { get; set; } = "meeting-sessions-report"; // lti.host
+                public string ReportByAttendanceFile { get; set; } = "meeting-attendance-report"; // lti.host
+
             }
         }
 
