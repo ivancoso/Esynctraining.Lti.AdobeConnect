@@ -180,10 +180,12 @@
     <Compile Include="Controllers\AcUserController.cs" />
     <Compile Include="Controllers\AudioProfilesController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Models\DeleteMeetingDto.cs" />
     <Compile Include="Models\DeleteSeminarSessionDto.cs" />
     <Compile Include="Models\EditSeminarDto.cs" />
     <Compile Include="Models\CreateSeminarDto.cs" />
     <Compile Include="Models\DeleteMeetingEventDto.cs" />
+    <Compile Include="Models\ReuseExistedAdobeConnectMeetingDto.cs" />
     <Compile Include="Models\SaveMeetingEventDto.cs" />
     <Compile Include="Controllers\SeminarController.cs" />
     <Compile Include="Controllers\UsersController.cs" />

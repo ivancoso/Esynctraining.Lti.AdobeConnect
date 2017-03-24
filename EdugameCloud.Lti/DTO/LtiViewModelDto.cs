@@ -59,11 +59,11 @@ namespace EdugameCloud.Lti.DTO
                 public string JoinToMeeting { get; set; } = "lti/meeting/join";
                 public string JoinToMeetingMobile { get; set; } = "lti/meeting/joinmobile";
                 public string LeaveMeeting { get; set; } = RestWebApiBaseUrl + "meeting/leave"; // API
-                public string DeleteMeeting { get; set; } = "lti/meeting/delete";
-                public string SaveMeetingAndGetUsers { get; set; } = "lti/meeting/UpdateAndReturnLmsUsers";
-                public string SaveMeeting { get; set; } = "lti/meeting/Update";
+                public string DeleteMeeting { get; set; } = RestWebApiBaseUrl + "meeting/delete"; // API
+                public string SaveMeetingAndGetUsers { get; set; } = RestWebApiBaseUrl + "meeting/UpdateAndReturnLmsUsers"; // API
+                public string SaveMeeting { get; set; } = RestWebApiBaseUrl + "meeting/Update";  // API
 
-                public string UseExistingMeeting { get; set; } = "lti/useExistingMeeting";
+                public string UseExistingMeeting { get; set; } = RestWebApiBaseUrl + "useExistingMeeting"; // API
                 public string GetTemplates { get; set; } = RestWebApiBaseUrl + "templates"; // API
                 public string GetAudioProfiles { get; set; } = RestWebApiBaseUrl + "AudioProfiles"; // API
                 public string SearchACMeetings { get; set; } = RestWebApiBaseUrl + "acSearchMeeting"; // API

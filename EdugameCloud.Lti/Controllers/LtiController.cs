@@ -54,6 +54,8 @@ namespace EdugameCloud.Lti.Controllers
 
         #endregion
 
+        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
+
         private ICanvasAPI CanvasApi => IoC.Resolve<ICanvasAPI>();
 
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();

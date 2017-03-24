@@ -108,9 +108,9 @@
             //routes.MapLowercaseRoute("getmeetingsessions", "meeting/sessions", new { controller = "LtiReport", action = "GetSessionsReport" });
             //routes.MapLowercaseRoute("getmeetingrecordings", "meeting/reports/by-recordings", new { controller = "LtiReport", action = "GetRecordingsReport" });
 
-            routes.MapLowercaseRoute("updatemeeting", "meeting/update", new { controller = "Lti", action = "UpdateMeeting" });
-            routes.MapLowercaseRoute("updatemeetingreturnusers", "meeting/UpdateAndReturnLmsUsers", new { controller = "Lti", action = "UpdateMeetingAndReturnLmsUsers" });
-            routes.MapLowercaseRoute("deletemeeting", "meeting/delete", new { controller = "Lti", action = "DeleteMeeting" });
+            //routes.MapLowercaseRoute("updatemeeting", "meeting/update", new { controller = "Lti", action = "UpdateMeeting" });
+            //routes.MapLowercaseRoute("updatemeetingreturnusers", "meeting/UpdateAndReturnLmsUsers", new { controller = "Lti", action = "UpdateMeetingAndReturnLmsUsers" });
+            //routes.MapLowercaseRoute("deletemeeting", "meeting/delete", new { controller = "Lti", action = "DeleteMeeting" });
             routes.MapLowercaseRoute("joinmeeting", "meeting/join", new { controller = "Lti", action = "JoinMeeting" });
             routes.MapLowercaseRoute("joinmeetingmobile", "meeting/JoinMobile", new { controller = "Lti", action = "JoinMeetingMobile" });
 
@@ -138,7 +138,7 @@
             //routes.MapLowercaseRoute("addNewAcUser", "acNewUser", new { controller = "AcUser", action = "AddNewUser" });
             //routes.MapLowercaseRoute("searchExistingAcUser", "acSearchUser", new { controller = "AcUser", action = "SearchExistingUser" });
             //routes.MapLowercaseRoute("searchExistingMeeting", "acSearchMeeting", new { controller = "AcMeeting", action = "SearchExistingMeeting" });
-            routes.MapLowercaseRoute("reuseAdobeConnectMeeting", "useExistingMeeting", new { controller = "Lti", action = "ReuseExistedAdobeConnectMeeting" });
+            //routes.MapLowercaseRoute("reuseAdobeConnectMeeting", "useExistingMeeting", new { controller = "Lti", action = "ReuseExistedAdobeConnectMeeting" });
 
             routes.MapLowercaseRoute("register-proxy-tool", "register-proxy-tool", new { controller = "LtiProxyTool", action = "RegisterProxyTool" });
             

@@ -285,10 +285,10 @@
     <Compile Include="Controllers\LtiController.ImsLogin.cs" />
     <Compile Include="DTO\ApiLti.cs" />
     <Compile Include="JsonSerializer.cs" />
+    <Compile Include="Models\MeetingReuseDTO.cs" />
     <Compile Include="Models\OutcomeModel.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\LtiController.ProxyTool.cs" />
-    <Compile Include="Controllers\LtiController.Meeting.cs" />
     <Compile Include="Controllers\OfficeHoursPodController.cs" />
     <Compile Include="Controllers\LtiController.Recordings.cs" />
     <Compile Include="Controllers\LtiController.cs" />
@@ -317,7 +317,6 @@
     <Compile Include="Extensions\HttpRequestBaseExtensions.cs" />
     <Compile Include="Extensions\MoodleParserExtensions.cs" />
     <Compile Include="JsonNetResult.cs" />
-    <Compile Include="LmsAuthorizeAttribute.cs" />
     <Compile Include="LtiWindsorInstaller.cs" />
     <Compile Include="Models\ProxyToolPasswordModel.cs" />
     <Compile Include="OAuth\Canvas\CanvasAuthResponse.cs" />
