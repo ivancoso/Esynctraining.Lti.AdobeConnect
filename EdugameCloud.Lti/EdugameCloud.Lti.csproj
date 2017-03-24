@@ -101,8 +101,8 @@
     <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.13\lib\net45\Esynctraining.AdobeConnect.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Core.Only, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.1\lib\net45\Esynctraining.Core.Only.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.0.27, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.27\lib\net45\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.FluentValidation, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.FluentValidation.1.0.0.1\lib\net45\Esynctraining.FluentValidation.dll</HintPath>
