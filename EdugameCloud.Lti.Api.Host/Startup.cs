@@ -7,6 +7,7 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.MsDependencyInjection;
 using EdugameCloud.Lti.Api.Filters;
+using EdugameCloud.Lti.Api.Host.Formatters;
 using EdugameCloud.Persistence;
 using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Providers;
@@ -51,6 +52,9 @@ namespace EdugameCloud.Lti.Api.Host
             services
                 .AddMvcCore(setup =>
                 {
+                    setup.InputFormatters.Insert(0, new JilInputFormatter());
+                    setup.OutputFormatters.Insert(0, new JilOutputFormatter());
+
                     setup.Filters.Add(new CheckModelForNullAttribute());
                     //setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                     setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
@@ -61,6 +65,16 @@ namespace EdugameCloud.Lti.Api.Host
                 .AddApiExplorer()
                 //.AddCors()
                 .AddDataAnnotations();
+                //.AddJsonOptions(options =>
+                // {
+                //     var settings = options.SerializerSettings;
+                //     settings.Formatting = Formatting.Indented;
+                //     settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                //     settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                //     settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                //     settings.NullValueHandling = NullValueHandling.Ignore;
+                // });
+
 
             var container = new WindsorContainer();
 
@@ -86,15 +100,6 @@ namespace EdugameCloud.Lti.Api.Host
 
             RegisterLtiComponents(container);
 
-            //.AddJsonOptions(options =>
-            // {
-            //     var settings = options.SerializerSettings;
-            //     settings.Formatting = Formatting.Indented;
-            //     settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-            //     settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-            //     settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            //     settings.NullValueHandling = NullValueHandling.Ignore;
-            // });
             
             services.AddSwaggerGen(c =>
             {
