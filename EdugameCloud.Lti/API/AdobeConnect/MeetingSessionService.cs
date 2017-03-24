@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using DotNetOpenAuth.Messaging;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
@@ -145,7 +146,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             DateTime startDate;
             DateTime endDate;
-            if (!DateTime.TryParse(dto.StartDate, out startDate) || !DateTime.TryParse(dto.EndDate, out endDate))
+            if (!DateTime.TryParseExact(dto.StartDate, "MM/dd/yyyy hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate) 
+                || !DateTime.TryParseExact(dto.EndDate, "MM/dd/yyyy hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
             {
                 //todo : log
                 throw new InvalidOperationException("Start date or End date is not correct.");
