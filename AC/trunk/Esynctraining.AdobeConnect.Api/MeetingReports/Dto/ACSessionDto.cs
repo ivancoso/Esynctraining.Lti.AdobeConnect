@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
 
@@ -40,6 +41,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
         [DataMember]
         public List<ACSessionParticipantDto> participants { get; set; }
 
+        [Required]
         [DataMember(Name = "startedAt")]
         public DateTime? dateStarted { get; set; }
 
@@ -56,6 +58,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
 
         //public string sessionName { get; set; }
 
+        [Required]
         [DataMember]
         public int sessionNumber { get; set; }
 

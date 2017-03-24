@@ -123,9 +123,8 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
             catch (Exception ex)
             {
                 logger.Error("GetAttendanceReports.Exception", ex);
+                throw;
             }
-
-            return Enumerable.Empty<ACSessionParticipantDto>();
         }
 
         private void GroupSessionParticipants(IEnumerable<ACSessionDto> sessionList, TimeZoneInfo timeZone)

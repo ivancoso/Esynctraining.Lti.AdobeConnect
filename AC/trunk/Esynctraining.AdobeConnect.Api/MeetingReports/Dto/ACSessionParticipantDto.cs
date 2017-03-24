@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
 
@@ -33,6 +34,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
         [IgnoreDataMember]
         public string scoId { get; set; }
 
+        [Required]
         [DataMember]
         public string participantName { get; set; }
 
@@ -48,6 +50,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
         [IgnoreDataMember]
         public string assetId { get; set; }
 
+        [Required]
         [DataMember(Name = "enteredAt")]
         public DateTime dateTimeEntered { get; set; }
 

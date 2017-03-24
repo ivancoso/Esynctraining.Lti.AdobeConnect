@@ -10,13 +10,15 @@
     <AssemblyName>Esynctraining.AdobeConnect.Api</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect.Api</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>adapted ContentHelper to sco-content filter</PackageReleaseNotes>
+    <PackageReleaseNotes>DataAnnotatition for DTO for extenal LTI API</PackageReleaseNotes>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.0.13</Version>
   </PropertyGroup>
 
   <ItemGroup>
