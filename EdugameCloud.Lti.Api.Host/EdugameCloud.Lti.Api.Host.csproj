@@ -6,7 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="log4net.cfg.xml" />
+    <Content Remove="wwwroot/.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="log4net.cfg.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="nhibernate.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -26,6 +32,7 @@
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0-rc3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="1.0.0-rc3" />
   </ItemGroup>
@@ -44,6 +51,11 @@
     <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Logs\placeholder.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

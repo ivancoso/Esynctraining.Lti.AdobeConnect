@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Net;
 using System.Threading.Tasks;
 using Castle.Core.Resource;
 using Castle.MicroKernel.Lifestyle;
@@ -10,16 +9,11 @@ using Castle.Windsor.MsDependencyInjection;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Persistence;
 using Esynctraining.CastleLog4Net;
-using Esynctraining.Core.Domain;
 using Esynctraining.Core.Providers;
 using Esynctraining.Windsor;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -58,7 +52,7 @@ namespace EdugameCloud.Lti.Api.Host
                 .AddMvcCore(setup =>
                 {
                     setup.Filters.Add(new CheckModelForNullAttribute());
-                    setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
+                    //setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                     setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                 })
                 .AddApplicationPart(typeof(Controllers.BaseApiController).Assembly)
@@ -133,8 +127,12 @@ namespace EdugameCloud.Lti.Api.Host
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            loggerFactory
+                .AddConsole(Configuration.GetSection("Logging"))
+                .AddDebug()
+                .AddFile(Configuration.GetSection("Logging"))
+                .AddFile(Configuration.GetSection("Logging_Serilog_Errors"));
+
 
             if (env.IsDevelopment())
             {
