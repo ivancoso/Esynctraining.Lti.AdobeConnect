@@ -106,9 +106,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
 
         // TODO: create DTO with validation!!
-        // NOTE: quick fix. defined 2 routes due to http://stackoverflow.com/questions/35011192/how-to-define-an-optional-parameter-in-path-using-swagger
         [Route("edit")]
-        [Route("edit/{id}")]
         [HttpPost]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResult EditRecording([FromBody]EditDto dto)
@@ -166,7 +164,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     lmsCompany,
                     this.GetAdminProvider(),
                     param.course_id,
-                    dto.id,
+                    dto.recordingId,
                     dto.meetingId,
                     dto.name,
                     dto.summary);

@@ -15,7 +15,7 @@ namespace EdugameCloud.Lti.DTO.Recordings
 
         [DataMember]
         //[Required]
-        public string id { get; set; }
+        public string recordingId { get; set; }
 
         [DataMember]
         //[Required]
@@ -34,7 +34,7 @@ namespace EdugameCloud.Lti.DTO.Recordings
         {
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
             this.RuleFor(model => model.meetingId).GreaterThan(0);
-            this.RuleFor(model => model.id).NotEmpty();
+            //this.RuleFor(model => model.recordingId).NotEmpty();
 
             this.RuleFor(model => model.name).NotEmpty().WithLocalizedMessage(() => Resources.Messages.ValidateTitleLength);
             this.RuleFor(model => model.name).Length(1, 60).WithLocalizedMessage(() => Resources.Messages.ValidateTitleLength);
