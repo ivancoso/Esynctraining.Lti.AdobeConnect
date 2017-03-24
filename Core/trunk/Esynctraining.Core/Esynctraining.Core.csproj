@@ -4,19 +4,19 @@
     <Description>Provides core functionality for eSyncTraining projects.</Description>
     <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.Core.Only</AssemblyTitle>
-    <VersionPrefix>1.0.1.0</VersionPrefix>
+    <VersionPrefix>1.0.0.28</VersionPrefix>
     <Authors>eSyncTraining.com</Authors>
     <TargetFrameworks>net45;net461</TargetFrameworks>
-    <AssemblyName>Esynctraining.Core.Only</AssemblyName>
+    <AssemblyName>Esynctraining.Core</AssemblyName>
     <PackageId>Esynctraining.Core.Only</PackageId>
     <PackageTags>core</PackageTags>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.1.1</Version>
+    <Version>1.0.0.29</Version>
     <PackageReleaseNotes>DataAnnotations for public LTI API</PackageReleaseNotes>
-    <AssemblyVersion>1.0.1.1</AssemblyVersion>
-    <FileVersion>1.0.1.1</FileVersion>
+    <AssemblyVersion>1.0.0.29</AssemblyVersion>
+    <FileVersion>1.0.0.29</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

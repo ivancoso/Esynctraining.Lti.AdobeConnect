@@ -27,7 +27,7 @@ namespace Esynctraining.Mail
             this.asciiTemplatesDirectory = MailerConfigurationSection.Current.With(x => x.AsciiTemplatesFolderPath);
 
             if (string.IsNullOrWhiteSpace(templatesDirectory))
-                throw new ArgumentException("templatesDirectory cannot be empty", "templatesDirectory");
+                throw new ArgumentException("templatesDirectory cannot be empty", nameof(templatesDirectory));
         }
 
         #endregion
