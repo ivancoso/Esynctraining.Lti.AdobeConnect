@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace Esynctraining.Core.Domain
@@ -6,6 +7,7 @@ namespace Esynctraining.Core.Domain
     [DataContract]
     public class OperationResult
     {
+        [Required]
         [DataMember(Name = "isSuccess")]
         public bool IsSuccess { get; set; }
 
