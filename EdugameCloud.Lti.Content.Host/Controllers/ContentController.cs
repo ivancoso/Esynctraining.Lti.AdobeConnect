@@ -31,6 +31,7 @@ using Esynctraining.WebApi.Formatting;
 namespace EdugameCloud.Lti.Content.Host.Controllers
 {
     [RoutePrefix("")]
+    [LmsAuthorizeBase]
     [EnableCors(origins: "*", headers: "*", methods: "post")]
     public class ContentController : BaseController
     {
