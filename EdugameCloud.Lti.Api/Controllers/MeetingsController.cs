@@ -5,6 +5,7 @@ using System.Text;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
@@ -45,13 +46,16 @@ namespace EdugameCloud.Lti.Api.Controllers
             var acProvider = this.GetAdminProvider();
 
             // TODO: implement. will be use be External API only
-            //IEnumerable<MeetingDTO> meetings = meetingSetup.GetMeetings(
-            //       LmsCompany,
-            //       CourseId,
-            //       acProvider,
-            //       session.LmsUser,                   
-            //       param,
-            //       trace);
+            IEnumerable<MeetingDTO> meetings = meetingSetup.GetMeetings(
+                   LmsCompany,
+                   CourseId,
+                   acProvider,
+                   new LmsUser(),
+                    new LtiParamDTO(),
+                   //session.LmsUser,
+                   //param,
+                   trace);
+            return meetings.ToSuccessResult();
 
             return Enumerable.Empty<MeetingDTO>().ToSuccessResult();
         }

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EdugameCloud.Lti.Api</name>
+    </assembly>
+    <members>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.BaseApiController.SessionSave">
+            <summary>
+            TRICK: do not use in most of your code.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Api.Controllers.ValuesController">
+            <summary>
+            Used to test REST API is alive.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Api.Controllers.ValuesController.InputDto">
+            <summary>
+            Test input DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.ValuesController.InputDto.MeetingId">
+            <summary>
+            String value with (50-100) length validation.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Api.Controllers.ValuesController.TestDto">
+            <summary>
+            out DTO
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.ValuesController.TestDto.Id">
+            <summary>
+            ID
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.ValuesController.TestDto.Description">
+            <summary>
+            Description can be empty.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.ValuesController.TestDto.Date">
+            <summary>
+            This is DateTime property. Should be returned as Unix timestamp.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Api.Controllers.ValuesController.Get2(EdugameCloud.Lti.Api.Controllers.ValuesController.InputDto)">
+            <summary>
+            Test method to check API works and alive. Return hard-coded values.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

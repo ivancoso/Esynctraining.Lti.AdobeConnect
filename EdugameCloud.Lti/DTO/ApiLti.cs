@@ -12,19 +12,22 @@ namespace EdugameCloud.Lti.DTO
         //public string lmsProviderName { get; set; }
     }
 
-    [DataContract]
-    public class TemplatesRequestDto : RequestDto
-    {
-        [DataMember]
-        public int LmsMeetingType { get; set; }
-    }
+    //[DataContract]
+    //public class TemplatesRequestDto : RequestDto
+    //{
+    //    [DataMember]
+    //    public int LmsMeetingType { get; set; }
+    //}
 
     [DataContract]
     public class MeetingRequestDto : RequestDto
     {
+        /// <summary>
+        /// Internal eSyncTraining DB meeting record ID.
+        /// </summary>
         [Required]
         [DataMember]
-        public int meetingId { get; set; }
+        public int MeetingId { get; set; }
 
     }
 
@@ -32,9 +35,12 @@ namespace EdugameCloud.Lti.DTO
     [DataContract]
     public class RecordingRequestDto : MeetingRequestDto
     {
+        /// <summary>
+        /// AC sco-id of the recording.
+        /// </summary>
         [Required]
         [DataMember]
-        public string recordingId { get; set; }
+        public string RecordingId { get; set; }
 
     }
 
@@ -43,7 +49,7 @@ namespace EdugameCloud.Lti.DTO
     public sealed class SearchRequestDto : RequestDto
     {
         [DataMember]
-        public string searchTerm { get; set; }
+        public string SearchTerm { get; set; }
 
     }
 

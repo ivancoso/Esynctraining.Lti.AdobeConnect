@@ -58,7 +58,7 @@
 
             try
             {
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.meetingId);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
                 if (meeting == null)
                     return OperationResultWithData<IEnumerable<ACSessionParticipantDto>>.Error(Messages.MeetingNotFound);
 
@@ -88,7 +88,7 @@
 
             try
             {
-                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.meetingId);
+                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
                 if (meeting == null)
                     return OperationResultWithData<IEnumerable<ACSessionDto>>.Error(Messages.MeetingNotFound);
 
@@ -118,7 +118,7 @@
 
             try
             {
-                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.meetingId);
+                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
                 if (meeting == null)
                     return OperationResultWithData<IEnumerable<RecordingTransactionDTO>>.Error(Messages.MeetingNotFound);
 

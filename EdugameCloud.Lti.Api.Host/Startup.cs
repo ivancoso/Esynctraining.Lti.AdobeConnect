@@ -8,6 +8,7 @@ using Castle.Windsor;
 using Castle.Windsor.MsDependencyInjection;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Host.Formatters;
+using EdugameCloud.Lti.Api.Host.Swagger;
 using EdugameCloud.Persistence;
 using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Extensions;
@@ -137,18 +138,24 @@ namespace EdugameCloud.Lti.Api.Host
                         //Pattern = "pattern",
                     }
                 );
-
                 
-
                 // HACK: umcomment for prod.
                 //if (HostingEnvironment.IsProduction())
-                //    c.DocumentFilter<HideNonApiFilter>();
+                    c.DocumentFilter<HideNonApiFilter>();
 
-                //c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Api.xml", HostingEnvironment.WebRootPath)); 
+                c.SchemaFilter<ApplyCustomSchemaFilters>();
 
+                c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Api.xml", HostingEnvironment.WebRootPath));
+                c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Core.xml", HostingEnvironment.WebRootPath));
+                c.IncludeXmlComments(string.Format(@"{0}\Esynctraining.AdobeConnect.Api.xml", HostingEnvironment.WebRootPath));
+                c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.xml", HostingEnvironment.WebRootPath));
+                
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
-                    Description = "Authorization header using the Bearer scheme. Example: \"Authorization: lti {token}\"",
+                    Description = "Authorization header using the Bearer scheme. " +
+                    "<br/> Example: \"Authorization: ltiapi {consumerKey}:{courseId}\""
+                    + "<br/> {courseId} - LMS course Id."
+                    + "For Sakai {courseId} - is GetHashCode() result for course context_id value.",
                     Name = "Authorization",
                     In = "header",
                     Type = "apiKey"
@@ -180,10 +187,11 @@ namespace EdugameCloud.Lti.Api.Host
             {
                 return ctx =>
                 {
+                    // TODO: env.IsDevelopment() ? new[] { "*" } : new[] { "*" }
                     ctx.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
                     ctx.Response.Headers.Add("Access-Control-Allow-Headers", new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" });
                     ctx.Response.Headers.Add("Access-Control-Allow-Methods", new[] { "POST" });
-                    ctx.Response.Headers.Add("Access-Control-Max-Age", new[] { "1728000" });
+                    ctx.Response.Headers.Add("Access-Control-Max-Age", new[] { "86400" }); // 1day
 
                     if (ctx.Request.Method == "OPTIONS")
                     {

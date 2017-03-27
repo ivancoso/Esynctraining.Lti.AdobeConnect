@@ -64,7 +64,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var userProvider = GetUserProvider(session.LmsCompany, session.LmsUser, principal, provider);
 
                 var myMeetings = userProvider.ReportMyMeetings(MeetingPermissionId.host).Values
-                    .Where(x => x.MeetingName.IndexOf(request.searchTerm, StringComparison.OrdinalIgnoreCase) >=0 || x.UrlPath.IndexOf(request.searchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
+                    .Where(x => x.MeetingName.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >=0 || x.UrlPath.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
                 
                 return myMeetings.Select(MeetingItemDto.Build).ToSuccessResult();
             }

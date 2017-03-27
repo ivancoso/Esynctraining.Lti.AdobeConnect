@@ -147,7 +147,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var provider = GetAdminProvider();
 
                 var result = new List<Principal>();
-                PrincipalCollectionResult byLogin = provider.GetAllByFieldLike("login", request.searchTerm);
+                PrincipalCollectionResult byLogin = provider.GetAllByFieldLike("login", request.SearchTerm);
                 if (byLogin.Success)
                 {
                     result.AddRange(byLogin.Values);
@@ -157,7 +157,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     // TODO: log error and return error!!
                 }
 
-                PrincipalCollectionResult byName = provider.GetAllByFieldLike("name", request.searchTerm);
+                PrincipalCollectionResult byName = provider.GetAllByFieldLike("name", request.SearchTerm);
                 if (byName.Success)
                 {
                     result.AddRange(byName.Values);

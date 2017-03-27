@@ -107,8 +107,7 @@ namespace EdugameCloud.Lti.Api.Filters
                             {
                                 var api = filterContext.Controller as BaseApiController;
                                 api.LmsCompany = license;
-                                // HACK another header??
-                                //api.CourseId = session.LmsCourseId; // TODO: !!!
+                                api.CourseId = FetchApiCourseId(filterContext.HttpContext.Request);
                             }
                         }
                     }
@@ -116,7 +115,7 @@ namespace EdugameCloud.Lti.Api.Filters
             }
             else
             {
-                filterContext.Result = new JsonResult(OperationResult.Error("Necessary arguments were not provided."));
+                filterContext.Result = new JsonResult(OperationResult.Error("Necessary Authorization arguments were not provided."));
             }
             base.OnActionExecuting(filterContext);
         }
@@ -175,7 +174,8 @@ namespace EdugameCloud.Lti.Api.Filters
 
             if ((authHeader != null) && authHeader.StartsWith(apiAuthScheme, StringComparison.OrdinalIgnoreCase))
             {
-                string token = authHeader.Substring(apiAuthScheme.Length).Trim();
+                string token = authHeader.Substring(apiAuthScheme.Length)
+                    .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                 Guid uid;
                 if (Guid.TryParse(token, out uid))
@@ -187,6 +187,14 @@ namespace EdugameCloud.Lti.Api.Filters
 
             mode = null;
             return Guid.Empty;
+        }
+
+        private static int FetchApiCourseId(HttpRequest req)
+        {
+            string authHeader = req.Headers[HeaderName];
+            string token = authHeader.Substring(apiAuthScheme.Length)
+                    .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)[1];
+            return int.Parse(token);
         }
 
     }

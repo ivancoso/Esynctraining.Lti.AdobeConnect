@@ -1,0 +1,1395 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EdugameCloud.Lti</name>
+    </assembly>
+    <members>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.HttpUtilsInternal.UrlEncode(System.String)">
+            <summary>
+            The url encode.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.HttpUtilsInternal.UrlEncodeToBytes(System.String)">
+            <summary>
+            The url encode to bytes.
+            </summary>
+            <param name="text">
+            The text.
+            </param>
+            <returns>
+            The bytes.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.API.AdobeConnect.DateExtensions">
+            <summary>
+            The date extensions.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.API.AdobeConnect.DateExtensions.dt1951">
+            <summary>
+            The date time 1951.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.DateExtensions.FixACValue(System.DateTime)">
+            <summary>
+            The fix ac value.
+            </summary>
+            <param name="dt">
+            The dt.
+            </param>
+            <returns>
+            The <see cref="!:DateTime?"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.API.AdobeConnect.IUsersSetup">
+            <summary>
+            The UsersSetup interface.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.MeetingSetup.GetLmsParameters(System.String,System.String,System.String,System.String@)">
+            <summary>
+            The get LMS parameters.
+            </summary>
+            <param name="acId">
+            The AC id.
+            </param>
+            <param name="acDomain">
+            The AC domain.
+            </param>
+            <param name="scoId">
+            The SCO id.
+            </param>
+            <param name="error">
+            The error.
+            </param>
+            <returns>
+            The <see cref="T:EdugameCloud.Lti.DTO.LmsUserParametersDTO"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.AddUsersToMeetingHostsGroup(Esynctraining.AdobeConnect.IAdobeConnectProxy,System.Collections.Generic.IEnumerable{System.String},Esynctraining.AC.Provider.Entities.PrincipalType)">
+            <summary>
+            The add users to meeting hosts group.
+            </summary>
+            <param name="provider">
+            The provider.
+            </param>
+            <param name="principalIds">
+            The principal ids.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.IsTeacher(EdugameCloud.Lti.DTO.LtiParamDTO)">
+            <summary>
+            The is teacher.
+            </summary>
+            <param name="param">
+            The parameter.
+            </param>
+            <returns>
+            The <see cref="T:System.Boolean"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.SetDefaultRolesForNonParticipants(EdugameCloud.Lti.Domain.Entities.ILmsLicense,Esynctraining.AdobeConnect.IAdobeConnectProxy,EdugameCloud.Lti.Domain.Entities.LmsCourseMeeting,System.Collections.Generic.IEnumerable{EdugameCloud.Lti.DTO.LmsUserDTO},System.Collections.Generic.IEnumerable{EdugameCloud.Lti.Domain.Entities.LmsUser},System.Collections.Generic.List{Esynctraining.AC.Provider.Entities.MeetingPermissionInfo},System.String@)">
+            <summary>
+            The update user.
+            </summary>
+            <param name="lmsCompany">
+            The lmsCompany.
+            </param>
+            <param name="provider">
+            The provider.
+            </param>
+            <param name="param">
+            The parameter.
+            </param>
+            <param name="scoId">
+            The SCO Id.
+            </param>
+            <param name="error">
+            The error.
+            </param>
+            <returns>
+            The <see cref="T:System.Collections.Generic.List`1"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.SetLMSUserDefaultACPermissions2(EdugameCloud.Lti.Domain.Entities.ILmsLicense,System.String,EdugameCloud.Lti.DTO.LmsUserDTO,System.String,System.Collections.Generic.List{Esynctraining.AC.Provider.Entities.MeetingPermissionUpdateTrio},System.Collections.Generic.List{System.String})">
+            <summary>
+            The set lms user default ac permissions 2.
+            </summary>
+            <param name="meetingScoId">
+            The meeting sco id.
+            </param>
+            <param name="u">
+            The u.
+            </param>
+            <param name="principalId">
+            The principal id.
+            </param>
+            <param name="meetingPermission">
+            The meeting permission.
+            </param>
+            <param name="hostPrincipals">
+            The host principals.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.GetGroupPrincipals(Esynctraining.AdobeConnect.IAdobeConnectProxy,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            The get group principals.
+            </summary>
+            <param name="provider">
+            The provider.
+            </param>
+            <param name="groupIds">
+            The group ids.
+            </param>
+            <returns>
+            The <see cref="T:System.Collections.Generic.List`1"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.GetMeetingAttendees(Esynctraining.AdobeConnect.IAdobeConnectProxy,System.String,System.Collections.Generic.HashSet{System.String})">
+            <summary>
+            The get meeting attendees.
+            </summary>
+            <param name="provider">
+            The provider.
+            </param>
+            <param name="meetingSco">
+            The meeting SCO.
+            </param>
+            <param name="hosts">
+            The hosts.
+            </param>
+            <param name="presenters">
+            The presenters.
+            </param>
+            <param name="participants">
+            The participants.
+            </param>
+            <param name="nonEditable">
+            The non editable.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.ProcessACMeetingAttendees(System.Collections.Generic.HashSet{System.String},Esynctraining.AdobeConnect.IAdobeConnectProxy,System.Collections.Generic.List{Esynctraining.AC.Provider.Entities.MeetingPermissionInfo},System.Collections.Generic.HashSet{System.String})">
+            <summary>
+            The process ac meeting attendees.
+            </summary>
+            <param name="nonEditable">
+            The non editable.
+            </param>
+            <param name="provider">
+            The provider.
+            </param>
+            <param name="values">
+            The values.
+            </param>
+            <param name="alreadyAdded">
+            The already added.
+            </param>
+            <returns>
+            The <see cref="T:System.Collections.Generic.List`1"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.LmsUserServiceBase.GetUser(EdugameCloud.Lti.Domain.Entities.ILmsLicense,System.String,System.Int32,System.String@,EdugameCloud.Lti.DTO.LtiParamDTO)">
+            <param name="currentUser">When we get all users for course, we use admin's token (currentUser.token)</param>
+            <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
+        </member>
+        <member name="T:EdugameCloud.Lti.API.IEGCEnabledLmsAPI">
+            <summary>
+            The EGC enabled LMS API interface.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.IEGCEnabledLmsAPI.GetItemsInfoForUser(EdugameCloud.Lti.Domain.Entities.LmsUserParameters,System.Boolean,System.String@)">
+            <summary>
+            The get items info for user.
+            </summary>
+            <param name="lmsUserParameters">
+            The LMS user parameters.
+            </param>
+            <param name="isSurvey">
+            The is survey.
+            </param>
+            <param name="error">
+            The error.
+            </param>
+            <returns>
+            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.IEGCEnabledLmsAPI.GetItemsForUser(EdugameCloud.Lti.Domain.Entities.LmsUserParameters,System.Boolean,System.Collections.Generic.IEnumerable{System.Int32},System.String@)">
+            <summary>
+            The get quiz list for user.
+            </summary>
+            <param name="lmsUserParameters">
+            The LMS User Parameters.
+            </param>
+            <param name="isSurvey">
+            The is Survey.
+            </param>
+            <param name="quizIds">
+            The quiz Ids.
+            </param>
+            <param name="error">
+            The error.
+            </param>
+            <returns>
+            The <see cref="T:NHibernate.Mapping.List"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.IEGCEnabledLmsAPI.SendAnswers(EdugameCloud.Lti.Domain.Entities.LmsUserParameters,System.String,System.Boolean,System.String[])">
+            <summary>
+            The send answers.
+            </summary>
+            <param name="lmsUserParameters">
+            The LMS user parameters.
+            </param>
+            <param name="json">
+            The JSON.
+            </param>
+            <param name="isSurvey">
+            The is Survey.
+            </param>
+            <param name="answers">
+            The answers.
+            </param>
+        </member>
+        <member name="T:EdugameCloud.Lti.API.ILmsAPI">
+            <summary>
+            The LMS API interface.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.API.LmsFactory">
+            <summary>
+            The LMS factory.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.API.LmsFactory.canvasApi">
+            <summary>
+            The Canvas API.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.API.LmsFactory.moodleApi">
+            <summary>
+            The Moodle API.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.API.LmsFactory.blackboardApi">
+            <summary>
+            The blackboard api.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.LmsFactory.#ctor(EdugameCloud.Lti.API.Canvas.IEGCEnabledCanvasAPI,EdugameCloud.Lti.API.Moodle.IEGCEnabledMoodleApi,EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi,EdugameCloud.Lti.API.Sakai.IEGCEnabledSakaiApi)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.API.LmsFactory"/> class.
+            </summary>
+            <param name="canvasApi">
+            The Canvas API.
+            </param>
+            <param name="moodleApi">
+            The Moodle API.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.API.LmsFactory.GetEGCEnabledLmsAPI(EdugameCloud.Lti.Domain.Entities.LmsProviderEnum)">
+            <summary>
+            The get LMS API.
+            </summary>
+            <param name="lmsId">
+            The LMS id.
+            </param>
+            <returns>
+            The <see cref="T:EdugameCloud.Lti.API.ILmsAPI"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Constants.LtiSessionKeys">
+            <summary>
+            The LTI session keys.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Constants.LtiSessionKeys.ProviderSessionKeyPattern">
+            <summary>
+            The provider session key pattern.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MeetingRequestDto.MeetingId">
+            <summary>
+            Internal eSyncTraining DB meeting record ID.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.RecordingRequestDto.RecordingId">
+            <summary>
+            AC sco-id of the recording.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.BBAssessmentDTO">
+            <summary>
+            The bb assessment dto.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBAssessmentDTO.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBAssessmentDTO.name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBAssessmentDTO.description">
+            <summary>
+            Gets or sets the description.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBAssessmentDTO.instructions">
+            <summary>
+            Gets or sets the instructions.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBAssessmentDTO.questions">
+            <summary>
+            Gets or sets the questions.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.CanvasQuestionDTO">
+            <summary>
+            The canvas question dto.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.CanvasQuizDTO">
+            <summary>
+            The canvas quiz dto.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizDTO.questions">
+            <summary>
+            Gets or sets the questions.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizDTO.question_list">
+            <summary>
+            Gets the question_list.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.CanvasFileDTO">
+            <summary>
+            The canvas file dto.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasFileDTO.url">
+            <summary>
+            Gets or sets the url.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.BBConsumerProfileDTO">
+            <summary>
+            The Black Board consumer profile DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBConsumerProfileDTO.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBConsumerProfileDTO.LtiVersion">
+            <summary>
+            Gets or sets the LTI Version.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBConsumerProfileDTO.Services">
+            <summary>
+            Gets or sets the services.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.BBQuestionDTO">
+            <summary>
+            The bb question dto.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.text">
+            <summary>
+            Gets or sets the text.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.htmlText">
+            <summary>
+            Gets or sets the text.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.questionText">
+            <summary>
+            Question text for FIB Sakai
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.title">
+            <summary>
+            Gets or sets the title.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.type">
+            <summary>
+            Gets or sets the type.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.answer">
+            <summary>
+            Gets or sets the answer.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.answers">
+            <summary>
+            Gets or sets the answers.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.answersList">
+            <summary>
+            Gets or sets the answers list.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.choices">
+            <summary>
+            Gets or sets the choices.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.answerRange">
+            <summary>
+            Gets or sets the answer range.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.answersChoices">
+            <summary>
+            Gets or sets the answers choices.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.tolerance">
+            <summary>
+            Gets or sets the tolerance.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.formula">
+            <summary>
+            Gets or sets the formula.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.variableSets">
+            <summary>
+            Gets or sets the variable sets.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.questionWordsList">
+            <summary>
+            Gets or sets the question words list.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.answerPhrasesList">
+            <summary>
+            Gets or sets the answer phrases list.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.BBQuestionDTO.caseSensitive">
+            <summary>
+            Indicates whether answers for this question should be checked for case sensitivity. Default value is false.
+            </summary>
+            note: currently is not used
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.MoodleQuizInfoDTO">
+            <summary>
+            The moodle quiz info DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizInfoDTO.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizInfoDTO.name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizInfoDTO.course">
+            <summary>
+            Gets or sets the course.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizInfoDTO.courseName">
+            <summary>
+            Gets or sets the course name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizInfoDTO.lastModifiedMoodle">
+            <summary>
+            Gets or sets the last modified moodle.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizInfoDTO.lastModifiedEGC">
+            <summary>
+            Gets or sets the last modified EGC.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.MoodleQuizResultDTO">
+            <summary>
+            The moodle quiz result DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizResultDTO.quizId">
+            <summary>
+            Gets or sets the quiz id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizResultDTO.questionId">
+            <summary>
+            Gets or sets the question id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizResultDTO.userId">
+            <summary>
+            Gets or sets the user id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizResultDTO.startTime">
+            <summary>
+            Gets or sets the start time.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizResultDTO.answers">
+            <summary>
+            Gets or sets the answers.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleQuizResultDTO.questionType">
+            <summary>
+            Gets or sets the question type.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.SakaiTokenDTO">
+            <summary>
+            The Sakai token DTO.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.DTO.SakaiTokenDTO.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.SakaiTokenDTO"/> class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.SakaiTokenDTO.error">
+            <summary>
+            Gets or sets error
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.SakaiTokenDTO.token">
+            <summary>
+            Gets or sets token
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.MoodleTokenDTO">
+            <summary>
+            The moodle token DTO.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.DTO.MoodleTokenDTO.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.MoodleTokenDTO"/> class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleTokenDTO.error">
+            <summary>
+            Gets or sets error
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MoodleTokenDTO.token">
+            <summary>
+            Gets or sets token
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO">
+            <summary>
+            The quiz submission DTO.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO"/> class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.access_code">
+            <summary>
+            Gets or sets the access code.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.attempt">
+            <summary>
+            Gets or sets the attempt.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.finished_at">
+            <summary>
+            Gets or sets the finished at.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.quiz_id">
+            <summary>
+            Gets or sets the quiz id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.quiz_questions">
+            <summary>
+            Gets or sets the quiz questions.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.score">
+            <summary>
+            Gets or sets the score.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.started_at">
+            <summary>
+            Gets or sets the started at.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.submission_id">
+            <summary>
+            Gets or sets the submission id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.time_spent">
+            <summary>
+            Gets or sets the time spent.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.user_id">
+            <summary>
+            Gets or sets the user id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionDTO.validation_token">
+            <summary>
+            Gets or sets the validation token.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.CanvasQuizSubmissionQuestionDTO">
+            <summary>
+            The quiz submission question DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionQuestionDTO.answer">
+            <summary>
+            Gets or sets the answer.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionQuestionDTO.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.CanvasQuizSubmissionResultDTO">
+            <summary>
+            The quiz submission result DTO.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.DTO.CanvasQuizSubmissionResultDTO.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.CanvasQuizSubmissionResultDTO"/> class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CanvasQuizSubmissionResultDTO.quiz_submissions">
+            <summary>
+            Gets or sets the quiz_submissions.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Models.ProxyToolPasswordModel">
+            <summary>
+            The proxy tool password model.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Models.ProxyToolPasswordModel.BlackBoardTitle">
+            <summary>
+            Gets or sets the black board title.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Models.ProxyToolPasswordModel.LmsDomain">
+            <summary>
+            Gets or sets the LMS domain.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Models.ProxyToolPasswordModel.RegistrationPassword">
+            <summary>
+            Gets or sets the registration password.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.HttpRequestBaseExtensions.IsAuthenticatedWithLti(System.Web.HttpRequestBase)">
+            <summary>
+            Get a value indicating whether the current request is authenticated
+            using LTI.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.HttpRequestBaseExtensions.CheckForRequiredLtiParameters(System.Web.HttpRequestBase)">
+            <summary>
+            Parse the HttpRequest and return a filled in LtiRequest.
+            </summary>
+            <param name="request">The HttpRequest to parse.</param>
+            <returns>An LtiInboundRequest filled in with the OAuth and LTI parameters
+            sent by the consumer.</returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Extensions.MoodleParserExtensions">
+            <summary>
+            The moodle parser extension.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.MoodleParserExtensions.ClearName(System.String)">
+            <summary>
+            The clear name.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.MoodleParserExtensions.GetNodeValue(System.Xml.XmlNode,System.String)">
+            <summary>
+            The get node value.
+            </summary>
+            <param name="root">
+            The root.
+            </param>
+            <param name="nodeName">
+            The node name.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.MoodleParserExtensions.GetNodeXmlValues(System.Xml.XmlNode,System.String)">
+            <summary>
+            The get node value.
+            </summary>
+            <param name="root">
+            The root.
+            </param>
+            <param name="nodeName">
+            The node name.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.OAuth.Canvas.CanvasAuthResponse">
+            <summary>
+            The canvas auth response.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.OAuth.Canvas.CanvasAuthResponse.access_token">
+            <summary>
+            Gets or sets the access_token.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.OAuth.Canvas.CanvasAuthResponse.user">
+            <summary>
+            Gets or sets the user.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.OAuth.Canvas.CanvasClient">
+            <summary>
+            The canvas client.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.AuthorizationEndpoint">
+            <summary>
+                The authorization endpoint.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.TokenEndpoint">
+            <summary>
+                The token endpoint.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.ReturnUrlDelimiter">
+            <summary>
+            The return url delimiter.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.StateQueryKey">
+            <summary>
+            The state query key.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.ReturnUriProviderKeyParameterName">
+            <summary>
+            The return uri provider key parameter name.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.userDataCache">
+            <summary>
+            The user data cache.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.userCanvasUrlCache">
+            <summary>
+            The user canvas url cache.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.appId">
+            <summary>
+                The _app id.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.appSecret">
+            <summary>
+                The _app secret.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.OAuth.Canvas.CanvasClient"/> class. 
+            </summary>
+            <param name="appId">
+            The app id.
+            </param>
+            <param name="appSecret">
+            The app secret.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.AddCanvasUrlToReturnUrl(System.String,System.String)">
+            <summary>
+            Add canvas url to return url
+            </summary>
+            <param name="returnUrl">Return url</param>
+            <param name="canvasUrl">Canvas url</param>
+            <returns>
+            Cleaned url
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.AddProviderKeyToReturnUrl(System.String,System.String)">
+            <summary>
+            The add provider key to return url.
+            </summary>
+            <param name="returnUrl">
+            The return url.
+            </param>
+            <param name="providerKey">
+            The provider key.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.GetServiceLoginUrl(System.Uri)">
+            <summary>
+            The get service login url.
+            </summary>
+            <param name="returnUrl">
+            The return url.
+            </param>
+            <returns>
+            An absolute URI.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.GetUserData(System.String)">
+            <summary>
+            The get user data.
+            </summary>
+            <param name="accessToken">
+            The access token.
+            </param>
+            <returns>
+            A dictionary of profile data.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.QueryAccessToken(System.Uri,System.String)">
+            <summary>
+            Obtains an access token given an authorization code and callback URL.
+            </summary>
+            <param name="returnUrl">
+            The return url.
+            </param>
+            <param name="authorizationCode">
+            The authorization code.
+            </param>
+            <returns>
+            The access token.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.ClearReturnUrl(System.Uri,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            The clear return url.
+            </summary>
+            <param name="returnUrl">
+            The return url.
+            </param>
+            <param name="collection">
+            The collection.
+            </param>
+            <returns>
+            The <see cref="T:System.Uri"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.OAuth.Canvas.CanvasUser">
+            <summary>
+            The Instagram user.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.OAuth.Canvas.CanvasUser.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.OAuth.Canvas.CanvasUser.name">
+            <summary>
+            Gets or sets the username.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager">
+            <summary>
+            The LTI open AUTH security manager.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.ProviderQueryStringName">
+            <summary>
+                The provider query string name.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.SessionIdQueryStringName">
+            <summary>
+                The query string name for session id.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.authenticationProvider">
+            <summary>
+            The authentication provider.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.requestContext">
+            <summary>
+            The request context.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.#ctor(System.Web.HttpContextBase,DotNetOpenAuth.AspNet.IAuthenticationClient,DotNetOpenAuth.AspNet.IOpenAuthDataProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager"/> class.
+            </summary>
+            <param name="requestContext">
+            The request context.
+            </param>
+            <param name="provider">
+            The provider.
+            </param>
+            <param name="dataProvider">
+            The data provider.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.AttachQueryStringParameter(System.Uri,System.String,System.String)">
+            <summary>
+            The attach query string parameter.
+            </summary>
+            <param name="url">
+            The url.
+            </param>
+            <param name="parameterName">
+            The parameter name. This value should not be provided by an end user; the caller should
+                ensure that this value comes only from a literal string.
+            </param>
+            <param name="parameterValue">
+            The parameter value.
+            </param>
+            <returns>
+            An absolute URI.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.ConvertToAbsoluteUri(System.String,System.Web.HttpContextBase)">
+            <summary>
+            Converts an app-relative url, e.g. ~/Content/Return.cshtml, to a full-blown url, e.g.
+                http://mysite.com/Content/Return.cshtml
+            </summary>
+            <param name="returnUrl">
+            The return URL.
+            </param>
+            <param name="context">
+            The context.
+            </param>
+            <returns>
+            An absolute URI.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.VerifyAuthentication(System.String)">
+            <summary>
+            The verify authentication.
+            </summary>
+            <param name="returnUrl">
+            The return url.
+            </param>
+            <returns>
+            The <see cref="T:DotNetOpenAuth.AspNet.AuthenticationResult"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.GetPublicFacingUrl(System.Web.HttpRequestBase)">
+            <summary>
+            Gets the public facing URL for the given incoming HTTP request.
+            </summary>
+            <param name="request">
+            The request.
+            </param>
+            <returns>
+            The URI that the outside world used to create this request.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.OAuth.LtiOpenAuthSecurityManager.GetPublicFacingUrl(System.Web.HttpRequestBase,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Gets the public facing URL for the given incoming HTTP request.
+            </summary>
+            <param name="request">
+            The request.
+            </param>
+            <param name="serverVariables">
+            The server variables to consider part of the request.
+            </param>
+            <returns>
+            The URI that the outside world used to create this request.
+            </returns>
+            <remarks>
+            Although the <paramref name="serverVariables"/> value can be obtained from
+                <see cref="P:System.Web.HttpRequest.ServerVariables"/>, it's useful to be able to pass them
+                in so we can simulate injected values from our unit tests since the actual property
+                is a read-only kind of <see cref="T:System.Collections.Specialized.NameValueCollection"/>.
+            </remarks>
+        </member>
+        <member name="T:EdugameCloud.Lti.OAuth.OAuthWebSecurityWrapper">
+            <summary>
+            The OAUTH web security wrapper.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Resources.Messages">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.AdobeConnectDeniedErrorMessage">
+            <summary>
+              Looks up a localized string similar to Not Authorized. Please check that account used to access Adobe Connect has sufficient permissions..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.AdobeConnectMeetingHostQuota">
+            <summary>
+              Looks up a localized string similar to You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.BlackboardDomainMissing">
+            <summary>
+              Looks up a localized string similar to Blackboard LMS domain is missing..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.CanNotGetBreezeSession">
+            <summary>
+              Looks up a localized string similar to Can&apos;t get Adobe Connect BreezeSession.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.CanSaveToDb">
+            <summary>
+              Looks up a localized string similar to Could not save user information in database. Please contact system administrator..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.CantCreatePrincipalWithEmptyEmail">
+            <summary>
+              Looks up a localized string similar to User Email doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.CantRetrieveLmsUsers">
+            <summary>
+              Looks up a localized string similar to Unable retrieve information about LMS users..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.CreateAcPrincipalManually">
+            <summary>
+              Looks up a localized string similar to User does not exist in AC database. You must create AC accounts manually..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.ErrorOccured">
+            <summary>
+              Looks up a localized string similar to Error occured. .
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.ExceptionMessage">
+            <summary>
+              Looks up a localized string similar to An exception is occured. Try again later or contact your administrator..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.ExceptionOccured">
+            <summary>
+              Looks up a localized string similar to An exception is occured. .
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.IncorrectAcPassword">
+            <summary>
+              Looks up a localized string similar to The password you provided is incorrect. Please try again..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiExternalToolUrl">
+            <summary>
+              Looks up a localized string similar to Review LTI integration. Possibly you have invalid consumer key or External Tool URL..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiInvalidRequest">
+            <summary>
+              Looks up a localized string similar to Invalid LTI request.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiNoAcAccount">
+            <summary>
+              Looks up a localized string similar to Sorry, Adobe Connect account does not exist for you. Please contact administrator..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiNoLmsAdmin">
+            <summary>
+              Looks up a localized string similar to Sorry, LMS Admin is not set for current license. Please contact administrator..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiOauthInvalidParameters">
+            <summary>
+              Looks up a localized string similar to Invalid OAuth parameters. Application Id and Application Key cannot be empty..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationDifferentDomain">
+            <summary>
+              Looks up a localized string similar to This LTI integration is already set for different domain..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationInactiveCompanyLicense">
+            <summary>
+              Looks up a localized string similar to Sorry, your company doesn&apos;t have any active license. Please contact administrator..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationInactiveLmsLicense">
+            <summary>
+              Looks up a localized string similar to LMS License is not active. Please contact administrator..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationMissingParameters">
+            <summary>
+              Looks up a localized string similar to Missing parameters:.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationNoContextRole">
+            <summary>
+              Looks up a localized string similar to There is no LIS context role provided in request..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationNoSetup">
+            <summary>
+              Looks up a localized string similar to Your Adobe Connect integration is not set up for provided consumer key..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationRequiredACParameters">
+            <summary>
+              Looks up a localized string similar to The following parameters are required for AC integration:.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationWrongSignature">
+            <summary>
+              Looks up a localized string similar to Invalid signature parameter..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.LtiValidationWrongVersion">
+            <summary>
+              Looks up a localized string similar to Invalid LTI Version parameter..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.MeetingCantFindPrincipal">
+            <summary>
+              Looks up a localized string similar to Cannot find Adobe Connect user with email {0} or login {1}.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.MeetingDeletionDisabled">
+            <summary>
+              Looks up a localized string similar to Meeting deletion is disabled.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.MeetingNotAssociatedToCourse">
+            <summary>
+              Looks up a localized string similar to This meeting is not associated to any course..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.MeetingNotFound">
+            <summary>
+              Looks up a localized string similar to Meeting not found.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.MeetingNotFoundInAC">
+            <summary>
+              Looks up a localized string similar to Meeting not found in Adobe Connect.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.MeetingNotStudyGroup">
+            <summary>
+              Looks up a localized string similar to The meeting is not a study group, you can only leave study groups..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.MeetingNotUniqueUrlPath">
+            <summary>
+              Looks up a localized string similar to URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.NoLmsInformation">
+            <summary>
+              Looks up a localized string similar to Could not find LMS information. Please, contact system administrator..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.NoSessionInformation">
+            <summary>
+              Looks up a localized string similar to Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.NotUniqueName">
+            <summary>
+              Looks up a localized string similar to There is already another item with this name. Please try again..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.NoUserByPrincipalIdFound">
+            <summary>
+              Looks up a localized string similar to No user with principal id {0} found in Adobe Connect..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.NoUserFound">
+            <summary>
+              Looks up a localized string similar to No user with id {0} found..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.PrincipalEmailUsedForGuest">
+            <summary>
+              Looks up a localized string similar to Unable to sync users. Guest record with email &apos;{0}&apos; already exists in Adobe Connect. Please contact AC administrator to promote guest to user..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.PrincipalLoginUsedForGuest">
+            <summary>
+              Looks up a localized string similar to Unable to sync users. Guest record with login &apos;{0}&apos; already exists in Adobe Connect. Please contact AC administrator to promote guest to user..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.PrincipalValidateAlreadyInAc">
+            <summary>
+              Looks up a localized string similar to User &apos;{0}&apos; already exists in Adobe Connect..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.PrincipalValidateEmailLength">
+            <summary>
+              Looks up a localized string similar to E-mail must be between 1 and 60 characters long..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.PrincipalValidateLoginLength">
+            <summary>
+              Looks up a localized string similar to Login must be between 1 and 60 characters long..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.PrincipalValidateNameLength">
+            <summary>
+              Looks up a localized string similar to The combined length of First and Last name must be between 1 and 60 characters..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.RecordingAlreadyHasMP4">
+            <summary>
+              Looks up a localized string similar to Recording is already been converted to MP4..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.RecordingCantDeleteMP4Progress">
+            <summary>
+              Looks up a localized string similar to Cannot delete. MP4 is already in progress..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.RecordingDisabledMP4">
+            <summary>
+              Looks up a localized string similar to MP4 functionality is not enabled in Adobe Connect..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.RecordingDuplicateMP4">
+            <summary>
+              Looks up a localized string similar to Trying to create MP4 duplicate recording..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.RecordingMissedMP4">
+            <summary>
+              Looks up a localized string similar to MP4 recording doesn&apos;t exist..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.RecordingNotFound">
+            <summary>
+              Looks up a localized string similar to No recording found.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.SessionTimeOut">
+            <summary>
+              Looks up a localized string similar to Session timed out. Please refresh the page..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.UserIsAlreadyParticipant">
+            <summary>
+              Looks up a localized string similar to This Adobe Connect user is already a participant of the meeting..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.UserNotInAdobeConnect">
+            <summary>
+              Looks up a localized string similar to User does not exist in Adobe Connect..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.UsersCannotBeSync">
+            <summary>
+              Looks up a localized string similar to Some of the users cannot be synchronized due to: .
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.UsersCouldNotBeRemoved">
+            <summary>
+              Looks up a localized string similar to Some of the users could not be removed..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.UsersCouldNotBeUpdated">
+            <summary>
+              Looks up a localized string similar to Some of the users could not be updated..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.UsersDuplicateEmail">
+            <summary>
+              Looks up a localized string similar to users with duplicate email exist, .
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.UsersEmptyEmail">
+            <summary>
+              Looks up a localized string similar to users with empty email exist, .
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.ValidateSummaryLength">
+            <summary>
+              Looks up a localized string similar to Summary must be between 0 and 4000 characters long..
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Resources.Messages.ValidateTitleLength">
+            <summary>
+              Looks up a localized string similar to Title must be between 1 and 60 characters long..
+            </summary>
+        </member>
+    </members>
+</doc>

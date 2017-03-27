@@ -16,20 +16,38 @@ namespace EdugameCloud.Lti.Api.Controllers
     [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
     public class ValuesController : BaseApiController
     {
+        /// <summary>
+        /// Test input DTO.
+        /// </summary>
         public class InputDto
         {
-            [StringLength(100, MinimumLength = 50)]
+            /// <summary>
+            /// String value with (50-100) length validation.
+            /// </summary>
+            [StringLength(10, MinimumLength = 5)]
             [Required]
             public string MeetingId { get; set; }
         }
 
+        /// <summary>
+        /// out DTO
+        /// </summary>
         public class TestDto
         {
+            /// <summary>
+            /// ID
+            /// </summary>
             [Required]
             public int Id { get; set; }
 
+            /// <summary>
+            /// Description can be empty.
+            /// </summary>
             public string Description { get; set; }
 
+            /// <summary>
+            /// This is DateTime property. Should be returned as Unix timestamp.
+            /// </summary>
             public DateTime Date { get; set; }
         }
         
@@ -43,9 +61,14 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
         }
 
-        // GET api/values
+        
+        /// <summary>
+        /// Test method to check API works and alive. Returns hard-coded values.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
-        //[EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public IEnumerable<TestDto> Get2([FromBody]InputDto request)
         {
             return new TestDto[] { new TestDto { Id = 1, Description = "test", Date = DateTime.Now }, new TestDto { Id = 2, Date = DateTime.Today } };

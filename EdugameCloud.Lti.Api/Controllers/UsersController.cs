@@ -64,7 +64,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     && service.CanRetrieveUsersFromApiForCompany(LmsCompany)
                     && LmsCompany.LmsCourseMeetings != null)
                 {
-                    SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false, meetingIds: new[] { request.meetingId });
+                    SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false, meetingIds: new[] { request.MeetingId });
                 }
 
                 string error;
@@ -74,7 +74,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     CourseId,
                     // TRICK: used for D2L only! to add admin to meeting. It's OK to pass null for API here.
                     SessionSave?.LtiSession?.LtiParam,
-                    request.meetingId,
+                    request.MeetingId,
                     out error,
                     null);
 

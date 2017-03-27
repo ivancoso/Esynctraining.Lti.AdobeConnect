@@ -178,7 +178,7 @@
             try
             {
                 var param = Session.LtiSession.LtiParam;
-                OperationResult result = this.meetingSetup.LeaveMeeting(LmsCompany, param, request.meetingId, GetAdminProvider());
+                OperationResult result = this.meetingSetup.LeaveMeeting(LmsCompany, param, request.MeetingId, GetAdminProvider());
                 return result;
             }
             catch (Exception ex)
@@ -201,7 +201,7 @@
                     LmsCompany,
                     this.GetAdminProvider(),
                     param,
-                    request.meetingId,
+                    request.MeetingId,
                     out error);
 
                 //if (string.IsNullOrEmpty(error))

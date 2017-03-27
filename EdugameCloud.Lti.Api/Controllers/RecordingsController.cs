@@ -69,6 +69,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         // we can reuse that info to have type (change API)
         [HttpPost]
         [Route("")]
+        //[ResponseType(typeof(IEnumerable<Country>))]
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public OperationResultWithData<IEnumerable<IRecordingDto>> GetRecordings([FromBody]TypeMeetingRequestDto request)
         {
@@ -86,7 +87,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     LmsCompany,
                     ac,
                     CourseId,
-                    request.meetingId,
+                    request.MeetingId,
                     getRoomTypeFactory);
 
                 // TRICK: for API UNIR uses AutoPublishRecordings==true; So no access to Session for them.
@@ -222,11 +223,11 @@ namespace EdugameCloud.Lti.Api.Controllers
                 if (LmsCompany.AutoPublishRecordings)
                     throw new Core.WarningMessageException("Publishing is not allowed by LMS license settings");
 
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.meetingId);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
                 var recording = new LmsCourseMeetingRecording
                 {
                     LmsCourseMeeting = meeting,
-                    ScoId = request.recordingId,
+                    ScoId = request.RecordingId,
                 };
                 meeting.MeetingRecordings.Add(recording);
                 LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
@@ -253,8 +254,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                 if (LmsCompany.AutoPublishRecordings)
                     throw new Core.WarningMessageException("UnPublishing is not allowed by LMS license settings");
 
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.meetingId);
-                var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == request.recordingId);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
+                var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == request.RecordingId);
                 if (recording != null)
                 {
                     meeting.MeetingRecordings.Remove(recording);

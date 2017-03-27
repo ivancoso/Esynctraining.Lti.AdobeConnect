@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using EdugameCloud.Lti.Api.Filters;
+using EdugameCloud.Lti.DTO;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -24,5 +26,34 @@ namespace EdugameCloud.Lti.Api.Host.Swagger
         }
 
     }
+
+// TODO: move
+    public class ApplyCustomSchemaFilters : ISchemaFilter
+    {
+        //public void Apply(Schema schema, SchemaRegistry schemaRegistry, Type type)
+        //{
+        //    var excludeProperties = new[] { "myProp1", "myProp2", "myProp3" };
+
+        //    foreach (var prop in excludeProperties)
+        //        if (schema.properties.ContainsKey(prop))
+        //            schema.properties.Remove(prop);
+        //}
+
+        public void Apply(Schema model, SchemaFilterContext context)
+        {
+            if (context.SystemType == typeof(MeetingDTO))
+            {
+                var excludeProperties = new[] { "accessLevel", "canJoin", "isEditable", "officeHours", "isDisabledForThisCourse",
+                    "telephonyProfileFields", "sessions"
+                };
+
+                foreach (var prop in excludeProperties)
+                    if (model.Properties.ContainsKey(prop))
+                        model.Properties.Remove(prop);
+            }
+        }
+
+    }
+
 
 }

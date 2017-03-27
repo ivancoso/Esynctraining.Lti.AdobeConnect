@@ -234,6 +234,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             object localLockObject = new object();
 
             var lmsUserPrincipalId = lmsUser.PrincipalId;
+            var principalsToCheckPermissions = new List<string> { "public-access" };
+            if (!string.IsNullOrWhiteSpace(lmsUser.PrincipalId))
+                principalsToCheckPermissions.Add(lmsUser.PrincipalId);
+
             var lmsCompanyId = lmsCompany.Id;
             // TRICK: not to have DB calls from Parallel.ForEach 
             var input = meetings.Select(x => new Tuple<LmsCourseMeeting, string>(x, x.GetMeetingScoId())).ToList();
@@ -244,7 +248,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                   {
                       MeetingInfo info = GetAcMeetingInfo(
                         provider,
-                        lmsUserPrincipalId,
+                        principalsToCheckPermissions,
                         lmsCompanyId,
                         meeting.Item2,
                         meeting.Item1,
@@ -560,7 +564,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if(meeting == null)
             {
-                meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingDTO.Id,
+                meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingDTO.Id ?? 0,
                     meetingDTO.GetMeetingType());
                 string meetingSco = meeting.GetMeetingScoId();
 
@@ -784,7 +788,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // TODO: optimize - we have result.ScoInfo already!!
             MeetingInfo info = this.GetAcMeetingInfo(
                            provider,
-                           lmsUser.PrincipalId,
+                           new List<string> { "public-access", lmsUser.PrincipalId },
                            lmsCompany.Id,
                            meeting.GetMeetingScoId(),
                            meeting,
@@ -804,7 +808,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     provider,
                     param.course_id,
                     param,
-                    updatedMeeting.Id,
+                    updatedMeeting.Id ?? 0,
                     //param.course_id,
                     out error,
                     //param,
@@ -944,7 +948,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // TODO: optimize - we have meetingSco.ScoInfo already!!
             MeetingInfo info = this.GetAcMeetingInfo(
                            provider,
-                           lmsUser.PrincipalId,
+                           new List<string> { "public-access", lmsUser.PrincipalId },
                            credentials.Id,
                            meeting.GetMeetingScoId(),
                            meeting,
@@ -971,7 +975,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     provider,
                     param.course_id,
                     param,
-                    updatedMeeting.Id,
+                    updatedMeeting.Id ?? 0,
                     out error,
                     lmsUsers);
                 if (error != null)
@@ -1496,7 +1500,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         
 
         private MeetingInfo GetAcMeetingInfo(IAdobeConnectProxy provider,
-            string lmsUserPrincipalId,
+            List<string> principalsToFetchPermissions,
             int lmsCompanyId,
             string meetingScoId,
             LmsCourseMeeting lmsCourseMeeting,
@@ -1523,7 +1527,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             psw = Stopwatch.StartNew();
             bool meetingExistsInAC;
             IEnumerable<MeetingPermissionInfo> permission = provider.GetMeetingPermissions(scoResult.ScoInfo.ScoId,
-                new List<string> { "public-access", lmsUserPrincipalId },
+                principalsToFetchPermissions,
                 out meetingExistsInAC).Values;
 
             psw.Stop();
@@ -1559,14 +1563,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (meeting.Sco == null)
                 return null;
 
-            bool isEditable = this.CanEdit(param, meeting.DbRecord);
-            var type = (LmsMeetingType) meeting.DbRecord.LmsMeetingType;
-
-            var canJoin = this.CanJoin(lmsUser, type, meeting.Permissions)
-                          || (type != LmsMeetingType.StudyGroup
-                              && (GetGuestAuditRoleMappings(lmsCompany, param).Any()
-                                  || (lmsCompany.UseSynchronizedUsers && meeting.DbRecord.EnableDynamicProvisioning)));
-
+            var type = (LmsMeetingType)meeting.DbRecord.LmsMeetingType;
             string officeHoursString = (type == LmsMeetingType.OfficeHours) ? meeting.DbRecord.OfficeHours.Hours : null;
 
             string meetingName = string.Empty;
@@ -1642,24 +1639,36 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 Id = meeting.DbRecord.Id,
                 AcRoomUrl = meeting.Sco.UrlPath.Trim('/'),
                 Name = meetingName,
-                Summary = meeting.Sco.Description,
-                ClassRoomId = meeting.Sco.ScoTag,
+                // NOTE: to skip "" from serialization
+                Summary = string.IsNullOrWhiteSpace(meeting.Sco.Description) ? null : meeting.Sco.Description,
+                ClassRoomId = string.IsNullOrWhiteSpace(meeting.Sco.ScoTag) ? null : meeting.Sco.ScoTag,
                 Template = meeting.Sco.SourceScoId,
                 StartTimeStamp =
                     (long) meeting.Sco.BeginDate.ConvertToUnixTimestamp() +
                     (long) GetTimezoneShift(timeZone, meeting.Sco.BeginDate),
                 Duration = (meeting.Sco.EndDate - meeting.Sco.BeginDate).ToString(@"h\:mm"),
-                AccessLevel = meeting.GetPublicAccessPermission(),
-                CanJoin = canJoin,
-                IsEditable = isEditable,
+
+                //AccessLevel = meeting.GetPublicAccessPermission(),
+                //CanJoin = canJoin,
+                //IsEditable = isEditable,
+
                 Type = (int) type,
                 OfficeHours = officeHoursString,
                 Reused = scoIdReused,
                 ReusedByAnotherMeeting = usedByAnotherMeeting,
 
                 AudioProfileId = meeting.DbRecord.AudioProfileId, // TODO: use meetingSco.TelephonyProfile
-                Sessions = sessions,
+                Sessions = sessions.Length > 0 ? sessions : null,
             };
+
+            // TRICK: for API
+            if (!string.IsNullOrWhiteSpace(lmsUser.PrincipalId))
+                SetPermissions(
+                    ret,
+                    lmsUser,
+                    param,
+                    lmsCompany,
+                    meeting);
 
             if (meeting.AudioProfile?.TelephonyProfile != null)
             {
@@ -1672,7 +1681,37 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return ret;
         }
-        
+
+        private void SetPermissions(
+            MeetingDTO dto,
+            LmsUser lmsUser,
+            LtiParamDTO param,
+            ILmsLicense lmsCompany,
+            MeetingInfo meeting)
+        {
+            if (meeting == null)
+                throw new ArgumentNullException(nameof(meeting));
+            if (lmsUser == null)
+                throw new ArgumentNullException(nameof(lmsUser));
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
+            //if (meeting.Sco == null)
+            //    return null;
+
+            bool isEditable = this.CanEdit(param, meeting.DbRecord);
+            var type = (LmsMeetingType)meeting.DbRecord.LmsMeetingType;
+
+            var canJoin = this.CanJoin(lmsUser, type, meeting.Permissions)
+                          || (type != LmsMeetingType.StudyGroup
+                              && (GetGuestAuditRoleMappings(lmsCompany, param).Any()
+                                  || (lmsCompany.UseSynchronizedUsers && meeting.DbRecord.EnableDynamicProvisioning)));
+
+            dto.AccessLevel = meeting.GetPublicAccessPermission();
+            dto.CanJoin = canJoin;
+            dto.IsEditable = isEditable;
+        }
+
         private static double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)
         {
             if (timezone == null)
