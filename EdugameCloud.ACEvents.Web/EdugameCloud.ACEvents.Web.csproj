@@ -15,7 +15,7 @@
     <AssemblyName>EdugameCloud.ACEvents.Web</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -221,7 +221,9 @@
     <Content Include="Content\img\GSILogo-Tag-Blue.jpg" />
     <Content Include="Content\img\GSU-2012-560x230-01.jpg" />
     <Content Include="Content\img\GSU-2012-740x300-01.jpg" />
-    <Content Include="exclude.txt" />
+    <Content Include="exclude.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
