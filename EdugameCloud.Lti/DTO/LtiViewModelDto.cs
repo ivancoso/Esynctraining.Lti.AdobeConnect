@@ -28,9 +28,9 @@ namespace EdugameCloud.Lti.DTO
                 public string EditRecordingInformation { get; set; } = RestWebApiBaseUrl + "recordings/edit";  // API
                 public string DeleteRecording { get; set; } = RestWebApiBaseUrl + "recordings/delete/{0}";  // API
 
-                public string OpenAcRecordingEditPage { get; set; } = "lti/recordings/edit/{0}"; // get
-                public string JoinRecording { get; set; } = "lti/recordings/join/{0}";  // get
-                public string GetRecordingFLV { get; set; } = "lti/recordings/getFlv/{0}"; // get
+                public string OpenAcRecordingEditPage { get; set; } = "recordings/edit/{0}"; // get
+                public string JoinRecording { get; set; } = "recordings/join/{0}";  // get
+                public string GetRecordingFLV { get; set; } = "recordings/getFlv/{0}"; // get
 
                 public string GetUsersForMeeting { get; set; } = RestWebApiBaseUrl + "users"; // API
                 public string CreateACUser { get; set; } = RestWebApiBaseUrl + "acNewUser"; // API
@@ -56,8 +56,8 @@ namespace EdugameCloud.Lti.DTO
                 public string CheckSettingsPasword { get; set; } = RestWebApiBaseUrl + "settings/checkpass"; // API
                 public string SaveSettings { get; set; } = RestWebApiBaseUrl + "settings/save"; // API
 
-                public string JoinToMeeting { get; set; } = "lti/meeting/join";
-                public string JoinToMeetingMobile { get; set; } = "lti/meeting/joinmobile";
+                public string JoinToMeeting { get; set; } = "meeting/join";
+                public string JoinToMeetingMobile { get; set; } = "meeting/joinmobile";
                 public string LeaveMeeting { get; set; } = RestWebApiBaseUrl + "meeting/leave"; // API
                 public string DeleteMeeting { get; set; } = RestWebApiBaseUrl + "meeting/delete"; // API
                 public string SaveMeetingAndGetUsers { get; set; } = RestWebApiBaseUrl + "meeting/UpdateAndReturnLmsUsers"; // API
