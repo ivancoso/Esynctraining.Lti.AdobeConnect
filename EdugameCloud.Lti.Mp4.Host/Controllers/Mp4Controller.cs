@@ -100,10 +100,10 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("file/{scoId:long:min(1)}")]
-        public virtual OperationResultWithData<string> AccessMp4File(string scoId, [FromUri]string lmsProviderName)
+        public virtual OperationResultWithData<string> AccessMp4File(string scoId, [FromUri]string session)
         {
-            if (lmsProviderName == null)
-                throw new ArgumentNullException(nameof(lmsProviderName));
+            if (session == null)
+                throw new ArgumentNullException(nameof(session));
 
             LmsCompany lmsCompany = null;
             try
@@ -134,7 +134,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
             catch (Exception ex)
             {
-                Logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, lmsProviderName);
+                Logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, session);
 
                 return OperationResultWithData<string>.Error(IsDebug 
                     ? (ex.Message + ex.StackTrace) 
@@ -144,7 +144,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("subtitle/{scoId:long:min(1)}")]
-        public OperationResultWithData<string> AccessVttFile(string scoId, [FromUri]string lmsProviderName)
+        public OperationResultWithData<string> AccessVttFile(string scoId, [FromUri]string session)
         {
             LmsCompany lmsCompany = null;
             try
@@ -170,12 +170,12 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpGet]
         [Route("subtitle/{fileScoId:long:min(1)}")]
-        public HttpResponseMessage GetVttFile(string fileScoId, [FromUri]string lmsProviderName)
+        public HttpResponseMessage GetVttFile(string fileScoId, [FromUri]string session)
         {
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
+                var session = GetReadOnlySession(session);
                 lmsCompany = session.LmsCompany;
 
                 string breezeToken;
@@ -193,7 +193,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content")]
-        public HttpResponseMessage GetVttFileViaPost(string fileScoId, [FromUri]string lmsProviderName)
+        public HttpResponseMessage GetVttFileViaPost(string fileScoId, [FromUri]string session)
         {
             LmsCompany lmsCompany = null;
             try
@@ -216,7 +216,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
-        public Task<FileUploadResultDto> PostVttFile(string fileScoId, [FromUri]string lmsProviderName)
+        public Task<FileUploadResultDto> PostVttFile(string fileScoId, [FromUri]string session)
         {
             var session = Session;
             var lmsCompany = session.LmsCompany;

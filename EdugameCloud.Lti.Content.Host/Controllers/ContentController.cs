@@ -56,8 +56,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
 
         [HttpPost]
-        [Route("{lmsProviderName:guid}/shortcuts")]
-        public OperationResultWithData<IEnumerable<ScoShortcutDto>> GetShortcuts(string lmsProviderName)
+        [Route("{session:guid}/shortcuts")]
+        public OperationResultWithData<IEnumerable<ScoShortcutDto>> GetShortcuts(string session)
         {
             LmsCompany lmsCompany = null;
             try
@@ -96,8 +96,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         /// Returns folder's content.
         /// </summary>
         [HttpPost]
-        [Route("{lmsProviderName:guid}/content/{folderScoId:long:min(1)}")]
-        public async Task<OperationResultWithData<IEnumerable<ScoContentDto>>> FolderContent(string lmsProviderName, string folderScoId)
+        [Route("{session:guid}/content/{folderScoId:long:min(1)}")]
+        public async Task<OperationResultWithData<IEnumerable<ScoContentDto>>> FolderContent(string session, string folderScoId)
         {
             LmsCompany lmsCompany = null;
             try
@@ -124,8 +124,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         /// Creates child folder.
         /// </summary>
         [HttpPost]
-        [Route("{lmsProviderName:guid}/content/{folderScoId:long:min(1)}/create-sub-folder")]
-        public OperationResultWithData<FolderDto> CreateSubFolder(string lmsProviderName, string folderScoId, [FromBody]FolderDto dto)
+        [Route("{session:guid}/content/{folderScoId:long:min(1)}/create-sub-folder")]
+        public OperationResultWithData<FolderDto> CreateSubFolder(string session, string folderScoId, [FromBody]FolderDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -157,8 +157,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         /// Get Download link to download file directly from AC (zip version).
         /// </summary>
         [HttpPost]
-        [Route("{lmsProviderName:guid}/content/{scoId:long:min(1)}/download")]
-        public OperationResult GetDownloadLink(string lmsProviderName, string scoId)
+        [Route("{session:guid}/content/{scoId:long:min(1)}/download")]
+        public OperationResult GetDownloadLink(string session, string scoId)
         {
             LmsCompany lmsCompany = null;
             try
@@ -202,8 +202,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         /// Deletes folder of file.
         /// </summary>
         [HttpPost]
-        [Route("{lmsProviderName:guid}/content/{scoId:long:min(1)}/delete")]
-        public OperationResult DeleteFileOrFolder(string lmsProviderName, string scoId)
+        [Route("{session:guid}/content/{scoId:long:min(1)}/delete")]
+        public OperationResult DeleteFileOrFolder(string session, string scoId)
         {
             LmsCompany lmsCompany = null;
             try
@@ -227,8 +227,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         }
 
         [HttpPost]
-        [Route("{lmsProviderName:guid}/content/{scoId:long:min(1)}/edit")]
-        public OperationResult EditSco(string lmsProviderName, string scoId, [FromBody]FileUpdateDto dto)
+        [Route("{session:guid}/content/{scoId:long:min(1)}/edit")]
+        public OperationResult EditSco(string session, string scoId, [FromBody]FileUpdateDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -254,8 +254,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         }
 
         [HttpPost]
-        [Route("{lmsProviderName:guid}/content/{scoId:long:min(1)}/move-to/{destinationFolderScoId}")]
-        public OperationResult MoveFileOrFolder(string lmsProviderName, string scoId, string destinationFolderScoId)
+        [Route("{session:guid}/content/{scoId:long:min(1)}/move-to/{destinationFolderScoId}")]
+        public OperationResult MoveFileOrFolder(string session, string scoId, string destinationFolderScoId)
         {
             LmsCompany lmsCompany = null;
             try
@@ -280,8 +280,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
-        [Route("uploading/{lmsProviderName:guid}/content/{folderScoId:long:min(1)}/upload-file")]
-        public async Task<HttpResponseMessage> UploadFile(string lmsProviderName, string folderScoId)
+        [Route("uploading/{session:guid}/content/{folderScoId:long:min(1)}/upload-file")]
+        public async Task<HttpResponseMessage> UploadFile(string session, string folderScoId)
         {
             if (!Request.Content.IsMimeMultipartContent())
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
