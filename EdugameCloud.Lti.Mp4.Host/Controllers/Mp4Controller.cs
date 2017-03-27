@@ -21,6 +21,7 @@ using Esynctraining.Mp4Service.Tasks.Client.Dto;
 namespace EdugameCloud.Lti.Mp4.Host.Controllers
 {
     [RoutePrefix("mp4")]
+    [LmsAuthorizeBase]
     [EnableCors(origins: "*", headers: "*", methods: "GET,POST,OPTIONS")]
     public class Mp4Controller : BaseController
     {
