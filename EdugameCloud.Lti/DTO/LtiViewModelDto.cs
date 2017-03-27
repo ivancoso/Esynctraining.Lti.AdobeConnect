@@ -45,13 +45,13 @@ namespace EdugameCloud.Lti.DTO
                 public string SaveEvent { get; set; } = RestWebApiBaseUrl + "calendar/saveevent"; // API
                 public string DeleteEvent { get; set; } = RestWebApiBaseUrl + "calendar/deleteevent"; // API
 
-                public string GetContentShortcuts { get; set; } = "lti-my-content/{0}/shortcuts";
-                public string GetFolderContent { get; set; } = "lti-my-content/{0}/content/{1}";
-                public string DownloadContent { get; set; } = "lti-my-content/{0}/content/{1}/download";
-                public string DeleteContent { get; set; } = "lti-my-content/{0}/content/{1}/delete";
-                public string EditContent { get; set; } = "lti-my-content/{0}/content/{1}/edit";
-                public string MoveContent { get; set; } = "lti-my-content/{0}/content/{1}/move-to/{2}";
-                public string CreateContentFolder { get; set; } = "lti-my-content/{0}/content/{1}/create-sub-folder";
+                public string GetContentShortcuts { get; set; } = "../lti-my-content/{0}/shortcuts";
+                public string GetFolderContent { get; set; } = "../lti-my-content/{0}/content/{1}";
+                public string DownloadContent { get; set; } = "../lti-my-content/{0}/content/{1}/download";
+                public string DeleteContent { get; set; } = "../lti-my-content/{0}/content/{1}/delete";
+                public string EditContent { get; set; } = "../lti-my-content/{0}/content/{1}/edit";
+                public string MoveContent { get; set; } = "../lti-my-content/{0}/content/{1}/move-to/{2}";
+                public string CreateContentFolder { get; set; } = "../lti-my-content/{0}/content/{1}/create-sub-folder";
 
                 public string CheckSettingsPasword { get; set; } = RestWebApiBaseUrl + "settings/checkpass"; // API
                 public string SaveSettings { get; set; } = RestWebApiBaseUrl + "settings/save"; // API
