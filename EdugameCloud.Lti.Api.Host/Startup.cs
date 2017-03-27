@@ -53,6 +53,11 @@ namespace EdugameCloud.Lti.Api.Host
             services
                 .AddMvcCore(setup =>
                 {
+                    while (setup.InputFormatters.Count > 0)
+                        setup.InputFormatters.RemoveAt(0);
+                    while (setup.OutputFormatters.Count > 0)
+                        setup.OutputFormatters.RemoveAt(0);
+
                     setup.InputFormatters.Insert(0, new JilInputFormatter());
                     setup.OutputFormatters.Insert(0, new JilOutputFormatter());
 

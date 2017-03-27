@@ -945,8 +945,9 @@ namespace EdugameCloud.Lti.Controllers
 
             var meetings = meetingSetup.GetMeetings(
                 credentials,
-                session.LmsUser,
+                param.course_id,
                 acProvider,
+                session.LmsUser,
                 param,
                 trace);
 

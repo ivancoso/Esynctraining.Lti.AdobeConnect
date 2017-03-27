@@ -68,8 +68,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         Name = meetingName + " #" + i.ToString(),
                         Summary = string.Empty,
-                        StartDate = startDate.ToString("yyyy-MM-dd HH:mm"),
-                        EndDate = endDate.ToString("yyyy-MM-dd HH:mm"),
+                        StartDate = startDate,//.ToString("yyyy-MM-dd HH:mm"),
+                        EndDate = endDate,//.ToString("yyyy-MM-dd HH:mm"),
                     };
                     listOfEvents.Add(ev);
                     i++;
@@ -88,8 +88,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 EventId = x.EventId,
                 Name = x.Name,
-                StartDate = DateTime.Parse(x.StartDate),
-                EndDate = DateTime.Parse(x.EndDate),
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
                 LmsCourseMeeting = meeting
             }));
             _lmsCourseMeetingModel.RegisterSave(meeting, true);
@@ -120,8 +120,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 Name = nameInfo.meetingName + " #",
                 Summary = string.Empty,
-                StartDate = startDate.ToString("yyyy-MM-dd HH:mm"),
-                EndDate = endDate.ToString("yyyy-MM-dd HH:mm"),
+                StartDate = startDate,//.ToString("yyyy-MM-dd HH:mm"),
+                EndDate = endDate,//.ToString("yyyy-MM-dd HH:mm"),
             };
 
             if (_calendarExportService != null)
@@ -133,8 +133,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 EventId = ev.EventId,
                 Name = ev.Name,
-                StartDate = DateTime.Parse(ev.StartDate),
-                EndDate = DateTime.Parse(ev.EndDate),
+                StartDate = ev.StartDate,
+                EndDate = ev.EndDate,
                 LmsCourseMeeting = meeting
             };
             meeting.MeetingSessions.Add(dbEvent);
@@ -144,17 +144,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public MeetingSessionDTO SaveSession(int meetingId, MeetingSessionDTO dto, LtiParamDTO param)
         {
-            DateTime startDate;
-            DateTime endDate;
-            if (!DateTime.TryParseExact(dto.StartDate, "MM/dd/yyyy hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate) 
-                || !DateTime.TryParseExact(dto.EndDate, "MM/dd/yyyy hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
-            {
-                //todo : log
-                throw new InvalidOperationException("Start date or End date is not correct.");
-            }
+            //DateTime startDate;
+            //DateTime endDate;
+            //if (!DateTime.TryParseExact(dto.StartDate, "MM/dd/yyyy hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate) 
+            //    || !DateTime.TryParseExact(dto.EndDate, "MM/dd/yyyy hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
+            //{
+            //    //todo : log
+            //    throw new InvalidOperationException("Start date or End date is not correct.");
+            //}
 
-            dto.StartDate = startDate.ToString("yyyy-MM-dd HH:mm");
-            dto.EndDate = endDate.ToString("yyyy-MM-dd HH:mm");
+            //dto.StartDate = startDate.ToString("yyyy-MM-dd HH:mm");
+            //dto.EndDate = endDate.ToString("yyyy-MM-dd HH:mm");
 
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
             var dbEvent = meeting.MeetingSessions.SingleOrDefault(x => x.Id == dto.Id)
@@ -173,8 +173,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             dbEvent.Name = dto.Name;
             dbEvent.Summary = dto.Summary;
-            dbEvent.StartDate = DateTime.Parse(dto.StartDate);
-            dbEvent.EndDate = DateTime.Parse(dto.EndDate);
+            dbEvent.StartDate = dto.StartDate;
+            dbEvent.EndDate = dto.EndDate;
 
             _lmsCourseMeetingModel.RegisterSave(meeting, true);
             return ConvertFromEntity(dbEvent);
@@ -256,8 +256,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 Id = entity.Id,
                 Name = entity.Name,
-                StartDate = entity.StartDate.ToString("MM/dd/yyyy hh:mm tt"),
-                EndDate = entity.EndDate.ToString("MM/dd/yyyy hh:mm tt"),
+                StartDate = entity.StartDate,//.ToString("MM/dd/yyyy hh:mm tt"),
+                EndDate = entity.EndDate,//.ToString("MM/dd/yyyy hh:mm tt"),
                 Summary = entity.Summary
             };
 

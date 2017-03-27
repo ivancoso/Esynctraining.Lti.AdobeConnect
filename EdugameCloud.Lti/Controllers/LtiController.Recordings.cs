@@ -22,10 +22,6 @@ namespace EdugameCloud.Lti.Controllers
     {
         private IRecordingsService RecordingsService => IoC.Resolve<IRecordingsService>();
 
-        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
-
-        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
-
 
         public LtiRecordingController(
             LmsUserSessionModel userSessionModel,
@@ -128,25 +124,7 @@ namespace EdugameCloud.Lti.Controllers
 
         //    return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
         //}
-
-        private static OperationResult GenerateErrorResult(StatusInfo status)
-        {
-            if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.invalid_recording_job_in_progress)
-            {
-                return OperationResult.Error(Resources.Messages.RecordingAlreadyHasMP4);
-            }
-            if (status.Code == StatusCodes.no_access && status.SubCode == StatusSubCodes.denied)
-            {
-                return OperationResult.Error(Resources.Messages.RecordingDisabledMP4);
-            }
-            if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.duplicate)
-            {
-                return OperationResult.Error(Resources.Messages.RecordingDuplicateMP4);
-            }
-
-            return OperationResult.Error("Unexpected error");
-        }
-
+        
         private ActionResult RecordingsError(string method, string sessionId, Exception ex)
         {
             Logger.ErrorFormat(ex, "{0} exception. sessionId:{1}.", method, sessionId);

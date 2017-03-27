@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace EdugameCloud.Lti.DTO
@@ -19,11 +20,11 @@ namespace EdugameCloud.Lti.DTO
 
         [Required]
         [DataMember]
-        public string StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
         [Required]
         [DataMember]
-        public string EndDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         [DataMember]
         public string Summary { get; set; }

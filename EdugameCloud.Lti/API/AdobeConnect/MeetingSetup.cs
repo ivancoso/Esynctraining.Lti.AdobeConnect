@@ -174,7 +174,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Error(result.InnerXml);
         }
 
-        public IEnumerable<MeetingDTO> GetMeetings(ILmsLicense lmsCompany, LmsUser lmsUser, IAdobeConnectProxy provider, LtiParamDTO param, StringBuilder trace)
+        public IEnumerable<MeetingDTO> GetMeetings(ILmsLicense lmsCompany, int courseId, IAdobeConnectProxy provider,
+            LmsUser lmsUser, LtiParamDTO param, StringBuilder trace)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -187,7 +188,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var ret = new List<MeetingDTO>();
             var sw = Stopwatch.StartNew();
-            var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(lmsCompany.Id, param.course_id).ToList();
+            var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(lmsCompany.Id, courseId).ToList();
             sw.Stop();
             trace?.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", sw.Elapsed.ToString());
 
@@ -210,7 +211,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             OfficeHours = officeHours,
                             LmsMeetingType = (int)LmsMeetingType.OfficeHours,
                             LmsCompanyId = lmsCompany.Id,
-                            CourseId = param.course_id,
+                            CourseId = courseId,
                         };
                     }
                 }
@@ -1616,8 +1617,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    StartDate = x.StartDate.ToString("MM/dd/yyyy hh:mm tt"),
-                    EndDate = x.EndDate.ToString("MM/dd/yyyy hh:mm tt"),
+                    StartDate = x.StartDate, //ToString("MM/dd/yyyy hh:mm tt"),
+                    EndDate = x.EndDate, //.ToString("MM/dd/yyyy hh:mm tt"),
                     Summary = x.Summary,
                 }).ToArray();
             }

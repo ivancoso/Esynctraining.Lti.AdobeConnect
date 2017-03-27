@@ -20,9 +20,6 @@ namespace EdugameCloud.Lti.Api.Controllers
         private readonly IAdobeConnectUserService acUserService;
         private readonly MeetingSetup meetingSetup;
 
-        private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
-        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
-
         #region Constructors and Destructors
 
         public MeetingsController(
@@ -48,10 +45,11 @@ namespace EdugameCloud.Lti.Api.Controllers
             var acProvider = this.GetAdminProvider();
 
             // TODO: implement. will be use be External API only
-            //IEnumerable<MeetingDTO> meetings = MeetingSetup.GetMeetings(
+            //IEnumerable<MeetingDTO> meetings = meetingSetup.GetMeetings(
             //       LmsCompany,
-            //       session.LmsUser,
+            //       CourseId,
             //       acProvider,
+            //       session.LmsUser,                   
             //       param,
             //       trace);
 

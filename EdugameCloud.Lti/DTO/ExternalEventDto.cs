@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace EdugameCloud.Lti.DTO
 {
@@ -12,10 +13,10 @@ namespace EdugameCloud.Lti.DTO
         public string EgcId { get; set; }
 
         [DataMember(Name = "startDate")]
-        public string StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
         [DataMember(Name = "endDate")]
-        public string EndDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         [DataMember(Name = "name")]
         public string Name { get; set; }
