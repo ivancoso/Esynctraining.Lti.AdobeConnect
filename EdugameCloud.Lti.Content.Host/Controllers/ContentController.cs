@@ -62,14 +62,14 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<IEnumerable<ScoShortcutDto>>.Error("Operation is not enabled.");
 
-                var param = session.LtiSession.LtiParam;
-                var ac = this.GetUserProvider(session);
+                var param = s.LtiSession.LtiParam;
+                var ac = this.GetUserProvider(s);
 
                 var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
@@ -102,13 +102,13 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<IEnumerable<ScoContentDto>>.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(session);
+                var ac = this.GetUserProvider(s);
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentControllerHelper<ScoContentDto>(Logger, contentService, new ScoContentDtoMapper());
                 return await helper.GetFolderContent(folderScoId, new NullDtoProcessor<ScoContentDto>());
@@ -136,13 +136,13 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 // TRICK:
                 dto.FolderId = folderScoId;
 
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<FolderDto>.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(session);
+                var ac = this.GetUserProvider(s);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.CreateFolder(dto);
             }
@@ -163,17 +163,17 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(session);
+                var ac = this.GetUserProvider(s);
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentControllerHelper<ScoContentDto>(Logger, contentService, new ScoContentDtoMapper());
 
-                var param = session.LtiSession.With(x => x.LtiParam);
+                var param = s.LtiSession.With(x => x.LtiParam);
                 var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                 if (lmsUser == null)
                 {
@@ -208,13 +208,13 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(session);
+                var ac = this.GetUserProvider(s);
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.DeleteSco(scoId);
@@ -236,13 +236,13 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(session);
+                var ac = this.GetUserProvider(s);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.EditSco(scoId, dto);
             }
@@ -260,13 +260,13 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(session);
+                var ac = this.GetUserProvider(s);
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.MoveSco(scoId, destinationFolderScoId);
@@ -312,9 +312,9 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 string fileName = provider.FileStreams.First().Key;
                 MultipartFormDataMemoryStreamProvider.FileContent stream = provider.FileStreams.First().Value;
 
-                var session = Session;
-                lmsCompany = session.LmsCompany;
-                var ac = this.GetUserProvider(session);
+                var s = Session;
+                lmsCompany = s.LmsCompany;
+                var ac = this.GetUserProvider(s);
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 int fileSize;

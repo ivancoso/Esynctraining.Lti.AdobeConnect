@@ -108,12 +108,12 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 var ac = this.GetAdminProvider(lmsCompany);
                 string breezeToken;
-                Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
+                Principal principal = GetPrincipal(lmsCompany, s.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
                 OperationResultWithData<string> result = new SubtitleUtility(ac, Logger, this).AccessMp4File(scoId,
                     lmsCompany.AcServer,
@@ -149,12 +149,12 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 string breezeToken;
                 var ac = GetAdminProvider(lmsCompany);
-                Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
+                Principal principal = GetPrincipal(lmsCompany, s.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).AccessVttFile(scoId,
                     lmsCompany.AcServer,
@@ -175,12 +175,12 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(session);
-                lmsCompany = session.LmsCompany;
+                var s = GetReadOnlySession(session);
+                lmsCompany = s.LmsCompany;
 
                 string breezeToken;
                 var ac = this.GetAdminProvider(lmsCompany);
-                Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
+                Principal principal = GetPrincipal(lmsCompany, s.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
             }
@@ -198,12 +198,12 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
+                var s = Session;
+                lmsCompany = s.LmsCompany;
 
                 string breezeToken;
                 var ac = this.GetAdminProvider(lmsCompany);
-                Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
+                Principal principal = GetPrincipal(lmsCompany, s.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
             }
@@ -218,8 +218,8 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
         public Task<FileUploadResultDto> PostVttFile(string fileScoId, [FromUri]string session)
         {
-            var session = Session;
-            var lmsCompany = session.LmsCompany;
+            var s = Session;
+            var lmsCompany = s.LmsCompany;
 
             var ac = GetAdminProvider(lmsCompany);
 
