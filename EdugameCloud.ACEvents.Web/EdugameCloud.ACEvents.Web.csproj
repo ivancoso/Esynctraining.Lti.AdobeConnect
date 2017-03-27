@@ -221,6 +221,7 @@
     <Content Include="Content\img\GSILogo-Tag-Blue.jpg" />
     <Content Include="Content\img\GSU-2012-560x230-01.jpg" />
     <Content Include="Content\img\GSU-2012-740x300-01.jpg" />
+    <Content Include="exclude.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
