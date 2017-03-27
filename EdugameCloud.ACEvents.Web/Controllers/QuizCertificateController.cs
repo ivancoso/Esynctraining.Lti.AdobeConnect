@@ -140,8 +140,6 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 {
                     if (!System.IO.File.Exists(certificateTemplateFilePath))
                     {
-                        //var certTemplate = _fileModel.GetOneById(certificateTemplateContentId).Value;
-                        //var certTemplate = _fileModel.GetOneById(certificateTemplateContentId).Value;
                         var certTemplate = _fileService.GetById(certificateTemplateContentId.ToString());
                         //var certTemplate = new FileDTO()
                         //{
