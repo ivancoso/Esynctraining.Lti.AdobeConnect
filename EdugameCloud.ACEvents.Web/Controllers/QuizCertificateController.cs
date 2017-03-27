@@ -277,10 +277,10 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         {
             var fields = new Dictionary<string, string>
                 {
-                    { "ParticipantName", AlignText(certInfo.ParticipantName, 33) },//hardcoded values in pdf template (length of custom fields)
-                    { "CourseTitle", AlignText(certInfo.CourseTitle, 40) },//hardcoded values in pdf template (length of custom fields)
+                    { "ParticipantName", AlignText(certInfo.ParticipantName, 25) },//hardcoded values in pdf template (length of custom fields)
+                    { "CourseTitle", AlignText(certInfo.CourseTitle, 29) },//hardcoded values in pdf template (length of custom fields)
                     { "CtoNumber", certInfo.CtoNumber },
-                    { "Duration", AlignText(certInfo.Duration, 23) },//hardcoded values in pdf template (length of custom fields)
+                    { "Duration", AlignText(certInfo.Duration, 18) },//hardcoded values in pdf template (length of custom fields)
                     { "Date",  certInfo.Date },
                     { "ExpiresDate",  certInfo.ExpiresDate },
                     { "KnowledgeArea",  certInfo.KnowledgeArea },
@@ -297,6 +297,10 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var fieldValueLength = value.ToCharArray().Length;
             var difference = fieldLength - fieldValueLength;
             var offset = fieldLength > fieldValueLength ? difference / 2 : 0;
+            if (offset >= 4 && offset < 8)
+                offset = (int)(offset * 1.3);
+            if (offset >= 8)
+                offset = (int)(offset * 1.6);
             value = fieldValueLength > fieldLength ? value.Take(fieldLength).ToString() : value;
             var result = new String(' ', offset) + value + (offset % 2 > 0 ? new String(' ', offset + 1) : new String(' ', offset));
             return result;
