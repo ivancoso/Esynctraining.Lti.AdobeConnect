@@ -34,21 +34,27 @@
     [DataContract]
     public class MeetingDTOLtiBase<TSession> : MeetingDtoBase
     {
+        /// <summary>
+        /// Internal eSyncTraining DB meeting record ID.
+        /// </summary>
         [Required]
         [DataMember]
-        public long Id { get; set; }
+        public long? Id { get; set; }
 
         #region Public Properties
 
+        /// <summary>
+        /// Meeting = 1, OfficeHours = 2, StudyGroup = 3, Seminar = 4, VirtualClassroom = 5.
+        /// </summary>
         [Required]
         [DataMember]
         public int Type { get; set; }
         
-        [Obsolete("TRICK: to hide from Swagger only. UNIR don't use OfficeHours")]
+        [Obsolete("TRICK: to hide from Swagger only. UNIR doesn't use OfficeHours")]
         [DataMember]
         public string OfficeHours { get; set; }
 
-        [Obsolete("TRICK: to hide from Swagger only. UNIR don't use OfficeHours")]
+        [Obsolete("TRICK: to hide from Swagger only. UNIR doesn't use OfficeHours")]
         [DataMember]
         public bool IsDisabledForThisCourse { get; set; }
 
@@ -65,9 +71,11 @@
         [DataMember]
         public int ReusedByAnotherMeeting { get; set; }
 
+        [Obsolete("TRICK: to hide from Swagger only. UNIR doesn't use AudioProfile")]
         [DataMember]
         public IDictionary<string, string> TelephonyProfileFields { get; set; }
 
+        [Obsolete("TRICK: to hide from Swagger only. UNIR doesn't use Sessions")]
         [DataMember(Name = "sessions")]
         public TSession[] Sessions { get; set; }
 
@@ -88,9 +96,9 @@
     [DataContract]
     public class MeetingDTO : MeetingDTOLtiBase<MeetingSessionDTO>
     {
+        //..TODO: check SSO - not in use there for now.But required for amgem.
         /// <summary>
         /// Used to support Virtual Classroom.
-        /// TODO: check SSO - not in use there for now. But required for amgem.
         /// </summary>
         [DataMember]
         public string ClassRoomId { get; set; }

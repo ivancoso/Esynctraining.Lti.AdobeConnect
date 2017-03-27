@@ -35,7 +35,7 @@
         public string LoginId { get; set; }
         
         [DataMember]
-        public string Name 
+        public string Name
         {
             get 
             {
