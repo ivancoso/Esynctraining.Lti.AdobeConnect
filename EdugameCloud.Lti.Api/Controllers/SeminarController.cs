@@ -1,11 +1,17 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Linq;
+using System.Runtime.Caching;
+using System.Text;
+using AutoMapper;
 using EdugameCloud.Core.Business;
+using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Resources;
 using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.Seminar.Dto;
 using Esynctraining.Core.Caching;
@@ -14,13 +20,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Caching;
-using System.Text;
-using System.Threading.Tasks;
-using EdugameCloud.Lti.Resources;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -28,10 +28,7 @@ namespace EdugameCloud.Lti.Api.Controllers
     public class SeminarController : BaseApiController
     {
         private static readonly IMapper mapper = new MapperConfiguration(cfg => cfg.CreateMap<MeetingDTO, SeminarDto>()).CreateMapper();
-
-        // TODO: ask if we need it or use base.Cache
-        protected readonly ObjectCache _cache = System.Runtime.Caching.MemoryCache.Default;
-
+        private readonly IMemoryCache _memoryCache;
         private readonly API.AdobeConnect.ISeminarService _seminarService;
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
@@ -40,6 +37,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         private API.AdobeConnect.IAdobeConnectAccountService AcAccountService => IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>();
 
         public SeminarController(
+            IMemoryCache memoryCache,
             API.AdobeConnect.ISeminarService seminarService,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
@@ -48,16 +46,17 @@ namespace EdugameCloud.Lti.Api.Controllers
         )
             : base(acAccountService, settings, logger, cache)
         {
+            _memoryCache = memoryCache;
             _seminarService = seminarService;
         }
 
         [Route("create")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResult Create([FromBody]CreateSeminarDto model)
         {
-            if (string.IsNullOrWhiteSpace(model.seminarLicenseId))
-                throw new ArgumentException("seminarLicenseId can't be empty", nameof(model.seminarLicenseId));
+            if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
+                throw new ArgumentException("seminarLicenseId can't be empty", nameof(model.SeminarLicenseId));
 
             //TRICK:
             model.Type = (int)LmsMeetingType.Seminar;
@@ -66,7 +65,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
                 var trace = new StringBuilder();
-                var fb = new SeminarFolderBuilder(model.seminarLicenseId);
+                var fb = new SeminarFolderBuilder(model.SeminarLicenseId);
 
                 OperationResult ret = MeetingSetup.SaveMeeting(
                     LmsCompany,
@@ -76,7 +75,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     trace,
                     fb);
 
-                return TrickForSeminar(ret, model.seminarLicenseId);
+                return TrickForSeminar(ret, model.SeminarLicenseId);
             }
             catch (Exception ex)
             {
@@ -87,7 +86,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("edit")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResult Edit([FromBody]EditSeminarDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
@@ -118,12 +117,9 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("sessions/create")]
         [Route("sessions/edit")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public OperationResult SaveSeminarSession([FromBody]SeminarSessionInputDto seminarSessionDto)
         {
-            if (seminarSessionDto == null)
-                throw new ArgumentNullException(nameof(seminarSessionDto));
-
             try
             {
                 //save under admin account doesn't work for user license
@@ -152,7 +148,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("sessions/delete")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public OperationResult DeleteSeminarSession([FromBody]DeleteSeminarSessionDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarSessionId))
@@ -194,7 +190,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         private IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)
         {
             string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
-            var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
+            var provider = _memoryCache.Get(cacheKey) as IAdobeConnectProxy;
 
             if (provider == null)
             {
@@ -203,7 +199,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 provider = accService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
 
                 var sessionTimeout = accService.GetAccountDetails(GetAdminProvider()).SessionTimeout - 1; //-1 is to be sure 
-                _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
+                _memoryCache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
 
             return provider;
@@ -252,7 +248,6 @@ namespace EdugameCloud.Lti.Api.Controllers
                 resultDto.SeminarLicenseId = seminarLicenseId;
                 return resultDto.ToSuccessResult();
             }
-
 
             var res2 = ret as OperationResultWithData<MeetingAndLmsUsersDTO>;
             if (res2 != null)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
@@ -35,7 +36,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("createBatch")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [TeacherOnly]
         public OperationResultWithData<IEnumerable<MeetingSessionDTO>> CreateBatch([FromBody]CreateMeetingSessionsBatchDto dto)
         {
             try
@@ -55,7 +56,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("getevents")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [TeacherOnly]
         public OperationResultWithData<IEnumerable<MeetingSessionDTO>> GetEvents(int meetingId)
         {
             try
@@ -73,14 +74,14 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("createevent")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [TeacherOnly]
         public OperationResultWithData<MeetingSessionDTO> CreateEvent([FromBody]CreateEventDto model)
         {
             try
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
                 var meetingSessionService = _lmsFactory.GetMeetingSessionService((LmsProviderEnum)LmsCompany.LmsProviderId);
-                var eve = meetingSessionService.CreateSession(model.meetingId, param);
+                var eve = meetingSessionService.CreateSession(model.MeetingId, param);
                 return eve.ToSuccessResult();
             }
             catch (Exception ex)
@@ -92,7 +93,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("saveevent")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [TeacherOnly]
         public OperationResultWithData<MeetingSessionDTO> SaveEvent([FromBody]SaveMeetingEventDto model)
         {
             try
@@ -111,7 +112,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("deleteevent")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [TeacherOnly]
         public OperationResult DeleteEvent([FromBody]DeleteMeetingEventDto model)
         {
             try

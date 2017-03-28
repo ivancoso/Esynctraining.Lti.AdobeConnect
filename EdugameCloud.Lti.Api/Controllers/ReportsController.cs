@@ -7,16 +7,15 @@
     using Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Resources;
     using Esynctraining.AdobeConnect.Api.MeetingReports;
     using Esynctraining.AdobeConnect.Api.MeetingReports.Dto;
+    using Esynctraining.Core.Caching;
     using Esynctraining.Core.Domain;
+    using Esynctraining.Core.Logging;
+    using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
     using Microsoft.AspNetCore.Mvc;
-    using Resources;
-    using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Caching;
-    using Esynctraining.Core.Logging;
-    using EdugameCloud.Lti.Resources;
 
     [Route("meeting/reports")]
     public partial class ReportsController : BaseApiController
@@ -40,7 +39,7 @@
 
         public ReportsController(
             IReportsService reportService,
-            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
+            IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, ICache cache)
             : base(acAccountService, settings, logger, cache)
@@ -54,9 +53,6 @@
         [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<ACSessionParticipantDto>> GetAttendanceReport([FromBody]ReportRequestDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             try
             {
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
@@ -84,9 +80,6 @@
         [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<ACSessionDto>> GetSessionsReport([FromBody]ReportRequestDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             try
             {
                 LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
@@ -114,9 +107,6 @@
         [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<RecordingTransactionDTO>> GetRecordingsReport([FromBody]ReportRequestDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             try
             {
                 LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
@@ -70,12 +71,9 @@ namespace EdugameCloud.Lti.Api.Controllers
         [HttpPost]
         [Route("")]
         //[ResponseType(typeof(IEnumerable<Country>))]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        [LmsAuthorizeBase(ApiCallEnabled = true)]
         public OperationResultWithData<IEnumerable<IRecordingDto>> GetRecordings([FromBody]TypeMeetingRequestDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             try
             {
                 var ac = GetAdminProvider();
@@ -109,12 +107,9 @@ namespace EdugameCloud.Lti.Api.Controllers
         // TODO: create DTO with validation!!
         [Route("edit")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResult EditRecording([FromBody]EditDto dto)
         {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
-
             try
             {
                 ///
@@ -182,16 +177,16 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("delete")]
         [Route("delete/{id}")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResult DeleteRecording(int meetingId, string id)
         {
             try
             {
-                var param = Session.LtiSession.LtiParam;
-
+                // TODO : FeatureName - but default value is true here!
                 if (!LmsCompany.CanRemoveRecordings)
                     throw new Core.WarningMessageException("Recording deletion is not enabled for the LMS license");
 
+                var param = Session.LtiSession.LtiParam;
                 OperationResult result = RecordingsService.RemoveRecording(
                     LmsCompany,
                     this.GetAdminProvider(),
@@ -210,14 +205,12 @@ namespace EdugameCloud.Lti.Api.Controllers
         
         [Route("publish")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public OperationResult PublishRecording([FromBody]RecordingRequestDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             try
             {
+                // TODO : FeatureName - but default value is true here!
                 if (LmsCompany.AutoPublishRecordings)
                     throw new Core.WarningMessageException("Publishing is not allowed by LMS license settings");
 
@@ -241,14 +234,12 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("unpublish")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public OperationResult UnpublishRecording([FromBody]RecordingRequestDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             try
             {
+                // TODO : FeatureName - but default value is true here!
                 if (LmsCompany.AutoPublishRecordings)
                     throw new Core.WarningMessageException("UnPublishing is not allowed by LMS license settings");
 
@@ -292,7 +283,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("share")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResultWithData<string> ShareRecording([FromBody]ShareRecordingRequestDto request)
         {
             try

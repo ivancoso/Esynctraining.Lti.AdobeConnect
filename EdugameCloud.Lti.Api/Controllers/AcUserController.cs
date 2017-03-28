@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
@@ -37,10 +38,6 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         }
 
-        private readonly LmsUserModel lmsUserModel;
-        private readonly UsersSetup usersSetup;
-        private readonly IAdobeConnectUserService acUserService;
-
         private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
@@ -48,33 +45,25 @@ namespace EdugameCloud.Lti.Api.Controllers
         #region Constructors and Destructors
 
         public AcUserController(
-            LmsUserModel lmsUserModel,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings, 
-            UsersSetup usersSetup,
-            IAdobeConnectUserService acUserService,
             ILogger logger, ICache cache)
             : base(acAccountService, settings, logger, cache)
         {
-            this.lmsUserModel = lmsUserModel;
-            this.usersSetup = usersSetup;
-            this.acUserService = acUserService;
         }
 
         #endregion
 
         [Route("acNewUser")]
         [HttpPost]
+        [LmsAuthorizeBase]
         public virtual OperationResultWithData<LmsUserDTO> AddNewUser([FromBody]AddUserDto request)
         {
             try
             {
-                if (request == null)
-                    throw new ArgumentNullException(nameof(request));
-                
+                // TODO: use FeatureName but this settings has true as default value
                 if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true))
                     return OperationResultWithData<LmsUserDTO>.Error("Operation is not enabled.");
-
                 var provider = GetAdminProvider();
                 Principal principal;
 
@@ -141,6 +130,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("acSearchUser")]
         [HttpPost]
+        [LmsAuthorizeBase]
         public virtual OperationResultWithData<IEnumerable<PrincipalDto>> SearchExistingUser([FromBody]SearchRequestDto request)
         {
             try

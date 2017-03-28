@@ -28,6 +28,8 @@ namespace EdugameCloud.Lti.Api.Filters
 
         public bool ApiCallEnabled { get; set; }
 
+        public string FeatureName { get; set; }
+
         // TODO: DI
         public LmsAuthorizeBaseAttribute()
         {
@@ -50,11 +52,14 @@ namespace EdugameCloud.Lti.Api.Filters
                     {
                         filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
                     }
+                    else if (!string.IsNullOrWhiteSpace(FeatureName) && !session.LmsCompany.GetSetting<bool>(FeatureName))
+                    {
+                        filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+                    }
                     else
                     {
                         ActionResult notAllowedResult;
                         var allowed = IsAllowed(session, out notAllowedResult);
-
                         if (!allowed)
                         {
                             filterContext.Result = notAllowedResult;
@@ -82,10 +87,12 @@ namespace EdugameCloud.Lti.Api.Filters
                             // TODO: better msg
                             filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
                         }
+                        else if (!string.IsNullOrWhiteSpace(FeatureName) && !license.GetSetting<bool>(FeatureName))
+                        {
+                            filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+                        }
                         else
                         {
-                            // TODO: ENABLED API FLAG!! company license level + action level
-
                             //ActionResult notAllowedResult;
                             //var allowed = IsAllowed(session, out notAllowedResult);
 
@@ -131,7 +138,7 @@ namespace EdugameCloud.Lti.Api.Filters
             return session;
         }
 
-        protected LmsCompany GetLicense(Guid key)
+        private LmsCompany GetLicense(Guid key)
         {
             var license = LicenseModel.GetOneByConsumerKey(key.ToString()).Value;
             if (license == null)
@@ -148,6 +155,7 @@ namespace EdugameCloud.Lti.Api.Filters
 
         private static Guid FetchToken(HttpRequest req, out string mode)
         {
+            mode = null;
             string authHeader = req.Headers[HeaderName];
 
             if ((authHeader != null) && authHeader.StartsWith(ltiAuthScheme, StringComparison.OrdinalIgnoreCase))
@@ -164,8 +172,11 @@ namespace EdugameCloud.Lti.Api.Filters
 
             if ((authHeader != null) && authHeader.StartsWith(apiAuthScheme, StringComparison.OrdinalIgnoreCase))
             {
-                string token = authHeader.Substring(apiAuthScheme.Length)
-                    .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)[0];
+                var parts = authHeader.Substring(apiAuthScheme.Length).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length != 2)
+                    return Guid.Empty;
+
+                string token = parts[0];
 
                 Guid uid;
                 if (Guid.TryParse(token, out uid))
@@ -175,7 +186,6 @@ namespace EdugameCloud.Lti.Api.Filters
                 }
             }
 
-            mode = null;
             return Guid.Empty;
         }
 
@@ -185,6 +195,33 @@ namespace EdugameCloud.Lti.Api.Filters
             string token = authHeader.Substring(apiAuthScheme.Length)
                     .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)[1];
             return int.Parse(token);
+        }
+
+    }
+
+    internal sealed class TeacherOnlyAttribute : LmsAuthorizeBaseAttribute
+    {
+        private readonly LmsRoleService _lmsRoleService;
+
+
+        public TeacherOnlyAttribute()
+        {
+            _lmsRoleService = IoC.Resolve<LmsRoleService>();
+        }
+
+
+        protected override bool IsAllowed(LmsUserSession session, out ActionResult notAllowedResult)
+        {
+            var isTeacher = _lmsRoleService.IsTeacher(session.LtiSession.LtiParam);
+
+            if (!isTeacher)
+            {
+                notAllowedResult = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+                return false;
+            }
+            
+            notAllowedResult = null;
+            return true;
         }
 
     }

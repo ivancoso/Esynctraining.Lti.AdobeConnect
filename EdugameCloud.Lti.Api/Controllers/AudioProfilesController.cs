@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
@@ -46,12 +47,9 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("audioprofiles")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public OperationResultWithData<IEnumerable<AudioProfileDto>> GetAudioProfiles([FromBody]AudioProfileRequestDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             try
             {
                 var session = Session;

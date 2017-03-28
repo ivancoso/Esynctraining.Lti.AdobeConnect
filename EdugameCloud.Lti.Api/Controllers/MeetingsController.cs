@@ -18,7 +18,6 @@ namespace EdugameCloud.Lti.Api.Controllers
 {
     public class MeetingsController : BaseApiController
     {
-        private readonly IAdobeConnectUserService acUserService;
         private readonly MeetingSetup meetingSetup;
 
         #region Constructors and Destructors
@@ -27,11 +26,9 @@ namespace EdugameCloud.Lti.Api.Controllers
             MeetingSetup meetingSetup,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            IAdobeConnectUserService acUserService,
             ILogger logger, ICache cache)
             : base(acAccountService, settings, logger, cache)
         {
-            this.acUserService = acUserService;
             this.meetingSetup = meetingSetup;
         }
 
@@ -150,7 +147,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("useExistingMeeting")]
         [HttpPost]
-        [Filters.LmsAuthorizeBase]
+        [Filters.LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.EnableMeetingReuse)]
         public virtual OperationResult ReuseExistedAdobeConnectMeeting(ReuseExistedAdobeConnectMeetingDto model)
         {
             if (string.IsNullOrWhiteSpace(model.ScoId))
@@ -158,9 +155,6 @@ namespace EdugameCloud.Lti.Api.Controllers
 
             try
             {
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingReuse))
-                    return OperationResult.Error("Operation is not enabled.");
-
                 var param = Session.LtiSession.LtiParam;
                 var provider = this.GetAdminProvider();
 

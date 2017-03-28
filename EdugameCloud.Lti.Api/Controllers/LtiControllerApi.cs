@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using EdugameCloud.Lti.Api.Filters;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Core.Business.Models;
@@ -25,8 +26,6 @@
         private readonly UsersSetup usersSetup;
 
         #endregion
-
-        private ISynchronizationUserService SynchronizationUserService => IoC.Resolve<ISynchronizationUserService>();
 
         private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 
@@ -52,7 +51,7 @@
 
         [Route("settings/save")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResultWithData<LmsUserSettingsDTO> SaveSettings([FromBody]LmsUserSettingsDTO settings)
         {
             try
@@ -100,7 +99,7 @@
         
         [Route("settings/checkpass")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResultWithData<bool> CheckPasswordBeforeJoin()
         {
             try
@@ -172,7 +171,7 @@
         
         [Route("meeting/leave")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResult LeaveMeeting([FromBody]MeetingRequestDto request)
         {
             try
@@ -190,7 +189,7 @@
         
         [Route("meeting/SetDefaultACRoles")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
+        [LmsAuthorizeBase]
         public virtual OperationResultWithData<List<LmsUserDTO>> SetDefaultRolesForNonParticipants([FromBody]MeetingRequestDto request)
         {
             try

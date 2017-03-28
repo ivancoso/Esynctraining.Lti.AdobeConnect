@@ -42,12 +42,12 @@ namespace EdugameCloud.Lti.Api.Controllers
 
 
         public ContentController(
+            IMemoryCache memoryCache,
             LmsUserModel lmsUserModel,
             EdugameCloud.Lti.API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger,
-            ICache cache,
-            IMemoryCache memoryCache)
+            ICache cache)
             : base(acAccountService, settings, logger, cache)
         {
             _lmsUserModel = lmsUserModel;
@@ -55,16 +55,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
 
 
-        [LmsAuthorizeBase]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
         [HttpPost]
         [Route("shortcuts")]
         public OperationResultWithData<IEnumerable<ScoShortcutDto>> GetShortcuts()
         {
             try
             {
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
-                    return OperationResultWithData<IEnumerable<ScoShortcutDto>>.Error("Operation is not enabled.");
-
                 var param = Session.LtiSession.LtiParam;
                 var ac = this.GetUserProvider();
 
@@ -92,16 +89,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// Returns folder's content.
         /// </summary>
-        [LmsAuthorizeBase]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{folderScoId:long:min(1)}")]
         public async Task<OperationResultWithData<IEnumerable<ScoContentDto>>> FolderContent(string folderScoId)
         {
             try
             {
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
-                    return OperationResultWithData<IEnumerable<ScoContentDto>>.Error("Operation is not enabled.");
-
                 var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentControllerHelper<ScoContentDto>(Logger, contentService, new ScoContentDtoMapper());
@@ -117,19 +111,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// Creates child folder.
         /// </summary>
-        [LmsAuthorizeBase]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
         [HttpPost]
         [Route("сontent/{folderScoId:long:min(1)}/create-sub-folder")]
         public OperationResultWithData<FolderDto> CreateSubFolder(string folderScoId, [FromBody]FolderDto dto)
         {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
-
             try
             {
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
-                    return OperationResultWithData<FolderDto>.Error("Operation is not enabled.");
-
                 // TRICK:
                 dto.FolderId = folderScoId;
 
@@ -147,16 +135,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// Get Download link to download file directly from AC (zip version).
         /// </summary>
-        [LmsAuthorizeBase]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{scoId:long:min(1)}/download")]
         public OperationResult GetDownloadLink(string scoId)
         {
             try
             {
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
-                    return OperationResult.Error("Operation is not enabled.");
-
                 var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentControllerHelper<ScoContentDto>(Logger, contentService, new ScoContentDtoMapper());
@@ -189,16 +174,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// Deletes folder of file.
         /// </summary>
-        [LmsAuthorizeBase]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{scoId:long:min(1)}/delete")]
         public OperationResult DeleteFileOrFolder(string scoId)
         {
             try
             {
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
-                    return OperationResult.Error("Operation is not enabled.");
-
                 var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
@@ -211,19 +193,13 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        [LmsAuthorizeBase]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{scoId:long:min(1)}/edit")]
         public OperationResult EditSco(string scoId, [FromBody]FileUpdateDto dto)
         {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
-
             try
             {
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
-                    return OperationResult.Error("Operation is not enabled.");
-
                 var ac = this.GetUserProvider();
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.EditSco(scoId, dto);
@@ -235,16 +211,13 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        [LmsAuthorizeBase]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{scoId:long:min(1)}/move-to/{destinationFolderScoId}")]
         public OperationResult MoveFileOrFolder(string scoId, string destinationFolderScoId)
         {
             try
             {
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
-                    return OperationResult.Error("Operation is not enabled.");
-
                 var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
@@ -284,6 +257,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResultWithData<ScoContentDto>.Error(Messages.SessionTimeOut);
             LmsCompany = Session.LmsCompany;
             
+            // TODO: check user is teacher + feature is enabled
+
             string name = form["name"];
             string description = form["description"];
             string customUrl = form["customUrl"];

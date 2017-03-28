@@ -98,9 +98,6 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Filters.LmsAuthorizeBase]
         public OperationResultWithData<IEnumerable<LmsUserDTO>> UpdateUser([FromBody]CourseUsersDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             var credentials = LmsCompany;
             string lastError = null;
             var updatedUsers = new List<LmsUserDTO>();
@@ -169,9 +166,6 @@ namespace EdugameCloud.Lti.Api.Controllers
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResultWithData<IEnumerable<LmsUserDTO>> RemoveFromAcMeeting([FromBody]CourseUsersDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
             if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser, true))
                 return OperationResultWithData<IEnumerable<LmsUserDTO>>.Error("Operation is not enabled.");
 
