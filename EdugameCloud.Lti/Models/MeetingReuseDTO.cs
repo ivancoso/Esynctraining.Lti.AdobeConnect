@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using EdugameCloud.Lti.Domain.Entities;
 
@@ -8,12 +9,15 @@ namespace EdugameCloud.Lti.Models
     [DataContract]
     public class MeetingReuseDTO
     {
+        [Required]
         [DataMember]
         public string ScoId { get; set; }
 
+        [Required]
         [DataMember]
         public bool MergeUsers { get; set; }
 
+        [Required]
         [DataMember]
         public int Type { get; set; }
 
