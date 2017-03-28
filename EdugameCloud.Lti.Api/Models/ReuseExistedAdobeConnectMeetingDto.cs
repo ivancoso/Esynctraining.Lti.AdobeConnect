@@ -7,6 +7,8 @@ namespace EdugameCloud.Lti.Api.Models
     public class ReuseExistedAdobeConnectMeetingDto : MeetingReuseDTO
     {
         [DataMember]
-        public bool? retrieveLmsUsers { get; set; }
+        public bool? RetrieveLmsUsers { get; set; }
+
     }
+
 }

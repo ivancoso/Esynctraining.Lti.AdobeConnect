@@ -158,11 +158,10 @@ namespace EdugameCloud.Lti.Api.Controllers
                     return OperationResult.Error(errorMessage.ToString());
                 }
 
-                var lmsCompany = Session.LmsCompany;
                 var param = Session.LtiSession.LtiParam;
 
                 OperationResult result = RecordingsService.EditRecording(
-                    lmsCompany,
+                    LmsCompany,
                     this.GetAdminProvider(),
                     param.course_id,
                     dto.recordingId,
@@ -188,14 +187,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                var lmsCompany = Session.LmsCompany;
                 var param = Session.LtiSession.LtiParam;
 
-                if (!lmsCompany.CanRemoveRecordings)
+                if (!LmsCompany.CanRemoveRecordings)
                     throw new Core.WarningMessageException("Recording deletion is not enabled for the LMS license");
 
                 OperationResult result = RecordingsService.RemoveRecording(
-                    lmsCompany,
+                    LmsCompany,
                     this.GetAdminProvider(),
                     param.course_id,
                     id,

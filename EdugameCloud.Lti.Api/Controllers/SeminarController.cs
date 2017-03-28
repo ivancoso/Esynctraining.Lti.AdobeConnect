@@ -20,6 +20,7 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
+using EdugameCloud.Lti.Resources;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -68,7 +69,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var fb = new SeminarFolderBuilder(model.seminarLicenseId);
 
                 OperationResult ret = MeetingSetup.SaveMeeting(
-                    Session.LmsCompany,
+                    LmsCompany,
                     this.GetCurrentUserProvider(Session),
                     param,
                     model,
@@ -89,16 +90,14 @@ namespace EdugameCloud.Lti.Api.Controllers
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public virtual OperationResult Edit([FromBody]EditSeminarDto model)
         {
-            if (string.IsNullOrWhiteSpace(model.lmsProviderName))
-                throw new ArgumentException("lmsProviderName can't be empty", nameof(model.lmsProviderName));
-            if (string.IsNullOrWhiteSpace(model.seminarLicenseId))
-                throw new ArgumentException("seminarLicenseId can't be empty", nameof(model.seminarLicenseId));
+            if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
+                throw new ArgumentException("seminarLicenseId can't be empty", nameof(model.SeminarLicenseId));
         
             try
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
                 var trace = new StringBuilder();
-                var fb = new SeminarFolderBuilder(model.seminarLicenseId);
+                var fb = new SeminarFolderBuilder(model.SeminarLicenseId);
                 OperationResult ret = MeetingSetup.SaveMeeting(
                     Session.LmsCompany,
                     this.GetCurrentUserProvider(Session),
@@ -107,7 +106,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     trace,
                     fb);
 
-                return TrickForSeminar(ret, model.seminarLicenseId);
+                return TrickForSeminar(ret, model.SeminarLicenseId);
             }
             catch (Exception ex)
             {
@@ -132,10 +131,10 @@ namespace EdugameCloud.Lti.Api.Controllers
 
                 // TRICK: change record meeting id to meeting sco-id
                 LtiParamDTO param = Session.LtiSession.LtiParam;
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(Session.LmsCompany.Id, CourseId, long.Parse(seminarSessionDto.SeminarRoomId));
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, long.Parse(seminarSessionDto.SeminarRoomId));
                 if (meeting == null)
                 {
-                    return OperationResult.Error(Resources.Messages.MeetingNotFound);
+                    return OperationResult.Error(Messages.MeetingNotFound);
                 }
 
                 ProcessQuota(ac, meeting.ScoId, seminarSessionDto);
@@ -156,15 +155,15 @@ namespace EdugameCloud.Lti.Api.Controllers
         [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase]
         public OperationResult DeleteSeminarSession([FromBody]DeleteSeminarSessionDto model)
         {
-            if (string.IsNullOrWhiteSpace(model.seminarSessionId))
-                throw new ArgumentException("seminarSessionId can't be empty", nameof(model.seminarSessionId));
+            if (string.IsNullOrWhiteSpace(model.SeminarSessionId))
+                throw new ArgumentException("seminarSessionId can't be empty", nameof(model.SeminarSessionId));
 
             //TODO: CHECK permission for deletion
             //TODO: to service
             try
             {
                 var ac = GetCurrentUserProvider(Session);
-                var result = ac.DeleteSco(model.seminarSessionId);
+                var result = ac.DeleteSco(model.SeminarSessionId);
 
                 return OperationResult.Success();
             }

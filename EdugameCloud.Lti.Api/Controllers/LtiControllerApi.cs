@@ -78,7 +78,7 @@
                     var couldSavePassword = usersSetup.SetACPassword(provider, LmsCompany, lmsUser, param, settings.password);
                     if (!couldSavePassword)
                     {
-                        return OperationResultWithData<LmsUserSettingsDTO>.Error(Resources.Messages.IncorrectAcPassword);
+                        return OperationResultWithData<LmsUserSettingsDTO>.Error(EdugameCloud.Lti.Resources.Messages.IncorrectAcPassword);
                     }
                 }
                 else
@@ -195,7 +195,7 @@
         {
             try
             {
-                var param = Session.LtiSession.With(x => x.LtiParam);
+                var param = Session.LtiSession.LtiParam;
                 string error = null;
                 List<LmsUserDTO> updatedUsers = this.usersSetup.SetDefaultRolesForNonParticipants(
                     LmsCompany,

@@ -8,6 +8,7 @@ using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Resources;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -157,7 +158,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
             return new OperationResultWithData<IEnumerable<LmsUserDTO>>
             {
-                Message = Resources.Messages.UsersCouldNotBeUpdated,
+                Message = Messages.UsersCouldNotBeUpdated,
                 Data = updatedUsers
             };
         }
@@ -224,7 +225,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
             return new OperationResultWithData<IEnumerable<LmsUserDTO>>
             {
-                Message = Resources.Messages.UsersCouldNotBeRemoved,
+                Message = Messages.UsersCouldNotBeRemoved,
                 Data = removedUsers,
             };
         }

@@ -4,6 +4,7 @@ using EdugameCloud.Lti.Api.Controllers;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.Resources;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
@@ -19,26 +20,15 @@ namespace EdugameCloud.Lti.Api.Filters
         private static readonly string ltiAuthScheme = "lti ";
         private static readonly string apiAuthScheme = "ltiapi ";
 
-        private LmsUserSessionModel _userSessionModel
-        {
-            get { return IoC.Resolve<LmsUserSessionModel>(); }
-        }
-
-        private LmsCompanyModel _licenseModel
-        {
-            get { return IoC.Resolve<LmsCompanyModel>(); }
-        }
-        private ILogger _logger
-        {
-            get { return IoC.Resolve<ILogger>(); }
-        }
-
+        private LmsUserSessionModel UserSessionModel => IoC.Resolve<LmsUserSessionModel>();
+        private LmsCompanyModel LicenseModel => IoC.Resolve<LmsCompanyModel>();
+        private ILogger Logger => IoC.Resolve<ILogger>();
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
 
         public bool ApiCallEnabled { get; set; }
 
-
+        // TODO: DI
         public LmsAuthorizeBaseAttribute()
         {
 
@@ -58,7 +48,7 @@ namespace EdugameCloud.Lti.Api.Filters
 
                     if (session == null)
                     {
-                        filterContext.Result = new JsonResult(OperationResult.Error(Resources.Messages.SessionTimeOut));
+                        filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
                     }
                     else
                     {
@@ -90,7 +80,7 @@ namespace EdugameCloud.Lti.Api.Filters
                         if (license == null)
                         {
                             // TODO: better msg
-                            filterContext.Result = new JsonResult(OperationResult.Error(Resources.Messages.SessionTimeOut));
+                            filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
                         }
                         else
                         {
@@ -129,10 +119,10 @@ namespace EdugameCloud.Lti.Api.Filters
 
         protected LmsUserSession GetReadOnlySession(Guid key)
         {
-            var session = _userSessionModel.GetByIdWithRelated(key).Value;
+            var session = UserSessionModel.GetByIdWithRelated(key).Value;
             if (session == null)
             {
-                _logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
+                Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
                 return null;
             }
 
@@ -143,10 +133,10 @@ namespace EdugameCloud.Lti.Api.Filters
 
         protected LmsCompany GetLicense(Guid key)
         {
-            var license = _licenseModel.GetOneByConsumerKey(key.ToString()).Value;
+            var license = LicenseModel.GetOneByConsumerKey(key.ToString()).Value;
             if (license == null)
             {
-                _logger.WarnFormat("LmsCompany not found. Key: {0}.", key);
+                Logger.WarnFormat("LmsCompany not found. Key: {0}.", key);
                 return null;
             }
 

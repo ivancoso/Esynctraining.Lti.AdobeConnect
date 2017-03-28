@@ -16,6 +16,7 @@
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Caching;
     using Esynctraining.Core.Logging;
+    using EdugameCloud.Lti.Resources;
 
     [Route("meeting/reports")]
     public partial class ReportsController : BaseApiController
@@ -50,7 +51,7 @@
 
         [Route("by-attendance")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<ACSessionParticipantDto>> GetAttendanceReport([FromBody]ReportRequestDto request)
         {
             if (request == null)
@@ -80,7 +81,7 @@
 
         [Route("by-sessions")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<ACSessionDto>> GetSessionsReport([FromBody]ReportRequestDto request)
         {
             if (request == null)
@@ -110,7 +111,7 @@
 
         [Route("by-recordings")]
         [HttpPost]
-        [EdugameCloud.Lti.Api.Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual OperationResultWithData<IEnumerable<RecordingTransactionDTO>> GetRecordingsReport([FromBody]ReportRequestDto request)
         {
             if (request == null)

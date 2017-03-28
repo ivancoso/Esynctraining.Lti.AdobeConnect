@@ -75,7 +75,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var fb = new MeetingFolderBuilder(Session.LmsCompany, ac, useLmsUserEmailForSearch, meeting.GetMeetingType());
 
                 OperationResult ret = this.meetingSetup.SaveMeeting(
-                    Session.LmsCompany,
+                    LmsCompany,
                     ac,
                     param,
                     meeting,
@@ -106,7 +106,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var fb = new MeetingFolderBuilder(Session.LmsCompany, ac, useLmsUserEmailForSearch, meeting.GetMeetingType());
 
                 var ret = this.meetingSetup.SaveMeeting(
-                    Session.LmsCompany,
+                    LmsCompany,
                     ac,
                     param,
                     meeting,
@@ -128,16 +128,16 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Filters.LmsAuthorizeBase]
         public virtual OperationResult DeleteMeeting([FromBody]DeleteMeetingDto model)
         {
-            bool? softDelete = model.remove;
+            bool? softDelete = model.Remove;
             try
             {
                 var param = Session.LtiSession.LtiParam;
 
                 OperationResult result = this.meetingSetup.DeleteMeeting(
-                    Session.LmsCompany,
+                    LmsCompany,
                     this.GetAdminProvider(),
                     param,
-                    model.meetingId, softDelete.GetValueOrDefault());
+                    model.MeetingId, softDelete.GetValueOrDefault());
 
                 return result;
             }
@@ -158,19 +158,17 @@ namespace EdugameCloud.Lti.Api.Controllers
 
             try
             {
-                var credentials = Session.LmsCompany;
-
-                if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingReuse))
+                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingReuse))
                     return OperationResult.Error("Operation is not enabled.");
 
                 var param = Session.LtiSession.LtiParam;
                 var provider = this.GetAdminProvider();
 
-                OperationResult result = meetingSetup.ReuseExistedAdobeConnectMeeting(credentials, Session.LmsUser,
+                OperationResult result = meetingSetup.ReuseExistedAdobeConnectMeeting(LmsCompany, Session.LmsUser,
                     provider,
                     param,
                     model,
-                    model.retrieveLmsUsers.GetValueOrDefault());
+                    model.RetrieveLmsUsers.GetValueOrDefault());
 
                 return result;
             }

@@ -1,14 +1,18 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace EdugameCloud.Lti.Api.Models
 {
     [DataContract]
     public class DeleteMeetingDto
     {
+        [Required]
         [DataMember]
-        public int meetingId { get; set; }
+        public int MeetingId { get; set; }
 
         [DataMember]
-        public bool? remove { get; set; } = false;
+        public bool? Remove { get; set; } = false;
+
     }
+
 }

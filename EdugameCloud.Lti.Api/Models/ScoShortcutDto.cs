@@ -4,14 +4,19 @@ using System.Runtime.Serialization;
 namespace EdugameCloud.Lti.Api.Models
 {
     [DataContract]
-    public class DeleteMeetingEventDto
+    public class ScoShortcutDto
     {
         [Required]
         [DataMember]
-        public int MeetingId { get; set; }
+        public string ScoId { get; set; }
 
+        [Required]
         [DataMember]
-        public int? Id { get; set; }
+        public string Type { get; set; }
+
+        [Required]
+        [DataMember]
+        public string Name { get; set; }
 
     }
 

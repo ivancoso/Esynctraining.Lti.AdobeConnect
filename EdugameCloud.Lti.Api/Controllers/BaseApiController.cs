@@ -3,6 +3,7 @@ using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.Resources;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core;
 using Esynctraining.Core.Caching;
@@ -17,10 +18,9 @@ namespace EdugameCloud.Lti.Api.Controllers
     public abstract class BaseApiController : ControllerBase
     {
         #region Fields
-        private static readonly IMemoryCache _acCache = new MemoryCache(new MemoryCacheOptions());
+        private static readonly IMemoryCache _acCache = IoC.Resolve<IMemoryCache>();
         private static bool? isDebug;
 
-        private readonly IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
         private LmsUserSession _session;
 
         #endregion
@@ -53,7 +53,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             get
             {
                 if (_session == null)
-                    throw new WarningMessageException(Resources.Messages.SessionTimeOut);
+                    throw new WarningMessageException(Messages.SessionTimeOut);
                 return _session;
             }
             set
@@ -85,8 +85,8 @@ namespace EdugameCloud.Lti.Api.Controllers
         )
         {
             this.acAccountService = acAccountService;
-            this.Settings = settings;
-            this.Logger = logger;
+            Settings = settings;
+            Logger = logger;
             Cache = cache;
         }
 
@@ -115,8 +115,8 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             Logger.Error(originalErrorMessage);
             return IsDebug
-                ? Resources.Messages.ExceptionOccured + originalErrorMessage
-                : Resources.Messages.ExceptionMessage;
+                ? Messages.ExceptionOccured + originalErrorMessage
+                : Messages.ExceptionMessage;
         }
 
         protected string GetOutputErrorMessage(string methodName, Exception ex)
@@ -133,8 +133,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return ex.Message;
 
             return IsDebug
-                ? Resources.Messages.ExceptionOccured + ex.ToString()
-                : Resources.Messages.ExceptionMessage;
+                ? Messages.ExceptionOccured + ex.ToString()
+                : Messages.ExceptionMessage;
         }
 
     }
