@@ -13,6 +13,8 @@ namespace EdugameCloud.Lti.DTO
         {
             public class ActionUrls
             {
+                public static string MyContentBaseUrl { get { return RestWebApiBaseUrl + "my-content/"; } }
+
                 public static string RestWebApiBaseUrl = "";
 
                 public string GetMP4Recordings { get; set; } = "lti-mp4/recordings";
@@ -45,13 +47,13 @@ namespace EdugameCloud.Lti.DTO
                 public string SaveEvent { get; set; } = RestWebApiBaseUrl + "calendar/saveevent"; // API
                 public string DeleteEvent { get; set; } = RestWebApiBaseUrl + "calendar/deleteevent"; // API
 
-                public string GetContentShortcuts { get; set; } = "../lti-my-content/shortcuts";
-                public string GetFolderContent { get; set; } = "../lti-my-content/content/{0}";
-                public string DownloadContent { get; set; } = "../lti-my-content/content/{0}/download";
-                public string DeleteContent { get; set; } = "../lti-my-content/content/{0}/delete";
-                public string EditContent { get; set; } = "../lti-my-content/content/{0}/edit";
-                public string MoveContent { get; set; } = "../lti-my-content/content/{0}/move-to/{1}";
-                public string CreateContentFolder { get; set; } = "../lti-my-content/content/{0}/create-sub-folder";
+                public string GetContentShortcuts { get; set; } = MyContentBaseUrl + "shortcuts";
+                public string GetFolderContent { get; set; } = MyContentBaseUrl + "content/{0}";
+                public string DownloadContent { get; set; } = MyContentBaseUrl + "content/{0}/download";
+                public string DeleteContent { get; set; } = MyContentBaseUrl + "content/{0}/delete";
+                public string EditContent { get; set; } = MyContentBaseUrl + "content/{0}/edit";
+                public string MoveContent { get; set; } = MyContentBaseUrl + "content/{0}/move-to/{1}";
+                public string CreateContentFolder { get; set; } = MyContentBaseUrl + "content/{0}/create-sub-folder";
 
                 public string CheckSettingsPasword { get; set; } = RestWebApiBaseUrl + "settings/checkpass"; // API
                 public string SaveSettings { get; set; } = RestWebApiBaseUrl + "settings/save"; // API
