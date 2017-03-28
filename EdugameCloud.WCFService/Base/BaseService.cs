@@ -426,7 +426,7 @@
                 PrimaryName = company.PrimaryContact.With(x => x.FullName),
                 SeatsCount = license.With(x => x.TotalLicensesCount),
                 IsTrial = license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false),
-                ExpirationDate = license.With(x => x.ExpiryDate.ToEst() + " EST"),
+                ExpirationDate = license.ExpiryDate.Date.ToShortDateString(),
             };
 
             bool sentSuccessfully = this.MailModel.SendEmailSync(
