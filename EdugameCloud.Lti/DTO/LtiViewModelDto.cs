@@ -55,6 +55,8 @@ namespace EdugameCloud.Lti.DTO
                 public string MoveContent { get; set; } = MyContentBaseUrl + "content/{0}/move-to/{1}";
                 public string CreateContentFolder { get; set; } = MyContentBaseUrl + "content/{0}/create-sub-folder";
 
+                public string UploadFile { get; set; } = MyContentBaseUrl + "uploading/content/{0}/upload-file";
+
                 public string CheckSettingsPasword { get; set; } = RestWebApiBaseUrl + "settings/checkpass"; // API
                 public string SaveSettings { get; set; } = RestWebApiBaseUrl + "settings/save"; // API
 
