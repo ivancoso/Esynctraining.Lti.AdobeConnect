@@ -990,13 +990,11 @@ namespace EdugameCloud.Lti.Controllers
             string userFullName = param.lis_person_name_full ?? param.lis_person_name_given + " " + param.lis_person_name_family;
             var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), Cache);
 
-            var filePattern = (string) Settings.JsBuildSelector;
-            var path = Server.MapPath("~/extjs/");
+            var filePattern = (string)Settings.JsBuildSelector;
             var versionFileJs = CacheUtility.GetCachedItem<Version>(PersistantCache, CachePolicies.Keys.VersionFileName(filePattern), () =>
-                VersionProcessor.ProcessVersion(path, filePattern));
-
-            //            string version = typeof(LtiController).Assembly.GetName().Version.ToString();
-            //            version = version.Substring(0, version.LastIndexOf('.'));
+            {
+                return VersionProcessor.ProcessVersion(Server.MapPath("~/extjs/"), filePattern);
+            });
 
             LtiViewModelDto.SettingsInfo.ActionUrls.RestWebApiBaseUrl = (string)Settings.LtiRestWebApiBaseUrl;
 

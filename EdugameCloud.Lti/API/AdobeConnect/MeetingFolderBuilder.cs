@@ -18,26 +18,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private readonly bool _useLmsUserEmailForSearch;
         private readonly LmsMeetingType _lmsMeetingType;
 
-        private LmsProviderModel LmsProviderModel
-        {
-            get { return IoC.Resolve<LmsProviderModel>(); }
-        }
 
-        private LmsCompanyModel LmsСompanyModel
-        {
-            get { return IoC.Resolve<LmsCompanyModel>(); }
-        }
+        private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
-        
+        private LmsCompanyModel LmsСompanyModel => IoC.Resolve<LmsCompanyModel>();
+
+
         public MeetingFolderBuilder(LmsCompany lmsCompany, IAdobeConnectProxy provider, bool useLmsUserEmailForSearch, LmsMeetingType lmsMeetingType = LmsMeetingType.Meeting)
         {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
-            _lmsCompany = lmsCompany;
-            _provider = provider;
+            _lmsCompany = lmsCompany ?? throw new ArgumentNullException(nameof(lmsCompany));
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
             _useLmsUserEmailForSearch = useLmsUserEmailForSearch;
             _lmsMeetingType = lmsMeetingType;
         }
