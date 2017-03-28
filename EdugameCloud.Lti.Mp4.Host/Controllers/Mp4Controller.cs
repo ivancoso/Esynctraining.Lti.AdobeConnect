@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
             catch (Exception ex)
             {
-                Logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, session);
+                Logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, Session.Id);
 
                 return OperationResultWithData<string>.Error(IsDebug 
                     ? (ex.Message + ex.StackTrace) 
