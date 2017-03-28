@@ -6,6 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Formatters\**" />
+    <Content Remove="Formatters\**" />
+    <EmbeddedResource Remove="Formatters\**" />
+    <None Remove="Formatters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="AspNetCoreExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot/.xml" />
   </ItemGroup>
 
@@ -28,8 +39,6 @@
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.0.29" />
     <PackageReference Include="Esynctraining.Windsor" Version="1.0.0.1" />
     <PackageReference Include="FluentValidation" Version="6.4.1" />
-    <PackageReference Include="Jil" Version="2.15.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
@@ -52,6 +61,15 @@
     <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj" />
+    <ProjectReference Include="..\Esynctraining.AspNetCore\Esynctraining.AspNetCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot/EdugameCloud.Lti.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot/Esynctraining.AdobeConnect.Api.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Update="Logs\placeholder.js">

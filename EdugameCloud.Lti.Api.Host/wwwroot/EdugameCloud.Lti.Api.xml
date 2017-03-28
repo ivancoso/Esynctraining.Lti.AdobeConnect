@@ -46,7 +46,7 @@
         </member>
         <member name="M:EdugameCloud.Lti.Api.Controllers.ValuesController.Get2(EdugameCloud.Lti.Api.Controllers.ValuesController.InputDto)">
             <summary>
-            Test method to check API works and alive. Return hard-coded values.
+            Test method to check API works and alive. Returns hard-coded values.
             </summary>
             <param name="request"></param>
             <returns></returns>
