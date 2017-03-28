@@ -67,8 +67,8 @@
     <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.26, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.26\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.13\lib\net45\Esynctraining.AdobeConnect.Api.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.14\lib\net45\Esynctraining.AdobeConnect.Api.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.CastleLog4Net.1.0.0.2\lib\net45\Esynctraining.CastleLog4Net.dll</HintPath>

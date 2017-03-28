@@ -65,9 +65,8 @@
       <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Castle.Windsor, Version=3.4.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.3.4.0\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="DotNetOpenAuth.AspNet, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.4.13329\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
@@ -96,11 +95,11 @@
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.26, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.26\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.24, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.25\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.26\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.13\lib\net45\Esynctraining.AdobeConnect.Api.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.14\lib\net45\Esynctraining.AdobeConnect.Api.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.29, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.29\lib\net45\Esynctraining.Core.dll</HintPath>
