@@ -54,21 +54,18 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         [HttpPost]
         public virtual async Task<OperationResultWithData<IEnumerable<IMp4StatusContainer>>> GetAllMeetingRecordings(RecordingsRequestDto input)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
-                var ac = GetAdminProvider(lmsCompany);
+                var param = Session.LtiSession.LtiParam;
+                var ac = GetAdminProvider();
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
                     () => new RoomTypeFactory(ac, (LmsMeetingType)input.LmsMeetingType, IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
                 IEnumerable<IRecordingDto> rawRecordings = RecordingsService.GetRecordings(
-                    lmsCompany,
+                    LmsCompany,
                     ac,
-                    session.LmsCourseId,
+                    Session.LmsCourseId,
                     input.MeetingId,
                     getRoomTypeFactory);
 
@@ -80,15 +77,15 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     ? rawRecordings.Select(x => smap.Map<SeminarRecordingWithMp4Dto>(x))
                     : rawRecordings.Select(x => map.Map<RecordingWithMp4Dto>(x));
 
-                if (!new LmsRoleService(Settings).IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
+                if (!new LmsRoleService(Settings).IsTeacher(param) && !LmsCompany.AutoPublishRecordings)
                 {
                     recordings = recordings.Where(x => x.Published).ToList();
                 }
                 Guid mp4;
-                if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
+                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
                     mp4 = Guid.Empty;
                 Guid mp4Subtitles;
-                if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
+                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
                     mp4Subtitles = Guid.Empty;
 
                 IEnumerable<IMp4StatusContainer> result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
@@ -102,7 +99,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("MP4-GetAllMeetingRecordings", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("MP4-GetAllMeetingRecordings", ex);
                 return OperationResultWithData<IEnumerable<IMp4StatusContainer>>.Error(errorMessage);
             }
         }
@@ -111,17 +108,13 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         [HttpPost]
         public virtual async Task<OperationResultWithData<Mp4TaskStatusDto>> GetRecordingStatus(RecordingActionRequestDto input)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
-
                 Guid mp4;
-                if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
+                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
                     mp4 = Guid.Empty;
                 Guid mp4Subtitles;
-                if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
+                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
                     mp4Subtitles = Guid.Empty;
 
                 if ((mp4 != Guid.Empty) || (mp4Subtitles != Guid.Empty))
@@ -139,7 +132,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("MP4-GetRecordings", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("MP4-GetRecordings", ex);
                 return OperationResultWithData<Mp4TaskStatusDto>.Error(errorMessage);
             }
         }

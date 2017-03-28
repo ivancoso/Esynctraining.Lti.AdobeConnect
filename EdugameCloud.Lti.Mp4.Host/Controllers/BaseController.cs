@@ -66,7 +66,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
         }
 
-        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
+        internal ILmsLicense LmsCompany
+        {
+            get { return Session.LmsCompany; }
+        }
+
 
         #region Constructors and Destructors
 
@@ -83,34 +87,15 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         }
 
         #endregion
-
-        /// <summary>
-        /// NOTE: use for GET methods ONLY!!!
-        /// </summary>
-        protected LmsUserSession GetReadOnlySession(string key)
+        
+        protected IAdobeConnectProxy GetAdminProvider()
         {
-            Guid uid;
-            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
-
-            if (session == null)
-            {
-                Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
-            }
-
-            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
-
-            return session;
-        }
-
-        protected IAdobeConnectProxy GetAdminProvider(ILmsLicense lmsCompany)
-        {
-            string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(lmsCompany.Id);
+            string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(LmsCompany.Id);
 
             var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
             if (provider == null)
             {
-                provider = acAccountService.GetProvider(new AdobeConnectAccess(new Uri(lmsCompany.AcServer), lmsCompany.AcUsername, lmsCompany.AcPassword), true);
+                provider = acAccountService.GetProvider(new AdobeConnectAccess(new Uri(LmsCompany.AcServer), LmsCompany.AcUsername, LmsCompany.AcPassword), true);
                 var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
                 _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
@@ -125,32 +110,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 ? Resources.Messages.ExceptionOccured + ex.ToString()
                 : Resources.Messages.ExceptionMessage;
         }
-
-        protected string GetOutputErrorMessage(string originalErrorMessage)
-        {
-            Logger.Error(originalErrorMessage);
-            return IsDebug
-                ? Resources.Messages.ExceptionOccured + originalErrorMessage
-                : Resources.Messages.ExceptionMessage;
-        }
-
-        protected string GetOutputErrorMessage(string methodName, LmsCompany credentials, Exception ex)
-        {
-            string lmsInfo = (credentials != null)
-                ? string.Format(" LmsCompany ID: {0}. Lms License Title: {1}. Lms Domain: {2}. AC Server: {3}.", credentials.Id, credentials.Title, credentials.LmsDomain, credentials.AcServer)
-                : string.Empty;
-
-            Logger.Error(methodName + lmsInfo, ex);
-
-            var forcePassMessage = ex as IUserMessageException;
-            if (forcePassMessage != null)
-                return ex.Message;
-
-            return IsDebug
-                ? Resources.Messages.ExceptionOccured + ex.ToString()
-                : Resources.Messages.ExceptionMessage;
-        }
-
+        
     }
 
     internal class LmsAuthorizeBaseAttribute : ActionFilterAttribute

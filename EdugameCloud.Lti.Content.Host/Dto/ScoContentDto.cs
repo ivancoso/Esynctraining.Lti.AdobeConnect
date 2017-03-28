@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
@@ -10,6 +11,7 @@ namespace EdugameCloud.Lti.Content.Host.Dto
     [DataContract]
     public class ScoContentDto
     {
+        [Required]
         [DataMember]
         public string ScoId { get; set; }
 
@@ -19,12 +21,14 @@ namespace EdugameCloud.Lti.Content.Host.Dto
         //[DataMember]
         //public string Type { get; set; }
 
+        [Required]
         [DataMember]
         public string Icon { get; set; }
 
         [IgnoreDataMember]
         public bool IsFolder { get; set; }
 
+        [Required]
         [DataMember]
         public string Name { get; set; }
 

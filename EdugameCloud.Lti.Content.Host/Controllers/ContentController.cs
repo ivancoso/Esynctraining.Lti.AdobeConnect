@@ -42,8 +42,6 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 
-        private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
-
 
         public ContentController(
             LmsUserSessionModel userSessionModel,
@@ -57,22 +55,18 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
 
         [HttpPost]
-        [Route("{session:guid}/shortcuts")]
-        public OperationResultWithData<IEnumerable<ScoShortcutDto>> GetShortcuts(string session)
+        [Route("shortcuts")]
+        public OperationResultWithData<IEnumerable<ScoShortcutDto>> GetShortcuts()
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
-                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<IEnumerable<ScoShortcutDto>>.Error("Operation is not enabled.");
 
-                var param = s.LtiSession.LtiParam;
-                var ac = this.GetUserProvider(s);
+                var param = Session.LtiSession.LtiParam;
+                var ac = this.GetUserProvider();
 
-                var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+                var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, LmsCompany.Id).Value;
 
                 var contentService = new ContentService(Logger, ac);
                 IEnumerable<ScoShortcut> shortcuts = contentService.GetShortcuts(new ScoShortcutType[] { ScoShortcutType.content, ScoShortcutType.my_content });
@@ -88,7 +82,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-GetShortcuts", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-GetShortcuts", ex);
                 return OperationResultWithData<IEnumerable<ScoShortcutDto>>.Error(errorMessage);
             }
         }
@@ -97,26 +91,22 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         /// Returns folder's content.
         /// </summary>
         [HttpPost]
-        [Route("{session:guid}/content/{folderScoId:long:min(1)}")]
-        public async Task<OperationResultWithData<IEnumerable<ScoContentDto>>> FolderContent(string session, string folderScoId)
+        [Route("content/{folderScoId:long:min(1)}")]
+        public async Task<OperationResultWithData<IEnumerable<ScoContentDto>>> FolderContent(string folderScoId)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
-                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<IEnumerable<ScoContentDto>>.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(s);
+                var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentControllerHelper<ScoContentDto>(Logger, contentService, new ScoContentDtoMapper());
                 return await helper.GetFolderContent(folderScoId, new NullDtoProcessor<ScoContentDto>());
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-FolderContent", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-FolderContent",  ex);
                 return OperationResultWithData<IEnumerable<ScoContentDto>>.Error(errorMessage);
             }
         }
@@ -125,31 +115,27 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         /// Creates child folder.
         /// </summary>
         [HttpPost]
-        [Route("{session:guid}/content/{folderScoId:long:min(1)}/create-sub-folder")]
-        public OperationResultWithData<FolderDto> CreateSubFolder(string session, string folderScoId, [FromBody]FolderDto dto)
+        [Route("сontent/{folderScoId:long:min(1)}/create-sub-folder")]
+        public OperationResultWithData<FolderDto> CreateSubFolder(string folderScoId, [FromBody]FolderDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
 
-            LmsCompany lmsCompany = null;
             try
             {
-                // TRICK:
-                dto.FolderId = folderScoId;
-
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
-                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResultWithData<FolderDto>.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(s);
+                // TRICK:
+                dto.FolderId = folderScoId;
+                
+                var ac = this.GetUserProvider();
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.CreateFolder(dto);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-CreateSubFolder", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-CreateSubFolder", ex);
                 return OperationResultWithData<FolderDto>.Error(errorMessage);
             }
         }
@@ -158,24 +144,20 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         /// Get Download link to download file directly from AC (zip version).
         /// </summary>
         [HttpPost]
-        [Route("{session:guid}/content/{scoId:long:min(1)}/download")]
-        public OperationResult GetDownloadLink(string session, string scoId)
+        [Route("content/{scoId:long:min(1)}/download")]
+        public OperationResult GetDownloadLink(string scoId)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
-                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(s);
+                var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentControllerHelper<ScoContentDto>(Logger, contentService, new ScoContentDtoMapper());
 
-                var param = s.LtiSession.With(x => x.LtiParam);
-                var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+                var param = Session.LtiSession.LtiParam;
+                var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, LmsCompany.Id).Value;
                 if (lmsUser == null)
                 {
                     throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
@@ -188,13 +170,13 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
                 var registeredUser = ac.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
 
-                string breezeToken = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, ac);
+                string breezeToken = MeetingSetup.ACLogin(LmsCompany, param, lmsUser, registeredUser, ac);
 
                 return helper.GetDownloadAsZipLink(scoId, breezeToken);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-GetDownloadLink", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-GetDownloadLink", ex);
                 return OperationResultWithData<IEnumerable<ScoContentDto>>.Error(errorMessage);
             }
         }
@@ -203,91 +185,77 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         /// Deletes folder of file.
         /// </summary>
         [HttpPost]
-        [Route("{session:guid}/content/{scoId:long:min(1)}/delete")]
-        public OperationResult DeleteFileOrFolder(string session, string scoId)
+        [Route("content/{scoId:long:min(1)}/delete")]
+        public OperationResult DeleteFileOrFolder(string scoId)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
-                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(s);
+                var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.DeleteSco(scoId);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-DeleteFileOrFolder", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-DeleteFileOrFolder", ex);
                 return OperationResultWithData<IEnumerable<ScoContentDto>>.Error(errorMessage);
             }
         }
 
         [HttpPost]
-        [Route("{session:guid}/content/{scoId:long:min(1)}/edit")]
-        public OperationResult EditSco(string session, string scoId, [FromBody]FileUpdateDto dto)
+        [Route("content/{scoId:long:min(1)}/edit")]
+        public OperationResult EditSco(string scoId, [FromBody]FileUpdateDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
 
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
-                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(s);
+                var ac = this.GetUserProvider();
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.EditSco(scoId, dto);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-EditFile", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-EditFile", ex);
                 return OperationResult.Error(errorMessage);
             }
         }
 
         [HttpPost]
-        [Route("{session:guid}/content/{scoId:long:min(1)}/move-to/{destinationFolderScoId}")]
-        public OperationResult MoveFileOrFolder(string session, string scoId, string destinationFolderScoId)
+        [Route("content/{scoId:long:min(1)}/move-to/{destinationFolderScoId}")]
+        public OperationResult MoveFileOrFolder(string scoId, string destinationFolderScoId)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
-                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
                     return OperationResult.Error("Operation is not enabled.");
 
-                var ac = this.GetUserProvider(s);
+                var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.MoveSco(scoId, destinationFolderScoId);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-MoveFileOrFolder", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-MoveFileOrFolder", ex);
                 return OperationResultWithData<IEnumerable<ScoContentDto>>.Error(errorMessage);
             }
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
-        [Route("uploading/{session:guid}/content/{folderScoId:long:min(1)}/upload-file")]
-        public async Task<HttpResponseMessage> UploadFile(string session, string folderScoId)
+        [Route("uploading/content/{folderScoId:long:min(1)}/upload-file")]
+        public async Task<HttpResponseMessage> UploadFile(string folderScoId)
         {
             if (!Request.Content.IsMimeMultipartContent())
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
-
-            LmsCompany lmsCompany = null;
 
             var provider = new MultipartFormDataMemoryStreamProvider();
             await Request.Content.ReadAsMultipartAsync(provider);
@@ -313,9 +281,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 string fileName = provider.FileStreams.First().Key;
                 MultipartFormDataMemoryStreamProvider.FileContent stream = provider.FileStreams.First().Value;
 
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-                var ac = this.GetUserProvider(s);
+                var ac = this.GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 int fileSize;

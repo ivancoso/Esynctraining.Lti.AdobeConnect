@@ -43,13 +43,9 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
 
-            LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
-
-                string licenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
+                string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
                 if (string.IsNullOrWhiteSpace(licenseKey))
                     throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
 
@@ -62,7 +58,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("Convert", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("Convert", ex);
                 return OperationResult.Error(errorMessage);
             }
         }
@@ -74,13 +70,9 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
 
-            LmsCompany lmsCompany = null;
             try
             {
-                var session = Session;
-                lmsCompany = session.LmsCompany;
-
-                string licenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
+                string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
                 if (string.IsNullOrWhiteSpace(licenseKey))
                     throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
 
@@ -93,7 +85,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ConvertWithSubtitles", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ConvertWithSubtitles", ex);
                 return OperationResult.Error(errorMessage);
             }
         }
@@ -101,23 +93,16 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("file/{scoId:long:min(1)}")]
-        public virtual OperationResultWithData<string> AccessMp4File(string scoId, [FromUri]string session)
+        public virtual OperationResultWithData<string> AccessMp4File(string scoId)
         {
-            if (session == null)
-                throw new ArgumentNullException(nameof(session));
-
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
-                var ac = this.GetAdminProvider(lmsCompany);
+                var ac = this.GetAdminProvider();
                 string breezeToken;
-                Principal principal = GetPrincipal(lmsCompany, s.LtiSession.LtiParam, scoId, ac, out breezeToken);
+                Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
                 OperationResultWithData<string> result = new SubtitleUtility(ac, Logger, this).AccessMp4File(scoId,
-                    lmsCompany.AcServer,
+                    LmsCompany.AcServer,
                     principal.PrincipalId,
                     breezeToken);
 
@@ -145,20 +130,16 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("subtitle/{scoId:long:min(1)}")]
-        public OperationResultWithData<string> AccessVttFile(string scoId, [FromUri]string session)
+        public OperationResultWithData<string> AccessVttFile(string scoId)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
                 string breezeToken;
-                var ac = GetAdminProvider(lmsCompany);
-                Principal principal = GetPrincipal(lmsCompany, s.LtiSession.LtiParam, scoId, ac, out breezeToken);
+                var ac = GetAdminProvider();
+                Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).AccessVttFile(scoId,
-                    lmsCompany.AcServer,
+                    LmsCompany.AcServer,
                     principal.PrincipalId,
                     breezeToken);
             }
@@ -173,15 +154,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         [Route("subtitle/{fileScoId:long:min(1)}")]
         public HttpResponseMessage GetVttFile(string fileScoId, [FromUri]string session)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = GetReadOnlySession(session);
-                lmsCompany = s.LmsCompany;
-
                 string breezeToken;
-                var ac = this.GetAdminProvider(lmsCompany);
-                Principal principal = GetPrincipal(lmsCompany, s.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
+                var ac = this.GetAdminProvider();
+                Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
             }
@@ -194,17 +171,13 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content")]
-        public HttpResponseMessage GetVttFileViaPost(string fileScoId, [FromUri]string session)
+        public HttpResponseMessage GetVttFileViaPost(string fileScoId)
         {
-            LmsCompany lmsCompany = null;
             try
             {
-                var s = Session;
-                lmsCompany = s.LmsCompany;
-
                 string breezeToken;
-                var ac = this.GetAdminProvider(lmsCompany);
-                Principal principal = GetPrincipal(lmsCompany, s.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
+                var ac = this.GetAdminProvider();
+                Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
             }
@@ -217,19 +190,15 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
-        public Task<FileUploadResultDto> PostVttFile(string fileScoId, [FromUri]string session)
+        public Task<FileUploadResultDto> PostVttFile(string fileScoId)
         {
-            var s = Session;
-            var lmsCompany = s.LmsCompany;
-
-            var ac = GetAdminProvider(lmsCompany);
-
+            var ac = GetAdminProvider();
             return new SubtitleUtility(ac, Logger, this).PostVttFile(fileScoId);
         }
 
  
-        private Principal GetPrincipal(LmsCompany lmsCompany, DTO.LtiParamDTO param, string scoId,
-             Esynctraining.AdobeConnect.IAdobeConnectProxy provider, out string breezeToken)
+        private Principal GetPrincipal(ILmsLicense lmsCompany, DTO.LtiParamDTO param, string scoId,
+             IAdobeConnectProxy provider, out string breezeToken)
         {
             breezeToken = string.Empty;
 

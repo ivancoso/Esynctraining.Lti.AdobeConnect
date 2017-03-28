@@ -71,7 +71,10 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             }
         }
 
-        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
+        internal ILmsLicense LmsCompany
+        {
+            get { return Session.LmsCompany; }
+        }
 
         #region Constructors and Destructors
 
@@ -89,17 +92,17 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
         #endregion
         
-        protected IAdobeConnectProxy GetUserProvider(LmsUserSession session)
+        protected IAdobeConnectProxy GetUserProvider()
         {
-            string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
+            string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(LmsCompany.Id, Session.LtiSession.LtiParam.lms_user_id);
             var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
 
             if (provider == null)
             {
-                string breezeSession = LoginCurrentUser(session);
-                provider = AcAccountService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
+                string breezeSession = LoginCurrentUser(Session);
+                provider = AcAccountService.GetProvider2(new AdobeConnectAccess2(new Uri(LmsCompany.AcServer), breezeSession));
 
-                var sessionTimeout = AcAccountService.GetAccountDetails(GetAdminProvider(session.LmsCompany)).SessionTimeout - 1; //-1 is to be sure 
+                var sessionTimeout = AcAccountService.GetAccountDetails(GetAdminProvider(LmsCompany)).SessionTimeout - 1; //-1 is to be sure 
                 _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
 
@@ -135,7 +138,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
                 throw;
             }
         }
@@ -155,10 +158,11 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             return provider;
         }
 
-        protected string GetOutputErrorMessage(string methodName, LmsCompany credentials, Exception ex)
+        protected string GetOutputErrorMessage(string methodName, Exception ex)
         {
-            string lmsInfo = (credentials != null)
-                ? string.Format(" LmsCompany ID: {0}. Lms License Title: {1}. Lms Domain: {2}. AC Server: {3}.", credentials.Id, credentials.Title, credentials.LmsDomain, credentials.AcServer)
+            string lmsInfo = (LmsCompany != null)
+                ? string.Format(" LmsCompany ID: {0}. Lms License Title: {1}. Lms Domain: {2}. AC Server: {3}.", 
+                LmsCompany.Id, LmsCompany.Title, LmsCompany.LmsDomain, LmsCompany.AcServer)
                 : string.Empty;
 
             Logger.Error(methodName + lmsInfo, ex);
@@ -219,9 +223,6 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                     {
                         var api = filterContext.ControllerContext.Controller as BaseController;
                         api.Session = session;
-                        //api.LmsCompany = session.LmsCompany;
-                        //api.CourseId = session.LmsCourseId;
-                        //filterContext.ActionArguments["session"] = session;
                     }
                 }
             }
@@ -272,17 +273,17 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 }
             }
 
-            if ((authHeader != null) && authHeader.StartsWith(apiAuthScheme, StringComparison.OrdinalIgnoreCase))
-            {
-                string token = authHeader.Substring(apiAuthScheme.Length).Trim();
+            //if ((authHeader != null) && authHeader.StartsWith(apiAuthScheme, StringComparison.OrdinalIgnoreCase))
+            //{
+            //    string token = authHeader.Substring(apiAuthScheme.Length).Trim();
 
-                Guid uid;
-                if (Guid.TryParse(token, out uid))
-                {
-                    mode = apiAuthScheme;
-                    return uid;
-                }
-            }
+            //    Guid uid;
+            //    if (Guid.TryParse(token, out uid))
+            //    {
+            //        mode = apiAuthScheme;
+            //        return uid;
+            //    }
+            //}
 
             mode = null;
             return Guid.Empty;
