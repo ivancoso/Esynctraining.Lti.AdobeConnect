@@ -50,6 +50,8 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         bool? CanRemoveMeeting { get; }
 
+        bool CanRemoveRecordings { get; set; }
+
         bool? EnableOfficeHours { get; }
 
         bool? ShowAnnouncements { get; }
