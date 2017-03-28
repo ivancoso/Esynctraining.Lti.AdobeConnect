@@ -468,7 +468,6 @@ Global
 		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
 		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -480,7 +479,6 @@ Global
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
