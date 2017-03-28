@@ -180,11 +180,11 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             if (!loginResult.Success)
                 throw new InvalidOperationException("Can't login to AC");
 
-            if (eventMapping.postQuizId != quizResult.quizId)
-            {
-                // it should be postQuiz result (that is the same as in mapping)
-                return null;
-            }
+            //if (eventMapping.postQuizId != quizResult.quizId)
+            //{
+            //    // it should be postQuiz result (that is the same as in mapping)
+            //    return null;
+            //}
 
             var quiz = _quizService.GetById(eventMapping.postQuizId, true);
             if (!quiz.isPostQuiz)
