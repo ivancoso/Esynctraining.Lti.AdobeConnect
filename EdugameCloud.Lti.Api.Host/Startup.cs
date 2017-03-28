@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace EdugameCloud.Lti.Api.Host
 {
@@ -55,10 +56,10 @@ namespace EdugameCloud.Lti.Api.Host
             services
                 .AddMvcCore(setup =>
                 {
-                    while (setup.InputFormatters.Count > 0)
-                        setup.InputFormatters.RemoveAt(0);
-                    while (setup.OutputFormatters.Count > 0)
-                        setup.OutputFormatters.RemoveAt(0);
+                    //while (setup.InputFormatters.Count > 0)
+                    //    setup.InputFormatters.RemoveAt(0);
+                    //while (setup.OutputFormatters.Count > 0)
+                    //    setup.OutputFormatters.RemoveAt(0);
 
                     setup.InputFormatters.Insert(0, new JilInputFormatter());
                     setup.OutputFormatters.Insert(0, new JilOutputFormatter());
@@ -73,16 +74,17 @@ namespace EdugameCloud.Lti.Api.Host
                 .AddApiExplorer()
                 //.AddCors()
                 .AddDataAnnotations();
-                //.AddJsonOptions(options =>
-                // {
-                //     var settings = options.SerializerSettings;
-                //     settings.Formatting = Formatting.Indented;
-                //     settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-                //     settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                //     settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                //     settings.NullValueHandling = NullValueHandling.Ignore;
-                // });
+            //.AddJsonOptions(options =>
+            // {
+            //     var settings = options.SerializerSettings;
+            //     settings.Formatting = Formatting.Indented;
+            //     settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+            //     settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+            //     settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            //     settings.NullValueHandling = NullValueHandling.Ignore;
+            // });
 
+            services.AddMemoryCache();
 
             var container = new WindsorContainer();
 
@@ -142,7 +144,7 @@ namespace EdugameCloud.Lti.Api.Host
                 
                 // HACK: umcomment for prod.
                 //if (HostingEnvironment.IsProduction())
-                    c.DocumentFilter<HideNonApiFilter>();
+                    //c.DocumentFilter<HideNonApiFilter>();
 
                 c.SchemaFilter<ApplyCustomSchemaFilters>();
 
@@ -154,7 +156,7 @@ namespace EdugameCloud.Lti.Api.Host
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "Authorization header using the Bearer scheme. " +
-                    "<br/> Example: \"Authorization: ltiapi {consumerKey}:{courseId}\""
+                    "<br/> Example: \"Authorization: ltiapi {consumerKey};{courseId}\""
                     + "<br/> {courseId} - LMS course Id."
                     + "For Sakai {courseId} - is GetHashCode() result for course context_id value.",
                     Name = "Authorization",

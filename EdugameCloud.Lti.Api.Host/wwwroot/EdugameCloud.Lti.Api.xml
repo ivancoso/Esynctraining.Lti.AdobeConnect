@@ -4,6 +4,26 @@
         <name>EdugameCloud.Lti.Api</name>
     </assembly>
     <members>
+        <member name="M:EdugameCloud.Lti.Api.Controllers.ContentController.FolderContent(System.String)">
+            <summary>
+            Returns folder's content.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Api.Controllers.ContentController.CreateSubFolder(System.String,Esynctraining.AdobeConnect.Api.Content.Dto.FolderDto)">
+            <summary>
+            Creates child folder.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Api.Controllers.ContentController.GetDownloadLink(System.String)">
+            <summary>
+            Get Download link to download file directly from AC (zip version).
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Api.Controllers.ContentController.DeleteFileOrFolder(System.String)">
+            <summary>
+            Deletes folder of file.
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Lti.Api.Controllers.BaseApiController.SessionSave">
             <summary>
             TRICK: do not use in most of your code.
@@ -50,6 +70,32 @@
             </summary>
             <param name="request"></param>
             <returns></returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Api.Resources.ScoShortcutNames">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Resources.ScoShortcutNames.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Resources.ScoShortcutNames.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Resources.ScoShortcutNames.content">
+            <summary>
+              Looks up a localized string similar to Shared Content.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Resources.ScoShortcutNames.my_content">
+            <summary>
+              Looks up a localized string similar to My Content.
+            </summary>
         </member>
     </members>
 </doc>
