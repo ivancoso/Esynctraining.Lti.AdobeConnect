@@ -1001,7 +1001,7 @@ namespace EdugameCloud.Lti.Controllers
             LtiViewModelDto.SettingsInfo.ActionUrls.RestWebApiBaseUrl = (string)Settings.LtiRestWebApiBaseUrl;
 
             var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
-            return new LtiViewModelDto
+            var model = new LtiViewModelDto
             {
                 FullVersion = versionFileJs,
 //                LtiVersion = version,
@@ -1028,6 +1028,12 @@ namespace EdugameCloud.Lti.Controllers
                     ? lmsProvider.UserGuideFileUrl
                     : new Uri(new Uri((string)Settings.BasePath, UriKind.Absolute), $"content/lti-instructions/{lmsProvider.ShortName}.pdf").ToString(),
             };
+
+            bool hasMp4 = settings.HasMp4ServiceLicenseKey | settings.HasMp4ServiceWithSubtitlesLicenseKey;
+            if (hasMp4)
+                model.ActionUrls.GetRecordings = model.ActionUrls.GetMP4Recordings;
+
+            return model;
         }
         
         private bool IsAdminRole(LtiParamDTO param)

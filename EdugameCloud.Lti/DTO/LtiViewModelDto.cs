@@ -17,10 +17,12 @@ namespace EdugameCloud.Lti.DTO
 
                 public static string RestWebApiBaseUrl = "";
 
-                public string GetMP4Recordings { get; set; } = "lti-mp4/recordings";
-                public string ConvertRecording { get; set; } = "lti-mp4/mp4/convert";
-                public string ConvertRecordingWithSubtitles { get; set; } = "lti-mp4/mp4/convertWithSubtitles";
-                public string GetRecordingStatus { get; set; } = "lti-mp4/recordings/status";
+                public static string Mp4BaseUrl = "lti-mp4/";
+                
+                public string GetMP4Recordings { get; set; } = Mp4BaseUrl + "recordings";
+                public string ConvertRecording { get; set; } = Mp4BaseUrl + "mp4/convert";
+                public string ConvertRecordingWithSubtitles { get; set; } = Mp4BaseUrl + "mp4/convertWithSubtitles";
+                public string GetRecordingStatus { get; set; } = Mp4BaseUrl + "recordings/status";
 
                 public string GetRecordings { get; set; } = RestWebApiBaseUrl + "recordings"; // API   + "lti-mp4/recordings"
                 public string PublishRecording { get; set; } = RestWebApiBaseUrl + "recordings/publish";  // API
