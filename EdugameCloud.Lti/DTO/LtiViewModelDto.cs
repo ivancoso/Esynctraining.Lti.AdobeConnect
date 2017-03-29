@@ -17,9 +17,9 @@ namespace EdugameCloud.Lti.DTO
 
                 public static string RestWebApiBaseUrl = "";
 
-                public static string Mp4BaseUrl = "lti-mp4/";
+                public static string Mp4BaseUrl = "../lti-mp4/";
 
-                public static string FileReportBase = "lti/";
+                public static string FileReportBase = "";
 
                 public string GetMP4Recordings { get; set; } = Mp4BaseUrl + "recordings";
                 public string ConvertRecording { get; set; } = Mp4BaseUrl + "mp4/convert";
