@@ -1,6 +1,7 @@
 ﻿using System;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Resources;
@@ -32,6 +33,8 @@ namespace EdugameCloud.Lti.Api.Controllers
         protected ICache Cache { get; }
 
         protected API.AdobeConnect.IAdobeConnectAccountService acAccountService { get; }
+
+        private Esynctraining.AdobeConnect.IAdobeConnectAccountService BaseAcAccountService = IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>();
 
         protected bool IsDebug
         {
@@ -75,6 +78,8 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         internal int CourseId { get; set; }
 
+        private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
+
         #region Constructors and Destructors
 
         public BaseApiController(
@@ -91,6 +96,48 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
 
         #endregion
+
+        protected IAdobeConnectProxy GetUserProvider()
+        {
+            string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(LmsCompany.Id, Session.LtiSession.LtiParam.lms_user_id);
+            var provider = _acCache.Get(cacheKey) as IAdobeConnectProxy;
+
+            if (provider == null)
+            {
+                IAdobeConnectProxy adminProvider;
+                string breezeSession = LoginCurrentUser(out adminProvider);
+                var acService = BaseAcAccountService;
+                provider = acService.GetProvider2(new AdobeConnectAccess2(new Uri(LmsCompany.AcServer), breezeSession));
+
+                var sessionTimeout = acService.GetAccountDetails(adminProvider).SessionTimeout - 1; //-1 is to be sure 
+                _acCache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
+            }
+
+            return provider;
+        }
+
+        private string LoginCurrentUser(out IAdobeConnectProxy adminProvider)
+        {
+            try
+            {
+                var param = Session.LtiSession.LtiParam;
+                var lmsUser = Session.LmsUser;
+                if (lmsUser.PrincipalId == null)
+                {
+                    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
+                }
+
+                adminProvider = GetAdminProvider();
+                string breezeToken = MeetingSetup.ACLogin(LmsCompany, param, lmsUser, adminProvider).BreezeSession;
+
+                return breezeToken;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
+                throw;
+            }
+        }
 
         protected IAdobeConnectProxy GetAdminProvider()
         {

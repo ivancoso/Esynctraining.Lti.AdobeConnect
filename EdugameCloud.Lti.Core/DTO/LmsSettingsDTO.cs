@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
+    using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -11,20 +12,21 @@
         /// <summary>
         /// Gets or sets the AC connection mode.
         /// </summary>
+        [Required]
         [DataMember]
-        public int acConnectionMode { get; set; }
+        public int AcConnectionMode { get; set; }
 
         /// <summary>
         /// Gets or sets the password.
         /// </summary>
         [DataMember]
-        public string password { get; set; }
+        public string Password { get; set; }
 
         /// <summary>
         /// Gets or sets the primary Color.
         /// </summary>
         [DataMember]
-        public string primaryColor { get; set; }
+        public string PrimaryColor { get; set; }
 
     }
 

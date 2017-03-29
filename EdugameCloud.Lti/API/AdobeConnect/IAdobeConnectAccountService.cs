@@ -16,18 +16,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         IAdobeConnectProxy GetProvider(string acDomain, UserCredentials credentials, bool login);
 
-        ACDetailsDTO GetAccountDetails(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache);
+        ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider, ICache cache);
 
-        IEnumerable<PrincipalReportDto> GetMeetingHostReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider);
+        IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider);
 
-        IEnumerable<TemplateDto> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache);
+        IEnumerable<TemplateDto> GetSharedMeetingTemplates(IAdobeConnectProxy provider, ICache cache);
 
         string LoginIntoAC(
             ILmsLicense lmsCompany,
             LtiParamDTO param,
             Principal registeredUser,
             string password,
-            Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
+            IAdobeConnectProxy provider,
             bool updateAcUser = true);
 
     }

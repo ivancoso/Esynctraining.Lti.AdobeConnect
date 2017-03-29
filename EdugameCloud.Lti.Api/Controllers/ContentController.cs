@@ -32,17 +32,17 @@ namespace EdugameCloud.Lti.Api.Controllers
     [Route("my-content")]
     public class ContentController : BaseApiController
     {
-        private readonly IMemoryCache _memoryCache;
+        //private readonly IMemoryCache _memoryCache;
         private readonly LmsUserModel _lmsUserModel;
 
 
-        private Esynctraining.AdobeConnect.IAdobeConnectAccountService BaseAcAccountService = IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>();
+        //private Esynctraining.AdobeConnect.IAdobeConnectAccountService BaseAcAccountService = IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>();
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 
 
         public ContentController(
-            IMemoryCache memoryCache,
+            //IMemoryCache memoryCache,
             LmsUserModel lmsUserModel,
             EdugameCloud.Lti.API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
@@ -51,7 +51,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             : base(acAccountService, settings, logger, cache)
         {
             _lmsUserModel = lmsUserModel;
-            _memoryCache = memoryCache;
+            //_memoryCache = memoryCache;
         }
 
 
@@ -153,14 +153,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
                 }
 
-                if (lmsUser.PrincipalId == null)
-                {
-                    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
-                }
-
-                var registeredUser = ac.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
-
-                string breezeToken = MeetingSetup.ACLogin(LmsCompany, param, lmsUser, registeredUser, ac);
+                string breezeToken = MeetingSetup.ACLogin(LmsCompany, param, lmsUser, ac).BreezeSession;
 
                 return helper.GetDownloadAsZipLink(scoId, breezeToken);
             }
@@ -293,54 +286,54 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
 
 
-        protected IAdobeConnectProxy GetUserProvider()
-        {
-            string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(LmsCompany.Id, Session.LtiSession.LtiParam.lms_user_id);
-            var provider = _memoryCache.Get(cacheKey) as IAdobeConnectProxy;
+        //protected IAdobeConnectProxy GetUserProvider()
+        //{
+        //    string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(LmsCompany.Id, Session.LtiSession.LtiParam.lms_user_id);
+        //    var provider = _memoryCache.Get(cacheKey) as IAdobeConnectProxy;
 
-            if (provider == null)
-            {
-                IAdobeConnectProxy adminProvider;
-                string breezeSession = LoginCurrentUser(out adminProvider);
-                var acService = BaseAcAccountService;
-                provider = acService.GetProvider2(new AdobeConnectAccess2(new Uri(LmsCompany.AcServer), breezeSession));
+        //    if (provider == null)
+        //    {
+        //        IAdobeConnectProxy adminProvider;
+        //        string breezeSession = LoginCurrentUser(out adminProvider);
+        //        var acService = BaseAcAccountService;
+        //        provider = acService.GetProvider2(new AdobeConnectAccess2(new Uri(LmsCompany.AcServer), breezeSession));
 
-                var sessionTimeout = acService.GetAccountDetails(adminProvider).SessionTimeout - 1; //-1 is to be sure 
-                _memoryCache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
-            }
+        //        var sessionTimeout = acService.GetAccountDetails(adminProvider).SessionTimeout - 1; //-1 is to be sure 
+        //        _memoryCache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
+        //    }
 
-            return provider;
-        }
+        //    return provider;
+        //}
 
-        private string LoginCurrentUser(out IAdobeConnectProxy adminProvider)
-        {
-            try
-            {
-                var param = Session.LtiSession.LtiParam;
-                var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, LmsCompany.Id).Value;
-                if (lmsUser == null)
-                {
-                    throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
-                }
+        //private string LoginCurrentUser(out IAdobeConnectProxy adminProvider)
+        //{
+        //    try
+        //    {
+        //        var param = Session.LtiSession.LtiParam;
+        //        var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, LmsCompany.Id).Value;
+        //        if (lmsUser == null)
+        //        {
+        //            throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
+        //        }
 
-                if (lmsUser.PrincipalId == null)
-                {
-                    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
-                }
+        //        //if (lmsUser.PrincipalId == null)
+        //        //{
+        //        //    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
+        //        //}
 
-                adminProvider = GetAdminProvider();
-                var registeredUser = adminProvider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
+        //        adminProvider = GetAdminProvider();
+        //        //var registeredUser = adminProvider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
 
-                string breezeToken = MeetingSetup.ACLogin(LmsCompany, param, lmsUser, registeredUser, adminProvider);
+        //        string breezeToken = MeetingSetup.ACLogin(LmsCompany, param, lmsUser, adminProvider);
 
-                return breezeToken;
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
-                throw;
-            }
-        }
+        //        return breezeToken;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
+        //        throw;
+        //    }
+        //}
 
         // TRICK: for upload only
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();

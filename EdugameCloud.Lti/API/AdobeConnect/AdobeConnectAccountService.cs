@@ -25,10 +25,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public AdobeConnectAccountService(ILogger logger)
         {
-            if (logger == null)
-                throw new ArgumentNullException(nameof(logger));
-
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -124,7 +121,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             Principal registeredUser,
             string password,
-            Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
+            IAdobeConnectProxy adminProvider,
             bool updateAcUser = true)
         {
             if(registeredUser == null)
@@ -136,7 +133,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 try
                 {
-                    var principalUpdateResult = provider.PrincipalUpdate(
+                    var principalUpdateResult = adminProvider.PrincipalUpdate(
                         new PrincipalSetup
                         {
                             PrincipalId = registeredUser.PrincipalId,
@@ -154,7 +151,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             , param.PersonNameFamily));
                 }
             }
-            var userProvider = this.GetProvider(lmsCompany, false); // separate provider for user not to lose admin logging in
+            var userProvider = GetProvider(lmsCompany, false); // separate provider for user not to lose admin logging in
 
             LoginResult resultByLogin = userProvider.Login(new UserCredentials(registeredUser.Login, password));
             if (resultByLogin.Success)

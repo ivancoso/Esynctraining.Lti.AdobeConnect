@@ -28,7 +28,6 @@ namespace EdugameCloud.Lti.Api.Controllers
     public class SeminarController : BaseApiController
     {
         private static readonly IMapper mapper = new MapperConfiguration(cfg => cfg.CreateMap<MeetingDTO, SeminarDto>()).CreateMapper();
-        private readonly IMemoryCache _memoryCache;
         private readonly API.AdobeConnect.ISeminarService _seminarService;
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
@@ -36,8 +35,8 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         private API.AdobeConnect.IAdobeConnectAccountService AcAccountService => IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>();
 
+
         public SeminarController(
-            IMemoryCache memoryCache,
             API.AdobeConnect.ISeminarService seminarService,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
@@ -46,7 +45,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         )
             : base(acAccountService, settings, logger, cache)
         {
-            _memoryCache = memoryCache;
+            //_memoryCache = memoryCache;
             _seminarService = seminarService;
         }
 
@@ -69,7 +68,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
                 OperationResult ret = MeetingSetup.SaveMeeting(
                     LmsCompany,
-                    this.GetCurrentUserProvider(Session),
+                    GetUserProvider(),
                     param,
                     model,
                     trace,
@@ -99,7 +98,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var fb = new SeminarFolderBuilder(model.SeminarLicenseId);
                 OperationResult ret = MeetingSetup.SaveMeeting(
                     Session.LmsCompany,
-                    this.GetCurrentUserProvider(Session),
+                    GetUserProvider(),
                     param,
                     model,
                     trace,
@@ -122,9 +121,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                //save under admin account doesn't work for user license
-                var ac = GetCurrentUserProvider(Session);
-
+                
                 // TRICK: change record meeting id to meeting sco-id
                 LtiParamDTO param = Session.LtiSession.LtiParam;
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, long.Parse(seminarSessionDto.SeminarRoomId));
@@ -133,6 +130,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                     return OperationResult.Error(Messages.MeetingNotFound);
                 }
 
+                //NOTE: save under admin account doesn't work for user license
+                var ac = GetUserProvider();
                 ProcessQuota(ac, meeting.ScoId, seminarSessionDto);
 
                 var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;
@@ -158,7 +157,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             //TODO: to service
             try
             {
-                var ac = GetCurrentUserProvider(Session);
+                var ac = GetUserProvider();
                 var result = ac.DeleteSco(model.SeminarSessionId);
 
                 return OperationResult.Success();
@@ -169,6 +168,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResult.Error(errorMessage);
             }
         }
+
 
         private void ProcessQuota(IAdobeConnectProxy ac, string meetingScoId, SeminarSessionInputDto seminarSessionDto)
         {
@@ -187,57 +187,53 @@ namespace EdugameCloud.Lti.Api.Controllers
             seminarSessionDto.ExpectedLoad = userLicense.LicenseQuota;
         }
 
-        private IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)
-        {
-            string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
-            var provider = _memoryCache.Get(cacheKey) as IAdobeConnectProxy;
+        //private IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)
+        //{
+        //    string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
+        //    var provider = _memoryCache.Get(cacheKey) as IAdobeConnectProxy;
 
-            if (provider == null)
-            {
-                string breezeSession = LoginCurrentUser(session);
-                var accService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(Logger);
-                provider = accService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
+        //    if (provider == null)
+        //    {
+        //        string breezeSession = LoginCurrentUser(session);
+        //        var accService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(Logger);
+        //        provider = accService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
 
-                var sessionTimeout = accService.GetAccountDetails(GetAdminProvider()).SessionTimeout - 1; //-1 is to be sure 
-                _memoryCache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
-            }
+        //        var sessionTimeout = accService.GetAccountDetails(GetAdminProvider()).SessionTimeout - 1; //-1 is to be sure 
+        //        _memoryCache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
+        //    }
 
-            return provider;
-        }
+        //    return provider;
+        //}
 
-        private string LoginCurrentUser(LmsUserSession session)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
-                var lmsUserModel = IoC.Resolve<LmsUserModel>();
-                var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-                if (lmsUser == null)
-                {
-                    throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
-                }
+        //private string LoginCurrentUser(LmsUserSession session)
+        //{
+        //    LmsCompany lmsCompany = null;
+        //    try
+        //    {
+        //        lmsCompany = session.LmsCompany;
+        //        var param = session.LtiSession.LtiParam;
+        //        var lmsUserModel = IoC.Resolve<LmsUserModel>();
+        //        var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+        //        if (lmsUser == null)
+        //        {
+        //            throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
+        //        }
 
-                if (lmsUser.PrincipalId == null)
-                {
-                    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
-                }
+        //        if (lmsUser.PrincipalId == null)
+        //        {
+        //            throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
+        //        }
 
-                var ac = GetAdminProvider();
-                var registeredUser = ac.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
-
-                var MeetingSetup = IoC.Resolve<MeetingSetup>();
-                string breezeToken = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, ac);
-
-                return breezeToken;
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
-                throw;
-            }
-        }
+        //        var ac = GetAdminProvider();
+        //        string breezeToken = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, ac).BreezeSession;
+        //        return breezeToken;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
+        //        throw;
+        //    }
+        //}
 
         private OperationResult TrickForSeminar(OperationResult ret, string seminarLicenseId)
         {

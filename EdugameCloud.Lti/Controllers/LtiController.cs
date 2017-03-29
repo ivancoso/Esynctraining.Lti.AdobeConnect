@@ -303,27 +303,12 @@ namespace EdugameCloud.Lti.Controllers
                     throw new Core.WarningMessageException(string.Format(Resources.Messages.NoUserFound, param.lms_user_id));
                 }
 
-                var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
-                Principal registeredUser = principalInfo != null ? principalInfo.Principal : null;
-                string breezeSession = null;
-
-                if (registeredUser != null)
-                {
-                    breezeSession = meetingSetup.ACLogin(
+                string breezeSession = meetingSetup.ACLogin(
                         lmsCompany,
                         param,
                         lmsUser,
-                        registeredUser,
-                        provider);
-                }
-                else
-                {
-                    var message = string.Format(
-                        Resources.Messages.NoUserByPrincipalIdFound, lmsUser.PrincipalId ?? string.Empty);
-                    Logger.Error(message);
-                    throw new Core.WarningMessageException(message);
-                }
-
+                        provider).BreezeSession;
+                
                 if (string.IsNullOrWhiteSpace(breezeSession))
                     return Json(OperationResult.Error(Resources.Messages.CanNotGetBreezeSession), JsonRequestBehavior.AllowGet);
 

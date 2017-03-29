@@ -1859,17 +1859,17 @@
             The LMS user settings DTO.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Lti.DTO.LmsUserSettingsDTO.acConnectionMode">
+        <member name="P:EdugameCloud.Lti.DTO.LmsUserSettingsDTO.AcConnectionMode">
             <summary>
             Gets or sets the AC connection mode.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Lti.DTO.LmsUserSettingsDTO.password">
+        <member name="P:EdugameCloud.Lti.DTO.LmsUserSettingsDTO.Password">
             <summary>
             Gets or sets the password.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Lti.DTO.LmsUserSettingsDTO.primaryColor">
+        <member name="P:EdugameCloud.Lti.DTO.LmsUserSettingsDTO.PrimaryColor">
             <summary>
             Gets or sets the primary Color.
             </summary>

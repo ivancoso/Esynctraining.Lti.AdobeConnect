@@ -294,8 +294,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             return ret;
         }
-        
-        public string JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, int meetingId, 
+
+        public string JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, int meetingId,
             ref string breezeSession, IAdobeConnectProxy provider)
         {
             this.LmsCourseMeetingModel.Flush();
@@ -309,7 +309,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             string currentMeetingScoId = currentMeeting.GetMeetingScoId();
             var meetingUrl = string.Empty;
-            
+
             if (!string.IsNullOrEmpty(currentMeetingScoId))
             {
                 ScoContent currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
@@ -325,10 +325,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new Core.WarningMessageException(string.Format("No user with id {0} found.", param.lms_user_id));
             }
 
-            string email = param.lis_person_contact_email_primary;
-            string login = param.lms_user_login;
+            //string email = param.lis_person_contact_email_primary;
+            //string login = param.lms_user_login;
             LmsUserDTO lmsUserDto = null;
-            if ((LmsMeetingType)currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup 
+            if ((LmsMeetingType)currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup
                 && currentMeeting.EnableDynamicProvisioning && lmsCompany.UseSynchronizedUsers)
             {
                 string userCreationError = null;
@@ -344,64 +344,48 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
             }
 
-            var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
-            Principal registeredUser = principalInfo?.Principal;
+            var loginResult = ACLogin(lmsCompany, param, lmsUser, provider);
 
+            // NOTE: ??? re-apply deleted from AC host role??
             if (currentMeeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
             {
                 var isOwner = currentMeeting.OfficeHours.LmsUser.UserId.Equals(param.lms_user_id);
 
-                if (registeredUser != null)
+                provider.UpdateScoPermissionForPrincipal(
+                    currentMeetingScoId,
+                    loginResult.User.PrincipalId,
+                    isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
+                if (isOwner)
                 {
-                    provider.UpdateScoPermissionForPrincipal(
-                        currentMeetingScoId,
-                        registeredUser.PrincipalId,
-                        isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
-                    if (isOwner)
-                    {
-                        this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new [] { registeredUser.PrincipalId });
-                    }
+                    this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new[] { loginResult.User.PrincipalId });
                 }
             }
 
-            var breezeToken = string.Empty;
+            ProcessGuestAuditUsers(provider, lmsCompany, currentMeetingScoId, loginResult.User.PrincipalId, param,
+                () => LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, currentMeetingScoId, 0));
 
-            if (registeredUser != null)
+            string breezeToken = loginResult.BreezeSession;
+
+            string wstoken = null;
+
+            if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Blackboard)
             {
-                ProcessGuestAuditUsers(provider, lmsCompany, currentMeetingScoId, registeredUser.PrincipalId, param, 
-                    () => LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, currentMeetingScoId, 0));
-                breezeToken = ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
+                string error;
 
-                string wstoken = null;
+                var lmsUserService = LmsFactory.GetUserService(LmsProviderEnum.Blackboard);
+                var currentUser = lmsUserService.GetUser(lmsCompany,
+                    param.lms_user_id,
+                    param.course_id,
+                    out error,
+                    param);
 
-                if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Blackboard)
+                if (currentUser != null)
                 {
-                    string error;
-
-                    var lmsUserService = LmsFactory.GetUserService(LmsProviderEnum.Blackboard);
-                    var currentUser = lmsUserService.GetUser(lmsCompany,
-                        param.lms_user_id,
-                        param.course_id,
-                        out error,
-                        param);
-
-                    if (currentUser != null)
-                    {
-                        wstoken = currentUser.Id;
-                    }
+                    wstoken = currentUser.Id;
                 }
+            }
 
-                this.SaveLMSUserParameters(param, lmsCompany, registeredUser.PrincipalId, wstoken);
-            }
-            else
-            {
-                var error = string.Format(
-                    "Cannot find Adobe Connect user with principal id {0} or email {1} or login {2}.",
-                    lmsUser.PrincipalId ?? string.Empty,
-                    email,
-                    login);
-                throw new Core.WarningMessageException(error);
-            }
+            this.SaveLMSUserParameters(param, lmsCompany, loginResult.User.PrincipalId, wstoken);
 
             breezeSession = breezeToken ?? string.Empty;
             bool isTeacher = this.UsersSetup.IsTeacher(param);
@@ -421,9 +405,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public string ACLogin(ILmsLicense lmsCompany, LtiParamDTO param, LmsUser lmsUser,
-            Principal registeredUser, Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
+        public class LoginResult
         {
+            public string BreezeSession { get; set; }
+
+            public Principal User { get; set; }
+        }
+
+        public LoginResult ACLogin(ILmsLicense lmsCompany, LtiParamDTO param, LmsUser lmsUser, IAdobeConnectProxy adminProvider)
+        {
+            if (lmsUser.PrincipalId == null)
+                throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
+
+            var principalInfo = adminProvider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo;
+            Principal registeredUser = principalInfo != null ? principalInfo.Principal : null;
+            if (registeredUser == null)
+            {
+                var message = string.Format(
+                        Resources.Messages.NoUserByPrincipalIdFound, lmsUser.PrincipalId ?? string.Empty);
+                Logger.Error(message);
+                throw new Core.WarningMessageException(message);
+            }
+
             string breezeToken = null;
             string generatedPassword = null;
             if (lmsUser.AcConnectionMode == AcConnectionMode.Overwrite && string.IsNullOrEmpty(lmsUser.ACPassword))
@@ -436,7 +439,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 else
                 { 
                     generatedPassword = Password.Generate(8, 2);
-                    var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
+                    var resetPasswordResult = adminProvider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
                     if (resetPasswordResult.Success)
                     {
                         UsersSetup.ResetUserACPassword(lmsUser, generatedPassword);
@@ -451,12 +454,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     param,
                     registeredUser,
                     password,
-                    provider);
+                    adminProvider);
                 if (breezeToken == null && generatedPassword == null && lmsUser.AcConnectionMode == AcConnectionMode.Overwrite)
                 {
                     // trying to login with new generated password (in case, for example, when user changed his AC password manually)
                     generatedPassword = Membership.GeneratePassword(8, 2);
-                    var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
+                    var resetPasswordResult = adminProvider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
                     if (resetPasswordResult.Success)
                     {
                         UsersSetup.ResetUserACPassword(lmsUser, generatedPassword);
@@ -466,11 +469,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         param,
                         registeredUser,
                         generatedPassword,
-                        provider);
+                        adminProvider);
                 }
             }
 
-            return breezeToken;
+            return new LoginResult { BreezeSession = breezeToken, User = registeredUser };
         }
 
         public OperationResult LeaveMeeting(ILmsLicense lmsCompany, LtiParamDTO param, int id, IAdobeConnectProxy provider)

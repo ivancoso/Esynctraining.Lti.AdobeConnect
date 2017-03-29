@@ -68,13 +68,13 @@
                     };
                 }
 
-                var acConnectionMode = (AcConnectionMode)settings.acConnectionMode;
-                lmsUser.PrimaryColor = settings.primaryColor;
+                var acConnectionMode = (AcConnectionMode)settings.AcConnectionMode;
+                lmsUser.PrimaryColor = settings.PrimaryColor;
 
                 if (acConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
                 {
                     var provider = GetAdminProvider();
-                    var couldSavePassword = usersSetup.SetACPassword(provider, LmsCompany, lmsUser, param, settings.password);
+                    var couldSavePassword = usersSetup.SetACPassword(provider, LmsCompany, lmsUser, param, settings.Password);
                     if (!couldSavePassword)
                     {
                         return OperationResultWithData<LmsUserSettingsDTO>.Error(EdugameCloud.Lti.Resources.Messages.IncorrectAcPassword);

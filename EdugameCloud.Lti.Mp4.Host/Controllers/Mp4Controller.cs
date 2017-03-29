@@ -25,6 +25,13 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "GET,POST,OPTIONS")]
     public class Mp4Controller : BaseController
     {
+        private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
+
+        private TaskClient Mp4Client = IoC.Resolve<TaskClient>();
+
+        private IMeetingSetup MeetingSetup = IoC.Resolve<IMeetingSetup>();
+
+
         public Mp4Controller(
             LmsUserSessionModel userSessionModel,
             Esynctraining.AdobeConnect.IAdobeConnectAccountService acAccountService,
@@ -48,9 +55,8 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
                 if (string.IsNullOrWhiteSpace(licenseKey))
                     throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
-
-                var mp4Client = IoC.Resolve<TaskClient>();
-                return await Mp4ApiUtility.DoConvert(mp4Client, 
+                
+                return await Mp4ApiUtility.DoConvert(Mp4Client, 
                     Guid.Parse(licenseKey),
                     MP4Service.Contract.Client.LicenseType.MP4,
                     input.RecordingId.ToString(),
@@ -76,8 +82,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 if (string.IsNullOrWhiteSpace(licenseKey))
                     throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
 
-                var mp4Client = IoC.Resolve<TaskClient>();
-                return await Mp4ApiUtility.DoConvert(mp4Client,
+                return await Mp4ApiUtility.DoConvert(Mp4Client,
                     Guid.Parse(licenseKey),
                     MP4Service.Contract.Client.LicenseType.MP4WithSubtitles,
                     input.RecordingId.ToString(),
@@ -196,37 +201,22 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             return new SubtitleUtility(ac, Logger, this).PostVttFile(fileScoId);
         }
 
- 
+
         private Principal GetPrincipal(ILmsLicense lmsCompany, DTO.LtiParamDTO param, string scoId,
              IAdobeConnectProxy provider, out string breezeToken)
         {
             breezeToken = string.Empty;
-
-            LmsUserModel lmsUserModel = IoC.Resolve<LmsUserModel>();
-            var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+            
+            var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
                 throw new WarningMessageException(string.Format("No user with id {0} found in the database.",
                     param.lms_user_id));
             }
 
-            var principalInfo = lmsUser.PrincipalId != null
-                ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo
-                : null;
-            var registeredUser = principalInfo != null ? principalInfo.Principal : null;
-
-            if (registeredUser != null)
-            {
-                var meetingSetup = IoC.Resolve<IMeetingSetup>();
-                breezeToken = meetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
-            }
-            else
-            {
-                throw new WarningMessageException(string.Format(
-                    "No user with principal id {0} found in Adobe Connect.", lmsUser.PrincipalId ?? string.Empty));
-            }
-
-            return registeredUser;
+            var loginResult = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, provider);
+            breezeToken = loginResult.BreezeSession;
+            return loginResult.User;
         }
 
     }

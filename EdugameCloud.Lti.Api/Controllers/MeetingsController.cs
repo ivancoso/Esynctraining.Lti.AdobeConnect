@@ -148,7 +148,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("useExistingMeeting")]
         [HttpPost]
         [Filters.LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.EnableMeetingReuse)]
-        public virtual OperationResult ReuseExistedAdobeConnectMeeting(ReuseExistedAdobeConnectMeetingDto model)
+        public virtual OperationResult ReuseExistedAdobeConnectMeeting([FromBody]ReuseExistedAdobeConnectMeetingDto model)
         {
             if (string.IsNullOrWhiteSpace(model.ScoId))
                 return OperationResult.Error("Source AdobeConnect meeting is not selected.");
