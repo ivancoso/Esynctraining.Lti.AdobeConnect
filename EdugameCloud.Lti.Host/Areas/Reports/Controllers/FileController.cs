@@ -57,15 +57,15 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-attendance-report")]
-        public virtual ActionResult MeetingAttendanceReport(string lmsProviderName, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingAttendanceReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
-                var session = this.GetReadOnlySession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                var s = this.GetReadOnlySession(session);
+                var credentials = s.LmsCompany;
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
-                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LmsCourseId, meetingId);
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, s.LmsCourseId, meetingId);
 
                 var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                 var acServer = credentials.AcServer;
@@ -99,7 +99,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 bool isShowMeetingTitle = false;
                 bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
                 string mimeType;
-                var company = this.companyModel.GetOneById(session.LmsCompany.CompanyId).Value;
+                var company = this.companyModel.GetOneById(s.LmsCompany.CompanyId).Value;
 
                 if (company == null)
                 {
@@ -107,13 +107,13 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     return null;
                 }
                 var localDate = GetLocalDate(timezoneOffset);
-                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
+                var parametersList = GetReportParameters(new ReportParamsDto(format, company, s, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
                 var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingAttendanceReport", participants,
                     out mimeType, parametersList);
 
                 if (reportRenderedBytes != null)
                 {
-                    var reportName = GenerateReportName(session, "Attendance", localDate);
+                    var reportName = GenerateReportName(s, "Attendance", localDate);
                     return this.File(
                         reportRenderedBytes,
                         mimeType,
@@ -135,16 +135,16 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-sessions-report")]
-        public virtual ActionResult MeetingSessionsReport(string lmsProviderName, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingSessionsReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
-                var session = this.GetReadOnlySession(lmsProviderName);
-                var credentials = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
+                var s = this.GetReadOnlySession(session);
+                var credentials = s.LmsCompany;
+                var param = s.LtiSession.With(x => x.LtiParam);
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
-                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LmsCourseId, meetingId);
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, s.LmsCourseId, meetingId);
 
                 var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                 var acMeetingUrl = credentials.AcServer + acMeeting.ScoInfo.UrlPath;
@@ -170,7 +170,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     return null;
                 }
 
-                var company = this.companyModel.GetOneById(session.LmsCompany.CompanyId).Value;
+                var company = this.companyModel.GetOneById(s.LmsCompany.CompanyId).Value;
 
                 if (company == null)
                 {
@@ -180,7 +180,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var localDate = GetLocalDate(timezoneOffset);
                 bool isShowMeetingTitle = false;
                 bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
-                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
+                var parametersList = GetReportParameters(new ReportParamsDto(format, company, s, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
                 var subreports = new Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>>
                 {
                     {
@@ -212,7 +212,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
                 if (reportRenderedBytes != null)
                 {
-                    var reportName = GenerateReportName(session, "Sessions", localDate);
+                    var reportName = GenerateReportName(s, "Sessions", localDate);
 
                     return this.File(
                         reportRenderedBytes,
@@ -235,15 +235,15 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-recordings-report")]
-        public virtual ActionResult MeetingRecordingsReport(string lmsProviderName, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingRecordingsReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
-                var session = this.GetReadOnlySession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                var s = this.GetReadOnlySession(session);
+                var credentials = s.LmsCompany;
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
-                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LmsCourseId, meetingId);
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, s.LmsCourseId, meetingId);
 
                 var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                 var acServer = credentials.AcServer;
@@ -271,7 +271,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 }
 
                 string mimeType;
-                var company = this.companyModel.GetOneById(session.LmsCompany.CompanyId).Value;
+                var company = this.companyModel.GetOneById(s.LmsCompany.CompanyId).Value;
 
                 if (company == null)
                 {
@@ -284,14 +284,14 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var localDate = GetLocalDate(timezoneOffset);
                 bool isShowMeetingTitle;
                 bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
-                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
+                var parametersList = GetReportParameters(new ReportParamsDto(format, company, s, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
 
                 var reportRenderedBytes = GenerateReportBytes(format, "RecordingAttendanceReport", participants,
                     out mimeType, parametersList);
 
                 if (reportRenderedBytes != null)
                 {
-                    var reportName = GenerateReportName(session, "RecordingViews", localDate);
+                    var reportName = GenerateReportName(s, "RecordingViews", localDate);
                     return this.File(
                         reportRenderedBytes,
                         mimeType,
