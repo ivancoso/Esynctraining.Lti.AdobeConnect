@@ -27,7 +27,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
-            if (provider == null)
+            if (meeting == null)
                 throw new ArgumentNullException(nameof(meeting));
 
             try
@@ -45,7 +45,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             RecordingName = us.Name,
                             Login = us.Login,
                             UserName = us.UserName,
-                            DateClosed = us.DateClosed,
+                            DateClosed = us.DateClosed != DateTime.MinValue ? us.DateClosed : (DateTime?)null,
                             DateCreated = us.DateCreated,
                         }).OrderByDescending(x => x.DateCreated).ToList();
 

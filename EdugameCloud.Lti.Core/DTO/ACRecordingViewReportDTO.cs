@@ -38,7 +38,7 @@ namespace EdugameCloud.Lti.Core.DTO
             this.scoId = acSession.RecordingScoId;
             this.scoName = acSession.RecordingName;
             this.dateTimeEntered = acSession.DateCreated.ConvertToClientTime(timezoneOffset);
-            this.dateTimeLeft = acSession.DateClosed == DateTime.MinValue ? null : (DateTime?)acSession.DateClosed.ConvertToClientTime(timezoneOffset);
+            this.dateTimeLeft = acSession.DateClosed?.ConvertToClientTime(timezoneOffset);
             this.login = acSession.Login;
             this.userName = acSession.UserName;
         }

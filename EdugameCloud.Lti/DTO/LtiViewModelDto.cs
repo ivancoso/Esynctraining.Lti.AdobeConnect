@@ -18,7 +18,9 @@ namespace EdugameCloud.Lti.DTO
                 public static string RestWebApiBaseUrl = "";
 
                 public static string Mp4BaseUrl = "lti-mp4/";
-                
+
+                public static string FileReportBase = "lti/";
+
                 public string GetMP4Recordings { get; set; } = Mp4BaseUrl + "recordings";
                 public string ConvertRecording { get; set; } = Mp4BaseUrl + "mp4/convert";
                 public string ConvertRecordingWithSubtitles { get; set; } = Mp4BaseUrl + "mp4/convertWithSubtitles";
@@ -84,9 +86,9 @@ namespace EdugameCloud.Lti.DTO
                 public string ReportBySessions { get; set; } = RestWebApiBaseUrl + "meeting/reports/by-sessions"; // API
                 public string ReportByAttendance { get; set; } = RestWebApiBaseUrl + "meeting/reports/by-attendance"; // API
 
-                public string ReportByRecordingsFile { get; set; } = "meeting-recordings-report"; // lti.host
-                public string ReportBySessionsFile { get; set; } = "meeting-sessions-report"; // lti.host
-                public string ReportByAttendanceFile { get; set; } = "meeting-attendance-report"; // lti.host
+                public string ReportByRecordingsFile { get; set; } = FileReportBase + "meeting-recordings-report"; // lti.host
+                public string ReportBySessionsFile { get; set; } = FileReportBase + "meeting-sessions-report"; // lti.host
+                public string ReportByAttendanceFile { get; set; } = FileReportBase + "meeting-attendance-report"; // lti.host
 
             }
         }
