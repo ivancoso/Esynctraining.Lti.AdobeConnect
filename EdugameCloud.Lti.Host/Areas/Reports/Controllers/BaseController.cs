@@ -13,18 +13,12 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 {
     public abstract class BaseController : Controller
     {
-        #region Fields
-
         private static bool? isDebug;
 
         private readonly LmsUserSessionModel userSessionModel;
 
-        #endregion
 
-        /// <summary>
-        ///   Gets the settings.
-        /// </summary>
-        public dynamic Settings { get; private set; }
+        protected dynamic Settings { get; private set; }
 
         protected ILogger logger { get; private set; }
 
@@ -45,10 +39,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
             }
         }
 
-        private LanguageModel LanguageModel
-        {
-            get { return IoC.Resolve<LanguageModel>(); }
-        }
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
         #region Constructors and Destructors
 
@@ -94,13 +85,13 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
             return provider;
         }
 
-        protected string GetOutputErrorMessage(string methodName, Exception ex)
-        {
-            logger.Error(methodName, ex);
-            return IsDebug
-                ? Resources.Messages.ExceptionOccured + ex.ToString()
-                : Resources.Messages.ExceptionMessage;
-        }
+        //protected string GetOutputErrorMessage(string methodName, Exception ex)
+        //{
+        //    logger.Error(methodName, ex);
+        //    return IsDebug
+        //        ? Resources.Messages.ExceptionOccured + ex.ToString()
+        //        : Resources.Messages.ExceptionMessage;
+        //}
 
         protected string GetOutputErrorMessage(string originalErrorMessage)
         {
