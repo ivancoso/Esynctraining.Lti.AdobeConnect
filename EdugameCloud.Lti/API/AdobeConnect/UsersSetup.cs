@@ -1,6 +1,4 @@
-﻿using EdugameCloud.Lti.Utils;
-
-namespace EdugameCloud.Lti.API.AdobeConnect
+﻿namespace EdugameCloud.Lti.API.AdobeConnect
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +19,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+    using Esynctraining.Crypto;
 
     public sealed class UsersSetup : IUsersSetup
     {
@@ -97,18 +96,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The add users to meeting hosts group.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="principalIds">
-        /// The principal ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         public void AddUsersToMeetingHostsGroup(IAdobeConnectProxy provider, IEnumerable<string> principalIds, PrincipalType principalType = PrincipalType.live_admins)
         {
             if (principalIds.Any())
@@ -597,27 +584,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return new LmsRoleService(this.settings).IsTeacher(param);
         }
 
-        /// <summary>
-        /// The update user.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The lmsCompany.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
@@ -976,24 +942,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             logger.InfoFormat("SaveMeeting: SetDefaultUsers.ProcessUsersInAC: time: {0}.", sw2.Elapsed.ToString());
         }
 
-        /// <summary>
-        /// The set lms user default ac permissions 2.
-        /// </summary>
-        /// <param name="meetingScoId">
-        /// The meeting sco id.
-        /// </param>
-        /// <param name="u">
-        /// The u.
-        /// </param>
-        /// <param name="principalId">
-        /// The principal id.
-        /// </param>
-        /// <param name="meetingPermission">
-        /// The meeting permission.
-        /// </param>
-        /// <param name="hostPrincipals">
-        /// The host principals.
-        /// </param>
         public void SetLMSUserDefaultACPermissions2(
             ILmsLicense lmsCompany,
             string meetingScoId, 
@@ -1435,15 +1383,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </param>
         /// <param name="meetingSco">
         /// The meeting SCO.
-        /// </param>
-        /// <param name="hosts">
-        /// The hosts.
-        /// </param>
-        /// <param name="presenters">
-        /// The presenters.
-        /// </param>
-        /// <param name="participants">
-        /// The participants.
         /// </param>
         /// <param name="nonEditable">
         /// The non editable.

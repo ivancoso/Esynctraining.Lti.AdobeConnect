@@ -18,15 +18,6 @@
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The fix ac value.
-        /// </summary>
-        /// <param name="dt">
-        /// The dt.
-        /// </param>
-        /// <returns>
-        /// The <see cref="DateTime?"/>.
-        /// </returns>
         public static DateTime? FixACValue(this DateTime dt)
         {
             return dt < dt1951 ? (DateTime?)null : dt;

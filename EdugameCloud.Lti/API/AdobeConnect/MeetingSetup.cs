@@ -418,7 +418,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
 
             var principalInfo = adminProvider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo;
-            Principal registeredUser = principalInfo != null ? principalInfo.Principal : null;
+            Principal registeredUser = principalInfo?.Principal;
             if (registeredUser == null)
             {
                 var message = string.Format(
@@ -1812,16 +1812,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
         }
-        
-        /// <summary>
-        /// The setup shared meetings folder.
-        /// </summary>
-        /// <param name="credentials">
-        /// The lmsCompany.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
+
         //private static void SetupSharedMeetingsFolder(LmsCompany credentials, LmsProvider lmsProvider, IAdobeConnectProxy provider)
         //{
         //    string ltiFolderSco = null;

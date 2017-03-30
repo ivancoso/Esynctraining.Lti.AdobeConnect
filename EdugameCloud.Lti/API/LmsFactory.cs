@@ -40,15 +40,6 @@ namespace EdugameCloud.Lti.API
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LmsFactory"/> class.
-        /// </summary>
-        /// <param name="canvasApi">
-        /// The Canvas API.
-        /// </param>
-        /// <param name="moodleApi">
-        /// The Moodle API.
-        /// </param>
         public LmsFactory(IEGCEnabledCanvasAPI canvasApi, IEGCEnabledMoodleApi moodleApi, IEGCEnabledBlackBoardApi blackboardApi, IEGCEnabledSakaiApi sakaiApi)
         {
             this.sakaiApi = sakaiApi;

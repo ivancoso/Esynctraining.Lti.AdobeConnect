@@ -46,9 +46,7 @@ namespace EdugameCloud.Lti
             container.Install(
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.AdobeConnect/Esynctraining.AdobeConnect.Windsor.xml"))
             );
-            
         }
-
     }
 
     public sealed class LtiMvcWindsorInstaller : IWindsorInstaller
