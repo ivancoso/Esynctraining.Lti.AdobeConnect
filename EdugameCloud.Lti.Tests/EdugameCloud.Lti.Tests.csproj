@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
-      <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
+      <Project>{410b1611-24ee-4887-8218-31fcbce1be02}</Project>
       <Name>EdugameCloud.Lti.BlackBoard</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">

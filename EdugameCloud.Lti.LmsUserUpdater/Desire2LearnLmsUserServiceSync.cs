@@ -1,8 +1,8 @@
-﻿using Esynctraining.Core.Logging;
-using EdugameCloud.Lti.API.Desire2Learn;
-using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Desire2Learn;
-using Esynctraining.Core.Providers;
+﻿//using Esynctraining.Core.Logging;
+//using EdugameCloud.Lti.API.Desire2Learn;
+//using EdugameCloud.Lti.Core.Business.Models;
+//using EdugameCloud.Lti.Desire2Learn;
+//using Esynctraining.Core.Providers;
 
 namespace LmsUserUpdater
 {

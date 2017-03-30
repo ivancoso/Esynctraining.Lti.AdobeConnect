@@ -143,51 +143,27 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj">
-      <Project>{2c718c51-fa6e-47df-8260-e1f085b3bc48}</Project>
+      <Project>{1223fc00-6d40-4356-9744-36474eb76917}</Project>
       <Name>EdugameCloud.Core.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
-      <Project>{998DB65F-E928-4987-929C-AD2C3931FBA7}</Project>
-      <Name>EdugameCloud.Lti.BlackBoard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj">
-      <Project>{42F32F14-1E81-4620-9AA0-EC58BF381283}</Project>
-      <Name>EdugameCloud.Lti.BrainHoney</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj">
-      <Project>{1B19293E-B5CA-463A-93A8-EF09CC255275}</Project>
-      <Name>EdugameCloud.Lti.Canvas</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
       <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj">
-      <Project>{C55551AB-4DD5-4BFD-9E75-253456213285}</Project>
-      <Name>EdugameCloud.Lti.Desire2Learn</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
-      <Project>{0E20B71C-4291-42F8-9F83-E1A51EE5494C}</Project>
-      <Name>EdugameCloud.Lti.Moodle</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Persistence\EdugameCloud.Lti.Persistence.csproj">
-      <Project>{b431087d-825b-4085-9747-f374c60fd4c4}</Project>
+      <Project>{e9bd4eb8-1136-480c-a07d-4e7fa6ffa6c4}</Project>
       <Name>EdugameCloud.Lti.Persistence</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj">
-      <Project>{2a856007-ffab-4d1d-b8d5-510451bf8b79}</Project>
-      <Name>EdugameCloud.Lti.Sakai</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
       <Name>EdugameCloud.Lti</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
-      <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
+      <Project>{18d11468-dda0-494c-870b-e261ee31cc25}</Project>
       <Name>EdugameCloud.Persistence</Name>
     </ProjectReference>
   </ItemGroup>
