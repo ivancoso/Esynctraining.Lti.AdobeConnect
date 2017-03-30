@@ -112,53 +112,10 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                ///
-                /// TODO: REUSE!!!!
-                ///
-                foreach (var key in ModelState.Keys.ToList().Where(key => ModelState.ContainsKey(key)))
-                {
-                    ModelState[key].Errors.Clear();
-                }
-
-                TryValidateModel(dto);
-
-                if (!ModelState.IsValid)
-                {
-                    var errorMessage = new StringBuilder();
-                    if (ModelState != null)
-                    {
-                        foreach (var msgSet in ModelState.Values)
-                            foreach (var msg in msgSet.Errors)
-                            {
-                                string txt = msg.ErrorMessage;
-                                if (!string.IsNullOrWhiteSpace(txt) && txt.Contains("#_#"))
-                                {
-                                    var errorDetails = txt.Split(new[] { "#_#" }, StringSplitOptions.RemoveEmptyEntries);
-                                    int errorCode;
-                                    if (errorDetails.FirstOrDefault() == null || !int.TryParse(errorDetails.FirstOrDefault(), out errorCode))
-                                    {
-                                        txt = errorDetails.FirstOrDefault();
-                                    }
-                                    else
-                                    {
-                                        txt = errorDetails.ElementAtOrDefault(1);
-                                    }
-                                }
-
-                                errorMessage.Append(txt);
-                                errorMessage.Append(" ");
-                            }
-                    }
-
-                    return OperationResult.Error(errorMessage.ToString());
-                }
-
-                var param = Session.LtiSession.LtiParam;
-
                 OperationResult result = RecordingsService.EditRecording(
                     LmsCompany,
                     this.GetAdminProvider(),
-                    param.course_id,
+                    CourseId,
                     dto.recordingId,
                     dto.meetingId,
                     dto.name,

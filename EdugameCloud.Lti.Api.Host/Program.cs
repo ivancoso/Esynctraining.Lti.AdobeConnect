@@ -8,15 +8,6 @@ namespace EdugameCloud.Lti.Api.Host
     {
         public static void Main(string[] args)
         {
-            //var container = new WindsorContainer();
-            //WindsorIoC.Initialize(container);
-
-            //container.RegisterComponents();
-            //RegisterComponentsWeb(container);
-            //container.Install(new LoggerWindsorInstaller());
-            //container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
-            //RegisterLtiComponents(container);
-
             var host = new WebHostBuilder()
                 .UseKestrel(opt => 
                 {

@@ -230,7 +230,7 @@ namespace EdugameCloud.Lti.Api.Host
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "eSyncTraining LTI API V1");
+                c.SwaggerEndpoint("/lti-api/swagger/v1/swagger.json", "eSyncTraining LTI API V1");
             });
         }
 
@@ -246,7 +246,7 @@ namespace EdugameCloud.Lti.Api.Host
             );
 
             container.Install(new LtiWindsorInstaller());
-            container.Install(new LtiMvcWindsorInstaller());
+            // container.Install(new LtiMvcWindsorInstaller());
             container.Install(new TelephonyWindsorInstaller());
 
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());

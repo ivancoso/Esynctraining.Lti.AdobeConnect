@@ -51,7 +51,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        internal LmsUserSession Session
+        public LmsUserSession Session
         {
             get
             {
@@ -74,9 +74,9 @@ namespace EdugameCloud.Lti.Api.Controllers
             set { _session = value; }
         }
 
-        internal ILmsLicense LmsCompany { get; set; }
+        public ILmsLicense LmsCompany { get; set; }
 
-        internal int CourseId { get; set; }
+        public int CourseId { get; set; }
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 
