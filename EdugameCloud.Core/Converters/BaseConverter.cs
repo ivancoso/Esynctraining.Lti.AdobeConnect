@@ -3,15 +3,6 @@
     using System;
     using System.Collections.Generic;
 
-    /// <summary>
-    /// The base model binder.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of DTO
-    /// </typeparam>
-    /// <typeparam name="T2">
-    /// The type of instance
-    /// </typeparam>
     public abstract class BaseConverter<T, T2> : BaseConverter
     {
         #region Constructors and Destructors
@@ -33,9 +24,6 @@
         #endregion
     }
 
-    /// <summary>
-    ///     The base converter.
-    /// </summary>
     public abstract class BaseConverter
     {
         #region Constructors and Destructors
@@ -75,4 +63,5 @@
 
         #endregion
     }
+
 }

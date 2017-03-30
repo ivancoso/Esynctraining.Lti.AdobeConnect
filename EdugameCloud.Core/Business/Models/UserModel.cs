@@ -437,14 +437,14 @@
                                 }
 
                                 this.RegisterSave(instance, true);
-                                if (notifyViaRTMP)
-                                {
-                                    IoC.Resolve<RealTimeNotificationModel>()
-                                        .NotifyClientsAboutChangesInTable<User>(
-                                            NotificationType.Update, 
-                                            instance.Company.Id, 
-                                            instance.Id);
-                                }
+                                //if (notifyViaRTMP)
+                                //{
+                                //    IoC.Resolve<RealTimeNotificationModel>()
+                                //        .NotifyClientsAboutChangesInTable<User>(
+                                //            NotificationType.Update, 
+                                //            instance.Company.Id, 
+                                //            instance.Id);
+                                //}
 
                                 result.Add(instance);
                             }
