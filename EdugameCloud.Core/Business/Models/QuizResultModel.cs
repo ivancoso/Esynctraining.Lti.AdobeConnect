@@ -27,15 +27,6 @@ namespace EdugameCloud.Core.Business.Models
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QuizResultModel"/> class. 
-        /// </summary>
-        /// <param name="distractorRepository">
-        /// The distractor Repository.
-        /// </param>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
         public QuizResultModel(IRepository<Distractor, int> distractorRepository, IRepository<QuizResult, int> repository, ApplicationSettingsProvider settings)
             : base(repository)
         {
