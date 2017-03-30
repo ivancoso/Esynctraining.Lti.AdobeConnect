@@ -1,29 +1,32 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
+using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Cors;
+using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Lti.Api.Controllers;
+using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Mp4.Host.Dto;
+using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Mp4Service.Tasks.Client;
 using Esynctraining.Mp4Service.Tasks.Client.Dto;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EdugameCloud.Lti.Mp4.Host.Controllers
 {
-    [RoutePrefix("mp4")]
-    [LmsAuthorizeBase]
-    [EnableCors(origins: "*", headers: "*", methods: "GET,POST,OPTIONS")]
-    public class Mp4Controller : BaseController
+    [Route("mp4")]
+    public class Mp4Controller : BaseApiController
     {
         private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
 
@@ -34,32 +37,30 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         public Mp4Controller(
             LmsUserSessionModel userSessionModel,
-            Esynctraining.AdobeConnect.IAdobeConnectAccountService acAccountService,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ILogger logger,
+            ICache cache)
+            : base(acAccountService, settings, logger, cache)
         {
         }
-        
+
 
         [HttpPost]
         [Route("convert")]
         [LmsAuthorizeBase]
-        public virtual async Task<OperationResult> Convert(RecordingActionRequestDto input)
+        public virtual async Task<OperationResult> Convert([FromBody]RecordingActionRequestDto input)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-
             try
             {
                 string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
                 if (string.IsNullOrWhiteSpace(licenseKey))
                     throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
-                
-                return await Mp4ApiUtility.DoConvert(Mp4Client, 
+
+                return await Mp4ApiUtility.DoConvert(Mp4Client,
                     Guid.Parse(licenseKey),
                     MP4Service.Contract.Client.LicenseType.MP4,
-                    input.RecordingId.ToString(),
+                    input.RecordingId,
                     Logger).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -71,11 +72,9 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("convertWithSubtitles")]
-        public virtual async Task<OperationResult> ConvertWithSubtitles(RecordingActionRequestDto input)
+        [LmsAuthorizeBase]
+        public virtual async Task<OperationResult> ConvertWithSubtitles([FromBody]RecordingActionRequestDto input)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-
             try
             {
                 string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
@@ -85,7 +84,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 return await Mp4ApiUtility.DoConvert(Mp4Client,
                     Guid.Parse(licenseKey),
                     MP4Service.Contract.Client.LicenseType.MP4WithSubtitles,
-                    input.RecordingId.ToString(),
+                    input.RecordingId,
                     Logger).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -98,15 +97,16 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("file/{scoId:long:min(1)}")]
+        [LmsAuthorizeBase]
         public virtual OperationResultWithData<string> AccessMp4File(string scoId)
         {
             try
             {
                 var ac = this.GetAdminProvider();
                 string breezeToken;
-                Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, scoId, ac, out breezeToken);
+                Principal principal = GetPrincipal(this.LmsCompany, Session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
-                OperationResultWithData<string> result = new SubtitleUtility(ac, Logger, this).AccessMp4File(scoId,
+                OperationResultWithData<string> result = new SubtitleUtility(ac, Logger).AccessMp4File(scoId,
                     LmsCompany.AcServer,
                     principal.PrincipalId,
                     breezeToken);
@@ -127,14 +127,15 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             {
                 Logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, Session.Id);
 
-                return OperationResultWithData<string>.Error(IsDebug 
-                    ? (ex.Message + ex.StackTrace) 
+                return OperationResultWithData<string>.Error(IsDebug
+                    ? (ex.Message + ex.StackTrace)
                     : "An exception is occured. Try again later or contact your administrator.");
             }
         }
 
         [HttpPost]
         [Route("subtitle/{scoId:long:min(1)}")]
+        [LmsAuthorizeBase]
         public OperationResultWithData<string> AccessVttFile(string scoId)
         {
             try
@@ -143,40 +144,53 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var ac = GetAdminProvider();
                 Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
-                return new SubtitleUtility(ac, Logger, this).AccessVttFile(scoId,
+                return new SubtitleUtility(ac, Logger).AccessVttFile(scoId,
                     LmsCompany.AcServer,
                     principal.PrincipalId,
                     breezeToken);
             }
             catch (Exception ex)
             {
-                Logger.Error("GetVttFile", ex);
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                string errorMessage = GetOutputErrorMessage("AccessVttFile", ex);
+                return OperationResultWithData<string>.Error(errorMessage);
             }
         }
 
         [HttpGet]
         [Route("subtitle/{fileScoId:long:min(1)}")]
-        public HttpResponseMessage GetVttFile(string fileScoId, [FromUri]string session)
+        public ActionResult GetVttFile(string fileScoId, Guid session)
         {
             try
             {
+                var s = GetReadOnlySession(session);
                 string breezeToken;
                 var ac = this.GetAdminProvider();
-                Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
+                Principal principal = GetPrincipal(LmsCompany, s.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
-                return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
+                //return new SubtitleUtility(ac, Logger).GetVttFile(principal.PrincipalId, fileScoId);
+                ScoInfo sco = DoGetSco(fileScoId, ac, principal.PrincipalId);
+                FileEntry file = GetOriginalFileContent(sco, ac);
+                if (file == null)
+                {
+                    return NotFound();
+                }
+                //string contentType;
+                //new FileExtensionContentTypeProvider().TryGetContentType(FileName, out contentType);
+                //return contentType ?? "application/octet-stream";
+
+                return File(file.Content, "text/html", file.FileName);
             }
             catch (Exception ex)
             {
                 Logger.Error("GetVttFile", ex);
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                return StatusCode(500);
             }
         }
 
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content")]
-        public HttpResponseMessage GetVttFileViaPost(string fileScoId)
+        [LmsAuthorizeBase]
+        public ActionResult GetVttFileViaPost(string fileScoId)
         {
             try
             {
@@ -184,21 +198,59 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var ac = this.GetAdminProvider();
                 Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
-                return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
+                //return new SubtitleUtility(ac, Logger).GetVttFile(principal.PrincipalId, fileScoId);
+
+                ScoInfo sco = DoGetSco(fileScoId, ac, principal.PrincipalId);
+                FileEntry file = GetOriginalFileContent(sco, ac);
+                if (file == null)
+                {
+                    return NotFound();
+                }
+                //string contentType;
+                //new FileExtensionContentTypeProvider().TryGetContentType(FileName, out contentType);
+                //return contentType ?? "application/octet-stream";
+
+                return File(file.Content, "text/html", file.FileName);
             }
             catch (Exception ex)
             {
                 Logger.Error("GetVttFile", ex);
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                return StatusCode(500);
             }
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
-        public Task<FileUploadResultDto> PostVttFile(string fileScoId)
+        [LmsAuthorizeBase]
+        public FileUploadResultDto PostVttFile(string fileScoId, IFormFile file)
         {
+            if (file == null)
+                return new FileUploadResultDto
+                {
+                    IsSuccess = false,
+                    Message = "No file uploaded",
+                };
+
             var ac = GetAdminProvider();
-            return new SubtitleUtility(ac, Logger, this).PostVttFile(fileScoId);
+            //return new SubtitleUtility(ac, Logger, this).PostVttFile(fileScoId);
+
+            FileDto acFile = Create(fileScoId,
+                file.FileName,
+                file.ContentType,
+                file.OpenReadStream().ReadFully(),
+                ac);
+
+            return new FileUploadResultDto
+            {
+                IsSuccess = true,
+                Message = "OK",
+                Result = new FileDescription
+                {
+                    FileId = acFile.Id,
+                    FileName = acFile.Name,
+                },
+            };
         }
 
 
@@ -206,7 +258,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
              IAdobeConnectProxy provider, out string breezeToken)
         {
             breezeToken = string.Empty;
-            
+
             var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
@@ -217,6 +269,128 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             var loginResult = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, provider);
             breezeToken = loginResult.BreezeSession;
             return loginResult.User;
+        }
+
+        private ScoInfo DoGetSco(string scoId, IAdobeConnectProxy ac, string principalId)
+        {
+            // check is user already has read permission!!!
+            // TODO: setup only if source recording is accessible??
+            //  ac.UpdateScoPermissionForPrincipal(scoId, principalId, MeetingPermissionId.view);
+            var sco = ac.GetScoInfo(scoId);
+            if (sco.Status.Code == Esynctraining.AC.Provider.Entities.StatusCodes.no_access && sco.Status.SubCode == StatusSubCodes.denied)
+            {
+                Logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                throw new WarningMessageException("Access denied.");
+            }
+            if (sco.Status.Code == Esynctraining.AC.Provider.Entities.StatusCodes.no_data && sco.Status.SubCode == StatusSubCodes.not_set)
+            {
+                Logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                throw new WarningMessageException("File not found in Adobe Connect.");
+            }
+            else if (!sco.Success)
+            {
+                Logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.",
+                 sco.Status.GetErrorInfo(),
+                 scoId);
+                throw new InvalidOperationException(msg);
+            }
+
+            return sco.ScoInfo;
+        }
+
+        private static FileDto Create(string fileScoId, string fileName, string fileContentType, byte[] content, IAdobeConnectProxy ac)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentException("fileName can't be empty", nameof(fileName));
+            if (string.IsNullOrWhiteSpace(fileContentType))
+                throw new ArgumentException("fileContentType can't be empty", nameof(fileContentType));
+            if (content == null)
+                throw new ArgumentNullException(nameof(content));
+
+            var uploadScoInfo = new UploadScoInfo
+            {
+                scoId = fileScoId,
+                fileContentType = fileContentType,
+                fileName = fileName,
+                fileBytes = content,
+                title = fileName,
+            };
+
+            try
+            {
+                string originalFileName = fileName;
+                StatusInfo uploadResult = ac.UploadContent(uploadScoInfo);
+            }
+            catch (AdobeConnectException ex)
+            {
+                // Status.Code: invalid. Status.SubCode: format. Invalid Field: file
+                if (ex.Status.Code == Esynctraining.AC.Provider.Entities.StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.format && ex.Status.InvalidField == "file")
+                    throw new Exception("Invalid file format selected.");
+
+                throw new Exception("Error occured during file uploading.", ex);
+            }
+
+            return new FileDto
+            {
+                Id = fileScoId,
+                Name = fileName,
+                Size = content.Length,
+            };
+        }
+
+        internal sealed class FileEntry
+        {
+            public string FileName { get; set; }
+
+            public byte[] Content { get; set; }
+
+
+            public FileEntry(byte[] content, string fileName)
+            {
+                Content = content;
+                FileName = fileName;
+            }
+
+        }
+
+        private static FileEntry GetOriginalFileContent(ScoInfo file, IAdobeConnectProxy provider)
+        {
+            string error;
+            byte[] content = provider.GetContentByUrlPath(file.UrlPath, "zip", out error);
+
+            var archive = new ZipArchive(new MemoryStream(content));
+            ZipArchiveEntry fileEntry = archive.Entries[0];
+
+            byte[] fileContent;
+            using (var memoryStream = new MemoryStream())
+            {
+                fileEntry.Open().CopyTo(memoryStream);
+                fileContent = memoryStream.ToArray();
+            }
+
+            return new FileEntry(fileContent, fileEntry.Name);
+        }
+
+
+        //....
+
+        // TRICK: for upload only
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
+
+        private LmsUserSessionModel UserSessionModel => IoC.Resolve<LmsUserSessionModel>();
+
+        protected LmsUserSession GetReadOnlySession(Guid key)
+        {
+            var session = UserSessionModel.GetByIdWithRelated(key).Value;
+            if (session == null)
+            {
+                Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
+                return null;
+            }
+
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
+            return session;
         }
 
     }

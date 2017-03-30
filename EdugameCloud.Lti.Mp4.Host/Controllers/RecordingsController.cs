@@ -2,57 +2,59 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Cors;
 using AutoMapper;
+using EdugameCloud.Lti.Api.Controllers;
+using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Mp4.Host.Dto;
 using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.MeetingRecording.Dto;
 using Esynctraining.AdobeConnect.Api.Seminar.Dto;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Mp4Service.Tasks.Client;
 using Esynctraining.Mp4Service.Tasks.Client.Dto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EdugameCloud.Lti.Mp4.Host.Controllers
 {
-    [RoutePrefix("recordings")]
+    [Route("recordings")]
     [LmsAuthorizeBase]
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class RecordingsController : BaseController
+    public class RecordingsController : BaseApiController
     {
         private static readonly MapperConfiguration mapConfig = new MapperConfiguration(cfg => cfg.CreateMap<RecordingDto, RecordingWithMp4Dto>());
         private static readonly MapperConfiguration seminarMapConfig = new MapperConfiguration(cfg => cfg.CreateMap<SeminarSessionRecordingDto, SeminarRecordingWithMp4Dto>());
         private readonly IMp4LinkBuilder _mp4LinkBuilder;
         private readonly IVttLinkBuilder _vttLinkBuilder;
 
-        private IRecordingsService RecordingsService => IoC.Resolve<IRecordingsService>();
+        private IRecordingsService RecordingsService { get; }
 
 
         public RecordingsController(
-            LmsUserSessionModel userSessionModel,
-            Esynctraining.AdobeConnect.IAdobeConnectAccountService acAccountService,
+            IMp4LinkBuilder mp4LinkBuilder,
+            IVttLinkBuilder vttLinkBuilder,
+            IRecordingsService recordingsService,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger, 
-            IMp4LinkBuilder mp4LinkBuilder, 
-            IVttLinkBuilder vttLinkBuilder)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ILogger logger,             
+            ICache cache)
+            : base(acAccountService, settings, logger, cache)
         {
             _mp4LinkBuilder = mp4LinkBuilder;
             _vttLinkBuilder = vttLinkBuilder;
+            RecordingsService = recordingsService;
         }
 
 
         [Route("")]
         [HttpPost]
-        public virtual async Task<OperationResultWithData<IEnumerable<IMp4StatusContainer>>> GetAllMeetingRecordings(RecordingsRequestDto input)
+        public virtual async Task<OperationResultWithData<IEnumerable<IMp4StatusContainer>>> GetAllMeetingRecordings([FromBody]RecordingsRequestDto input)
         {
             try
             {
@@ -106,7 +108,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [Route("status")]
         [HttpPost]
-        public virtual async Task<OperationResultWithData<Mp4TaskStatusDto>> GetRecordingStatus(RecordingActionRequestDto input)
+        public virtual async Task<OperationResultWithData<Mp4TaskStatusDto>> GetRecordingStatus([FromBody]RecordingActionRequestDto input)
         {
             try
             {
@@ -120,7 +122,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 if ((mp4 != Guid.Empty) || (mp4Subtitles != Guid.Empty))
                 {
                     var mp4Client = IoC.Resolve<TaskClient>();
-                    return await Mp4ApiUtility.GetRecordingStatus(mp4Client, input.RecordingId.ToString(),
+                    return await Mp4ApiUtility.GetRecordingStatus(mp4Client, input.RecordingId,
                         mp4,
                         mp4Subtitles,
                         _mp4LinkBuilder,
