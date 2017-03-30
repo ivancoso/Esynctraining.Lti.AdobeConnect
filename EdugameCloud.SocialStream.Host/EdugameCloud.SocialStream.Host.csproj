@@ -299,7 +299,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
-      <Project>{4E419CD8-BE17-40E0-B71B-CCA30699D758}</Project>
+      <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">

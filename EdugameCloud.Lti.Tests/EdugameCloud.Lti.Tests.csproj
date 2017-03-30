@@ -64,8 +64,12 @@
       <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
       <Name>EdugameCloud.Lti.BlackBoard</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
+      <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
+      <Name>EdugameCloud.Lti.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
-      <Project>{0654349B-3097-448F-A4B3-B412B9AB20D5}</Project>
+      <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
       <Name>EdugameCloud.Lti</Name>
     </ProjectReference>
   </ItemGroup>

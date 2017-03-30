@@ -90,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
-      <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
+      <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj">
@@ -98,7 +98,7 @@
       <Name>EdugameCloud.Lti.Sakai</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
-      <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>
+      <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
       <Name>EdugameCloud.Lti</Name>
     </ProjectReference>
   </ItemGroup>

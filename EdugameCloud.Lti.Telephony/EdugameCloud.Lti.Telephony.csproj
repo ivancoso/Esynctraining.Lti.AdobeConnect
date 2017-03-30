@@ -85,16 +85,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
-      <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
-      <Name>EdugameCloud.Lti.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
+      <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
+      <Name>EdugameCloud.Lti.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
