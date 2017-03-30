@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using DotNetOpenAuth.Messaging;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
@@ -22,13 +21,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public MeetingSessionService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ICalendarExportService calendarExportService)
         {
-            if (lmsCourseMeetingModel == null)
-                throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
-            if (logger == null)
-                throw new ArgumentNullException(nameof(logger));
-
-            _lmsCourseMeetingModel = lmsCourseMeetingModel;
-            _logger = logger;
+            _lmsCourseMeetingModel = lmsCourseMeetingModel ?? throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _calendarExportService = calendarExportService;
         }
 

@@ -64,7 +64,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
         
 
-        public ACDetailsDTO GetAccountDetails(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache)
+        public ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider, ICache cache)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
@@ -79,7 +79,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return item;
         }
 
-        public IEnumerable<PrincipalReportDto> GetMeetingHostReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
+        public IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));

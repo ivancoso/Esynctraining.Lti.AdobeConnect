@@ -97,7 +97,7 @@
         public CanvasClient(string appId, string appSecret)
             : base("canvas")
         {
-            if(string.IsNullOrEmpty(appId))
+            if (string.IsNullOrEmpty(appId))
                 throw new ArgumentException(nameof(appId));
             if (string.IsNullOrEmpty(appSecret))
                 throw new ArgumentException(nameof(appSecret));
