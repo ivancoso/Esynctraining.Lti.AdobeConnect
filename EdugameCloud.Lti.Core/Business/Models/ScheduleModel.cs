@@ -64,24 +64,6 @@
             return result;
         }
 
-        /// <summary>
-        /// The execute if possible.
-        /// </summary>
-        /// <param name="schedule">
-        /// The schedule.
-        /// </param>
-        /// <param name="scheduledAction">
-        /// The scheduled action.
-        /// </param>
-        /// <param name="scoId">
-        /// The sco Id.
-        /// </param>
-        /// <param name="output">
-        /// The output.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         public bool ExecuteIfPossible(Schedule schedule, Func<IEnumerable<LmsCompany>, DateTime, int, string> scheduledAction,
             IEnumerable<LmsCompany> companies, 
             int meetingId,

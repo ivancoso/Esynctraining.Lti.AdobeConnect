@@ -21,12 +21,6 @@
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LmsUserParametersDTO"/> class.
-        /// </summary>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
         public LmsUserParametersDTO(LmsUserParameters param, LmsProvider lmsProvider)
         {
             this.lmsUserParametersId = param.Id;

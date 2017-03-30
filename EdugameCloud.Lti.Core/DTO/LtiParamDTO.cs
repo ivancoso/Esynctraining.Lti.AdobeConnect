@@ -5,7 +5,7 @@ namespace EdugameCloud.Lti.DTO
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Web;
-    using System.Web.Mvc;
+    //using System.Web.Mvc;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Domain.Entities;
     using Esynctraining.Core.Extensions;
@@ -304,7 +304,7 @@ namespace EdugameCloud.Lti.DTO
 
         public string lti_version { get; set; }
 
-        [AllowHtml]
+        //[AllowHtml]
         public string resource_link_description { get; set; }
 
         // D2L properties

@@ -68,15 +68,6 @@ namespace EdugameCloud.Lti.Core.Business.Models
         //    return this.Repository.FindOne(defaultQuery);
         //}
 
-        /// <summary>
-        /// The get one by ac domain.
-        /// </summary>
-        /// <param name="adobeConnectDomain">
-        /// The ac domain.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{LmsCompany}"/>.
-        ///// </returns>
         //public IFutureValue<LmsCompany> GetOneByAcDomain(string adobeConnectDomain)
         //{
         //    if (adobeConnectDomain.EndsWith("/"))

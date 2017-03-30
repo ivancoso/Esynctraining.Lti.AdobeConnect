@@ -31,12 +31,6 @@ namespace EdugameCloud.Lti.DTO
             enableRemoveUser = true;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CompanyLmsDTO"/> class.
-        /// </summary>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
         public CompanyLmsDTO(LmsCompany instance, LmsProvider provider, dynamic settings)
         {
             if (instance == null)

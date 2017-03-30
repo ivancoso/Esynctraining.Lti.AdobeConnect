@@ -178,21 +178,6 @@
             return this.Repository.FindOne(defaultQuery).Value;
         }
 
-        /// <summary>
-        /// The get one by user and type.
-        /// </summary>
-        /// <param name="companyLmsId">
-        /// The company lms id.
-        /// </param>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue"/>.
-        /// </returns>
         public IFutureValue<LmsCourseMeeting> GetOneByUserAndType(int companyLmsId, string userId, LmsMeetingType type)
         {
             if (companyLmsId <= 0)
@@ -217,21 +202,6 @@
             return this.Repository.FindOne(defaultQuery);
         }
 
-        /// <summary>
-        /// The get one by course and type.
-        /// </summary>
-        /// <param name="companyLmsId">
-        /// The company lms id.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue"/>.
-        /// </returns>
         public IFutureValue<LmsCourseMeeting> GetOneByCourseAndType(int companyLmsId, int courseId, LmsMeetingType type)
         {
             if (companyLmsId <= 0)
@@ -247,18 +217,6 @@
             return this.Repository.FindOne(defaultQuery);
         }
 
-        /// <summary>
-        /// The get all by course id.
-        /// </summary>
-        /// <param name="companyLmsId">
-        /// The company lms id.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
         public IEnumerable<LmsCourseMeeting> GetAllByCourseId(int companyLmsId, int courseId)
         {
             if (companyLmsId <= 0)
@@ -309,15 +267,6 @@
             return this.Repository.FindAll(defaultQuery);
         }
 
-        /// <summary>
-        /// The get all by office hours id.
-        /// </summary>
-        /// <param name="officeHoursId">
-        /// The office hours id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
         public IEnumerable<LmsCourseMeeting> GetAllByOfficeHoursId(int officeHoursId)
         {
             if (officeHoursId <= 0)

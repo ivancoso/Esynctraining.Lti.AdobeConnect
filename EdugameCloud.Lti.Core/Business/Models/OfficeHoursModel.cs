@@ -27,15 +27,6 @@
 
         #region Public Methods
 
-        /// <summary>
-        /// The get by lms course meeting id.
-        /// </summary>
-        /// <param name="lmsUserId">
-        /// The lms User Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue"/>.
-        /// </returns>
         public IFutureValue<OfficeHours> GetByLmsUserId(int lmsUserId)
         {
             QueryOver<OfficeHours, OfficeHours> queryOver = QueryOver.Of<OfficeHours>().Where(s => s.LmsUser.Id == lmsUserId);

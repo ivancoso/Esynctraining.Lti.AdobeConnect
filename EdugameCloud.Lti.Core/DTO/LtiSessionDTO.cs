@@ -3,8 +3,6 @@
     using System;
     using System.Runtime.Serialization;
 
-    using EdugameCloud.Lti.Utils;
-
     //todo: remove this class
     /// <summary>
     /// The LTI session DTO.

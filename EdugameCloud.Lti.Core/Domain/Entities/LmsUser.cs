@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using EdugameCloud.Lti.Core.Domain.Entities;
-using EdugameCloud.Lti.Utils;
 using Esynctraining.Core.Domain.Entities;
+using Esynctraining.Crypto;
 
 namespace EdugameCloud.Lti.Domain.Entities
 {

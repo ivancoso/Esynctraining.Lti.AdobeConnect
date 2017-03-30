@@ -3,7 +3,6 @@
     using System;
     using System.Net.Mail;
     using System.Runtime.Serialization;
-    using System.Web.Script.Serialization;
     
     [DataContract]
     public class LmsUserDTO
@@ -31,7 +30,6 @@
         public string Id { get; set; }
 
         [IgnoreDataMember]
-        [ScriptIgnore]
         public string LoginId { get; set; }
         
         [DataMember]
@@ -50,7 +48,6 @@
             } 
         }
         
-        [ScriptIgnore]
         [IgnoreDataMember]
         public string PrimaryEmail { get; set; }
         
@@ -58,7 +55,6 @@
         public bool IsEditable { get; set; }
 
         [IgnoreDataMember]
-        [ScriptIgnore]
         public string LtiId { get; set; }
 
         [DataMember]
