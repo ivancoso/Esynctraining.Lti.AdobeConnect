@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using EdugameCloud.Lti.DTO;
 using Newtonsoft.Json.Linq;
@@ -103,7 +104,7 @@ namespace EdugameCloud.Lti.Sakai
             {
                 return null;
             }
-            formula = HttpUtility.HtmlDecode(formula);
+            formula = WebUtility.HtmlDecode(formula);
             formula = formula.Replace("<mi>", "[").Replace("</mi>", "]");
             return formula;
         }

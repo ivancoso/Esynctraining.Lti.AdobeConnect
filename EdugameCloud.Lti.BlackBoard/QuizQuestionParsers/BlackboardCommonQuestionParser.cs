@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web;
 using EdugameCloud.Lti.DTO;
@@ -329,7 +330,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
             {
                 return null;
             }
-            formula = HttpUtility.HtmlDecode(formula);
+            formula = WebUtility.HtmlDecode(formula);
             formula = formula.Replace("<mi>", "[").Replace("</mi>", "]");
             return formula;
         }

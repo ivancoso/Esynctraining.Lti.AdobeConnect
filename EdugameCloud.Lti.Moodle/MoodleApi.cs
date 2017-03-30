@@ -9,7 +9,6 @@ namespace EdugameCloud.Lti.Moodle
     using System.Linq;
     using System.Net;
     using System.Text;
-    using System.Web.Script.Serialization;
     using System.Xml;
     using Esynctraining.Core.Logging;
     using EdugameCloud.Lti.API;
@@ -19,6 +18,7 @@ namespace EdugameCloud.Lti.Moodle
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
+    using System.Web.Script.Serialization;
 
     /// <summary>
     ///     The Moodle API.

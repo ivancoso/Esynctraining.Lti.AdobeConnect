@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
@@ -41,7 +42,7 @@ namespace EdugameCloud.Lti.Sakai
             ret.question_text = dto.htmlText.ClearName();
             ret.htmlText = dto.htmlText;
             var imageLinks = dto.answersImageLinks as JToken;
-            ret.answersImageLinks = imageLinks != null ? imageLinks.ToObject<List<string>>() : null;
+            ret.answersImageLinks = imageLinks?.ToObject<List<string>>();
 
             ret.answers.ForEach(
                 a =>
@@ -341,7 +342,7 @@ namespace EdugameCloud.Lti.Sakai
             {
                 return null;
             }
-            formula = HttpUtility.HtmlDecode(formula);
+            formula = WebUtility.HtmlDecode(formula);
             formula = formula.Replace("<mi>", "[").Replace("</mi>", "]");
             return formula;
         }

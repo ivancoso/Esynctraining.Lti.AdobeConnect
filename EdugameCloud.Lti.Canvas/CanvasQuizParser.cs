@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Net;
     using System.Text;
     using System.Web;
     using System.Xml;
@@ -132,7 +133,7 @@
         /// </returns>
         private static string ExtractFilesFromText(string text, ref int fileIndexStart, Dictionary<int, LmsQuestionFileDTO> fileIds)
         {
-            var textToXml = HttpUtility.HtmlDecode(text);
+            var textToXml = WebUtility.HtmlDecode(text);
             textToXml = "<p>" + textToXml + "</p>";
 
             var sb = new StringBuilder();
