@@ -36,17 +36,6 @@
             The date time 1951.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Lti.API.AdobeConnect.DateExtensions.FixACValue(System.DateTime)">
-            <summary>
-            The fix ac value.
-            </summary>
-            <param name="dt">
-            The dt.
-            </param>
-            <returns>
-            The <see cref="!:DateTime?"/>.
-            </returns>
-        </member>
         <member name="T:EdugameCloud.Lti.API.AdobeConnect.IUsersSetup">
             <summary>
             The UsersSetup interface.
@@ -72,20 +61,6 @@
             The <see cref="T:EdugameCloud.Lti.DTO.LmsUserParametersDTO"/>.
             </returns>
         </member>
-        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.AddUsersToMeetingHostsGroup(Esynctraining.AdobeConnect.IAdobeConnectProxy,System.Collections.Generic.IEnumerable{System.String},Esynctraining.AC.Provider.Entities.PrincipalType)">
-            <summary>
-            The add users to meeting hosts group.
-            </summary>
-            <param name="provider">
-            The provider.
-            </param>
-            <param name="principalIds">
-            The principal ids.
-            </param>
-            <returns>
-            The <see cref="T:System.Boolean"/>.
-            </returns>
-        </member>
         <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.IsTeacher(EdugameCloud.Lti.DTO.LtiParamDTO)">
             <summary>
             The is teacher.
@@ -96,49 +71,6 @@
             <returns>
             The <see cref="T:System.Boolean"/>.
             </returns>
-        </member>
-        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.SetDefaultRolesForNonParticipants(EdugameCloud.Lti.Domain.Entities.ILmsLicense,Esynctraining.AdobeConnect.IAdobeConnectProxy,EdugameCloud.Lti.Domain.Entities.LmsCourseMeeting,System.Collections.Generic.IEnumerable{EdugameCloud.Lti.DTO.LmsUserDTO},System.Collections.Generic.IEnumerable{EdugameCloud.Lti.Domain.Entities.LmsUser},System.Collections.Generic.List{Esynctraining.AC.Provider.Entities.MeetingPermissionInfo},System.String@)">
-            <summary>
-            The update user.
-            </summary>
-            <param name="lmsCompany">
-            The lmsCompany.
-            </param>
-            <param name="provider">
-            The provider.
-            </param>
-            <param name="param">
-            The parameter.
-            </param>
-            <param name="scoId">
-            The SCO Id.
-            </param>
-            <param name="error">
-            The error.
-            </param>
-            <returns>
-            The <see cref="T:System.Collections.Generic.List`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.SetLMSUserDefaultACPermissions2(EdugameCloud.Lti.Domain.Entities.ILmsLicense,System.String,EdugameCloud.Lti.DTO.LmsUserDTO,System.String,System.Collections.Generic.List{Esynctraining.AC.Provider.Entities.MeetingPermissionUpdateTrio},System.Collections.Generic.List{System.String})">
-            <summary>
-            The set lms user default ac permissions 2.
-            </summary>
-            <param name="meetingScoId">
-            The meeting sco id.
-            </param>
-            <param name="u">
-            The u.
-            </param>
-            <param name="principalId">
-            The principal id.
-            </param>
-            <param name="meetingPermission">
-            The meeting permission.
-            </param>
-            <param name="hostPrincipals">
-            The host principals.
-            </param>
         </member>
         <member name="M:EdugameCloud.Lti.API.AdobeConnect.UsersSetup.GetGroupPrincipals(Esynctraining.AdobeConnect.IAdobeConnectProxy,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
@@ -164,15 +96,6 @@
             <param name="meetingSco">
             The meeting SCO.
             </param>
-            <param name="hosts">
-            The hosts.
-            </param>
-            <param name="presenters">
-            The presenters.
-            </param>
-            <param name="participants">
-            The participants.
-            </param>
             <param name="nonEditable">
             The non editable.
             </param>
@@ -196,10 +119,6 @@
             <returns>
             The <see cref="T:System.Collections.Generic.List`1"/>.
             </returns>
-        </member>
-        <member name="M:EdugameCloud.Lti.API.LmsUserServiceBase.GetUser(EdugameCloud.Lti.Domain.Entities.ILmsLicense,System.String,System.Int32,System.String@,EdugameCloud.Lti.DTO.LtiParamDTO)">
-            <param name="currentUser">When we get all users for course, we use admin's token (currentUser.token)</param>
-            <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
         </member>
         <member name="T:EdugameCloud.Lti.API.IEGCEnabledLmsAPI">
             <summary>
@@ -284,17 +203,6 @@
             <summary>
             The blackboard api.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Lti.API.LmsFactory.#ctor(EdugameCloud.Lti.API.Canvas.IEGCEnabledCanvasAPI,EdugameCloud.Lti.API.Moodle.IEGCEnabledMoodleApi,EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi,EdugameCloud.Lti.API.Sakai.IEGCEnabledSakaiApi)">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.API.LmsFactory"/> class.
-            </summary>
-            <param name="canvasApi">
-            The Canvas API.
-            </param>
-            <param name="moodleApi">
-            The Moodle API.
-            </param>
         </member>
         <member name="M:EdugameCloud.Lti.API.LmsFactory.GetEGCEnabledLmsAPI(EdugameCloud.Lti.Domain.Entities.LmsProviderEnum)">
             <summary>

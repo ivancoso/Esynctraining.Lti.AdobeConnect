@@ -39,10 +39,8 @@
     <PackageReference Include="System.Net.Http" Version="4.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Api\EdugameCloud.Lti.Api.csproj" />
-    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj" />
     <ProjectReference Include="..\Esynctraining.AspNetCore\Esynctraining.AspNetCore.csproj" />
   </ItemGroup>

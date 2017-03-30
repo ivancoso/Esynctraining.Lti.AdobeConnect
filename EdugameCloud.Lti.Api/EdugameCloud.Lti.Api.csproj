@@ -213,20 +213,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
-      <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
-      <Name>EdugameCloud.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
-      <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
-      <Name>EdugameCloud.Lti.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
-      <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>
-      <Name>EdugameCloud.Lti</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +220,20 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ScoShortcutNames.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
+      <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
+      <Name>EdugameCloud.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
+      <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
+      <Name>EdugameCloud.Lti.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
+      <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
+      <Name>EdugameCloud.Lti</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

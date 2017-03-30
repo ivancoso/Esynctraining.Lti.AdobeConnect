@@ -2214,17 +2214,6 @@
             The distractor repository.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuizResultModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuizResult,System.Int32},Esynctraining.Core.Providers.ApplicationSettingsProvider)">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuizResultModel"/> class. 
-            </summary>
-            <param name="distractorRepository">
-            The distractor Repository.
-            </param>
-            <param name="repository">
-            The repository.
-            </param>
-        </member>
         <member name="M:EdugameCloud.Core.Business.Models.QuizResultModel.GetOneByACSessionIdAndEmail(System.Int32,System.String)">
             <summary>
             The get one by ac session id and email.

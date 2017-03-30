@@ -55,54 +55,6 @@
             The repository.
             </param>
         </member>
-        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel.GetOneByUserAndType(System.Int32,System.String,EdugameCloud.Lti.Domain.Entities.LmsMeetingType)">
-            <summary>
-            The get one by user and type.
-            </summary>
-            <param name="companyLmsId">
-            The company lms id.
-            </param>
-            <param name="userId">
-            The user id.
-            </param>
-            <param name="type">
-            The type.
-            </param>
-            <returns>
-            The <see cref="!:IFutureValue"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel.GetOneByCourseAndType(System.Int32,System.Int32,EdugameCloud.Lti.Domain.Entities.LmsMeetingType)">
-            <summary>
-            The get one by course and type.
-            </summary>
-            <param name="companyLmsId">
-            The company lms id.
-            </param>
-            <param name="courseId">
-            The course id.
-            </param>
-            <param name="type">
-            The type.
-            </param>
-            <returns>
-            The <see cref="!:IFutureValue"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel.GetAllByCourseId(System.Int32,System.Int32)">
-            <summary>
-            The get all by course id.
-            </summary>
-            <param name="companyLmsId">
-            The company lms id.
-            </param>
-            <param name="courseId">
-            The course id.
-            </param>
-            <returns>
-            The <see cref="!:IEnumerable"/>.
-            </returns>
-        </member>
         <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel.GetAllByMeetingId(System.String)">
             <summary>
             The get all by meeting id.
@@ -112,17 +64,6 @@
             </param>
             <returns>
             The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel.GetAllByOfficeHoursId(System.Int32)">
-            <summary>
-            The get all by office hours id.
-            </summary>
-            <param name="officeHoursId">
-            The office hours id.
-            </param>
-            <returns>
-            The <see cref="!:IEnumerable"/>.
             </returns>
         </member>
         <member name="T:EdugameCloud.Lti.Core.Business.Models.LmsProviderModel">
@@ -259,17 +200,6 @@
             The repository.
             </param>
         </member>
-        <member name="M:EdugameCloud.Lti.Core.Business.Models.OfficeHoursModel.GetByLmsUserId(System.Int32)">
-            <summary>
-            The get by lms course meeting id.
-            </summary>
-            <param name="lmsUserId">
-            The lms User Id.
-            </param>
-            <returns>
-            The <see cref="!:IFutureValue"/>.
-            </returns>
-        </member>
         <member name="T:EdugameCloud.Lti.Core.Business.Models.ScheduleModel">
             <summary>
             The schedule model.
@@ -295,26 +225,6 @@
             </param>
             <returns>
             The <see cref="T:EdugameCloud.Lti.Domain.Entities.Schedule"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Lti.Core.Business.Models.ScheduleModel.ExecuteIfPossible(EdugameCloud.Lti.Domain.Entities.Schedule,System.Func{System.Collections.Generic.IEnumerable{EdugameCloud.Lti.Domain.Entities.LmsCompany},System.DateTime,System.Int32,System.String},System.Collections.Generic.IEnumerable{EdugameCloud.Lti.Domain.Entities.LmsCompany},System.Int32,System.String@)">
-            <summary>
-            The execute if possible.
-            </summary>
-            <param name="schedule">
-            The schedule.
-            </param>
-            <param name="scheduledAction">
-            The scheduled action.
-            </param>
-            <param name="scoId">
-            The sco Id.
-            </param>
-            <param name="output">
-            The output.
-            </param>
-            <returns>
-            The <see cref="T:System.Boolean"/>.
             </returns>
         </member>
         <member name="M:EdugameCloud.Lti.Core.Business.Models.ScheduleModel.GetSchedule(EdugameCloud.Lti.Domain.Entities.ScheduleDescriptor)">
@@ -1451,14 +1361,6 @@
             Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.CompanyLmsDTO"/> class.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Lti.DTO.CompanyLmsDTO.#ctor(EdugameCloud.Lti.Domain.Entities.LmsCompany,EdugameCloud.Lti.Domain.Entities.LmsProvider,System.Object)">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.CompanyLmsDTO"/> class.
-            </summary>
-            <param name="instance">
-            The instance.
-            </param>
-        </member>
         <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.enableMultipleMeetings">
             <summary>
             Gets or sets the condition of multiple meetings.
@@ -1883,14 +1785,6 @@
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.LmsUserParametersDTO"/> class.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Lti.DTO.LmsUserParametersDTO.#ctor(EdugameCloud.Lti.Domain.Entities.LmsUserParameters,EdugameCloud.Lti.Domain.Entities.LmsProvider)">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.LmsUserParametersDTO"/> class.
-            </summary>
-            <param name="param">
-            The parameter.
-            </param>
         </member>
         <member name="T:EdugameCloud.Lti.DTO.LtiParamDTO">
             <summary>
