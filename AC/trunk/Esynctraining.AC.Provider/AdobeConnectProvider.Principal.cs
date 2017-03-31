@@ -263,7 +263,7 @@ namespace Esynctraining.AC.Provider
         /// <returns>Status Info.</returns>
         public PrincipalResult PrincipalDelete(PrincipalDelete principalDelete)
         {
-            // action=principal-update
+            // action=principals-delete
             var commandParams = QueryStringBuilder.EntityToQueryString(principalDelete);
 
             StatusInfo status;

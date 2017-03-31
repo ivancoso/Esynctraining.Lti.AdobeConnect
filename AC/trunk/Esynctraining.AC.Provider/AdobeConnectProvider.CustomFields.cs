@@ -16,9 +16,16 @@ namespace Esynctraining.AC.Provider
 
             // act: "custom-fields"
             return GetResult(Commands.CustomField.CustomFields,
-                string.Format(CommandParams.CustomFields.FilterByName, UrlEncode(customFieldName)), 
+                string.Format(CommandParams.CustomFields.FilterByName, UrlEncode(customFieldName)),
                 "//custom-fields/field",
                 ParserSingleton<CustomFieldParser>.Instance);
+        }
+
+        public CollectionResult<CustomField> GetCustomFields(string filter = null)
+        {
+            // act: "custom-fields"
+            return GetCollection<CustomField>(Commands.CustomField.CustomFields, filter, CustomFieldsHome,
+                CustomFieldsField, ParserSingleton<CustomFieldParser>.Instance.Parse);
         }
 
         public SingleObjectResult<CustomField> CustomFieldUpdate(CustomField value)

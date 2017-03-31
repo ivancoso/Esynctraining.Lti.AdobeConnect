@@ -289,9 +289,10 @@
 
         }
 
-        internal static class CustomFields
+        public static class CustomFields
         {
             public static readonly string FilterByName = "filter-name={0}";
+            public static readonly string FilterObjectType = "filter-object-type={0}";
 
             public static readonly string Delete = "field-id={0}&object-type={1}";
 

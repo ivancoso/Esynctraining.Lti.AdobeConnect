@@ -241,6 +241,16 @@ namespace Esynctraining.AdobeConnect
             return fieldName;
         }
 
+        public CollectionResult<CustomField> GetAllCustomFields()
+        {
+            return Execute(() => { return _provider.GetCustomFields(); });
+        }
+
+        public CollectionResult<CustomField> GetCustomFieldsByObjectType(ObjectType type)
+        {
+            return Execute(() => { return _provider.GetCustomFields(string.Format(CommandParams.CustomFields.FilterObjectType, type.GetACEnum())); });
+        }
+
         public ReportUserTrainingsTakenCollectionResult ReportUserTrainingsTaken(string principalId)
         {
             if (string.IsNullOrEmpty(principalId))
@@ -907,6 +917,29 @@ namespace Esynctraining.AdobeConnect
         }
         
         public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
+        {
+            StatusInfo result;
+            try
+            {
+                result = _provider.UpdateAclField(aclId, fieldId, value);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw new AdobeConnectException("UpdateAclField exception", ex);
+            }
+
+            if (result.Code != StatusCodes.ok)
+            {
+                string errorInfo = result.GetErrorInfo();
+                _logger.Error("[AdobeConnectProxy Error] " + errorInfo);
+                throw new AdobeConnectException(result);
+            }
+
+            return result;
+        }
+
+        public StatusInfo UpdateAclField(string aclId, string fieldId, string value)
         {
             StatusInfo result;
             try

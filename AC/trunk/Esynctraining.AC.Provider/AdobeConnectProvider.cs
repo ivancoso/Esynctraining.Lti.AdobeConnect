@@ -473,27 +473,17 @@
                 : new FieldCollectionResult(status);
         }
 
-        /// <summary>
-        /// The update ACL field.
-        /// </summary>
-        /// <param name="aclId">
-        /// The ACL Id.
-        /// </param>
-        /// <param name="fieldId">
-        /// The feature Id.
-        /// </param>
-        /// <param name="value">
-        /// The value.
-        /// </param>
-        /// <returns>
-        /// The <see cref="StatusInfo"/>.
-        /// </returns>
         public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
+        {
+            return UpdateAclField(aclId, fieldId.ToXmlString(), value);
+        }
+
+        public StatusInfo UpdateAclField(string aclId, string fieldId, string value)
         {
             // act: "acl-field-update"
             StatusInfo status;
 
-            this.requestProcessor.Process(Commands.Sco.FieldUpdate, string.Format(CommandParams.Features.FieldUpdate, aclId, fieldId.ToXmlString(), value), out status);
+            this.requestProcessor.Process(Commands.Sco.FieldUpdate, string.Format(CommandParams.Features.FieldUpdate, aclId, fieldId, value), out status);
 
             return status;
         }

@@ -199,6 +199,7 @@ namespace Esynctraining.AdobeConnect
         #endregion Telephony
 
         StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value);
+        StatusInfo UpdateAclField(string aclId, string fieldId, string value); //there could be custom Id for Acl field
         //StatusInfo UpdateMeetingFeature(string accountId, MeetingFeatureId featureId, bool enable);
         StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId);
         StatusInfo UpdatePublicAccessPermissions(string aclId, SpecialPermissionId permissionId);
@@ -218,6 +219,7 @@ namespace Esynctraining.AdobeConnect
         RecordingCollectionResult GetSeminarSessionRecordingsList(string seminarId, string seminarSessionId);
         string GetAclField(string scoId, string aclId);
         CustomField GetCustomField(string name);
-
+        CollectionResult<CustomField> GetAllCustomFields();
+        CollectionResult<CustomField> GetCustomFieldsByObjectType(ObjectType type);
     }
 }

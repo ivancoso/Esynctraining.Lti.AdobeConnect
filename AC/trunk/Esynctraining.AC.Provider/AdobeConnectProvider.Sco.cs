@@ -20,6 +20,8 @@
 
         private const string ScoHome = "//sco";
         private const string ScoNavHome = "//sco-nav";
+        private const string CustomFieldsHome = "//custom-fields";
+        private const string CustomFieldsField = "//field";
 
         #endregion
 
