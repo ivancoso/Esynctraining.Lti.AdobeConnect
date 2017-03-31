@@ -56,7 +56,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var listOfEvents = new List<MeetingSessionDTO>();
             while (startDate < latestDateToCheck)
             {
-                if (dto.DaysOfWeek.Contains(startDate.DayOfWeek))
+                if (dto.DaysOfWeek.Contains((int)startDate.DayOfWeek))
                 {
                     var ev = new MeetingSessionDTO
                     {

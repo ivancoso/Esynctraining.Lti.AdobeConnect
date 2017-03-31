@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Lti.Extensions
 {
+    using System;
     using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
@@ -18,6 +19,9 @@
         /// </returns>
         public static string GetMeetingScoId(this LmsCourseMeeting meeting)
         {
+            if (meeting == null)
+                throw new ArgumentNullException(nameof(meeting));
+
             if (meeting.ScoId != null)
             {
                 return meeting.ScoId;
@@ -28,7 +32,13 @@
                 return meeting.OfficeHours.ScoId;
             }
 
+            // TODO: investigate
+            //if (meeting.Id > 0)
+            //    throw new InvalidOperationException($"sco-id for meeting {meeting.Id} not found.");
+
             return null;
         }
+
     }
+
 }

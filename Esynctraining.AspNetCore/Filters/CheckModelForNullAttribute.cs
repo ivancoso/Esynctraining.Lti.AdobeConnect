@@ -34,6 +34,16 @@ namespace Esynctraining.AspNetCore.Filters
                 //context.Result = new BadRequestObjectResult(OperationResult.Error("The argument cannot be null"));
 
             }
+
+            if (context.ActionArguments.Count < context.ActionDescriptor.Parameters.Count)
+            {
+                context.Result = new ObjectResult(OperationResult.Error("Argument parsing error."));
+
+                // This will return a 400 with an error in json.
+                //context.Result = new BadRequestObjectResult(OperationResult.Error("The argument cannot be null"));
+
+            }
+
             base.OnActionExecuting(context);
         }
 

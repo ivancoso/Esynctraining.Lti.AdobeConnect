@@ -12,6 +12,14 @@
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
             routes.IgnoreRoute("{*robotstxt}", new { robotstxt = @"(.*/)?robots.txt(/.*)?" });
 
+
+            routes.MapLowercaseRoute("meeting-attendance-report", "meeting-attendance-report", 
+                new { area = "Reports", controller = "File", action = "MeetingAttendanceReport" });
+            routes.MapLowercaseRoute("meeting-sessions-report", "MeetingSessionsReport", 
+                new { area = "Reports", controller = "File", action = "MeetingAttendanceReport" });
+            routes.MapLowercaseRoute("meeting-recordings-report", "meeting-recordings-report", 
+                new { area = "Reports", controller = "File", action = "MeetingRecordingsReport" });
+
             // TODO!!:
             routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });
             LtiRoutes.AppendTo2(routes); //AppendTo2

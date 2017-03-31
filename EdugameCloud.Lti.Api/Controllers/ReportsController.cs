@@ -7,6 +7,7 @@
     using Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Extensions;
     using EdugameCloud.Lti.Resources;
     using Esynctraining.AdobeConnect.Api.MeetingReports;
     using Esynctraining.AdobeConnect.Api.MeetingReports.Dto;
@@ -60,7 +61,7 @@
                     return OperationResultWithData<IEnumerable<ACSessionParticipantDto>>.Error(Messages.MeetingNotFound);
 
                 IEnumerable<ACSessionParticipantDto> report = _reportService.GetAttendanceReports(
-                    meeting.ScoId,
+                    meeting.GetMeetingScoId(),
                     this.GetAdminProvider(),
                     TimeZoneInfo.Utc,
                     request.StartIndex,
@@ -87,7 +88,7 @@
                     return OperationResultWithData<IEnumerable<ACSessionDto>>.Error(Messages.MeetingNotFound);
 
                 IEnumerable<ACSessionDto> report = _reportService.GetSessionsReports(
-                    meeting.ScoId,
+                    meeting.GetMeetingScoId(),
                     GetAdminProvider(),
                     TimeZoneInfo.Utc,
                     request.StartIndex,

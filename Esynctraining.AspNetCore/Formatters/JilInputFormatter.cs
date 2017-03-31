@@ -38,10 +38,19 @@ namespace Esynctraining.AspNetCore.Formatters
             var encoding = Encoding.UTF8;//do we need to get this from the request im not sure yet 
             using (var reader = new StreamReader(context.HttpContext.Request.Body))
             {
-                var model = Jil.JSON.Deserialize(reader, context.ModelType, JilSerializer.JilOptions);
-                return InputFormatterResult.SuccessAsync(model);
+                try
+                {
+                    var model = Jil.JSON.Deserialize(reader, context.ModelType, JilSerializer.JilOptions);
+                    return InputFormatterResult.SuccessAsync(model);
+                }
+                catch (Exception ex)
+                {
+                    // TODO: log!!!
+                    return InputFormatterResult.FailureAsync();
+                }
             }
         }
+
     }
 
 }

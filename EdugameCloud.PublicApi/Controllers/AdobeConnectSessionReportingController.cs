@@ -134,9 +134,9 @@ namespace EdugameCloud.PublicApi.Controllers
             {
                 discussion = data == null ? null : new SNGroupDiscussionDTO(data),
                 members =
-                               SNMemberModel.GetAllByACSessionId(acSessionId)
-                               .Select(x => new SNMemberDTO(x))
-                               .ToArray()
+                    SNMemberModel.GetAllByACSessionId(acSessionId)
+                    .Select(x => new SNMemberDTO(x))
+                    .ToArray()
             };
         }
 

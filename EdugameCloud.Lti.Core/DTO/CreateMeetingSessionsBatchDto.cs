@@ -18,8 +18,9 @@ namespace EdugameCloud.Lti.Core.DTO
         [DataMember(Name = "duration")]
         public string Duration { get; set; }
 
+        // TRICK: to support JIL instead of DayOfWeek
         [DataMember(Name = "daysOfWeek")]
-        public DayOfWeek[] DaysOfWeek { get; set; }
+        public int[] DaysOfWeek { get; set; }
 
         [DataMember(Name = "weeks")]
         public int Weeks { get; set; }

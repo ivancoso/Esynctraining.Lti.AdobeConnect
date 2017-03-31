@@ -56,7 +56,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
-        [ActionName("meeting-attendance-report")]
+        //[ActionName("meeting-attendance-report")]
         public virtual ActionResult MeetingAttendanceReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
@@ -134,7 +134,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
-        [ActionName("meeting-sessions-report")]
+        //[ActionName("meeting-sessions-report")]
         public virtual ActionResult MeetingSessionsReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
@@ -234,7 +234,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
-        [ActionName("meeting-recordings-report")]
+        //[ActionName("meeting-recordings-report")]
         public virtual ActionResult MeetingRecordingsReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try

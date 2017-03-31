@@ -534,7 +534,6 @@
     <Content Include="Content\swf\admin\resources\images\eSyncLogo.png" />
     <Content Include="Content\swf\admin\resources\images\headeBG.png" />
     <Content Include="Content\swf\admin\resources\images\leftIcon.png" />
-    <Content Include="Content\swf\admin\resources\images\loader.swf" />
     <Content Include="Content\swf\admin\resources\images\logo.png" />
     <Content Include="Content\swf\admin\resources\images\logoBig.png" />
     <Content Include="Content\swf\admin\resources\images\logoSmall.png" />
@@ -600,7 +599,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\core.js" />
     <Content Include="Scripts\swfobject.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -717,9 +715,7 @@
       <Name>EdugameCloud.Persistence</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\swf\admin\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
