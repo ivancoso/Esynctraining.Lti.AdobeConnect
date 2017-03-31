@@ -36,6 +36,7 @@ UpdateAclField</PackageReleaseNotes>
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System" />
@@ -47,6 +48,7 @@ UpdateAclField</PackageReleaseNotes>
   </Target>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System" />
