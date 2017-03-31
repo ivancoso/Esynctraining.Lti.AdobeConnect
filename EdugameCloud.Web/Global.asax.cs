@@ -13,7 +13,6 @@ using Castle.Windsor;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti;
 using EdugameCloud.MVC.ModelBinders;
-using EdugameCloud.MVC.Services;
 using EdugameCloud.Persistence;
 using EdugameCloud.Web.Providers;
 using Esynctraining.CastleLog4Net;

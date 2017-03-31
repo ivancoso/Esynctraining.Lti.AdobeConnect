@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props" Condition="Exists('..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -8,31 +7,21 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B149C2F2-4E11-4667-A83F-59D6D00401E4}</ProjectGuid>
+    <ProjectGuid>{A96BC47C-CF87-42E2-816C-28FF2FC3C6B1}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EdugameCloud.Web</RootNamespace>
     <AssemblyName>EdugameCloud.Web</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <MvcBuildViews>false</MvcBuildViews>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>443</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
+    <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>4.0</OldToolsVersion>
-    <UseGlobalApplicationHostFile />
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,21 +31,19 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Castle.Facilities.Logging, Version=3.4.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.LoggingFacility.3.4.0\lib\net45\Castle.Facilities.Logging.dll</HintPath>
@@ -68,37 +55,31 @@
       <HintPath>..\packages\DotNetOpenAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.27, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.27\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.27\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.27, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.27\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.27\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.CastleLog4Net.1.0.0.2\lib\net45\Esynctraining.CastleLog4Net.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.29, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.29\lib\net45\Esynctraining.Core.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.29\lib\net461\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core.SystemWeb, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.SystemWeb.1.0.0.1\lib\net45\Esynctraining.Core.SystemWeb.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.FluentValidation, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.FluentValidation.1.0.0.1\lib\net45\Esynctraining.FluentValidation.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Mvc, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Mvc.1.0.0.1\lib\net45\Esynctraining.Mvc.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.NHibernate.1.0.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Windsor, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Windsor.1.0.0.1\lib\net45\Esynctraining.Windsor.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="FluentValidation, Version=6.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentValidation.6.4.1\lib\Net45\FluentValidation.dll</HintPath>
@@ -108,7 +89,6 @@
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -116,26 +96,17 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="NodaTime, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
-      <HintPath>..\packages\NodaTime.1.3.4\lib\net35-Client\NodaTime.dll</HintPath>
+    <Reference Include="NodaTime, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NodaTime.2.0.0\lib\net45\NodaTime.dll</HintPath>
     </Reference>
-    <Reference Include="RazorEngine, Version=3.9.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <HintPath>..\packages\RazorEngine.3.9.3\lib\net45\RazorEngine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
@@ -144,99 +115,36 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
     <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
     </Reference>
     <Reference Include="WebMatrix.WebData, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="911HealthCheck.aspx.cs">
-      <DependentUpon>911HealthCheck.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="911HealthCheck.aspx.designer.cs">
-      <DependentUpon>911HealthCheck.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\Common.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Common.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\Emails.designer.cs">
-      <DependentUpon>Emails.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="App_GlobalResources\Errors.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Errors.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\Views\File\ImportUsers.designer.cs">
-      <DependentUpon>ImportUsers.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="App_GlobalResources\Views\Home\Index.designer.cs">
-      <DependentUpon>Index.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="App_GlobalResources\Views\Shared\Buttons.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Buttons.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\Views\Shared\Error.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Error.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\Views\Shared\Shared.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Shared.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\EGCResourceProvider.cs" />
-    <Compile Include="Providers\ResourceProviderActivator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="911HealthCheck.aspx" />
@@ -510,6 +418,7 @@
     <Content Include="Content\images\warning.png" />
     <Content Include="Content\lti-config\blackboard.xml" />
     <Content Include="Content\lti-config\brainhoney.xml" />
+    <Content Include="Content\lti-config\bridge.xml" />
     <Content Include="Content\lti-config\brightspace.xml" />
     <Content Include="Content\lti-config\canvas.xml" />
     <Content Include="Content\lti-config\moodle.xml" />
@@ -517,149 +426,18 @@
     <Content Include="Content\lti-files\edugame-cloud-ws-1.1.3.jar" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
-    <Content Include="Content\swf\admin\appStyles.css" />
-    <Content Include="Content\swf\admin\resources\icons\add.png" />
-    <Content Include="Content\swf\admin\resources\icons\addSmall.png" />
-    <Content Include="Content\swf\admin\resources\icons\announce.png" />
-    <Content Include="Content\swf\admin\resources\icons\bird.png" />
-    <Content Include="Content\swf\admin\resources\icons\blackboard.jpg" />
-    <Content Include="Content\swf\admin\resources\icons\brainhoney.jpg" />
-    <Content Include="Content\swf\admin\resources\icons\canvas.jpg" />
-    <Content Include="Content\swf\admin\resources\icons\closeRed.png" />
-    <Content Include="Content\swf\admin\resources\icons\collapse.png" />
-    <Content Include="Content\swf\admin\resources\icons\connect.png" />
-    <Content Include="Content\swf\admin\resources\icons\cross.png" />
-    <Content Include="Content\swf\admin\resources\icons\crossListIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\crosswordIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\crosswordIconSolidColor.png" />
-    <Content Include="Content\swf\admin\resources\icons\deleteIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\brightspace.jpg" />
-    <Content Include="Content\swf\admin\resources\icons\dislike.png" />
-    <Content Include="Content\swf\admin\resources\icons\downArrow.png" />
-    <Content Include="Content\swf\admin\resources\icons\downListIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\download.png" />
-    <Content Include="Content\swf\admin\resources\icons\egcIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\errorBig.png" />
-    <Content Include="Content\swf\admin\resources\icons\expand.png" />
-    <Content Include="Content\swf\admin\resources\icons\facebook.png" />
-    <Content Include="Content\swf\admin\resources\icons\gearBox.png" />
-    <Content Include="Content\swf\admin\resources\icons\helpIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\hexagonIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\hSplit.png" />
-    <Content Include="Content\swf\admin\resources\icons\iconFillIn.png" />
-    <Content Include="Content\swf\admin\resources\icons\iconHotspot.png" />
-    <Content Include="Content\swf\admin\resources\icons\iconImageChoice.png" />
-    <Content Include="Content\swf\admin\resources\icons\iconMatching.png" />
-    <Content Include="Content\swf\admin\resources\icons\iconMultiChoice.png" />
-    <Content Include="Content\swf\admin\resources\icons\iconOrder.png" />
-    <Content Include="Content\swf\admin\resources\icons\iconSppedoMeter.png" />
-    <Content Include="Content\swf\admin\resources\icons\iconTrueFalse.png" />
-    <Content Include="Content\swf\admin\resources\icons\import-export.png" />
-    <Content Include="Content\swf\admin\resources\icons\info.png" />
-    <Content Include="Content\swf\admin\resources\icons\infoGreyIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\leftArrow.png" />
-    <Content Include="Content\swf\admin\resources\icons\like.png" />
-    <Content Include="Content\swf\admin\resources\icons\linkedin.png" />
-    <Content Include="Content\swf\admin\resources\icons\listIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\lms.png" />
-    <Content Include="Content\swf\admin\resources\icons\logout.png" />
-    <Content Include="Content\swf\admin\resources\icons\moodle.jpg" />
-    <Content Include="Content\swf\admin\resources\icons\multiUser.png" />
-    <Content Include="Content\swf\admin\resources\icons\ovalIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\pencil.png" />
-    <Content Include="Content\swf\admin\resources\icons\pentagonIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\pieChart.png" />
-    <Content Include="Content\swf\admin\resources\icons\preview.png" />
-    <Content Include="Content\swf\admin\resources\icons\questionStep.png" />
-    <Content Include="Content\swf\admin\resources\icons\quizIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\quizIconSolidColor.png" />
-    <Content Include="Content\swf\admin\resources\icons\quizRight.png" />
-    <Content Include="Content\swf\admin\resources\icons\quizWrong.png" />
-    <Content Include="Content\swf\admin\resources\icons\rankBG.png" />
-    <Content Include="Content\swf\admin\resources\icons\rectangleIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\remove.png" />
-    <Content Include="Content\swf\admin\resources\icons\reportIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\reportIconSolidColor.png" />
-    <Content Include="Content\swf\admin\resources\icons\reset.png" />
-    <Content Include="Content\swf\admin\resources\icons\review.png" />
-    <Content Include="Content\swf\admin\resources\icons\rightArrow.png" />
-    <Content Include="Content\swf\admin\resources\icons\sakai.jpg" />
-    <Content Include="Content\swf\admin\resources\icons\searchClear.png" />
-    <Content Include="Content\swf\admin\resources\icons\searchSmall.png" />
-    <Content Include="Content\swf\admin\resources\icons\shared.png" />
-    <Content Include="Content\swf\admin\resources\icons\shuffle.png" />
-    <Content Include="Content\swf\admin\resources\icons\singleUser.png" />
-    <Content Include="Content\swf\admin\resources\icons\slideShare.png" />
-    <Content Include="Content\swf\admin\resources\icons\smallNo.png" />
-    <Content Include="Content\swf\admin\resources\icons\smallYes.png" />
-    <Content Include="Content\swf\admin\resources\icons\socialIconSolidColor.png" />
-    <Content Include="Content\swf\admin\resources\icons\starIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\supportIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\surveyIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\surveyIconSolidColor.png" />
-    <Content Include="Content\swf\admin\resources\icons\testIconColor.png" />
-    <Content Include="Content\swf\admin\resources\icons\testIconSolidColor.png" />
-    <Content Include="Content\swf\admin\resources\icons\textIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\ticMark.png" />
-    <Content Include="Content\swf\admin\resources\icons\topArrow.png" />
-    <Content Include="Content\swf\admin\resources\icons\tringleIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\upDownIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\user.png" />
-    <Content Include="Content\swf\admin\resources\icons\videoIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\vSplit.png" />
-    <Content Include="Content\swf\admin\resources\icons\wizardGeneral.png" />
-    <Content Include="Content\swf\admin\resources\icons\wizardMap.png" />
-    <Content Include="Content\swf\admin\resources\icons\wizardMy.png" />
-    <Content Include="Content\swf\admin\resources\icons\wizardPreview.png" />
-    <Content Include="Content\swf\admin\resources\icons\wizardText.png" />
-    <Content Include="Content\swf\admin\resources\icons\wizardTheme.png" />
-    <Content Include="Content\swf\admin\resources\icons\wordSearchIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\yesIcon.png" />
-    <Content Include="Content\swf\admin\resources\images\ajax-loader.gif" />
-    <Content Include="Content\swf\admin\resources\images\animation.swf" />
-    <Content Include="Content\swf\admin\resources\images\bg.png" />
-    <Content Include="Content\swf\admin\resources\images\bg3.gif" />
-    <Content Include="Content\swf\admin\resources\images\blank.png" />
-    <Content Include="Content\swf\admin\resources\images\brandLogo.png" />
-    <Content Include="Content\swf\admin\resources\images\crosswordWizardBack.png" />
-    <Content Include="Content\swf\admin\resources\images\custom.png" />
-    <Content Include="Content\swf\admin\resources\images\downIcon.png" />
-    <Content Include="Content\swf\admin\resources\images\eSyncLogo.png" />
-    <Content Include="Content\swf\admin\resources\images\headeBG.png" />
-    <Content Include="Content\swf\admin\resources\images\leftIcon.png" />
-    <Content Include="Content\swf\admin\resources\images\loader.swf" />
-    <Content Include="Content\swf\admin\resources\images\logo.png" />
-    <Content Include="Content\swf\admin\resources\images\logoBig.png" />
-    <Content Include="Content\swf\admin\resources\images\logoSmall.png" />
-    <Content Include="Content\swf\admin\resources\images\long.png" />
-    <Content Include="Content\swf\admin\resources\images\mapPreview\bing.jpg" />
-    <Content Include="Content\swf\admin\resources\images\mapPreview\google.jpg" />
-    <Content Include="Content\swf\admin\resources\images\mapPreview\ilog.jpg" />
-    <Content Include="Content\swf\admin\resources\images\mapPreview\mapQuest.jpg" />
-    <Content Include="Content\swf\admin\resources\images\mask.png" />
-    <Content Include="Content\swf\admin\resources\images\maskBG.png" />
-    <Content Include="Content\swf\admin\resources\images\preview.png" />
-    <Content Include="Content\swf\admin\resources\images\quizWizardBack.png" />
-    <Content Include="Content\swf\admin\resources\images\socialWizardBack.png" />
-    <Content Include="Content\swf\admin\resources\images\sort.png" />
-    <Content Include="Content\swf\admin\resources\images\swfIcon.png" />
-    <Content Include="Content\swf\admin\resources\images\videoHelpThumb.jpg" />
-    <Content Include="Content\swf\admin\resources\images\wordsbg.png" />
-    <Content Include="Content\swf\admin\resources\xml\surveyPredefinedData.xml" />
-    <Content Include="Content\swf\admin\resources\xml\weightBucketPreDefinedData.xml" />
     <Content Include="Content\swf\playerProductInstall.swf" />
     <Content Include="Content\swf\pub\SocialAccessProxy.swf" />
     <Content Include="crossdomain.xml" />
     <Content Include="Global.asax" />
+    <Content Include="log4net.cfg.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Logs\placeholder.js" />
-    <Content Include="Content\swf\admin\resources\fonts\ARIAL.TTF" />
-    <Content Include="Content\swf\admin\resources\fonts\ARIALBD.TTF" />
-    <Content Include="Content\xsd\snGroupDiscussion.xsd">
-      <SubType>Designer</SubType>
+    <Content Include="nhibernate.cfg.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\xsd\vcfProfile.xsd">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="packages.config" />
     <Content Include="Content\lti-files\edugamecloud_1.0.7.zip" />
     <Content Include="Content\lti-instructions\Blackboard.pdf" />
     <Content Include="Content\lti-instructions\BrainHoney.pdf" />
@@ -667,66 +445,135 @@
     <Content Include="Content\lti-instructions\Canvas.pdf" />
     <Content Include="Content\lti-instructions\Moodle.pdf" />
     <Content Include="Content\lti-instructions\Sakai.pdf" />
-    <None Include="Properties\PublishProfiles\Dev.pubxml">
+    <Content Include="Content\swf\config\paths.properties" />
+    <None Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Properties\PublishProfiles\test.pubxml" />
-    <None Include="Properties\PublishProfiles\Web.pubxml">
+    <None Include="Content\xsd\vcfProfile.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="log4net.cfg.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="nhibernate.cfg.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Scripts\core.js" />
-    <Content Include="Scripts\swfobject.js" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Web.constrings">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Views\Shared\_BaseLayout.cshtml" />
-    <Content Include="Views\Home\Admin.cshtml" />
-    <Content Include="Views\File\VCF.cshtml" />
-    <Content Include="Views\File\ImportUsers.cshtml" />
+    <Content Include="machineKey.config" />
     <Content Include="Views\File\ImportQuestions.cshtml" />
-    <Content Include="machineKey.config">
-      <SubType>Designer</SubType>
+    <Content Include="Views\File\ImportUsers.cshtml" />
+    <Content Include="Views\File\VCF.cshtml" />
+    <Content Include="Views\Home\Admin.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_BaseLayout.cshtml" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Web.constrings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\swf\config\" />
+    <Content Include="Scripts\core.js" />
+    <Content Include="Scripts\swfobject.js" />
+    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config">
-      <SubType>Designer</SubType>
+    <Compile Include="911HealthCheck.aspx.cs">
+      <DependentUpon>911HealthCheck.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="911HealthCheck.aspx.designer.cs">
+      <DependentUpon>911HealthCheck.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Common.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Common.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Emails.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Emails.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Errors.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Errors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Views\File\ImportUsers.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ImportUsers.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Views\Home\Index.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Index.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Views\Shared\Buttons.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Buttons.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Views\Shared\Error.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Error.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Views\Shared\Shared.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Shared.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\EGCResourceProvider.cs" />
+    <Compile Include="Providers\ResourceProviderActivator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\Common.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Common.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\Emails.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Emails.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\Errors.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Errors.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\Views\File\ImportUsers.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>ImportUsers.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\Views\Home\Index.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Index.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\Views\Shared\Buttons.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Buttons.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\Views\Shared\Error.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Error.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\Views\Shared\Shared.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Shared.designer.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj">
-      <Project>{2c718c51-fa6e-47df-8260-e1f085b3bc48}</Project>
+      <Project>{1223fc00-6d40-4356-9744-36474eb76917}</Project>
       <Name>EdugameCloud.Core.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
-      <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
+      <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
@@ -738,81 +585,29 @@
       <Name>EdugameCloud.MVC</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
-      <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
+      <Project>{18d11468-dda0-494c-870b-e261ee31cc25}</Project>
       <Name>EdugameCloud.Persistence</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_GlobalResources\Common.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Common.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_GlobalResources\Errors.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Errors.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\Views\Shared\Buttons.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Buttons.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_GlobalResources\Views\Shared\Error.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Error.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_GlobalResources\Views\Shared\Shared.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Shared.designer.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\Views\Home\Index.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Index.designer.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\Emails.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Emails.designer.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\Views\File\ImportUsers.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>ImportUsers.designer.cs</LastGenOutput>
-    </Content>
+    <Folder Include="Content\swf\admin\" />
   </ItemGroup>
   <PropertyGroup>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugProxy|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
-    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
-  </Target>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>35153</DevelopmentServerPort>
+          <DevelopmentServerPort>50254</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://dev.edugamecloud.com</IISUrl>
+          <IISUrl>http://localhost:35153/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -822,12 +617,10 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
     <Error Condition="!Exists('..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
   </Target>
@@ -837,5 +630,6 @@
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-  </Target> -->
+  </Target>
+  -->
 </Project>
