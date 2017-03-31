@@ -418,7 +418,6 @@
     <Content Include="Content\images\warning.png" />
     <Content Include="Content\lti-config\blackboard.xml" />
     <Content Include="Content\lti-config\brainhoney.xml" />
-    <Content Include="Content\lti-config\bridge.xml" />
     <Content Include="Content\lti-config\brightspace.xml" />
     <Content Include="Content\lti-config\canvas.xml" />
     <Content Include="Content\lti-config\moodle.xml" />
