@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 namespace Esynctraining.AspNetCore.Formatters
 {
     // https://www.codefluff.com/write-your-own-asp-net-core-mvc-formatters/
+    // TODO: see https://github.com/aspnet/Mvc/blob/dev/src/Microsoft.AspNetCore.Mvc.Formatters.Json/JsonInputFormatter.cs#L133
     public class JilInputFormatter : IInputFormatter
     {
         private static readonly string ContentType = "application/json";
@@ -35,7 +36,7 @@ namespace Esynctraining.AspNetCore.Formatters
                 else return InputFormatterResult.SuccessAsync(null);
             }
 
-            var encoding = Encoding.UTF8;//do we need to get this from the request im not sure yet 
+            //var encoding = Encoding.UTF8;//do we need to get this from the request im not sure yet 
             using (var reader = new StreamReader(context.HttpContext.Request.Body))
             {
                 try
@@ -45,7 +46,7 @@ namespace Esynctraining.AspNetCore.Formatters
                 }
                 catch (Exception ex)
                 {
-                    // TODO: log!!!
+                    context.ModelState.TryAddModelError(string.Empty, ex.Message);
                     return InputFormatterResult.FailureAsync();
                 }
             }
