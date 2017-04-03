@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.Caching;
 using System.Text;
 using AutoMapper;
-using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -20,7 +19,6 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -51,7 +49,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("create")]
         [HttpPost]
-        [LmsAuthorizeBase]
+        [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
         public virtual OperationResult Create([FromBody]CreateSeminarDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
@@ -85,7 +83,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("edit")]
         [HttpPost]
-        [LmsAuthorizeBase]
+        [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
         public virtual OperationResult Edit([FromBody]EditSeminarDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
@@ -116,7 +114,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("sessions/create")]
         [Route("sessions/edit")]
         [HttpPost]
-        [LmsAuthorizeBase]
+        [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
         public OperationResult SaveSeminarSession([FromBody]SeminarSessionInputDto seminarSessionDto)
         {
             try
@@ -147,7 +145,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("sessions/delete")]
         [HttpPost]
-        [LmsAuthorizeBase]
+        [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
         public OperationResult DeleteSeminarSession([FromBody]DeleteSeminarSessionDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarSessionId))
