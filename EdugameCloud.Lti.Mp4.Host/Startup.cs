@@ -57,7 +57,7 @@ namespace EdugameCloud.Lti.Mp4.Host
                     setup.InputFormatters.Insert(0, new JilInputFormatter());
                     setup.OutputFormatters.Insert(0, new JilOutputFormatter());
 
-                    setup.Filters.Add(new CheckModelForNullAttribute());
+                    setup.Filters.Add(new CheckModelForNullAttribute(HostingEnvironment.IsDevelopment()));
                     //setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                     setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                 })
