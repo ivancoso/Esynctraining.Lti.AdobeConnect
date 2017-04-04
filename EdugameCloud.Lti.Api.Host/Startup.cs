@@ -71,8 +71,8 @@ namespace EdugameCloud.Lti.Api.Host
                 .AddControllersAsServices()
                 .AddJsonFormatters()
                 .AddApiExplorer()
-                //.AddCors()
                 .AddDataAnnotations();
+
             //.AddJsonOptions(options =>
             // {
             //     var settings = options.SerializerSettings;
@@ -83,7 +83,9 @@ namespace EdugameCloud.Lti.Api.Host
             //     settings.NullValueHandling = NullValueHandling.Ignore;
             // });
 
-            services.AddMemoryCache();
+            services
+                .AddCors()
+                .AddMemoryCache();
 
             var container = new WindsorContainer();
 
@@ -184,29 +186,30 @@ namespace EdugameCloud.Lti.Api.Host
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(next =>
-            {
-                return ctx =>
-                {
-                    // NOTE: skip Swagger related requests
-                    if (ctx.Request.Method == "OPTIONS" || ctx.Request.Method == "POST")
-                    {
-                        // TODO: GC performances
-                        var origins = Configuration["AppSettings:CorsOrigin"].Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                        ctx.Response.Headers.Add("Access-Control-Allow-Origin", origins);
-                        ctx.Response.Headers.Add("Access-Control-Allow-Headers", new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" });
-                        ctx.Response.Headers.Add("Access-Control-Allow-Methods", new[] { "POST" });
-                        ctx.Response.Headers.Add("Access-Control-Max-Age", new[] { "86400" }); // 1day
+            // https://docs.microsoft.com/en-us/aspnet/core/security/cors
+            //app.Use(next =>
+            //{
+            //    return ctx =>
+            //    {
+            //        // NOTE: skip Swagger related requests
+            //        if (ctx.Request.Method == "OPTIONS" || ctx.Request.Method == "POST")
+            //        {
+            //            // TODO: GC performances
+            //            var origins = Configuration["AppSettings:CorsOrigin"].Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            //            ctx.Response.Headers.Add("Access-Control-Allow-Origin", origins);
+            //            ctx.Response.Headers.Add("Access-Control-Allow-Headers", new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" });
+            //            ctx.Response.Headers.Add("Access-Control-Allow-Methods", new[] { "POST" });
+            //            ctx.Response.Headers.Add("Access-Control-Max-Age", new[] { "86400" }); // 1day
 
-                        if (ctx.Request.Method == "OPTIONS")
-                        {
-                            return Task.FromResult(0);
-                        }
-                    }
+            //            if (ctx.Request.Method == "OPTIONS")
+            //            {
+            //                return Task.FromResult(0);
+            //            }
+            //        }
 
-                    return next(ctx);
-                };
-            });
+            //        return next(ctx);
+            //    };
+            //});
 
             //app.UseExceptionHandler(
             //    builder =>
@@ -221,6 +224,15 @@ namespace EdugameCloud.Lti.Api.Host
             //            }
             //        });
             //    });
+            var origins = Configuration["AppSettings:CorsOrigin"].Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            app.UseCors(builder =>
+                builder
+                .WithOrigins(origins)
+                .WithMethods("POST")
+                .WithHeaders(new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" })
+                .SetPreflightMaxAge(TimeSpan.FromDays(1)));
+
+
             app.UseMvc(cfg => 
             {
             });
