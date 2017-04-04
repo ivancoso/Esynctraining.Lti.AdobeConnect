@@ -201,7 +201,7 @@ namespace Esynctraining.FluentValidation
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string GetString()
+        public string GetString(object context)
         {
             var message = this.ErrorMessageSource == null ? this.ErrorMessage : this.ErrorMessageSource.With(x => x.Invoke());
             return this.ErrorKey == default(int) ? message : this.ErrorKey + "#_#" + message;
