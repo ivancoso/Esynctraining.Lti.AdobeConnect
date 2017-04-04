@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-using Esynctraining.Core.Enums;
-using Esynctraining.FluentValidation;
+﻿using System.Runtime.Serialization;
 using FluentValidation;
 
 namespace EdugameCloud.Lti.DTO.Recordings
