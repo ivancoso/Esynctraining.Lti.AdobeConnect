@@ -141,9 +141,8 @@ namespace EdugameCloud.Lti.Api.Host
                     }
                 );
                 
-                // HACK: umcomment for prod.
-                //if (HostingEnvironment.IsProduction())
-                    //c.DocumentFilter<HideNonApiFilter>();
+                if (!HostingEnvironment.IsDevelopment())
+                    c.DocumentFilter<HideNonApiFilter>();
 
                 c.SchemaFilter<ApplyCustomSchemaFilters>();
 
@@ -189,15 +188,20 @@ namespace EdugameCloud.Lti.Api.Host
             {
                 return ctx =>
                 {
-                    // TODO: env.IsDevelopment() ? new[] { "*" } : new[] { "*" }
-                    ctx.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
-                    ctx.Response.Headers.Add("Access-Control-Allow-Headers", new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" });
-                    ctx.Response.Headers.Add("Access-Control-Allow-Methods", new[] { "POST" });
-                    ctx.Response.Headers.Add("Access-Control-Max-Age", new[] { "86400" }); // 1day
-
-                    if (ctx.Request.Method == "OPTIONS")
+                    // NOTE: skip Swagger related requests
+                    if (ctx.Request.Method == "OPTIONS" || ctx.Request.Method == "POST")
                     {
-                        return Task.FromResult(0);
+                        // TODO: GC performances
+                        var origins = Configuration["AppSettings:CorsOrigin"].Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                        ctx.Response.Headers.Add("Access-Control-Allow-Origin", origins);
+                        ctx.Response.Headers.Add("Access-Control-Allow-Headers", new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" });
+                        ctx.Response.Headers.Add("Access-Control-Allow-Methods", new[] { "POST" });
+                        ctx.Response.Headers.Add("Access-Control-Max-Age", new[] { "86400" }); // 1day
+
+                        if (ctx.Request.Method == "OPTIONS")
+                        {
+                            return Task.FromResult(0);
+                        }
                     }
 
                     return next(ctx);
