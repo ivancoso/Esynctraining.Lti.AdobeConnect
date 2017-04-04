@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using EdugameCloud.Lti.Api.Filters;
-using EdugameCloud.Lti.DTO;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -32,7 +31,7 @@ namespace EdugameCloud.Lti.Api.Host.Swagger
     {
         public void Apply(Schema model, SchemaFilterContext context)
         {
-            if (context.SystemType == typeof(MeetingDTO))
+            if (context.SystemType == typeof(DTO.MeetingDTO))
             {
                 var excludeProperties = new[] { "accessLevel", "canJoin", "isEditable", "officeHours", "isDisabledForThisCourse",
                     "telephonyProfileFields", "sessions"
