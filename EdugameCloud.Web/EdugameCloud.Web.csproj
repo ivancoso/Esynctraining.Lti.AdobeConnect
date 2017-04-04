@@ -69,8 +69,8 @@
     <Reference Include="Esynctraining.Core.SystemWeb, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.SystemWeb.1.0.0.1\lib\net45\Esynctraining.Core.SystemWeb.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.FluentValidation, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.FluentValidation.1.0.0.1\lib\net45\Esynctraining.FluentValidation.dll</HintPath>
+    <Reference Include="Esynctraining.FluentValidation, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.FluentValidation.1.0.0.3\lib\net45\Esynctraining.FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Mvc, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Mvc.1.0.0.1\lib\net45\Esynctraining.Mvc.dll</HintPath>
