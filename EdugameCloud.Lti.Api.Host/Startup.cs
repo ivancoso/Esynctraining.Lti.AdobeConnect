@@ -137,7 +137,7 @@ namespace EdugameCloud.Lti.Api.Host
                 builder
                 .WithOrigins(origins)
                 .WithMethods("POST")
-                .WithHeaders(new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" })
+                .WithHeaders("Authorization", "X-Requested-With", "Content-Type", "Accept", "Origin")
                 .SetPreflightMaxAge(TimeSpan.FromDays(1)));
 
             app.UseMvc(cfg => 
