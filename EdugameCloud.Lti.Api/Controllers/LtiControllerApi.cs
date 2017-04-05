@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using EdugameCloud.Lti.Api.Filters;
-    using EdugameCloud.Lti.API;
+    using EdugameCloud.Lti.Api.Models;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
