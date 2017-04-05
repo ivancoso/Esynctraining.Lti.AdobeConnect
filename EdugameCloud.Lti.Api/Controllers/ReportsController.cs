@@ -5,6 +5,7 @@
     using System.Runtime.Serialization;
     using API.AdobeConnect;
     using Core.Business.Models;
+    using EdugameCloud.Lti.Api.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;

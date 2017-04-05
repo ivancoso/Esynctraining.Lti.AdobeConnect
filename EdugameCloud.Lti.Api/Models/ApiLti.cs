@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace EdugameCloud.Lti.DTO
+namespace EdugameCloud.Lti.Api.Models
 {
-    // TODO: move
     [DataContract]
     public class RequestDto
     {
@@ -11,14 +10,7 @@ namespace EdugameCloud.Lti.DTO
         //[DataMember]
         //public string lmsProviderName { get; set; }
     }
-
-    //[DataContract]
-    //public class TemplatesRequestDto : RequestDto
-    //{
-    //    [DataMember]
-    //    public int LmsMeetingType { get; set; }
-    //}
-
+    
     [DataContract]
     public class MeetingRequestDto : RequestDto
     {
@@ -26,6 +18,7 @@ namespace EdugameCloud.Lti.DTO
         /// Internal eSyncTraining DB meeting record ID.
         /// </summary>
         [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "MeetingId value is not valid.")]
         [DataMember]
         public int MeetingId { get; set; }
 
@@ -48,6 +41,7 @@ namespace EdugameCloud.Lti.DTO
     [DataContract]
     public sealed class SearchRequestDto : RequestDto
     {
+        [Required]
         [DataMember]
         public string SearchTerm { get; set; }
 
