@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.10
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.WCFService", "EdugameCloud.WCFService\EdugameCloud.WCFService.csproj", "{1758C513-FDF1-47FA-842F-9C332DA85C17}"
 EndProject
@@ -33,8 +33,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Tests", "EdugameCloud.Lti.Tests\EdugameCloud.Lti.Tests.csproj", "{2C3F36AB-F82B-41A0-8C98-336FD249BBDA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E106AB37-3EBA-4EE4-807B-7C02C910DC96}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.ACEvents.Web", "EdugameCloud.ACEvents.Web\EdugameCloud.ACEvents.Web.csproj", "{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Certificates", "EdugameCloud.Certificates\EdugameCloud.Certificates.csproj", "{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}"
 EndProject
@@ -208,17 +206,6 @@ Global
 		{2C3F36AB-F82B-41A0-8C98-336FD249BBDA}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{2C3F36AB-F82B-41A0-8C98-336FD249BBDA}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{2C3F36AB-F82B-41A0-8C98-336FD249BBDA}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E3CF784-C2BC-4E72-8FA0-555CF98BFC35}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU

@@ -32,11 +32,7 @@ namespace EdugameCloud.ACEvents.Web
             DIConfig.RegisterComponents(container);
 
             container.Install(new ControllersInstaller("EdugameCloud.ACEvents.Web"));
-            //container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").Pick().If(Component.IsInNamespace("EdugameCloud.MVC.Controllers")).WithService.Self().LifestyleTransient());
-
-            //container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
-            //container.Register(Classes.FromAssemblyNamed("EdugameCloud.ACEvents.Web").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
-            //container.Register(Classes.FromThisAssembly().BasedOn<BaseController>().LifestylePerWebRequest());
+            
             container.Register(Classes.FromThisAssembly().BasedOn<SoapHttpClientProtocol>().LifestylePerWebRequest());
             SetControllerFactory(container);
         }
