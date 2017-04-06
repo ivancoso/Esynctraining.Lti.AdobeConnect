@@ -21,10 +21,9 @@
                 new { area = "Reports", controller = "File", action = "MeetingRecordingsReport" });
 
 
-            routes.MapLowercaseRoute("hashcode", "hash/{value}", new { controller = "HashCode", action = "GetHashCode" });
-            // TODO!!:
-            routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });
-            LtiRoutes.AppendTo2(routes); //AppendTo2
+            routes.MapLowercaseRoute("hashcode", "hash/{value}", new { area="", controller = "HashCode", action = "GetHashCode" });
+
+            LtiRoutes.AppendTo2(routes);
         }
 
     }

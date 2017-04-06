@@ -161,7 +161,7 @@
             }
             catch (Exception ex)
             {
-                logger.Error("FileController.GetPublicBuild.", ex);
+                logger.Error("BuildDeliverController.GetPublicBuild.", ex);
                 throw;
             }
 
@@ -231,7 +231,7 @@
             }
             catch (Exception ex)
             {
-                logger.Error("FileController.GetPublicBuild.", ex);
+                logger.Error("BuildDeliverController.GetPublicBuild.", ex);
                 throw;
             }
 
