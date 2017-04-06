@@ -15,8 +15,8 @@
 
             routes.MapLowercaseRoute("meeting-attendance-report", "meeting-attendance-report", 
                 new { area = "Reports", controller = "File", action = "MeetingAttendanceReport" });
-            routes.MapLowercaseRoute("meeting-sessions-report", "MeetingSessionsReport", 
-                new { area = "Reports", controller = "File", action = "MeetingAttendanceReport" });
+            routes.MapLowercaseRoute("meeting-sessions-report", "meeting-sessions-report", 
+                new { area = "Reports", controller = "File", action = "MeetingSessionsReport" });
             routes.MapLowercaseRoute("meeting-recordings-report", "meeting-recordings-report", 
                 new { area = "Reports", controller = "File", action = "MeetingRecordingsReport" });
 
