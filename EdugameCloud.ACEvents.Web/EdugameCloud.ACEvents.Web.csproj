@@ -38,4 +38,8 @@
 <ItemGroup>
   <WCFMetadata Include="Connected Services" />
 </ItemGroup>
+
+<ItemGroup>
+  <Folder Include="wwwroot\lib\" />
+</ItemGroup>
 </Project>

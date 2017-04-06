@@ -183,6 +183,8 @@ namespace EdugameCloud.ACEvents.Web
             //    .WithHeaders(new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" })
             //    .SetPreflightMaxAge(TimeSpan.FromDays(1)));
 
+            app.UseStaticFiles();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
