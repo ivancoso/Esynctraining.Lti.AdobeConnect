@@ -10,16 +10,14 @@ using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Hosting;
-using System.Web.Mvc;
+//using System.Web.Hosting;
+//using System.Web.Mvc;
 using System.Xml.Linq;
-using EdugameCloud.ACEvents.Web.AcDomainsNamespace;
+using CompanyAcDomainsNamespace;
+using CompanyEventsServiceNamespace;
+
 using EdugameCloud.ACEvents.Web.Certificates;
-using EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace;
-using EdugameCloud.ACEvents.Web.FileServiceNamespace;
-using EdugameCloud.ACEvents.Web.Models;
-using EdugameCloud.ACEvents.Web.QuizResultServiceNamespace;
-using EdugameCloud.ACEvents.Web.QuizServiceNamespace;
+
 using EdugameCloud.Certificates.Pdf;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
@@ -27,6 +25,13 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
+using FileServiceNamespace;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using QuizResultServiceNamespace;
+using QuizServiceNamespace;
 
 //using EdugameCloud.Certificates.Pdf;
 
@@ -36,21 +41,25 @@ using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.ACEvents.Web.Controllers
 {
-    public partial class QuizCertificateController : Controller
+    public class QuizCertificateController : Controller
     {
         private static readonly object _locker = new object();
-        private readonly QuizResultService _quizResultService;
+        private readonly QuizResultServiceClient _quizResultService;
 
-        private readonly FileService _fileService;
-        private readonly CompanyAcDomainsService _companyAcDomainsService;
-        private readonly CompanyEventsService _companyEventsService;
-        private readonly QuizService _quizService;
+        private readonly FileServiceClient _fileService;
+        private readonly CompanyAcDomainsServiceClient _companyAcDomainsService;
+        private readonly CompanyEventsServiceClient _companyEventsService;
+        private readonly QuizServiceClient _quizService;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         //private readonly FileModel _fileModel;
 
 
-        public QuizCertificateController(QuizResultService quizResultService, FileService fileService, CompanyAcDomainsService domainsService, 
-            CompanyEventsService companyEventsService, QuizService quizService)
+        public QuizCertificateController(QuizResultServiceClient quizResultService, FileServiceClient fileService, CompanyAcDomainsServiceClient domainsService,
+            CompanyEventsServiceClient companyEventsService, QuizServiceClient quizService, IHostingEnvironment hostingEnvironment, IHttpContextAccessor context)
         {
+            _httpContextAccessor = context;
+            _hostingEnvironment = hostingEnvironment;
             _quizService = quizService;
             _companyEventsService = companyEventsService;
             _companyAcDomainsService = domainsService;
@@ -60,14 +69,14 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         }
 
 
-        [OutputCache(CacheProfile = "QuizPreview")]
+        //[OutputCache(CacheProfile = "QuizPreview")]
         public virtual ActionResult Preview(Guid quizResultGuid)
         {
             try
             {
                 QuizCertificateInfo quizResult = FindCompletedQuizResult(quizResultGuid);
                 if (quizResult == null)
-                    return HttpNotFound();
+                    return NotFound();
 
                 string imagePath = GetCertProcessor(quizResult).RenderPreview(ImageFormat.Jpeg, BuildTemplateData(quizResult));
                 return File(imagePath, "image/jpeg", "CertificatePreview.jpg");
@@ -80,16 +89,16 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             }
         }
 
-        [OutputCache(CacheProfile = "QuizDownload")]
+        //[OutputCache(CacheProfile = "QuizDownload")]
         public virtual ActionResult Download(Guid quizResultGuid)
         {
             try
             {
                 QuizCertificateInfo quizResult = FindCompletedQuizResult(quizResultGuid);
                 if (quizResult == null)
-                    return HttpNotFound();
+                    return NotFound();
 
-                if (Request.Browser.IsMobileDevice)
+                if (_httpContextAccessor.HttpContext.Request.IsMobileBrowser())
                 {
                     string imagePath = GetCertProcessor(quizResult).RenderPreview(ImageFormat.Png, BuildTemplateData(quizResult), resize: false);
                     return File(imagePath, "image/png", $"Certificate_{quizResult.ParticipantName}.png");
@@ -140,7 +149,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 {
                     if (!System.IO.File.Exists(certificateTemplateFilePath))
                     {
-                        var certTemplate = _fileService.GetById(certificateTemplateContentId.ToString());
+                        var certTemplate = _fileService.GetByIdAsync(certificateTemplateContentId).Result;
                         //var certTemplate = new FileDTO()
                         //{
                         //    fileName = "temp"
@@ -154,11 +163,11 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             return certificateTemplateFilePath;
         }
 
-        private static string GetPdfTempatePath(Guid certificateTemplateContentId)
+        private string GetPdfTempatePath(Guid certificateTemplateContentId)
         {
             string setting = ConfigurationManager.AppSettings["PdfTemplateFolder"];
             string folder = setting.StartsWith("~")
-                ? HostingEnvironment.MapPath(setting)
+                ? Path.Combine(_hostingEnvironment.WebRootPath, setting)
                 : setting;
 
             return Path.Combine(folder,
@@ -167,9 +176,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
         private QuizCertificateInfo FindCompletedQuizResult(Guid quizResultGuid)
         {
-            var quizResult = _quizResultService.GetByGuid(quizResultGuid.ToString());
-            var eventMapping = _companyEventsService.GetById(quizResult.eventQuizMappingId ?? 0, true);
-            var acDomain = _companyAcDomainsService.GetById(eventMapping.companyAcDomainId, true);
+            var quizResult = _quizResultService.GetByGuidAsync(quizResultGuid).Result;
+            var eventMapping = _companyEventsService.GetByIdAsync(quizResult.eventQuizMappingId ?? 0).Result;
+            var acDomain = _companyAcDomainsService.GetByIdAsync(eventMapping.companyAcDomainId).Result;
             var acUrl = acDomain.path;
             var apiUrl = new Uri(acUrl);
             var logger = IoC.Resolve<ILogger>();
@@ -186,11 +195,11 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             //    return null;
             //}
 
-            var quiz = _quizService.GetById(eventMapping.postQuizId, true);
+            var quiz = _quizService.GetByIdAsync(eventMapping.postQuizId).Result;
             if (!quiz.isPostQuiz)
                 return null;
             var quizPassingScoreInPercents = (float)quiz.passingScore / 100;
-            var quizData = _quizService.GetQuizDataByQuizId(eventMapping.postQuizId, true);
+            var quizData = _quizService.GetQuizDataByQuizIdAsync(eventMapping.postQuizId).Result;
             var totalQuestions = quizData.questions.Length;
             var scoreInPercents = (float)quizResult.score / totalQuestions;
             var isSuccess = scoreInPercents >= quizPassingScoreInPercents;

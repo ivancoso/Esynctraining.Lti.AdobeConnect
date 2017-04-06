@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using EdugameCloud.ACEvents.Web.AcDomainsNamespace;
-using EdugameCloud.ACEvents.Web.CompanyEventsServiceNamespace;
-using EdugameCloud.ACEvents.Web.EmailServiceNamespace;
-using EdugameCloud.ACEvents.Web.LookupServiceNamespace;
+using CompanyAcDomainsNamespace;
+using CompanyEventsServiceNamespace;
+//using System.Web;
+//using System.Web.Mvc;
 using EdugameCloud.ACEvents.Web.Models;
+using EmailServiceNamespace;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
@@ -17,27 +16,34 @@ using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using LookupServiceNamespace;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using StatusCodes = Esynctraining.AC.Provider.Entities.StatusCodes;
 
 namespace EdugameCloud.ACEvents.Web.Controllers
 {
+
+
     public class EventsController : Controller
     {
         //private readonly ILogger _logger;
         private readonly ILogger _logger;
-        private readonly dynamic _settings;
-        private EmailService _emailService;
-        private readonly LookupService _lookupService;
-        private readonly CompanyEventsService _companyEventsService;
-        private readonly CompanyAcDomainsService _companyAcDomainsService;
+        private IEmailService _emailService;
+        private readonly ILookupService _lookupService;
+        private readonly ICompanyEventsService _companyEventsService;
+        private readonly ICompanyAcDomainsService _companyAcDomainsService;
+        private readonly IHttpContextAccessor _context;
 
-        public EventsController(ILogger logger, ApplicationSettingsProvider settings, EmailService emailService,
-            CompanyEventsService companyEventsService, LookupService lookupService, CompanyAcDomainsService companyAcDomainsService)
+        public EventsController(ILogger logger, IEmailService emailService,
+            ICompanyEventsService companyEventsService, ILookupService lookupService, ICompanyAcDomainsService companyAcDomainsService, IHttpContextAccessor context)
         {
+            _context = context;
             _companyAcDomainsService = companyAcDomainsService;
             _companyEventsService = companyEventsService;
             _lookupService = lookupService;
             _emailService = emailService;
-            _settings = settings;
             _logger = logger;
             //  _logger = logger;
         }
@@ -45,17 +51,17 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         public ActionResult Signup()
         {
             //if (Request.QueryString["licenseId"] == null || Request.QueryString["eventScoId"] == null)
-            if (Request.QueryString["eventQuizMappingId"] == null)
+            if (string.IsNullOrEmpty(_context.HttpContext.Request.Query["eventQuizMappingId"]))
                 throw new InvalidOperationException("You should pass eventQuizMappingId");
 
-            var eventQuizMappingId = Request.QueryString["eventQuizMappingId"];
+            var eventQuizMappingId = _context.HttpContext.Request.Query["eventQuizMappingId"];
             var eventQuizMappingIdGuid = Guid.Parse(eventQuizMappingId);
             var companyEventsService = _companyEventsService;
-            var eventMapping = companyEventsService.GetByGuid(eventQuizMappingIdGuid.ToString());
+            var eventMapping = companyEventsService.GetByGuidAsync(eventQuizMappingIdGuid).Result;
             if (eventMapping == null)
                 throw new InvalidOperationException("No eventQuizMapping with this id");
             var acService = _companyAcDomainsService;
-            var acDomain = acService.GetById(eventMapping.companyAcDomainId, true);
+            var acDomain = acService.GetByIdAsync(eventMapping.companyAcDomainId).Result;
             var acUrl = acDomain.path;
             var eventScoId = eventMapping.acEventScoId;
             //var acUrl = "http://esynctraining.adobeconnect.com";
@@ -75,7 +81,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             //var lookupServiceClient = new LookupServiceClient.LookupServiceClient();
             var lookupWebService = _lookupService;
-            var states = lookupWebService.GetStates();
+            var states = lookupWebService.GetStatesAsync().Result;
 
             model.States = states.Select(x => new SelectListItem()
             {
@@ -108,10 +114,10 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         {
             _logger.Info("Gettings states");
             var lookupWebService = _lookupService;
-            _logger.Info("lookup url is " + lookupWebService.Url);
-            var schools = lookupWebService.GetSchools().Where(x => x.State.stateCode == stateCode);
+            //_logger.Info("lookup url is " + lookupWebService.Endpoint.Address.Uri);
+            var schools = lookupWebService.GetSchoolsAsync().Result.Where(x => x.State.stateCode == stateCode);
             var stateSchools = schools.OrderBy(x => x.AccountName);
-            return Json(stateSchools, JsonRequestBehavior.AllowGet);
+            return Json(stateSchools);
         }
 
         [HttpPost]
@@ -122,9 +128,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 return Json(new { IsSuccess = false, Message = "You didn't pass form validation" });
             }
             var eventQuizMapping = _companyEventsService;
-            var companyQuizEventMappingDto = eventQuizMapping.GetById(eventModel.EventQuizMappingId, true);
+            var companyQuizEventMappingDto = eventQuizMapping.GetByIdAsync(eventModel.EventQuizMappingId).Result;
             var acService = _companyAcDomainsService;
-            var acDomain = acService.GetById(companyQuizEventMappingDto.companyAcDomainId, true);
+            var acDomain = acService.GetByIdAsync(companyQuizEventMappingDto.companyAcDomainId).Result;
             var acUrl = acDomain.path;
             var apiUrl = new Uri(acUrl);
             var logger = IoC.Resolve<ILogger>();
@@ -208,12 +214,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                     EventEndDate = eventModel.EndDate,
                     EventName = eventModel.EventName,
                     EventStartDate = eventModel.StartDate,
-                    EventEndDateSpecified = true,
-                    EventStartDateSpecified = true,
                     eventQuizMappingId = eventModel.EventQuizMappingId,
-                    eventQuizMappingIdSpecified = true
                 };
-                _emailService.SendRegistrationEmail(eventRegistrationDto);
+                var sendingResult = _emailService.SendRegistrationEmailAsync(eventRegistrationDto).Result;
             }
             catch (Exception e)
             {

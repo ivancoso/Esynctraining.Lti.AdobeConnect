@@ -7,5 +7,4 @@ namespace EdugameCloud.Core.Logging
         public Logger() : base(IoC.Resolve<Castle.Core.Logging.ILoggerFactory>().Create("Default")) { }
         
     }
-
 }
