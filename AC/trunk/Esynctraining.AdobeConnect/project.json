@@ -60,7 +60,7 @@
   "scripts": {
     "postcompile": [
       "dotnet pack --no-build --configuration %compile:Configuration%"
-      //..\.nuget\NuGet.exe push .\bin\Debug\Esynctraining.Provider.1.0.1.20.nupkg -source https://nuget.esynctraining.com/nuget -ApiKey 1a4d6ac5-2fa1-4844-a42d-b95e432f00ee
+      //..\.nuget\NuGet.exe push bin\Release\Esynctraining.AdobeConnect.1.0.1.28.nupkg -source http://192.168.10.59/nuget -ApiKey 1a4d6ac5-2fa1-4844-a42d-b95e432f00ee
     ]
   }
 
