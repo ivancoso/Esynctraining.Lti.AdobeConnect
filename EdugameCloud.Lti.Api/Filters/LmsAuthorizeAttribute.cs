@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Api.Controllers;
 using EdugameCloud.Lti.API;
@@ -7,6 +10,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,11 +40,10 @@ namespace EdugameCloud.Lti.Api.Filters
 
         }
 
-
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             string mode;
-            Guid token = FetchToken(filterContext.HttpContext.Request, out mode);
+            Guid token = FetchToken(context.HttpContext.Request, out mode);
             if (token != Guid.Empty)
             {
                 if (mode == ltiAuthScheme)
@@ -50,11 +53,11 @@ namespace EdugameCloud.Lti.Api.Filters
 
                     if (session == null)
                     {
-                        filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
+                        context.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
                     }
                     else if (!string.IsNullOrWhiteSpace(FeatureName) && !session.LmsCompany.GetSetting<bool>(FeatureName))
                     {
-                        filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+                        context.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
                     }
                     else
                     {
@@ -62,11 +65,11 @@ namespace EdugameCloud.Lti.Api.Filters
                         var allowed = IsAllowed(session, out notAllowedResult);
                         if (!allowed)
                         {
-                            filterContext.Result = notAllowedResult;
+                            context.Result = notAllowedResult;
                         }
                         else
                         {
-                            var api = filterContext.Controller as BaseApiController;
+                            var api = context.Controller as BaseApiController;
                             api.Session = session;
                             api.LmsCompany = session.LmsCompany;
                             api.CourseId = session.LmsCourseId;
@@ -77,7 +80,7 @@ namespace EdugameCloud.Lti.Api.Filters
                 {
                     if (!ApiCallEnabled)
                     {
-                        filterContext.Result = new JsonResult(OperationResult.Error("External calls are not permitted"));
+                        context.Result = new JsonResult(OperationResult.Error("External calls are not permitted"));
                     }
                     else
                     {
@@ -85,11 +88,11 @@ namespace EdugameCloud.Lti.Api.Filters
                         if (license == null)
                         {
                             // TODO: better msg
-                            filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
+                            context.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
                         }
                         else if (!string.IsNullOrWhiteSpace(FeatureName) && !license.GetSetting<bool>(FeatureName))
                         {
-                            filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+                            context.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
                         }
                         else
                         {
@@ -102,9 +105,9 @@ namespace EdugameCloud.Lti.Api.Filters
                             //}
                             //else
                             {
-                                var api = filterContext.Controller as BaseApiController;
+                                var api = context.Controller as BaseApiController;
                                 api.LmsCompany = license;
-                                api.CourseId = FetchApiCourseId(filterContext.HttpContext.Request);
+                                api.CourseId = await FetchApiCourseIdAsync(context.HttpContext.Request);
                             }
                         }
                     }
@@ -112,12 +115,93 @@ namespace EdugameCloud.Lti.Api.Filters
             }
             else
             {
-                filterContext.Result = new JsonResult(OperationResult.Error("Necessary Authorization arguments were not provided."));
+                context.Result = new JsonResult(OperationResult.Error("Necessary Authorization arguments were not provided."));
             }
-            base.OnActionExecuting(filterContext);
+
+            await base.OnActionExecutionAsync(context, next);
         }
 
-        
+        //public override void OnActionExecuting(ActionExecutingContext filterContext)
+        //{
+        //    string mode;
+        //    Guid token = FetchToken(filterContext.HttpContext.Request, out mode);
+        //    if (token != Guid.Empty)
+        //    {
+        //        if (mode == ltiAuthScheme)
+        //        {
+        //            // TODO: try\catch?
+        //            LmsUserSession session = GetReadOnlySession(token);
+
+        //            if (session == null)
+        //            {
+        //                filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
+        //            }
+        //            else if (!string.IsNullOrWhiteSpace(FeatureName) && !session.LmsCompany.GetSetting<bool>(FeatureName))
+        //            {
+        //                filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+        //            }
+        //            else
+        //            {
+        //                ActionResult notAllowedResult;
+        //                var allowed = IsAllowed(session, out notAllowedResult);
+        //                if (!allowed)
+        //                {
+        //                    filterContext.Result = notAllowedResult;
+        //                }
+        //                else
+        //                {
+        //                    var api = filterContext.Controller as BaseApiController;
+        //                    api.Session = session;
+        //                    api.LmsCompany = session.LmsCompany;
+        //                    api.CourseId = session.LmsCourseId;
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (!ApiCallEnabled)
+        //            {
+        //                filterContext.Result = new JsonResult(OperationResult.Error("External calls are not permitted"));
+        //            }
+        //            else
+        //            {
+        //                LmsCompany license = GetLicense(token);
+        //                if (license == null)
+        //                {
+        //                    // TODO: better msg
+        //                    filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
+        //                }
+        //                else if (!string.IsNullOrWhiteSpace(FeatureName) && !license.GetSetting<bool>(FeatureName))
+        //                {
+        //                    filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+        //                }
+        //                else
+        //                {
+        //                    //ActionResult notAllowedResult;
+        //                    //var allowed = IsAllowed(session, out notAllowedResult);
+
+        //                    //if (!allowed)
+        //                    //{
+        //                    //    filterContext.Result = notAllowedResult;
+        //                    //}
+        //                    //else
+        //                    {
+        //                        var api = filterContext.Controller as BaseApiController;
+        //                        api.LmsCompany = license;
+        //                        api.CourseId = await FetchApiCourseIdAsync(filterContext.HttpContext.Request);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        filterContext.Result = new JsonResult(OperationResult.Error("Necessary Authorization arguments were not provided."));
+        //    }
+        //    base.OnActionExecuting(filterContext);
+        //}
+
+
         protected virtual bool IsAllowed(LmsUserSession session, out ActionResult notAllowedResult)
         {
             notAllowedResult = null;
@@ -189,12 +273,31 @@ namespace EdugameCloud.Lti.Api.Filters
             return Guid.Empty;
         }
 
-        private static int FetchApiCourseId(HttpRequest req)
+        private static async Task<int> FetchApiCourseIdAsync(HttpRequest req)
         {
             string authHeader = req.Headers[HeaderName];
             string token = authHeader.Substring(apiAuthScheme.Length)
                     .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)[1];
-            return int.Parse(token);
+
+            int intCourseId;
+            if (int.TryParse(token, out intCourseId))
+                return intCourseId;
+
+            string ltiUrl = (IoC.Resolve<ApplicationSettingsProvider>() as dynamic).LtiHostUrl as string;
+            Uri root = new Uri(ltiUrl);
+            var url = new Uri(new Uri(root, "hash/"), WebUtility.UrlEncode(token));
+            using (var http = new HttpClient())
+            {
+                try
+                {
+                    string value = await http.GetStringAsync(url);
+                    return int.Parse(value);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Error fetching GetHashCode for Sakai course id", ex);
+                }                
+            }
         }
 
     }
