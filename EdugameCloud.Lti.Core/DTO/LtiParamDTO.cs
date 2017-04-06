@@ -51,25 +51,7 @@ namespace EdugameCloud.Lti.DTO
         /// <summary>
         /// Gets the course id.
         /// </summary>
-        public int course_id
-        {
-            get
-            {
-                if (this.custom_canvas_course_id != 0)
-                {
-                    return this.custom_canvas_course_id;
-                }
-
-                int courseId;
-                if (int.TryParse(this.context_id, out courseId))
-                {
-                    return courseId;
-                }
-
-                courseId = this.TryParseBlackBoardCourseId();
-                return courseId != 0 ? courseId : this.TryGetSakaiCourseIdHash();
-            }
-        }
+        public int course_id { get; set; }
 
         /// <summary>
         /// Gets or sets the custom canvas API domain.
@@ -136,6 +118,7 @@ namespace EdugameCloud.Lti.DTO
                 return null;
             }
         }
+
         /// <summary>
         /// Gets or sets the LIS person name full.
         /// </summary>
@@ -439,7 +422,12 @@ namespace EdugameCloud.Lti.DTO
             string authority = new Uri(this.referer).GetLeftPart(UriPartial.Authority).ToLowerInvariant();
             return authority.Replace(scheme, string.Empty);
         }
-        
+
+        public void CalculateFields()
+        {
+            course_id = CalcCourseId();
+        }
+
         private int TryParseBlackBoardCourseId()
         {
             int result = 0;
@@ -474,6 +462,23 @@ namespace EdugameCloud.Lti.DTO
             }
 
             return result;
+        }
+
+        public int CalcCourseId()
+        {
+            if (this.custom_canvas_course_id != 0)
+            {
+                return this.custom_canvas_course_id;
+            }
+
+            int courseId;
+            if (int.TryParse(this.context_id, out courseId))
+            {
+                return courseId;
+            }
+
+            courseId = this.TryParseBlackBoardCourseId();
+            return courseId != 0 ? courseId : this.TryGetSakaiCourseIdHash();
         }
 
         #endregion

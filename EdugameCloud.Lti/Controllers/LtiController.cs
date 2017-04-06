@@ -329,6 +329,9 @@ namespace EdugameCloud.Lti.Controllers
             var trace = new StringBuilder();
             try
             {
+                // TRICK: to save course_id in DB;
+                param.CalculateFields();
+
                 // Parse and validate the request
                 Request.CheckForRequiredLtiParameters();
 
