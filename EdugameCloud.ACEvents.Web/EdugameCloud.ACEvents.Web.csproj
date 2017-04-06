@@ -13,10 +13,11 @@
 <ItemGroup>
 	<ProjectReference Include="..\EdugameCloud.Certificates\EdugameCloud.Certificates.csproj" />
 	<ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj" />
+	<ProjectReference Include="..\Esynctraining.AspNetCore\Esynctraining.AspNetCore.csproj" />
 	
 </ItemGroup>
 <ItemGroup>
-	<PackageReference Include="Esynctraining.AdobeConnect" version="1.0.1.26" />
+	<PackageReference Include="Esynctraining.AdobeConnect" version="1.0.1.28" />
 	<PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
 	<PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
@@ -39,7 +40,4 @@
   <WCFMetadata Include="Connected Services" />
 </ItemGroup>
 
-<ItemGroup>
-  <Folder Include="wwwroot\lib\" />
-</ItemGroup>
 </Project>

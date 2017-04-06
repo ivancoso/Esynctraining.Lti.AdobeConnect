@@ -22,9 +22,9 @@
                 $.each(data,
                     function (index, school) {
                         $("#School").append("<option value='" +
-                            school.SchoolNumber +
+                            school.schoolNumber +
                             "'>" +
-                            school.AccountName +
+                            school.accountName +
                             "</option>");
                     });
 
@@ -58,13 +58,13 @@
                     data: data,
                     dataType: 'json',
                     success: function (result) {
-                        if (result.IsSuccess) {
+                        if (result.isSuccess) {
                             //$('#success').show().fadeOut(20000);
                             debugger;
                             window.location = result.RedirectUrl;
                         } else {
                             //$('#errorMessage').html(result.Message);
-                            $('#errorMessage').html("<span class='red'><b>" + result.Message + "</b></span>").closest('div').show().fadeOut(20000);
+                            $('#errorMessage').html("<span class='red'><b>" + result.message + "</b></span>").closest('div').show().fadeOut(20000);
                         }
                     },
                     error: function (e, a, b, ctx, d) {
@@ -108,21 +108,30 @@
             <br />
         </div>
 
-        @*@using (Html.BeginForm("EventRegister", "Events", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
-            {*@
+       
+        
+        @{
+            var labelColumnWidth = 5;
+            var inputColumnWidth = 7;
+        }
+
         <form class="form-horizontal">
-
-            @Html.HiddenFor(x => x.EventQuizMappingId)
-            @*@Html.AntiForgeryToken()*@
-            @Html.ValidationSummary(true)
-
             
+            @*@Html.HiddenFor(x => x.EventQuizMappingId)*@
+            <input asp-for="EventQuizMappingId" style="display: none" />
+            @*@Html.AntiForgeryToken()*@
+            @*@Html.ValidationSummary(true)*@
+
+            @*<div asp-validation-summary="All" class="text-danger"></div>*@
 
             <div class="form-group">
-                <label class="col-sm-5 control-label">First Name *</label>
-                <div class="col-sm-7">
-                    @Html.TextBoxFor(m => m.FirstName, new {@class = "form-control", placeholder = "First Name", tabindex = 1})
-                    @Html.ValidationMessageFor(m => m.FirstName)
+                <label class="col-sm-@labelColumnWidth control-label" asp-for="FirstName">First Name *</label>
+                <div class="col-sm-@inputColumnWidth">
+                    @*@Html.TextBoxFor(m => m.FirstName, new {@class = "form-control", placeholder = "First Name", tabindex = 1})
+                    @Html.ValidationMessageFor(m => m.FirstName)*@
+                    
+                    <input asp-for="FirstName" class="form-control" placeholder="First Name" tabindex="1"/>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
 
             </div>

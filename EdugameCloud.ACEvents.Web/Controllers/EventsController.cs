@@ -24,33 +24,31 @@ using StatusCodes = Esynctraining.AC.Provider.Entities.StatusCodes;
 
 namespace EdugameCloud.ACEvents.Web.Controllers
 {
-
-
     public class EventsController : Controller
     {
-        //private readonly ILogger _logger;
         private readonly ILogger _logger;
-        private IEmailService _emailService;
+        private readonly IEmailService _emailService;
         private readonly ILookupService _lookupService;
         private readonly ICompanyEventsService _companyEventsService;
         private readonly ICompanyAcDomainsService _companyAcDomainsService;
         private readonly IHttpContextAccessor _context;
+        private readonly IAdobeConnectAccountService _acService;
 
         public EventsController(ILogger logger, IEmailService emailService,
-            ICompanyEventsService companyEventsService, ILookupService lookupService, ICompanyAcDomainsService companyAcDomainsService, IHttpContextAccessor context)
+            ICompanyEventsService companyEventsService, ILookupService lookupService,
+            ICompanyAcDomainsService companyAcDomainsService, IHttpContextAccessor context, IAdobeConnectAccountService acService)
         {
+            _acService = acService;
             _context = context;
             _companyAcDomainsService = companyAcDomainsService;
             _companyEventsService = companyEventsService;
             _lookupService = lookupService;
             _emailService = emailService;
             _logger = logger;
-            //  _logger = logger;
         }
 
-        public ActionResult Signup()
+        public IActionResult Signup()
         {
-            //if (Request.QueryString["licenseId"] == null || Request.QueryString["eventScoId"] == null)
             if (string.IsNullOrEmpty(_context.HttpContext.Request.Query["eventQuizMappingId"]))
                 throw new InvalidOperationException("You should pass eventQuizMappingId");
 
@@ -63,11 +61,12 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var acService = _companyAcDomainsService;
             var acDomain = acService.GetByIdAsync(eventMapping.companyAcDomainId).Result;
             var acUrl = acDomain.path;
+            var login = acDomain.user;
+            var pass = acDomain.password;
             var eventScoId = eventMapping.acEventScoId;
-            //var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = new Uri(acUrl);
             _logger.Info("Signup started");
-            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), _logger, apiUrl);
+            var proxy = _acService.GetProvider(new AdobeConnectAccess(apiUrl, login, pass), true);
             var eventInfo = proxy.GetScoInfo(eventScoId);
             if (!eventInfo.Success)
                 throw new InvalidOperationException("Error getting event info");
@@ -79,7 +78,6 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 EventQuizMappingId = eventMapping.eventQuizMappingId
             };
 
-            //var lookupServiceClient = new LookupServiceClient.LookupServiceClient();
             var lookupWebService = _lookupService;
             var states = lookupWebService.GetStatesAsync().Result;
 
@@ -110,7 +108,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             return View(model);
         }
 
-        public ActionResult GetSchoolPerState(string stateCode)
+        public IActionResult GetSchoolPerState(string stateCode)
         {
             _logger.Info("Gettings states");
             var lookupWebService = _lookupService;
@@ -119,9 +117,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var stateSchools = schools.OrderBy(x => x.AccountName);
             return Json(stateSchools);
         }
-
+        
         [HttpPost]
-        public ActionResult EventRegister(EventModel eventModel)
+        public IActionResult EventRegister(EventModel eventModel)
         {
             if (!ModelState.IsValid) //Check for validation errors
             {
@@ -133,14 +131,11 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var acDomain = acService.GetByIdAsync(companyQuizEventMappingDto.companyAcDomainId).Result;
             var acUrl = acDomain.path;
             var apiUrl = new Uri(acUrl);
-            var logger = IoC.Resolve<ILogger>();
-
+            var login = acDomain.user;
+            var pass = acDomain.password;
             var scoId = companyQuizEventMappingDto.acEventScoId;
-            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
-            var loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
-            if (!loginResult.Success)
-                throw new InvalidOperationException($"Can't login to AC url {apiUrl} user {acDomain.user}");
-
+            var proxy = _acService.GetProvider(new AdobeConnectAccess(apiUrl, login, pass), true);
+            
             var eventInfo = proxy.GetScoInfo(scoId);
             if (!eventInfo.Success)
                 throw new InvalidOperationException("Can't get event info");
@@ -174,7 +169,8 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 });
                 try
                 {
-                    loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
+                    // AA: after you register to event you should login again
+                    var loginResult = proxy.Login(new UserCredentials(login, pass));
                     if (!loginResult.Success)
                         throw new InvalidOperationException($"Can't login to AC url {apiUrl} user {acDomain.user}");
 
@@ -227,6 +223,8 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                     message = "You have already registered to the event!";
                 if (message.Contains("denied"))
                     message = "The registration cannot be completed. Please contact your Administrator.";
+                if (message.Contains("sco_expired"))
+                    message = "The registration to the event is expired. Please contact your Administrator.";
                 _logger.Error(message);
                 return Json(new { IsSuccess = false, Message = message });
             }

@@ -12,10 +12,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using EdugameCloud.Core.Logging;
 using EmailServiceNamespace;
+using Esynctraining.AdobeConnect;
 using FileServiceNamespace;
 using LookupServiceNamespace;
 using QuizResultServiceNamespace;
 using QuizServiceNamespace;
+using Esynctraining.AspNetCore.Filters;
 //using Logger = EdugameCloud.Core.Logging.Logger;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
@@ -61,7 +63,7 @@ namespace EdugameCloud.ACEvents.Web
                     //setup.OutputFormatters.Insert(0, new JilOutputFormatter());
 
                     //setup.Filters.Add(new CheckModelForNullAttribute(HostingEnvironment.IsDevelopment()));
-                    //setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
+                    setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                 })
 
                 .AddControllersAsServices();
@@ -126,6 +128,7 @@ namespace EdugameCloud.ACEvents.Web
             services.AddScoped<IFileService, FileServiceClient>();
             services.AddScoped<IQuizResultService, QuizResultServiceClient>();
             services.AddScoped<IQuizService, QuizServiceClient>();
+            services.AddScoped<IAdobeConnectAccountService, AdobeConnectAccountService>();
 
             //container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
 
@@ -159,8 +162,10 @@ namespace EdugameCloud.ACEvents.Web
             }
             else
             {
-                app.UseExceptionHandler("/error");
+                app.UseExceptionHandler("/Error");
             }
+
+            app.UseStatusCodePages();
 
             //app.UseExceptionHandler(
             //    builder =>
