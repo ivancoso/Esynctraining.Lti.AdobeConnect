@@ -40,10 +40,11 @@ namespace EdugameCloud.Lti.Api.Filters
 
         }
 
-        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string mode;
-            Guid token = FetchToken(context.HttpContext.Request, out mode);
+            Guid token = FetchToken(filterContext.HttpContext.Request, out mode);
             if (token != Guid.Empty)
             {
                 if (mode == ltiAuthScheme)
@@ -53,11 +54,11 @@ namespace EdugameCloud.Lti.Api.Filters
 
                     if (session == null)
                     {
-                        context.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
+                        filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
                     }
                     else if (!string.IsNullOrWhiteSpace(FeatureName) && !session.LmsCompany.GetSetting<bool>(FeatureName))
                     {
-                        context.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+                        filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
                     }
                     else
                     {
@@ -65,11 +66,11 @@ namespace EdugameCloud.Lti.Api.Filters
                         var allowed = IsAllowed(session, out notAllowedResult);
                         if (!allowed)
                         {
-                            context.Result = notAllowedResult;
+                            filterContext.Result = notAllowedResult;
                         }
                         else
                         {
-                            var api = context.Controller as BaseApiController;
+                            var api = filterContext.Controller as BaseApiController;
                             api.Session = session;
                             api.LmsCompany = session.LmsCompany;
                             api.CourseId = session.LmsCourseId;
@@ -80,7 +81,7 @@ namespace EdugameCloud.Lti.Api.Filters
                 {
                     if (!ApiCallEnabled)
                     {
-                        context.Result = new JsonResult(OperationResult.Error("External calls are not permitted"));
+                        filterContext.Result = new JsonResult(OperationResult.Error("External calls are not permitted"));
                     }
                     else
                     {
@@ -88,11 +89,11 @@ namespace EdugameCloud.Lti.Api.Filters
                         if (license == null)
                         {
                             // TODO: better msg
-                            context.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
+                            filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
                         }
                         else if (!string.IsNullOrWhiteSpace(FeatureName) && !license.GetSetting<bool>(FeatureName))
                         {
-                            context.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
+                            filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
                         }
                         else
                         {
@@ -105,9 +106,9 @@ namespace EdugameCloud.Lti.Api.Filters
                             //}
                             //else
                             {
-                                var api = context.Controller as BaseApiController;
+                                var api = filterContext.Controller as BaseApiController;
                                 api.LmsCompany = license;
-                                api.CourseId = await FetchApiCourseIdAsync(context.HttpContext.Request);
+                                api.CourseId = FetchApiCourseId(filterContext.HttpContext.Request);
                             }
                         }
                     }
@@ -115,91 +116,10 @@ namespace EdugameCloud.Lti.Api.Filters
             }
             else
             {
-                context.Result = new JsonResult(OperationResult.Error("Necessary Authorization arguments were not provided."));
+                filterContext.Result = new JsonResult(OperationResult.Error("Necessary Authorization arguments were not provided."));
             }
-
-            await base.OnActionExecutionAsync(context, next);
+            base.OnActionExecuting(filterContext);
         }
-
-        //public override void OnActionExecuting(ActionExecutingContext filterContext)
-        //{
-        //    string mode;
-        //    Guid token = FetchToken(filterContext.HttpContext.Request, out mode);
-        //    if (token != Guid.Empty)
-        //    {
-        //        if (mode == ltiAuthScheme)
-        //        {
-        //            // TODO: try\catch?
-        //            LmsUserSession session = GetReadOnlySession(token);
-
-        //            if (session == null)
-        //            {
-        //                filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
-        //            }
-        //            else if (!string.IsNullOrWhiteSpace(FeatureName) && !session.LmsCompany.GetSetting<bool>(FeatureName))
-        //            {
-        //                filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
-        //            }
-        //            else
-        //            {
-        //                ActionResult notAllowedResult;
-        //                var allowed = IsAllowed(session, out notAllowedResult);
-        //                if (!allowed)
-        //                {
-        //                    filterContext.Result = notAllowedResult;
-        //                }
-        //                else
-        //                {
-        //                    var api = filterContext.Controller as BaseApiController;
-        //                    api.Session = session;
-        //                    api.LmsCompany = session.LmsCompany;
-        //                    api.CourseId = session.LmsCourseId;
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (!ApiCallEnabled)
-        //            {
-        //                filterContext.Result = new JsonResult(OperationResult.Error("External calls are not permitted"));
-        //            }
-        //            else
-        //            {
-        //                LmsCompany license = GetLicense(token);
-        //                if (license == null)
-        //                {
-        //                    // TODO: better msg
-        //                    filterContext.Result = new JsonResult(OperationResult.Error(Messages.SessionTimeOut));
-        //                }
-        //                else if (!string.IsNullOrWhiteSpace(FeatureName) && !license.GetSetting<bool>(FeatureName))
-        //                {
-        //                    filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
-        //                }
-        //                else
-        //                {
-        //                    //ActionResult notAllowedResult;
-        //                    //var allowed = IsAllowed(session, out notAllowedResult);
-
-        //                    //if (!allowed)
-        //                    //{
-        //                    //    filterContext.Result = notAllowedResult;
-        //                    //}
-        //                    //else
-        //                    {
-        //                        var api = filterContext.Controller as BaseApiController;
-        //                        api.LmsCompany = license;
-        //                        api.CourseId = await FetchApiCourseIdAsync(filterContext.HttpContext.Request);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        filterContext.Result = new JsonResult(OperationResult.Error("Necessary Authorization arguments were not provided."));
-        //    }
-        //    base.OnActionExecuting(filterContext);
-        //}
 
 
         protected virtual bool IsAllowed(LmsUserSession session, out ActionResult notAllowedResult)
@@ -273,7 +193,7 @@ namespace EdugameCloud.Lti.Api.Filters
             return Guid.Empty;
         }
 
-        private static async Task<int> FetchApiCourseIdAsync(HttpRequest req)
+        private static int FetchApiCourseId(HttpRequest req)
         {
             string authHeader = req.Headers[HeaderName];
             string token = authHeader.Substring(apiAuthScheme.Length)
@@ -284,19 +204,19 @@ namespace EdugameCloud.Lti.Api.Filters
                 return intCourseId;
 
             string ltiUrl = (IoC.Resolve<ApplicationSettingsProvider>() as dynamic).LtiHostUrl as string;
-            Uri root = new Uri(ltiUrl);
-            var url = new Uri(new Uri(root, "hash/"), WebUtility.UrlEncode(token));
-            using (var http = new HttpClient())
+            var url = new Uri(new Uri(new Uri(ltiUrl), "hash/"), WebUtility.UrlEncode(token));
+            try
             {
-                try
+                string value;
+                using (var web = new WebClient())
                 {
-                    string value = await http.GetStringAsync(url);
-                    return int.Parse(value);
+                    value = web.DownloadString(url);
                 }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException("Error fetching GetHashCode for Sakai course id", ex);
-                }                
+                return int.Parse(value);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error fetching GetHashCode for Sakai course id", ex);
             }
         }
 
