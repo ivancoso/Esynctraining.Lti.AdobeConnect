@@ -221,5 +221,6 @@ namespace Esynctraining.AdobeConnect
         CustomField GetCustomField(string name);
         CollectionResult<CustomField> GetAllCustomFields();
         CollectionResult<CustomField> GetCustomFieldsByObjectType(ObjectType type);
+        StatusInfo RegisterToEvent(EventRegistrationFormFields eventDetails);
     }
 }
