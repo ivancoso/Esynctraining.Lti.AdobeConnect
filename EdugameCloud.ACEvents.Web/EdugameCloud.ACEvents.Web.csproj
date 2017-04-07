@@ -40,4 +40,10 @@
   <WCFMetadata Include="Connected Services" />
 </ItemGroup>
 
+<ItemGroup>
+    <None Update="Logs\placeholder.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

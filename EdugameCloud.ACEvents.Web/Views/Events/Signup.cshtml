@@ -60,8 +60,7 @@
                     success: function (result) {
                         if (result.isSuccess) {
                             //$('#success').show().fadeOut(20000);
-                            debugger;
-                            window.location = result.RedirectUrl;
+                            window.location = result.redirectUrl;
                         } else {
                             //$('#errorMessage').html(result.Message);
                             $('#errorMessage').html("<span class='red'><b>" + result.message + "</b></span>").closest('div').show().fadeOut(20000);
