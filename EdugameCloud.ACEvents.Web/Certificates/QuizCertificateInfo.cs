@@ -15,7 +15,7 @@ namespace EdugameCloud.ACEvents.Web.Certificates
         public string Date { get; set; }
         public string ExpiresDate { get; set; }
         public string SpecificId { get; set; }
-        public Guid CertificateGuid { get; set; }
+        public Guid CertificateTemplateGuid { get; set; }
         public string State { get; set; }
         public string School { get; set; }
 

@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using Castle.Core.Logging;
 using CompanyAcDomainsNamespace;
 using CompanyEventsServiceNamespace;
+using EdugameCloud.Certificates.Pdf;
 using Esynctraining.Core.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +19,7 @@ using LookupServiceNamespace;
 using QuizResultServiceNamespace;
 using QuizServiceNamespace;
 using Esynctraining.AspNetCore.Filters;
+using Microsoft.Extensions.Options;
 //using Logger = EdugameCloud.Core.Logging.Logger;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
@@ -37,7 +39,7 @@ namespace EdugameCloud.ACEvents.Web
         {
             HostingEnvironment = env;
             LoggerFactory = loggerFactory;
-            
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -47,7 +49,7 @@ namespace EdugameCloud.ACEvents.Web
 
             loggerFactory
                 .AddConsole(Configuration.GetSection("Logging"))
-                //.AddDebug()
+                .AddDebug()
                 .AddFile(Configuration.GetSection("Logging"))
                 .AddFile(Configuration.GetSection("Logging_Serilog_Errors"));
         }
@@ -60,49 +62,19 @@ namespace EdugameCloud.ACEvents.Web
             services
                 .AddMvc(setup =>
                 {
-                    //while (setup.InputFormatters.Count > 0)
-                    //    setup.InputFormatters.RemoveAt(0);
-                    //while (setup.OutputFormatters.Count > 0)
-                    //    setup.OutputFormatters.RemoveAt(0);
-
-                    //setup.InputFormatters.Insert(0, new JilInputFormatter());
-                    //setup.OutputFormatters.Insert(0, new JilOutputFormatter());
-
                     //setup.Filters.Add(new CheckModelForNullAttribute(HostingEnvironment.IsDevelopment()));
                     setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                 })
 
                 .AddControllersAsServices();
-                //.AddJsonFormatters()
-                //.AddApiExplorer()
-                //.AddDataAnnotations();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            //services
-                //.AddCors()
-                //.AddMemoryCache();
 
-            //var container = new WindsorContainer();
-
-            //container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.Scoped());
-            //services.AddRequestScopingMiddleware(container.BeginScope);
-
-            //WindsorIoC.Initialize(container);
-            //container.RegisterComponents();
-
-            //var configurationSection = Configuration.GetSection("AppSettings");
-            //var collection = new NameValueCollection();
-            //foreach (var appSetting in configurationSection.GetChildren())
-            //{
-            //    collection.Add(appSetting.Key, appSetting.Value);
-            //}
-
-
-            //var fact = new ConsoleFactory();
-            //services.AddSingleton<Castle.Core.Logging.ILoggerFactory>(fact);
-            //services.AddSingleton<Castle.Core.Logging.ILoggerFactory, ConsoleFactory>();
             services.AddSingleton<ILogger, FakeLogger>();
+            services.AddOptions();
+            services.Configure<AppSettings>(Configuration);
+            
 
             services.AddScoped<IEmailService>(provider =>
             {
@@ -128,29 +100,38 @@ namespace EdugameCloud.ACEvents.Web
                 var client = new CompanyAcDomainsServiceClient(CompanyAcDomainsServiceClient.EndpointConfiguration.BasicHttpBinding_ICompanyAcDomainsService, companyAcDomainsServiceUrl);
                 return client;
             });
-            //services.AddScoped<ILookupService, LookupServiceClient>();
-            //services.AddScoped<ICompanyAcDomainsService, CompanyAcDomainsServiceClient>();
-            //services.AddScoped<ICompanyEventsService, CompanyEventsServiceClient>();
-            services.AddScoped<IFileService, FileServiceClient>();
-            services.AddScoped<IQuizResultService, QuizResultServiceClient>();
-            services.AddScoped<IQuizService, QuizServiceClient>();
+
+            services.AddScoped<IQuizService>(provider =>
+            {
+                var quizServiceUrl = Configuration["WebServiceReferences:QuizService"];
+                var client = new QuizServiceClient(QuizServiceClient.EndpointConfiguration.BasicHttpBinding_IQuizService, quizServiceUrl);
+                return client;
+            });
+
+            services.AddScoped<IQuizResultService>(provider =>
+            {
+                var quizResultServiceUrl = Configuration["WebServiceReferences:QuizResultService"];
+                var client = new QuizResultServiceClient(QuizResultServiceClient.EndpointConfiguration.BasicHttpBinding_IQuizResultService, quizResultServiceUrl);
+                return client;
+            });
+
+            services.AddScoped<IFileService>(provider =>
+            {
+                var configOptions = provider.GetService<IOptionsSnapshot<AppSettings>>().Value;
+                var fileServiceUrl = configOptions.WebServiceReferences.FileService;
+                var client = new FileServiceClient(FileServiceClient.EndpointConfiguration.BasicHttpBinding_IFileService, fileServiceUrl);
+                return client;
+            });
+
             services.AddScoped<IAdobeConnectAccountService, AdobeConnectAccountService>();
 
-            //container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
-
-            //container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
-            //    .DynamicParameters((k, d) => d.Add("collection", collection))
-            //    .LifeStyle.Singleton);
-
-            //container.Install(new LoggerWindsorInstaller());
-            //container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
-
-
-
-            //services.AddOptions();
-
-            //return WindsorRegistrationHelper.CreateServiceProvider(container, services);
-
+            services.AddScoped<IQuizCerfificateProcessor>(provider =>
+                {
+                    var configOptions = provider.GetService<IOptionsSnapshot<AppSettings>>().Value;
+                    var certificateSettings = configOptions.CertificateSettings;
+                    var client = new QuizCerfificateProcessor(certificateSettings);
+                    return client;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -200,8 +181,8 @@ namespace EdugameCloud.ACEvents.Web
                     template: "{controller=Events}/{action=Signup}/{id?}");
             });
 
-           
+
         }
-        
+
     }
 }

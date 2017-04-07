@@ -10,8 +10,6 @@ using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-//using System.Web.Hosting;
-//using System.Web.Mvc;
 using System.Xml.Linq;
 using CompanyAcDomainsNamespace;
 using CompanyEventsServiceNamespace;
@@ -23,49 +21,51 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
-using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 using FileServiceNamespace;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using QuizResultServiceNamespace;
 using QuizServiceNamespace;
-
-//using EdugameCloud.Certificates.Pdf;
-
-//using SimuLyve.Mbm.Core.BusinessModels;
-//using SimuLyve.Mbm.Core.BusinessModels.Pdf;
-//using SimuLyve.Mbm.Core.DomailModel;
+using ILogger = Esynctraining.Core.Logging.ILogger;
 
 namespace EdugameCloud.ACEvents.Web.Controllers
 {
     public class QuizCertificateController : Controller
     {
         private static readonly object _locker = new object();
-        private readonly QuizResultServiceClient _quizResultService;
+        private readonly IQuizResultService _quizResultService;
 
-        private readonly FileServiceClient _fileService;
-        private readonly CompanyAcDomainsServiceClient _companyAcDomainsService;
-        private readonly CompanyEventsServiceClient _companyEventsService;
-        private readonly QuizServiceClient _quizService;
+        private readonly IFileService _fileService;
+        private readonly ICompanyAcDomainsService _companyAcDomainsService;
+        private readonly ICompanyEventsService _companyEventsService;
+        private readonly IQuizService _quizService;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        //private readonly FileModel _fileModel;
+        private readonly Microsoft.Extensions.Logging.ILogger _logger;
+        private readonly IAdobeConnectAccountService _adobeConnectAccountService;
+        private readonly AppSettings _appSettings;
+        private readonly IQuizCerfificateProcessor _quizCerfificateProcessor;
 
-
-        public QuizCertificateController(QuizResultServiceClient quizResultService, FileServiceClient fileService, CompanyAcDomainsServiceClient domainsService,
-            CompanyEventsServiceClient companyEventsService, QuizServiceClient quizService, IHostingEnvironment hostingEnvironment, IHttpContextAccessor context)
+        public QuizCertificateController(IQuizResultService quizResultService, IFileService fileService, ICompanyAcDomainsService domainsService,
+            ICompanyEventsService companyEventsService, IQuizService quizService, IHostingEnvironment hostingEnvironment, IHttpContextAccessor context,
+            IAdobeConnectAccountService acProvider, ILoggerFactory loggerFactory, IOptionsSnapshot<AppSettings> appSettings, IQuizCerfificateProcessor quizCerfificateProcessor)
         {
+            _quizCerfificateProcessor = quizCerfificateProcessor;
+            _appSettings = appSettings.Value;
+            _adobeConnectAccountService = acProvider;
             _httpContextAccessor = context;
             _hostingEnvironment = hostingEnvironment;
             _quizService = quizService;
             _companyEventsService = companyEventsService;
             _companyAcDomainsService = domainsService;
             _fileService = fileService;
-
             _quizResultService = quizResultService;
+            _logger = loggerFactory.CreateLogger<QuizCerfificateProcessor>();
         }
 
 
@@ -78,13 +78,14 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 if (quizResult == null)
                     return NotFound();
 
-                string imagePath = GetCertProcessor(quizResult).RenderPreview(ImageFormat.Jpeg, BuildTemplateData(quizResult));
-                return File(imagePath, "image/jpeg", "CertificatePreview.jpg");
+                //var certTemplatePath = GetCertificatePath(quizResult.CertificateTemplateGuid);
+                string imagePath = _quizCerfificateProcessor.RenderPreview(quizResultGuid.ToString(), quizResult.CertificateTemplateGuid.ToString(), ImageFormat.Jpeg, BuildTemplateData(quizResult));
+                return PhysicalFile(imagePath, "image/jpeg", "CertificatePreview.jpg");
 
             }
             catch (Exception ex)
             {
-                Esynctraining.Core.Utils.IoC.Resolve<ILogger>().Error("Error during Certificate Preview.", ex);
+                _logger.LogError("Error during Certificate Preview.", ex);
                 throw;
             }
         }
@@ -98,20 +99,23 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 if (quizResult == null)
                     return NotFound();
 
+                //string certificateTemplateFilePath = GetCertificatePath(quizResult.CertificateTemplateGuid);
+                var templateUid = quizResult.CertificateTemplateGuid.ToString();
                 if (_httpContextAccessor.HttpContext.Request.IsMobileBrowser())
                 {
-                    string imagePath = GetCertProcessor(quizResult).RenderPreview(ImageFormat.Png, BuildTemplateData(quizResult), resize: false);
-                    return File(imagePath, "image/png", $"Certificate_{quizResult.ParticipantName}.png");
+
+                    string imagePath = _quizCerfificateProcessor.RenderPreview(quizResultGuid.ToString(), templateUid, ImageFormat.Png, BuildTemplateData(quizResult), resize: false);
+                    return PhysicalFile(imagePath, "image/png", $"Certificate_{quizResult.ParticipantName}.png");
                 }
 
-                string filePath = GetCertProcessor(quizResult).RenderPdfDocument(BuildTemplateData(quizResult));
+                string filePath = _quizCerfificateProcessor.RenderPdfDocument(quizResultGuid.ToString(), templateUid, BuildTemplateData(quizResult));
                 //var contentDisposition = new ContentDisposition()
                 //{
                 //    FileName = filePath,
                 //    Inline = true
                 //};
                 //Response.Headers.Add("Content-Disposition", contentDisposition.ToString() );
-                return File(filePath, "application/pdf", $"Certificate_{quizResult.ParticipantName}.pdf");
+                return PhysicalFile(filePath, "application/pdf", $"Certificate_{quizResult.ParticipantName}.pdf");
                 //return new FilePathResultEx(filePath, System.Web.MimeMapping.GetMimeMapping(filePath))
                 //{
                 //    FileDownloadName = filePath,
@@ -120,54 +124,47 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             }
             catch (Exception ex)
             {
-                Esynctraining.Core.Utils.IoC.Resolve<ILogger>().Error("Error during Certificate Preview.", ex);
+                _logger.LogError("Error during Certificate Preview.", ex);
                 throw;
             }
         }
 
 
-        private QuizCerfificateProcessor GetCertProcessor(QuizCertificateInfo value)
-        {
-            string certificateTemplateFilePath = GetCertificatePath(value.CertificateGuid);
-            return new QuizCerfificateProcessor(certificateTemplateFilePath, value.CertificateGuid.ToString());
-        }
-
-        //private  GetCertProcessor(ProjectCertificateInfo value)
+        //private string GetCertificatePath(Guid certificateTemplateContentId)
         //{
-        //    string certificateTemplateFilePath = GetCertificatePath(value.CertificateTemplateContentId.Value);
-        //    return new QuizCerfificateProcessor(certificateTemplateFilePath, value.CertificateTemplateContentId.Value.ToString());
+        //    var certificateTemplateFilePath = GetPdfTempatePath(certificateTemplateContentId);
+
+        //    if (!System.IO.File.Exists(certificateTemplateFilePath))
+        //    {
+        //        throw new InvalidOperationException($"Certificate template {certificateTemplateFilePath} does not exist!");
+        //    }
+
+        //    // TODO: think about by-key locking
+        //    //if (!System.IO.File.Exists(certificateTemplateFilePath))
+        //    //{
+        //    //    lock (_locker)
+        //    //    {
+        //    //        if (!System.IO.File.Exists(certificateTemplateFilePath))
+        //    //        {
+        //    //            var certTemplate = _fileService.GetByIdAsync(certificateTemplateContentId).Result;
+        //    //            //var certTemplate = new FileDTO()
+        //    //            //{
+        //    //            //    fileName = "temp"
+        //    //            //};
+        //    //            var content = System.IO.File.ReadAllBytes(certTemplate.fileName);
+        //    //            System.IO.File.WriteAllBytes(certificateTemplateFilePath, content);
+        //    //        }
+        //    //    }
+        //    //}
+
+        //    return certificateTemplateFilePath;
         //}
-
-        private string GetCertificatePath(Guid certificateTemplateContentId)
-        {
-            string certificateTemplateFilePath = GetPdfTempatePath(certificateTemplateContentId);
-
-            // TODO: think about by-key locking
-            if (!System.IO.File.Exists(certificateTemplateFilePath))
-            {
-                lock (_locker)
-                {
-                    if (!System.IO.File.Exists(certificateTemplateFilePath))
-                    {
-                        var certTemplate = _fileService.GetByIdAsync(certificateTemplateContentId).Result;
-                        //var certTemplate = new FileDTO()
-                        //{
-                        //    fileName = "temp"
-                        //};
-                        var content = System.IO.File.ReadAllBytes(certTemplate.fileName);
-                        System.IO.File.WriteAllBytes(certificateTemplateFilePath, content);
-                    }
-                }
-            }
-
-            return certificateTemplateFilePath;
-        }
 
         private string GetPdfTempatePath(Guid certificateTemplateContentId)
         {
-            string setting = ConfigurationManager.AppSettings["PdfTemplateFolder"];
+            string setting = _appSettings.CertificateSettings.PdfTemplateFolder;
             string folder = setting.StartsWith("~")
-                ? Path.Combine(_hostingEnvironment.WebRootPath, setting)
+                ? Path.Combine(Directory.GetCurrentDirectory(), setting.TrimStart('~').TrimStart('/'))
                 : setting;
 
             return Path.Combine(folder,
@@ -180,11 +177,13 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var eventMapping = _companyEventsService.GetByIdAsync(quizResult.eventQuizMappingId ?? 0).Result;
             var acDomain = _companyAcDomainsService.GetByIdAsync(eventMapping.companyAcDomainId).Result;
             var acUrl = acDomain.path;
+            var login = acDomain.user;
+            var pass = acDomain.password;
             var apiUrl = new Uri(acUrl);
-            var logger = IoC.Resolve<ILogger>();
 
             var scoId = eventMapping.acEventScoId;
-            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
+            var proxy = _adobeConnectAccountService.GetProvider(new AdobeConnectAccess(apiUrl, login, pass), false);
+
             var loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
             if (!loginResult.Success)
                 throw new InvalidOperationException("Can't login to AC");
@@ -225,7 +224,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             var stateQuestionId = stateNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
             var schoolQuestionId = schoolNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
-            
+
             var userAnswers = doc.Root?.Descendants("user_list").Descendants("user").ToList();
             var userAnswer = userAnswers?.FirstOrDefault(x => x.Attribute("login").Value.ToString().ToLower().Equals(quizResult.acEmail, StringComparison.OrdinalIgnoreCase));
             var state = userAnswer?.Attribute("registration_question_" + stateQuestionId)?.Value ?? String.Empty;
@@ -266,7 +265,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 TrainerName = teacherName,
                 Date = UnixTimeStampToDateTime(quizResult.dateCreated).ToString("MMMM dd, yyyy")
             };
-            quizCertificateInfo.CertificateGuid = CertTemplateBuilder.GetTemplateGuid(state);
+            quizCertificateInfo.CertificateTemplateGuid = CertTemplateBuilder.GetTemplateGuid(state);
 
             return quizCertificateInfo;
         }

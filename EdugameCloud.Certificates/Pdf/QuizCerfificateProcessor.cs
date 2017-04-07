@@ -6,47 +6,45 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Web.Hosting;
 using Esynctraining.PdfProcessor.Renders;
 using iTextSharp.text.pdf;
 
 namespace EdugameCloud.Certificates.Pdf
 {
-    public sealed class QuizCerfificateProcessor
+    public sealed class QuizCerfificateProcessor : IQuizCerfificateProcessor
     {
-        private readonly string _templateFilePath;
-        private readonly string _templateToken;
+        private readonly CertificateSettings _certificateSettings;
 
-
-        public QuizCerfificateProcessor(string templateFilePath, string templateToken)
+        public QuizCerfificateProcessor(CertificateSettings settings)
         {
-            Check.Argument.IsNotNullOrEmpty(templateFilePath, "templateFilePath");
-            Check.Argument.IsNotNullOrEmpty(templateToken, "templateToken");
-
-            _templateFilePath = templateFilePath;
-            _templateToken = templateToken;
+            Check.Argument.IsNotNullOrEmpty(settings.PdfOutputFolder, "PdfOutputFolder");
+            Check.Argument.IsNotNullOrEmpty(settings.PdfTemplateFolder, "PdfTemplateFolder");
+            _certificateSettings = settings;
         }
 
-
-        public string RenderPdfDocument(IDictionary<string, string> fields)
+        //string certificateUid, string templateToken,
+        public string RenderPdfDocument(string certificateUid, string templateUid, IDictionary<string, string> fields)
         {
             Check.Argument.IsNotNull(fields, "fields");
+            Check.Argument.IsNotNull(fields, "certificateUid");
 
-            string outputFilePath = BuildPdfPath(fields["ParticipantName"]);
-            RenderPdfFile(outputFilePath, fields);
+            string outputFilePath = BuildPdfOutputPath(certificateUid, fields["ParticipantName"]);
+            var templateFilePath = GetPdfTempatePath(Guid.Parse(templateUid));
+            RenderPdfFile(templateFilePath, outputFilePath, fields);
             return outputFilePath;
         }
 
-        public string RenderPreview(ImageFormat format, IDictionary<string, string> fields, bool resize = true)
+        public string RenderPreview(string certificateUid, string templateUid, ImageFormat format, IDictionary<string, string> fields, bool resize = true)
         {
             Check.Argument.IsNotNull(fields, "fields");
 
-            string generatedPdfPath = BuildPdfPath(fields["ParticipantName"]);
+            string generatedPdfPath = BuildPdfOutputPath(certificateUid, fields["ParticipantName"]);
             string imageFilePath = generatedPdfPath + FileExtensionFromEncoder(format);
             if (File.Exists(imageFilePath))
                 return imageFilePath;
 
-            RenderPdfFile(generatedPdfPath, fields);
+            var templateFilePath = GetPdfTempatePath(Guid.Parse(templateUid));
+            RenderPdfFile(templateFilePath, generatedPdfPath, fields);
 
             using (var render = new GsNetPdfRender(generatedPdfPath, 150))
             {
@@ -72,23 +70,39 @@ namespace EdugameCloud.Certificates.Pdf
         //    }
         //}
 
+        private string GetPdfTempatePath(Guid templateId)
+        {
+            string setting = _certificateSettings.PdfTemplateFolder;
+            string folder = setting.StartsWith("~")
+                ? Path.Combine(Directory.GetCurrentDirectory(), setting.TrimStart('~').TrimStart('/'))
+                : setting;
 
-        private void RenderPdfFile(string outputFilePath, IDictionary<string, string> fields)
+            return Path.Combine(folder,
+                string.Format("{0}.pdf", templateId.ToString()));
+        }
+
+        private void RenderPdfFile(string templateFilePath, string templateOutputPath, IDictionary<string, string> fields)
         {
             Check.Argument.IsNotNull(fields, "fields");
 
-            if (File.Exists(outputFilePath))
+            if (File.Exists(templateOutputPath))
                 return;
 
-            using (var pdfOutputFile = new FileStream(outputFilePath, FileMode.Create))
+            using (var pdfOutputFile = new FileStream(templateOutputPath, FileMode.Create))
             {
-                ProcessPdf(pdfOutputFile, fields);
+                ProcessPdf(templateFilePath, pdfOutputFile, fields);
             }
+
+
+            //PdfReader pdfReader = new PdfReader(certificateUid);
+            //PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileStream(certificateUid, FileMode.Create));
+
+            //ProcessPdf(certificateUid, certificateUid, fields);
         }
 
-        private void ProcessPdf(Stream outputStream, IDictionary<string, string> quizCertificateDetails)
+        private void ProcessPdf(string templateFilePath, Stream outputStream, IDictionary<string, string> quizCertificateDetails)
         {
-            using (var pdfReader = new PdfReader(_templateFilePath))
+            using (var pdfReader = new PdfReader(templateFilePath))
             {
                 using (var pdfStamper = new PdfStamper(pdfReader, outputStream))
                 {
@@ -105,13 +119,14 @@ namespace EdugameCloud.Certificates.Pdf
             }
         }
 
-        private string BuildPdfPath(string participantName)
+        private string BuildPdfOutputPath(string certificateUid, string participantName)
         {
-            string fileName = string.Format("{0}_{1}.pdf", _templateToken, participantName);
+            string fileName = string.Format("{0}_{1}.pdf", certificateUid, participantName);
 
-            string setting = ConfigurationManager.AppSettings["PdfOutputFolder"];
-            string folder = setting.StartsWith("~")
-                ? HostingEnvironment.MapPath(setting)
+            string setting = _certificateSettings.PdfOutputFolder;
+            string folder = setting.StartsWith("~") ?
+                //? HostingEnvironment.MapPath(setting)
+                Path.Combine(Directory.GetCurrentDirectory(), setting.TrimStart('~').TrimStart('/'))
                 : setting;
 
             return Path.Combine(folder, fileName);
