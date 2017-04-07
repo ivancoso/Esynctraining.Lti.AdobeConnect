@@ -13,42 +13,9 @@
     [Synchronization]
     public class NHibernateSessionSource : ISessionSource
     {
-        #region Static Fields
-
-        /// <summary>
-        /// The n hibernate hashtable key.
-        /// </summary>
         protected static readonly object NHibernateHashtableKey = new object();
 
-        #endregion
 
-        #region Fields
-
-        #endregion
-
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NHibernateSessionSource"/> class.
-        /// </summary>
-        /// <param name="sessionFactory">
-        /// The session factory.
-        /// </param>
-        public NHibernateSessionSource(ISessionFactory sessionFactory)
-        {
-            if (Local.Data[NHibernateHashtableKey] == null)
-            {
-                Local.Data[NHibernateHashtableKey] = sessionFactory.OpenSession();
-            }
-        }
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Gets the session.
-        /// </summary>
         public ISession Session
         {
             get
@@ -57,13 +24,16 @@
             }
         }
 
-        #endregion
 
-        #region Public Methods and Operators
+        public NHibernateSessionSource(ISessionFactory sessionFactory)
+        {
+            if (Local.Data[NHibernateHashtableKey] == null)
+            {
+                Local.Data[NHibernateHashtableKey] = sessionFactory.OpenSession();
+            }
+        }
 
-        /// <summary>
-        /// The dispose.
-        /// </summary>
+
         public virtual void Dispose()
         {
             if (this.Session != null)
@@ -89,6 +59,6 @@
             }
         }
 
-        #endregion
     }
+
 }

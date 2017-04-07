@@ -1,10 +1,4 @@
-﻿using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Constants;
-using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.MVC.Services;
-
-namespace EdugameCloud.MVC.Controllers
+﻿namespace EdugameCloud.MVC.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -21,7 +15,11 @@ namespace EdugameCloud.MVC.Controllers
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.MVC.Attributes;
+    using EdugameCloud.MVC.Services;
     using EdugameCloud.MVC.ViewModels;
     using EdugameCloud.MVC.ViewResults;
     using Esynctraining.Core.Business.Models;

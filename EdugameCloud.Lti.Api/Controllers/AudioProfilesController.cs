@@ -71,9 +71,10 @@ namespace EdugameCloud.Lti.Api.Controllers
                 }
 
                 var provider = this.GetAdminProvider();
-                var lmsUser = session.LmsUser ??
-                              LmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, LmsCompany.Id).Value;
-                
+                var lmsUser = session.LmsUser 
+                    // TODO: is it possible??
+                    ?? LmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, LmsCompany.Id).Value;
+
                 var profiles = AudioProfileService.GetAudioProfiles(provider, LmsCompany, lmsUser.PrincipalId);
                 return profiles.Select(x => new AudioProfileDto(x)).ToSuccessResult();
             }

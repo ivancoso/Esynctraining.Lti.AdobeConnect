@@ -202,20 +202,20 @@
             return this.Repository.FindOne(defaultQuery);
         }
 
-        public IFutureValue<LmsCourseMeeting> GetOneByCourseAndType(int companyLmsId, int courseId, LmsMeetingType type)
-        {
-            if (companyLmsId <= 0)
-                throw new ArgumentOutOfRangeException(nameof(companyLmsId));
-            if (courseId == 0)
-                throw new ArgumentOutOfRangeException(nameof(courseId));
-            if (type <= 0)
-                throw new ArgumentOutOfRangeException(nameof(type));
+        //public IFutureValue<LmsCourseMeeting> GetOneByCourseAndType(int companyLmsId, int courseId, LmsMeetingType type)
+        //{
+        //    if (companyLmsId <= 0)
+        //        throw new ArgumentOutOfRangeException(nameof(companyLmsId));
+        //    if (courseId == 0)
+        //        throw new ArgumentOutOfRangeException(nameof(courseId));
+        //    if (type <= 0)
+        //        throw new ArgumentOutOfRangeException(nameof(type));
 
-            int typeValue = (int)type;
-            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.LmsCompanyId == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == typeValue).Take(1);
-            return this.Repository.FindOne(defaultQuery);
-        }
+        //    int typeValue = (int)type;
+        //    var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
+        //        .Where(x => x.LmsCompanyId == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == typeValue).Take(1);
+        //    return this.Repository.FindOne(defaultQuery);
+        //}
 
         public IEnumerable<LmsCourseMeeting> GetAllByCourseId(int companyLmsId, int courseId)
         {

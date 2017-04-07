@@ -61,22 +61,16 @@
         public static Route MapLowercaseRoute(this RouteCollection routes, string name, string url, object defaults, object constraints)
         {
             if (routes == null)
-            {
-                throw new ArgumentNullException("routes");
-            }
-
+                throw new ArgumentNullException(nameof(routes));
             if (url == null)
-            {
-                throw new ArgumentNullException("url");
-            }
+                throw new ArgumentNullException(nameof(url));
 
             var route = new LowercaseRoute(url, new MvcRouteHandler())
-                            {
-                                Defaults = new RouteValueDictionary(defaults), 
-                                Constraints =
-                                    new RouteValueDictionary(constraints), 
-                                DataTokens = new RouteValueDictionary()
-                            };
+            {
+                Defaults = new RouteValueDictionary(defaults),
+                Constraints = new RouteValueDictionary(constraints),
+                DataTokens = new RouteValueDictionary(),
+            };
             routes.Add(name, route);
             return route;
         }

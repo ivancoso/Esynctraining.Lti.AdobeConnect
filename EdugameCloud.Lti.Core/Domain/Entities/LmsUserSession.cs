@@ -26,6 +26,7 @@
 
         /// <summary>
         /// Gets or sets the company LMS.
+        /// Consider using LmsCompany in your BaseApiController.
         /// </summary>
         public virtual LmsCompany LmsCompany { get; set; }
 

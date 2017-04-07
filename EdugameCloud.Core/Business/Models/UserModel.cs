@@ -11,7 +11,6 @@
     using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
@@ -20,11 +19,10 @@
     using Esynctraining.NHibernate;
     using NHibernate;
     using NHibernate.Criterion;
-    using NHibernate.Linq;
     using NHibernate.Transform;
 
     /// <summary>
-    ///     The user model.
+    /// The user model.
     /// </summary>
     public class UserModel : BaseModel<User, int>
     {

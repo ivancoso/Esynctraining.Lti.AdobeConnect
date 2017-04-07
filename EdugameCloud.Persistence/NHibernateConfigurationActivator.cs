@@ -18,23 +18,6 @@
     /// </summary>
     public class NHibernateConfigurationActivator : DefaultComponentActivator
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NHibernateConfigurationActivator"/> class.
-        /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <param name="kernel">
-        /// The kernel.
-        /// </param>
-        /// <param name="onCreation">
-        /// The on creation.
-        /// </param>
-        /// <param name="onDestruction">
-        /// The on destruction.
-        /// </param>
         public NHibernateConfigurationActivator(
             ComponentModel model, 
             IKernelInternal kernel, 
@@ -44,25 +27,7 @@
         {
         }
 
-        #endregion
 
-        #region Methods
-
-        /// <summary>
-        /// The create instance.
-        /// </summary>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        /// <param name="constructor">
-        /// The constructor.
-        /// </param>
-        /// <param name="arguments">
-        /// The arguments.
-        /// </param>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
         protected override object CreateInstance(
             CreationContext context, 
             ConstructorCandidate constructor, 
@@ -88,6 +53,6 @@
             return cfg;
         }
 
-        #endregion
     }
+
 }

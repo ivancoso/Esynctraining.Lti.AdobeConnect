@@ -9,5 +9,7 @@ namespace EdugameCloud.Core.Business.Models
             : base(repository)
         {
         }
+
     }
+
 }

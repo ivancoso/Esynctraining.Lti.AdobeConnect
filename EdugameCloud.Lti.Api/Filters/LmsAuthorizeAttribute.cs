@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Api.Controllers;
 using EdugameCloud.Lti.API;

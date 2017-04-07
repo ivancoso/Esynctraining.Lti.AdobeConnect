@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
@@ -19,10 +18,6 @@ namespace EdugameCloud.Lti.Api.Controllers
 {
     public class AcMeetingController : BaseApiController
     {
-        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
-
-        #region Constructors and Destructors
-
         public AcMeetingController(
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
@@ -31,7 +26,6 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
         }
 
-        #endregion
 
         [Route("acSearchMeeting")]
         [HttpPost]

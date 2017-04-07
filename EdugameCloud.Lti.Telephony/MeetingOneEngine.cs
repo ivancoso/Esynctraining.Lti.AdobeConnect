@@ -23,10 +23,7 @@ namespace EdugameCloud.Lti.Telephony
 
         public MeetingOneEngine(ILogger logger, string baseAddress = null)
         {
-            if (logger == null)
-                throw new ArgumentNullException(nameof(logger));
-
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _baseAddress = baseAddress ?? MeetingOneConfigurationSection.Current.ApiUrl;
         }
 

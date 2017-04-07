@@ -95,7 +95,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var trace = new StringBuilder();
                 var fb = new SeminarFolderBuilder(model.SeminarLicenseId);
                 OperationResult ret = MeetingSetup.SaveMeeting(
-                    Session.LmsCompany,
+                    LmsCompany,
                     GetUserProvider(),
                     param,
                     model,

@@ -4,8 +4,6 @@
     using System.Security.Principal;
     using EdugameCloud.Core.Domain.Entities;
 
-    //using Esynctraining.Core.Authentication;
-
     /// <summary>
     ///     The Edugame cloud identity.
     /// </summary>

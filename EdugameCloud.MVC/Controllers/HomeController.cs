@@ -17,7 +17,6 @@ namespace EdugameCloud.MVC.Controllers
     [HandleError]
     public partial class HomeController : BaseController
     {
-
         private readonly UserActivationModel userActivationModel;
         private readonly UserModel userModel;
         private readonly IBuildVersionProcessor versionProcessor;

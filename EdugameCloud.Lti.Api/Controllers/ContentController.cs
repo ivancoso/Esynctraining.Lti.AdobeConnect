@@ -32,17 +32,13 @@ namespace EdugameCloud.Lti.Api.Controllers
     [Route("my-content")]
     public class ContentController : BaseApiController
     {
-        //private readonly IMemoryCache _memoryCache;
         private readonly LmsUserModel _lmsUserModel;
 
-
-        //private Esynctraining.AdobeConnect.IAdobeConnectAccountService BaseAcAccountService = IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>();
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 
 
         public ContentController(
-            //IMemoryCache memoryCache,
             LmsUserModel lmsUserModel,
             EdugameCloud.Lti.API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
@@ -51,7 +47,6 @@ namespace EdugameCloud.Lti.Api.Controllers
             : base(acAccountService, settings, logger, cache)
         {
             _lmsUserModel = lmsUserModel;
-            //_memoryCache = memoryCache;
         }
 
 

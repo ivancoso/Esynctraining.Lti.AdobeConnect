@@ -1,16 +1,12 @@
 ﻿namespace EdugameCloud.Persistence
 {
     using System.Configuration;
-    //using System.Web.Configuration;
     using Castle.Core.Resource;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
     using EdugameCloud.Core.Converters;
-    //using EdugameCloud.Core.Business.Models;
-    //using EdugameCloud.Core.Converters;
-
     using Esynctraining.Core.Providers;
-    
+
     public static class WindsorContainerConfiguration
     {
         public static void RegisterComponents(this IWindsorContainer container)
