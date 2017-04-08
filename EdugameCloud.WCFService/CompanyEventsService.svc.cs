@@ -51,17 +51,7 @@ namespace EdugameCloud.WCFService
         {
             get { return IoC.Resolve<QuizResultModel>(); }
         }
-
-        private ILogger Logger
-        {
-            get { return IoC.Resolve<ILogger>(); }
-        }
-
-        protected dynamic Settings
-        {
-            get { return IoC.Resolve<ApplicationSettingsProvider>(); }
-        }
-
+       
         public CompanyEventDTO[] GetEventsByCompany(int companyId)
         {
             var defaultAcDomain = CompanyAcServerModel.GetAllByCompany(companyId).FirstOrDefault(x => x.IsDefault);
@@ -213,7 +203,9 @@ namespace EdugameCloud.WCFService
 
         public CompanyQuizEventMappingDTO GetByGuid(Guid id)
         {
+            Logger.Info($"event mapping quid is {id}");
             var entity = CompanyEventQuizMappingModel.GetByGuid(id);
+
             return new CompanyQuizEventMappingDTO(entity, Settings);
         }
     }

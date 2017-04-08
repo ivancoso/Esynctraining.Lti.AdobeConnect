@@ -8,28 +8,32 @@ using EmailServiceNamespace;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
-using Esynctraining.Core.Logging;
 using LookupServiceNamespace;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using ILogger = Esynctraining.Core.Logging.ILogger;
 using StatusCodes = Esynctraining.AC.Provider.Entities.StatusCodes;
 
 namespace EdugameCloud.ACEvents.Web.Controllers
 {
     public class EventsController : Controller
     {
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
         private readonly IEmailService _emailService;
         private readonly ILookupService _lookupService;
         private readonly ICompanyEventsService _companyEventsService;
         private readonly ICompanyAcDomainsService _companyAcDomainsService;
         private readonly IHttpContextAccessor _context;
         private readonly IAdobeConnectAccountService _acService;
+        private readonly Microsoft.Extensions.Logging.ILogger _logger;
+        private readonly AppSettings _appeSettings;
 
-        public EventsController(ILogger logger, IEmailService emailService,
+        public EventsController(IEmailService emailService,
             ICompanyEventsService companyEventsService, ILookupService lookupService,
-            ICompanyAcDomainsService companyAcDomainsService, IHttpContextAccessor context, IAdobeConnectAccountService acService)
+            ICompanyAcDomainsService companyAcDomainsService, IHttpContextAccessor context, IAdobeConnectAccountService acService, ILoggerFactory loggerFactory, IOptionsSnapshot<AppSettings> appSettings)
         {
             _acService = acService;
             _context = context;
@@ -37,7 +41,8 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             _companyEventsService = companyEventsService;
             _lookupService = lookupService;
             _emailService = emailService;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<EventsController>();
+            _appeSettings = appSettings.Value;
         }
 
         public IActionResult Signup()
@@ -45,6 +50,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             if (string.IsNullOrEmpty(_context.HttpContext.Request.Query["eventQuizMappingId"]))
                 throw new InvalidOperationException("You should pass eventQuizMappingId");
 
+            _logger.LogInformation($"companyEventsService points to {_appeSettings.WebServiceReferences.CompanyEventsService}");
             var eventQuizMappingId = _context.HttpContext.Request.Query["eventQuizMappingId"];
             var eventQuizMappingIdGuid = Guid.Parse(eventQuizMappingId);
             var companyEventsService = _companyEventsService;
@@ -58,7 +64,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var pass = acDomain.password;
             var eventScoId = eventMapping.acEventScoId;
             var apiUrl = new Uri(acUrl);
-            _logger.Info("Signup started");
+            _logger.LogInformation("Signup started");
             var proxy = _acService.GetProvider(new AdobeConnectAccess(apiUrl, login, pass), true);
             var eventInfo = proxy.GetScoInfo(eventScoId);
             if (!eventInfo.Success)
@@ -103,7 +109,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
         public IActionResult GetSchoolPerState(string stateCode)
         {
-            _logger.Info("Gettings states");
+            _logger.LogInformation("Gettings states");
             var lookupWebService = _lookupService;
             //_logger.Info("lookup url is " + lookupWebService.Endpoint.Address.Uri);
             var schools = lookupWebService.GetSchoolsAsync().Result.Where(x => x.State.stateCode == stateCode);
@@ -185,13 +191,13 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 }
                 catch (Exception e)
                 {
-                    _logger.Error("Error on adding user as a participant to an event", e);
+                    _logger.LogError("Error on adding user as a participant to an event", e);
                 }
 
                 if (status.Code != StatusCodes.ok)
                 {
                     var message = $"{status.Code}  {status.InnerXml} {status.InvalidField} {status.UnderlyingExceptionInfo} ";
-                    _logger.Error(message);
+                    _logger.LogError(message);
                     return Json(new { IsSuccess = false, Message = status.UnderlyingExceptionInfo });
                 }
 
@@ -218,7 +224,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                     message = "The registration cannot be completed. Please contact your Administrator.";
                 if (message.Contains("sco_expired"))
                     message = "The registration to the event is expired. Please contact your Administrator.";
-                _logger.Error(message);
+                _logger.LogError(message);
                 return Json(new { IsSuccess = false, Message = message });
             }
             return Json(new { IsSuccess = true, Message = "You've successfully signed up for an event!", RedirectUrl = Url.Action("SuccessPage") });
