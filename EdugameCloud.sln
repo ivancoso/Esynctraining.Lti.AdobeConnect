@@ -505,7 +505,6 @@ Global
 		{7DADF90A-DA89-48A5-A266-EE9A9A43D8CD}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{7DADF90A-DA89-48A5-A266-EE9A9A43D8CD}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
 		{7DADF90A-DA89-48A5-A266-EE9A9A43D8CD}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{7DADF90A-DA89-48A5-A266-EE9A9A43D8CD}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 		{4323CA31-A7B4-4EEF-97C5-F731F20FBFDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4323CA31-A7B4-4EEF-97C5-F731F20FBFDE}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{4323CA31-A7B4-4EEF-97C5-F731F20FBFDE}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -518,7 +517,6 @@ Global
 		{4323CA31-A7B4-4EEF-97C5-F731F20FBFDE}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{4323CA31-A7B4-4EEF-97C5-F731F20FBFDE}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
 		{4323CA31-A7B4-4EEF-97C5-F731F20FBFDE}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{4323CA31-A7B4-4EEF-97C5-F731F20FBFDE}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
