@@ -8,6 +8,8 @@ namespace EdugameCloud.ACEvents.Web
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
+                .CaptureStartupErrors(true)
+                .UseSetting("detailedErrors", "true")
                 .UseKestrel(opt =>
                     {
                         opt.AddServerHeader = false;
