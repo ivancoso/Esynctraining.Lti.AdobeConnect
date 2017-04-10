@@ -3,12 +3,11 @@ namespace Esynctraining.Core.Utils
     using System;
     using System.Security.Cryptography;
     using System.Text;
-    using System.Web.Configuration;
-    using System.Web.Security;
 
     /// <summary>
     /// The cryptographer.
     /// </summary>
+    [Obsolete("Moved to Esynctraining.Crypto")]
     public static class Cryptographer
     {
         #region Constants
@@ -69,12 +68,14 @@ namespace Esynctraining.Core.Utils
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public static string HashPassword(string password, string passwordSalt)
-        {
-            return FormsAuthentication.HashPasswordForStoringInConfigFile(
-                passwordSalt + password, FormsAuthPasswordFormat.SHA1.ToString());
-        }
+        //public static string HashPassword(string password, string passwordSalt)
+        //{
+        //    return FormsAuthentication.HashPasswordForStoringInConfigFile(
+        //        passwordSalt + password, FormsAuthPasswordFormat.SHA1.ToString());
+        //}
 
         #endregion
+
     }
+
 }
