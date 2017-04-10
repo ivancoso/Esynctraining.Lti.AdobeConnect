@@ -1280,9 +1280,7 @@
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
                         TestSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
 
-                        var passingScore = tests[acSession].PassingScore.HasValue
-                                               ? tests[acSession].PassingScore.Value
-                                               : 0;
+                        var passingScore = tests[acSession].PassingScore ?? 0;
                         var questions = sessionResults[acSession].questions;
                         var details =
                             new[] { acSession }.Select(
@@ -1300,7 +1298,7 @@
                                     (long)sessionResults[s].players.Average(p => (p.endTime.ConvertFromUnixTimeStamp() - p.startTime.ConvertFromUnixTimeStamp()).Ticks),
                                         passingScore,
                                         passingScorePercent = ((double)passingScore / 100).ToString("0.0%"),
-                                        timeLimit = tests[s].TimeLimit.HasValue ? tests[s].TimeLimit.Value : 0,
+                                        timeLimit = tests[s].TimeLimit ?? 0,
                                     }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
                     };
