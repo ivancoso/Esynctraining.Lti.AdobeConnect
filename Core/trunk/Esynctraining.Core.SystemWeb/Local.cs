@@ -7,6 +7,7 @@
     /// <summary>
     /// The local.
     /// </summary>
+    [Obsolete("Consider not to use this class in your code. User console\asp.net\asp.net code specific code instead.")]
     public static class Local
     {
         #region Static Fields

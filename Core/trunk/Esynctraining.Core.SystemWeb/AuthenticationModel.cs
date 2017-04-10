@@ -10,62 +10,24 @@ namespace Esynctraining.Core.Business.Models
     /// </summary>
     public class AuthenticationModel 
     {
-
-        #region Public Properties
-
-        /// <summary>
-        ///     Gets the default url.
-        /// </summary>
-        public static string DefaultUrl
-        {
-            get
-            {
-                return FormsAuthentication.DefaultUrl;
-            }
-        }
-
-        #endregion
+        public static string DefaultUrl => FormsAuthentication.DefaultUrl;
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     The create random password.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="string" />.
-        /// </returns>
+        [Obsolete]
         public static string CreateRandomPassword()
         {
             return CreateRandomPassword(8);
         }
 
-        /// <summary>
-        /// The create random password.
-        /// </summary>
-        /// <param name="passwordLength">
-        /// The password length.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        [Obsolete]
         public static string CreateRandomPassword(int passwordLength)
         {
             const string AllowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
             return CreateRandomPassword(passwordLength, AllowedChars);
         }
 
-        /// <summary>
-        /// The create random password.
-        /// </summary>
-        /// <param name="passwordLength">
-        /// The password length.
-        /// </param>
-        /// <param name="allowedChars">
-        /// The allowed chars.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        [Obsolete]
         public static string CreateRandomPassword(int passwordLength, string allowedChars)
         {
             var randNum = new Random();
