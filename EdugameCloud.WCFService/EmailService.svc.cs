@@ -2,6 +2,9 @@
 
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Xml.Linq;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.WCFService.Mail.Models;
 using Esynctraining.AC.Provider;
@@ -55,6 +58,10 @@ namespace EdugameCloud.WCFService
         protected dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
 
         private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
+
+        private SchoolModel SchoolModel => IoC.Resolve<SchoolModel>();
+
+        private IAdobeConnectAccountService AdobeConnectAccountService => IoC.Resolve<IAdobeConnectAccountService>();
 
         #region Public Methods and Operators
 
@@ -266,6 +273,111 @@ namespace EdugameCloud.WCFService
             return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
         }
 
+        public OperationResultDto SendCertificateToTeacher(string postQuizResultGuid)
+        {
+            Guid guid;
+            var canParse = Guid.TryParse(postQuizResultGuid, out guid);
+            if (!canParse)
+            {
+                var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, ErrorsTexts.GetResultError_NotFound, "No item with such id found");
+                this.LogError("EmailService.SendCertificateToTeacher", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+            var postQuizResult = QuizResultModel.GetOneByGuid(guid).Value;
+            var emailsNotSend = new List<string>();
+            if (string.IsNullOrEmpty(postQuizResult.ACEmail))
+            {
+                Logger.Warn($"[SendCertificateToTeacher] Email is empty. quizResultId={postQuizResult.Id}");
+                emailsNotSend.Add(postQuizResult.ParticipantName);
+            }
+
+            var eventMapping = CompanyEventQuizMappingModel.GetOneById(postQuizResult.EventQuizMapping.Id).Value;
+            var acUrl = eventMapping.CompanyAcDomain.AcServer;
+            var login = eventMapping.CompanyAcDomain.Username;
+            var password = eventMapping.CompanyAcDomain.Password;
+            var adobeConnectProxy = AdobeConnectAccountService.GetProvider(new AdobeConnectAccess(new Uri(acUrl), login, password), false);
+
+            var loginResult = adobeConnectProxy.Login(new UserCredentials(login, password));
+            if (!loginResult.Success)
+                throw new InvalidOperationException("Can't login to AC");
+
+            var dynamicQuestionAnswers = GetDynamicQuestionAnswers(acUrl, eventMapping.AcEventScoId,
+                loginResult.Status.SessionInfo, postQuizResult.ACEmail);
+            var schoolNumber = dynamicQuestionAnswers["school"];
+            var school = SchoolModel.GetOneByName(schoolNumber);
+            var schoolEmail = school.SchoolEmail;
+            if (string.IsNullOrEmpty(schoolEmail))
+            {
+                Logger.Warn($"[SendCertificateToTeacher] Teacher Email is empty. quizResultId={postQuizResult.Id}");
+                emailsNotSend.Add(schoolEmail);
+            }
+
+            var schoolAccountName = school.AccountName;
+            var model = new TeacherCertificateEmailModel(Settings)
+            {
+                CertificateLink = Settings.CertificatesUrl + "/QuizCertificate/Download?quizResultGuid=" + postQuizResult.Guid,
+                ParticipantName = postQuizResult.ParticipantName,
+                TeacherName = schoolAccountName
+            };
+            bool sentSuccessfully = MailModel.SendEmailSync(schoolAccountName, schoolEmail,
+                        Emails.CertificateSubject,
+                        model, Common.AppEmailName, Common.AppEmail);
+            if (!sentSuccessfully)
+            {
+                emailsNotSend.Add(schoolEmail);
+            }
+            return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
+        }
+
+        private static Dictionary<string, string> GetDynamicQuestionAnswers(string acUrl, string scoId, string breezeSession, string userEmail)
+        {
+            var userStateSchoolAnswersUrl =
+                $"{acUrl}/api/xml?action=report-event-participants-complete-information&sco-id={scoId}&session={breezeSession}";
+
+            var reply = string.Empty;
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
+                var request = new HttpRequestMessage(HttpMethod.Get, userStateSchoolAnswersUrl);
+                reply = client.SendAsync(request).Result.Content.ReadAsStringAsync().Result;
+            }
+
+            var doc = XDocument.Parse(reply);
+            var questions = doc.Root?.Descendants("registration_questions").Descendants("question").ToList();
+            var stateNode =
+                questions?.FirstOrDefault(
+                    x =>
+                        x.Attribute("description")
+                            .Value.ToString()
+                            .ToLower()
+                            .Equals("state", StringComparison.OrdinalIgnoreCase));
+            var schoolNode =
+                questions?.FirstOrDefault(
+                    x =>
+                        x.Attribute("description")
+                            .Value.ToString()
+                            .ToLower()
+                            .Equals("school", StringComparison.OrdinalIgnoreCase));
+
+            var stateQuestionId = stateNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
+            var schoolQuestionId = schoolNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
+
+            var userAnswers = doc.Root?.Descendants("user_list").Descendants("user").ToList();
+            var userAnswer =
+                userAnswers?.FirstOrDefault(
+                    x =>
+                        x.Attribute("login")
+                            .Value.ToString()
+                            .ToLower()
+                            .Equals(userEmail, StringComparison.OrdinalIgnoreCase));
+            var stateAnswer = userAnswer?.Attribute("registration_question_" + stateQuestionId)?.Value ?? String.Empty;
+            var schoolAnswer = userAnswer?.Attribute("registration_question_" + schoolQuestionId)?.Value ?? String.Empty;
+            var result = new Dictionary<string, string>() { { "state", stateAnswer }, { "school", schoolAnswer } };
+            return result;
+        }
+
+
         public OperationResultDto SendEventQuizResultEmail(int[] quizResultIds)
         {
             var quizResults = QuizResultModel.GetAllByIds(quizResultIds.ToList());
@@ -283,6 +395,7 @@ namespace EdugameCloud.WCFService
             var eventInfo = proxy.GetScoInfo(scoId);
             if (!eventInfo.Success)
                 throw new InvalidOperationException("");
+            
 
             List<string> emailsNotSend = new List<string>();
             foreach (var quizResult in quizResults)

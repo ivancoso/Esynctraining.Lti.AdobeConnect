@@ -223,6 +223,7 @@ namespace EdugameCloud.WCFService
 
                 var emailService = new EmailService();
                 emailService.SendCertificate(postQuizResult.Guid.ToString());
+                emailService.SendCertificateToTeacher(postQuizResult.Guid.ToString());
             }
 
             return resultDto;

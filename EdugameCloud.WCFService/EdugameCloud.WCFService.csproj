@@ -196,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CompanyAcDomainsService.svc" />
+    <Content Include="Mail\Templates\TeacherCertificateEmail.html" />
     <Content Include="Mail\Templates\CertificateEmail.html" />
     <Content Include="Mail\Templates\EventQuizRegistration.html" />
     <Content Include="OfflineQuizService.svc" />
@@ -282,6 +283,7 @@
     <Compile Include="CORS\PreflightOperationInvoker.cs" />
     <Compile Include="Mail\Models\CertificateEmailModel.cs" />
     <Compile Include="Mail\Models\EventQuizRegistrationModel.cs" />
+    <Compile Include="Mail\Models\TeacherCertificateEmailModel.cs" />
     <Compile Include="OfflineQuizService.svc.cs">
       <DependentUpon>OfflineQuizService.svc</DependentUpon>
     </Compile>
@@ -644,7 +646,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://app.edugamecloud.com/services</IISUrl>
+          <IISUrl>http://dev.edugamecloud.com/services</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.WCFService
+﻿using EdugameCloud.Lti.API.AdobeConnect;
+
+namespace EdugameCloud.WCFService
 {
     using System;
     using System.Configuration;
@@ -84,7 +86,7 @@
             container.RegisterEgcComponents();
 
             container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
-            
+
             RegisterLtiComponents(container);
         }
 

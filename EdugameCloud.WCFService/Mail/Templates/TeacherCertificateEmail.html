@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td align="center">
+
+                <table cellspacing="0" cellpadding="36" border="0" width="768" style="background-color: #FFFFFF;">
+                    <tr>
+                        <td align="left" width="50%">
+                            <a href="http://app.edugamecloud.com"><img alt="EduGame Cloud logo" src="@(Model.BaseUrl)images/logoBig.png" /></a>
+                        </td>
+                        <td align="right" width="50%">
+                            <p style="color: #464646; font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif; font-size: 14px; line-height: 18px; text-align: right;">Enriching online interaction for meetings, training and education on Adobe Connect</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="100%" colspan="2" style="background-color: #79b300; height: 12px; line-height: 12px; margin: 0; padding: 0;">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="100%" colspan="2">
+                            <!--Table to divide main area-->
+                            <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td valign="top" width="65%" style="padding: 0 36px 0 0; text-align: left; font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif; color:#464646; font-size: 14px; line-height: 18px;">
+                                        <p style="margin: 0 0 18px 0;">Hi @Model.TeacherName,</p>
+                                        <br />
+                                        <p style="margin: 0 0 18px 0;">We would like to inform that @Model.ParticipantName has passed the quiz</p>
+                                        <p style="margin: 0 0 18px 0;">Please click this <a href="@Model.CertificateLink">link</a> to download your Certificate.</p>
+                                        <p style="margin: 0 0 18px 0;">Thank you.</p>
+                                    </td>
+                                   
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="100%" colspan="2" align="center" style="color: #666; font-size: 11px;">Copyright &#169; 2017 <a href="https://www.esynctraining.com">eSyncTraining, Inc</a>. All rights reserved.</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

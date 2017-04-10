@@ -29,7 +29,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         private readonly IHttpContextAccessor _context;
         private readonly IAdobeConnectAccountService _acService;
         private readonly Microsoft.Extensions.Logging.ILogger _logger;
-        private readonly AppSettings _appeSettings;
+        private readonly AppSettings _appSettings;
 
         public EventsController(IEmailService emailService,
             ICompanyEventsService companyEventsService, ILookupService lookupService,
@@ -42,7 +42,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             _lookupService = lookupService;
             _emailService = emailService;
             _logger = loggerFactory.CreateLogger<EventsController>();
-            _appeSettings = appSettings.Value;
+            _appSettings = appSettings.Value;
         }
 
         public IActionResult Signup()
@@ -50,7 +50,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             if (string.IsNullOrEmpty(_context.HttpContext.Request.Query["eventQuizMappingId"]))
                 throw new InvalidOperationException("You should pass eventQuizMappingId");
 
-            _logger.LogInformation($"companyEventsService points to {_appeSettings.WebServiceReferences.CompanyEventsService}");
+            _logger.LogInformation($"companyEventsService points to {_appSettings.WebServiceReferences.CompanyEventsService}");
             var eventQuizMappingId = _context.HttpContext.Request.Query["eventQuizMappingId"];
             var eventQuizMappingIdGuid = Guid.Parse(eventQuizMappingId);
             var companyEventsService = _companyEventsService;

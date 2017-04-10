@@ -132,6 +132,7 @@ namespace EdugameCloud.ACEvents.Web
                     var client = new QuizCerfificateProcessor(certificateSettings);
                     return client;
                 });
+            services.AddScoped<IGoddardApiConsumer, GoddardApiConsumer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

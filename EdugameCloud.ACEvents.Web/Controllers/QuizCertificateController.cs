@@ -19,6 +19,7 @@ using EdugameCloud.ACEvents.Web.Certificates;
 using EdugameCloud.Certificates.Pdf;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Utils;
@@ -50,11 +51,13 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         private readonly IAdobeConnectAccountService _adobeConnectAccountService;
         private readonly AppSettings _appSettings;
         private readonly IQuizCerfificateProcessor _quizCerfificateProcessor;
+        private readonly IGoddardApiConsumer _goddardApiConsumer;
 
         public QuizCertificateController(IQuizResultService quizResultService, IFileService fileService, ICompanyAcDomainsService domainsService,
             ICompanyEventsService companyEventsService, IQuizService quizService, IHostingEnvironment hostingEnvironment, IHttpContextAccessor context,
-            IAdobeConnectAccountService acProvider, ILoggerFactory loggerFactory, IOptionsSnapshot<AppSettings> appSettings, IQuizCerfificateProcessor quizCerfificateProcessor)
+            IAdobeConnectAccountService acProvider, ILoggerFactory loggerFactory, IOptionsSnapshot<AppSettings> appSettings, IQuizCerfificateProcessor quizCerfificateProcessor, IGoddardApiConsumer goddardApiConsumer)
         {
+            _goddardApiConsumer = goddardApiConsumer;
             _quizCerfificateProcessor = quizCerfificateProcessor;
             _appSettings = appSettings.Value;
             _adobeConnectAccountService = acProvider;
@@ -116,59 +119,13 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 //};
                 //Response.Headers.Add("Content-Disposition", contentDisposition.ToString() );
                 return PhysicalFile(filePath, "application/pdf", $"Certificate_{quizResult.ParticipantName}.pdf");
-                //return new FilePathResultEx(filePath, System.Web.MimeMapping.GetMimeMapping(filePath))
-                //{
-                //    FileDownloadName = filePath,
-                //    Inline = true
-                //};
+               
             }
             catch (Exception ex)
             {
                 _logger.LogError("Error during Certificate Preview.", ex);
                 throw;
             }
-        }
-
-
-        //private string GetCertificatePath(Guid certificateTemplateContentId)
-        //{
-        //    var certificateTemplateFilePath = GetPdfTempatePath(certificateTemplateContentId);
-
-        //    if (!System.IO.File.Exists(certificateTemplateFilePath))
-        //    {
-        //        throw new InvalidOperationException($"Certificate template {certificateTemplateFilePath} does not exist!");
-        //    }
-
-        //    // TODO: think about by-key locking
-        //    //if (!System.IO.File.Exists(certificateTemplateFilePath))
-        //    //{
-        //    //    lock (_locker)
-        //    //    {
-        //    //        if (!System.IO.File.Exists(certificateTemplateFilePath))
-        //    //        {
-        //    //            var certTemplate = _fileService.GetByIdAsync(certificateTemplateContentId).Result;
-        //    //            //var certTemplate = new FileDTO()
-        //    //            //{
-        //    //            //    fileName = "temp"
-        //    //            //};
-        //    //            var content = System.IO.File.ReadAllBytes(certTemplate.fileName);
-        //    //            System.IO.File.WriteAllBytes(certificateTemplateFilePath, content);
-        //    //        }
-        //    //    }
-        //    //}
-
-        //    return certificateTemplateFilePath;
-        //}
-
-        private string GetPdfTempatePath(Guid certificateTemplateContentId)
-        {
-            string setting = _appSettings.CertificateSettings.PdfTemplateFolder;
-            string folder = setting.StartsWith("~")
-                ? Path.Combine(Directory.GetCurrentDirectory(), setting.TrimStart('~').TrimStart('/'))
-                : setting;
-
-            return Path.Combine(folder,
-                string.Format("{0}.pdf", certificateTemplateContentId.ToString()));
         }
 
         private QuizCertificateInfo FindCompletedQuizResult(Guid quizResultGuid)
@@ -184,7 +141,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var scoId = eventMapping.acEventScoId;
             var proxy = _adobeConnectAccountService.GetProvider(new AdobeConnectAccess(apiUrl, login, pass), false);
 
-            var loginResult = proxy.Login(new UserCredentials(acDomain.user, acDomain.password));
+            var loginResult = proxy.Login(new UserCredentials(login, pass));
             if (!loginResult.Success)
                 throw new InvalidOperationException("Can't login to AC");
 
@@ -205,8 +162,87 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             if (!isSuccess)
                 return null;
 
+            var dynamicQuestionAnswers = GetDynamicQuestionAnswers(acUrl, scoId, loginResult.Status.SessionInfo, quizResult.acEmail);
+            var state = dynamicQuestionAnswers["state"];
+            //var school = dynamicQuestionAnswers["school"];
+
+            //var userEmail = quizResult.acEmail;
+            //var userInfo = proxy.GetPrincipalInfo(userEmail);
+            var participantName = quizResult.participantName;
+            //var participantName = $"{userInfo.PrincipalInfo.Principal.Name}";
+
+            var eventScoInfo = proxy.GetScoInfo(scoId);
+           
+            var trainerId = GetTeacherId(acUrl, scoId, loginResult.Status.SessionInfo);
+            var trainer = _goddardApiConsumer.GetTrainer(trainerId);
+            var teacherName = $"{trainer.FirstName} {trainer.LastName}";
+
+            var courseId = GetCourseId(acUrl, scoId, loginResult.Status.SessionInfo);
+
+
+            var hours = (eventScoInfo.ScoInfo.EndDate - eventScoInfo.ScoInfo.BeginDate).Hours;
+            var hoursEnding = hours > 1 ? "s" : string.Empty;
+            var quizCertificateInfo = new QuizCertificateInfo()
+            {
+                ParticipantName = participantName,
+                KnowledgeArea = "Core Knowledge Area",
+                //State = stateQuestionId,
+                Duration = $"{hours} clock hour{hoursEnding}",
+                CourseTitle = eventScoInfo.ScoInfo.Name,
+                TrainerName = teacherName,
+                Date = UnixTimeStampToDateTime(quizResult.dateCreated).ToString("MMMM dd, yyyy")
+            };
+            quizCertificateInfo.CertificateTemplateGuid = CertTemplateBuilder.GetTemplateGuid(state);
+
+            return quizCertificateInfo;
+        }
+
+        private string GetTeacherId(string acUrl, string scoId, string breezeSession)
+        {
+            var eventInfoUrl = $"{acUrl}/api/xml?action=event-info&sco-id={scoId}&session={breezeSession}";
+            string reply;
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
+                var request = new HttpRequestMessage(HttpMethod.Get, eventInfoUrl);
+                reply = client.SendAsync(request).Result.Content.ReadAsStringAsync().Result;
+            }
+            var doc = XDocument.Parse(reply);
+            var speaker = doc.Root?.Descendants("event-info").FirstOrDefault()?.Descendants("speaker-name").FirstOrDefault()?.Value;
+
+            if (string.IsNullOrEmpty(speaker))
+            {
+                throw new InvalidOperationException($"Speaker should be set for the event with sco-id {scoId}");
+            }
+
+            return speaker;
+        }
+
+        private string GetCourseId(string acUrl, string scoId, string breezeSession)
+        {
+            var eventInfoUrl = $"{acUrl}/api/xml?action=event-info&sco-id={scoId}&session={breezeSession}";
+            string reply;
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
+                var request = new HttpRequestMessage(HttpMethod.Get, eventInfoUrl);
+                reply = client.SendAsync(request).Result.Content.ReadAsStringAsync().Result;
+            }
+            var doc = XDocument.Parse(reply);
+            var speaker = doc.Root?.Descendants("event-info").FirstOrDefault()?.Descendants("event-info").FirstOrDefault()?.Value;
+            if (string.IsNullOrEmpty(speaker))
+            {
+                throw new InvalidOperationException($"Speaker should be set for the event with sco-id {scoId}");
+            }
+            speaker = speaker.Trim();
+
+            return speaker;
+        }
+
+        private static Dictionary<string, string> GetDynamicQuestionAnswers(string acUrl, string scoId, string breezeSession, string userEmail)
+        {
             var userStateSchoolAnswersUrl =
-                $"{acUrl}/api/xml?action=report-event-participants-complete-information&sco-id={scoId}&session={loginResult.Status.SessionInfo}";
+                $"{acUrl}/api/xml?action=report-event-participants-complete-information&sco-id={scoId}&session={breezeSession}";
 
             var reply = string.Empty;
 
@@ -219,55 +255,36 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             var doc = XDocument.Parse(reply);
             var questions = doc.Root?.Descendants("registration_questions").Descendants("question").ToList();
-            var stateNode = questions?.FirstOrDefault(x => x.Attribute("description").Value.ToString().ToLower().Equals("state", StringComparison.OrdinalIgnoreCase));
-            var schoolNode = questions?.FirstOrDefault(x => x.Attribute("description").Value.ToString().ToLower().Equals("school", StringComparison.OrdinalIgnoreCase));
+            var stateNode =
+                questions?.FirstOrDefault(
+                    x =>
+                        x.Attribute("description")
+                            .Value.ToString()
+                            .ToLower()
+                            .Equals("state", StringComparison.OrdinalIgnoreCase));
+            var schoolNode =
+                questions?.FirstOrDefault(
+                    x =>
+                        x.Attribute("description")
+                            .Value.ToString()
+                            .ToLower()
+                            .Equals("school", StringComparison.OrdinalIgnoreCase));
 
             var stateQuestionId = stateNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
             var schoolQuestionId = schoolNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
 
             var userAnswers = doc.Root?.Descendants("user_list").Descendants("user").ToList();
-            var userAnswer = userAnswers?.FirstOrDefault(x => x.Attribute("login").Value.ToString().ToLower().Equals(quizResult.acEmail, StringComparison.OrdinalIgnoreCase));
-            var state = userAnswer?.Attribute("registration_question_" + stateQuestionId)?.Value ?? String.Empty;
-            var school = userAnswer?.Attribute("registration_question_" + schoolQuestionId)?.Value ?? String.Empty;
-
-            var userEmail = quizResult.acEmail;
-            //var userInfo = proxy.GetPrincipalInfo(userEmail);
-            var participantName = quizResult.participantName;
-            //var participantName = $"{userInfo.PrincipalInfo.Principal.Name}";
-
-            var eventScoInfo = proxy.GetScoInfo(scoId);
-            var eventParticipants = proxy.GetAllMeetingEnrollments(scoId);
-
-            var teacherName = String.Empty;
-            if (eventParticipants.Success)
-            {
-                var host = eventParticipants.Values.FirstOrDefault(x => x.PermissionId == MeetingPermissionId.host);
-                if (host != null)
-                {
-                    teacherName = host.Name;
-                }
-            }
-            else
-            {
-                var teacher = proxy.GetScoByUrl2(eventScoInfo.ScoInfo.UrlPath).ScoInfo.Owner;
-                teacherName = teacher.Name;
-            }
-
-            var hours = (eventScoInfo.ScoInfo.EndDate - eventScoInfo.ScoInfo.BeginDate).Hours;
-            var hoursEnding = hours > 1 ? "s" : string.Empty;
-            var quizCertificateInfo = new QuizCertificateInfo()
-            {
-                ParticipantName = participantName,
-                KnowledgeArea = "Core Knowledge Area",
-                State = stateQuestionId,
-                Duration = $"{hours} clock hour{hoursEnding}",
-                CourseTitle = eventScoInfo.ScoInfo.Name,
-                TrainerName = teacherName,
-                Date = UnixTimeStampToDateTime(quizResult.dateCreated).ToString("MMMM dd, yyyy")
-            };
-            quizCertificateInfo.CertificateTemplateGuid = CertTemplateBuilder.GetTemplateGuid(state);
-
-            return quizCertificateInfo;
+            var userAnswer =
+                userAnswers?.FirstOrDefault(
+                    x =>
+                        x.Attribute("login")
+                            .Value.ToString()
+                            .ToLower()
+                            .Equals(userEmail, StringComparison.OrdinalIgnoreCase));
+            var stateAnswer = userAnswer?.Attribute("registration_question_" + stateQuestionId)?.Value ?? String.Empty;
+            var schoolAnswer = userAnswer?.Attribute("registration_question_" + schoolQuestionId)?.Value ?? String.Empty;
+            var result = new Dictionary<string, string>(){ {"state", stateAnswer }, {"school", schoolAnswer }};
+            return result;
         }
 
         private static DateTime UnixTimeStampToDateTime(double unixTimeStamp)

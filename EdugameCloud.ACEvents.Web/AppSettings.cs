@@ -8,6 +8,8 @@ namespace EdugameCloud.ACEvents.Web
 
         public WebServiceReferenceSettings WebServiceReferences { get; set; }
 
+        public string GoddardApi { get; set; }
+
         public class WebServiceReferenceSettings
         {
             public string EmailService { get; set; }
