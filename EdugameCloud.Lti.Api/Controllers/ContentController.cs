@@ -281,20 +281,21 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
 
         // TRICK: for upload only
-        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
+        //private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
-        private LmsUserSessionModel UserSessionModel => IoC.Resolve<LmsUserSessionModel>();
+        //private LmsUserSessionModel UserSessionModel => IoC.Resolve<LmsUserSessionModel>();
 
         protected LmsUserSession GetReadOnlySession(Guid key)
         {
-            var session = UserSessionModel.GetByIdWithRelated(key).Value;
+            var session = IoC.Resolve<LmsUserSessionModel>().GetByIdWithRelated(key).Value;
             if (session == null)
             {
                 Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
                 return null;
             }
 
-            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
+            System.Threading.Thread.CurrentThread.CurrentUICulture =
+                new System.Globalization.CultureInfo(IoC.Resolve<LanguageModel>().GetById(session.LmsCompany.LanguageId).TwoLetterCode);
             return session;
         }
 

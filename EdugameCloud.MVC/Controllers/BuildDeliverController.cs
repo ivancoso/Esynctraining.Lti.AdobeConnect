@@ -129,7 +129,7 @@
 
                         using (var archive = ZipFile.OpenRead(physicalPath))
                         {
-                            using (var arc = new ZipArchive(ms))
+                            using (var arc = new ZipArchive(ms, ZipArchiveMode.Create, true))
                             {
                                 foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
                                 {
@@ -199,7 +199,7 @@
 
                         using (var archive = ZipFile.OpenRead(physicalPath))
                         {
-                            using (var arc = new ZipArchive(ms))
+                            using (var arc = new ZipArchive(ms, ZipArchiveMode.Create, true))
                             {
                                 foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
                                 {
@@ -231,7 +231,7 @@
             }
             catch (Exception ex)
             {
-                logger.Error("BuildDeliverController.GetPublicBuild.", ex);
+                logger.Error("BuildDeliverController.GetMobileBuild.", ex);
                 throw;
             }
 
@@ -269,10 +269,11 @@
                     {
                         try
                         {
-                            var ms = new MemoryStream();
+                            // NOTE: current POD size is about 960kb
+                            var ms = new MemoryStream(960 * 1024);
                             using (var archive = ZipFile.OpenRead(physicalPath))
                             {
-                                using (var arc = new ZipArchive(ms))
+                                using (var arc = new ZipArchive(ms, ZipArchiveMode.Create, true))
                                 {
                                     foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
                                     {

@@ -86,8 +86,8 @@ namespace Esynctraining.AspNetCore.Filters
 
                 context.Result = new ObjectResult(validationErrorModel);
             }
-
         }
 
     }
+
 }
