@@ -108,7 +108,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// </summary>
         [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
         [HttpPost]
-        [Route("сontent/{folderScoId:long:min(1)}/create-sub-folder")]
+        [Route("content/{folderScoId:long:min(1)}/create-sub-folder")]
         public OperationResultWithData<FolderDto> CreateSubFolder(string folderScoId, [FromBody]FolderDto dto)
         {
             try
