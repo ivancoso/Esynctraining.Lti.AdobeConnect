@@ -5,6 +5,7 @@ using Castle.Windsor;
 using EdugameCloud.Persistence;
 using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
 using Esynctraining.Windsor;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,8 @@ namespace EdugameCloud.Lti.Api.Host
         {
             var container = new WindsorContainer();
 
-            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.Scoped());
+            container.Register(Component.For<ILocalData>().ImplementedBy<AspNetCoreNHibernateSessionSource.Local.LocalData>());
+            container.Register(Component.For<ISessionSource>().ImplementedBy<AspNetCoreNHibernateSessionSource>().LifeStyle.Scoped());
 
             WindsorIoC.Initialize(container);
             container.RegisterComponents();

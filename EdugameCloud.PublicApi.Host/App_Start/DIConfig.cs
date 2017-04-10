@@ -26,7 +26,7 @@ namespace EdugameCloud.PublicApi
             );
 
             container.Install(new NHibernateWindsorInstaller());
-            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWebRequest);
+            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.PerWebRequest);
             
             //container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWcfOperation());
             

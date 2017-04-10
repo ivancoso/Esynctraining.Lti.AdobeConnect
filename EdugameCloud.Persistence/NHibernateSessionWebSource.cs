@@ -1,76 +1,102 @@
 ﻿namespace EdugameCloud.Persistence
 {
+    using System.Collections;
     using System.Runtime.Remoting.Contexts;
     using System.Web;
+    using Esynctraining.Core.Utils;
     using NHibernate;
 
     /// <summary>
     /// The hibernate session web source.
     /// </summary>
     [Synchronization]
-    public sealed class NHibernateSessionWebSource : NHibernateSessionSource
+    public sealed class NHibernateSessionWebSource : ISessionSource
     {
-        #region Static Fields
-        
-        private static readonly object lockObj = new object();
+        #region Inner Class
 
-        #endregion
-
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NHibernateSessionWebSource"/> class.
-        /// </summary>
-        /// <param name="sessionFactory">
-        /// The session factory.
-        /// </param>
-        public NHibernateSessionWebSource(ISessionFactory sessionFactory)
-            : base(sessionFactory)
+        public static class Local
         {
-           //this.Session.BeginTransaction();
+            private static readonly object LocalDataHashtableKey = new object();
+
+            private static readonly ILocalData Current = new LocalData();
+
+
+            public static ILocalData Data => Current;
+            
+            private class LocalData : ILocalData
+            {
+                private static Hashtable LocalHashtable
+                {
+                    get
+                    {
+                        var webHashtable = HttpContext.Current.Items[LocalDataHashtableKey] as Hashtable;
+                        if (webHashtable == null)
+                        {
+                            HttpContext.Current.Items[LocalDataHashtableKey] = webHashtable = new Hashtable();
+                        }
+
+                        return webHashtable;
+                    }
+                }
+
+                public object this[object key]
+                {
+                    get { return LocalHashtable[key]; }
+                    set { LocalHashtable[key] = value; }
+                }
+
+
+                public void Clear()
+                {
+                    LocalHashtable.Clear();
+                }
+
+            }
+
         }
 
         #endregion
 
-        #region Public Methods and Operators
-        
-        //public override void Dispose()
-        //{
-        //    if (this.Session != null)
-        //    {
-        //        try
-        //        {
-        //            ITransaction transaction = this.Session.Transaction;
-        //            if (transaction.IsActive)
-        //            {
-        //                using (transaction)
-        //                {
-        //                    if (HttpContext.Current.Server.GetLastError() == null)
-        //                    {
-        //                        transaction.Commit();
-        //                    }
-        //                    else
-        //                    {
-        //                        transaction.Rollback();
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        finally
-        //        {
-        //            lock (lockObj)
-        //            {
-        //                if (this.Session != null)
-        //                {
-        //                    this.Session.Dispose();
+        private static readonly object NHibernateHashtableKey = new object();
 
-        //                    // Local.Data[NHibernateHashtableKey] = null;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
-        #endregion
+        public ISession Session => Local.Data[NHibernateHashtableKey] as ISession;
+
+
+        public NHibernateSessionWebSource(ISessionFactory sessionFactory)
+        {
+            if (Local.Data[NHibernateHashtableKey] == null)
+            {
+                Local.Data[NHibernateHashtableKey] = sessionFactory.OpenSession();
+            }
+        }
+
+
+        public void Dispose()
+        {
+            if (this.Session != null)
+            {
+                try
+                {
+                    this.Session.Flush();
+                }
+                finally
+                {
+                    try
+                    {
+                        if (this.Session != null)
+                        {
+                            this.Session.Dispose();
+                        }
+                    }
+                    finally
+                    {
+                        Local.Data[NHibernateHashtableKey] = null;
+                    }
+                }
+            }
+        }
+
     }
+
 }

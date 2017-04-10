@@ -48,7 +48,7 @@ namespace EdugameCloud.WCFService
             
             container.Install(new NHibernateWindsorInstaller());
 
-            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWcfOperationIncludingWebOrb());
+            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.PerWcfOperationIncludingWebOrb());
             
             container.AddFacility<WcfFacility>();
             //https://groups.google.com/forum/#!msg/castle-project-users/TewcYkiP_Uc/yLW4HrbSUJgJ

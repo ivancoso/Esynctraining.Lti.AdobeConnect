@@ -11,7 +11,7 @@
     using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Business.Models;
+    //using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
@@ -422,7 +422,7 @@
                                                    };
                                 if (string.IsNullOrWhiteSpace(passwordCellValue))
                                 {
-                                    instance.SetPassword(AuthenticationModel.CreateRandomPassword());
+                                    instance.SetPassword(Password.Generate(8, 0));
                                     if (sendActivation != null)
                                     {
                                         sendActivation(instance);

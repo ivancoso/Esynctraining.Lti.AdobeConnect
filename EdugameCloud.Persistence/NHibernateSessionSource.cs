@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Persistence
 {
     using System;
+    using System.Collections;
     using System.Runtime.Remoting.Contexts;
 
     using Esynctraining.Core.Utils;
@@ -13,6 +14,63 @@
     [Synchronization]
     public class NHibernateSessionSource : ISessionSource
     {
+        #region Inner Class
+
+        public static class Local
+        {
+            private static readonly ILocalData Current = new LocalData();
+
+
+            public static ILocalData Data => Current;
+
+
+            /// <summary>
+            /// The local data.
+            /// </summary>
+            private class LocalData : ILocalData
+            {
+                #region Static Fields
+
+                /// <summary>
+                /// The thread hash table.
+                /// </summary>
+                [ThreadStatic]
+                private static Hashtable threadHashtable;
+
+                #endregion
+
+                #region Properties
+
+                /// <summary>
+                /// Gets the local hash table.
+                /// </summary>
+                private static Hashtable LocalHashtable
+                {
+                    get
+                    {
+                        return threadHashtable ?? (threadHashtable = new Hashtable());
+                    }
+                }
+
+                #endregion
+
+                public object this[object key]
+                {
+                    get { return LocalHashtable[key]; }
+                    set { LocalHashtable[key] = value; }
+                }
+
+                public void Clear()
+                {
+                    LocalHashtable.Clear();
+                }
+
+            }
+
+        }
+
+        #endregion
+
         protected static readonly object NHibernateHashtableKey = new object();
 
 

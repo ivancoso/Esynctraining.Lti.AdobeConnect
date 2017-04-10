@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Threading.Tasks;
-using Castle.MicroKernel.Registration;
-using Castle.Windsor;
+using Castle.MicroKernel.Lifestyle;
 using Castle.Windsor.MsDependencyInjection;
-using EdugameCloud.Persistence;
+using Esynctraining.AspNetCore;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
-using Esynctraining.CastleLog4Net;
-using Esynctraining.Core.Providers;
-using Esynctraining.Mp4Service.Tasks.Client;
-using Esynctraining.Windsor;
-using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -69,31 +62,10 @@ namespace EdugameCloud.Lti.Mp4.Host
 
             services.AddMemoryCache();
 
-            var container = new WindsorContainer();
+            services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
 
-            //container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.Scoped());
-            //services.AddRequestScopingMiddleware(container.BeginScope);
-            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.Transient);
-
-            WindsorIoC.Initialize(container);
-            container.RegisterComponents();
-
-            var configurationSection = Configuration.GetSection("AppSettings");
-            var collection = new NameValueCollection();
-            foreach (var appSetting in configurationSection.GetChildren())
-            {
-                collection.Add(appSetting.Key, appSetting.Value);
-            }
-
-            container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
-                .DynamicParameters((k, d) => d.Add("collection", collection))
-                .LifeStyle.Singleton);
-
-            container.Install(new LoggerWindsorInstaller());
-            container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
-
-            RegisterLtiComponents(container);
-            RegisterLocalComponents(container);
+            var container = DIConfig.ConfigureWindsor(Configuration);
+            services.AddRequestScopingMiddleware(container.BeginScope);
 
             services.AddSwaggerGen(c =>
             {
@@ -205,55 +177,6 @@ namespace EdugameCloud.Lti.Mp4.Host
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "eSyncTraining LTI MP4 API V1");
             });
-        }
-
-        private static void RegisterLtiComponents(WindsorContainer container)
-        {
-            //            container.Install(
-            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Moodle/EdugameCloud.Lti.Moodle.Windsor.xml")),
-            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Desire2Learn/EdugameCloud.Lti.Desire2Learn.Windsor.xml")),
-            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Canvas/EdugameCloud.Lti.Canvas.Windsor.xml")),
-            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.BrainHoney/EdugameCloud.Lti.BrainHoney.Windsor.xml")),
-            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Blackboard/EdugameCloud.Lti.BlackBoard.Windsor.xml")),
-            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Sakai/EdugameCloud.Lti.Sakai.Windsor.xml"))
-            //);
-
-            container.Install(new LtiWindsorInstaller());
-            // container.Install(new LtiMvcWindsorInstaller());
-            container.Install(new TelephonyWindsorInstaller());
-
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti")
-                .BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
-
-        }
-
-        private static void RegisterLocalComponents(IWindsorContainer container)
-        {
-            dynamic settings = Esynctraining.Core.Utils.IoC.Resolve<ApplicationSettingsProvider>() as dynamic;
-
-            string mp4ApiBaseAddress = settings.MP4ApiBaseAddress as string;
-            container.Register(Component.For<TaskClient>()
-                   .ImplementedBy<TaskClient>()
-                   .DependsOn(Dependency.OnValue("baseApiAddress", mp4ApiBaseAddress))
-                   .LifeStyle.Singleton);
-
-            container.Register(Classes.FromAssemblyNamed("Esynctraining.Mp4Service.Tasks.Client").Pick()
-                .If(type => type.Name.EndsWith("Model"))
-                .WithService.Self().Configure(c => c.LifestyleTransient()));
-
-            container.Register(Component.For<IMp4LinkBuilder>()
-                .UsingFactoryMethod(() => new AdobeConnectFileAccessLinkBuilder(settings.BaseUrl.TrimEnd('/') + "/" + settings.Mp4FileAccess_Mp4.TrimStart('/')))
-                .LifestyleSingleton());
-
-            container.Register(Component.For<IVttLinkBuilder>()
-                .UsingFactoryMethod(() => new AdobeConnectFileAccessLinkBuilder(settings.BaseUrl.TrimEnd('/') + "/" + settings.Mp4FileAccess_Vtt.TrimStart('/')))
-                .LifestyleSingleton());
-
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Mp4.Host")
-                .Pick()
-                .If(Component.IsInNamespace("EdugameCloud.Lti.Mp4.Host.Controllers"))
-                .WithService.Self()
-                .LifestyleTransient());
         }
 
     }

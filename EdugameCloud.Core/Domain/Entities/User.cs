@@ -4,9 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Utils;
+    using Esynctraining.Crypto;
 
     /// <summary>
     /// The user.
@@ -165,17 +164,11 @@
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        ///     The generate cookie value.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="string" />.
-        /// </returns>
-        public virtual string GenerateCookieValue()
-        {
-            return this.Id + "G" + this.HashEmail() + "G" + Guid.NewGuid().ToString("N").ToUpper();
-        }
+        
+        //public virtual string GenerateCookieValue()
+        //{
+        //    return this.Id + "G" + this.HashEmail() + "G" + Guid.NewGuid().ToString("N").ToUpper();
+        //}
 
         /// <summary>
         ///     The hash email.
@@ -183,10 +176,10 @@
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        public virtual string HashEmail()
-        {
-            return BitConverter.ToString(Cryptographer.GenerateHash(this.Email)).Replace("-", string.Empty).ToUpper();
-        }
+        //public virtual string HashEmail()
+        //{
+        //    return BitConverter.ToString(Cryptographer.GenerateHash(this.Email)).Replace("-", string.Empty).ToUpper();
+        //}
 
         /// <summary>
         ///     The is administrator.
@@ -268,7 +261,7 @@
         /// </returns>
         public virtual string ResetPassword()
         {
-            return this.ResetPassword(AuthenticationModel.CreateRandomPassword);
+            return this.ResetPassword((x) => EdugameCloud.Core.Password.Generate(x, 0));
         }
 
         /// <summary>
@@ -317,7 +310,7 @@
             }
 
             return this.Password.ToLower()
-                   == BitConverter.ToString(Cryptographer.GenerateHash(password)).Replace("-", string.Empty).ToLower();
+                == BitConverter.ToString(Cryptographer.GenerateHash(password)).Replace("-", string.Empty).ToLower();
         }
 
         public virtual bool ValidatePasswordHash(string passwordHash)

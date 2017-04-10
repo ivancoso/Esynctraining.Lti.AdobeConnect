@@ -65,9 +65,11 @@ namespace EdugameCloud.Lti.Api.Host
                 .AddCors()
                 .AddMemoryCache();
 
+            services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
+
             var container = DIConfig.ConfigureWindsor(Configuration);
             services.AddRequestScopingMiddleware(container.BeginScope);
-            
+
             services.AddLtiSwagger(HostingEnvironment);
 
             //services.AddOptions();

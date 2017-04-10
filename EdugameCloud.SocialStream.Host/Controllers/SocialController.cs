@@ -24,16 +24,18 @@ namespace EdugameCloud.SocialStream.Host.Controllers
     public partial class SocialController : BaseController
     {
         private readonly SocialUserTokensModel socialUserTokensModel;
-        private readonly RealTimeNotificationModel realTimeNotificationModel;
+        //private readonly RealTimeNotificationModel realTimeNotificationModel;
 
         private readonly ILogger logger;
 
 
-        public SocialController(SocialUserTokensModel socialUserTokensModel, RealTimeNotificationModel realTimeNotificationModel, ILogger logger, ApplicationSettingsProvider settings)
+        public SocialController(SocialUserTokensModel socialUserTokensModel, 
+            //RealTimeNotificationModel realTimeNotificationModel, 
+            ILogger logger, ApplicationSettingsProvider settings)
             : base(settings)
         {
             this.socialUserTokensModel = socialUserTokensModel;
-            this.realTimeNotificationModel = realTimeNotificationModel;
+            //this.realTimeNotificationModel = realTimeNotificationModel;
             this.logger = logger;
         }
 
@@ -89,14 +91,14 @@ namespace EdugameCloud.SocialStream.Host.Controllers
                             tokens.Token = token;
                             tokens.Secret = secret;
                             this.socialUserTokensModel.RegisterSave(tokens, true);
-                            try
-                            {
-                                this.realTimeNotificationModel.NotifyClientsAboutSocialTokens(new SocialUserTokensDTO(tokens));
-                            }
-                            catch (Exception ex)
-                            {
+                            //try
+                            //{
+                            //    this.realTimeNotificationModel.NotifyClientsAboutSocialTokens(new SocialUserTokensDTO(tokens));
+                            //}
+                            //catch (Exception ex)
+                            //{
 
-                            }
+                            //}
 
                         }
 
