@@ -14,7 +14,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
@@ -94,7 +94,7 @@ namespace EdugameCloud.WCFService
 
             model.Refresh(ref company);
             model.RegisterDelete(company, true);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Delete, company.Id, company.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Delete, company.Id, company.Id);
             return id;
         }
 
@@ -282,7 +282,7 @@ namespace EdugameCloud.WCFService
 
             company.Status = CompanyStatus.Active;
             model.RegisterSave(company, true);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, company.Id, company.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, company.Id, company.Id);
         }
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace EdugameCloud.WCFService
 
             company.Status = CompanyStatus.Inactive;
             model.RegisterSave(company, true);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, company.Id, company.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, company.Id, company.Id);
         }
 
         /// <summary>
@@ -426,7 +426,7 @@ namespace EdugameCloud.WCFService
                 var isUserTransient = user.IsTransient();
                 user.Company = instance;
                 UserModel.RegisterSave(user);
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
                 instance.PrimaryContact = user;
                 companyModel.RegisterSave(instance, true);
                 if (isUserTransient)
@@ -483,7 +483,7 @@ namespace EdugameCloud.WCFService
                 throw new FaultException<Error>(errorRes, errorRes.errorMessage);
             }
 
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, instance.Id, instance.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, instance.Id, instance.Id);
             var dtoResult = new CompanyDTO(instance);
             var lmses = isTransient ? LmsCompanyModel.GetAllByCompanyId(instance.Id).ToList() : new List<LmsCompany>();
 

@@ -9,7 +9,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
@@ -117,7 +117,7 @@
 
             user.Logo = file;
             model.RegisterSave(user, true);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@
 
             user.Status = UserStatus.Active;
             model.RegisterSave(user, true);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@
 
             user.Status = UserStatus.Inactive;
             model.RegisterSave(user, true);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@
             {
                 user.Status = UserStatus.Active;
                 model.RegisterSave(user, true);
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
             }
         }
 
@@ -222,7 +222,7 @@
             {
                 user.Status = UserStatus.Inactive;
                 model.RegisterSave(user, true);
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
             }
 
             model.Flush();
@@ -253,7 +253,7 @@
             }
 
             model.RegisterDelete(user, true);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Delete, user.Company.Id, user.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Delete, user.Company.Id, user.Id);
             return id;
         }
 
@@ -286,7 +286,7 @@
             foreach (var user in users)
             {
                 model.RegisterDelete(user, true);
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
                 res.Add(user.Id);
             }
 
@@ -724,7 +724,7 @@
                         }
 
                         userModel.RegisterSave(userInstance, true);
-                        IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, userInstance.Company.Id, userInstance.Id);
+                        //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, userInstance.Company.Id, userInstance.Id);
 
                         if (isTransient)
                         {
@@ -812,7 +812,7 @@
                 this.UserActivationModel.RegisterDelete(passwordActivation);
             }
 
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, contact.Company.Id, contact.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, contact.Company.Id, contact.Id);
             this.SendPasswordEmail(contact.FirstName, contact.Email, newPassword);
         }
 

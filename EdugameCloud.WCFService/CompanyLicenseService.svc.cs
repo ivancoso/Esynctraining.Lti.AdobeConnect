@@ -11,7 +11,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -63,7 +63,7 @@ namespace EdugameCloud.WCFService
             }
             
             model.RegisterDelete(companyLicense, true);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<CompanyLicense>(NotificationType.Delete, companyLicense.Company.Id, companyLicense.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<CompanyLicense>(NotificationType.Delete, companyLicense.Company.Id, companyLicense.Id);
             return id;
         }
 
@@ -124,7 +124,7 @@ namespace EdugameCloud.WCFService
                                               : companyLicenseModel.GetOneById(dto.companyLicenseId).Value;
                 instance = this.ConvertDto(dto, instance);
                 companyLicenseModel.RegisterSave(instance, true);
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<CompanyLicense>(NotificationType.Update, instance.Company.Id, instance.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<CompanyLicense>(NotificationType.Update, instance.Company.Id, instance.Id);
                 return new CompanyLicenseDTO(instance);
             }
 

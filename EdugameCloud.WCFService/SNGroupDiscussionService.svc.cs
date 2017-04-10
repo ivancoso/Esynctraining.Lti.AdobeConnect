@@ -7,7 +7,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -121,7 +121,7 @@
                 instance = this.ConvertDto(discussion, instance);
                 model.RegisterSave(instance, true);
                 this.UpdateCache();
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletResult>(NotificationType.Update, discussion.companyId, instance.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletResult>(NotificationType.Update, discussion.companyId, instance.Id);
                 return new SNGroupDiscussionDTO(instance);
             }
 

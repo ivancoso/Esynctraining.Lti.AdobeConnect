@@ -9,7 +9,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
@@ -311,7 +311,7 @@ namespace EdugameCloud.WCFService
             quizModel.RegisterSave(survey, true);
             int companyId =
                 survey.With(x => x.SubModuleItem).With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Survey>(NotificationType.Update, companyId, survey.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Survey>(NotificationType.Update, companyId, survey.Id);
             return new SurveyDTO(survey);
         }
 

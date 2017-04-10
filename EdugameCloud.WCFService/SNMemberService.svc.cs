@@ -9,7 +9,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -69,11 +69,11 @@
 
             model.RegisterDelete(sessionMember, true);
             this.UpdateCache();
-            IoC.Resolve<RealTimeNotificationModel>()
-                .NotifyClientsAboutChangesInTable(
-                    NotificationType.Delete,
-                    this.CurrentUser.With(x => x.Company.Id),
-                    sessionMember);
+            //IoC.Resolve<RealTimeNotificationModel>()
+            //    .NotifyClientsAboutChangesInTable(
+            //        NotificationType.Delete,
+            //        this.CurrentUser.With(x => x.Company.Id),
+            //        sessionMember);
             return id;
         }
 
@@ -119,7 +119,7 @@
                 instance = this.ConvertDto(sessionMember, instance);
                 model.RegisterSave(instance, true);
                 this.UpdateCache();
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SNMember>(NotificationType.Update, sessionMember.companyId, instance.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SNMember>(NotificationType.Update, sessionMember.companyId, instance.Id);
                 return new SNMemberDTO(instance);
             }
 
@@ -164,10 +164,10 @@
             if (created.Any())
             {
                 var companyId = results.FirstOrDefault(x => x.companyId != 0).With(x => x.companyId);
-                if (companyId != default(int))
-                {
-                    IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SNMember>(NotificationType.Update, companyId, 0);
-                }
+                //if (companyId != default(int))
+                //{
+                //    IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SNMember>(NotificationType.Update, companyId, 0);
+                //}
 
                 result.saved = created.Select(x => new SNMemberDTO(x)).ToArray();
             }

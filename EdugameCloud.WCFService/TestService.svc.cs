@@ -8,7 +8,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -294,7 +294,7 @@
             test = this.ConvertDto(appletResultDTO, test);
             testModel.RegisterSave(test, true);
             int companyId = smi.With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Test>(NotificationType.Update, companyId, test.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Test>(NotificationType.Update, companyId, test.Id);
             return new TestWithSmiDTO(test, smi);
         }
 

@@ -10,7 +10,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -68,7 +68,7 @@ namespace EdugameCloud.WCFService
                 var surveyResult = isTransient ? null : surveyResultModel.GetOneById(surveyResultDTO.surveyResultId).Value;
                 surveyResult = this.ConvertDto(surveyResultDTO, surveyResult);
                 surveyResultModel.RegisterSave(surveyResult);
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SurveyResult>(NotificationType.Update, surveyResultDTO.companyId, surveyResult.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SurveyResult>(NotificationType.Update, surveyResultDTO.companyId, surveyResult.Id);
                 return new SurveyResultDTO(surveyResult);
             }
 
@@ -112,7 +112,7 @@ namespace EdugameCloud.WCFService
 
             if (created.Any())
             {
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SurveyResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SurveyResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
                 result.saved = created.Select(x => new SurveyResultDTO(x)).ToArray();
             }
 
@@ -170,14 +170,14 @@ namespace EdugameCloud.WCFService
             }
 
             model.RegisterDelete(surveyResult, true);
-            IoC.Resolve<RealTimeNotificationModel>()
-                .NotifyClientsAboutChangesInTable<SurveyResult>(
-                    NotificationType.Delete,
-                    surveyResult.With(x => x.Survey)
-                        .With(x => x.SubModuleItem)
-                        .With(x => x.CreatedBy)
-                        .With(x => x.Company.Id),
-                    surveyResult.Id);
+            //IoC.Resolve<RealTimeNotificationModel>()
+            //    .NotifyClientsAboutChangesInTable<SurveyResult>(
+            //        NotificationType.Delete,
+            //        surveyResult.With(x => x.Survey)
+            //            .With(x => x.SubModuleItem)
+            //            .With(x => x.CreatedBy)
+            //            .With(x => x.Company.Id),
+            //        surveyResult.Id);
             return id;
         }
 

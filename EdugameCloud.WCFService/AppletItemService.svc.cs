@@ -8,7 +8,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -82,7 +82,7 @@
                 appletItem = this.ConvertDto(appletResultDTO, appletItem);
                 sessionModel.RegisterSave(appletItem, true);
                 int companyId = appletItem.With(x => x.SubModuleItem).With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletItem>(NotificationType.Update, companyId, appletItem.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletItem>(NotificationType.Update, companyId, appletItem.Id);
                 return new AppletItemDTO(appletItem);
             }
 

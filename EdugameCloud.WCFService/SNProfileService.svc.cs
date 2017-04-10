@@ -11,7 +11,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -164,7 +164,7 @@ namespace EdugameCloud.WCFService
                 this.SaveServices(services, instance);
                 profileModel.Refresh(ref instance);
                 this.UpdateCache();
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable(NotificationType.Update, this.CurrentUser.With(x => x.Company.Id), instance);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable(NotificationType.Update, this.CurrentUser.With(x => x.Company.Id), instance);
                 return new SNProfileDTO(instance);
             }
 

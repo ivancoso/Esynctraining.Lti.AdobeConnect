@@ -13,7 +13,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -78,8 +78,8 @@ namespace EdugameCloud.WCFService
             }
 
             UserModel.RegisterSave(user);
-            IoC.Resolve<RealTimeNotificationModel>()
-                .NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+            //IoC.Resolve<RealTimeNotificationModel>()
+            //    .NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
             UserActivationModel.RegisterDelete(arr);
             this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
             if (WebOperationContext.Current != null)

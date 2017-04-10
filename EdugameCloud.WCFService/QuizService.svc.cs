@@ -7,7 +7,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
@@ -333,7 +333,7 @@
             quizModel.RegisterSave(quiz, true);
             int companyId =
                 quiz.With(x => x.SubModuleItem).With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
-            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Quiz>(NotificationType.Update, companyId, quiz.Id);
+            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Quiz>(NotificationType.Update, companyId, quiz.Id);
             return new QuizDTO(quiz);
         }
 

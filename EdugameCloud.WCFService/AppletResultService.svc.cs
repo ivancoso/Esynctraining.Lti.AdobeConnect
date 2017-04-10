@@ -12,7 +12,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
-    using EdugameCloud.Core.RTMP;
+    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -65,7 +65,7 @@ namespace EdugameCloud.WCFService
                 var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.appletResultId).Value;
                 appletResult = this.ConvertDto(appletResultDTO, appletResult);
                 sessionModel.RegisterSave(appletResult, true);
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletResult>(NotificationType.Update, appletResultDTO.companyId, appletResult.Id);
+                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletResult>(NotificationType.Update, appletResultDTO.companyId, appletResult.Id);
                 return new AppletResultDTO(appletResult);
             }
 
@@ -111,10 +111,10 @@ namespace EdugameCloud.WCFService
             if (created.Any())
             {
                 var companyId = appletResultDTOs.FirstOrDefault(x => x.companyId != 0).With(x => x.companyId);
-                if (companyId != default(int))
-                {
-                    IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletResult>(NotificationType.Update, companyId, 0);
-                }
+                //if (companyId != default(int))
+                //{
+                //    IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletResult>(NotificationType.Update, companyId, 0);
+                //}
 
                 result.saved = created.Select(x => new AppletResultDTO(x)).ToArray();
             }
@@ -175,14 +175,14 @@ namespace EdugameCloud.WCFService
             
             model.RegisterDelete(appletResult, true);
             int companyId = appletResult.With(x => x.AppletItem).With(x => x.SubModuleItem).With(x => x.CreatedBy).With(x => x.Company.Id);
-            if (companyId != default(int))
-            {
-                IoC.Resolve<RealTimeNotificationModel>()
-                    .NotifyClientsAboutChangesInTable<AppletResult>(
-                        NotificationType.Delete,
-                        companyId,
-                        appletResult.Id);
-            }
+            //if (companyId != default(int))
+            //{
+            //    IoC.Resolve<RealTimeNotificationModel>()
+            //        .NotifyClientsAboutChangesInTable<AppletResult>(
+            //            NotificationType.Delete,
+            //            companyId,
+            //            appletResult.Id);
+            //}
 
             return id;
         }
