@@ -20,12 +20,12 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.DTO;
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
     using Resources;
+    using EdugameCloud.Core;
 
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
@@ -547,7 +547,7 @@ namespace EdugameCloud.WCFService
             result.ModifiedBy = entityDto.modifiedBy.HasValue ? userModel.GetOneById(entityDto.modifiedBy.Value).Value : null;
             if (isTransient && string.IsNullOrWhiteSpace(entityDto.password))
             {
-                entityDto.password = AuthenticationModel.CreateRandomPassword();
+                entityDto.password = Password.Generate(8, 0);
             }
 
             if (isTransient || (!string.IsNullOrWhiteSpace(entityDto.password) && !result.ValidatePassword(entityDto.password)))

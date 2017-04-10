@@ -6,6 +6,7 @@
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using EdugameCloud.Core;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -16,7 +17,6 @@
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.DTO;
     using EdugameCloud.WCFService.ViewModels;
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
@@ -710,7 +710,7 @@
                     {
                         if (isTransient && string.IsNullOrWhiteSpace(user.password))
                         {
-                            user.password = AuthenticationModel.CreateRandomPassword();
+                            user.password = Password.Generate(8, 0);
                         }
 
                         // bool passwordChanged = false, 
@@ -902,11 +902,11 @@
         /// </returns>
         private SessionDTO SetNewSession(User user)
         {
-            user.SessionToken = AuthenticationModel.CreateRandomPassword(45);
+            user.SessionToken = Password.Generate(45, 0);
             var userModel = this.UserModel;
             while (userModel.GetOneByToken(user.SessionToken).Value != null)
             {
-                user.SessionToken = AuthenticationModel.CreateRandomPassword(45);
+                user.SessionToken = Password.Generate(45, 0);
             }
 
             user.SessionTokenExpirationDate = DateTime.Now.AddDays(1);

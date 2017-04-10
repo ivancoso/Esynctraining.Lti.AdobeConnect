@@ -16,7 +16,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.Providers;
     using Esynctraining.CastleLog4Net;
-    using Esynctraining.Core.Business.Models;
+    //using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Wcf;
     using FluentValidation;
@@ -77,7 +77,7 @@ namespace EdugameCloud.WCFService
                 Classes.FromAssemblyNamed("EdugameCloud.WCFService").BasedOn(typeof(QuizResultConverter)).WithServiceSelf().LifestyleTransient());
             container.Register(Component.For<ConverterFactory>().ImplementedBy<ConverterFactory>());
 
-            container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWcfOperation());
+            //container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWcfOperation());
             
             container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
                     .DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings))

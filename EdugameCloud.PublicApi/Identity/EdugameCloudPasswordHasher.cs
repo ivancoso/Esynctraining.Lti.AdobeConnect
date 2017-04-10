@@ -1,5 +1,6 @@
 ﻿using System;
 using Esynctraining.Core.Utils;
+using Esynctraining.Crypto;
 using Microsoft.AspNet.Identity;
 
 namespace EdugameCloud.PublicApi.Identity
