@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Persistence
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Esynctraining.Core.Domain.Entities;
@@ -20,6 +21,8 @@
     /// </typeparam>
     public class Repository<TEntity, TId> : IRepository<TEntity, TId> where TId : struct where TEntity : IEntity<TId>
     {
+        private readonly ISessionSource _manager;
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -30,27 +33,19 @@
         /// </param>
         public Repository(ISessionSource manager)
         {
-            this.Manager = manager;
+            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
         }
 
         #endregion
 
         #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the manager.
-        /// </summary>
-        public ISessionSource Manager { get; set; }
-
+        
         /// <summary>
         /// Gets the session.
         /// </summary>
         public ISession Session
         {
-            get
-            {
-                return this.Manager.Session;
-            }
+            get { return _manager.Session; }
         }
 
         #endregion
@@ -82,7 +77,7 @@
         /// </returns>
         public IEnumerable<TEntity> FindAll(DetachedCriteria criteria)
         {
-            return criteria.GetExecutableCriteria(this.Manager.Session).Future<TEntity>();
+            return criteria.GetExecutableCriteria(Session).Future<TEntity>();
         }
 
         /// <summary>
@@ -99,7 +94,7 @@
         /// </returns>
         public IEnumerable<TEntity> FindAll(DetachedCriteria criteria, int timeout)
         {
-            return criteria.GetExecutableCriteria(this.Manager.Session).SetTimeout(timeout).List<TEntity>();
+            return criteria.GetExecutableCriteria(Session).SetTimeout(timeout).List<TEntity>();
         }
 
         /// <summary>
@@ -113,7 +108,7 @@
         /// </returns>
         public IEnumerable<TEntity> FindAll(QueryOver<TEntity> queryOver)
         {
-            return queryOver.GetExecutableQueryOver(this.Manager.Session).Future<TEntity>();
+            return queryOver.GetExecutableQueryOver(Session).Future<TEntity>();
         }
 
         /// <summary>
@@ -129,7 +124,7 @@
         /// </returns>
         public IEnumerable<TOtherEntity> FindAll<TOtherEntity>(QueryOver<TEntity> queryOver)
         {
-            return queryOver.GetExecutableQueryOver(this.Manager.Session).Future<TOtherEntity>();
+            return queryOver.GetExecutableQueryOver(Session).Future<TOtherEntity>();
         }
 
         /// <summary>
@@ -202,7 +197,7 @@
         /// </returns>
         public IFutureValue<TReturn> FindOne<TReturn>(DetachedCriteria criteria)
         {
-            return criteria.GetExecutableCriteria(this.Manager.Session).FutureValue<TReturn>();
+            return criteria.GetExecutableCriteria(Session).FutureValue<TReturn>();
         }
 
         /// <summary>
@@ -236,7 +231,10 @@
         /// </returns>
         public IFutureValue<TReturn> FindOne<TReturn>(QueryOver<TEntity> queryOver)
         {
-            return queryOver.GetExecutableQueryOver(this.Manager.Session).FutureValue<TReturn>();
+            if (Session == null)
+                throw new InvalidOperationException("Session is null");
+
+            return queryOver.GetExecutableQueryOver(Session).FutureValue<TReturn>();
         }
 
         /// <summary>
@@ -244,7 +242,7 @@
         /// </summary>
         public void Flush()
         {
-            this.Manager.Session.Flush();
+            Session.Flush();
         }
 
         /// <summary>
@@ -266,7 +264,7 @@
             }
             else
             {
-                this.Manager.Session.Delete(entity);
+                Session.Delete(entity);
             }
 
             return entity;
@@ -283,7 +281,7 @@
         /// </returns>
         public TEntity RegisterSave(TEntity entity)
         {
-            this.Manager.Session.SaveOrUpdate(entity);
+            Session.SaveOrUpdate(entity);
             return entity;
         }
 
@@ -304,7 +302,7 @@
         /// </returns>
         public IFutureValue<TSome> StoreProcedureForOne<TSome>(string name, params StoreProcedureParam[] storeProcedureParams)
         {
-            var query = this.Manager.Session.GetNamedQuery(name);
+            var query = Session.GetNamedQuery(name);
             query = storeProcedureParams.Aggregate(query, (current, storeProcedureParam) => storeProcedureParam.AddParam(current));
             return query.SetResultTransformer(Transformers.AliasToBean<TSome>()).FutureValue<TSome>();
         }
@@ -326,7 +324,7 @@
         /// </returns>
         public IEnumerable<TSome> StoreProcedureForMany<TSome>(string name, params StoreProcedureParam[] storeProcedureParams)
         {
-            var query = this.Manager.Session.GetNamedQuery(name);
+            var query = Session.GetNamedQuery(name);
             query = storeProcedureParams.Aggregate(query, (current, storeProcedureParam) => storeProcedureParam.AddParam(current));
             if (typeof(TSome).IsClass)
             {
