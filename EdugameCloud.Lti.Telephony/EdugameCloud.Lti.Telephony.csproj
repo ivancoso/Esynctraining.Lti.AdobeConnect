@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Esynctraining.AdobeConnect" Version="1.0.1.27" />
-    <PackageReference Include="Esynctraining.MeetingOne.RestClient" Version="1.0.0.5" />
+    <PackageReference Include="Esynctraining.MeetingOne.RestClient" Version="1.0.0.6" />
   </ItemGroup>
 
   <ItemGroup>
