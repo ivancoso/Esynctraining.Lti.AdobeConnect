@@ -19,6 +19,8 @@ namespace EdugameCloud.ACEvents.Web.Certificates
         //public string State { get; set; }
         //public string School { get; set; }
         public string EventApprovalCode { get; set; }
+        public string StateTrainerNumber { get; set; }
+        public string StateTrainerCourseNumber { get; set; }
 
     }
    

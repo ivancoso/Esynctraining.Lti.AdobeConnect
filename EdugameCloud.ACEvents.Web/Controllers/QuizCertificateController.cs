@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
@@ -154,15 +155,16 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var quiz = _quizService.GetByIdAsync(eventMapping.postQuizId).Result;
             if (!quiz.isPostQuiz)
                 return null;
-            var quizPassingScoreInPercents = (float)quiz.passingScore / 100;
+            var quizPassingScoreInPercents = (float) quiz.passingScore / 100;
             var quizData = _quizService.GetQuizDataByQuizIdAsync(eventMapping.postQuizId).Result;
             var totalQuestions = quizData.questions.Length;
-            var scoreInPercents = (float)quizResult.score / totalQuestions;
+            var scoreInPercents = (float) quizResult.score / totalQuestions;
             var isSuccess = scoreInPercents >= quizPassingScoreInPercents;
             if (!isSuccess)
                 return null;
 
-            var dynamicQuestionAnswers = GetDynamicQuestionAnswers(acUrl, scoId, loginResult.Status.SessionInfo, quizResult.acEmail);
+            var dynamicQuestionAnswers = GetDynamicQuestionAnswers(acUrl, scoId, loginResult.Status.SessionInfo,
+                quizResult.acEmail);
             var state = dynamicQuestionAnswers["state"];
             //var school = dynamicQuestionAnswers["school"];
 
@@ -172,23 +174,32 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             //var participantName = $"{userInfo.PrincipalInfo.Principal.Name}";
 
             var eventScoInfo = proxy.GetScoInfo(scoId);
-           
+
             var trainerId = GetTeacherId(acUrl, scoId, loginResult.Status.SessionInfo);
             var trainer = _goddardApiConsumer.GetTrainer(trainerId);
             var teacherName = $"{trainer.FirstName} {trainer.LastName}";
 
             var courseId = GetCourseId(acUrl, scoId, loginResult.Status.SessionInfo);
+            var course = _goddardApiConsumer.GetCourse(courseId)?.CourseTitle ?? eventScoInfo.ScoInfo.Name;
 
+            var coreKnowledgeArea = _goddardApiConsumer.GetCoreKnowledgeArea(courseId, state)?.Name ?? String.Empty;
+            var encodedEventName = WebUtility.UrlEncode(WebUtility.UrlEncode(eventScoInfo.ScoInfo.Name));//AA: we need double encode for slash symbol (at least it didn't work with one encoding when I tried)
+            var eventApprovalCode = _goddardApiConsumer.GetEventStateCourseNumber(encodedEventName, state)?.Name ?? String.Empty;
+            var stateTrainerNumber = _goddardApiConsumer.GetStateTrainerNumber(trainerId, state)?.Label ?? String.Empty;
+            var stateTrainerCourseNumber = _goddardApiConsumer.GetStateTrainerCourseNumber(courseId, state, trainerId)?.CourseTitle ?? String.Empty;
 
             var hours = (eventScoInfo.ScoInfo.EndDate - eventScoInfo.ScoInfo.BeginDate).Hours;
             var hoursEnding = hours > 1 ? "s" : string.Empty;
             var quizCertificateInfo = new QuizCertificateInfo()
             {
                 ParticipantName = participantName,
-                KnowledgeArea = "Core Knowledge Area",
+                KnowledgeArea = coreKnowledgeArea,
+                EventApprovalCode = eventApprovalCode,
+                StateTrainerNumber = stateTrainerNumber,
+                StateTrainerCourseNumber = stateTrainerCourseNumber,
                 //State = stateQuestionId,
                 Duration = $"{hours} clock hour{hoursEnding}",
-                CourseTitle = eventScoInfo.ScoInfo.Name,
+                CourseTitle = course,
                 TrainerName = teacherName,
                 Date = UnixTimeStampToDateTime(quizResult.dateCreated).ToString("MMMM dd, yyyy")
             };
@@ -302,16 +313,19 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         {
             var fields = new Dictionary<string, string>
                 {
-                    { "ParticipantName", AlignText(certInfo.ParticipantName, 25) },//hardcoded values in pdf template (length of custom fields)
-                    { "CourseTitle", AlignText(certInfo.CourseTitle, 29) },//hardcoded values in pdf template (length of custom fields)
+                    { "ParticipantName", certInfo.ParticipantName },//hardcoded values in pdf template (length of custom fields)
+                    { "CourseTitle", certInfo.CourseTitle },//hardcoded values in pdf template (length of custom fields)
                     { "CtoNumber", certInfo.CtoNumber },
-                    { "Duration", AlignText(certInfo.Duration, 18) },//hardcoded values in pdf template (length of custom fields)
+                    { "Duration", certInfo.Duration },//hardcoded values in pdf template (length of custom fields)
                     { "Date",  certInfo.Date },
                     { "ExpiresDate",  certInfo.ExpiresDate },
                     { "KnowledgeArea",  certInfo.KnowledgeArea },
                     { "Signature",  certInfo.Signature },
                     { "SpecificId",  certInfo.SpecificId },
-                    { "TrainerName",  certInfo.TrainerName }
+                    { "TrainerName",  certInfo.TrainerName },
+                    { "EventApprovalCode",  certInfo.EventApprovalCode },
+                    { "StateTrainerNumber",  certInfo.StateTrainerNumber },
+                    { "StateTrainerCourseNumber",  certInfo.StateTrainerCourseNumber },
                 };
 
             return fields;
