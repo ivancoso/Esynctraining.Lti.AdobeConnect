@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.0.14" />
+    <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.1" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.0.29" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
@@ -21,9 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="BbWsClient">
-      <HintPath>..\ExternalLibraries\BbWsClient.1.0.1\BbWsClient.dll</HintPath>
-    </Reference>
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
   </ItemGroup>

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BbWsClient;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BlackBoard;
@@ -9,6 +8,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Domain;
+using Esynctraining.BlackBoardClient;
 
 namespace EdugameCloud.Lti.BlackBoard
 {

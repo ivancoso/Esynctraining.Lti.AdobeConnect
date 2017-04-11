@@ -1,5 +1,5 @@
 ﻿using System;
-using BbWsClient;
+using Esynctraining.BlackBoardClient;
 using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.BlackBoard

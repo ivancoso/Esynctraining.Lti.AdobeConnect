@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using BbWsClient;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.BlackBoardClient;
 
 namespace EdugameCloud.Lti.API.BlackBoard
 {

@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text.RegularExpressions;
-using BbWsClient;
-using BbWsClient.Announcements;
-using BbWsClient.CourseMembership;
-using BbWsClient.User;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BlackBoard;
@@ -16,6 +12,10 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Providers;
+using Esynctraining.BlackBoardClient;
+using Esynctraining.BlackBoardClient.CourseMembership;
+using Esynctraining.BlackBoardClient.User;
+using Esynctraining.BlackBoardClient.Announcements;
 
 namespace EdugameCloud.Lti.BlackBoard
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using BbWsClient;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.API.BlackBoard;
@@ -129,7 +128,7 @@ namespace EdugameCloud.Lti.API
             if (!TestDomainFormat(test, out info))
                 return false;
 
-            WebserviceWrapper session = test.enableProxyToolMode
+            var session = test.enableProxyToolMode
                 ? this.SoapAPI.LoginToolAndCreateAClient(
                     out info,
                     test.domain.IsSSL(),

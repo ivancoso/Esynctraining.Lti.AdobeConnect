@@ -9,6 +9,7 @@
     <PackageReference Include="DotNetOpenAuth.AspNet" Version="4.3.4.13329" />
     <PackageReference Include="DotNetOpenAuth.OpenId.RelyingParty" Version="4.3.4.13329" />
     <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.0.14" />
+    <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.1" />
     <PackageReference Include="Esynctraining.Crypto" Version="1.0.1" />
     <PackageReference Include="Esynctraining.FluentValidation" Version="1.0.0.3" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.0.1" />
@@ -27,9 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="BbWsClient">
-      <HintPath>..\ExternalLibraries\BbWsClient.1.0.1\BbWsClient.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Runtime.Caching" />
