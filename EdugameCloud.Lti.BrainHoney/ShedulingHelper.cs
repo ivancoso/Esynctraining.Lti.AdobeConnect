@@ -383,7 +383,7 @@ namespace EdugameCloud.Lti.BrainHoney
                         {
                             var lmsUser = new LmsUserDTO
                             {
-                                LoginId = enrollment.UserName,
+                                Login = enrollment.UserName,
                                 PrimaryEmail = enrollment.Email,
                                 LmsRole = enrollment.Role,
                                 Id = enrollment.UserId,

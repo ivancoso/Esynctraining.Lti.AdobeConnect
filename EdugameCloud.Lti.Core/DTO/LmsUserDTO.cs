@@ -29,8 +29,13 @@
         [DataMember]
         public string Id { get; set; }
 
-        [IgnoreDataMember]
-        public string LoginId { get; set; }
+        /// <summary>
+        /// User's login in LMS system.
+        /// If AC uses Email-as-Login, this value represents user's login in AC.
+        /// NOTE: login used by External API calls only.
+        /// </summary>
+        [DataMember]
+        public string Login { get; set; }
         
         [DataMember]
         public string Name
@@ -69,7 +74,7 @@
 
         public string GetLogin()
         {
-            return this.LoginId ?? this.Name;
+            return this.Login ?? this.Name;
         }
         
         public string GetEmail()

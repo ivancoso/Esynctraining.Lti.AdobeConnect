@@ -176,7 +176,7 @@
                             {
                                 LmsRole = role, 
                                 PrimaryEmail = email, 
-                                LoginId = userName, 
+                                Login = userName, 
                                 Id = userId, 
                                 Name = firstName + " " + lastName, 
                             });

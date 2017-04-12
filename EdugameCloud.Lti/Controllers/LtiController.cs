@@ -767,7 +767,7 @@ namespace EdugameCloud.Lti.Controllers
                     Logger.Warn("[Canvas Auth Issue]. lms_user_login == '$Canvas.user.loginId'");
                     LmsUserDTO user = CanvasApi.GetUser(company.LmsDomain, token, userId);
                     if (user != null)
-                        userName = user.LoginId;
+                        userName = user.Login;
                 }
 
                 if (string.IsNullOrWhiteSpace(username))

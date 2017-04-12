@@ -142,7 +142,7 @@ namespace EdugameCloud.Lti.Sakai
                         {
                             LmsRole = groupName,
                             PrimaryEmail = email,
-                            LoginId = userName,
+                            Login = userName,
                             Id = userId,
                             Name = fullName,
                         });

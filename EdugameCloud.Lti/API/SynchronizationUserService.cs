@@ -294,7 +294,7 @@ namespace EdugameCloud.Lti.API
                         AcId = x.User.PrincipalId,
                         Id = x.User.UserIdExtended ?? x.User.UserId,
                         LtiId = x.User.UserId,
-                        LoginId = x.User.Username,
+                        Login = x.User.Username,
                         Name = x.User.Name,
                         PrimaryEmail = x.User.Email,
                         LmsRole = x.LmsRole

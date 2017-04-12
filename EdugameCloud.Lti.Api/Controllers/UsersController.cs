@@ -81,6 +81,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                     out error,
                     null);
 
+                CleanUpDto(users);
+
                 if (string.IsNullOrWhiteSpace(error))
                 {
                     return users.ToSuccessResult();
@@ -224,6 +226,19 @@ namespace EdugameCloud.Lti.Api.Controllers
                 Message = Messages.UsersCouldNotBeRemoved,
                 Data = removedUsers,
             };
+        }
+
+
+        // TRICK: we need Login for UNIR only
+        private void CleanUpDto(IEnumerable<LmsUserDTO> data)
+        {
+            if (SessionSave == null)
+            {
+                foreach (var user in data)
+                {
+                    user.Login = null;
+                }
+            }
         }
 
     }

@@ -241,7 +241,7 @@ namespace EdugameCloud.Lti.BlackBoard
                                         return new LmsUserDTO
                                         {
                                             Id = e.userId,
-                                            LoginId = user.With(x => x.name),
+                                            Login = user.With(x => x.name),
                                             PrimaryEmail = user.With(x => x.extendedInfo).With(x => x.emailAddress),
                                             Name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
                                             LmsRole = GetRole(e.roleId, roles),
