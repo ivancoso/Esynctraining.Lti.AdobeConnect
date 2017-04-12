@@ -14,7 +14,7 @@
     <RootNamespace>EdugameCloud.Web</RootNamespace>
     <AssemblyName>EdugameCloud.Web</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>443</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
@@ -57,8 +57,8 @@
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.27, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.27\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.27, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.27\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.29, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.29\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.CastleLog4Net.1.0.0.2\lib\net45\Esynctraining.CastleLog4Net.dll</HintPath>
@@ -727,7 +727,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50254</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

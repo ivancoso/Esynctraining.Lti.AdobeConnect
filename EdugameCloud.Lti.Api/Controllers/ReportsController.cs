@@ -68,6 +68,13 @@
                     request.StartIndex,
                     request.Limit);
 
+                // TRICK: clean not to serialize
+                foreach (var item in report)
+                {
+                    item.login = null;
+                    item.principalId = null;
+                }
+
                 return report.ToSuccessResult();
             }
             catch (Exception ex)

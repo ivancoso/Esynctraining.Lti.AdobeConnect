@@ -38,11 +38,11 @@
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.27, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.27\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.27, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.27\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.29, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.29\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.14, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.14\lib\net461\Esynctraining.AdobeConnect.Api.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.16, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.16\lib\net461\Esynctraining.AdobeConnect.Api.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.29, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.29\lib\net461\Esynctraining.Core.dll</HintPath>
