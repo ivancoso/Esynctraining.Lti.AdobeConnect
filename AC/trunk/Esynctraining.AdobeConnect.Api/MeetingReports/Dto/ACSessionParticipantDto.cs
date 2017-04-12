@@ -44,7 +44,12 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
         [IgnoreDataMember]
         public string sessionName { get; set; }
 
-        [IgnoreDataMember]
+        /// <summary>
+        /// Attendee's principal-id from AC.
+        /// NOTE: principalId used by External API calls only.
+        /// </summary>
+        [Required]
+        [DataMember(Name = "acId")]
         public string principalId { get; set; }
 
         [IgnoreDataMember]
@@ -60,7 +65,12 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
         [IgnoreDataMember]
         public float durationInHours { get; set; }
 
-        [IgnoreDataMember]
+        /// <summary>
+        /// Attendee's login(username) from AC.
+        /// NOTE: login used by External API calls only.
+        /// </summary>
+        [Required]
+        [DataMember]
         public string login { get; set; }
 
         [IgnoreDataMember]
