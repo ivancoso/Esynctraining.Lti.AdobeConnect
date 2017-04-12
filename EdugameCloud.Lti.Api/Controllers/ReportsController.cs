@@ -68,11 +68,15 @@
                     request.StartIndex,
                     request.Limit);
 
-                // TRICK: clean not to serialize
-                foreach (var item in report)
+                // TRICK: check that is not API call.
+                if (SessionSave != null)
                 {
-                    item.login = null;
-                    item.principalId = null;
+                    // TRICK: clean not to serialize
+                    foreach (var item in report)
+                    {
+                        item.login = null;
+                        item.principalId = null;
+                    }
                 }
 
                 return report.ToSuccessResult();
