@@ -131,13 +131,7 @@
                         {
                             using (var arc = new ZipArchive(ms, ZipArchiveMode.Create, true))
                             {
-                                foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
-                                {
-                                    using (Stream fs = arc.CreateEntry(file.Name).Open())
-                                    {
-                                        file.Open().CopyTo(fs);
-                                    }
-                                }
+                                CopyAllFilesExceptConfig(archive, arc);
 
                                 using (var fs = arc.CreateEntry("config.xml").Open())
                                 {
@@ -201,13 +195,7 @@
                         {
                             using (var arc = new ZipArchive(ms, ZipArchiveMode.Create, true))
                             {
-                                foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
-                                {
-                                    using (Stream fs = arc.CreateEntry(file.Name).Open())
-                                    {
-                                        file.Open().CopyTo(fs);
-                                    }
-                                }
+                                CopyAllFilesExceptConfig(archive, arc);
 
                                 using (var fs = arc.CreateEntry("config.xml").Open())
                                 {
@@ -238,6 +226,16 @@
             return new HttpStatusCodeResult(HttpStatusCode.NotFound);
         }
 
+        private static void CopyAllFilesExceptConfig(ZipArchive archive, ZipArchive arc)
+        {
+            foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
+            {
+                using (Stream fs = arc.CreateEntry(file.FullName).Open())
+                {
+                    file.Open().CopyTo(fs);
+                }
+            }
+        }
 
         private void EnsureServicePathConfigExists(string physicalPath)
         {
@@ -275,13 +273,7 @@
                             {
                                 using (var arc = new ZipArchive(ms, ZipArchiveMode.Create, true))
                                 {
-                                    foreach (var file in archive.Entries.Where(x => x.Name != "config.xml"))
-                                    {
-                                        using (Stream fs = arc.CreateEntry(file.Name).Open())
-                                        {
-                                            file.Open().CopyTo(fs);
-                                        }
-                                    }
+                                    CopyAllFilesExceptConfig(archive, arc);
 
                                     using (var fs = arc.CreateEntry("config.xml").Open())
                                     {
