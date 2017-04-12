@@ -149,13 +149,37 @@
       <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
+      <Project>{410b1611-24ee-4887-8218-31fcbce1be02}</Project>
+      <Name>EdugameCloud.Lti.BlackBoard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj">
+      <Project>{2a9704ff-ed00-4b8d-b4a9-f60f837f6f55}</Project>
+      <Name>EdugameCloud.Lti.BrainHoney</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj">
+      <Project>{9cbd846d-100c-4084-b71d-73c40192ef21}</Project>
+      <Name>EdugameCloud.Lti.Canvas</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
       <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj">
+      <Project>{1d04423b-12e2-41e5-bce6-a5aa99091110}</Project>
+      <Name>EdugameCloud.Lti.Desire2Learn</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
+      <Project>{8bde322e-1592-4c41-ac4a-b9a644175f04}</Project>
+      <Name>EdugameCloud.Lti.Moodle</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Persistence\EdugameCloud.Lti.Persistence.csproj">
       <Project>{e9bd4eb8-1136-480c-a07d-4e7fa6ffa6c4}</Project>
       <Name>EdugameCloud.Lti.Persistence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj">
+      <Project>{1535300b-d67d-41f1-9d1f-ebcc5ac32b75}</Project>
+      <Name>EdugameCloud.Lti.Sakai</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
