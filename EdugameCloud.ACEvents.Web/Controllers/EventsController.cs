@@ -176,7 +176,15 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                     var byLogin = proxy.GetAllByLogin(eventModel.Email);
                     if (byLogin.Success)
                     {
-                        var principalId = byLogin.Values.ToList()[0].PrincipalId;
+                        var principals = byLogin.Values.ToList();
+                        if (!principals.Any())
+                        {
+                            var message = $"There is no AC user with login {eventModel.Email}, events should not allows guests. Please contact system administrator";
+                            _logger.LogError(message);
+                            return Json(new { IsSuccess = false, Message = message });
+                        }
+                            
+                        var principalId = principals[0].PrincipalId;
 
                         proxy.UpdateScoPermissions(new List<IPermissionUpdateTrio>
                         {
@@ -192,6 +200,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 catch (Exception e)
                 {
                     _logger.LogError("Error on adding user as a participant to an event", e);
+                    return Json(new { IsSuccess = false, Message = e.Message });
                 }
 
                 if (status.Code != StatusCodes.ok)
