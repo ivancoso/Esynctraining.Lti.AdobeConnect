@@ -232,8 +232,10 @@ namespace EdugameCloud.Lti.Api.Controllers
         // TRICK: we need Login for UNIR only
         private void CleanUpDto(IEnumerable<LmsUserDTO> data)
         {
-            if (SessionSave == null)
+            // TRICK: check that is not API call.
+            if (SessionSave != null)
             {
+                // TRICK: clean not to serialize
                 foreach (var user in data)
                 {
                     user.Login = null;
