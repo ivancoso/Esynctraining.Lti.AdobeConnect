@@ -710,7 +710,7 @@
                     {
                         if (isTransient && string.IsNullOrWhiteSpace(user.password))
                         {
-                            user.password = Password.Generate(8, 0);
+                            user.password = Password.CreateAlphaNumericRandomPassword(8);
                         }
 
                         // bool passwordChanged = false, 
@@ -902,11 +902,11 @@
         /// </returns>
         private SessionDTO SetNewSession(User user)
         {
-            user.SessionToken = Password.Generate(45, 0);
+            user.SessionToken = Password.CreateAlphaNumericRandomPassword(45);
             var userModel = this.UserModel;
             while (userModel.GetOneByToken(user.SessionToken).Value != null)
             {
-                user.SessionToken = Password.Generate(45, 0);
+                user.SessionToken = Password.CreateAlphaNumericRandomPassword(45);
             }
 
             user.SessionTokenExpirationDate = DateTime.Now.AddDays(1);

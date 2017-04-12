@@ -547,7 +547,7 @@ namespace EdugameCloud.WCFService
             result.ModifiedBy = entityDto.modifiedBy.HasValue ? userModel.GetOneById(entityDto.modifiedBy.Value).Value : null;
             if (isTransient && string.IsNullOrWhiteSpace(entityDto.password))
             {
-                entityDto.password = Password.Generate(8, 0);
+                entityDto.password = Password.CreateAlphaNumericRandomPassword(8);
             }
 
             if (isTransient || (!string.IsNullOrWhiteSpace(entityDto.password) && !result.ValidatePassword(entityDto.password)))

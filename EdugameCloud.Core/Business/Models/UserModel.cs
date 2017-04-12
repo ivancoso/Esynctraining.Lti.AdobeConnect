@@ -422,7 +422,7 @@
                                                    };
                                 if (string.IsNullOrWhiteSpace(passwordCellValue))
                                 {
-                                    instance.SetPassword(Password.Generate(8, 0));
+                                    instance.SetPassword(Password.CreateAlphaNumericRandomPassword(8));
                                     if (sendActivation != null)
                                     {
                                         sendActivation(instance);

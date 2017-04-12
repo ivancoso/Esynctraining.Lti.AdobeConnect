@@ -438,7 +438,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 else
                 { 
-                    generatedPassword = Password.Generate(8, 2);
+                    generatedPassword = Password.CreateAlphaNumericRandomPassword(8);
                     var resetPasswordResult = adminProvider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
                     if (resetPasswordResult.Success)
                     {

@@ -261,7 +261,7 @@
         /// </returns>
         public virtual string ResetPassword()
         {
-            return this.ResetPassword((x) => EdugameCloud.Core.Password.Generate(x, 0));
+            return this.ResetPassword((x) => EdugameCloud.Core.Password.CreateAlphaNumericRandomPassword(x));
         }
 
         /// <summary>
