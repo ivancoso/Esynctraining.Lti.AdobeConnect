@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace Esynctraining.ForwardingProxyMiddleware
 {
@@ -16,13 +15,11 @@ namespace Esynctraining.ForwardingProxyMiddleware
 
     public class ProxyMiddleware
     {
-        private const int DefaultWebSocketBufferSize = 4096;
-
         private readonly RequestDelegate _next;
         private readonly HttpClient _httpClient;
         private readonly ProxyOptions _options;
 
-        private static readonly string[] NotForwardedWebSocketHeaders = new[] { "Connection", "Host", "Upgrade", "Sec-WebSocket-Key", "Sec-WebSocket-Version" };
+        private static readonly string XHTTPMethodOverride = "X-HTTP-Method-Override";
 
         public ProxyMiddleware(RequestDelegate next, IOptions<ProxyOptions> options)
         {
@@ -68,50 +65,10 @@ namespace Esynctraining.ForwardingProxyMiddleware
             var requestMessage = new HttpRequestMessage();
             var requestMethod = context.Request.Method;
 
-            // TODO:
-            if (context.Request.HasFormContentType)
+            var methodHeader = context.Request.Headers.FirstOrDefault(x => XHTTPMethodOverride.Equals(x.Key, StringComparison.OrdinalIgnoreCase)).Value;
+            if (methodHeader != Microsoft.Extensions.Primitives.StringValues.Empty)
             {
-                var requestBodyStream = new MemoryStream();
-                var originalRequestBody = context.Request.Body;
-
-                await context.Request.Body.CopyToAsync(requestBodyStream);
-                requestBodyStream.Seek(0, SeekOrigin.Begin);
-                context.Request.Body = requestBodyStream;
-
-                //context.Request.Body = originalRequestBody; ??
-
-                var method = context.Request.Form["method"];
-                if (method != Microsoft.Extensions.Primitives.StringValues.Empty)
-                {
-                    requestMethod = method;
-                }
-
-                // HACK:
-                requestBodyStream.Seek(0, SeekOrigin.Begin);
-                context.Request.Body = requestBodyStream;
-            }
-            else if (context.Request.ContentType == "application/json")
-            {
-                var requestBodyStream = new MemoryStream();
-                var originalRequestBody = context.Request.Body;
-
-                await context.Request.Body.CopyToAsync(requestBodyStream);
-                requestBodyStream.Seek(0, SeekOrigin.Begin);
-                context.Request.Body = requestBodyStream;
-
-                //using (StreamReader readStream = new StreamReader(context.Request.Body))
-                StreamReader readStream = new StreamReader(context.Request.Body);
-                {
-                    var documentContents = readStream.ReadToEnd();
-
-                    var deserializedResult = JsonConvert.DeserializeObject<HttpMethodParam>(documentContents);
-
-                    requestMethod = deserializedResult.Method;
-                }
-
-                // HACK:
-                requestBodyStream.Seek(0, SeekOrigin.Begin);
-                context.Request.Body = requestBodyStream;
+                requestMethod = methodHeader;
             }
 
             var httpMethod = new HttpMethod(requestMethod);
@@ -126,7 +83,7 @@ namespace Esynctraining.ForwardingProxyMiddleware
             }
 
             // Copy the request headers
-            foreach (var header in context.Request.Headers)
+            foreach (var header in context.Request.Headers.Where(x => !XHTTPMethodOverride.Equals(x.Key, StringComparison.OrdinalIgnoreCase)))
             {
                 if (!requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray()) && requestMessage.Content != null)
                 {
