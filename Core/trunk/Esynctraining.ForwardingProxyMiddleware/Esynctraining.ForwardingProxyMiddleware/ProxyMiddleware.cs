@@ -21,6 +21,8 @@ namespace Esynctraining.ForwardingProxyMiddleware
 
         private static readonly string XHTTPMethodOverride = "X-HTTP-Method-Override";
 
+        private readonly string _hostWithPort;
+
         public ProxyMiddleware(RequestDelegate next, IOptions<ProxyOptions> options)
         {
             if (options == null)
@@ -54,6 +56,8 @@ namespace Esynctraining.ForwardingProxyMiddleware
             {
                 _options.Scheme = "http";
             }
+
+            _hostWithPort = _options.Host + ":" + _options.Port;
 
             _httpClient = new HttpClient(new HttpClientHandler());
         }
@@ -91,8 +95,9 @@ namespace Esynctraining.ForwardingProxyMiddleware
                 }
             }
 
-            requestMessage.Headers.Host = _options.Host + ":" + _options.Port;
-            var uriString = $"{_options.Scheme}://{_options.Host}:{_options.Port}{context.Request.PathBase}{context.Request.Path}{context.Request.QueryString}";
+            requestMessage.Headers.Host = _hostWithPort;
+            //var uriString = $"{_options.Scheme}://{_options.Host}:{_options.Port}{context.Request.PathBase}{context.Request.Path}{context.Request.QueryString}";
+            var uriString = $"{_options.Scheme}://{_options.Host}:{_options.Port}{context.Request.Path}{context.Request.QueryString}";
             requestMessage.RequestUri = new Uri(uriString);
 
             requestMessage.Method = httpMethod;

@@ -16,7 +16,6 @@ namespace Esynctraining.ProxyMiddleware.Web.Test
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
                 .Build();
 
             host.Run();
