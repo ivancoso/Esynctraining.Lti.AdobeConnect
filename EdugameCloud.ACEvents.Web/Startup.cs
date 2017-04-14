@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.IO;
 using Castle.Core.Logging;
 using CompanyAcDomainsNamespace;
 using CompanyEventsServiceNamespace;
@@ -19,6 +20,7 @@ using LookupServiceNamespace;
 using QuizResultServiceNamespace;
 using QuizServiceNamespace;
 using Esynctraining.AspNetCore.Filters;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 //using Logger = EdugameCloud.Core.Logging.Logger;
 using ILogger = Esynctraining.Core.Logging.ILogger;
@@ -68,13 +70,15 @@ namespace EdugameCloud.ACEvents.Web
 
                 .AddControllersAsServices();
 
+            //services.AddDirectoryBrowser();
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 
             services.AddSingleton<ILogger, FakeLogger>();
             services.AddOptions();
             services.Configure<AppSettings>(Configuration);
-            
+
 
             services.AddScoped<IEmailService>(provider =>
             {
@@ -151,30 +155,16 @@ namespace EdugameCloud.ACEvents.Web
             }
 
             app.UseStatusCodePages();
-
-            //app.UseExceptionHandler(
-            //    builder =>
-            //    {
-            //        builder.Run(
-            //        async context =>
-            //        {
-            //            context.Response.StatusCode = (int)HttpStatusCode.OK;
-            //            var ex = context.Features.Get<IExceptionHandlerFeature>();
-            //            if (ex != null)
-            //            { 
-            //            }
-            //        });
-            //    });
-            //var origins = Configuration["AppSettings:CorsOrigin"].Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-            //app.UseCors(builder =>
-            //    builder
-            //    .WithOrigins(origins)
-            //    .WithMethods("POST")
-            //    .WithHeaders(new[] { "Authorization, X-Requested-With, Content-Type, Accept, Origin" })
-            //    .SetPreflightMaxAge(TimeSpan.FromDays(1)));
-
+            app.UseDefaultFiles();
             app.UseStaticFiles();
 
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+            Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", @"UI")),
+                RequestPath = new PathString("/UI")
+            });
+           
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

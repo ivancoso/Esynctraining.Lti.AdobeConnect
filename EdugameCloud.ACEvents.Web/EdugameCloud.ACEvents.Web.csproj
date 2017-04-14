@@ -3,13 +3,33 @@
     <TargetFramework>net462</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="wwwroot\UI\index.html" />
+    <None Remove="wwwroot\UI\placeholder.txt" />
     <None Remove="Views\app_offline.htm" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Pdf\Shared\Placeholder.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\UI\index.html" />
+    <Content Include="wwwroot\UI\placeholder.txt" />
     <Content Include="Views\app_offline.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\UI\static\css\app.9ebff9878d44075310b7aa65b68ac00a.css" />
+    <None Include="wwwroot\UI\static\css\app.d5dd99aee5ce6aa46d74f5aef2d9499a.css" />
+    <None Include="wwwroot\UI\static\css\app.f94634fd56c7e5957c99c8beef51c23b.css" />
+    <None Include="wwwroot\UI\static\img\logoBackCloud.59a1e66.png" />
+    <None Include="wwwroot\UI\static\img\logoBackRightCloud.0bd9fc5.png" />
+    <None Include="wwwroot\UI\static\js\app.00c0f5cb69f5b2b40a39.js" />
+    <None Include="wwwroot\UI\static\js\app.1f920cc5716522a61e98.js" />
+    <None Include="wwwroot\UI\static\js\app.eb118b1ef6266732c4bc.js" />
+    <None Include="wwwroot\UI\static\js\manifest.1e1cdc92a21ca447062e.js" />
+    <None Include="wwwroot\UI\static\js\manifest.6f8095ff1ee12d4e1ffa.js" />
+    <None Include="wwwroot\UI\static\js\manifest.9d788e9e71a31cd14714.js" />
+    <None Include="wwwroot\UI\static\js\vendor.6e4744be72c49dc17d89.js" />
+    <None Include="wwwroot\UI\static\js\vendor.8b41096bc0276dc6549e.js" />
+    <None Include="wwwroot\UI\static\js\vendor.9312744deeae822dbb75.js" />
   </ItemGroup> 
 <ItemGroup>   
     <Reference Include="Microsoft.CSharp" />
