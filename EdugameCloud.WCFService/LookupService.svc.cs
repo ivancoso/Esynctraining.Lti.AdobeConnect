@@ -27,8 +27,15 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class LookupService : BaseService, ILookupService
     {
+        private readonly StateModel StateModel;
+
+        public LookupService(StateModel stateModel)
+        {
+            StateModel = stateModel;
+        }
+
         #region Properties
-        
+
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
         
         private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
@@ -47,7 +54,7 @@ namespace EdugameCloud.WCFService
         
         private BuildVersionTypeModel BuildVersionTypeModel => IoC.Resolve<BuildVersionTypeModel>();
         
-        private StateModel StateModel => IoC.Resolve<StateModel>();
+        //private StateModel StateModel => IoC.Resolve<StateModel>();
 
         private SchoolModel SchoolModel => IoC.Resolve<SchoolModel>();
 
