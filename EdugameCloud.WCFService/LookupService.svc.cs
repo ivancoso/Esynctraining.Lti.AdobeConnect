@@ -27,9 +27,9 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class LookupService : BaseService, ILookupService
     {
-        private readonly StateModel StateModel;
+        private readonly Func<StateModel> StateModel;
 
-        public LookupService(StateModel stateModel)
+        public LookupService(Func<StateModel> stateModel)
         {
             StateModel = stateModel;
         }
@@ -305,7 +305,7 @@ namespace EdugameCloud.WCFService
         {
             try
             {
-                return this.StateModel.GetAll().Select(x => new StateDTO(x)).ToArray();
+                return this.StateModel().GetAll().Select(x => new StateDTO(x)).ToArray();
             }
             catch (Exception ex)
             {
