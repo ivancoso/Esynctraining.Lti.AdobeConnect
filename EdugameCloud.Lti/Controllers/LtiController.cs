@@ -244,17 +244,25 @@ namespace EdugameCloud.Lti.Controllers
         [HttpGet]
         public virtual ActionResult GetExtJsPage(string primaryColor, string session, int acConnectionMode, bool disableCacheBuster = true)
         {
-            var model = TempData["lti-index-model"] as LtiViewModelDto;
-
-            // TRICK: to change lang inside
-            LmsUserSession s = GetReadOnlySession(session);
-
-            if (model == null)
+            try
             {
-                model = BuildModel(s);
-            }
+                var model = TempData["lti-index-model"] as LtiViewModelDto;
 
-            return View("Index", model);
+                // TRICK: to change lang inside
+                LmsUserSession s = GetReadOnlySession(session);
+
+                if (model == null)
+                {
+                    model = BuildModel(s);
+                }
+
+                return View("Index", model);
+            }
+            catch (Core.WarningMessageException ex)
+            {
+                this.ViewBag.Message = ex.Message;
+                return this.View("~/Views/Lti/LtiError.cshtml");
+            }
         }
         
         [HttpGet]
