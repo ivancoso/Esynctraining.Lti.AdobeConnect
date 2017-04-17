@@ -32,7 +32,7 @@ namespace EdugameCloud.Lti.DTO
 
                 public string ShareRecording { get; set; } = RestWebApiBaseUrl + "recordings/share";  // API
                 public string EditRecordingInformation { get; set; } = RestWebApiBaseUrl + "recordings/edit";  // API
-                public string DeleteRecording { get; set; } = RestWebApiBaseUrl + "recordings/delete/{0}";  // API
+                public string DeleteRecording { get; set; } = RestWebApiBaseUrl + "recordings/delete";  // API
 
                 public string OpenAcRecordingEditPage { get; set; } = "recordings/edit/{0}"; // get
                 public string JoinRecording { get; set; } = "recordings/join/{0}";  // get
