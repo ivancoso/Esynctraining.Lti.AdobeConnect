@@ -57,12 +57,12 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("getevents")]
         [HttpPost]
         [TeacherOnly]
-        public OperationResultWithData<IEnumerable<MeetingSessionDTO>> GetEvents(int meetingId)
+        public OperationResultWithData<IEnumerable<MeetingSessionDTO>> GetEvents([FromBody]MeetingRequestDto request)
         {
             try
             {
                 var meetingSessionService = _lmsFactory.GetMeetingSessionService((LmsProviderEnum)LmsCompany.LmsProviderId);
-                var result = meetingSessionService.GetSessions(meetingId);
+                var result = meetingSessionService.GetSessions(request.MeetingId);
                 return result.ToSuccessResult();
             }
             catch (Exception ex)
