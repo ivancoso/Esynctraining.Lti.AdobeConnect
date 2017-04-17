@@ -21,8 +21,11 @@ namespace EdugameCloud.Lti.LmsUserUpdater
         {
             const string ConsumerKeyParameterName = "consumerkey";
             const string ConsumerKeyOutParameterName = "consumerkeyout";
+            const string SplitSyncModeParameterName = "splitsyncmode";
+
             const string neMutexName = "EdugameCloud.Lti.LmsUserUpdater.BackgroundMutexName";
             var parameters = ParseArgumentList(args);
+
             // prevent two instances from running
             bool created;
 
@@ -55,11 +58,14 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                         companies =
                             companies.Where(x => excludeKeys.All(ek => ek != x.ConsumerKey)).ToList();
                     }
-                    SplitSyncMode mode;
-                    if (!Enum.TryParse(settings.SplitSyncMode, out mode))
-                    {
-                        mode = SplitSyncMode.None;
-                    }
+
+                    //SplitSyncMode mode;
+                    //if (!Enum.TryParse(settings.SplitSyncMode, out mode))
+                    //{
+                    //    mode = SplitSyncMode.None;
+                    //}
+
+                    SplitSyncMode mode = parameters.ContainsKey(SplitSyncModeParameterName) ? (SplitSyncMode)Enum.Parse(typeof(SplitSyncMode), parameters[SplitSyncModeParameterName]) : SplitSyncMode.None;
 
                     companies = companies.Where(x => (mode == SplitSyncMode.None || x.Id %2 == (int)mode)
                         && !LicenseExpired(x) 
