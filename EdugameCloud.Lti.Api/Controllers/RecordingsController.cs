@@ -129,12 +129,10 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        // NOTE: quick fix. defined 2 routes due to http://stackoverflow.com/questions/35011192/how-to-define-an-optional-parameter-in-path-using-swagger
         [Route("delete")]
-        [Route("delete/{id}")]
         [HttpPost]
         [LmsAuthorizeBase]
-        public virtual OperationResult DeleteRecording(int meetingId, string id)
+        public virtual OperationResult DeleteRecording([FromBody]RecordingRequestDto request)
         {
             try
             {
@@ -147,8 +145,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                     LmsCompany,
                     this.GetAdminProvider(),
                     param.course_id,
-                    id,
-                    meetingId);
+                    request.RecordingId,
+                    request.MeetingId);
 
                 return result;
             }
