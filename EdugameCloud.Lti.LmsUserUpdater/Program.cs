@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -10,6 +11,7 @@ using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
+using Esynctraining.Core.Providers;
 
 namespace EdugameCloud.Lti.LmsUserUpdater
 {
@@ -28,6 +30,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
             {
                 IoCStart.Init();
                 ILogger logger = IoC.Resolve<ILogger>();
+                dynamic settings = IoC.Resolve<ApplicationSettingsProvider>();
 
                 if (!created)
                 {
@@ -44,7 +47,6 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     IEnumerable<LmsCompany> companies = lmsCompanyModel.GetEnabledForSynchronization(parameters.ContainsKey(ConsumerKeyParameterName) 
                         ? parameters[ConsumerKeyParameterName]
                         : null);
-                    logger.Warn($"[Companies to sync] {string.Join(",", companies.Select(x=> x.Id))}");
                     //timer.Stop();
                     //logger.Warn($"Retrieve companies elapsed time: {timer.Elapsed.ToString()}");
                     if (parameters.ContainsKey(ConsumerKeyOutParameterName))
@@ -53,9 +55,16 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                         companies =
                             companies.Where(x => excludeKeys.All(ek => ek != x.ConsumerKey)).ToList();
                     }
+                    SplitSyncMode mode;
+                    if (!Enum.TryParse(settings.SplitSyncMode, out mode))
+                    {
+                        mode = SplitSyncMode.None;
+                    }
 
-                    companies = companies.Where(x => !LicenseExpired(x) 
+                    companies = companies.Where(x => (mode == SplitSyncMode.None || x.Id %2 == (int)mode)
+                        && !LicenseExpired(x) 
                         && x.LmsCourseMeetings.Any(y => y.LmsMeetingType != (int)LmsMeetingType.OfficeHours)).ToList();
+                    logger.Info($"[Companies to sync] {string.Join(",", companies.Select(x=> x.Id))}");
                     var groupedByCompany = companies.GroupBy(x => x.LmsProviderId);//.ToDictionary(x => x.Key, y => y.SelectMany(z=>z.LmsCourseMeetings).GroupBy(c => new CourseCompany { CourseId = c.CourseId, LmsCompanyId = c.LmsCompany.Id }));
 
                     //todo: Task for each lms if possible
