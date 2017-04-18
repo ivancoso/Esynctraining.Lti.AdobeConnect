@@ -8,9 +8,10 @@ namespace EdugameCloud.Lti.BlackBoard
     {
         private readonly ILogger _logger;
 
+
         public CastleLoggerAdapter(ILogger logger)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 

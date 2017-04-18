@@ -108,8 +108,8 @@ namespace EdugameCloud.Lti.BlackBoard
         /// </param>
         public SoapBlackBoardApi(ApplicationSettingsProvider settings, ILogger logger)
         {
-            this.settings = settings;
-            this.logger = logger;
+            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #endregion

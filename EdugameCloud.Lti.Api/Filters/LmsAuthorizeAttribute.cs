@@ -5,6 +5,7 @@ using EdugameCloud.Lti.Api.Controllers;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.GetHashCodeTrick;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -201,21 +202,23 @@ namespace EdugameCloud.Lti.Api.Filters
             if (int.TryParse(token, out intCourseId))
                 return intCourseId;
 
-            string ltiUrl = (IoC.Resolve<ApplicationSettingsProvider>() as dynamic).LtiHostUrl as string;
-            var url = new Uri(new Uri(new Uri(ltiUrl), "hash/"), WebUtility.UrlEncode(token));
-            try
-            {
-                string value;
-                using (var web = new WebClient())
-                {
-                    value = web.DownloadString(url);
-                }
-                return int.Parse(value);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Error fetching GetHashCode for Sakai course id", ex);
-            }
+            return SakaiCourseNumberTrick.GetHashCode(token);
+
+            //string ltiUrl = (IoC.Resolve<ApplicationSettingsProvider>() as dynamic).LtiHostUrl as string;
+            //var url = new Uri(new Uri(new Uri(ltiUrl), "hash/"), WebUtility.UrlEncode(token));
+            //try
+            //{
+            //    string value;
+            //    using (var web = new WebClient())
+            //    {
+            //        value = web.DownloadString(url);
+            //    }
+            //    return int.Parse(value);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new InvalidOperationException("Error fetching GetHashCode for Sakai course id", ex);
+            //}
         }
 
     }

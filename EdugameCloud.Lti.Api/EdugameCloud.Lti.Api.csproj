@@ -231,6 +231,10 @@
       <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.GetHashCodeTrick\EdugameCloud.Lti.GetHashCodeTrick.csproj">
+      <Project>{d0e5a5ae-9c5e-4c32-b0b5-485bf1c0a3ad}</Project>
+      <Name>EdugameCloud.Lti.GetHashCodeTrick</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
       <Name>EdugameCloud.Lti</Name>
