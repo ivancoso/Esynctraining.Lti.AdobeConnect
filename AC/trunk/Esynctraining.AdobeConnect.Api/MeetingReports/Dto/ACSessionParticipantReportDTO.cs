@@ -8,6 +8,11 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
 
         public ACSessionParticipantReportDto(ACSessionParticipantDto acSession, TimeZoneInfo timezone)
         {
+            if (acSession == null)
+                throw new ArgumentNullException(nameof(acSession));
+            if (timezone == null)
+                throw new ArgumentNullException(nameof(timezone));
+
             this.scoId = acSession.scoId;
             this.participantName = acSession.participantName;
             this.scoName = acSession.scoName;
