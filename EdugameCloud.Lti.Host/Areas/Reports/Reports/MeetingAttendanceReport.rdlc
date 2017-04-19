@@ -258,12 +258,12 @@
             <TablixMember>
               <Group Name="fullName">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!fullName.Value</GroupExpression>
+                  <GroupExpression>=Fields!participantName.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
                 <SortExpression>
-                  <Value>=Fields!fullName.Value</Value>
+                  <Value>=Fields!participantName.Value</Value>
                 </SortExpression>
               </SortExpressions>
               <TablixHeader>
@@ -291,7 +291,7 @@
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!fullName.Value</Value>
+                                <Value>=Fields!participantName.Value</Value>
                                 <Style>
                                   <FontFamily>Lucida Sans Unicode</FontFamily>
                                   <FontSize>8pt</FontSize>
