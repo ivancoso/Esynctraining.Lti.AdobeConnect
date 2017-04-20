@@ -59,6 +59,7 @@ namespace EdugameCloud.MVC.Controllers
         }
                 
         [HttpGet]
+        [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         public virtual ActionResult Activate(string code)
         {
             var passwordActivation = this.userActivationModel.GetOneByCode(code).Value;
