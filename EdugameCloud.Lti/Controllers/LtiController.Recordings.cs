@@ -35,6 +35,7 @@ namespace EdugameCloud.Lti.Controllers
         #region Public Methods and Operators
                 
         [HttpGet]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ActionResult JoinRecording(string session, string recordingUrl)
         {
             LmsCompany lmsCompany = null;
@@ -55,6 +56,7 @@ namespace EdugameCloud.Lti.Controllers
         }
         
         [HttpGet]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ActionResult EditRecording(string session, string recordingUrl)
         {
             LmsCompany lmsCompany = null;
@@ -76,6 +78,7 @@ namespace EdugameCloud.Lti.Controllers
         }
         
         [HttpGet]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ActionResult GetRecordingFlv(string session, string recordingUrl)
         {
             LmsCompany lmsCompany = null;

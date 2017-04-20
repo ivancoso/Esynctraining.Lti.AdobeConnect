@@ -15,6 +15,8 @@
         }
 
 
+        [HttpGet]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual JsonResult GetAuthenticationParameters(string acId, string acDomain, string scoId)
         {
             string error = null;

@@ -267,6 +267,7 @@ namespace EdugameCloud.Lti.Controllers
         }
         
         [HttpGet]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ActionResult JoinMeeting(string session, int meetingId)
         {
             LmsCompany credentials = null;
@@ -297,6 +298,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpGet]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ActionResult JoinMeetingMobile(string session)
         {
             LmsCompany lmsCompany = null;

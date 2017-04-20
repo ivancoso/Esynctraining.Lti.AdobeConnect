@@ -43,6 +43,7 @@
 
         [HttpGet]
         [ActionName("force-update")]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ContentResult ForceUpdate(int meetingId)
         {
             string result = null;
@@ -75,6 +76,7 @@
         
         [HttpGet]
         [ActionName("update-if-necessary")]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ContentResult UpdateIfNecessary(int meetingId)
         {
             string result = null;

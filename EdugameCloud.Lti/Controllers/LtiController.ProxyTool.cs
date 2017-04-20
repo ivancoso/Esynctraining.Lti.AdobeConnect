@@ -29,8 +29,8 @@
         }
 
 
-        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         [HttpGet]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ActionResult RegisterProxyTool(string lmsDomain)
         {
             if (string.IsNullOrWhiteSpace(lmsDomain))

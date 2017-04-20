@@ -15,7 +15,7 @@ namespace EdugameCloud.Lti.Controllers
     public partial class LtiController
     {
         [ActionName("ims")]
-        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ActionResult ImsLogin(LtiParamDTO param)
         {
             try
