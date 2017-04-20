@@ -242,6 +242,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpGet]
+        [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual ActionResult GetExtJsPage(string primaryColor, string session, int acConnectionMode, bool disableCacheBuster = true)
         {
             try
