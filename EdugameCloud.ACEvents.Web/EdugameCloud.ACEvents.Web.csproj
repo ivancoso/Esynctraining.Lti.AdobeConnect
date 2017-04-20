@@ -108,16 +108,7 @@
     </None>
     <None Update="App_Data\Pdf\Template\475dad9a-c7eb-4053-b9a0-b75f0035f2a2.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="App_Data\Pdf\Template\A1757137-7522-483A-B34D-BAE970F9616D.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="App_Data\Pdf\Template\D97EAEEC-398A-47DC-B6DE-408A2E89F9E2.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="App_Data\Pdf\Template\EF827C2B-C711-4E55-B57B-B01D1807CBEB.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </None>  
     <None Update="Logs\placeholder.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
