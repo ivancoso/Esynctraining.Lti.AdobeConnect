@@ -6,6 +6,7 @@ using CompanyEventsServiceNamespace;
 using EdugameCloud.ACEvents.Web.Models;
 using EmailServiceNamespace;
 using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using LookupServiceNamespace;
@@ -156,6 +157,37 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             try
             {
+                //AA: need to create it manually (coz when event register called question answers are blank)
+                var existingLogin = proxy.GetAllByLogin(eventModel.Email);
+                if (existingLogin.Success)
+                {
+                    var principals = existingLogin.Values.ToList();
+                    if (!principals.Any())
+                    {
+                        var setup = new PrincipalSetup
+                        {
+                            Email = eventModel.Email,
+                            FirstName = eventModel.FirstName,
+                            LastName = eventModel.LastName,
+                            Login = login,
+                            SendEmail = false,
+                            HasChildren = false,
+                            Type = PrincipalType.user,
+                            Password = eventModel.Password
+                            //Name = NOTE: name is used for groups ONLY!!
+                        };
+
+                        var pu = proxy.PrincipalUpdate(setup, false, false);
+                        if (!pu.Success)
+                        {
+                            var message =
+                                $"Can't create AC user with login {eventModel.Email}";
+                            _logger.LogError(message);
+                            return Json(new {IsSuccess = false, Message = message});
+                        }
+                    }
+                }
+
                 var status = proxy.RegisterToEvent(new EventRegistrationFormFields()
                 {
                     ScoId = scoId,
