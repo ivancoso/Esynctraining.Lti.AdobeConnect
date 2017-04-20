@@ -73,6 +73,42 @@
 </ItemGroup>
 
 <ItemGroup>
+    <None Update="App_Data\Pdf\Template\00157137-7522-483A-B34D-BAE970F9616D.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\10fe750d-41ad-4c24-8f6a-99884250eb51.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\134ce892-fccc-4d78-8a17-8c0cc1322253.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\1736983e-4de8-4520-ad93-d832141214f2.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\2064fdb8-4c06-4084-8cb9-54269fcd5133.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\25d7faba-9be4-417d-883f-0c598647d1eb.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\28a7e44a-8b36-4bc1-9d79-d3b13e0030d0.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\32827C2B-C711-4E55-B57B-B01D1807CBEB.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\381875aa-df57-4aa6-af14-99a856f96cb2.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\40c3b666-5b21-4fda-ad32-5017b4ae75a1.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\43713819-615b-4fd7-b12e-035e8b30c68d.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Pdf\Template\475dad9a-c7eb-4053-b9a0-b75f0035f2a2.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="App_Data\Pdf\Template\A1757137-7522-483A-B34D-BAE970F9616D.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
