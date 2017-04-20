@@ -21,10 +21,17 @@ namespace Esynctraining.AC.Provider
                 ParserSingleton<CustomFieldParser>.Instance);
         }
 
+        public CollectionResult<CustomField> GetCustomFields(string fieldName, ObjectType objectType)
+        {
+            var filter = string.Format(CommandParams.CustomFields.FilterByNameAndObjectTypeFormat, UrlEncode(fieldName), objectType.ToString().Replace("_", "-"));
+
+            return GetCustomFields(filter);
+        }
+
         public CollectionResult<CustomField> GetCustomFields(string filter = null)
         {
             // act: "custom-fields"
-            return GetCollection<CustomField>(Commands.CustomField.CustomFields, filter, CustomFieldsHome,
+            return GetCollection(Commands.CustomField.CustomFields, filter, CustomFieldsHome,
                 CustomFieldsField, ParserSingleton<CustomFieldParser>.Instance.Parse);
         }
 

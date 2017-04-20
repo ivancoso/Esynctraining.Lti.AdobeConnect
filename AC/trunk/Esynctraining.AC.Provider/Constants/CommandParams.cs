@@ -293,6 +293,7 @@
         {
             public static readonly string FilterByName = "filter-name={0}";
             public static readonly string FilterObjectType = "filter-object-type={0}";
+            public static readonly string FilterByNameAndObjectTypeFormat = "filter-name={0}&filter-object-type={1}";
 
             public static readonly string Delete = "field-id={0}&object-type={1}";
 

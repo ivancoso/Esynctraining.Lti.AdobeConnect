@@ -230,8 +230,7 @@ namespace Esynctraining.AdobeConnect
 
         public CustomField GetCustomField(string name)
         {
-            var result =Execute(() => { return _provider.GetCustomField(name); },
-                name);
+            var result = Execute(() => { return _provider.GetCustomField(name); }, name);
             if (!result.Success)
             {
                 throw new InvalidOperationException($"Getting custom field {name} failed {result.Status}");
@@ -249,6 +248,11 @@ namespace Esynctraining.AdobeConnect
         public CollectionResult<CustomField> GetCustomFieldsByObjectType(ObjectType type)
         {
             return Execute(() => { return _provider.GetCustomFields(string.Format(CommandParams.CustomFields.FilterObjectType, type.GetACEnum())); });
+        }
+
+        public CollectionResult<CustomField> GetCustomFields(string fieldName, ObjectType objectType)
+        {
+            return Execute(() => { return _provider.GetCustomFields(fieldName, objectType); });
         }
 
         public ReportUserTrainingsTakenCollectionResult ReportUserTrainingsTaken(string principalId)
