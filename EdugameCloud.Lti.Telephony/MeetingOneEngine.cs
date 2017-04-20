@@ -64,6 +64,13 @@ namespace EdugameCloud.Lti.Telephony
                         LastName = param.PersonNameFamily,
                         MailingAddress = param.lis_person_contact_email_primary,
                     },
+
+                    RoomSettings = new RoomSettings
+                    {
+                        DialoutEnabled = true,
+                        AllowDomesticDialouts = true,
+                        AllowInternationalDialouts = true,
+                    },
                 };
 
                 // TODO: DI
