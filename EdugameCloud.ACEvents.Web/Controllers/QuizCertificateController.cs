@@ -134,8 +134,8 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var quizResult = _quizResultService.GetByGuidAsync(quizResultGuid).Result;
             var eventMapping = _companyEventsService.GetByIdAsync(quizResult.eventQuizMappingId ?? 0).Result;
             var acDomain = _companyAcDomainsService.GetByIdAsync(eventMapping.companyAcDomainId).Result;
-            var acUrl = acDomain.path;
-            var login = acDomain.user;
+            var acUrl = acDomain.path.Trim();
+            var login = acDomain.user.Trim();
             var pass = acDomain.password;
             var apiUrl = new Uri(acUrl);
 
