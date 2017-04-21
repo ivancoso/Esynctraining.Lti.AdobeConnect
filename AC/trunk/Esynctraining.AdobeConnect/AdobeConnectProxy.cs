@@ -26,10 +26,6 @@ namespace Esynctraining.AdobeConnect
 
         public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, Uri adobeConnectRoot) 
         {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (logger == null)
-                throw new ArgumentNullException(nameof(logger));
             if (adobeConnectRoot == null)
                 throw new ArgumentNullException(nameof(adobeConnectRoot));
             if (!adobeConnectRoot.IsAbsoluteUri)
@@ -37,8 +33,8 @@ namespace Esynctraining.AdobeConnect
             if (!adobeConnectRoot.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase) && !adobeConnectRoot.Scheme.Equals("HTTP", StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException($"HTTP and HTTPS only", nameof(adobeConnectRoot));
 
-            _provider = provider;
-            _logger = logger;
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             AdobeConnectRoot = adobeConnectRoot;
         }
 
@@ -83,7 +79,12 @@ namespace Esynctraining.AdobeConnect
                 if (result.SubCode == StatusSubCodes.no_quota
                     && result.Type == "num-of-members-quota")
                 {
-                    throw new WarningMessageException(Resources.Messages.AdobeConnectMeetingHostQuota);
+                    string message = Resources.Messages.ResourceManager.GetString($"AdobeConnectMeetingHostQuota_{type.ToString()}");
+                    if (string.IsNullOrEmpty(message))
+                    {
+                        message = string.Format(Resources.Messages.AdobeConnectMeetingHostQuota, type.ToString());
+                    }
+                    throw new WarningMessageException(message);
                 }
 
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalIds:{1}.TypeName:{2}.",
@@ -127,7 +128,12 @@ namespace Esynctraining.AdobeConnect
                 if (result.SubCode == StatusSubCodes.no_quota
                     && result.Type == "num-of-members-quota")
                 {
-                    throw new WarningMessageException(Resources.Messages.AdobeConnectMeetingHostQuota);
+                    string message = Resources.Messages.ResourceManager.GetString($"AdobeConnectMeetingHostQuota_{type.ToString()}");
+                    if (string.IsNullOrEmpty(message))
+                    {
+                        message = string.Format(Resources.Messages.AdobeConnectMeetingHostQuota, type.ToString());
+                    }
+                    throw new WarningMessageException(message);
                 }
 
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalId:{1}.TypeName:{2}.",
@@ -1146,7 +1152,13 @@ namespace Esynctraining.AdobeConnect
                     && status.SubCode == StatusSubCodes.no_quota
                     && status.Type == "num-of-members-quota")
                 {
-                    throw new WarningMessageException(Resources.Messages.AdobeConnectMeetingHostQuota);
+                    // TRICK: for AddToGroup(IEnumerable<string> principalIds, string groupId)
+                    string message = Resources.Messages.ResourceManager.GetString($"AdobeConnectMeetingHostQuota_{parameter2Value}");
+                    if (string.IsNullOrEmpty(message))
+                    {
+                        message = string.Format(Resources.Messages.AdobeConnectMeetingHostQuota, parameter2Value);
+                    }
+                    throw new WarningMessageException(message);
                 }
 
                 if (status.Code != StatusCodes.ok)

@@ -45,13 +45,11 @@ namespace Esynctraining.AdobeConnect
         {
             var connectionDetails = new ConnectionDetails(credentials.Domain);
             var provider = new AdobeConnectProvider(connectionDetails);
+            LoginResult result = provider.LoginWithSessionId(credentials.SessionToken);
+            if (!result.Success || (result.User == null))
             {
-                LoginResult result = provider.LoginWithSessionId(credentials.SessionToken);
-                if (!result.Success || (result.User == null))
-                {
-                    _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status = " + result.Status.GetErrorInfo());
-                    throw new InvalidOperationException("Login to Adobe Connect failed. Status = " + result.Status.GetErrorInfo());
-                }
+                _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status = " + result.Status.GetErrorInfo());
+                throw new InvalidOperationException("Login to Adobe Connect failed. Status = " + result.Status.GetErrorInfo());
             }
 
             return new AdobeConnectProxy(provider, _logger, credentials.Domain);
