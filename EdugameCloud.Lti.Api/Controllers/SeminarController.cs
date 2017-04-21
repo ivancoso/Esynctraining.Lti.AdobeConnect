@@ -119,7 +119,6 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                
                 // TRICK: change record meeting id to meeting sco-id
                 LtiParamDTO param = Session.LtiSession.LtiParam;
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, long.Parse(seminarSessionDto.SeminarRoomId));

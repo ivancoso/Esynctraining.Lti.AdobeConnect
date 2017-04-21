@@ -1004,11 +1004,6 @@
               Looks up a localized string similar to Not Authorized. Please check that account used to access Adobe Connect has sufficient permissions..
             </summary>
         </member>
-        <member name="P:EdugameCloud.Lti.Resources.Messages.AdobeConnectMeetingHostQuota">
-            <summary>
-              Looks up a localized string similar to You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive..
-            </summary>
-        </member>
         <member name="P:EdugameCloud.Lti.Resources.Messages.BlackboardDomainMissing">
             <summary>
               Looks up a localized string similar to Blackboard LMS domain is missing..
