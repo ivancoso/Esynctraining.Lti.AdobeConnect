@@ -26,6 +26,7 @@
   <PackageReference Include="Castle.Windsor" Version="3.4.0" />
     <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="1.3.3" />
     <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.0.16" />
+    <PackageReference Include="Esynctraining.AspNetCore" Version="1.0.0.1" />
     <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.0.29" />
     <PackageReference Include="Esynctraining.Mp4Service.Tasks.Client" Version="1.0.1.4" />
@@ -46,7 +47,6 @@
     <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Api\EdugameCloud.Lti.Api.csproj" />
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj" />
-    <ProjectReference Include="..\Esynctraining.AspNetCore\Esynctraining.AspNetCore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Logs\placeholder.js">
