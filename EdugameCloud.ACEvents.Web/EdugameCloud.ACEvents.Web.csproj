@@ -46,7 +46,7 @@
 </ItemGroup>
 <ItemGroup>
 	<PackageReference Include="Esynctraining.AdobeConnect" version="1.0.1.28" />
-	<PackageReference Include="Esynctraining.AspNetCore" Version="1.0.0.1" />
+	<PackageReference Include="Esynctraining.AspNetCore" Version="1.0.0.2" />
 	<PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
 	<PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
