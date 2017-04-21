@@ -261,6 +261,11 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.GetCustomFields(fieldName, objectType); });
         }
 
+        public SingleObjectResult<CustomField> CustomFieldUpdate(CustomField value)
+        {
+            return Execute(() => { return _provider.CustomFieldUpdate(value); });
+        }
+
         public ReportUserTrainingsTakenCollectionResult ReportUserTrainingsTaken(string principalId)
         {
             if (string.IsNullOrEmpty(principalId))
