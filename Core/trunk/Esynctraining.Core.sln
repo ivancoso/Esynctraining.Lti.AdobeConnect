@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.FluentValidat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Wcf", "Esynctraining.Core.Wcf\Esynctraining.Core.Wcf.csproj", "{FB054AF9-5332-4A82-9311-13B8AB09193D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Crypto", "Esynctraining.Crypto\Esynctraining.Crypto.csproj", "{9AC42D6C-8D85-4EFB-BCF5-CF0A6923C9A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Crypto", "Esynctraining.Crypto\Esynctraining.Crypto.csproj", "{9AC42D6C-8D85-4EFB-BCF5-CF0A6923C9A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Logging.CastleLogger", "Esynctraining.Core.Logging.CastleLogger\Esynctraining.Core.Logging.CastleLogger.csproj", "{0268975F-3268-4319-A885-9A4687BB29BC}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.SystemWeb", "Esynctraining.Core.SystemWeb\Esynctraining.Core.SystemWeb.csproj", "{85975C13-EE15-4831-AB3F-AB624D7D851E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Core", "Esynctraining.Core\Esynctraining.Core.csproj", "{AB78F376-E633-405E-9AB5-DD85927CA757}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.AspNetCore", "Esynctraining.AspNetCore\Esynctraining.AspNetCore.csproj", "{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{AB78F376-E633-405E-9AB5-DD85927CA757}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB78F376-E633-405E-9AB5-DD85927CA757}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB78F376-E633-405E-9AB5-DD85927CA757}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

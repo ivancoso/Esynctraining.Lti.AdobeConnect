@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.0.1</Version>
+    <Copyright>Copyright © 2017 eSyncTraining.com</Copyright>
+    <Description>Contains basic webapi stuff (global exception filter, Jil formatters etc)  and Esync ILogger wrapper (which is basic for all nuget packages)</Description>
+    <Authors>Esynctraining</Authors>
+    <Company>Esynctraining</Company>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.0.29" />
+    <PackageReference Include="Jil" Version="2.15.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Messages.Designer.cs">
+      <DependentUpon>Messages.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Resources\Messages.es.Designer.cs">
+      <DependentUpon>Messages.es.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Messages.es.resx">
+      <LastGenOutput>Messages.es.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Messages.resx">
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
