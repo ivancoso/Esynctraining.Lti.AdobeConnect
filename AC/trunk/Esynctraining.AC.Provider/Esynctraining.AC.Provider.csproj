@@ -4,13 +4,12 @@
     <Description>Provides Adobe Connect functionality for eSyncTraining projects</Description>
     <Copyright>Copyright � 2013-2017 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.AC.Provider</AssemblyTitle>
-    <VersionPrefix>1.0.2.22</VersionPrefix>
     <Authors>eSyncTraining.com</Authors>
     <TargetFrameworks>net45;net461</TargetFrameworks>
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>Added GetCustomFields by fieldName and objectType
+    <PackageReleaseNotes>
 </PackageReleaseNotes>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -18,7 +17,7 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <Version>1.0.2.29</Version>
+    <Version>1.0.2.30</Version>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
