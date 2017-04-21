@@ -3,11 +3,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Esynctraining.AspNetCore
 {
-    public class EsyncLoggerWrapper : Esynctraining.Core.Logging.ILogger
+    public class MicrosoftLoggerWrapper : Esynctraining.Core.Logging.ILogger
     {
         private readonly Microsoft.Extensions.Logging.ILogger _innerLogger;
 
-        public EsyncLoggerWrapper(Microsoft.Extensions.Logging.ILogger innerLogger)
+        public MicrosoftLoggerWrapper(Microsoft.Extensions.Logging.ILogger innerLogger)
         {
             _innerLogger = innerLogger ?? throw new ArgumentNullException(nameof(innerLogger));
         }
