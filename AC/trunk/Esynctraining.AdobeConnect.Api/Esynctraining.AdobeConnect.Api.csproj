@@ -10,7 +10,7 @@
     <AssemblyName>Esynctraining.AdobeConnect.Api</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect.Api</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>added DataMember to ACSessionParticipantDto for UNIR API</PackageReleaseNotes>
+    <PackageReleaseNotes>removed Required attribute for MeetingDtoBase.AcRoomUrl</PackageReleaseNotes>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
@@ -18,7 +18,7 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.0.16</Version>
+    <Version>1.0.0.17</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">

@@ -10,7 +10,7 @@ namespace Esynctraining.AdobeConnect.Api.Meeting.Dto
         /// <summary>
         /// AC metting's url-path.
         /// </summary>
-        [Required]
+        //[Required] //todo: different dto for create and update
         [DataMember]
         public string AcRoomUrl { get; set; }
 
