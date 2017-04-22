@@ -23,7 +23,7 @@ namespace Esynctraining.AdobeConnect.Recordings
 
         protected bool IsPublicRecording(string recordingScoId)
         {
-            var moreDetails = AcProxy.GetScoPublicAccessPermissions(recordingScoId);
+            var moreDetails = AcProxy.GetScoPublicAccessPermissions(recordingScoId, skipAcError: true);
             var isPublic = false;
             if (moreDetails.Success && moreDetails.Values.Any())
             {

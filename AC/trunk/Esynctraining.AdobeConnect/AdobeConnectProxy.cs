@@ -678,13 +678,13 @@ namespace Esynctraining.AdobeConnect
             }
         }
 
-        public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
+        public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId, bool skipAcError = false)
         {
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
 
             return Execute(() => { return _provider.GetScoPublicAccessPermissions(scoId); },
-                scoId);
+                scoId, null, skipAcResultProcessing: skipAcError);
         }
 
         /// <summary>

@@ -97,7 +97,7 @@ namespace Esynctraining.AdobeConnect
 
         CollectionResult<ScoNav> GetScoNavigation(string scoId);
 
-        PermissionCollectionResult GetScoPublicAccessPermissions(string scoId);
+        PermissionCollectionResult GetScoPublicAccessPermissions(string scoId, bool skipAcError = false);
 
         /// <summary>
         /// Returns permissions for SCO (SCOs other than meetings or courses, e.g. files\folders)
