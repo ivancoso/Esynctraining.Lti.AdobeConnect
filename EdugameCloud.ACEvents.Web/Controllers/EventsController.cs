@@ -182,7 +182,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                         {
                             var message =
                                 $"Can't create AC user with login {eventModel.Email}";
-                            _logger.LogError(message);
+                            _logger.LogError(message, pu.Status.InnerXml);
                             return Json(new {IsSuccess = false, Message = message});
                         }
                     }
