@@ -169,7 +169,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                             Email = eventModel.Email,
                             FirstName = eventModel.FirstName,
                             LastName = eventModel.LastName,
-                            Login = login,
+                            Login = eventModel.Email,
                             SendEmail = false,
                             HasChildren = false,
                             Type = PrincipalType.user,
