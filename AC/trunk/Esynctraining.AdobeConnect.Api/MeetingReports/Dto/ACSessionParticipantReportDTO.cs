@@ -14,7 +14,9 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
                 throw new ArgumentNullException(nameof(timezone));
 
             this.scoId = acSession.scoId;
-            this.participantName = acSession.participantName;
+            participantName = string.IsNullOrEmpty(acSession.participantName)
+                ? acSession.sessionName
+                : acSession.participantName; //guests have only sessionName
             this.scoName = acSession.scoName;
             this.sessionName = acSession.sessionName;
             this.principalId = acSession.principalId;

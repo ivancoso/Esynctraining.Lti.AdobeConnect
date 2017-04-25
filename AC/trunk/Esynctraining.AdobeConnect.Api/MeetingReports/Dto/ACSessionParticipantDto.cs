@@ -14,8 +14,8 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
                 throw new ArgumentNullException(nameof(source));
             if (timeZone == null)
                 throw new ArgumentNullException(nameof(timeZone));
-            
-            participantName = source.ParticipantName;
+
+            participantName = string.IsNullOrEmpty(source.ParticipantName) ? source.SessionName : source.ParticipantName; //guests have only sessionName
             sessionName = source.SessionName;
             login = source.Login;
             dateTimeEntered = FixACValue(source.DateCreated, timeZone).Value;
