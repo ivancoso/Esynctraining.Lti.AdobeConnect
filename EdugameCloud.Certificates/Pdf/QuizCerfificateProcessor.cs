@@ -40,8 +40,9 @@ namespace EdugameCloud.Certificates.Pdf
 
             string generatedPdfPath = BuildPdfOutputPath(certificateUid, fields["ParticipantName"]);
             string imageFilePath = generatedPdfPath + FileExtensionFromEncoder(format);
-            if (File.Exists(imageFilePath))
-                return imageFilePath;
+            //AA: should not be cached 
+            //if (File.Exists(imageFilePath))
+            //    return imageFilePath;
 
             var templateFilePath = GetPdfTempatePath(Guid.Parse(templateUid));
             RenderPdfFile(templateFilePath, generatedPdfPath, fields);
@@ -125,7 +126,6 @@ namespace EdugameCloud.Certificates.Pdf
 
             string setting = _certificateSettings.PdfOutputFolder;
             string folder = setting.StartsWith("~") ?
-                //? HostingEnvironment.MapPath(setting)
                 Path.Combine(Directory.GetCurrentDirectory(), setting.TrimStart('~').TrimStart('/'))
                 : setting;
 
