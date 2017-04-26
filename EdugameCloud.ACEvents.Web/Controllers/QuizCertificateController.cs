@@ -73,7 +73,6 @@ namespace EdugameCloud.ACEvents.Web.Controllers
         }
 
 
-        //[OutputCache(CacheProfile = "QuizPreview")]
         public virtual ActionResult Preview(Guid quizResultGuid)
         {
             try
@@ -94,7 +93,6 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             }
         }
 
-        //[OutputCache(CacheProfile = "QuizDownload")]
         public virtual ActionResult Download(Guid quizResultGuid)
         {
             try
@@ -103,7 +101,6 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 if (quizResult == null)
                     return NotFound();
 
-                //string certificateTemplateFilePath = GetCertificatePath(quizResult.CertificateTemplateGuid);
                 var templateUid = quizResult.CertificateTemplateGuid.ToString();
                 if (_httpContextAccessor.HttpContext.Request.IsMobileBrowser())
                 {
@@ -113,12 +110,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
                 }
 
                 string filePath = _quizCerfificateProcessor.RenderPdfDocument(quizResultGuid.ToString(), templateUid, BuildTemplateData(quizResult));
-                //var contentDisposition = new ContentDisposition()
-                //{
-                //    FileName = filePath,
-                //    Inline = true
-                //};
-                //Response.Headers.Add("Content-Disposition", contentDisposition.ToString() );
+                
                 return PhysicalFile(filePath, "application/pdf", $"Certificate_{quizResult.ParticipantName}.pdf");
                
             }
@@ -146,12 +138,6 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             if (!loginResult.Success)
                 throw new InvalidOperationException("Can't login to AC");
 
-            //if (eventMapping.postQuizId != quizResult.quizId)
-            //{
-            //    // it should be postQuiz result (that is the same as in mapping)
-            //    return null;
-            //}
-
             var quiz = _quizService.GetByIdAsync(eventMapping.postQuizId).Result;
             if (!quiz.isPostQuiz)
                 return null;
@@ -166,13 +152,9 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var dynamicQuestionAnswers = GetDynamicQuestionAnswers(acUrl, scoId, loginResult.Status.SessionInfo,
                 quizResult.acEmail);
             var state = dynamicQuestionAnswers["state"];
-            //var school = dynamicQuestionAnswers["school"];
-
-            //var userEmail = quizResult.acEmail;
-            //var userInfo = proxy.GetPrincipalInfo(userEmail);
+           
             var participantName = quizResult.participantName;
-            //var participantName = $"{userInfo.PrincipalInfo.Principal.Name}";
-
+            
             var eventScoInfo = proxy.GetScoInfo(scoId);
 
             var trainerId = GetTeacherId(acUrl, scoId, loginResult.Status.SessionInfo);
@@ -330,20 +312,5 @@ namespace EdugameCloud.ACEvents.Web.Controllers
 
             return fields;
         }
-
-        private static string AlignText(string value, int fieldLength)
-        {
-            var fieldValueLength = value.ToCharArray().Length;
-            var difference = fieldLength - fieldValueLength;
-            var offset = fieldLength > fieldValueLength ? difference / 2 : 0;
-            if (offset >= 4 && offset < 8)
-                offset = (int)(offset * 1.3);
-            if (offset >= 8)
-                offset = (int)(offset * 1.6);
-            value = fieldValueLength > fieldLength ? value.Take(fieldLength).ToString() : value;
-            var result = new String(' ', offset) + value + (offset % 2 > 0 ? new String(' ', offset + 1) : new String(' ', offset));
-            return result;
-        }
-
     }
 }
