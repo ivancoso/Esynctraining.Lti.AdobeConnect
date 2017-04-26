@@ -22,6 +22,7 @@ using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Microsoft.Reporting.WebForms;
+using NodaTime.TimeZones;
 
 namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 {
@@ -57,11 +58,12 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         //[ActionName("meeting-attendance-report")]
-        public virtual ActionResult MeetingAttendanceReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingAttendanceReport(string session, int meetingId, string timezone, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
                 var s = this.GetReadOnlySession(session);
+                var tz = GetTimeZoneInfoForTzdbId(timezone) ?? TimeZoneInfo.Utc;
                 var credentials = s.LmsCompany;
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
@@ -86,14 +88,14 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var tempParticipants = this.meetingSetup.GetAttendanceReports(
                     meeting.GetMeetingScoId(),
                     this.GetAdobeConnectProvider(credentials),
-                    TimeZoneInfo.Utc,
+                    tz,
                     startIndex,
                     limit);
 
                 var participants = new List<ACSessionParticipantReportDto>();
                 if (tempParticipants.Any())
                 {
-                    participants = tempParticipants.Select(x => new ACSessionParticipantReportDto(x, TimeZoneInfo.Utc)).ToList();
+                    participants = tempParticipants.Select(x => new ACSessionParticipantReportDto(x, tz)).ToList();
                 }
 
                 bool isShowMeetingTitle = false;
@@ -106,7 +108,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     this.RedirectToError(" Unable to retrieve data about company");
                     return null;
                 }
-                var localDate = GetLocalDate(timezoneOffset);
+                var localDate = GetLocalDate(tz);
                 var parametersList = GetReportParameters(new ReportParamsDto(format, company, s, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
                 var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingAttendanceReport", participants,
                     out mimeType, parametersList);
@@ -135,15 +137,14 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         //[ActionName("meeting-sessions-report")]
-        public virtual ActionResult MeetingSessionsReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingSessionsReport(string session, int meetingId, string timezone, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
                 var s = this.GetReadOnlySession(session);
                 var credentials = s.LmsCompany;
-                var param = s.LtiSession.With(x => x.LtiParam);
                 var acProvider = this.GetAdobeConnectProvider(credentials);
-
+                var tz = GetTimeZoneInfoForTzdbId(timezone) ?? TimeZoneInfo.Utc;
                 LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, s.LmsCourseId, meetingId);
 
                 var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
@@ -153,7 +154,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var tempMeetingSessions = this.meetingSetup.GetSessionsReports(
                     meeting.GetMeetingScoId(),
                     acProvider,
-                    TimeZoneInfo.Utc,
+                    tz,
                     startIndex,
                     limit);
 
@@ -161,7 +162,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
                 if (tempMeetingSessions.Any())
                 {
-                    meetingSessions = tempMeetingSessions.Select(x => new ACSessionReportDto(x, TimeZoneInfo.Utc)).ToList();
+                    meetingSessions = tempMeetingSessions.Select(x => new ACSessionReportDto(x, tz)).ToList();
                 }
 
                 if (format.ToUpper() != "PDF" && format.ToUpper() != "EXCEL")
@@ -177,7 +178,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     this.RedirectToError("Unable to retrieve data about company");
                     return null;
                 }
-                var localDate = GetLocalDate(timezoneOffset);
+                var localDate = GetLocalDate(tz);
                 bool isShowMeetingTitle = false;
                 bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
                 var parametersList = GetReportParameters(new ReportParamsDto(format, company, s, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
@@ -235,14 +236,14 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         //[ActionName("meeting-recordings-report")]
-        public virtual ActionResult MeetingRecordingsReport(string session, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingRecordingsReport(string session, int meetingId, string timezone, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
                 var s = this.GetReadOnlySession(session);
                 var credentials = s.LmsCompany;
                 var acProvider = this.GetAdobeConnectProvider(credentials);
-
+                var tz = GetTimeZoneInfoForTzdbId(timezone) ?? TimeZoneInfo.Utc;
                 LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, s.LmsCourseId, meetingId);
 
                 var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
@@ -267,7 +268,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var participants = new List<ACRecordingViewReportDTO>();
                 if (tempParticipants.Any())
                 {
-                    participants = tempParticipants.Select(x => new ACRecordingViewReportDTO(x, timezoneOffset)).ToList();
+                    participants = tempParticipants.Select(x => new ACRecordingViewReportDTO(x, tz)).ToList();
                 }
 
                 string mimeType;
@@ -281,7 +282,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
                 var acMeetingUrl = acServer + acMeeting.ScoInfo.UrlPath;
                 var acMeetingTitle = acMeeting.ScoInfo.Name;
-                var localDate = GetLocalDate(timezoneOffset);
+                var localDate = GetLocalDate(tz);
                 bool isShowMeetingTitle;
                 bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
                 var parametersList = GetReportParameters(new ReportParamsDto(format, company, s, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
@@ -634,13 +635,32 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
         }
 
-        private DateTime GetLocalDate(int timezoneOffset)
+        //to core
+        private DateTime GetLocalDate(TimeZoneInfo tz)
         {
-            var utcDate = DateTime.Now.ToUniversalTime();
-            return utcDate.ConvertToClientTime(timezoneOffset);
-
+            return TimeZoneInfo.ConvertTime(DateTime.UtcNow, tz);
         }
 
+        private TimeZoneInfo GetTimeZoneInfoForTzdbId(string tzdbId)
+        {
+            var olsonMappings = TzdbDateTimeZoneSource.Default.WindowsMapping.MapZones;
+            var map = olsonMappings.FirstOrDefault(x =>
+                x.TzdbIds.Any(z => z.Equals(tzdbId, StringComparison.OrdinalIgnoreCase)));
+            return map != null ? FindSystemTimeZoneByIdOrDefault(map.WindowsId) : null;
+        }
+
+        private TimeZoneInfo FindSystemTimeZoneByIdOrDefault(string timezoneId)
+        {
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
+            }
+            catch (TimeZoneNotFoundException e)
+            {
+                logger.Error($"Timezone not found. Id: {timezoneId}", e);
+                return null;
+            }
+        }
         #endregion
 
     }

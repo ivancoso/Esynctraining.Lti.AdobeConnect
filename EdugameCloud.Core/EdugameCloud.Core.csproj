@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.76.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.5.0" />
-    <PackageReference Include="Esynctraining.AC.Provider" Version="1.0.2.29" />
+    <PackageReference Include="Esynctraining.AC.Provider" Version="1.0.2.30" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.0.29" />
     <PackageReference Include="Esynctraining.Crypto" Version="1.0.1" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.0.1" />
