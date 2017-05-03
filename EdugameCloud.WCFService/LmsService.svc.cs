@@ -281,9 +281,9 @@ namespace EdugameCloud.WCFService
 
         public PrincipalReportDto[] GetMeetingHostReport(int lmsCompanyId)
         {
-            LmsCompany licence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
+            LmsCompany license = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
 
-            var provider = AdobeConnectAccountService.GetProvider(licence);
+            var provider = AdobeConnectAccountService.GetProvider(license);
 
             return AdobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
         }
@@ -296,11 +296,11 @@ namespace EdugameCloud.WCFService
                 if (principalIds == null)
                     throw new ArgumentNullException("principalIds");
 
-                LmsCompany currentLicence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
+                LmsCompany currentLicense = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
                 IAdobeConnectProxy currentLicenseProvider = null;
                 try
                 {
-                    currentLicenseProvider = AdobeConnectAccountService.GetProvider(currentLicence.AcServer, new UserCredentials(login, password), true);
+                    currentLicenseProvider = AdobeConnectAccountService.GetProvider(currentLicense.AcServer, new UserCredentials(login, password), true);
                 }
                 catch (InvalidOperationException)
                 {
@@ -308,24 +308,24 @@ namespace EdugameCloud.WCFService
                 }
                 PrincipalCollectionResult principalsToDelete = currentLicenseProvider.GetAllByPrincipalIds(principalIds);
 
-                IEnumerable<LmsCompany> companyLicences = this.LmsCompanyModel.GetAllByCompanyId(currentLicence.CompanyId);
-                var lmsLicencePrincipals = new List<string>();
-                foreach (LmsCompany lms in companyLicences)
+                IEnumerable<LmsCompany> companyLicenses = this.LmsCompanyModel.GetAllByCompanyId(currentLicense.CompanyId);
+                var lmsLicensePrincipals = new List<string>();
+                foreach (LmsCompany lms in companyLicenses)
                 {
-                    if (lms.AcServer.TrimEnd(new char[] { '/' }) == currentLicence.AcServer.TrimEnd(new char[] { '/' }))
+                    if (lms.AcServer.TrimEnd(new char[] { '/' }) == currentLicense.AcServer.TrimEnd(new char[] { '/' }))
                     {
-                        bool tryToDeleteAcUserFromLicence = principalsToDelete.Values.Select(x => x.Login).Contains(lms.AcUsername);
-                        if (tryToDeleteAcUserFromLicence)
-                            lmsLicencePrincipals.Add(string.Format("Adobe Connect account '{0}' is used within your LMS licence '{1}'. ", lms.AcUsername, lms.Title));
+                        bool tryToDeleteAcUserFromLicense = principalsToDelete.Values.Select(x => x.Login).Contains(lms.AcUsername);
+                        if (tryToDeleteAcUserFromLicense)
+                            lmsLicensePrincipals.Add(string.Format("Adobe Connect account '{0}' is used within your LMS license '{1}'. ", lms.AcUsername, lms.Title));
                     }
                 }
 
-                if (lmsLicencePrincipals.Count > 0)
+                if (lmsLicensePrincipals.Count > 0)
                 {
-                    string msg = (lmsLicencePrincipals.Count == 1)
+                    string msg = (lmsLicensePrincipals.Count == 1)
                         ? "You should not delete account. "
                         : "You should not delete some accounts. ";
-                    return OperationResultDto.Error(msg + string.Join("", lmsLicencePrincipals));
+                    return OperationResultDto.Error(msg + string.Join("", lmsLicensePrincipals));
                 }
 
                 bool allOK = true;

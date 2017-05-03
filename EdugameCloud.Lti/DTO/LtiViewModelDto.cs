@@ -119,7 +119,7 @@ namespace EdugameCloud.Lti.DTO
         }
 
         [DataMember(Name = "lmsSettings")]
-        public LicenceSettingsDto LicenceSettings { get; set; }
+        public LicenseSettingsDto LicenseSettings { get; set; }
 
         [DataMember(Name = "meetings")]
         public IEnumerable<MeetingDTO> Meetings { get; set; }

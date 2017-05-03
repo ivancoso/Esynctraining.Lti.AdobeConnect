@@ -987,7 +987,7 @@ namespace EdugameCloud.Lti.Controllers
             acSettings.SetTimezoneShift(null);
 
             string userFullName = param.lis_person_name_full ?? param.lis_person_name_given + " " + param.lis_person_name_family;
-            var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), Cache);
+            var settings = LicenseSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), Cache);
 
             var filePattern = (string)Settings.JsBuildSelector;
             var versionFileJs = CacheUtility.GetCachedItem<Version>(PersistantCache, CachePolicies.Keys.VersionFileName(filePattern), () =>
@@ -1008,7 +1008,7 @@ namespace EdugameCloud.Lti.Controllers
                 CurrentUserName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline),
                 AcSettings = acSettings,
                 AcRoles = new AcRole[] { AcRole.Host, AcRole.Presenter, AcRole.Participant },
-                LicenceSettings = settings,
+                LicenseSettings = settings,
                 Meetings = meetings,
                 Seminars = seminars,
                 SeminarsMessage = seminarsMessage,

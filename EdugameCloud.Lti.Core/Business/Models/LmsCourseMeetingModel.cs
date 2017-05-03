@@ -99,12 +99,12 @@
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("scoId can not be empty", nameof(scoId));
 
-            // NOTE: check only licences of the company with the same AC!!
+            // NOTE: check only licenses of the company with the same AC!!
             var query = from c in this.Repository.Session.Query<LmsCompany>()
                         where c.CompanyId == lmsCompany.CompanyId
                         select new { c.Id, c.AcServer };
-            var currentLicenceAc = new Uri(lmsCompany.AcServer);
-            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenceAc.Host).Select(c => c.Id).ToArray();
+            var currentLicenseAc = new Uri(lmsCompany.AcServer);
+            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenseAc.Host).Select(c => c.Id).ToArray();
 
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
@@ -126,12 +126,12 @@
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            // NOTE: check only licences of the company with the same AC!!
+            // NOTE: check only licenses of the company with the same AC!!
             var query = from c in this.Repository.Session.Query<LmsCompany>()
                         where c.CompanyId == lmsCompany.CompanyId
                         select new { c.Id, c.AcServer };
-            var currentLicenceAc = new Uri(lmsCompany.AcServer);
-            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenceAc.Host).Select(c => c.Id).ToArray();
+            var currentLicenseAc = new Uri(lmsCompany.AcServer);
+            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenseAc.Host).Select(c => c.Id).ToArray();
 
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
@@ -153,12 +153,12 @@
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("scoId can not be empty", nameof(scoId));
 
-            // NOTE: check only licences of the company with the same AC!!
+            // NOTE: check only licenses of the company with the same AC!!
             var query = from c in this.Repository.Session.Query<LmsCompany>()
                         where c.CompanyId == lmsCompany.CompanyId
                         select new { c.Id, c.AcServer };
-            var currentLicenceAc = new Uri(lmsCompany.AcServer);
-            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenceAc.Host).Select(c => c.Id).ToArray();
+            var currentLicenseAc = new Uri(lmsCompany.AcServer);
+            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenseAc.Host).Select(c => c.Id).ToArray();
 
             // NOTE: return only not-reused meeting - created from LTI
             LmsCourseMeeting x = null;

@@ -55,11 +55,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             {
                 string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
                 if (string.IsNullOrWhiteSpace(licenseKey))
-                    throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
+                    throw new WarningMessageException("Can't find your MP4Service license. Contact administrator.");
 
                 Guid license;
                 if (!Guid.TryParse(licenseKey, out license))
-                    throw new WarningMessageException("Invalid MP4Service licence. Contact administrator.");
+                    throw new WarningMessageException("Invalid MP4Service license. Contact administrator.");
 
                 return await Mp4ApiUtility.DoConvert(Mp4Client,
                     license,
@@ -83,11 +83,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             {
                 string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
                 if (string.IsNullOrWhiteSpace(licenseKey))
-                    throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
+                    throw new WarningMessageException("Can't find your MP4Service license. Contact administrator.");
 
                 Guid license;
                 if (!Guid.TryParse(licenseKey, out license))
-                    throw new WarningMessageException("Invalid MP4Service licence. Contact administrator.");
+                    throw new WarningMessageException("Invalid MP4Service license. Contact administrator.");
 
                 return await Mp4ApiUtility.DoConvert(Mp4Client,
                     license,

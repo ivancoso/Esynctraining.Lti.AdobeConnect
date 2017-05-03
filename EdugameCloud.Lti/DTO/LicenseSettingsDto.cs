@@ -9,7 +9,7 @@ using Esynctraining.Core.Caching;
 namespace EdugameCloud.Lti.DTO
 {
     [DataContract]
-    public sealed class LicenceSettingsDto
+    public sealed class LicenseSettingsDto
     {
         #region Inner Class: LabelsDto
 
@@ -161,19 +161,19 @@ namespace EdugameCloud.Lti.DTO
         public bool EnableRemoveUser { get; set; }
 
 
-        public static LicenceSettingsDto Build(LmsCompany value, Language lmsLicenseLanguage, ICache cache)
+        public static LicenseSettingsDto Build(LmsCompany value, Language lmsLicenseLanguage, ICache cache)
         {
             if (value == null)
                 throw new ArgumentNullException("value");
             if (cache == null)
                 throw new ArgumentNullException("cache");
 
-            return CacheUtility.GetCachedItem<LicenceSettingsDto>(cache,
+            return CacheUtility.GetCachedItem<LicenseSettingsDto>(cache,
                 CachePolicies.Keys.CompanyLmsSettings(value.Id),
                 CachePolicies.Dependencies.CompanyLmsSettings(value.Id),
                 () =>
             {
-                return new LicenceSettingsDto
+                return new LicenseSettingsDto
                 {
                     IsSettingsVisible = value.IsSettingsVisible.GetValueOrDefault(),
                     IsLmsHelpVisible = value.ShowLmsHelp.GetValueOrDefault(),

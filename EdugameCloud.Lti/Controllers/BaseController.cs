@@ -123,7 +123,6 @@ namespace EdugameCloud.Lti.Controllers
             }
 
             return provider;
-
         }
 
         protected string GetOutputErrorMessage(string methodName, Exception ex)

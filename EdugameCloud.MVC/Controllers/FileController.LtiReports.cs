@@ -26,16 +26,16 @@ namespace EdugameCloud.MVC.Controllers
         [CustomAuthorize]
         public virtual ActionResult MeetingHostReport(int lmsCompanyId, string format = "PDF")
         {
-            var licence = this.lmsCompanyModel.GetOneById(lmsCompanyId).Value;
+            var license = this.lmsCompanyModel.GetOneById(lmsCompanyId).Value;
 
-            if (licence == null)
+            if (license == null)
             {
                return this.HttpNotFound();
             }
 
-            var lmsCompanyName = LmsProviderModel.GetById(licence.LmsProviderId).LmsProviderName;
+            var lmsCompanyName = LmsProviderModel.GetById(license.LmsProviderId).LmsProviderName;
 
-            var provider = adobeConnectAccountService.GetProvider(licence);
+            var provider = adobeConnectAccountService.GetProvider(license);
 
             var meetingHosts =  adobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
 
@@ -63,7 +63,7 @@ namespace EdugameCloud.MVC.Controllers
 
             var reportParameters = new ReportParameterCollection
             {
-                new ReportParameter("AccountUrl", licence.AcServer),
+                new ReportParameter("AccountUrl", license.AcServer),
                 new ReportParameter("LmsCompanyName", lmsCompanyName)
             };
             localReport.SetParameters(reportParameters);
