@@ -62,9 +62,10 @@ namespace EdugameCloud.Lti.Api.Controllers
                     return Enumerable.Empty<AudioProfileDto>().ToSuccessResult();
                 }
 
+                var profileSetting = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) ?? TelephonyDTO.SupportedProfiles.None;
                 // NOTE: For None option - reuse can be active for every meeting type
                 if (((LmsMeetingType)request.MeetingType != LmsMeetingType.OfficeHours)
-                    && (LmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) != TelephonyDTO.SupportedProfiles.None))
+                    && (profileSetting != TelephonyDTO.SupportedProfiles.None))
                 {
                     Logger.Error($"Meeting type {request.MeetingType} is not supported for audio-profile reuse");
                     return Enumerable.Empty<AudioProfileDto>().ToSuccessResult();

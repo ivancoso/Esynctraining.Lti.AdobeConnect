@@ -1,8 +1,6 @@
 ﻿using System;
 using EdugameCloud.Core.Business;
-using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.AdobeConnect;
