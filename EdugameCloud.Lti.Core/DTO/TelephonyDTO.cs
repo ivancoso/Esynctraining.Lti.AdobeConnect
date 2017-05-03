@@ -49,23 +49,23 @@ namespace EdugameCloud.Lti.DTO
         }
 
 
-        [DataMember]
+        [DataMember(Name = "activeProfile")]
         public string ActiveProfile { get; set; }
-        
-        [DataMember]
+
+        [DataMember(Name = "courseMeetingOption")]
         public int CourseMeetingOption { get; set; }
-        
-        [DataMember]
+
+        [DataMember(Name = "officeHoursOption")]
         public int OfficeHoursOption { get; set; }
-        
-        [DataMember]
+
+        [DataMember(Name = "studyGroupOption")]
         public int StudyGroupOption { get; set; }
 
 
-        [DataMember]
+        [DataMember(Name = "meetingOne")]
         public TelephonyMeetingOneDTO MeetingOne { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "arkadin")]
         public TelephonyArkadinDTO Arkadin { get; set; }
 
     }

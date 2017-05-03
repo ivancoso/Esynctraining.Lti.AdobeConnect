@@ -5,13 +5,13 @@ namespace EdugameCloud.Lti.DTO
     [DataContract]
     public class TelephonyMeetingOneDTO
     {
-        [DataMember]
+        [DataMember(Name = "userName")]
         public string UserName { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "secretHashKey")]
         public string SecretHashKey { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "owningAccountNumber")]
         public string OwningAccountNumber { get; set; }
 
     }

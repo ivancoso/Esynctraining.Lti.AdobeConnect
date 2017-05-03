@@ -5,7 +5,7 @@ namespace EdugameCloud.Lti.DTO
     [DataContract]
     public class TelephonyArkadinDTO
     {
-        [DataMember]
+        [DataMember(Name = "userName")]
         public string UserName { get; set; }
 
     }
