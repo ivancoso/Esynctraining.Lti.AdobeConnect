@@ -61,7 +61,7 @@ namespace EdugameCloud.Lti.DTO
 
                 public string UploadFile { get; set; } = MyContentBaseUrl + "uploading/content/{0}/upload-file";
 
-                public string CheckSettingsPasword { get; set; } = RestWebApiBaseUrl + "settings/checkpass"; // API
+                public string CheckSettingsPassword { get; set; } = RestWebApiBaseUrl + "settings/checkpass"; // API
                 public string SaveSettings { get; set; } = RestWebApiBaseUrl + "settings/save"; // API
 
                 public string JoinToMeeting { get; set; } = "meeting/join";
