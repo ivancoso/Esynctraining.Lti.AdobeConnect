@@ -2,6 +2,7 @@
 using Castle.MicroKernel.Lifestyle;
 using Castle.Windsor.MsDependencyInjection;
 using EdugameCloud.Lti.Api.Host.Swagger;
+using EdugameCloud.Lti.Telephony;
 using Esynctraining.AspNetCore;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EdugameCloud.Lti.Api.Host
 {
@@ -39,6 +41,9 @@ namespace EdugameCloud.Lti.Api.Host
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(typeof(IConfiguration), Configuration); // ??
+
+            services.Configure<MeetingOneSettings>(Configuration.GetSection("MeetingOneSettings"))
+                .AddSingleton(sp => sp.GetService<IOptionsSnapshot<MeetingOneSettings>>().Value);
 
             services
                 .AddMvcCore(setup =>

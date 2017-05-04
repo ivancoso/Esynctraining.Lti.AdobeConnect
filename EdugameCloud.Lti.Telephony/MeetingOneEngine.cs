@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using EdugameCloud.Lti.Telephony.Configuration;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
@@ -21,13 +20,14 @@ namespace EdugameCloud.Lti.Telephony
         private readonly string _baseAddress;
 
 
-        public MeetingOneEngine(ILogger logger, string baseAddress = null)
+        public MeetingOneEngine(ILogger logger, MeetingOneSettings settings)
         {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _baseAddress = baseAddress ?? MeetingOneConfigurationSection.Current.ApiUrl;
+
+            _baseAddress = settings.ApiUrl;
         }
-
-
+        
         public TelephonyProfile CreateProfile(ILmsLicense lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
         {
             if (lmsCompany == null)
