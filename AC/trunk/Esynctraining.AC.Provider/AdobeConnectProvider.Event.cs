@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
+using System.Resources;
 using System.Threading.Tasks;
 using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects;
@@ -39,15 +40,38 @@ namespace Esynctraining.AC.Provider
 
         public async Task<StatusInfo> CreateEvent(SaveEventFields saveEventFields)
         {
+            if (saveEventFields.AdminUser == null || string.IsNullOrEmpty(saveEventFields.AdminUser.Login) ||
+                string.IsNullOrEmpty(saveEventFields.AdminUser.Password))
+            {
+                throw new InvalidOperationException(nameof(saveEventFields.AdminUser));
+            }
+            if (saveEventFields.StartDate == DateTime.MinValue|| saveEventFields.StartDate == DateTime.MaxValue)
+            {
+                throw new InvalidOperationException(nameof(saveEventFields.StartDate));
+            }
+            if (string.IsNullOrEmpty(saveEventFields.Name))
+            {
+                throw new InvalidOperationException(nameof(saveEventFields.Name));
+            }
+
             //Login as in UI, get 2 cookies and owasp and use it
             var loginResult = requestProcessor.LoginAsOnUi(saveEventFields.AdminUser);
             var owasp = loginResult.Owasp;
 
-            var shortcutStatus = new StatusInfo();
-            var eventsScoId = GetShortcutByType(ScoShortcutType.events.ToString(), out shortcutStatus).ScoId;
+            StatusInfo status;
+            var shortcutByType = GetShortcutByType(ScoShortcutType.events.ToString(), out status);
+            var eventsScoId = shortcutByType.ScoId;
+
+            var myMeetings = GetShortcutByType(ScoShortcutType.my_meetings.ToString(), out status);
+            saveEventFields.ListScoId = myMeetings.ScoId;
+            //saveEventFields.ListScoId = "304292";
+            
             var getResult = await requestProcessor.GetAcAdminResponseRedirectLocation(eventsScoId, owasp);
             
             var dict = AcCreateEventHelper.GetPostFormFields(saveEventFields, owasp);
+            var commonInfo = GetCommonInfo().CommonInfo;
+            var accountId = commonInfo.AccountId?.ToString() ?? throw new InvalidOperationException("Can't get common info");
+            //var accountId = "7";
             
             var result = requestProcessor.PostAcAdminRequest(new CreatingEventContainer()
             {
@@ -55,10 +79,11 @@ namespace Esynctraining.AC.Provider
                 EventScoId = getResult.ScoId,
                 SharedEventsFolderScoId = eventsScoId,
                 Owasp = owasp,
-                PostUrl = getResult.CreateEventPostUrl
+                PostUrl = getResult.CreateEventPostUrl,
+                AccountId = accountId
             });
             
-            return shortcutStatus;
+            return result;
         }
 
 

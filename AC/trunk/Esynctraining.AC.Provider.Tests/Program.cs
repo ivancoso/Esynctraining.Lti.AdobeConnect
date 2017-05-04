@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.Entities;
 using NUnit.Framework;
 
 namespace Esynctraining.AC.Provider.Tests
@@ -55,32 +56,9 @@ namespace Esynctraining.AC.Provider.Tests
             var acProvider = new AdobeConnectProvider(con);
             var login = "nastya@esynctraining.com";
             var password = "Welcome1";
-           
-            var saveEventFields = new SaveEventFields()
-            {
-                StartDate = DateTime.Now,
-                EventTemplateId = "11036",
-                Name = $"__newMyTest{DateTime.Now:yyyy-M-d hh-mm-ss}",
-                EventInfo = "info",
-                EndDate = DateTime.Now.AddHours(1),
-                EventType = "meeting",
-                ListScoId = "304292",
-                OwnerPermissionId = "host",
-                EventCategory = "live",
-                LoggedInAccess = "view",
-                PasswordByPass = false,
-                CatalogView = "remove",
-                DefaultCatalogView = "view",
-                ShowInCatalog = true,
-                DefaultRegistrationType = "advance",
-                Description = String.Empty,
-                UrlPath = string.Empty,
-                TimeZoneId = 4,
-                Lang = "en",
-                Feature = "Next >",
-                RegistrationLimitEnabled = false,
-                AdminUser = new UserCredentials(login, password)
-            };
+            var eventName = $"__newMyTest{DateTime.Now:yyyy-M-d hh-mm-ss}";
+            var eventStartDate = DateTime.Now;
+            var saveEventFields = new SaveEventFields(new UserCredentials(login, password), eventName, eventStartDate);
             var result = await acProvider.CreateEvent(saveEventFields);
         }
     }

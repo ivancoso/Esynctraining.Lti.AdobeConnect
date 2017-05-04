@@ -19,6 +19,28 @@ namespace Esynctraining.AC.Provider.DataObjects
 
     public class SaveEventFields
     {
+        public SaveEventFields(UserCredentials adminUser, string name, DateTime startDate)
+        {
+            AdminUser = adminUser;
+            Name = name;
+            StartDate = startDate;
+            EventTemplateId = ""; //will set default template
+            EventTemplateId = "11036";
+            TimeZoneId = 4;
+            EventType = "meeting";
+            OwnerPermissionId = "host";
+            EventCategory = "live";
+            LoggedInAccess = "view";
+            CatalogView = "remove";
+            DefaultCatalogView = "view";
+            ShowInCatalog = true;
+            DefaultRegistrationType = "advance";
+            Lang = "en";
+            UrlPath = String.Empty;
+            Description = String.Empty;
+            EventInfo = String.Empty;
+            EndDate = StartDate.AddHours(1);
+        }
         public UserCredentials AdminUser { get; set; }
         public string Name { get; set; }
         public string EventTemplateId { get; set; }
@@ -40,7 +62,6 @@ namespace Esynctraining.AC.Provider.DataObjects
         public string DefaultRegistrationType { get; set; }
         public int TimeZoneId { get; set; }
         public string Lang { get; set; }
-        public string Feature { get; set; }
         //public string Owasp { get; set; }
         public bool Tag11041 { get; set; }
         public bool Tag11038 { get; set; }
@@ -70,6 +91,7 @@ namespace Esynctraining.AC.Provider.DataObjects
         public string EventScoId { get; set; }
         public string SharedEventsFolderScoId { get; set; }
         public Uri PostUrl { get; set; }
+        public string AccountId { get; set; }
         public Dictionary<string, string> EventProperties { get; set; }
     }
 }

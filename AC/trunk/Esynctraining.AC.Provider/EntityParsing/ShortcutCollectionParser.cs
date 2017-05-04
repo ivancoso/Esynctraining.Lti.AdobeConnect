@@ -51,7 +51,9 @@
         /// </returns>
         public static ScoShortcut GetByType(XmlNode xml, string type)
         {
-            return Parse(xml).FirstOrDefault(s => string.Equals(s.Type, type, StringComparison.InvariantCultureIgnoreCase));
+            return Parse(xml).FirstOrDefault(s => string.Equals(s.Type, type, StringComparison.InvariantCultureIgnoreCase) ||
+            string.Equals(s.Type, type.Replace('_', '-'), StringComparison.InvariantCultureIgnoreCase) //AA: because enum should contain my-meetings, not my_meetings!! (enums can't use - symbol)
+            );
         }
     }
 }

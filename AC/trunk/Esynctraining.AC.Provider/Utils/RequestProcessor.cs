@@ -19,6 +19,7 @@ namespace Esynctraining.AC.Provider.Utils
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.Extensions;
 
+
     /// <summary>
     /// The request processor.
     /// </summary>
@@ -130,7 +131,7 @@ namespace Esynctraining.AC.Provider.Utils
                 using (var client = new HttpClient(handler) { BaseAddress = new Uri(acUrl) })
                 {
                     var path =
-                        $"system/login/ok?domain={WebUtility.HtmlEncode(acUrl)}&next=%2F&set-lang=en";
+                        $"system/login/ok?domain={ WebUtility.UrlEncode(acUrl)}&next=%2F&set-lang=en";
                     var result =
                         client.PostAsync(path, new FormUrlEncodedContent(new List<KeyValuePair<string, string>>()
                         {
@@ -162,6 +163,9 @@ namespace Esynctraining.AC.Provider.Utils
                 }
             }
 
+            //breezeSession = "breezbreez4q42qbe9fwk67eq8";
+            //breezeCCookieResult = "P8FO-IME7-HQNH-U4G1-1YVB-YC08-FVKS-SG4Z";
+            //owasp = "3953ed4a8da0089576679d254aa07a305ff707f70aedc164c3dac3ec7da3fbb6";
             SetSessionId(breezeSession);
             SetBreezeCCookie(breezeCCookieResult);
             return new LoginAsOnUiContainer()
@@ -183,16 +187,16 @@ namespace Esynctraining.AC.Provider.Utils
             {
                 using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
                 {
-                    var requestUri = $"admin/event/folder/list/new/1/next?account-id=7&filter-rows=100&filter-start=0&sco-id={settings.EventScoId}&start-id={settings.SharedEventsFolderScoId}&tab-id={settings.SharedEventsFolderScoId}&OWASP_CSRFTOKEN={settings.Owasp}";
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Host", baseAddress.DnsSafeHost);
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", baseAddress.AbsoluteUri);
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Referer", requestUri);
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en,en-US;q=0.8,ru;q=0.6");
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, br");
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Upgrade-Insecure-Requests", "1");
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Connection", "keep-alive");
-                    //client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36");
+                    var requestUri = $"admin/event/folder/list/new/1/next?account-id={settings.AccountId}&filter-rows=100&filter-start=0&sco-id={settings.EventScoId}&start-id={settings.SharedEventsFolderScoId}&tab-id={settings.SharedEventsFolderScoId}&OWASP_CSRFTOKEN={settings.Owasp}";
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Host", baseAddress.DnsSafeHost);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", baseAddress.AbsoluteUri);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Referer", requestUri);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en,en-US;q=0.8,ru;q=0.6");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, br");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Upgrade-Insecure-Requests", "1");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Connection", "keep-alive");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36");
                     client.DefaultRequestHeaders.ExpectContinue = false;
                     var content = new MultipartFormDataContent();
                     foreach (var eventProperty in settings.EventProperties)
@@ -203,8 +207,7 @@ namespace Esynctraining.AC.Provider.Utils
                     }
 
                     var result = client.PostAsync(requestUri, content).Result;
-                    var status = new StatusInfo();
-                    status.SessionInfo = this.sessionCookie.Value;
+                    var status = new StatusInfo {SessionInfo = sessionCookie.Value};
                     return status;
                 }
             }

@@ -912,6 +912,11 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.RegisterToEvent(eventDetails); });
         }
 
+        public StatusInfo CreateEvent(SaveEventFields saveEventFields)
+        {
+            return Execute(() => _provider.CreateEvent(saveEventFields).Result);
+        }
+
         public ReportScoViewsContentCollectionResult ReportScoViews(string scoId)
         {
             if (string.IsNullOrWhiteSpace(scoId))
