@@ -13,11 +13,5 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("event-info")]
         public string EventInfo { get; set; }
-
-        /// <summary>
-        /// Gets or sets the event template.
-        /// </summary>
-        [XmlElement("event-template")]
-        public string EventTemplate { get; set; }
     }
 }

@@ -8,6 +8,9 @@ namespace Esynctraining.AC.Provider.Entities
     [XmlRoot("common")]
     public class CommonInfo
     {
+        [XmlElement("OWASP_CSRF_TOKEN")]
+        public OWASPInfo OWASP_CSRF_TOKEN { get; set; }
+        
         [XmlElement("host")]
         public string AccountUrl { get; set; }
 

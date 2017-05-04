@@ -119,7 +119,5 @@
 
             return propertyInfo.Name.Replace('_', '-').ToLower();
         }
-
     }
-
 }

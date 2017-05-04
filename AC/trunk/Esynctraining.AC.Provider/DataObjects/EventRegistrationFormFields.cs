@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Esynctraining.AC.Provider.DataObjects
 {
+
+
     public class EventRegistrationFormFields
     {
         public string ScoId { get; set; }
@@ -12,5 +15,61 @@ namespace Esynctraining.AC.Provider.DataObjects
         public string LastName { get; set; }
 
         public Dictionary<string,string> AdditionalFields { get;set; }
+    }
+
+    public class SaveEventFields
+    {
+        public UserCredentials AdminUser { get; set; }
+        public string Name { get; set; }
+        public string EventTemplateId { get; set; }
+        public string Description { get; set; }
+        public string EventCategory { get; set; }
+        public string EventType { get; set; }
+        public string ListScoId { get; set; }
+        public string OwnerPermissionId { get; set; }
+        public string UrlPath { get; set; }
+        public string EventInfo { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public bool PasswordByPass { get; set; }
+        public bool ShowInCatalog { get; set; }
+        public bool RegistrationLimitEnabled { get; set; }
+        public string LoggedInAccess { get; set; }
+        public string CatalogView { get; set; }
+        public string DefaultCatalogView { get; set; }
+        public string DefaultRegistrationType { get; set; }
+        public int TimeZoneId { get; set; }
+        public string Lang { get; set; }
+        public string Feature { get; set; }
+        //public string Owasp { get; set; }
+        public bool Tag11041 { get; set; }
+        public bool Tag11038 { get; set; }
+        public bool Tag11039 { get; set; }
+        public bool Tag11040 { get; set; }
+    }
+
+    public class LoginAsOnUiContainer
+    {
+        public string BreezeCCookie { get; set; }
+        public string BreezeSession { get; set; }
+        public string Owasp { get; set; }
+    }
+
+    public class CreatingEventResponse
+    {
+        //public string Cookie { get; set; }
+        public Uri CreateEventPostUrl { get; set; }
+        //public string OwaspReturned { get; set; }
+        public string ScoId { get; set; }
+    }
+
+    public class CreatingEventContainer
+    {
+        //public string Cookie { get; set; }
+        public string Owasp { get; set; }
+        public string EventScoId { get; set; }
+        public string SharedEventsFolderScoId { get; set; }
+        public Uri PostUrl { get; set; }
+        public Dictionary<string, string> EventProperties { get; set; }
     }
 }

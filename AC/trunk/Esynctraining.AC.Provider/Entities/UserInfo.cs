@@ -26,5 +26,4 @@
         public string Login { get; set; }
 
     }
-
 }

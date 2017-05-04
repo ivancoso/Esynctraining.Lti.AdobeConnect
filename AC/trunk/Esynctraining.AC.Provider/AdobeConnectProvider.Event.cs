@@ -1,10 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.EntityParsing;
 using Esynctraining.AC.Provider.Extensions;
+using Esynctraining.AC.Provider.Utils;
 
 namespace Esynctraining.AC.Provider
 {
@@ -22,6 +26,41 @@ namespace Esynctraining.AC.Provider
 //                ? new EventCollectionResult(status, EventInfoCollectionParser.Parse(doc))
 //                : new EventCollectionResult(status);
 //        }
+
+        //public void GetEventDynamicQuestionAnswers()
+        //{
+            
+        //}
+
+        //public void GetEventInfo()
+        //{
+            
+        //}
+
+        public async Task<StatusInfo> CreateEvent(SaveEventFields saveEventFields)
+        {
+            //Login as in UI, get 2 cookies and owasp and use it
+            var loginResult = requestProcessor.LoginAsOnUi(saveEventFields.AdminUser);
+            var owasp = loginResult.Owasp;
+
+            var shortcutStatus = new StatusInfo();
+            var eventsScoId = GetShortcutByType(ScoShortcutType.events.ToString(), out shortcutStatus).ScoId;
+            var getResult = await requestProcessor.GetAcAdminResponseRedirectLocation(eventsScoId, owasp);
+            
+            var dict = AcCreateEventHelper.GetPostFormFields(saveEventFields, owasp);
+            
+            var result = requestProcessor.PostAcAdminRequest(new CreatingEventContainer()
+            {
+                EventProperties = dict,
+                EventScoId = getResult.ScoId,
+                SharedEventsFolderScoId = eventsScoId,
+                Owasp = owasp,
+                PostUrl = getResult.CreateEventPostUrl
+            });
+            
+            return shortcutStatus;
+        }
+
 
         public GenericResult<EventRegistrationDetails> GetEventRegistrationDetails(string scoId)
         {

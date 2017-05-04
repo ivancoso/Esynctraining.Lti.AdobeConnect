@@ -1,4 +1,11 @@
-﻿namespace Esynctraining.AC.Provider.Utils
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+namespace Esynctraining.AC.Provider.Utils
 {
     using System;
     using System.IO;
@@ -21,11 +28,12 @@
 
         private readonly ConnectionDetails connectionDetails;
         private Cookie sessionCookie;
+        private Cookie breezeCCookie;
 
         #endregion
 
         #region Constructors and Destructors
-        
+
         public RequestProcessor(ConnectionDetails details)
         {
             if (details == null)
@@ -67,7 +75,7 @@
         {
             get
             {
-                return this.sessionCookie != null 
+                return this.sessionCookie != null
                     && !string.IsNullOrWhiteSpace(this.sessionCookie.Value)
                     && !string.IsNullOrWhiteSpace(this.sessionCookie.Domain);
             }
@@ -76,17 +84,142 @@
         #endregion
 
         #region Public Methods and Operators
-        
+
+        public async Task<CreatingEventResponse> GetAcAdminResponseRedirectLocation(string sharedEventsFolderScoId, string owasp)
+        {
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(sessionCookie);
+            cookieContainer.Add(breezeCCookie);
+            // get response redirect location
+            using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer, AllowAutoRedirect = false })
+            {
+                using (var client = new HttpClient(handler))
+                {
+                    var getTask = await client.GetAsync(connectionDetails.AdobeConnectRoot.AbsoluteUri +
+                                                 $"admin/event/folder/list/new?filter-rows=100&filter-start=0&parent-acl-id={sharedEventsFolderScoId}&sco-id={sharedEventsFolderScoId}&start-id={sharedEventsFolderScoId}&tab-id={sharedEventsFolderScoId}&OWASP_CSRFTOKEN={owasp}");
+                    var result = getTask;
+                    
+                    var location = result.Headers.Location;
+
+                    var queryStringDict = location.DecodeQueryParameters();
+                    var eventScoId = queryStringDict["sco-id"];
+                    
+                    if (string.IsNullOrEmpty(eventScoId))
+                        throw new InvalidOperationException("ScoId of newly created event can't be empty!");
+                    var res = new CreatingEventResponse()
+                    {
+                        CreateEventPostUrl = location,
+                        ScoId = eventScoId,
+                    };
+                    return res;
+                }
+            }
+        }
+
+        public LoginAsOnUiContainer LoginAsOnUi(UserCredentials adminUser)
+        {
+            var login = adminUser.Login;
+            var acUrl = connectionDetails.AdobeConnectRoot.AbsoluteUri;
+            var pass = adminUser.Password;
+
+            var breezeSession = "";
+            var breezeCCookieResult = "";
+            var owasp = "";
+            using (var handler = new HttpClientHandler() { AllowAutoRedirect = false })
+            {
+                using (var client = new HttpClient(handler) { BaseAddress = new Uri(acUrl) })
+                {
+                    var path =
+                        $"system/login/ok?domain={WebUtility.HtmlEncode(acUrl)}&next=%2F&set-lang=en";
+                    var result =
+                        client.PostAsync(path, new FormUrlEncodedContent(new List<KeyValuePair<string, string>>()
+                        {
+                            new KeyValuePair<string, string>("login", login),
+                            new KeyValuePair<string, string>("password", pass),
+                        })).Result;
+
+                    IEnumerable<string> cookieValues;
+                    result.Headers.TryGetValues("Set-Cookie", out cookieValues);
+                    var breezeSessionFull = cookieValues.First().Split(';')[0];
+                    var parsedSessionCookie =
+                        breezeSessionFull.Substring(breezeSessionFull.IndexOf("=", StringComparison.Ordinal) + 1);
+                    breezeSession = parsedSessionCookie;
+
+                    using (var innerClient = new HttpClient())
+                    {
+                        var innerResult = innerClient.GetAsync(result.Headers.Location).Result;
+                        innerResult.Headers.TryGetValues("Set-Cookie", out cookieValues);
+                        var breezeCCookieFull = cookieValues.First().Split(';')[0];
+                        var cookie =
+                            breezeCCookieFull.Substring(breezeCCookieFull.IndexOf("=", StringComparison.Ordinal) + 1);
+
+                        var location = innerResult.RequestMessage.RequestUri;
+                        var queryStringDict = location.DecodeQueryParameters();
+
+                        owasp = queryStringDict["OWASP_CSRFTOKEN"];
+                        breezeCCookieResult = cookie;
+                    }
+                }
+            }
+
+            SetSessionId(breezeSession);
+            SetBreezeCCookie(breezeCCookieResult);
+            return new LoginAsOnUiContainer()
+            {
+                Owasp = owasp,
+                BreezeSession = breezeSession,
+                BreezeCCookie = breezeCCookieResult
+            };
+        }
+
+        public StatusInfo PostAcAdminRequest(CreatingEventContainer settings)
+        {
+            var baseAddress = new Uri(connectionDetails.AdobeConnectRoot.AbsoluteUri);
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(sessionCookie.Name, sessionCookie.Value));
+            cookieContainer.Add(baseAddress, new Cookie(breezeCCookie.Name, breezeCCookie.Value));
+            var messageHandler = new HttpClientHandler() { CookieContainer = cookieContainer, AllowAutoRedirect = true };
+            using (var handler = messageHandler)
+            {
+                using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+                {
+                    var requestUri = $"admin/event/folder/list/new/1/next?account-id=7&filter-rows=100&filter-start=0&sco-id={settings.EventScoId}&start-id={settings.SharedEventsFolderScoId}&tab-id={settings.SharedEventsFolderScoId}&OWASP_CSRFTOKEN={settings.Owasp}";
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Host", baseAddress.DnsSafeHost);
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", baseAddress.AbsoluteUri);
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Referer", requestUri);
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en,en-US;q=0.8,ru;q=0.6");
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, br");
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Upgrade-Insecure-Requests", "1");
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("Connection", "keep-alive");
+                    //client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36");
+                    client.DefaultRequestHeaders.ExpectContinue = false;
+                    var content = new MultipartFormDataContent();
+                    foreach (var eventProperty in settings.EventProperties)
+                    {
+                        var stringContent = new StringContent(eventProperty.Value);
+                        stringContent.Headers.Remove("Content-Type");
+                        content.Add(stringContent, eventProperty.Key);
+                    }
+
+                    var result = client.PostAsync(requestUri, content).Result;
+                    var status = new StatusInfo();
+                    status.SessionInfo = this.sessionCookie.Value;
+                    return status;
+                }
+            }
+        }
+
         public byte[] DownloadData(string urlPath, string format, out string error)
         {
             error = null;
             string url = string.Format(
-                "{0}/{1}/output/{1}.{2}?download={2}", 
+                "{0}/{1}/output/{1}.{2}?download={2}",
                 connectionDetails.AdobeConnectRoot.ToString().TrimEnd('/'),
                 urlPath.Trim('/'),
                 format);
-           
-              return DownloadData(url, out error);
+
+            return DownloadData(url, out error);
         }
 
         public byte[] DownloadData2(string urlPath, string fileName, out string error)
@@ -127,7 +260,7 @@
 
         private byte[] DownloadData(string url, out string error)
         {
-            error = null;            
+            error = null;
             var request = WebRequest.Create(url) as HttpWebRequest;
             request = ProcessRequest(request, contentRequest: true);
 
@@ -215,7 +348,7 @@
 
             return this.FinalizeProcessingResponse(status, webRequest);
         }
-        
+
         public XmlDocument ProcessUpload(
             string action,
             string parameters,
@@ -240,7 +373,7 @@
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.Timeout = TimeSpan.FromMilliseconds(connectionDetails.HttpContentRequestTimeout);
-                    
+
                     response = httpClient.PostAsync(url, form).Result;
                 }
 
@@ -255,7 +388,7 @@
                 return null;
             }
         }
-        
+
         //public XmlDocument ProcessUploadMultipart(
         //    string action, 
         //    string parameters, 
@@ -306,9 +439,18 @@
         public void SetSessionId(string sessionId)
         {
             this.sessionCookie = new Cookie(
-                AdobeConnectProviderConstants.SessionCookieName, 
-                sessionId, 
-                "/", 
+                AdobeConnectProviderConstants.SessionCookieName,
+                sessionId,
+                "/",
+                connectionDetails.AdobeConnectRoot.Host);
+        }
+
+        public void SetBreezeCCookie(string sessionId)
+        {
+            this.breezeCCookie = new Cookie(
+                AdobeConnectProviderConstants.BreezeCCookie,
+                sessionId,
+                "/",
                 connectionDetails.AdobeConnectRoot.Host);
         }
 
@@ -326,10 +468,10 @@
         {
             //this.connectionDetails.AdobeConnectRoot + string.Format(@"api/xml?action={0}&{1}", action, parameters)
             var url = BuildUrl(action, parameters);
-            var request = WebRequest.Create(url ) as HttpWebRequest;
+            var request = WebRequest.Create(url) as HttpWebRequest;
             return ProcessRequest(request);
         }
-        
+
         private XmlDocument FinalizeProcessingResponse(StatusInfo status, HttpWebRequest webRequest)
         {
             HttpWebResponse webResponse = null;
@@ -356,7 +498,7 @@
                         status.SessionInfo = this.sessionCookie.Value;
                     }
                 }
-                
+
                 Stream receiveStream = webResponse.GetResponseStream();
 
                 if (receiveStream == null)
@@ -433,7 +575,7 @@
 
             return doc;
         }
-        
+
         private HttpWebRequest ProcessRequest(HttpWebRequest request, bool contentRequest = false)
         {
             //try
@@ -470,7 +612,7 @@
 
             return request;
         }
-        
+
         //private static void WriteMultipartForm(
         //    Stream s, 
         //    string boundary, 
@@ -527,13 +669,13 @@
         //    WriteToStream(s, fileData);
         //    WriteToStream(s, trailer);
         //}
-        
+
         //private static void WriteToStream(Stream s, string txt)
         //{
         //    byte[] bytes = Encoding.UTF8.GetBytes(txt);
         //    s.Write(bytes, 0, bytes.Length);
         //}
-        
+
         //private static void WriteToStream(Stream s, byte[] bytes)
         //{
         //    s.Write(bytes, 0, bytes.Length);

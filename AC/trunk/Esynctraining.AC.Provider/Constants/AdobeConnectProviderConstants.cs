@@ -9,6 +9,7 @@
         /// The session cookie name.
         /// </summary>
         public const string SessionCookieName = "BREEZESESSION";
+        public const string BreezeCCookie = "BreezeCCookie";
 
         /// <summary>
         /// The default event max participants.

@@ -35,6 +35,7 @@ namespace Esynctraining.AC.Provider.EntityParsing
                     Locale = xml.SelectSingleNodeValue("@locale"),
                 };
 
+                result.OWASP_CSRF_TOKEN = OwaspParser.Parse(xml);
                 result.User = UserInfoParser.Parse(xml);
 
                 return result;
