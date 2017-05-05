@@ -770,8 +770,9 @@
                 }
             }
 
-            var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
-            this.AddUsersToMeetingHostsGroup(provider, hostPrincipals, hostGroup);
+            // NOTE: add to meeting-hosts *only* user meeting created.
+            //var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
+            //this.AddUsersToMeetingHostsGroup(provider, hostPrincipals, hostGroup);
 
             return result;
         }
@@ -1087,11 +1088,12 @@
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.AcId, permission);
             }
 
-            if (permission == MeetingPermissionId.host)
-            {
-                var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
-                this.AddUsersToMeetingHostsGroup(provider, new[] { user.AcId }, hostGroup);
-            }
+            // NOTE: add to meeting-hosts *only* user meeting created.
+            //if (permission == MeetingPermissionId.host)
+            //{
+            //    var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
+            //    this.AddUsersToMeetingHostsGroup(provider, new[] { user.AcId }, hostGroup);
+            //}
 
             return skipReturningUsers
                 ? null
@@ -1165,11 +1167,12 @@
             var permission = AcRole.GetById(user.AcRole.Value).MeetingPermissionId;
             provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.AcId, permission);
 
-            if (permission == MeetingPermissionId.host)
-            {
-                var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
-                AddUsersToMeetingHostsGroup(provider, new[] { user.AcId }, hostGroup);
-            }
+            // NOTE: add to meeting-hosts *only* user meeting created.
+            //if (permission == MeetingPermissionId.host)
+            //{
+            //    var hostGroup = MeetingTypeFactory.HostGroup((LmsMeetingType) meeting.LmsMeetingType);
+            //    AddUsersToMeetingHostsGroup(provider, new[] { user.AcId }, hostGroup);
+            //}
 
             return new LmsUserDTO
             {
@@ -1597,10 +1600,11 @@
                         hostPrincipals);
                 }
             }
-//            var sw3 = Stopwatch.StartNew();
+            //            var sw3 = Stopwatch.StartNew();
 
             // TRICK: do not move down to chunk part!
-            this.AddUsersToMeetingHostsGroup(provider, hostPrincipals, MeetingTypeFactory.HostGroup(meetingType));
+            // NOTE: add to meeting-hosts *only* user meeting created.
+            //this.AddUsersToMeetingHostsGroup(provider, hostPrincipals, MeetingTypeFactory.HostGroup(meetingType));
 
             foreach (var chunk in meetingPermissions.Chunk(provider.GetPermissionChunk()))
             {
