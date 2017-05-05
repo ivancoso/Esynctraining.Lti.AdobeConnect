@@ -24,6 +24,22 @@ namespace Esynctraining.AdobeConnect.Tests
             Assert.Equals(eventInfo.ScoInfo.EventTemplateScoId, 56489);
         }
 
+        [Test]
+        public void WillCreateEventViaProxy()
+        {
+            var acApiUrl = "https://connectstage.esynctraining.com/";
+            var login = "nastya@esynctraining.com";
+            var password = "Welcome1";
+            var adobeConnectRoot = new Uri(acApiUrl);
+            var con = new ConnectionDetails(adobeConnectRoot);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), adobeConnectRoot, String.Empty);
+            var eventName = $"__newMyTest{DateTime.Now:yyyy-M-d hh-mm-ss}";
+            var eventStartDate = DateTime.Now;
+            var saveEventFields = new SaveEventFields(new UserCredentials(login, password), eventName, eventStartDate);
+            var result = proxy.CreateEvent(saveEventFields);
+        }
+
 
         [Test]
         public void WillReportUserTrainingsTaken()

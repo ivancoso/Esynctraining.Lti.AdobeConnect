@@ -18,42 +18,51 @@ namespace Esynctraining.AdobeConnect.Tests
 {
     class Program
     {
-        static void Main1(string[] args)
+        static void Main(string[] args)
         {
-            var d = new DateTime(1482489280536);
+            var tests = new AdobeConnectProxyTests();
+            tests.WillCreateEventViaProxy();
 
-            //var tests = new CalcReportTests();
-            //tests.Init();
-            //tests.WillGetRecordingsStats("https://connect.fiu.edu", "mkollen", "e$ync123");
 
-            //RunUmdRecordingsReport();
-            var container = new WindsorContainer();
-            WindsorIoC.Initialize(container);
-            DIConfig.RegisterComponents(container);
 
-            var logger = IoC.Resolve<ILogger>();
-            //var accountService = new AdobeConnectAccountService(logger);
-            //IAdobeConnectProxy ac = accountService.GetProvider(new AdobeConnectAccess("http://connectdev.esynctraining.com", "sergeyi@esynctraining.com", "e$ync123"), true);
-            
-            //var chatService = new ChatTranscriptService(ac, new ContentService(logger, ac), logger);
-            //var lastSession = ac.ReportMeetingSessions("458536").Values.Last();
 
-            //ChatTranscript chat = chatService.GetMeetingChatTranscript("458536", "7", lastSession.DateCreated, lastSession.DateEnd);
-            //var publicChat = chat.GetPublicChat();
-            //var privateChatGroups = chat.GetPrivateChatGroups();
-            //int re = 43;
 
-            var connectionDetails = new ConnectionDetails(new Uri("http://connectdev.esynctraining.com"));
-            var provider = new AdobeConnectProvider(connectionDetails);
-            var userCredentials = new UserCredentials("sergeyi@esynctraining.com", "pwd");
-            LoginResult result = provider.Login(userCredentials);
-            var meetingScoId = 458536;
-            var res = provider.ReportAssetResponseInfo(meetingScoId.ToString(), "458583");
-            var rr2 = provider.ReportQuizQuestionResponse(meetingScoId.ToString());
-            var rr3 = provider.ReportQuizInteractions(meetingScoId.ToString());
-            var rr4 = provider.ReportQuizQuestionDistribution(meetingScoId.ToString());
 
-            int rr = 4;
+
+            //var d = new DateTime(1482489280536);
+
+            ////var tests = new CalcReportTests();
+            ////tests.Init();
+            ////tests.WillGetRecordingsStats("https://connect.fiu.edu", "mkollen", "e$ync123");
+
+            ////RunUmdRecordingsReport();
+            //var container = new WindsorContainer();
+            //WindsorIoC.Initialize(container);
+            //DIConfig.RegisterComponents(container);
+
+            //var logger = IoC.Resolve<ILogger>();
+            ////var accountService = new AdobeConnectAccountService(logger);
+            ////IAdobeConnectProxy ac = accountService.GetProvider(new AdobeConnectAccess("http://connectdev.esynctraining.com", "sergeyi@esynctraining.com", "e$ync123"), true);
+
+            ////var chatService = new ChatTranscriptService(ac, new ContentService(logger, ac), logger);
+            ////var lastSession = ac.ReportMeetingSessions("458536").Values.Last();
+
+            ////ChatTranscript chat = chatService.GetMeetingChatTranscript("458536", "7", lastSession.DateCreated, lastSession.DateEnd);
+            ////var publicChat = chat.GetPublicChat();
+            ////var privateChatGroups = chat.GetPrivateChatGroups();
+            ////int re = 43;
+
+            //var connectionDetails = new ConnectionDetails(new Uri("http://connectdev.esynctraining.com"));
+            //var provider = new AdobeConnectProvider(connectionDetails);
+            //var userCredentials = new UserCredentials("sergeyi@esynctraining.com", "pwd");
+            //LoginResult result = provider.Login(userCredentials);
+            //var meetingScoId = 458536;
+            //var res = provider.ReportAssetResponseInfo(meetingScoId.ToString(), "458583");
+            //var rr2 = provider.ReportQuizQuestionResponse(meetingScoId.ToString());
+            //var rr3 = provider.ReportQuizInteractions(meetingScoId.ToString());
+            //var rr4 = provider.ReportQuizQuestionDistribution(meetingScoId.ToString());
+
+            //int rr = 4;
 
 
             //var seminarService = new SeminarService(logger);
