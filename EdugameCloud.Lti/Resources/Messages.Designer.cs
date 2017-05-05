@@ -421,6 +421,15 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not a valid e-mail address..
+        /// </summary>
+        public static string PrincipalValidateEmailFormat {
+            get {
+                return ResourceManager.GetString("PrincipalValidateEmailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to E-mail must be between 1 and 60 characters long..
         /// </summary>
         public static string PrincipalValidateEmailLength {

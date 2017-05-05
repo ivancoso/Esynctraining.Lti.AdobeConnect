@@ -219,6 +219,11 @@ namespace EdugameCloud.Lti.Api.Controllers
                     throw new Core.WarningMessageException(Messages.PrincipalValidateEmailLength);
                 }
 
+                if (pu.Status.InvalidField == "email" && pu.Status.SubCode == StatusSubCodes.format)
+                {
+                    throw new Core.WarningMessageException(Messages.PrincipalValidateEmailFormat);
+                }
+
                 if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.range)
                 {
                     throw new Core.WarningMessageException(Messages.PrincipalValidateLoginLength);

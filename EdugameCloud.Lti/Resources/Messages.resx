@@ -311,4 +311,7 @@
   <data name="AdobeConnectDeniedErrorMessage" xml:space="preserve">
     <value>Not Authorized. Please check that account used to access Adobe Connect has sufficient permissions.</value>
   </data>
+  <data name="PrincipalValidateEmailFormat" xml:space="preserve">
+    <value>Not a valid e-mail address.</value>
+  </data>
 </root>
