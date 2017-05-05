@@ -15,37 +15,37 @@ namespace Esynctraining.AC.Provider
 {
     public partial class AdobeConnectProvider
     {
-//        public EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0)
-//        {
-//            // act: "report-my-events"
-//            StatusInfo status;
-//
-//            var doc = this.requestProcessor.Process(Commands.ReportMyEvents,
-//                string.Empty.AppendPagingIfNeeded(startIndex, limit).TrimStart('&'), out status);
-//
-//            return ResponseIsOk(doc, status)
-//                ? new EventCollectionResult(status, EventInfoCollectionParser.Parse(doc))
-//                : new EventCollectionResult(status);
-//        }
+        //        public EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0)
+        //        {
+        //            // act: "report-my-events"
+        //            StatusInfo status;
+        //
+        //            var doc = this.requestProcessor.Process(Commands.ReportMyEvents,
+        //                string.Empty.AppendPagingIfNeeded(startIndex, limit).TrimStart('&'), out status);
+        //
+        //            return ResponseIsOk(doc, status)
+        //                ? new EventCollectionResult(status, EventInfoCollectionParser.Parse(doc))
+        //                : new EventCollectionResult(status);
+        //        }
 
         //public void GetEventDynamicQuestionAnswers()
         //{
-            
+
         //}
 
         //public void GetEventInfo()
         //{
-            
+
         //}
 
-        public async Task<StatusInfo> CreateEvent(SaveEventFields saveEventFields)
+        public async Task<SaveEventResponse> CreateEvent(SaveEventFields saveEventFields)
         {
             if (saveEventFields.AdminUser == null || string.IsNullOrEmpty(saveEventFields.AdminUser.Login) ||
                 string.IsNullOrEmpty(saveEventFields.AdminUser.Password))
             {
                 throw new InvalidOperationException(nameof(saveEventFields.AdminUser));
             }
-            if (saveEventFields.StartDate == DateTime.MinValue|| saveEventFields.StartDate == DateTime.MaxValue)
+            if (saveEventFields.StartDate == DateTime.MinValue || saveEventFields.StartDate == DateTime.MaxValue)
             {
                 throw new InvalidOperationException(nameof(saveEventFields.StartDate));
             }
@@ -65,14 +65,15 @@ namespace Esynctraining.AC.Provider
             var myMeetings = GetShortcutByType(ScoShortcutType.my_meetings.ToString(), out status);
             saveEventFields.ListScoId = myMeetings.ScoId;
             //saveEventFields.ListScoId = "304292";
-            
+
             var getResult = await requestProcessor.GetAcAdminResponseRedirectLocation(eventsScoId, owasp);
-            
+            saveEventFields.EventTemplateId = getResult.EventTemplateId;
             var dict = AcCreateEventHelper.GetPostFormFields(saveEventFields, owasp);
             var commonInfo = GetCommonInfo().CommonInfo;
-            var accountId = commonInfo.AccountId?.ToString() ?? throw new InvalidOperationException("Can't get common info");
+            var accountId = commonInfo.AccountId?.ToString() ??
+            throw new InvalidOperationException("Can't get common info");
             //var accountId = "7";
-            
+
             var result = requestProcessor.PostAcAdminRequest(new CreatingEventContainer()
             {
                 EventProperties = dict,
@@ -82,8 +83,11 @@ namespace Esynctraining.AC.Provider
                 PostUrl = getResult.CreateEventPostUrl,
                 AccountId = accountId
             });
-            
-            return result;
+
+            return new SaveEventResponse()
+            {
+                EventScoId = getResult.ScoId
+            };
         }
 
 

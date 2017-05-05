@@ -17,6 +17,11 @@ namespace Esynctraining.AC.Provider.DataObjects
         public Dictionary<string,string> AdditionalFields { get;set; }
     }
 
+    public class SaveEventResponse
+    {
+        public string EventScoId { get; set; }
+    }
+
     public class SaveEventFields
     {
         public SaveEventFields(UserCredentials adminUser, string name, DateTime startDate)
@@ -24,8 +29,9 @@ namespace Esynctraining.AC.Provider.DataObjects
             AdminUser = adminUser;
             Name = name;
             StartDate = startDate;
-            EventTemplateId = ""; //will set default template
-            EventTemplateId = "11036";
+            EventTemplateId = ""; //will be set later in code (on 1st get with redirect)
+            //EventTemplateId = "11036";
+            //EventTemplateId = "11065";
             TimeZoneId = 4;
             EventType = "meeting";
             OwnerPermissionId = "host";
@@ -82,6 +88,7 @@ namespace Esynctraining.AC.Provider.DataObjects
         public Uri CreateEventPostUrl { get; set; }
         //public string OwaspReturned { get; set; }
         public string ScoId { get; set; }
+        public string EventTemplateId { get; set; }
     }
 
     public class CreatingEventContainer

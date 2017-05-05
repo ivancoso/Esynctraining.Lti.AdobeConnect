@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Esynctraining.AC.Provider.Utils
 {
@@ -92,7 +93,8 @@ namespace Esynctraining.AC.Provider.Utils
             cookieContainer.Add(sessionCookie);
             cookieContainer.Add(breezeCCookie);
             // get response redirect location
-            using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer, AllowAutoRedirect = false })
+            var httpMessageHandler = new HttpClientHandler() { CookieContainer = cookieContainer, AllowAutoRedirect = false };
+            using (var handler = httpMessageHandler)
             {
                 using (var client = new HttpClient(handler))
                 {
@@ -107,10 +109,39 @@ namespace Esynctraining.AC.Provider.Utils
                     
                     if (string.IsNullOrEmpty(eventScoId))
                         throw new InvalidOperationException("ScoId of newly created event can't be empty!");
+
+                    string eventTemplateId = String.Empty;
+                    using (var innerClient = new HttpClient(httpMessageHandler))
+                    {
+                        var innerResult = innerClient.GetAsync(result.Headers.Location).Result;
+                        var returnedHtmlPage = innerResult.Content.ReadAsStringAsync().Result;
+                        //var text = @"<?xml version=""1.0"" encoding=""utf-8""?>" + @"<html><body></body></html>";
+                        var text = @"<?xml version=""1.0"" encoding=""utf-8""?>" + returnedHtmlPage.Trim();
+                        //var xml = new XmlDocument();
+                        //xml.PreserveWhitespace = false;
+                        //xml.LoadXml(text);
+                        //var res1 = xml.SelectSingleNode("select");
+                        //var xml = XDocument.Parse(text, LoadOptions.PreserveWhitespace);
+                        //var desc = xml.Root?.Descendants("select");
+                        //var cqTemplate = xml.Root?.Descendants("select").Single(x => x.Attribute("id")?.Value == "cqTemplate");
+                        //var option = cqTemplate?.Descendants("option").Single(x => x.Value == "Shared-Default Template");
+                        //eventTemplateId = option?.Attribute("value")?.Value;
+                        var pattern =
+                            //@"value=""(\d+)"" id=""javascript: load\('\/system\/login-redirect\?next='\+encodeURIComponent\('cq-auth:\/content\/connect\/c1\/7\/en\/events\/event\/shared\/default_template\/event_landing\.html'\)\)";
+                            @"value=""(\d+)"" id=""javascript:load\('\/system\/login-redirect\?next='\+encodeURIComponent\('cq-auth:\/content\/connect\/c1\/7\/en\/events\/event\/shared\/default_template\/event_landing\.html'\)\)";
+                            //@"value=""(\d+)""";
+                        var regex = new Regex(pattern);
+                        var matches = regex.Matches(text);
+                        var match = matches[0];
+                        var group = match.Groups[1].Value;
+                        eventTemplateId = group;
+                    }
+
                     var res = new CreatingEventResponse()
                     {
                         CreateEventPostUrl = location,
                         ScoId = eventScoId,
+                        EventTemplateId = eventTemplateId
                     };
                     return res;
                 }
