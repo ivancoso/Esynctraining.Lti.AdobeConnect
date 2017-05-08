@@ -9,8 +9,7 @@
   <ItemGroup>
     <Content Include="App_Data\Pdf\Shared\Placeholder.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="wwwroot\UI\index.html" />
+    </Content>    
     <Content Include="wwwroot\UI\placeholder.txt" />
     <Content Include="Views\app_offline.htm" />
   </ItemGroup>  
