@@ -2,38 +2,38 @@ namespace EdugameCloud.Lti.Core.Constants
 {
     public class LmsCompanySettingNames
     {
-        public const string IsOAuthSandbox = "IsOAuthSandbox";
-        public const string OAuthAppId = "OAuthAppId";
-        public const string OAuthAppKey = "OAuthAppKey";
-        public const string UseSynchronizedUsers = "UseSynchronizedUsers";
-        public const string SupportPageHtml = "SupportPageHtml";
-        public const string LabelMeeting = "LabelMeeting";
-        public const string LabelOfficeHour = "LabelOfficeHour";
-        public const string LabelStudyGroup = "LabelStudyGroup";
-        public const string EnableMeetingReuse = "EnableMeetingReuse";
-        public const string MeetingNameFormatterId = "MeetingNameFormatterId";
-        public const string DenyACUserCreation = "DenyACUserCreation";
-        public const string EnableMultipleMeetings = "EnableMultipleMeetings";
-        public const string UseMP4 = "UseMP4";
-        public const string UseFLV = "UseFLV";
-        public const string AdditionalLmsDomains = "AdditionalLmsDomains";
-        public const string ShowMeetingSummary = "ShowMeetingSummary";
-        public const string ShowMeetingTime = "ShowMeetingTime";
-        public const string ShowMeetingDuration = "ShowMeetingDuration";
-        public const string CanRemoveRecordings = "CanRemoveRecordings";
-        public const string AutoPublishRecordings = "AutoPublishRecordings";
-        public const string ForcedAddInInstallation = "ForcedAddInInstallation";
-        public const string LanguageId = "LanguageId";
-        public const string Mp4ServiceLicenseKey = "Mp4ServiceLicenseKey";
-        public const string Mp4ServiceWithSubtitlesLicenseKey = "Mp4ServiceWithSubtitlesLicenseKey";
-        public const string ShowAudioProfile = "ShowAudioProfile";
-        public const string AudioProfileUnique = "AudioProfileUnique";
+        public const string IsOAuthSandbox = nameof(IsOAuthSandbox);
+        public const string OAuthAppId = nameof(OAuthAppId);
+        public const string OAuthAppKey = nameof(OAuthAppKey);
+        public const string UseSynchronizedUsers = nameof(UseSynchronizedUsers);
+        public const string SupportPageHtml = nameof(SupportPageHtml);
+        public const string LabelMeeting = nameof(LabelMeeting);
+        public const string LabelOfficeHour = nameof(LabelOfficeHour);
+        public const string LabelStudyGroup = nameof(LabelStudyGroup);
+        public const string EnableMeetingReuse = nameof(EnableMeetingReuse);
+        public const string MeetingNameFormatterId = nameof(MeetingNameFormatterId);
+        public const string DenyACUserCreation = nameof(DenyACUserCreation);
+        public const string EnableMultipleMeetings = nameof(EnableMultipleMeetings);
+        public const string UseMP4 = nameof(UseMP4);
+        public const string UseFLV = nameof(UseFLV);
+        public const string AdditionalLmsDomains = nameof(AdditionalLmsDomains);
+        public const string ShowMeetingSummary = nameof(ShowMeetingSummary);
+        public const string ShowMeetingTime = nameof(ShowMeetingTime);
+        public const string ShowMeetingDuration = nameof(ShowMeetingDuration);
+        public const string CanRemoveRecordings = nameof(CanRemoveRecordings);
+        public const string AutoPublishRecordings = nameof(AutoPublishRecordings);
+        public const string ForcedAddInInstallation = nameof(ForcedAddInInstallation);
+        public const string LanguageId = nameof(LanguageId);
+        public const string Mp4ServiceLicenseKey = nameof(Mp4ServiceLicenseKey);
+        public const string Mp4ServiceWithSubtitlesLicenseKey = nameof(Mp4ServiceWithSubtitlesLicenseKey);
+        public const string ShowAudioProfile = nameof(ShowAudioProfile);
+        public const string AudioProfileUnique = nameof(AudioProfileUnique);
 
         public const string SeminarsEnable = nameof(SeminarsEnable);
         public const string SeminarsLabel = nameof(SeminarsLabel);
 
-        public const string EnableAuditGuestEntry = "EnableAuditGuestEntry";
-        public const string UseSakaiEvents = "UseSakaiEvents";
+        public const string EnableAuditGuestEntry = nameof(EnableAuditGuestEntry);
+        public const string UseSakaiEvents = nameof(UseSakaiEvents);
         public const string EnableMyContent = nameof(EnableMyContent);
         public const string EnableAddGuest = nameof(EnableAddGuest);
         public const string EnableSetUserRole = nameof(EnableSetUserRole);
