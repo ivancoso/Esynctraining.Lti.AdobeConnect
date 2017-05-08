@@ -4,6 +4,7 @@ using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -36,7 +37,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("createBatch")]
         [HttpPost]
-        [TeacherOnly]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public OperationResultWithData<IEnumerable<MeetingSessionDTO>> CreateBatch([FromBody]CreateMeetingSessionsBatchDto dto)
         {
             try
@@ -56,7 +57,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("getevents")]
         [HttpPost]
-        [TeacherOnly]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public OperationResultWithData<IEnumerable<MeetingSessionDTO>> GetEvents([FromBody]MeetingRequestDto request)
         {
             try
@@ -74,7 +75,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("createevent")]
         [HttpPost]
-        [TeacherOnly]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public OperationResultWithData<MeetingSessionDTO> CreateEvent([FromBody]CreateEventDto model)
         {
             try
@@ -93,7 +94,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("saveevent")]
         [HttpPost]
-        [TeacherOnly]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public OperationResultWithData<MeetingSessionDTO> SaveEvent([FromBody]SaveMeetingEventDto model)
         {
             try
@@ -112,7 +113,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("deleteevent")]
         [HttpPost]
-        [TeacherOnly]
+        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public OperationResult DeleteEvent([FromBody]DeleteMeetingEventDto model)
         {
             try
