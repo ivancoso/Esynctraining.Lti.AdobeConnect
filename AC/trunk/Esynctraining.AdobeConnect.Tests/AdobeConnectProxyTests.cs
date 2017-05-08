@@ -4,6 +4,7 @@ using System.Linq;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
+using Esynctraining.AC.Provider.Entities;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -11,6 +12,49 @@ namespace Esynctraining.AdobeConnect.Tests
 {
     public class AdobeConnectProxyTests
     {
+        [Test]
+        public void WillUpdatePassword()
+        {
+            var login = "anton.abyzov@gmail.com";
+            var email = login;
+            var password = "WH3hfQ5L";
+            var acApiUrl = "https://connectstage.esynctraining.com/";
+            var adobeConnectRoot = new Uri(acApiUrl);
+            var con = new ConnectionDetails(adobeConnectRoot);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), adobeConnectRoot, String.Empty);
+            proxy.Login(new UserCredentials("nastya@esynctraining.com", "Welcome1"));//admin
+
+            var _adobeConnectAccountService = new AdobeConnectAccountService(new FakeLogger());
+            //proxy.PrincipalUpdatePassword()
+
+            var existingPrincipalsResult = proxy.GetAllByEmail(email);
+            if (!existingPrincipalsResult.Success)
+            {
+                return;
+            }
+
+            var existingPrincipal = existingPrincipalsResult.Values.FirstOrDefault();
+
+            var principalSetup = new PrincipalSetup
+            {
+                PrincipalId = existingPrincipal?.PrincipalId,
+                Email = email,
+                Login = email,
+                FirstName = "aaa",
+                LastName = "bbb",
+                SendEmail = true,
+                HasChildren = false,
+                Type = PrincipalType.user
+            };
+            var updatePrincipalResult = proxy.PrincipalUpdate(principalSetup, existingPrincipal != null);
+
+            var updateResult = proxy.PrincipalUpdatePassword(existingPrincipal?.PrincipalId, password);
+
+            var userProxy = _adobeConnectAccountService.GetProvider(new AdobeConnectAccess(new Uri(acApiUrl), email, password), true);
+            
+        }
+
         [Test]
         public void WillGetEventInfo()
         {
