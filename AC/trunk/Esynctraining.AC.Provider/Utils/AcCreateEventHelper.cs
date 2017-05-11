@@ -31,14 +31,14 @@ namespace Esynctraining.AC.Provider.Utils
                 result.Add("day:date-begin", saveEventFields.StartDate.Day.ToString().ToLower());
                 result.Add("month:date-begin", saveEventFields.StartDate.Month.ToString().ToLower());
                 result.Add("year:date-begin", saveEventFields.StartDate.Year.ToString().ToLower());
-                result.Add("hhmm:date-begin", saveEventFields.StartDate.ToString("hh:mm"));
+                result.Add("hhmm:date-begin", saveEventFields.StartDate.ToString("HH:mm"));
             }
             if (saveEventFields.EndDate != DateTime.MinValue && saveEventFields.EndDate != DateTime.MaxValue)
             {
                 result.Add("day:date-end", saveEventFields.EndDate.Day.ToString().ToLower());
                 result.Add("month:date-end", saveEventFields.EndDate.Month.ToString().ToLower());
                 result.Add("year:date-end", saveEventFields.EndDate.Year.ToString().ToLower());
-                result.Add("hhmm:date-end", saveEventFields.EndDate.ToString("hh:mm"));
+                result.Add("hhmm:date-end", saveEventFields.EndDate.ToString("HH:mm"));
             }
 
             result.Add("time-zone-id", saveEventFields.TimeZoneId.ToString().ToLower());

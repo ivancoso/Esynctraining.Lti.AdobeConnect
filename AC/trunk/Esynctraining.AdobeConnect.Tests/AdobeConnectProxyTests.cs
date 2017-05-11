@@ -56,6 +56,16 @@ namespace Esynctraining.AdobeConnect.Tests
         }
 
         [Test]
+        public void WillTestDateAddHours()
+        {
+            var date = new DateTime(2017, 5, 4, 23, 30, 0);
+            Console.WriteLine(date.ToString("HH:mm"));
+            var endDate = date.AddHours(1);
+            var result = endDate.ToString("HH:mm");
+            Console.WriteLine(result);
+        }
+
+        [Test]
         public void WillGetEventInfo()
         {
             var acApiUrl = new Uri("http://connect.esynctraining.com");
@@ -78,9 +88,10 @@ namespace Esynctraining.AdobeConnect.Tests
             var con = new ConnectionDetails(adobeConnectRoot);
             var acProvider = new AdobeConnectProvider(con);
             var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), adobeConnectRoot, String.Empty);
-            var eventName = $"__newMyTest{DateTime.Now:yyyy-M-d hh-mm-ss}";
-            var eventStartDate = DateTime.Now;
+            var eventName = $"__FromACLibTest{DateTime.Now:yyyy-M-d hh-mm-ss}";
+            var eventStartDate = new DateTime(2017, 5, 4, 0, 30, 0);
             var saveEventFields = new SaveEventFields(new UserCredentials(login, password), eventName, eventStartDate);
+            saveEventFields.TimeZoneId = 85; //Greenwich
             var result = proxy.CreateEvent(saveEventFields);
         }
 

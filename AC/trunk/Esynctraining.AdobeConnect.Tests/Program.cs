@@ -21,8 +21,9 @@ namespace Esynctraining.AdobeConnect.Tests
         static void Main(string[] args)
         {
             var tests = new AdobeConnectProxyTests();
-            tests.WillUpdatePassword();
-            //tests.WillCreateEventViaProxy();
+            //tests.WillTestDateAddHours();
+            //tests.WillUpdatePassword();
+            tests.WillCreateEventViaProxy();
 
 
 
