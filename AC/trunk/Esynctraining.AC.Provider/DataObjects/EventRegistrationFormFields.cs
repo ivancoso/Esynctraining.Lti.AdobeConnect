@@ -20,6 +20,12 @@ namespace Esynctraining.AC.Provider.DataObjects
     public class SaveEventResponse
     {
         public string EventScoId { get; set; }
+
+        public string EventTitle { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
     }
 
     public class SaveEventFields

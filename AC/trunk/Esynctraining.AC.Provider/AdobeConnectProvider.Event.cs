@@ -72,7 +72,7 @@ namespace Esynctraining.AC.Provider
             var commonInfo = GetCommonInfo().CommonInfo;
             var accountId = commonInfo.AccountId?.ToString() ??
             throw new InvalidOperationException("Can't get common info");
-            //var accountId = "7";
+            
 
             var result = requestProcessor.PostAcAdminRequest(new CreatingEventContainer()
             {
@@ -86,7 +86,10 @@ namespace Esynctraining.AC.Provider
 
             return new SaveEventResponse()
             {
-                EventScoId = getResult.ScoId
+                EventScoId = getResult.ScoId,
+                StartDate = saveEventFields.StartDate,
+                EndDate = saveEventFields.EndDate,
+                EventTitle = saveEventFields.Name
             };
         }
 
