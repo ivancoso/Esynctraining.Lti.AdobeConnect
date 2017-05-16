@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Extensions
+﻿using EdugameCloud.Lti.Core.Routes;
+
+namespace EdugameCloud.Lti.Extensions
 {
     using System;
     using System.Web.Mvc;
@@ -23,6 +25,11 @@
             return absoluteAction;
         }
 
+        public static string AbsoluteCallbackAction(this UrlHelper url, string schema, object routeValues)
+        {
+            Uri requestUrl = url.RequestContext.HttpContext.Request.Url;
+            return $"{schema}://{requestUrl.Authority}{url.Action(LtiRoutes.RouteConstants.AuthCallbackActionName, LtiRoutes.RouteConstants.LtiControllerName, routeValues)}";
+        }
     }
 
 }

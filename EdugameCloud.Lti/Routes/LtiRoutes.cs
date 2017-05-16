@@ -83,10 +83,10 @@
 
         public static void AppendTo2(RouteCollection routes)
         {
-            routes.MapLowercaseRoute("LtiOAuthLogin", "{provider}-login", new { controller = "Lti", action = "LoginWithProvider" });
-            routes.MapLowercaseRoute("LtiOAuthCallback", "oauth-callback", new { controller = "Lti", action = "AuthenticationCallback" });
-            routes.MapLowercaseRoute("ImsLogin", "ims", new { controller = "Lti", action = "ims" });
-            routes.MapLowercaseRoute("Outcomes", "outcomes", new { controller = "Lti", action = "outcomes" });
+            routes.MapLowercaseRoute("LtiOAuthLogin", "{provider}-login", new { controller = RouteConstants.LtiControllerName, action = "LoginWithProvider" });
+            routes.MapLowercaseRoute("LtiOAuthCallback", "oauth-callback", new { controller = RouteConstants.LtiControllerName, action = RouteConstants.AuthCallbackActionName });
+            routes.MapLowercaseRoute("ImsLogin", "ims", new { controller = RouteConstants.LtiControllerName, action = "ims" });
+            routes.MapLowercaseRoute("Outcomes", "outcomes", new { controller = RouteConstants.LtiControllerName, action = "outcomes" });
 
             // ??? routes.MapLowercaseRoute("DefaultLti", "", new { controller = "Lti", action = "Index" });
             // ??? routes.MapLowercaseRoute("DefaultLtitabbed", "Lti/tabbed", new { controller = "Lti", action = "Index" });
@@ -111,8 +111,8 @@
             //routes.MapLowercaseRoute("updatemeeting", "meeting/update", new { controller = "Lti", action = "UpdateMeeting" });
             //routes.MapLowercaseRoute("updatemeetingreturnusers", "meeting/UpdateAndReturnLmsUsers", new { controller = "Lti", action = "UpdateMeetingAndReturnLmsUsers" });
             //routes.MapLowercaseRoute("deletemeeting", "meeting/delete", new { controller = "Lti", action = "DeleteMeeting" });
-            routes.MapLowercaseRoute("joinmeeting", "meeting/join", new { controller = "Lti", action = "JoinMeeting" });
-            routes.MapLowercaseRoute("joinmeetingmobile", "meeting/JoinMobile", new { controller = "Lti", action = "JoinMeetingMobile" });
+            routes.MapLowercaseRoute("joinmeeting", "meeting/join", new { controller = RouteConstants.LtiControllerName, action = "JoinMeeting" });
+            routes.MapLowercaseRoute("joinmeetingmobile", "meeting/JoinMobile", new { controller = RouteConstants.LtiControllerName, action = "JoinMeetingMobile" });
 
             //routes.MapLowercaseRoute("getrecordings", "recordings", new { controller = "LtiRecording", action = "GetRecordings" });
             //routes.MapLowercaseRoute("editrecording2", "recordings/edit/{id}", new { controller = "LtiRecording", action = "EditRecording", id = UrlParameter.Optional },
@@ -133,7 +133,7 @@
 
             //routes.MapLowercaseRoute("gettemplates", "templates", new { controller = "AcTemplate", action = "GetTemplates" });
 
-            routes.MapLowercaseRoute("extjspage", "extjs-entry", new { controller = "Lti", action = "GetExtJsPage" });
+            routes.MapLowercaseRoute("extjspage", "extjs-entry", new { controller = RouteConstants.LtiControllerName, action = "GetExtJsPage" });
 
             //routes.MapLowercaseRoute("addNewAcUser", "acNewUser", new { controller = "AcUser", action = "AddNewUser" });
             //routes.MapLowercaseRoute("searchExistingAcUser", "acSearchUser", new { controller = "AcUser", action = "SearchExistingUser" });
@@ -160,6 +160,12 @@
 
             //routes.MapLowercaseRoute("DefaultLtiAction", "{action}", new { controller = "Lti" });
 
+        }
+
+        public static class RouteConstants
+        {
+            public const string AuthCallbackActionName = "AuthenticationCallback";
+            public const string LtiControllerName = "Lti";
         }
 
     }

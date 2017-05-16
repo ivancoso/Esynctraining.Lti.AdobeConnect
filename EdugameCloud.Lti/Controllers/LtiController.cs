@@ -22,6 +22,7 @@ namespace EdugameCloud.Lti.Controllers
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Core.OAuth;
+	using EdugameCloud.Lti.Core.Routes;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
@@ -493,11 +494,8 @@ namespace EdugameCloud.Lti.Controllers
                             string schema = Request.GetScheme();
 
                             var d2lService = IoC.Resolve<IDesire2LearnApiService>();
-                            string returnUrl = this.Url.AbsoluteAction(
-                                "callback",
-                                "Lti",
-                                new {__provider__ = provider},
-                                schema);
+                            string returnUrl = Url.AbsoluteCallbackAction(schema, new { __provider__ = provider });
+
                             Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, sessionKey));
                             return Redirect(
                                 d2lService
@@ -733,11 +731,7 @@ namespace EdugameCloud.Lti.Controllers
         {
             string schema = Request.GetScheme();
 
-            string returnUrl = this.Url.AbsoluteAction(
-                        "AuthenticationCallback",
-                        "Lti",
-                        new { __provider__ = provider, session },
-                        schema);
+            string returnUrl = this.Url.AbsoluteCallbackAction(schema, new { __provider__ = provider, session });
             switch (provider)
             {
                 case LmsProviderNames.Canvas:
