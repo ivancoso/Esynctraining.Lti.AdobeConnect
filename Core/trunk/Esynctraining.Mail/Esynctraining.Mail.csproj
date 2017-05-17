@@ -51,9 +51,6 @@
   <ItemGroup>
     <Compile Include="AttachmentsProvider.cs" />
     <Compile Include="Configuration\Config.cs" />
-    <Compile Include="Configuration\INotificationsSettings.cs" />
-    <Compile Include="Configuration\IEmailRecipientSettings.cs" />
-    <Compile Include="Configuration\IEmailRecipientSettingsCollection.cs" />
     <Compile Include="Configuration\MailerConfigurationSection.cs" />
     <Compile Include="Configuration\EmailRecipientSettingsElement.cs" />
     <Compile Include="Configuration\SystemEmailElement.cs" />
@@ -61,8 +58,7 @@
     <Compile Include="Configuration\SystemEmailElementCollection.cs" />
     <Compile Include="IAttachmentsProvider.cs" />
     <Compile Include="ISmtpClientEngine.cs" />
-    <Compile Include="Configuration\ISystemEmail.cs" />
-    <Compile Include="Configuration\ISystemEmailCollection.cs" />
+    <Compile Include="Configuration\SystemEmailExtensions.cs" />
     <Compile Include="ITemplateProvider.cs" />
     <Compile Include="ITemplateTransformer.cs" />
     <Compile Include="SmtpClientEngine.cs" />
@@ -87,6 +83,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.Mail.Configuration\Esynctraining.Mail.Configuration.csproj">
+      <Project>{3fb348ef-d9c9-45e4-9a57-016b7ba3ebe3}</Project>
+      <Name>Esynctraining.Mail.Configuration</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

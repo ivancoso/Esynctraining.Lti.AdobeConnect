@@ -23,13 +23,7 @@ namespace Esynctraining.Mail.Configuration
         {
             get { return (string)this["email"]; }
         }
-
-
-        public MailAddress BuildMailAddress()
-        {
-            return new MailAddress(Email, Name);
-        }
-
+        
     }
 
 }
