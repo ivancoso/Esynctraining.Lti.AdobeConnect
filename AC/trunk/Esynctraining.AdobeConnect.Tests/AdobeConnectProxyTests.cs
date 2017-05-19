@@ -13,6 +13,45 @@ namespace Esynctraining.AdobeConnect.Tests
     public class AdobeConnectProxyTests
     {
         [Test]
+        public void ScoMove()
+        {
+            var acApiUrl = "https://stage1-melaleuca.acms.com/";
+            var login = "developer@esynctraining.com";
+            var password = "e$ync123MEL";
+            var adobeConnectRoot = new Uri(acApiUrl);
+            var con = new ConnectionDetails(adobeConnectRoot);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), adobeConnectRoot, String.Empty);
+            var result = proxy.Login(new UserCredentials(login, password));
+            var scheduledWebinarsFolderId = "110965";
+            var startDate = new DateTime(2017, 5, 20, 2, 0, 0);
+            var nestedFolders = proxy.GetScoExpandedContent(scheduledWebinarsFolderId).Values.Where(x => x.Icon == "folder" && x.ScoId != scheduledWebinarsFolderId);
+            var folderName = $"{startDate.Year}-{startDate.ToString("MM")}-{startDate.ToString("dd")}";
+            var dateFolder =
+                nestedFolders.FirstOrDefault(x => x.Name == folderName);
+            string moveToFolderScoId;
+            if (dateFolder == null)
+            {
+                var newFolder = proxy.CreateSco(new FolderUpdateItem()
+                {
+                    Type = ScoType.folder,
+                    Name = folderName,
+                    FolderId = scheduledWebinarsFolderId
+                });
+                moveToFolderScoId = newFolder.ScoInfo.ScoId;
+            }
+            else
+            {
+                moveToFolderScoId = dateFolder.ScoId;
+            }
+            var res = proxy.MoveSco(moveToFolderScoId, "109041");
+            
+            var t = 1;
+            //proxy.MoveSco()
+
+        }
+
+        [Test]
         public void WillUpdatePassword()
         {
             var login = "anton.abyzov@gmail.com";
