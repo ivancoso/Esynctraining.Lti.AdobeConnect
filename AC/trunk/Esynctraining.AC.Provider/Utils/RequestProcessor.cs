@@ -38,10 +38,7 @@ namespace Esynctraining.AC.Provider.Utils
 
         public RequestProcessor(ConnectionDetails details)
         {
-            if (details == null)
-                throw new ArgumentNullException(nameof(details));
-
-            connectionDetails = details;
+            connectionDetails = details ?? throw new ArgumentNullException(nameof(details));
             SetSessionId(null);
         }
 
@@ -574,8 +571,15 @@ namespace Esynctraining.AC.Provider.Utils
         protected XmlDocument ProcessXmlResult(StatusInfo status, string buffer)
         {
             var doc = new XmlDocument();
-            doc.Load(new StringReader(buffer));
 
+            try
+            {
+                doc.Load(new StringReader(buffer));
+            }
+            catch (XmlException ex)
+            {
+                doc.Load(new StringReader(RemoveTroublesomeCharacters(buffer)));
+            }
             status.InnerXml = doc.InnerXml;
 
             status.Code = EnumReflector.ReflectEnum(doc.SelectSingleNodeValue("//status/@code"), StatusCodes.not_set);
@@ -608,6 +612,31 @@ namespace Esynctraining.AC.Provider.Utils
             }
 
             return doc;
+        }
+
+        // https://stackoverflow.com/questions/20762/how-do-you-remove-invalid-hexadecimal-characters-from-an-xml-based-data-source-p?rq=1
+        private static string RemoveTroublesomeCharacters(string inString)
+        {
+            if (inString == null)
+                return null;
+
+            var newString = new StringBuilder(inString.Length);
+            char ch;
+
+            for (int i = 0; i < inString.Length; i++)
+            {
+
+                ch = inString[i];
+                // remove any characters outside the valid UTF-8 range as well as all control characters
+                // except tabs and new lines
+                //if ((ch < 0x00FD && ch > 0x001F) || ch == '\t' || ch == '\n' || ch == '\r')
+                //if using .NET version prior to 4, use above logic
+                if (XmlConvert.IsXmlChar(ch)) //this method is new in .NET 4
+                {
+                    newString.Append(ch);
+                }
+            }
+            return newString.ToString();
         }
 
         private HttpWebRequest ProcessRequest(HttpWebRequest request, bool contentRequest = false)
