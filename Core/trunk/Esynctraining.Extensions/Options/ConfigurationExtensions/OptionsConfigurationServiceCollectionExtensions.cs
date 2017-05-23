@@ -20,7 +20,7 @@ namespace Esynctraining.Extensions
 
             services
                 .Configure<TOptionsDto>(config)
-                .AddSingleton<ITOptions>((sp) => builder(sp.GetService<IOptions<TOptionsDto>>().Value));
+                .AddSingleton((sp) => builder(sp.GetService<IOptions<TOptionsDto>>().Value));
 
             return services;
         }
