@@ -3,10 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.1</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.0.2</Version>
     <Company>eSyncTraining Inc.</Company>
     <Authors>Sergey Isakovich</Authors>
     <Description>Extensions for Mset of common icrosoft.Extensions.xxx libraries.</Description>
+    <PackageReleaseNotes>use Esynctraining.Extensions namespace</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
