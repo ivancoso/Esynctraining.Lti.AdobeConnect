@@ -912,7 +912,7 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.RegisterToEvent(eventDetails); });
         }
 
-        public SingleObjectResult<SaveEventResponse> CreateEvent(SaveEventFields saveEventFields)
+        public SaveEventResponse CreateEvent(SaveEventFields saveEventFields)
         {
             return Execute(() => _provider.CreateEvent(saveEventFields).Result);
         }

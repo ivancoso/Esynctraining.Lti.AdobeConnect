@@ -235,8 +235,7 @@ namespace Esynctraining.AC.Provider.Utils
                     }
 
                     var result = client.PostAsync(requestUri, content).Result;
-                    var status = new StatusInfo {SessionInfo = sessionCookie.Value};
-                    return status;
+                    return new StatusInfo { SessionInfo = sessionCookie.Value };
                 }
             }
         }

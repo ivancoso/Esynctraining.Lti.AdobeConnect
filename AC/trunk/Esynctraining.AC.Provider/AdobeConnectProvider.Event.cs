@@ -38,7 +38,7 @@ namespace Esynctraining.AC.Provider
 
         //}
 
-        public async Task<SingleObjectResult<SaveEventResponse>> CreateEvent(SaveEventFields saveEventFields)
+        public async Task<SaveEventResponse> CreateEvent(SaveEventFields saveEventFields)
         {
             if (saveEventFields.AdminUser == null
                 || string.IsNullOrEmpty(saveEventFields.AdminUser.Login)
@@ -83,20 +83,15 @@ namespace Esynctraining.AC.Provider
                 AccountId = accountId
             });
 
-            if (result.Code == StatusCodes.ok)
+            return new SaveEventResponse()
             {
-                return new DataObjects.Results.SingleObjectResult<SaveEventResponse>(result, new SaveEventResponse()
-                {
-                    EventScoId = getResult.ScoId,
-                    StartDate = saveEventFields.StartDate,
-                    EndDate = saveEventFields.EndDate,
-                    EventTitle = saveEventFields.Name
-                });
-            }
-
-            return new DataObjects.Results.SingleObjectResult<SaveEventResponse>(result);
+                EventScoId = getResult.ScoId,
+                StartDate = saveEventFields.StartDate,
+                EndDate = saveEventFields.EndDate,
+                EventTitle = saveEventFields.Name
+            };
         }
-        
+
         public GenericResult<EventRegistrationDetails> GetEventRegistrationDetails(string scoId)
         {
             // act: "report-my-events"
