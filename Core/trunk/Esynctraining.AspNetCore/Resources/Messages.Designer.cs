@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 namespace Esynctraining.AspNetCore.Resources {
-    using System;
+    using System.Reflection;
     
     
     /// <summary>
@@ -39,7 +39,7 @@ namespace Esynctraining.AspNetCore.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Esynctraining.AspNetCore.Resources.Messages", typeof(Messages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Esynctraining.AspNetCore.Resources.Messages", typeof(Messages).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

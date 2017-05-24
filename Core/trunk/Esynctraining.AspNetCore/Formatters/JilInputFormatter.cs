@@ -46,6 +46,8 @@ namespace Esynctraining.AspNetCore.Formatters
                 }
                 catch (Exception ex)
                 {
+                    // https://github.com/aspnet/Docs/blob/master/aspnetcore/mvc/advanced/custom-formatters/Sample/Formatters/VcardInputFormatter.cs
+                    // TODO:                 context.ModelState.TryAddModelError(context.ModelName, ex.Message);
                     context.ModelState.TryAddModelError(string.Empty, ex.Message);
                     return InputFormatterResult.FailureAsync();
                 }
