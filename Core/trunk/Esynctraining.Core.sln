@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mail", "Esynctraining.Mail\Esynctraining.Mail.csproj", "{873245BF-8C4A-423A-9EA0-31811C2F660C}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Core", "Esynctraining.Core\Esynctraining.Core.csproj", "{AB78F376-E633-405E-9AB5-DD85927CA757}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.AspNetCore", "Esynctraining.AspNetCore\Esynctraining.AspNetCore.csproj", "{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Core.Logging.MicrosoftExtensionsLogger", "Esynctraining.Core.Logging.MicrosoftExtensionsLogger\Esynctraining.Core.Logging.MicrosoftExtensionsLogger.csproj", "{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C2C50BF-63B7-4C09-B5F1-8CC90F1D4639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
