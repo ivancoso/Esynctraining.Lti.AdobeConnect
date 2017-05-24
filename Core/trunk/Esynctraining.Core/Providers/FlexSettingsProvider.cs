@@ -1,3 +1,4 @@
+#if NET45 || NET461
 namespace Esynctraining.Core.Providers
 {
     using System.Collections.Generic;
@@ -119,3 +120,5 @@ namespace Esynctraining.Core.Providers
         #endregion
     }
 }
+
+#endif

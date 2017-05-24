@@ -1,4 +1,5 @@
-﻿namespace Esynctraining.Core.Extensions
+﻿#if NET45 || NET461
+namespace Esynctraining.Core.Extensions
 {
     using System;
     using System.Collections.Generic;
@@ -342,3 +343,5 @@
     }
 
 }
+
+#endif

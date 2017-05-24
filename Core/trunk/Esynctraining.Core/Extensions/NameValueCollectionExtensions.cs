@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.Core.Extensions
+﻿#if NET45 || NET461
+
+namespace Esynctraining.Core.Extensions
 {
     using System;
     using System.Collections;
@@ -12,7 +14,7 @@
     /// </summary>
     public static class NameValueCollectionExtensions
     {
-        #region Public Methods and Operators
+#region Public Methods and Operators
 
         /// <summary>
         /// The has key.
@@ -134,9 +136,9 @@
             return dic;
         }
 
-        #endregion
+#endregion
 
-        #region Methods
+#region Methods
 
         /// <summary>
         /// The add values.
@@ -163,6 +165,9 @@
             }
         }
 
-        #endregion
+#endregion
     }
+
 }
+
+#endif

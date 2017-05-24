@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.Core.Domain.Entities
+﻿#if NET45 || NET461
+
+namespace Esynctraining.Core.Domain.Entities
 {
     using System;
     using System.Data.SqlTypes;
@@ -157,3 +159,5 @@
         #endregion
     }
 }
+
+#endif

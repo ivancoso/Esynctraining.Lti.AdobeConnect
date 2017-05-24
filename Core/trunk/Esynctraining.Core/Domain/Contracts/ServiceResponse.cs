@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.Core.Domain.Contracts
+﻿#if NET45 || NET461
+
+namespace Esynctraining.Core.Domain.Contracts
 {
     using System;
     using System.Collections.Generic;
@@ -107,3 +109,5 @@
         #endregion
     }
 }
+
+#endif

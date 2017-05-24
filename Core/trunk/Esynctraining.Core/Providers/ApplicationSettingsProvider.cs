@@ -11,7 +11,7 @@ namespace Esynctraining.Core.Providers
     public class ApplicationSettingsProvider : DynamicObject
     {
         private readonly NameValueCollection collection;
-        private readonly string defaultUILanguage = "en-US";
+        //private readonly string defaultUILanguage = "en-US";
 
         #region Constructors and Destructors
 
@@ -37,13 +37,13 @@ namespace Esynctraining.Core.Providers
         /// <summary>
         ///     Gets default UI language.
         /// </summary>
-        public string DefaultUILanguage
-        {
-            get
-            {
-                return this.defaultUILanguage;
-            }
-        }
+        //public string DefaultUILanguage
+        //{
+        //    get
+        //    {
+        //        return this.defaultUILanguage;
+        //    }
+        //}
         
         #endregion
 
@@ -91,6 +91,7 @@ namespace Esynctraining.Core.Providers
         }
 
         #endregion
+
     }
 
 }

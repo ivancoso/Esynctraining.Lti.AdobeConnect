@@ -84,30 +84,30 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public static string GetContentTypeByExtension(this string fileName)
-        {
-            var ext = Path.GetExtension(fileName).If(x => !string.IsNullOrEmpty(x), x => x.Substring(1)) ?? string.Empty;
-            ext = ext.ToLower();
-            switch (ext)
-            {
-                case "png":
-                case "gif":
-                case "tiff":
-                case "bmp":
-                case "pict":
-                    return @"image/" + ext;
-                case "jpg":
-                case "jpe":
-                case "jpeg":
-                    return @"image/jpeg";
-                case "swf":
-                    return @"application/x-shockwave-flash";
-                case "zip":
-                    return @"application/zip";
-                default:
-                    return null;
-            }
-        }
+        //public static string GetContentTypeByExtension(this string fileName)
+        //{
+        //    var ext = Path.GetExtension(fileName).If(x => !string.IsNullOrEmpty(x), x => x.Substring(1)) ?? string.Empty;
+        //    ext = ext.ToLower();
+        //    switch (ext)
+        //    {
+        //        case "png":
+        //        case "gif":
+        //        case "tiff":
+        //        case "bmp":
+        //        case "pict":
+        //            return @"image/" + ext;
+        //        case "jpg":
+        //        case "jpe":
+        //        case "jpeg":
+        //            return @"image/jpeg";
+        //        case "swf":
+        //            return @"application/x-shockwave-flash";
+        //        case "zip":
+        //            return @"application/zip";
+        //        default:
+        //            return null;
+        //    }
+        //}
 
         /// <summary>
         /// The replace all.

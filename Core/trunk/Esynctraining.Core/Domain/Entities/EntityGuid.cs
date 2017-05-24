@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.Core.Domain.Entities
+﻿#if NET45 || NET461
+
+namespace Esynctraining.Core.Domain.Entities
 {
     using System;
     using System.Runtime.Serialization;
@@ -114,3 +116,5 @@
         #endregion
     }
 }
+
+#endif

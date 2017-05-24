@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if NET45 || NET461
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,7 +45,7 @@ it's simply a single small class.
 Examples!
 ---------
 
-### Nodes via dynamic invocation
+Nodes via dynamic invocation
 
     dynamic xml = new DynamicBuilder.Xml();
 
@@ -52,7 +54,7 @@ Examples!
 
     // yields  <hello>world</hello>
 
-### Attributes via anonymous objects
+Attributes via anonymous objects
 
     dynamic xml = new DynamicBuilder.Xml();    
 
@@ -61,7 +63,7 @@ Examples!
 
     // yields  <user username="jdoe" usertype="admin">John Doe</user>
     
-### Nesting via anonymous delegates
+Nesting via anonymous delegates
 
     dynamic xml = new DynamicBuilder.Xml();
     
@@ -79,7 +81,7 @@ Examples!
         <email>jdoe@example.org</email>
     </user>
 
-### Putting it all together: building an Atom syndication feed:
+Putting it all together: building an Atom syndication feed:
 
     // First let's get some posts from a hypothetical `postRepository`
     IList<BlogPost> posts = postRepository.GetLatest(50);
@@ -143,7 +145,7 @@ To run DynamicBuilder's [xUnit][2]-based tests, use
 Usage
 -----
 
-### Declaring XML
+Declaring XML
 
 **Instantiation**
 
@@ -239,7 +241,7 @@ proper `xmlns` attribute, but also an actual namespace being set on the underlyi
     // yields <feed xmlns="http://www.w3.org/2005/Atom" />
     xml.feed(new { xmlns = "http://www.w3.org/2005/Atom" });
 
-### Using and outputting generated XML
+Using and outputting generated XML
 
 `DynamicBuilder.Xml` instances allow for simple immediate conversion to strings 
 without requiring manual `XmlWriter` or memory stream/encoding management.
@@ -643,3 +645,5 @@ Version History
             #endregion
         }
 }
+
+#endif

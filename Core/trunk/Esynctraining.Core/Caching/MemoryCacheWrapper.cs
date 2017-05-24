@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if NET45 || NET461
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Caching;
@@ -45,3 +47,5 @@ namespace Esynctraining.Core.Caching
     }
 
 }
+
+#endif
