@@ -8,9 +8,9 @@ namespace Esynctraining.Core.Logging.CastleLogger
         private readonly Castle.Core.Logging.ILogger _castleLogger;
 
 
-        public LoggerBase(Castle.Core.Logging.ILogger logger)
+        protected LoggerBase(Castle.Core.Logging.ILogger logger)
         {
-            _castleLogger = logger;
+            _castleLogger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -39,15 +39,15 @@ namespace Esynctraining.Core.Logging.CastleLogger
             _castleLogger.DebugFormat(exception, format, args);
         }
 
-        public void DebugFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.DebugFormat(formatProvider, format, args);
-        }
+        //public void DebugFormat(IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.DebugFormat(formatProvider, format, args);
+        //}
 
-        public void DebugFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.DebugFormat(exception, formatProvider, format, args);
-        }
+        //public void DebugFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.DebugFormat(exception, formatProvider, format, args);
+        //}
 
         public void Error(string message)
         {
@@ -74,15 +74,15 @@ namespace Esynctraining.Core.Logging.CastleLogger
             _castleLogger.ErrorFormat(exception, format, args);
         }
 
-        public void ErrorFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.ErrorFormat(formatProvider, format, args);
-        }
+        //public void ErrorFormat(IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.ErrorFormat(formatProvider, format, args);
+        //}
 
-        public void ErrorFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.ErrorFormat(exception, formatProvider, format, args);
-        }
+        //public void ErrorFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.ErrorFormat(exception, formatProvider, format, args);
+        //}
 
         public void Fatal(string message)
         {
@@ -109,15 +109,15 @@ namespace Esynctraining.Core.Logging.CastleLogger
             _castleLogger.FatalFormat(exception, format, args);
         }
 
-        public void FatalFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.FatalFormat(formatProvider, format, args);
-        }
+        //public void FatalFormat(IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.FatalFormat(formatProvider, format, args);
+        //}
 
-        public void FatalFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.FatalFormat(exception, formatProvider, format, args);
-        }
+        //public void FatalFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.FatalFormat(exception, formatProvider, format, args);
+        //}
 
         public void Info(string message)
         {
@@ -144,15 +144,15 @@ namespace Esynctraining.Core.Logging.CastleLogger
             _castleLogger.InfoFormat(exception, format, args);
         }
 
-        public void InfoFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.InfoFormat(formatProvider, format, args);
-        }
+        //public void InfoFormat(IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.InfoFormat(formatProvider, format, args);
+        //}
 
-        public void InfoFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.InfoFormat(exception, formatProvider, format, args);
-        }
+        //public void InfoFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.InfoFormat(exception, formatProvider, format, args);
+        //}
 
         public void Warn(string message)
         {
@@ -179,15 +179,15 @@ namespace Esynctraining.Core.Logging.CastleLogger
             _castleLogger.WarnFormat(exception, format, args);
         }
 
-        public void WarnFormat(IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.WarnFormat(formatProvider, format, args);
-        }
+        //public void WarnFormat(IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.WarnFormat(formatProvider, format, args);
+        //}
 
-        public void WarnFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
-        {
-            _castleLogger.WarnFormat(exception, formatProvider, format, args);
-        }
+        //public void WarnFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
+        //{
+        //    _castleLogger.WarnFormat(exception, formatProvider, format, args);
+        //}
 
     }
 
