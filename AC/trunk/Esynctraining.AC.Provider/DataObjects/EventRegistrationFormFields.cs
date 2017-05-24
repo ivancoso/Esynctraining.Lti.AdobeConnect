@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace Esynctraining.AC.Provider.DataObjects
 {
-
-
     public class EventRegistrationFormFields
     {
         public string ScoId { get; set; }
@@ -53,6 +51,7 @@ namespace Esynctraining.AC.Provider.DataObjects
             EventInfo = String.Empty;
             EndDate = StartDate.AddHours(1);
         }
+
         public UserCredentials AdminUser { get; set; }
         public string Name { get; set; }
         public string EventTemplateId { get; set; }
