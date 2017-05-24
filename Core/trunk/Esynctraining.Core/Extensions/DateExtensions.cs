@@ -1,7 +1,9 @@
 ﻿namespace Esynctraining.Core.Extensions
 {
     using System;
+#if NET45 || NET461
     using System.Data.SqlTypes;
+#endif
 
     /// <summary>
     /// The date extensions.
@@ -19,16 +21,8 @@
             _utcOrigin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local).ToLocalTime();
         }
 
-
-        /// <summary>
-        /// The age from birthday.
-        /// </summary>
-        /// <param name="birthDay">
-        /// The birth day.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Nullable{Int32}"/>.
-        /// </returns>
+#if NET45 || NET461
+        [Obsolete("Really used somewhere?? Core?? ))")]
         public static int? AgeFromBirthday(this DateTime birthDay)
         {
             if (birthDay.Year == SqlDateTime.MinValue.Value.Year)
@@ -96,7 +90,8 @@
 
             return dt;
         }
-        
+#endif
+
         /// <summary>
         /// The from micro seconds.
         /// </summary>
@@ -154,7 +149,7 @@
         /// </returns>
         public static DateTime ConvertFromUnixTimeStamp(this double dt)
         {
-            return _origin.Add(TimeSpan.FromMilliseconds(dt)).AdaptToSQL();
+            return _origin.Add(TimeSpan.FromMilliseconds(dt)); // TODO: is it valid???  .AdaptToSQL();
         }
 
         /// <summary>

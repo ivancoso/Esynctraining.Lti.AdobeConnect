@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.Core.Utils
+﻿#if NET45 || NET461
+
+namespace Esynctraining.Core.Utils
 {
     using System;
     using System.Xml.Linq;
@@ -54,3 +56,5 @@
         #endregion
     }
 }
+
+#endif
