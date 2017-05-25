@@ -92,6 +92,50 @@ namespace Esynctraining.AC.Provider.Entities
         }
     }
 
+
+    public sealed class IntercallProviderFields : ITelephonyProfileProviderFields
+    {
+        private static readonly string FieldPrefix = "x-tel-intercall-";
+
+
+        /// <summary>
+        /// Conference Number (conference-number)
+        /// </summary>
+        public string ConferenceNumber { get; set; }
+
+        /// <summary>
+        /// Conference Code (participant-code)
+        /// </summary>
+        public string ConferenceCode { get; set; }
+
+        /// <summary>
+        /// Leader Pin (leader-pin)
+        /// </summary>
+        public string LeaderPin { get; set; }
+
+        /// <summary>
+        /// Further Dial In Numbers (company-url)
+        /// </summary>
+        public string FurtherDialInNumbers { get; set; }
+
+        /// <summary>
+        /// {x-tel-intercall-uv-conference-number} (uv-conference-number)
+        /// </summary>
+        public string UvConferenceNumber { get; set; }
+
+
+        public string ToQueryString()
+        {
+            return new TelephonyProviderFieldRequestBuilder(FieldPrefix)
+                .Add("conference-number", ConferenceNumber)
+                .Add("participant-code", ConferenceCode)
+                .Add("leader-pin", LeaderPin)
+                .Add("company-url", FurtherDialInNumbers)
+                .Add("uv-conference-number", UvConferenceNumber)
+                .BuildQueryParams();
+        }
+    }
+
     internal sealed class TelephonyProviderFieldRequestBuilder
     {
         private readonly string _fieldPrefix;
