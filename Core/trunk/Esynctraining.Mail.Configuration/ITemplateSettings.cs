@@ -3,12 +3,12 @@
     public interface ITemplateSettings
     {
         // TODO: DO WE USE?????
-        string AttachmentsFolderPath { get; }
+        //string AttachmentsFolderPath { get; }
 
         //[Required]
         string TemplatesFolderPath { get; }
 
-        string ImagesFolderPath { get; }
+        //string ImagesFolderPath { get; }
 
     }
 

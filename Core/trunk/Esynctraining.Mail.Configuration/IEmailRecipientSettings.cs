@@ -8,11 +8,11 @@ namespace Esynctraining.Mail.Configuration
 
         string FromToken { get; }
 
-        IEnumerable<string> ToTokens { get; }
+        List<string> ToTokens { get; }
 
-        IEnumerable<string> CcTokens { get; }
+        List<string> CcTokens { get; }
 
-        IEnumerable<string> BccTokens { get; }
+        List<string> BccTokens { get; }
 
     }
 

@@ -9,18 +9,18 @@ namespace Esynctraining.Mail.Configuration.Json
 
         public string FromToken { get; set; }
 
-        public IEnumerable<string> ToTokens { get; set; }
+        public List<string> ToTokens { get; set; }
 
-        public IEnumerable<string> CcTokens { get; set; }
+        public List<string> CcTokens { get; set; }
 
-        public IEnumerable<string> BccTokens { get; set; }
+        public List<string> BccTokens { get; set; }
 
 
         public EmailRecipientSettings()
         {
-            ToTokens = new string[0];
-            CcTokens = new string[0];
-            BccTokens = new string[0];
+            ToTokens = new List<string>();
+            CcTokens = new List<string>();
+            BccTokens = new List<string>();
         }
     }
 
