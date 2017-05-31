@@ -231,6 +231,10 @@
         /// </summary>
         view_only,
         /// <summary>
+        /// Not sure what it means and when it's set. Saw this for recording created for user's meeting that had view-hidden permission (Minnesot State)
+        /// </summary>
+        view_denied,
+        /// <summary>
         /// The meeting is public, and anyone who has the URL for the meeting can enter the room.
         /// </summary>
         public_access,
