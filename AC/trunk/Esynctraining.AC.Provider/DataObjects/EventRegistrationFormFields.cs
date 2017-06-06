@@ -59,6 +59,7 @@ namespace Esynctraining.AC.Provider.DataObjects
         public string EventCategory { get; set; }
         public string EventType { get; set; }
         public string ListScoId { get; set; }
+        public string FolderScoId { get; set; }
         public string OwnerPermissionId { get; set; }
         public string UrlPath { get; set; }
         public string EventInfo { get; set; }
@@ -98,10 +99,9 @@ namespace Esynctraining.AC.Provider.DataObjects
 
     public class CreatingEventContainer
     {
-        //public string Cookie { get; set; }
         public string Owasp { get; set; }
         public string EventScoId { get; set; }
-        public string SharedEventsFolderScoId { get; set; }
+        public string FolderScoId { get; set; }
         public Uri PostUrl { get; set; }
         public string AccountId { get; set; }
         public Dictionary<string, string> EventProperties { get; set; }

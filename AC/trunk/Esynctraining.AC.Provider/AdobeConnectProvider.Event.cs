@@ -61,13 +61,18 @@ namespace Esynctraining.AC.Provider
             var loginResult = requestProcessor.LoginAsOnUi(saveEventFields.AdminUser);
 
             StatusInfo status;
-            var eventsShortcut = GetShortcutByType(ScoShortcutType.events.ToString(), out status);
+            var folderScoId = saveEventFields.FolderScoId;
+            if (saveEventFields.FolderScoId == null)
+            {
+                var eventsShortcut = GetShortcutByType(ScoShortcutType.events.ToString(), out status);
+                folderScoId = eventsShortcut.ScoId;
+            }
 
             var myMeetings = GetShortcutByType(ScoShortcutType.my_meetings.ToString(), out status);
 
             saveEventFields.ListScoId = myMeetings.ScoId;
 
-            var getResult = await requestProcessor.GetAcAdminResponseRedirectLocation(eventsShortcut.ScoId, loginResult.Owasp);
+            var getResult = await requestProcessor.GetAcAdminResponseRedirectLocation(folderScoId, loginResult.Owasp);
             saveEventFields.EventTemplateId = getResult.EventTemplateId;
 
             var dict = AcCreateEventHelper.GetPostFormFields(saveEventFields, loginResult.Owasp);
@@ -77,7 +82,7 @@ namespace Esynctraining.AC.Provider
             {
                 EventProperties = dict,
                 EventScoId = getResult.ScoId,
-                SharedEventsFolderScoId = eventsShortcut.ScoId,
+                FolderScoId = folderScoId,
                 Owasp = loginResult.Owasp,
                 PostUrl = getResult.CreateEventPostUrl,
                 AccountId = accountId
@@ -86,6 +91,62 @@ namespace Esynctraining.AC.Provider
             return new SaveEventResponse()
             {
                 EventScoId = getResult.ScoId,
+                StartDate = saveEventFields.StartDate,
+                EndDate = saveEventFields.EndDate,
+                EventTitle = saveEventFields.Name
+            };
+        }
+
+        public async Task<SaveEventResponse> EditEvent(SaveEventFields saveEventFields, string eventScoId, bool isTimezoneChanged)
+        {
+            if (saveEventFields.AdminUser == null
+                || string.IsNullOrEmpty(saveEventFields.AdminUser.Login)
+                || string.IsNullOrEmpty(saveEventFields.AdminUser.Password))
+            {
+                throw new InvalidOperationException(nameof(saveEventFields.AdminUser));
+            }
+
+            if (saveEventFields.StartDate == DateTime.MinValue || saveEventFields.StartDate == DateTime.MaxValue)
+            {
+                throw new InvalidOperationException(nameof(saveEventFields.StartDate));
+            }
+
+            if (string.IsNullOrEmpty(saveEventFields.Name))
+            {
+                throw new InvalidOperationException(nameof(saveEventFields.Name));
+            }
+
+            // Login as in UI, get 2 cookies and owasp and use it
+            var loginResult = requestProcessor.LoginAsOnUi(saveEventFields.AdminUser);
+
+            var dict = AcCreateEventHelper.GetPostFormFieldsForEdit(saveEventFields, loginResult.Owasp);
+            var accountId = GetCommonInfo().CommonInfo.AccountId?.ToString() ?? throw new InvalidOperationException("Can't get common info");
+
+            requestProcessor.PostEditEventAcAdminRequest(new CreatingEventContainer()
+            {
+                EventProperties = dict,
+                EventScoId = eventScoId,
+                FolderScoId = saveEventFields.FolderScoId,
+                Owasp = loginResult.Owasp,
+                AccountId = accountId
+            });
+
+            if (isTimezoneChanged)
+            {
+                // HACK: send request second time to set correct time because it was converted to new timezone
+                requestProcessor.PostEditEventAcAdminRequest(new CreatingEventContainer()
+                {
+                    EventProperties = dict,
+                    EventScoId = eventScoId,
+                    FolderScoId = saveEventFields.FolderScoId,
+                    Owasp = loginResult.Owasp,
+                    AccountId = accountId
+                });
+            }
+
+            return new SaveEventResponse()
+            {
+                EventScoId = eventScoId,
                 StartDate = saveEventFields.StartDate,
                 EndDate = saveEventFields.EndDate,
                 EventTitle = saveEventFields.Name

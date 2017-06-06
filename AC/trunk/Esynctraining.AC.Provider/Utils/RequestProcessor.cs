@@ -84,7 +84,7 @@ namespace Esynctraining.AC.Provider.Utils
 
         #region Public Methods and Operators
 
-        public async Task<CreatingEventResponse> GetAcAdminResponseRedirectLocation(string sharedEventsFolderScoId, string owasp)
+        public async Task<CreatingEventResponse> GetAcAdminResponseRedirectLocation(string folderScoId, string owasp)
         {
             var cookieContainer = new CookieContainer();
             cookieContainer.Add(sessionCookie);
@@ -96,7 +96,7 @@ namespace Esynctraining.AC.Provider.Utils
                 using (var client = new HttpClient(handler))
                 {
                     var getTask = await client.GetAsync(connectionDetails.AdobeConnectRoot.AbsoluteUri +
-                                                 $"admin/event/folder/list/new?filter-rows=100&filter-start=0&parent-acl-id={sharedEventsFolderScoId}&sco-id={sharedEventsFolderScoId}&start-id={sharedEventsFolderScoId}&tab-id={sharedEventsFolderScoId}&OWASP_CSRFTOKEN={owasp}");
+                                                 $"admin/event/folder/list/new?filter-rows=100&filter-start=0&parent-acl-id={folderScoId}&sco-id={folderScoId}&start-id={folderScoId}&tab-id={folderScoId}&OWASP_CSRFTOKEN={owasp}");
                     var result = getTask;
                     
                     var location = result.Headers.Location;
@@ -215,7 +215,7 @@ namespace Esynctraining.AC.Provider.Utils
             {
                 using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
                 {
-                    var requestUri = $"admin/event/folder/list/new/1/next?account-id={settings.AccountId}&filter-rows=100&filter-start=0&sco-id={settings.EventScoId}&start-id={settings.SharedEventsFolderScoId}&tab-id={settings.SharedEventsFolderScoId}&OWASP_CSRFTOKEN={settings.Owasp}";
+                    var requestUri = $"admin/event/folder/list/new/1/next?account-id={settings.AccountId}&filter-rows=100&filter-start=0&sco-id={settings.EventScoId}&start-id={settings.FolderScoId}&tab-id={settings.FolderScoId}&OWASP_CSRFTOKEN={settings.Owasp}";
                     client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
                     client.DefaultRequestHeaders.TryAddWithoutValidation("Host", baseAddress.DnsSafeHost);
                     client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", baseAddress.AbsoluteUri);
@@ -235,6 +235,47 @@ namespace Esynctraining.AC.Provider.Utils
                     }
 
                     var result = client.PostAsync(requestUri, content).Result;
+                    return new StatusInfo { SessionInfo = sessionCookie.Value };
+                }
+            }
+        }
+
+        public StatusInfo PostEditEventAcAdminRequest(CreatingEventContainer settings)
+        {
+            var baseAddress = new Uri(connectionDetails.AdobeConnectRoot.AbsoluteUri);
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(sessionCookie.Name, sessionCookie.Value));
+            cookieContainer.Add(baseAddress, new Cookie(breezeCCookie.Name, breezeCCookie.Value));
+            var messageHandler = new HttpClientHandler() { CookieContainer = cookieContainer, AllowAutoRedirect = true };
+            using (var handler = messageHandler)
+            {
+                using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+                {
+                    var requestUri = $"admin/event/sco/info/edit/save?account-id={settings.AccountId}&sco-id={settings.EventScoId}&tab-id={settings.FolderScoId}&OWASP_CSRFTOKEN={settings.Owasp}";
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Host", baseAddress.DnsSafeHost);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Connection", "keep-alive");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", baseAddress.AbsoluteUri);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Upgrade-Insecure-Requests", "1");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36");
+
+                    var referer = $"admin/event/sco/info/edit?account-id={settings.AccountId}&sco-id={settings.EventScoId}&tab-id={settings.FolderScoId}&OWASP_CSRFTOKEN={settings.Owasp}";
+
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Referer", referer);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en,en-US;q=0.8,ru;q=0.6");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, br");
+                    
+                    client.DefaultRequestHeaders.ExpectContinue = false;
+                    var content = new MultipartFormDataContent();
+                    foreach (var eventProperty in settings.EventProperties)
+                    {
+                        var stringContent = new StringContent(eventProperty.Value);
+                        stringContent.Headers.Remove("Content-Type");
+                        content.Add(stringContent, eventProperty.Key);
+                    }
+
+                    var result = client.PostAsync(requestUri, content).Result;
+
                     return new StatusInfo { SessionInfo = sessionCookie.Value };
                 }
             }
