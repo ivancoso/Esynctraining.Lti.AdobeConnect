@@ -225,5 +225,6 @@ namespace Esynctraining.AdobeConnect
         SingleObjectResult<CustomField> CustomFieldUpdate(CustomField value);
         StatusInfo RegisterToEvent(EventRegistrationFormFields eventDetails);
         SaveEventResponse CreateEvent(SaveEventFields saveEventFields);
+        SaveEventResponse EditEvent(SaveEventFields saveEventFields, string eventScoId, bool isTimezoneChanged);
     }
 }

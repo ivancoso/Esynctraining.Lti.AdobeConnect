@@ -917,6 +917,11 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => _provider.CreateEvent(saveEventFields).Result);
         }
 
+        public SaveEventResponse EditEvent(SaveEventFields saveEventFields, string eventScoId, bool isTimezoneChanged)
+        {
+            return Execute(() => _provider.EditEvent(saveEventFields, eventScoId, isTimezoneChanged).Result);
+        }
+
         public ReportScoViewsContentCollectionResult ReportScoViews(string scoId)
         {
             if (string.IsNullOrWhiteSpace(scoId))

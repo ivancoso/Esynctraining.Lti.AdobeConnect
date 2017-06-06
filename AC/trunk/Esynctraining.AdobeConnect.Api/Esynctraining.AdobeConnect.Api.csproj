@@ -37,10 +37,6 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
-  <Target Name="PostcompileScript" AfterTargets="Build" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
-    <Exec Command="dotnet pack --no-build --configuration $(Configuration)" />
-  </Target>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System.Configuration" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
