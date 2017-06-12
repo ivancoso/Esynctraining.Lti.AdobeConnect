@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-    <AssemblyVersion>1.8.3.0</AssemblyVersion>
-    <Version>1.8.3</Version>
+    <AssemblyVersion>1.8.4.0</AssemblyVersion>
+    <Version>1.8.4</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
