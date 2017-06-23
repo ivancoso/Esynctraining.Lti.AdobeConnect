@@ -164,12 +164,19 @@ namespace EdugameCloud.Lti.Canvas
                     throw new InvalidOperationException(string.Format("[EGCEnabledCanvasAPI.FetchCourseUser] Canvas returns '{0}'", response.StatusDescription));
                 }
 
-                var result = response.Data;
-                if (result != null)
+                var user = response.Data;
+                if (user == null)
+                    return null;
+
+                var result = new LmsUserDTO
                 {
-                    result.PrimaryEmail = result.Email;
-                    SetRole(result, courseId);
-                }
+                    Id = user.Id,
+                    Email = user.Email,
+                    Login = user.login_id,
+                    Name = user.Name,
+                    PrimaryEmail = user.Email,
+                    LmsRole = SetRole(user, courseId)
+                };
 
                 return result;
             }
@@ -222,19 +229,21 @@ namespace EdugameCloud.Lti.Canvas
 
                     link = ExtractNextPageLink(response);
 
-                    List<CanvasLmsUserDTO> us = response.Data;
-                    if (us == null)
+                    List<CanvasLmsUserDTO> users = response.Data;
+                    if (users == null)
                     {
                         continue;
                     }
-                    us.ForEach(
-                        u =>
-                        {
-                            SetRole(u, courseId); //u.lms_role = role;
-                            u.PrimaryEmail = u.Email; // todo: create separate canvas api class and map it to LmsUserDTO
-                        });
 
-                    result.AddRange(us);
+                    result.AddRange(users.Select(user => new LmsUserDTO
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        Login = user.login_id,
+                        Name = user.Name,
+                        PrimaryEmail = user.Email,
+                        LmsRole = SetRole(user, courseId)
+                    }));
                 }
                 //}
 
@@ -494,20 +503,20 @@ namespace EdugameCloud.Lti.Canvas
             return link;
         }
 
-        private void SetRole(CanvasLmsUserDTO userDto, int courseid)
+        private string SetRole(CanvasLmsUserDTO canvasDto, int courseid)
         {
-            if (userDto.enrollments != null)
+            if (canvasDto.enrollments != null)
             {
-                var enrollment = userDto.enrollments.FirstOrDefault(x => x.course_id == courseid);
+                var enrollment = canvasDto.enrollments.FirstOrDefault(x => x.course_id == courseid);
                 if (enrollment != null)
                 {
-                    userDto.LmsRole = enrollment.role.Replace("Enrollment", String.Empty);
-                    return;
+                    return enrollment.role.Replace("Enrollment", String.Empty);
                 }
             }
 
             _logger.WarnFormat("[Canvas API] User without role. CourseId:{0}, UserId:{1}",
-                        courseid, userDto.Id);
+                        courseid, canvasDto.Id);
+            return null;
         }
 
         private LmsCourseDTO GetCourse(string api, string userToken, int courseId)
