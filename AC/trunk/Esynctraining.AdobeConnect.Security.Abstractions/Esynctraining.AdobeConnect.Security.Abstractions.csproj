@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Company>eSyncTraining Inc.</Company>
+    <Authors>Sergey Isakovich</Authors>
+    <Version>1.0.0.1</Version>
+    <PackageTags>as security identity</PackageTags>
+    <Description>security base code; for use by UseOpenIdConnectServer and owin security</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.AdobeConnect" Version="1.0.1.42" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>
