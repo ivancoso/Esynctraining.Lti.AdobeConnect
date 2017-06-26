@@ -44,7 +44,7 @@ namespace Esynctraining.AdobeConnect.Security.Abstractions.Identity
             if (!_acDomainValidator.IsValid(companyToken, acDomain))
             {
                 _logger?.Warn($"[UserManager.FindAsync] AC domain is not valid for companyToken. AcDomain={acDomain}");
-                return null;
+                return Task.FromResult<AdobeConnectUser>(null);
             }
 
             string sessionToken;
@@ -56,7 +56,7 @@ namespace Esynctraining.AdobeConnect.Security.Abstractions.Identity
             if (acPrincipal == null)
             {
                 _logger?.Warn($"[UserManager.FindAsync] Principal not found. AcDomain={acDomain}, AcLogin={acLogin}");
-                return null;
+                return Task.FromResult<AdobeConnectUser>(null);
             }
 
             var roles = new List<string>();
