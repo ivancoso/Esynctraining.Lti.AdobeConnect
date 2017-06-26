@@ -162,6 +162,16 @@
                        : defaultValue;
         }
 
+        public static TimeSpan ParseTimeSpanWithDefault(this string stringValue, TimeSpan defaultValue)
+        {
+            if (string.IsNullOrWhiteSpace(stringValue))
+                return defaultValue;
+
+            TimeSpan result;
+
+            return TimeSpan.TryParse(stringValue, out result) ? result : defaultValue;
+        }
+
         /// <summary>
         /// The parse boolean with default.
         /// </summary>

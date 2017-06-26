@@ -96,30 +96,6 @@
 
         #region Read
        
-        /// <summary>
-        /// List all meetings on the server. Internal paging logic to return ALL meetings without too-much-data error.
-        /// </summary>
-        /// <returns>
-        /// <see cref="MeetingItem">Meeting list</see>
-        /// *Note: all dates are GMT
-        /// </returns>
-        public MeetingItemCollectionResult ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0)
-        {
-            // act: "report-bulk-objects"
-            // "&sort-sco-id=asc" - to have valid paging!
-            return DoCallMeetingItemList(Commands.ReportBulkObjects, 
-                CommandParams.ReportBulkObjectsFilters.Meeting
-                .AppendFilter(filter)
-                .AppendSortingIfNeeded("sco-id", SortOrder.Ascending), // TODO: better sorting??
-                null, 0, int.MaxValue);
-        }
-
-        public MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0)
-        {
-            string filter = string.Format(CommandParams.ReportBulkObjectsFilters.ByNameLike, nameLikeCriteria);
-            return ReportAllMeetings(filter, startIndex, limit);
-        }
-        
         public MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
         {
             // act: "report-meeting-attendance"
@@ -216,7 +192,7 @@
         {
             StatusInfo status;
             var doc = this.requestProcessor.Process(action, filter.AppendPagingIfNeeded(startIndex, limit), out status);
-            var data = MeetingItemCollectionParser.Parse(doc, this.requestProcessor.AdobeConnectRoot, xPath);
+            var data = MeetingItemCollectionParser.Parse(doc, xPath);
             bool okResponse = ResponseIsOk(doc, status);
 
             if (!okResponse)

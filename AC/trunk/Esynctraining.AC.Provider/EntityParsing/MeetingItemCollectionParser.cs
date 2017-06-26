@@ -15,7 +15,7 @@
         /// <summary>
         /// The path.
         /// </summary>
-        private const string Path = "//report-bulk-objects/row";
+        //private const string Path = "//report-bulk-objects/row";
 
         /// <summary>
         /// Parses the specified XML.
@@ -23,9 +23,9 @@
         /// <param name="xml">The XML.</param>
         /// <param name="adobeConnectUrl">AdobeConnect Root Url.</param>
         /// <returns>Collection of Meeting Items.</returns>
-        public static IEnumerable<MeetingItem> Parse(XmlNode xml, Uri adobeConnectUrl, string path)
+        public static IEnumerable<MeetingItem> Parse(XmlNode xml, string path)
         {
-            path = path ?? Path;
+            //path = path ?? Path;
             if (xml == null || !xml.NodeListExists(path))
             {
                 TraceTool.TraceMessage(string.Format("Node {0} is empty: no data available", path));
@@ -34,7 +34,7 @@
             }
 
             return xml.SelectNodes(path).Cast<XmlNode>()
-                .Select(node => MeetingItemParser.Parse(node, adobeConnectUrl))
+                .Select(node => MeetingItemParser.Parse(node))
                 .Where(item => item != null)
                 .ToArray();
         }

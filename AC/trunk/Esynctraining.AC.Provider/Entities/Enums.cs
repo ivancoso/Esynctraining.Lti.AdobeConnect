@@ -325,4 +325,37 @@
  
     }
 
+    // https://helpx.adobe.com/adobe-connect/webservices/common-xml-elements-attributes.html#icon
+    public enum ScoIcon
+    {
+        not_set,
+        //documented:
+        archive,
+        attachment,
+        authorware,
+        captivate,
+        course,
+        curriculum,
+        external_event,
+        flv,
+        html,
+        image,
+        lms_plugin,
+        logos,
+        meeting_template,
+        mp3,
+        pdf,
+        pod,
+        presentation,
+        producer,
+        seminar,
+        session,
+        swf,
+        //not documented:
+        content,
+        folder,
+        pod_hybrid,
+        virtual_classroom
+    }
+
 }

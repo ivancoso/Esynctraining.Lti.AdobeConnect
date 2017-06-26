@@ -852,14 +852,22 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.ReportBulkObjects(filter, startIndex, limit); }, filter);
         }
 
-        public MeetingItemCollectionResult ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0)
+        public CollectionResult<ReportBulkObjectItem> ReportAllMeetings(string filter = null, int startIndex = 0, int limit = AdobeConnectProviderConstants.MaxOperationSize)
         {
-            return Execute(() => { return _provider.ReportAllMeetings(filter, startIndex, limit); } );
+            return Execute(() => _provider.ReportBulkObjects(CommandParams.ReportBulkObjectsFilters.Meeting
+                .AppendFilter(filter)
+                .AppendSortingIfNeeded("sco-id", SortOrder.Ascending)));
         }
 
-        public MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0)
+        public CollectionResult<ReportBulkObjectItem> ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = AdobeConnectProviderConstants.MaxOperationSize)
         {
-            return Execute(() => { return _provider.ReportMeetingsByName(nameLikeCriteria, startIndex, limit); },
+            return Execute(() =>
+                {
+                    string filter = string.Format(CommandParams.ReportBulkObjectsFilters.ByNameLike, nameLikeCriteria);
+                    return _provider.ReportBulkObjects(CommandParams.ReportBulkObjectsFilters.Meeting
+                        .AppendFilter(filter)
+                        .AppendSortingIfNeeded("sco-id", SortOrder.Ascending));
+                },
                 nameLikeCriteria);
         }
 

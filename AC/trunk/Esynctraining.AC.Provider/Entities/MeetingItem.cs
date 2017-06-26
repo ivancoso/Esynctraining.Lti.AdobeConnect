@@ -4,133 +4,81 @@ namespace Esynctraining.AC.Provider.Entities
     using System.Xml.Serialization;
 
     /// <summary>
-    /// MeetingItem structure
+    /// response object for report-my-meetings api request
+    /// <meeting sco-id="28104" type="meeting" icon="meeting" permission-id="host" active-participants="0">
+    ///     <name>Sergey test meeting</name>
+    ///     <description>erfvr</description>
+    ///     <domain-name>connectdev.esynctraining.com</domain-name>
+    ///     <url-path>/r86x3iw2ij4/</url-path>
+    ///     <date-begin>2015-12-11T02:00:00.000-08:00</date-begin>
+    ///     <date-end>2015-12-11T03:00:00.000-08:00</date-end>
+    ///     <expired>true</expired>
+    ///     <duration>01:00:00.000</duration>
+    /// </meeting>
+    /// todo: separate report-bulk-objects response
     /// </summary>
     [XmlRoot("meeting")]
     public class MeetingItem
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MeetingItem"/> class.
-        /// </summary>
         public MeetingItem()
         {
             this.Type = ScoType.not_set;
         }
 
-        /// <summary>
-        /// Gets or sets the SCO id.
-        /// </summary>
         [XmlAttribute("sco-id")]
         public string ScoId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the folder id.
-        /// </summary>
-        [XmlAttribute("folder-id")]
-        public string FolderId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the active participants.
-        /// </summary>
+        [XmlElement("type")]
+        public ScoType Type { get; set; }
+        [XmlElement("icon")]
+        public ScoIcon Icon { get; set; }
+        [XmlAttribute("permission-id")]
+        public string PermissionId { get; set; }
         [XmlAttribute("active-participants")]
         public int ActiveParticipants { get; set; }
-
-        /// <summary>
-        /// Gets or sets the meeting name.
-        /// </summary>
-        [XmlElement("meeting-name")]
-        public string MeetingName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the meeting description.
-        /// </summary>
-        [XmlElement("meeting-description")]
-        public string MeetingDescription { get; set; }
-
-        /// <summary>
-        /// Gets or sets the language.
-        /// </summary>
-        [XmlElement("lang")]
-        public string Language { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SCO tag.
-        /// </summary>
-        [XmlElement("sco-tag")]
-        public string ScoTag { get; set; }
-
-        /// <summary>
-        /// Gets or sets the domain name.
-        /// </summary>
+        [XmlElement("name")]
+        public string Name { get; set; }
+        [XmlElement("description")]
+        public string Description { get; set; }
         [XmlElement("domain-name")]
         public string DomainName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the url path.
-        /// </summary>
         [XmlElement("url-path")]
         public string UrlPath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the full url.
-        /// </summary>
-        public string FullUrl { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date begin.
-        /// </summary>
         [XmlElement("date-begin")]
         public DateTime DateBegin { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date end.
-        /// </summary>
         [XmlElement("date-end")]
         public DateTime DateEnd { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date modified.
-        /// </summary>
-        [XmlElement("date-modified")]
-        public DateTime DateModified { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether is folder.
-        /// </summary>
-        [XmlElement("is-folder")]
-        public bool IsFolder { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether expired.
-        /// </summary>
         [XmlElement("expired")]
         public bool Expired { get; set; }
-
-        /// <summary>
-        /// Gets or sets the duration.
-        /// </summary>
         [XmlElement("duration")]
         public TimeSpan Duration { get; set; }
 
-        /// <summary>
-        /// Gets or sets the byte count.
-        /// </summary>
+        //not used:
+        /*
+        [XmlAttribute("folder-id")]
+        public string FolderId { get; set; }
+
+        [XmlElement("meeting-name")]
+        public string MeetingName { get; set; }
+
+        [XmlElement("meeting-description")]
+        public string MeetingDescription { get; set; }
+
+        [XmlElement("lang")]
+        public string Language { get; set; }
+
+        [XmlElement("sco-tag")]
+        public string ScoTag { get; set; }
+
+        public string FullUrl { get; set; }
+
+        [XmlElement("date-modified")]
+        public DateTime DateModified { get; set; }
+
+        [XmlElement("is-folder")]
+        public bool IsFolder { get; set; }
+
         [XmlElement("byte-count")]
         public long ByteCount { get; set; }
-
-        /// <summary>
-        /// Gets or sets the type.
-        /// </summary>
-        [XmlElement]
-        [XmlElement("type")]
-        public ScoType Type { get; set; }
-
-        /// <summary>
-        /// Gets or sets the permission id.
-        /// </summary>
-        [XmlAttribute("permission-id")]
-        public string PermissionId { get; set; }
-
+        */
     }
-
 }

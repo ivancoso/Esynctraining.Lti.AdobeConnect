@@ -199,7 +199,7 @@
         /// <summary>
         /// The report bulk objects filters.
         /// </summary>
-        internal static class ReportBulkObjectsFilters
+        public static class ReportBulkObjectsFilters
         {
             /// <summary>
             /// Gets the meeting.

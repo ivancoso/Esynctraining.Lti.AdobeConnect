@@ -6,57 +6,49 @@
     using Esynctraining.AC.Provider.Extensions;
     using Esynctraining.AC.Provider.Utils;
 
-    /// <summary>
-    /// The meeting item parser.
-    /// </summary>
     internal static class MeetingItemParser
     {
-        /// <summary>
-        /// Parses the specified XML.
-        /// </summary>
-        /// <param name="xml">The XML.</param>
-        /// <param name="adobeConnectRoot">AC root URL.</param>
-        /// <returns>Meeting Item or null if it's a folder.</returns>
-        public static MeetingItem Parse(XmlNode xml, Uri adobeConnectRoot)
+        public static MeetingItem Parse(XmlNode xml)
         {
-            if (xml == null || xml.Attributes == null)
+            if (xml?.Attributes == null)
             {
                 return null;
             }
-
+            var iconString = xml.SelectAttributeValue("icon");
             try
             {
-                var item = new MeetingItem
+                return new MeetingItem
                 {
                     ScoId = xml.SelectAttributeValue("sco-id"),
                     Type = EnumReflector.ReflectEnum(xml.SelectAttributeValue("type"), ScoType.not_set),
-                    MeetingName = xml.SelectSingleNodeValue("name/text()"),
-                    UrlPath = xml.SelectSingleNodeValue("url/text()"),
-
-                    // NOTE: if folder =>  date-begin is null
+                    Icon = string.IsNullOrWhiteSpace(iconString) 
+                        ? ScoIcon.not_set 
+                        : EnumReflector.ReflectEnum(xml.SelectAttributeValue("icon"), ScoIcon.not_set),
+                    PermissionId = xml.SelectAttributeValue("permission-id"),
+                    ActiveParticipants = xml.ParseAttributeInt("active-participants"),
+                    Name = xml.SelectSingleNodeValue("name/text()"),
+                    Description = xml.SelectSingleNodeValue("description/text()"),
+                    DomainName = xml.SelectSingleNodeValue("domain-name/text()"),
+                    UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
                     DateBegin = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
                     DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
-                    DateModified = xml.ParseNodeDateTime("date-modified/text()", default(DateTime)),
-                    PermissionId = xml.SelectAttributeValue("permission-id")
+                    Expired = xml.ParseNodeBool("description/text()"),
+                    Duration = xml.ParseNodeTimeSpan("duration/text()", default(TimeSpan))
                 };
+                /*
+if (!string.IsNullOrEmpty(item.UrlPath) && adobeConnectRoot != null)
+{
+item.FullUrl = adobeConnectRoot.ToString().TrimEnd('/') + item.UrlPath;
+}
 
-                if (string.IsNullOrEmpty(item.UrlPath))
-                {
-                    item.UrlPath = xml.SelectSingleNodeValue("url-path/text()");
-                }
+item.Duration = item.DateEnd.Subtract(item.DateBegin);
 
-                if (!string.IsNullOrEmpty(item.UrlPath) && adobeConnectRoot != null)
-                {
-                    item.FullUrl = adobeConnectRoot.ToString().TrimEnd('/') + item.UrlPath;
-                }
-
-                item.Duration = item.DateEnd.Subtract(item.DateBegin);
-
-                // if item.DateBegin is not defined and duration is 0 => then this is the folder which should be ignored
-                if (!item.DateBegin.Equals(default(DateTime)) || item.Duration.TotalMinutes != 0)
-                {
-                    return item;
-                }
+// if item.DateBegin is not defined and duration is 0 => then this is the folder which should be ignored
+if (!item.DateBegin.Equals(default(DateTime)) || item.Duration.TotalMinutes != 0)
+{
+return item;
+}
+ */
             }
             catch (Exception ex)
             {

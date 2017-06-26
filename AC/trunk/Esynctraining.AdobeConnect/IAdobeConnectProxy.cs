@@ -142,9 +142,9 @@ namespace Esynctraining.AdobeConnect
         /// Consider using filter.
         /// Sorts by sco-id.
         /// </summary>
-        MeetingItemCollectionResult ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0);
+        CollectionResult<ReportBulkObjectItem> ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0);
 
-        MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0);
+        CollectionResult<ReportBulkObjectItem> ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0);
 
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);
         //TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0);
