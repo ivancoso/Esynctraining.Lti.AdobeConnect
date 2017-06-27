@@ -13,6 +13,19 @@ namespace Esynctraining.AC.Provider
 {
     public partial class AdobeConnectProvider
     {
+        public TransactionCollectionResult ReportBulkConsolidatedTransactions(string filter, int startIndex = 0, int limit = 0)
+        {
+            // act: "report-bulk-consolidated-transactions"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions,
+                filter.AppendPagingIfNeeded(startIndex, limit), out status);
+
+            return ResponseIsOk(doc, status)
+                ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
+                : new TransactionCollectionResult(status);
+        }
+
         public TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0)
         {
             if (recordingScoIdList == null)
@@ -20,19 +33,12 @@ namespace Esynctraining.AC.Provider
             if (!recordingScoIdList.Any())
                 throw new ArgumentException("Non-empty list expected", nameof(recordingScoIdList));
 
-            // act: "report-bulk-consolidated-transactions"
-            StatusInfo status;
 
             var parameters = new StringBuilder(CommandParams.ReportBulkConsolidatedTransactionsFilters.TypeRecording);
             foreach (string recordingScoId in recordingScoIdList)
                 parameters.AppendFormat(CommandParams.ReportBulkConsolidatedTransactionsFilters.AndByScoId, recordingScoId);
 
-            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions,
-                parameters.ToString().AppendPagingIfNeeded(startIndex, limit), out status);
-
-            return ResponseIsOk(doc, status)
-                ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
-                : new TransactionCollectionResult(status);
+            return ReportBulkConsolidatedTransactions(parameters.ToString(), startIndex, limit);
         }
 
         /// <summary>
@@ -52,33 +58,21 @@ namespace Esynctraining.AC.Provider
         /// </returns>
         public TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0)
         {
-            // act: "report-bulk-consolidated-transactions"
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions, 
-                string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.MeetingScoId, meetingId).AppendPagingIfNeeded(startIndex, limit),
-                out status);
-
-            return ResponseIsOk(doc, status)
-                ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
-                : new TransactionCollectionResult(status);
+            return ReportBulkConsolidatedTransactions(
+                string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.MeetingScoId, meetingId),
+                startIndex,
+                limit);
         }
-
+        
         /// <summary>
         /// TRICK: uses "sort-date-created=desc".
         /// </summary>        
         public TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0)
         {
-            // act: "report-bulk-consolidated-transactions"
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions,
-                string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.PrincipalId, principalId)
-                .AppendPagingIfNeeded(startIndex, limit), out status);
-
-            return ResponseIsOk(doc, status)
-                ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
-                : new TransactionCollectionResult(status);
+            return ReportBulkConsolidatedTransactions(
+                string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.PrincipalId, principalId),
+                startIndex,
+                limit);
         }
         
         // Not used from Proxy level

@@ -871,6 +871,11 @@ namespace Esynctraining.AdobeConnect
                 nameLikeCriteria);
         }
 
+        public TransactionCollectionResult ReportBulkConsolidatedTransactions(string filter, int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportBulkConsolidatedTransactions(filter, startIndex, limit); });
+        }
+
         public TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0)
         {
             return Execute(() => { return _provider.ReportRecordingTransactions(recordingScoIdList, startIndex, limit); },

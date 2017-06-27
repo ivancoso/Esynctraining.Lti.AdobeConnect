@@ -181,37 +181,6 @@ namespace Esynctraining.AC.Provider
             }
         }
 
-        /// <summary>
-        /// The url encode unicode to bytes.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <returns>
-        /// The bytes.
-        /// </returns>
-        private static byte[] UrlEncodeUnicodeToBytes(string text)
-        {
-            if (text == null)
-            {
-                return null;
-            }
-
-            if (text == string.Empty)
-            {
-                return new byte[0];
-            }
-
-            var result = new MemoryStream(text.Length);
-
-            foreach (var c in text)
-            {
-                UrlEncodeChar(c, result, true);
-            }
-
-            return result.ToArray();
-        }
-
     }
 
 }

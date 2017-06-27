@@ -148,6 +148,7 @@ namespace Esynctraining.AdobeConnect
 
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);
         //TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0);
+        TransactionCollectionResult ReportBulkConsolidatedTransactions(string filter, int startIndex = 0, int limit = 0);
 
         TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0);
 
