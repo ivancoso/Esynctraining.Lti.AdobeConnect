@@ -29,6 +29,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.AspNetCore", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Core.Logging.MicrosoftExtensionsLogger", "Esynctraining.Core.Logging.MicrosoftExtensionsLogger\Esynctraining.Core.Logging.MicrosoftExtensionsLogger.csproj", "{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Extensions", "Esynctraining.Extensions\Esynctraining.Extensions.csproj", "{A9D32085-69E6-42BB-B4EB-1A92F0D3BAC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Mail.Core", "Esynctraining.Mail.Core\Esynctraining.Mail.Core.csproj", "{83671C8B-4D61-4792-9757-1C021B11A9DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Mail.SmtpClient.MailKit", "Esynctraining.Mail.SmtpClient.MailKit\Esynctraining.Mail.SmtpClient.MailKit.csproj", "{D979E59F-D0CC-4BB4-86D5-ABD1C360C134}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Mail.TemplateTransform.AspNetCore", "Esynctraining.Mail.TemplateTransform.AspNetCore\Esynctraining.Mail.TemplateTransform.AspNetCore.csproj", "{7EF30D67-C3F4-45AD-9A68-5F7D9322FEC3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Mail.TemplateTransform.RazorLight", "Esynctraining.Mail.TemplateTransform.RazorLight\Esynctraining.Mail.TemplateTransform.RazorLight.csproj", "{FB1CF772-873F-4FE4-9420-C173B07448AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +97,26 @@ Global
 		{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FFAE60F-0DA0-430D-8F60-F8D6E31AED64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9D32085-69E6-42BB-B4EB-1A92F0D3BAC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9D32085-69E6-42BB-B4EB-1A92F0D3BAC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9D32085-69E6-42BB-B4EB-1A92F0D3BAC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9D32085-69E6-42BB-B4EB-1A92F0D3BAC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83671C8B-4D61-4792-9757-1C021B11A9DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83671C8B-4D61-4792-9757-1C021B11A9DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83671C8B-4D61-4792-9757-1C021B11A9DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83671C8B-4D61-4792-9757-1C021B11A9DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D979E59F-D0CC-4BB4-86D5-ABD1C360C134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D979E59F-D0CC-4BB4-86D5-ABD1C360C134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D979E59F-D0CC-4BB4-86D5-ABD1C360C134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D979E59F-D0CC-4BB4-86D5-ABD1C360C134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EF30D67-C3F4-45AD-9A68-5F7D9322FEC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EF30D67-C3F4-45AD-9A68-5F7D9322FEC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EF30D67-C3F4-45AD-9A68-5F7D9322FEC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EF30D67-C3F4-45AD-9A68-5F7D9322FEC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB1CF772-873F-4FE4-9420-C173B07448AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB1CF772-873F-4FE4-9420-C173B07448AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB1CF772-873F-4FE4-9420-C173B07448AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB1CF772-873F-4FE4-9420-C173B07448AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
