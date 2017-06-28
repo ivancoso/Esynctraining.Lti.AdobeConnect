@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.0.2</Version>
     <Authors>Sergey Isakovich</Authors>
     <Company>eSyncTraining Inc.</Company>
     <Description>RazorLight implementation of ITemplateTransformer. Designed to be used from console applications.</Description>
     <PackageTags>mail</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReleaseNotes>target standart 1.6</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
