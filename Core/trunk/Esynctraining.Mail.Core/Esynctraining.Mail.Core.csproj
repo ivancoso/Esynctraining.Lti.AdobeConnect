@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Sergey Isakovich</Authors>
+    <Company>eSyncTraining Inc.</Company>
+    <Description>Core project for Mail</Description>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Version>1.0.0.1</Version>
+    <PackageTags>mail</PackageTags>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.6;net461</TargetFrameworks>
+    <Authors>Sergey Isakovich</Authors>
+    <Company>eSyncTraining Inc.</Company>
+    <Description>MailKit implementation of ISmtpClient</Description>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Version>1.0.0.1</Version>
+    <PackageTags>mail mailkit smtp</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1" />
+    <PackageReference Include="MailKit" Version="1.16.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.Mail.Core\Esynctraining.Mail.Core.csproj" />
+  </ItemGroup>
+
+</Project>

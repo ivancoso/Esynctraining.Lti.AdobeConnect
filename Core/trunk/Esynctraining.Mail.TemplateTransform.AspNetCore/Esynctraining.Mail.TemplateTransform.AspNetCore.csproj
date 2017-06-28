@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.0.1</Version>
+    <Authors>Sergey Isakovich</Authors>
+    <Company>eSyncTraining Inc.</Company>
+    <Description>Microsoft.AspNetCore.Mvc.Razor implementation of ITemplateTransformer. Consider using from ASP.NET Core projects only.</Description>
+    <PackageTags>mail asp.net</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.Mail.Core\Esynctraining.Mail.Core.csproj" />
+  </ItemGroup>
+
+</Project>
