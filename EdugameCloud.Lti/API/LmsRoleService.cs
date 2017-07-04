@@ -29,9 +29,6 @@ namespace EdugameCloud.Lti.API
             if (param.roles == null)
                 return false;
 
-            IEnumerable<string> defaultTeacherRoles = ((string)settings.TeacherRoles).Split(',');
-            IEnumerable<string> licenseSpecificTeacherRoles = lmsCompany.RoleMappings.Where(x => x.IsTeacherRole).Select(x => x.LmsRoleName);
-
             return
                 //defaultTeacherRoles
                 ((string)settings.TeacherRoles).Split(',')
