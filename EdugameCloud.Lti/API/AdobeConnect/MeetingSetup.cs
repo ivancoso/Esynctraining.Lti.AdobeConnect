@@ -192,7 +192,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var sw = Stopwatch.StartNew();
             var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(lmsCompany.Id, courseId).ToList();
             sw.Stop();
-            bool isTeacher = this.UsersSetup.IsTeacher(param);
+            bool isTeacher = this.UsersSetup.IsTeacher(param, lmsCompany);
             if (!isTeacher && lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
             {
                 meetings =
