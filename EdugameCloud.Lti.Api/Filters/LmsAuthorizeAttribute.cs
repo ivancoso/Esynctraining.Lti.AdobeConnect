@@ -236,7 +236,7 @@ namespace EdugameCloud.Lti.Api.Filters
 
         protected override bool IsAllowed(LmsUserSession session, out ActionResult notAllowedResult)
         {
-            var isTeacher = _lmsRoleService.IsTeacher(session.LtiSession.LtiParam);
+            var isTeacher = _lmsRoleService.IsTeacher(session.LtiSession.LtiParam, session.LmsCompany);
 
             if (!isTeacher)
             {

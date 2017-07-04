@@ -53,8 +53,6 @@ namespace EdugameCloud.Lti.Api.Controllers
                    //param,
                    trace);
             return meetings.ToSuccessResult();
-
-            return Enumerable.Empty<MeetingDTO>().ToSuccessResult();
         }
 
         [Route("meeting/update")]
