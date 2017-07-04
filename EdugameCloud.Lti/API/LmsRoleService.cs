@@ -30,13 +30,15 @@ namespace EdugameCloud.Lti.API
                 return false;
 
             IEnumerable<string> defaultTeacherRoles = ((string)settings.TeacherRoles).Split(',');
-
-            //string teacherRolesOverride = lmsCompany.GetSetting<string>(LmsCompanySettingNames.CustomTeacherRoles) ?? string.Empty;
-            //IEnumerable<string> licenseSpecificTeacherRoles = teacherRolesOverride.Split(',');
+            IEnumerable<string> licenseSpecificTeacherRoles = lmsCompany.RoleMappings.Where(x => x.IsTeacherRole).Select(x => x.LmsRoleName);
 
             return
-                defaultTeacherRoles.Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
-                //|| licenseSpecificTeacherRoles.Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
+                //defaultTeacherRoles
+                ((string)settings.TeacherRoles).Split(',')
+                    .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0)
+                //licenseSpecificTeacherRoles
+                || lmsCompany.RoleMappings.Where(x => x.IsTeacherRole).Select(x => x.LmsRoleName)
+                    .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
 
     }
