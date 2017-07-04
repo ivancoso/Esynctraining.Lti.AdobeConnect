@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -72,47 +74,54 @@ namespace EdugameCloud.Lti.API
 //            var input = meetings.Select(x => new Tuple<LmsCourseMeeting, string>(x, x.GetMeetingScoId())).ToList();
             var timer = Stopwatch.StartNew();
 //synchronous version
-            foreach (var groupedMeeting in groupedMeetings)
-            {
-                var courseId = groupedMeeting.Key;
+            //var parallelMode = ConfigurationManager.AppSettings["ParallelMode"];
+            //if (parallelMode == null || parallelMode != "1")
+            //{
+                foreach (var groupedMeeting in groupedMeetings)
+                {
+                    var courseId = groupedMeeting.Key;
                 var opResult = service.GetUsers(lmsCompany, courseId);
-                if (opResult.IsSuccess)
-                {
-                    licenseUsers.Add(courseId, opResult.Data);
-                }
-                else
-                {
-                    licenseUsers.Add(courseId, new List<LmsUserDTO>());
-                }
+                    if (opResult.IsSuccess)
+                    {
+                        licenseUsers.Add(courseId, opResult.Data);
+                    }
+                    else
+                    {
+                        licenseUsers.Add(courseId, new List<LmsUserDTO>());
+                    }
 
-            }
+                }
+            //}
 //parallel version
-            //            Parallel.ForEach<int, Dictionary<int, IEnumerable<LmsUserDTO>>>(
-            //                  groupedMeetings.Select(x => x.Key),
-            //                  () => new Dictionary<int, IEnumerable<LmsUserDTO>>(),
-            //                  (courseId, state, localDictionary) =>
-            //                  {
-            //                  var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseId);
-            //                      if (opResult.IsSuccess)
-            //                      {
-            //                          localDictionary.Add(courseId, opResult.Data);
-            //                      }
-            //                      else
-            //                      {
-            //                          localDictionary.Add(courseId, new List<LmsUserDTO>());
-            //                      }
-            //
-            //                      return localDictionary;
-            //                  },
-            //                  (finalResult) =>
-            //                  {
-            //                      lock (localLockObject)
-            //                          foreach (var item in finalResult)
-            //                          {
-            //                              licenseUsers.Add(item.Key, item.Value);
-            //                          }
-            //                  }
-            //            );
+            //else
+            //{
+            //    Parallel.ForEach<int, Dictionary<int, IEnumerable<LmsUserDTO>>>(
+            //        groupedMeetings.Select(x => x.Key),
+            //        () => new Dictionary<int, IEnumerable<LmsUserDTO>>(),
+            //        (courseId, state, localDictionary) =>
+            //        {
+            //            var opResult = service.GetUsers(lmsCompany, courseId);
+            //            if (opResult.IsSuccess)
+            //            {
+            //                localDictionary.Add(courseId, opResult.Data);
+            //            }
+            //            else
+            //            {
+            //                localDictionary.Add(courseId, new List<LmsUserDTO>());
+            //            }
+
+            //            return localDictionary;
+            //        },
+            //        (finalResult) =>
+            //        {
+            //            lock (localLockObject)
+            //                foreach (var item in finalResult)
+            //                {
+            //                    licenseUsers.Add(item.Key, item.Value);
+            //                }
+            //        }
+            //    );
+            //}
             timer.Stop();
             logger.Warn($"Users from API elapsed seconds:{timer.Elapsed.ToString()}");
             acProvider = acAccountService.GetProvider(lmsCompany); //users retrieve can take more than session timeout
@@ -149,17 +158,29 @@ namespace EdugameCloud.Lti.API
                         }
                         else
                         {
-                            var userIds = licenseUsers[courseGroup.Key].Select(x => x.LtiId ?? x.Id);
-//                        logger.InfoFormat("API user ids: {0}", String.Join(",", userIds));
-                            var existedDbUsers = users?.Where(x => licenseUsers[courseGroup.Key].Any(u => (u.LtiId ?? u.Id) == x.UserId)) 
-                                ?? lmsUserModel.GetByUserIdAndCompanyLms(userIds.ToArray(), lmsCompany.Id);
+                            var licenseUsersVar = licenseUsers[courseGroup.Key].ToList();
 
-                            var newUsers = UpdateDbUsers(licenseUsers[courseGroup.Key].ToList(), lmsCompany, users, acProvider);
+                            // var userIds = licenseUsersVar.Select(x => x.LtiId ?? x.Id);
+//                        logger.InfoFormat("API user ids: {0}", String.Join(",", userIds));
+                            var existedDbUsers = users.Where(x => licenseUsersVar.Any(u => (u.LtiId ?? u.Id) == x.UserId));
+                                //?? lmsUserModel.GetByUserIdAndCompanyLms(userIds.ToArray(), lmsCompany.Id);
+                            var existedUserIds = existedDbUsers.Select(x => x.Id).ToList();
+
+                        var newUsers = UpdateDbUsers(licenseUsers[courseGroup.Key].ToList(), lmsCompany, users, acProvider);
                             users.AddRange(newUsers);
                             // merge results;
                             foreach (var meeting in courseGroup)
                             {
-                                var existedUserIds = existedDbUsers.Select(x => x.Id).ToList();
+                                if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+                                {
+                                    licenseUsersVar =
+                                    licenseUsers[courseGroup.Key].Where(
+                                        x => x.SectionIds == null || x.SectionIds.Any(s => meeting.CourseSections.Any(cs => cs.LmsId == s))).ToList();
+                                    existedDbUsers =
+                                        users.Where(x => licenseUsersVar.Any(u => (u.LtiId ?? u.Id) == x.UserId));
+                                    existedUserIds = existedDbUsers.Select(x => x.Id).ToList();
+                                    newUsers = new List<LmsUser>();
+                                }
                                 var userRolesToDelete =
                                     meeting.MeetingRoles.Where(x => existedUserIds.All(u => u != x.User.Id)).ToList();
 

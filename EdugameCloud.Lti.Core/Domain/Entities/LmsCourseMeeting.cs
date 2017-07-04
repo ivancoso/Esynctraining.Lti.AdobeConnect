@@ -44,6 +44,8 @@
 
         public virtual IList<LmsMeetingSession> MeetingSessions { get; protected set; }
 
+        public virtual IList<LmsCourseSection> CourseSections { get; protected set; }
+
         public virtual bool EnableDynamicProvisioning { get; set; }
         
         #endregion
@@ -54,6 +56,7 @@
             MeetingGuests = new List<LmsCourseMeetingGuest>();
             MeetingRecordings = new List<LmsCourseMeetingRecording>();
             MeetingSessions = new List<LmsMeetingSession>();
+            CourseSections = new List<LmsCourseSection>();
         }
 
     }

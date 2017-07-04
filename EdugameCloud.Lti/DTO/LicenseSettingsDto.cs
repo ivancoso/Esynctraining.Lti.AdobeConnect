@@ -160,6 +160,11 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "enableRemoveUser")]
         public bool EnableRemoveUser { get; set; }
 
+        [DataMember(Name = "useUserSections")]
+        public bool UseCourseSections { get; set; }
+
+        [DataMember(Name = "useCourseMeetingsCustomLayout")]
+        public bool UseCourseMeetingsCustomLayout { get; set; }
 
         public static LicenseSettingsDto Build(LmsCompany value, Language lmsLicenseLanguage, ICache cache)
         {
@@ -214,6 +219,8 @@ namespace EdugameCloud.Lti.DTO
                     HasMp4ServiceWithSubtitlesLicenseKey = !string.IsNullOrWhiteSpace(value.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey)),
 
                     ShowAudioProfile = value.GetSetting<bool>(LmsCompanySettingNames.ShowAudioProfile),
+                    UseCourseSections = value.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections),
+                    UseCourseMeetingsCustomLayout = value.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout),
 
                     Labels = new LabelsDto
                     {

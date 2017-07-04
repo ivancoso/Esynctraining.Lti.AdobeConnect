@@ -88,6 +88,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private IAudioProfilesService AudioProfileService => IoC.Resolve<IAudioProfilesService>();
 
+        private ISynchronizationUserService SynchronizationUserService => IoC.Resolve<ISynchronizationUserService>();
+
         private ILogger Logger => IoC.Resolve<ILogger>();
 
         #endregion
@@ -727,7 +729,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     meeting.Owner = lmsUser;
                 }
-
+                
                 this.LmsCourseMeetingModel.RegisterSave(meeting);
                 this.LmsCourseMeetingModel.Flush();
 
@@ -737,6 +739,25 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
                     && lmsUsers.Count <= Core.Utils.Constants.SyncUsersCountLimit)
                 {
+                    if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+                    {
+                        var api = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsCompany.LmsProviderId);
+                        var sections = api.GetCourseSections(lmsCompany, meeting.CourseId.ToString());
+                        var firstSection = sections.OrderBy(x => x.Id).FirstOrDefault();
+                        if (firstSection != null)
+                        {
+                            meeting.CourseSections.Add(new LmsCourseSection
+                            {
+                                LmsId = firstSection.Id,
+                                Name = firstSection.Name,
+                                Meeting = meeting
+                            });
+
+                            lmsUsers =
+                                lmsUsers.Where(
+                                    x => x.SectionIds == null || x.SectionIds.Any(s => s == firstSection.Id.ToString())).ToList();
+                        }
+                    }
                     string msg;
                     List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers,
                         out msg);
@@ -1931,6 +1952,31 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #endregion
 
+        public OperationResult UpdateMeetingCourseSections(ILmsLicense lmsLicense, UpdateCourseSectionsDto updateCourseSectionsDto)
+        {
+            var meeting = LmsCourseMeetingModel.GetOneById(updateCourseSectionsDto.MeetingId).Value;
+
+            if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+            {
+                var api = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsLicense.LmsProviderId);
+                var sections = api.GetCourseSections(lmsLicense, meeting.CourseId.ToString());
+                var firstSection = sections.OrderBy(x => x.Id).FirstOrDefault();
+                if (firstSection != null)
+                {
+                    meeting.CourseSections.Add(new LmsCourseSection
+                    {
+                        LmsId = firstSection.Id,
+                        Name = firstSection.Name,
+                        Meeting = meeting
+                    });
+                }
+
+                SynchronizationUserService.SynchronizeUsers(lmsLicense, syncACUsers: false, meetingIds: new[] { meeting.Id });
+                return OperationResult.Success();
+            }
+
+            return OperationResult.Error("License doesn't support 'Sections' feature");
+        }
     }
 
 }

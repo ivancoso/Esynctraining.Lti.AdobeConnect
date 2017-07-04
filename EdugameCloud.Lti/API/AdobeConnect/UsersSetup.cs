@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.API.AdobeConnect
+﻿using EdugameCloud.Lti.Core.Constants;
+
+namespace EdugameCloud.Lti.API.AdobeConnect
 {
     using System;
     using System.Collections.Generic;
@@ -208,11 +210,26 @@
             if (serviceResult.IsSuccess)
             {
                 error = null;
+                if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections) && meeting.Return(x => x.Id, 0) > 0)
+                {
+                    return
+                        serviceResult.Data.Where(
+                            x =>
+                                x.SectionIds == null ||
+                                x.SectionIds.Any(s => meeting.CourseSections.Any(cs => cs.LmsId == s))).ToList();
+                }
                 return serviceResult.Data;
             }
             logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, " +
                 "courseId={2}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), courseId);
             var users = service.GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
+            if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections) && meeting.Return(x => x.Id, 0) > 0)
+            {
+                users = users.Where(
+                        x =>
+                            x.SectionIds == null ||
+                            x.SectionIds.Any(s => meeting.CourseSections.Any(cs => cs.LmsId == s))).ToList();
+            }
             return error == null ? users : new List<LmsUserDTO>();
         }
 

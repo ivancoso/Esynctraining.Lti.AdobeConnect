@@ -78,9 +78,20 @@ namespace EdugameCloud.Lti.API
             return null;
         }
 
-        public LmsUserServiceBase GetUserService(LmsProviderEnum lmsProvider)
+        public LmsUserServiceBase GetUserService(LmsProviderEnum lmsId)
         {
-            return IoC.Resolve<LmsUserServiceBase>(lmsProvider.ToString());
+            return IoC.Resolve<LmsUserServiceBase>(lmsId.ToString());
+        }
+
+        public LmsCourseSectionsServiceBase GetCourseSectionsService(LmsProviderEnum lmsId)
+        {
+            switch (lmsId)
+            {
+                case LmsProviderEnum.Canvas:
+                    return IoC.Resolve<LmsCourseSectionsServiceBase>(lmsId.ToString());
+            }
+
+            return new LmsCourseSectionsServiceBase();
         }
 
         public IMeetingSessionService GetMeetingSessionService(LmsProviderEnum lmsId)

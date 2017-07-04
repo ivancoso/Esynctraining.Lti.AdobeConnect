@@ -42,6 +42,8 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string MoodleQuizServiceToken = nameof(MoodleQuizServiceToken);
         public const string CanStudentCreateStudyGroup = nameof(CanStudentCreateStudyGroup);
         public const string EnableMeetingSessions = nameof(EnableMeetingSessions);
+        public const string UseCourseSections = nameof(UseCourseSections);
+        public const string UseCourseMeetingsCustomLayout = nameof(UseCourseMeetingsCustomLayout);
 
         public const string EnableVirtualClassrooms = nameof(EnableVirtualClassrooms);
         public const string VirtualClassroomsLabel = nameof(VirtualClassroomsLabel);

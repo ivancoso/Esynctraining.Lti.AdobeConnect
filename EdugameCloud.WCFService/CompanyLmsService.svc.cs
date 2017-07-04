@@ -18,7 +18,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.DTO;
-    using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
@@ -280,6 +279,8 @@ namespace EdugameCloud.WCFService
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.ShowAudioProfile, dto.showAudioProfile.ToString());
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AudioProfileUnique, dto.audioProfileUnique.ToString());
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseCourseSections, dto.UseCourseSections);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseCourseMeetingsCustomLayout, dto.UseCourseMeetingsCustomLayout);
 
             //OAuth options
             if (lmsProvider.Id == (int) LmsProviderEnum.Desire2Learn || lmsProvider.Id == (int)LmsProviderEnum.Canvas)

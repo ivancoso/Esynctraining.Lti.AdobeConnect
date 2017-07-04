@@ -23,6 +23,8 @@ namespace EdugameCloud.Lti.API.Canvas
             string userToken,
             int courseid,
             CanvasQuizSubmissionDTO submission);
+
+        List<LmsCourseSectionDTO> GetCourseSections(string domain, string userToken, int courseId);
     }
 
 }

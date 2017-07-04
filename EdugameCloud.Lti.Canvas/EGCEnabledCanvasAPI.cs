@@ -242,7 +242,8 @@ namespace EdugameCloud.Lti.Canvas
                         Login = user.login_id,
                         Name = user.Name,
                         PrimaryEmail = user.Email,
-                        LmsRole = SetRole(user, courseId)
+                        LmsRole = SetRole(user, courseId),
+                        SectionIds = user.enrollments.Select(x => x.course_section_id.ToString()).ToList()
                     }));
                 }
                 //}
@@ -253,6 +254,53 @@ namespace EdugameCloud.Lti.Canvas
             catch (Exception ex)
             {
                 _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.GetUsersForCourse] API:{0}. UserToken:{1}. CourseId:{2}.", domain, userToken, courseId);
+                throw;
+            }
+        }
+
+        public List<LmsCourseSectionDTO> GetCourseSections(string domain, string userToken, int courseId)
+        {
+            try
+            {
+                Validate(domain, userToken);
+
+                var result = new List<LmsCourseSectionDTO>();
+                var client = CreateRestClient(domain);
+
+                var link = $"/api/v1/courses/{courseId}/sections?include[]=students&include[]=enrollments";
+
+                RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
+
+                IRestResponse<List<CanvasCourseSectionDTO>> response = client.Execute<List<CanvasCourseSectionDTO>>(request);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
+                    if (errorData != null && errorData.errors != null && errorData.errors.Any())
+                    {
+                        _logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}, domain:{3}.",
+                            response.StatusCode, response.StatusDescription, link, domain);
+                        foreach (var error in errorData.errors)
+                        {
+                            _logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);
+                        }
+                    }
+                    return result;
+                }
+
+
+                List<CanvasCourseSectionDTO> sections = response.Data;
+
+                return sections.Select(x => new LmsCourseSectionDTO
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name
+                }).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.GetCourseSections] API:{0}. UserToken:{1}. CourseId:{2}.", domain, userToken, courseId);
                 throw;
             }
         }

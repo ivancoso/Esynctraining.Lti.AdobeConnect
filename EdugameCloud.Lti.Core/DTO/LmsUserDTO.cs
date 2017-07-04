@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿using System.Collections.Generic;
+
+namespace EdugameCloud.Lti.DTO
 {
     using System;
     using System.Net.Mail;
@@ -28,6 +30,9 @@
         
         [DataMember]
         public string Id { get; set; }
+
+        [DataMember]
+        public List<string> SectionIds { get; set; }
 
         /// <summary>
         /// User's login in LMS system.

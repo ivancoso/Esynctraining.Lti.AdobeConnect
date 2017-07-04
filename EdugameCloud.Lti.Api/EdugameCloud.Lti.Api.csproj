@@ -181,6 +181,7 @@
     <Compile Include="Controllers\AcUserController.cs" />
     <Compile Include="Controllers\AudioProfilesController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\SectionsController.cs" />
     <Compile Include="Models\ApiLti.cs" />
     <Compile Include="Models\CreateEventDto.cs" />
     <Compile Include="Models\DeleteMeetingDto.cs" />

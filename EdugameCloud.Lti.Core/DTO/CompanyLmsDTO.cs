@@ -130,6 +130,8 @@ namespace EdugameCloud.Lti.DTO
             moodleCoreServiceToken = instance.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
             moodleQuizServiceToken = instance.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
             isPdfMeetingUrl = instance.GetSetting<bool>(LmsCompanySettingNames.IsPdfMeetingUrl);
+            UseCourseSections = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections);
+            UseCourseMeetingsCustomLayout = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout);
             Telephony = new TelephonyDTO(instance);
         }
 
@@ -480,6 +482,12 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool isPdfMeetingUrl { get; set; }
+
+        [DataMember(Name = "useUserSections")]
+        public bool UseCourseSections { get; set; }
+
+        [DataMember(Name = "useCourseMeetingsCustomLayout")]
+        public bool UseCourseMeetingsCustomLayout { get; set; }
     }
 
 }

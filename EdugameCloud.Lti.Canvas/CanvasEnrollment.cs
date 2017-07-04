@@ -4,5 +4,6 @@ namespace EdugameCloud.Lti.Canvas
     {
         public int course_id { get; set; }
         public string role { get; set; }
+        public int course_section_id { get; set; }
     }
 }

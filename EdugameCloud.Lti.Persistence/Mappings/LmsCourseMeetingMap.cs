@@ -32,6 +32,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             HasMany(x => x.MeetingGuests).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();
             HasMany(x => x.MeetingRecordings).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();
             HasMany(x => x.MeetingSessions).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();
+            HasMany(x => x.CourseSections).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();
 
         }
 

@@ -30,6 +30,18 @@
 
     }
 
+    [DataContract]
+    public class UpdateCourseSectionsDto
+    {
+        [Required]
+        [DataMember]
+        public int MeetingId { get; set; }
+
+        [Required]
+        [DataMember]
+        public string[] SectionIds { get; set; }
+    }
+
 
     [DataContract]
     public class MeetingDTOLtiBase<TSession> : MeetingDtoBase
