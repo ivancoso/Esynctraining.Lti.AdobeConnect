@@ -71,6 +71,9 @@ namespace EdugameCloud.Lti.DTO
                 public string SaveMeetingAndGetUsers { get; set; } = RestWebApiBaseUrl + "meeting/UpdateAndReturnLmsUsers"; // API
                 public string SaveMeeting { get; set; } = RestWebApiBaseUrl + "meeting/update";  // API
 
+                public string CourseSections { get; set; } = RestWebApiBaseUrl + "meeting/sections";  // API
+                public string UpdateMeetingCourseSection { get; set; } = RestWebApiBaseUrl + "meeting/UpdateMeetingCourseSection";  // API
+
                 public string UseExistingMeeting { get; set; } = RestWebApiBaseUrl + "useExistingMeeting"; // API
                 public string GetTemplates { get; set; } = RestWebApiBaseUrl + "templates"; // API
                 public string GetAudioProfiles { get; set; } = RestWebApiBaseUrl + "audioProfiles"; // API

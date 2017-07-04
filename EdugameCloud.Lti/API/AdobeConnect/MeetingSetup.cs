@@ -192,6 +192,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var sw = Stopwatch.StartNew();
             var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(lmsCompany.Id, courseId).ToList();
             sw.Stop();
+            bool isTeacher = this.UsersSetup.IsTeacher(param);
+            if (!isTeacher && lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+            {
+                meetings =
+                    meetings.Where(
+                        x =>
+                            (LmsMeetingType) x.LmsMeetingType != LmsMeetingType.Meeting ||
+                            x.MeetingRoles.Any(mr => mr.User.Id == lmsUser.Id)).ToList();
+
+            }
             trace?.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", sw.Elapsed.ToString());
 
             // NOTE: add office hours meeting, if it exists for the user, but not in current course
@@ -1967,7 +1977,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     });
                 }
 
-                SynchronizationUserService.SynchronizeUsers(lmsLicense, syncACUsers: false, meetingIds: new[] { meeting.Id });
+                //SynchronizationUserService.SynchronizeUsers(lmsLicense, syncACUsers: false, meetingIds: new[] { meeting.Id });
                 return OperationResult.Success();
             }
 

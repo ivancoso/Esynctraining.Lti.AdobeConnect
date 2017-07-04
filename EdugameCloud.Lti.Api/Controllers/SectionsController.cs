@@ -27,9 +27,11 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             this.meetingSetup = meetingSetup;
             this.usersSetup = usersSetup;
+            this.lmsFactory = lmsFactory;
         }
 
-        [Route("meetings/sections")]
+        [Route("meeting/sections")]
+        [HttpGet]
         [HttpPost]
         [Filters.LmsAuthorizeBase]
         public virtual OperationResult GetMeetingCourseSections()
@@ -38,7 +40,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             return api.GetCourseSections(LmsCompany, CourseId.ToString()).ToSuccessResult();
         }
 
-        [Route("meetings/UpdateMeetingCourseSection")]
+        [Route("meeting/UpdateMeetingCourseSection")]
         [HttpPost]
         [Filters.LmsAuthorizeBase]
         public virtual OperationResult UpdateMeetingCourseSections([FromBody]UpdateCourseSectionsDto updateCourseSectionsDto)
