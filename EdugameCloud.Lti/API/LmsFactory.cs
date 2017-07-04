@@ -88,7 +88,7 @@ namespace EdugameCloud.Lti.API
             switch (lmsId)
             {
                 case LmsProviderEnum.Canvas:
-                    return IoC.Resolve<LmsCourseSectionsServiceBase>(lmsId.ToString());
+                    return IoC.Resolve<LmsCourseSectionsServiceBase>();
             }
 
             return new LmsCourseSectionsServiceBase();

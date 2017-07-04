@@ -115,6 +115,9 @@
         [DataMember]
         public string ClassRoomId { get; set; }
 
+        [DataMember]
+        public List<string> SectionIds { get; set; }
+
     }
 
 }
