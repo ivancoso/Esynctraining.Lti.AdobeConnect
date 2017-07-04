@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Providers;
 
@@ -16,11 +19,24 @@ namespace EdugameCloud.Lti.API
         }
 
 
-        public bool IsTeacher(LtiParamDTO param)
+        public bool IsTeacher(LtiParamDTO param, ILmsLicense lmsCompany)
         {
-            return param.roles != null
-                && settings.TeacherRoles != null
-                && ((string)settings.TeacherRoles).Split(',').Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
+            if (param == null)
+                throw new ArgumentNullException(nameof(param));
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
+            if (param.roles == null)
+                return false;
+
+            IEnumerable<string> defaultTeacherRoles = ((string)settings.TeacherRoles).Split(',');
+
+            //string teacherRolesOverride = lmsCompany.GetSetting<string>(LmsCompanySettingNames.CustomTeacherRoles) ?? string.Empty;
+            //IEnumerable<string> licenseSpecificTeacherRoles = teacherRolesOverride.Split(',');
+
+            return
+                defaultTeacherRoles.Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
+                //|| licenseSpecificTeacherRoles.Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
 
     }

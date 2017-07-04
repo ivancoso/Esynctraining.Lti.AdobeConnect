@@ -390,7 +390,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.SaveLMSUserParameters(param, lmsCompany, loginResult.User.PrincipalId, wstoken);
 
             breezeSession = breezeToken ?? string.Empty;
-            bool isTeacher = this.UsersSetup.IsTeacher(param);
+            bool isTeacher = this.UsersSetup.IsTeacher(param, lmsCompany);
             bool forcedAddInInstallation = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
             if (lmsCompany.LoginUsingCookie.GetValueOrDefault())
             {
@@ -536,7 +536,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(fb));
             
             if ((meetingDTO.GetMeetingType() == LmsMeetingType.StudyGroup) 
-                && !UsersSetup.IsTeacher(param)
+                && !UsersSetup.IsTeacher(param, lmsCompany)
                 && !lmsCompany.GetSetting<bool>(LmsCompanySettingNames.CanStudentCreateStudyGroup, true))
             {
                 return OperationResult.Error("Students are not allowed to create Study Groups.");
@@ -674,8 +674,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (!result.Success || result.ScoInfo == null)
                 {
-                if (!result.Success)
-                    Logger.Error($"[CreateSco\\UpdateSco error]: { result.Status.GetErrorInfo() }");
+                    if (!result.Success)
+                        Logger.Error($"[CreateSco\\UpdateSco error]: { result.Status.GetErrorInfo() }");
 
                     if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
                         return OperationResult.Error(Resources.Messages.NotUniqueName);
@@ -1320,7 +1320,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return true;
                 }
 
-                var principalId = lmsUser.PrincipalId;
                 var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId, meetingDTO.AudioProfileId, provider);
                 if (audioUpdateResult.IsSuccess)
                 {
@@ -1425,7 +1424,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
         }
         
-        private bool CanEdit(LtiParamDTO param, LmsCourseMeeting meeting)
+        private bool CanEdit(LtiParamDTO param, LmsCourseMeeting meeting, ILmsLicense lmsCompany)
         {
             if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
             {
@@ -1437,7 +1436,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return meeting.Owner.UserId.Equals(param.lms_user_id);
             }
 
-            return UsersSetup.IsTeacher(param);
+            return UsersSetup.IsTeacher(param, lmsCompany);
         }
         
         private bool CanJoin(
@@ -1720,10 +1719,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            //if (meeting.Sco == null)
-            //    return null;
-
-            bool isEditable = this.CanEdit(param, meeting.DbRecord);
+            bool isEditable = this.CanEdit(param, meeting.DbRecord, lmsCompany);
             var type = (LmsMeetingType)meeting.DbRecord.LmsMeetingType;
 
             var canJoin = this.CanJoin(lmsUser, type, meeting.Permissions)

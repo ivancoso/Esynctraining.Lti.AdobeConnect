@@ -89,7 +89,8 @@ namespace EdugameCloud.Lti.DTO
             this.enableAnnouncements = instance.ShowAnnouncements.GetValueOrDefault();
             this.useSynchronizedUsers = instance.UseSynchronizedUsers;
             this.meetingNameFormatterId = instance.MeetingNameFormatterId;
-            this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole)).ToArray();
+            this.roleMapping = instance.RoleMappings.Select(x =>
+                new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole, x.IsTeacherRole)).ToArray();
             this.isSandbox = instance.GetSetting<bool>(LmsCompanySettingNames.IsOAuthSandbox);
             this.oAuthAppId = instance.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
             this.oAuthAppKey = instance.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);

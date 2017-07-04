@@ -14,14 +14,18 @@
         [DataMember]
         public bool isDefaultLmsRole { get; set; }
 
+        [DataMember]
+        public bool isTeacherRole { get; set; }
+
 
         public LmsCompanyRoleMappingDTO() { }
 
-        public LmsCompanyRoleMappingDTO(string lmsRoleName, int acRole, bool isDefaultLmsRole)
+        public LmsCompanyRoleMappingDTO(string lmsRoleName, int acRole, bool isDefaultLmsRole, bool isTeacherRole)
         {
             this.lmsRoleName = lmsRoleName;
             this.acRole = acRole;
             this.isDefaultLmsRole = isDefaultLmsRole;
+            this.isTeacherRole = isTeacherRole;
         }
 
     }

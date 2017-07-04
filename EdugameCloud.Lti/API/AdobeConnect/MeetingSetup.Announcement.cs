@@ -62,7 +62,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 case (int)LmsProviderEnum.Canvas:
                     var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-                    var token = UsersSetup.IsTeacher(param) && !string.IsNullOrEmpty(lmsUser.Token)
+                    var token = UsersSetup.IsTeacher(param, lmsCompany) && !string.IsNullOrEmpty(lmsUser.Token)
                         ? lmsUser.Token
                         : lmsCompany.AdminUser.Return(a => a.Token, string.Empty);
                         
@@ -157,7 +157,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 case (int)LmsProviderEnum.Canvas:
                     var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-                    var token = UsersSetup.IsTeacher(param) && !String.IsNullOrEmpty(lmsUser.Token)
+                    var token = UsersSetup.IsTeacher(param, lmsCompany) && !String.IsNullOrEmpty(lmsUser.Token)
                         ? lmsUser.Token
                         : lmsCompany.AdminUser.Return(a => a.Token, string.Empty);
 

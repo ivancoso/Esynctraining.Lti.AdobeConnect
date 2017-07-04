@@ -11,6 +11,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.LmsRoleName).Not.Nullable();
             this.Map(x => x.AcRole).Not.Nullable();
             this.Map(x => x.IsDefaultLmsRole).Not.Nullable();
+            this.Map(x => x.IsTeacherRole).Not.Nullable();
         }
     }
 }

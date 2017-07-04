@@ -1007,7 +1007,7 @@ namespace EdugameCloud.Lti.Controllers
                 Seminars = seminars,
                 SeminarsMessage = seminarsMessage,
 
-                IsTeacher = UsersSetup.IsTeacher(param),
+                IsTeacher = UsersSetup.IsTeacher(param, credentials),
                 ConnectServer = credentials.AcServer + "/",
 
                 CourseMeetingsEnabled = credentials.EnableCourseMeetings.GetValueOrDefault() || param.is_course_meeting_enabled,

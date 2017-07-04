@@ -587,18 +587,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        /// <summary>
-        /// The is teacher.
-        /// </summary>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public bool IsTeacher(LtiParamDTO param)
+        public bool IsTeacher(LtiParamDTO param, ILmsLicense lmsCompany)
         {
-            return new LmsRoleService(this.settings).IsTeacher(param);
+            return new LmsRoleService(this.settings).IsTeacher(param, lmsCompany);
         }
 
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(

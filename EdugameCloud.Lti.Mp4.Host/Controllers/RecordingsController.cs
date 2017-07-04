@@ -79,7 +79,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     ? rawRecordings.Select(x => smap.Map<SeminarRecordingWithMp4Dto>(x))
                     : rawRecordings.Select(x => map.Map<RecordingWithMp4Dto>(x));
 
-                if (!new LmsRoleService(Settings).IsTeacher(param) && !LmsCompany.AutoPublishRecordings)
+                if (!new LmsRoleService(Settings).IsTeacher(param, LmsCompany) && !LmsCompany.AutoPublishRecordings)
                 {
                     recordings = recordings.Where(x => x.Published).ToList();
                 }

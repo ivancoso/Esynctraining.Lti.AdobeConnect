@@ -375,6 +375,7 @@ namespace EdugameCloud.WCFService
                 else
                 {
                     old.AcRole = newSetRole.acRole;
+                    old.IsTeacherRole = newSetRole.isTeacherRole;
                 }
             }
             if (oldMapsToDelete.Count > 0)
@@ -391,6 +392,7 @@ namespace EdugameCloud.WCFService
                         LmsRoleName = newRole.lmsRoleName,
                         AcRole = newRole.acRole,
                         IsDefaultLmsRole = newRole.isDefaultLmsRole,
+                        IsTeacherRole = newRole.isTeacherRole,
                     };
                     instance.RoleMappings.Add(map);
                 }

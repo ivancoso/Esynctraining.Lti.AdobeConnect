@@ -53,7 +53,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(timeZone));
 
             var licenseDtos = new List<SeminarLicenseDto>();
-            bool canAddSeminars = UsersSetup.IsTeacher(param);
+            bool canAddSeminars = UsersSetup.IsTeacher(param, lmsCompany);
 
             var sharedLicenses = GetSharedSeminarLicenses(acProxy).Where(x => !x.IsExpired);
             foreach (var license in sharedLicenses)

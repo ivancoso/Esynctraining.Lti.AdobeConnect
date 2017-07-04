@@ -39,7 +39,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(lmsCompany));
 
             var usedAudioProfiles = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique) 
-                ? meetingModel.GetByCompanyWithAudioProfiles(lmsCompany).ToList().Select(x => x.AudioProfileId).ToList() 
+                ? meetingModel.GetByCompanyWithAudioProfiles(lmsCompany).Select(x => x.AudioProfileId).ToList() 
                 : new List<string>();
             
             var profiles = _innerService.GetAudioProfiles(provider, principalId)
