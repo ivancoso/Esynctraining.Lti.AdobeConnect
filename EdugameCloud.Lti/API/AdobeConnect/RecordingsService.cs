@@ -51,7 +51,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return Enumerable.Empty<RecordingDto>();
             }
 
-            var timeZone = acAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
+            TimeZoneInfo timeZone = TimeZoneInfo.Utc; // acAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
 
             IEnumerable<IRecordingDto> result;
             var meetingSco = meeting.GetMeetingScoId();
