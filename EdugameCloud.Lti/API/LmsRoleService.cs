@@ -31,8 +31,8 @@ namespace EdugameCloud.Lti.API
 
             return
                 //defaultTeacherRoles
-                ((string)settings.TeacherRoles).Split(',')
-                    .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0)
+                (!string.IsNullOrWhiteSpace((string)settings.TeacherRoles) && ((string)settings.TeacherRoles).Split(',')
+                    .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0))
                 //licenseSpecificTeacherRoles
                 || lmsCompany.RoleMappings.Where(x => x.IsTeacherRole).Select(x => x.LmsRoleName)
                     .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
