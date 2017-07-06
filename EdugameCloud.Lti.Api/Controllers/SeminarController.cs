@@ -43,7 +43,6 @@ namespace EdugameCloud.Lti.Api.Controllers
         )
             : base(acAccountService, settings, logger, cache)
         {
-            //_memoryCache = memoryCache;
             _seminarService = seminarService;
         }
 
@@ -120,7 +119,6 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 // TRICK: change record meeting id to meeting sco-id
-                LtiParamDTO param = Session.LtiSession.LtiParam;
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, long.Parse(seminarSessionDto.SeminarRoomId));
                 if (meeting == null)
                 {
@@ -183,55 +181,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
             seminarSessionDto.ExpectedLoad = userLicense.LicenseQuota;
         }
-
-        //private IAdobeConnectProxy GetCurrentUserProvider(LmsUserSession session)
-        //{
-        //    string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
-        //    var provider = _memoryCache.Get(cacheKey) as IAdobeConnectProxy;
-
-        //    if (provider == null)
-        //    {
-        //        string breezeSession = LoginCurrentUser(session);
-        //        var accService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(Logger);
-        //        provider = accService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
-
-        //        var sessionTimeout = accService.GetAccountDetails(GetAdminProvider()).SessionTimeout - 1; //-1 is to be sure 
-        //        _memoryCache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
-        //    }
-
-        //    return provider;
-        //}
-
-        //private string LoginCurrentUser(LmsUserSession session)
-        //{
-        //    LmsCompany lmsCompany = null;
-        //    try
-        //    {
-        //        lmsCompany = session.LmsCompany;
-        //        var param = session.LtiSession.LtiParam;
-        //        var lmsUserModel = IoC.Resolve<LmsUserModel>();
-        //        var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-        //        if (lmsUser == null)
-        //        {
-        //            throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
-        //        }
-
-        //        if (lmsUser.PrincipalId == null)
-        //        {
-        //            throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
-        //        }
-
-        //        var ac = GetAdminProvider();
-        //        string breezeToken = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, ac).BreezeSession;
-        //        return breezeToken;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
-        //        throw;
-        //    }
-        //}
-
+        
         private OperationResult TrickForSeminar(OperationResult ret, string seminarLicenseId)
         {
             var res1 = ret as OperationResultWithData<MeetingDTO>;
@@ -256,5 +206,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
             return ret;
         }
+
     }
+
 }

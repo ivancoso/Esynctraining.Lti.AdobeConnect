@@ -55,11 +55,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
-                var param = Session.LtiSession.LtiParam;
-                var ac = this.GetUserProvider();
-
-                var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, LmsCompany.Id).Value;
-
+                var ac = GetUserProvider();
                 var contentService = new ContentService(Logger, ac);
                 IEnumerable<ScoShortcut> shortcuts = contentService.GetShortcuts(new ScoShortcutType[] { ScoShortcutType.content, ScoShortcutType.my_content });
 
@@ -168,7 +164,6 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 var ac = this.GetUserProvider();
-                var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.DeleteSco(scoId);
             }
@@ -205,7 +200,6 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 var ac = this.GetUserProvider();
-                var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 return helper.MoveSco(scoId, destinationFolderScoId);
             }
@@ -215,21 +209,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResultWithData<IEnumerable<ScoContentDto>>.Error(errorMessage);
             }
         }
-
-
-        //public class FileUploadModel
-        //{
-        //    public IFormFile file { get; set; }
-
-        //    public string name { get; set; }
-
-        //    public string description { get; set; }
-
-        //    public string customUrl { get; set; }
-
-        //    public string folderScoId { get; set; }
-        //}
-
+        
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
         [Route("uploading/content/{folderScoId:long:min(1)}/upload-file")]
@@ -254,7 +234,6 @@ namespace EdugameCloud.Lti.Api.Controllers
                 string fileName = file.FileName;
                 
                 var ac = this.GetUserProvider();
-                var contentService = new ContentService(Logger, ac);
                 var helper = new ContentEditControllerHelper(Logger, ac);
                 int fileSize;
                 ScoInfoResult createdFile = helper.UploadFile(folderScoId, name, description, customUrl, fileName, file.ContentType, file.OpenReadStream(), out fileSize);
@@ -278,10 +257,6 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        // TRICK: for upload only
-        //private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
-
-        //private LmsUserSessionModel UserSessionModel => IoC.Resolve<LmsUserSessionModel>();
 
         protected LmsUserSession GetReadOnlySession(Guid key)
         {
