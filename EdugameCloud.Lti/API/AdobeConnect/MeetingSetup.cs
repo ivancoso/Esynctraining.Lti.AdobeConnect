@@ -751,9 +751,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
                     {
-                        var api = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsCompany.LmsProviderId);
-                        var sections = api.GetCourseSections(lmsCompany, meeting.CourseId.ToString());
-                        var firstSection = sections.OrderBy(x => x.Id).FirstOrDefault();
+                        var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsCompany.LmsProviderId);
+                        var sections = sectionsService.GetCourseSections(lmsCompany, meeting.CourseId.ToString());
+                        var firstSection = sections.OrderBy(x => x.Id).FirstOrDefault(); //
                         if (firstSection != null)
                         {
                             meeting.CourseSections.Add(new LmsCourseSection
@@ -1960,42 +1960,33 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #endregion
 
-        public OperationResult UpdateMeetingCourseSections(ILmsLicense lmsLicense, UpdateCourseSectionsDto updateCourseSectionsDto)
+        public void UpdateMeetingCourseSections(ILmsLicense lmsLicense, UpdateCourseSectionsDto updateCourseSectionsDto)
         {
             var meeting = LmsCourseMeetingModel.GetOneById(updateCourseSectionsDto.MeetingId).Value;
 
-            if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+            var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsLicense.LmsProviderId);
+            var sections = sectionsService.GetCourseSections(lmsLicense, meeting.CourseId.ToString());
+            var sectionsToRemove = meeting.CourseSections.Where(x => updateCourseSectionsDto.SectionIds.All(s => s != x.LmsId));
+            foreach (var lmsCourseSection in sectionsToRemove)
             {
-                var api = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsLicense.LmsProviderId);
-                var sections = api.GetCourseSections(lmsLicense, meeting.CourseId.ToString());
-                var sectionsToRemove = meeting.CourseSections.Where(x => updateCourseSectionsDto.SectionIds.All(s => s != x.LmsId))
-                        .ToList();
-                foreach (var lmsCourseSection in sectionsToRemove)
-                {
-                    meeting.CourseSections.Remove(lmsCourseSection);
-                }
-
-                var sectionsToAdd = sections.Where(x => updateCourseSectionsDto.SectionIds.Any(s => s == x.Id) && meeting.CourseSections.All(cs => cs.LmsId != x.Id));
-                foreach (var lmsCourseSectionDto in sectionsToAdd)
-                {
-                    meeting.CourseSections.Add(new LmsCourseSection
-                    {
-                        LmsId = lmsCourseSectionDto.Id,
-                        Name = lmsCourseSectionDto.Name,
-                        Meeting = meeting
-                    });
-                }
-
-                if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseSynchronizedUsers))
-                {
-                    SynchronizationUserService.SynchronizeUsers(lmsLicense, syncACUsers: true,
-                        meetingIds: new[] {meeting.Id});
-                }
-
-                return OperationResult.Success();
+                meeting.CourseSections.Remove(lmsCourseSection);
             }
 
-            return OperationResult.Error("License doesn't support 'Sections' feature");
+            var sectionsToAdd = sections.Where(x => updateCourseSectionsDto.SectionIds.Any(s => s == x.Id) && meeting.CourseSections.All(cs => cs.LmsId != x.Id));
+            foreach (var lmsCourseSectionDto in sectionsToAdd)
+            {
+                meeting.CourseSections.Add(new LmsCourseSection
+                {
+                    LmsId = lmsCourseSectionDto.Id,
+                    Name = lmsCourseSectionDto.Name,
+                    Meeting = meeting
+                });
+            }
+
+            if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseSynchronizedUsers))
+            {
+                SynchronizationUserService.SynchronizeUsers(lmsLicense, true, meetingIds: new[] {meeting.Id});
+            }
         }
     }
 

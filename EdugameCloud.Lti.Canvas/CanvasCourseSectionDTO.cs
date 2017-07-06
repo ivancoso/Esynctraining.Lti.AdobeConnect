@@ -17,5 +17,7 @@ namespace EdugameCloud.Lti.Canvas
         */
         public long? Nonxlist_course_id { get; set; }
         public long? Total_students { get; set; }
+        
+        //students {enrollments}
     }
 }

@@ -55,65 +55,14 @@ ALTER TABLE [dbo].[CompanyEventQuizMapping] CHECK CONSTRAINT [FK_CompanyEventQui
 GO
 
 
-
-
 alter table dbo.QuizResult
 add EventQuizMappingId int
 GO
 alter table dbo.QuizResult
 ADD CONSTRAINT FK_QuizResult_EventQuizMapping FOREIGN KEY (EventQuizMappingId)     
     REFERENCES dbo.CompanyEventQuizMapping (CompanyEventQuizMappingId)     
-   
 
-
-
-   -- =============================================
--- Author:		Eugene Baranovsky
--- Create date: 10.10.2014
--- Usage:		Admin
--- Description:	is used to get a list of quiz sessions 
---              by userId for Admin Reporting
--- =============================================
-ALTER PROCEDURE [dbo].[getQuizSessionsByUserId]  
-	@userId int = null
-AS
-BEGIN
-
-SELECT LNG.[language], 	   
-	   QR.acSessionId, 	
-	   QR.EventQuizMappingId as eventQuizMappingId,
-	   (select Count(Q.questionid) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
-	   ACS.subModuleItemId, 
-	   ACS.dateCreated,
-	   ACS.includeAcEmails,
-	   SMC.categoryName,
-	   ACUM.acUserModeId,
-	   AI.quizName,	 
-	   COUNT(QR.quizResultId) AS totalParticipants, 
-	   (SELECT COUNT(QR.quizResultId)
-       FROM QuizResult QR
-       WHERE QR.score > 0 AND ACS.acSessionId = QR.acSessionId) AS activeParticipants,
-       (SELECT SUM(score)from QuizResult where acSessionId = QR.acSessionId ) AS TotalScore,
-       AI.quizName, 
-       [User].userId
-       
-FROM   ACSession ACS INNER JOIN
-	   [Language] LNG  ON ACS.languageId = LNG.languageId INNER JOIN
-       QuizResult QR ON ACS.acSessionId = QR.acSessionId INNER JOIN
-       ACUserMode ACUM ON ACUM.acUserModeId = ACS.acUserModeId INNER JOIN
-       Quiz AI ON QR.quizId = AI.quizId INNER JOIN
-       SubModuleItem SMI ON ACS.subModuleItemId = SMI.subModuleItemId AND AI.subModuleItemId = SMI .subModuleItemId INNER JOIN
-       SubModuleCategory SMC ON SMI.subModuleCategoryId = SMC.subModuleCategoryId INNER JOIN
-       [User] ON ACS.userId = [User].userId
-       
-GROUP BY LNG.[language],  QR.acSessionId, QR.EventQuizMappingId, ACS.subModuleItemId, ACS.dateCreated, ACS.includeAcEmails, AI.quizName, SMC.categoryName, ACUM.acUserModeId, [User].userId, ACS.acSessionId
-
-HAVING      ([User].userId = @userId)
-
-END
-
-
-
+GO
 
 alter table dbo.QuizResult
 add appMaximizedTime int
@@ -126,88 +75,6 @@ ALTER TABLE Quiz
 ADD passingScore INT NOT NULL 
 CONSTRAINT DF_Quiz_passingScore DEFAULT 0
 
-
--- =============================================
--- Author:		Eugene Baranovsky
--- Create date: 10.10.2014
--- Usage:		Admin
--- Description:	is used to get a list of quiz results 
---				by acSessionId
--- =============================================
-ALTER PROCEDURE [dbo].[getQuizResultByACSessionId]  
-	@acSessionId int = null,@subModuleItemID int = null
-AS
-BEGIN
-select sub.quizResultId, sub.participantName, sub.acEmail, sub.score, sub.TotalQuestion, sub.startTime, sub.endTime, 
-		 ROW_NUMBER() OVER (ORDER BY sub.score desc, sub.dateDifference asc) AS position, sub.isCompleted, sub.appMaximizedTime, sub.appInFocusTime, sub.passingScore from (
-SELECT   QR.quizResultId,
-		 QR.participantName,	
-		 QR.acEmail,	 
-		 QR.score,
-		 (select Count(Q.questionid) from Question Q where Q.subModuleItemId=@subModuleItemID) as TotalQuestion,
-	 	 QR.startTime,
-		 QR.endTime,
-		 DATEDIFF(second, QR.startTime, QR.endTime) as dateDifference,
-		 QR.isCompleted,
-		 QR.appMaximizedTime as appMaximizedTime,
-		 QR.appInFocusTime as appInFocusTime,
-		 Q.passingScore as passingScore
-		 
-		    
-FROM     Quiz Q INNER JOIN
-         QuizResult QR ON Q.quizId = QR.quizId
-
-WHERE    QR.acSessionId = @acSessionId
-) as sub
-
-
-END
-
-GO
-
-ALTER PROCEDURE [dbo].[getQuizResultByACSessionIdAcEmail]
-(
-	@acSessionId		INT,
-	@subModuleItemID	INT,
-	@acEmail			NVARCHAR(500)
-) 
-AS
-BEGIN
-
-SELECT
-	sub.quizResultId, 
-	sub.participantName,
-	sub.acEmail,
-	sub.score,
-	sub.TotalQuestion, -- TRICK: TotalQuestion
-	sub.startTime,
-	sub.endTime, 
-	ROW_NUMBER() OVER (ORDER BY sub.score desc, sub.dateDifference asc) AS position,
-	sub.isCompleted,
-	sub.appInFocusTime,
-	sub.appMaximizedTime,
-	sub.passingScore
-FROM
-(
-	SELECT  QR.quizResultId,
-			QR.participantName,	
-			QR.acEmail,	 
-			QR.score,
-			(SELECT Count(Q.questionid) FROM Question Q WHERE Q.subModuleItemId = @subModuleItemID) AS TotalQuestion, -- TRICK: TotalQuestion
-			QR.startTime,
-			QR.endTime,
-			DATEDIFF(second, QR.startTime, QR.endTime) AS dateDifference,
-			QR.isCompleted,
-		    QR.appMaximizedTime as appMaximizedTime,
-			QR.appInFocusTime as appInFocusTime,
-			Qz.passingScore as passingScore
-	FROM Quiz Qz
-		INNER JOIN         QuizResult QR ON Qz.quizId = QR.quizId
-	WHERE QR.acSessionId = @acSessionId AND QR.acEmail = @acEmail
-) AS sub
-
-
-END
 
 alter table dbo.Quiz
 add [guid] UNIQUEIDENTIFIER DEFAULT NEWID() NOT NULL

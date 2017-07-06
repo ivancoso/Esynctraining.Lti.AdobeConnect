@@ -12,6 +12,7 @@ namespace EdugameCloud.Lti.Canvas
     {
         private readonly IEGCEnabledCanvasAPI canvasApi;
         private readonly ILogger logger;
+
         public CanvasLmsCourseSectionsService(IEGCEnabledCanvasAPI canvasApi, ILogger logger)
         {
             this.canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
