@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using EdugameCloud.Lti.Domain.Entities;
+﻿using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;

@@ -169,7 +169,7 @@ namespace EdugameCloud.WCFService
                 var buffer = this.FileModel.GetData(file);
                 if (buffer != null)
                 {
-                    var contentType = file.FileName.GetContentTypeByExtension();
+                    var contentType = GetContentTypeByExtension(file.FileName);
                     if (WebOperationContext.Current != null && !string.IsNullOrWhiteSpace(contentType))
                     {
                         WebOperationContext.Current.OutgoingResponse.Headers["Content-Type"] = contentType;
@@ -236,5 +236,31 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
+        private static string GetContentTypeByExtension(string fileName)
+        {
+            var ext = Path.GetExtension(fileName).If(x => !string.IsNullOrEmpty(x), x => x.Substring(1)) ?? string.Empty;
+            ext = ext.ToLower();
+            switch (ext)
+            {
+                case "png":
+                case "gif":
+                case "tiff":
+                case "bmp":
+                case "pict":
+                    return @"image/" + ext;
+                case "jpg":
+                case "jpe":
+                case "jpeg":
+                    return @"image/jpeg";
+                case "swf":
+                    return @"application/x-shockwave-flash";
+                case "zip":
+                    return @"application/zip";
+                default:
+                    return null;
+            }
+        }
+
     }
 }

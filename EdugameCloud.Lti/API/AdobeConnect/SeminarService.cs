@@ -36,8 +36,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IEnumerable<LmsCourseMeeting> seminarRecords,
             LmsUser lmsUser,
             LtiParamDTO param,
-            LmsCompany lmsCompany,
-            TimeZoneInfo timeZone)
+            LmsCompany lmsCompany
+            //,TimeZoneInfo timeZone
+            )
         {
             if (acProxy == null)
                 throw new ArgumentNullException(nameof(acProxy));
@@ -49,8 +50,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(param));
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
-            if (timeZone == null)
-                throw new ArgumentNullException(nameof(timeZone));
+            //if (timeZone == null)
+            //    throw new ArgumentNullException(nameof(timeZone));
 
             var licenseDtos = new List<SeminarLicenseDto>();
             bool canAddSeminars = UsersSetup.IsTeacher(param, lmsCompany);
@@ -65,8 +66,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     seminarRecords,
                     lmsUser,
                     param,
-                    lmsCompany,
-                    timeZone);
+                    lmsCompany
+                    //,timeZone
+                    );
             }
 
             try
@@ -81,8 +83,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         seminarRecords,
                         lmsUser,
                         param,
-                        lmsCompany,
-                        timeZone);
+                        lmsCompany
+                        //,timeZone
+                        );
                 }
             }
             catch (Exception ex)
@@ -108,8 +111,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public OperationResultWithData<Esynctraining.AdobeConnect.Api.Seminar.Dto.SeminarSessionDto> SaveSeminarSession(SeminarSessionInputDto seminarSessionDto, 
             string seminarScoId,
-            IAdobeConnectProxy provider,
-            TimeZoneInfo timeZone)
+            IAdobeConnectProxy provider
+            //,TimeZoneInfo timeZone
+            )
         {
             FixDateTimeFields(seminarSessionDto);
 
@@ -150,7 +154,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 Id = scoInfo.ScoId,
                 Name = scoInfo.Name,
-                StartTimeStamp = (long)scoInfo.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, scoInfo.BeginDate),
+                StartTimeStamp = (long)scoInfo.BeginDate.ConvertToUnixTimestamp(), // + (long)GetTimezoneShift(timeZone, scoInfo.BeginDate),
                 Duration = (scoInfo.EndDate - scoInfo.BeginDate).ToString(@"h\:mm"),
                 Summary = scoInfo.Description,
                 AcRoomUrl = scoInfo.UrlPath.Trim('/'),
@@ -167,8 +171,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IEnumerable<LmsCourseMeeting> seminarRecords,
             LmsUser lmsUser,
             LtiParamDTO param,
-            LmsCompany lmsCompany,
-            TimeZoneInfo timeZone)
+            LmsCompany lmsCompany
+            //,TimeZoneInfo timeZone
+            )
         {
             var seminars = GetSeminars(licenseScoId, acProxy);
             var rooms = new List<SeminarDto>();
@@ -180,7 +185,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 var sessions = GetSeminarSessions(seminar.ScoId, acProxy);
 
-                var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, meetingRecord, timeZone, canAddSeminars);
+                var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, meetingRecord, /* timeZone,*/ canAddSeminars);
                 if (canAddSeminars || room.CanJoin) //don't show user-seminars to those who is not participating
                 {
                     room.Id = meetingRecord.Id; // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
@@ -192,8 +197,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                             Name = x.Name,
                             StartTimeStamp =
-                                (long) x.BeginDate.ConvertToUnixTimestamp() +
-                                (long) GetTimezoneShift(timeZone, x.BeginDate),
+                                (long) x.BeginDate.ConvertToUnixTimestamp(), // + (long) GetTimezoneShift(timeZone, x.BeginDate),
                             Duration = (x.EndDate - x.BeginDate).ToString(@"h\:mm"),
                             Summary = x.Description,
                             AcRoomUrl = x.UrlPath.Trim('/'),
@@ -226,7 +230,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             ScoContent seminar,
             LmsCourseMeeting seminarMeeting,
-            TimeZoneInfo timeZone,
+            //TimeZoneInfo timeZone,
             bool isEditable,
             StringBuilder trace = null)
         {
@@ -266,7 +270,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 Name = seminar.Name,
                 Summary = seminar.Description,
                 Template = seminar.SourceScoId,
-                StartTimeStamp = (long)seminar.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, seminar.BeginDate),
+                StartTimeStamp = (long)seminar.BeginDate.ConvertToUnixTimestamp(), // + (long)GetTimezoneShift(timeZone, seminar.BeginDate),
                 Duration = (seminar.EndDate - seminar.BeginDate).ToString(@"h\:mm"),
                 AccessLevel = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
                 CanJoin = canJoin,
@@ -328,16 +332,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
         
-        private double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)
-        {
-            if (timezone != null)
-            {
-                var offset = timezone.GetUtcOffset(value).TotalMilliseconds;
-                return offset;
-            }
+        //private double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)
+        //{
+        //    if (timezone != null)
+        //    {
+        //        var offset = timezone.GetUtcOffset(value).TotalMilliseconds;
+        //        return offset;
+        //    }
 
-            return 0;
-        }
+        //    return 0;
+        //}
     }
 
 }

@@ -34,7 +34,7 @@ namespace EdugameCloud.Lti.Core.DTO
 
             return new MeetingItemDto
             {
-                Name = arg.MeetingName,
+                Name = arg.Name,
                 Url = arg.UrlPath,
                 ScoId = arg.ScoId,
             };

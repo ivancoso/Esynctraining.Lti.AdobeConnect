@@ -72,7 +72,7 @@
                 byte[] buffer = this.fileModel.GetData(file);
                 if (buffer != null)
                 {
-                    return this.File(buffer, file.FileName.GetContentTypeByExtension(), file.FileName);
+                    return this.File(buffer, GetContentTypeByExtension(file.FileName), file.FileName);
                 }
             }
 
@@ -298,6 +298,31 @@
                 }
             }
 
+        }
+
+        private static string GetContentTypeByExtension(string fileName)
+        {
+            var ext = Path.GetExtension(fileName).If(x => !string.IsNullOrEmpty(x), x => x.Substring(1)) ?? string.Empty;
+            ext = ext.ToLower();
+            switch (ext)
+            {
+                case "png":
+                case "gif":
+                case "tiff":
+                case "bmp":
+                case "pict":
+                    return @"image/" + ext;
+                case "jpg":
+                case "jpe":
+                case "jpeg":
+                    return @"image/jpeg";
+                case "swf":
+                    return @"application/x-shockwave-flash";
+                case "zip":
+                    return @"application/zip";
+                default:
+                    return null;
+            }
         }
 
     }

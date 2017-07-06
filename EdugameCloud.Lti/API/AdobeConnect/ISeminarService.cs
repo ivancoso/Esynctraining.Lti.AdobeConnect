@@ -14,13 +14,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IEnumerable<LmsCourseMeeting> seminarRecords,
             LmsUser lmsUser,
             LtiParamDTO param,
-            LmsCompany lmsCompany,
-            TimeZoneInfo timeZone);
+            LmsCompany lmsCompany//,
+            //TimeZoneInfo timeZone
+            );
 
         OperationResultWithData<Esynctraining.AdobeConnect.Api.Seminar.Dto.SeminarSessionDto> SaveSeminarSession(SeminarSessionInputDto seminarSessionDto,
             string seminarScoId,
-            IAdobeConnectProxy provider,
-            TimeZoneInfo timeZone);
+            IAdobeConnectProxy provider//,
+            //TimeZoneInfo timeZone
+            );
 
         //bool CheckEditPermissions(string licenseId, LtiParamDTO param, IAdobeConnectProxy acProxy, LmsUser lmsUser);
 

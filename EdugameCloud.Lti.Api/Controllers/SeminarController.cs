@@ -131,8 +131,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var ac = GetUserProvider();
                 ProcessQuota(ac, meeting.ScoId, seminarSessionDto);
 
-                var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;
-                var meetingUpdateResult = _seminarService.SaveSeminarSession(seminarSessionDto, meeting.ScoId, ac, timeZone);
+                //var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;
+                var meetingUpdateResult = _seminarService.SaveSeminarSession(seminarSessionDto, meeting.ScoId, ac/*, timeZone*/);
                 return meetingUpdateResult;
             }
             catch (Exception ex)

@@ -28,6 +28,7 @@ namespace EdugameCloud.Lti.Telephony
             _baseAddress = settings.ApiUrl;
         }
         
+
         public TelephonyProfile CreateProfile(ILmsLicense lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
         {
             if (lmsCompany == null)
@@ -35,7 +36,7 @@ namespace EdugameCloud.Lti.Telephony
             if (param == null)
                 throw new ArgumentNullException(nameof(param));
             if (string.IsNullOrWhiteSpace(profileName))
-                throw new ArgumentNullException("Non-empty value expected", nameof(profileName));
+                throw new ArgumentException("Non-empty value expected", nameof(profileName));
             if (acProxy == null)
                 throw new ArgumentNullException(nameof(acProxy));
 

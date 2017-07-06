@@ -278,7 +278,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             sw.Stop();
             trace?.AppendFormat("\t GetMeetings - Parallel.ForEach get data from AC ({0} meetings): {1}\r\n", meetings.Count, sw.Elapsed.ToString());
 
-            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
+            //TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
             sw = Stopwatch.StartNew();
             foreach (MeetingInfo meeting in resultCollection)
             {
@@ -287,7 +287,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         param,
                         lmsCompany,
                         meeting,
-                        timeZone,
+                        //timeZone,
                         trace);
 
                 if (dto != null)
@@ -807,7 +807,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             sw = Stopwatch.StartNew();
 
-            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
+            //TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
 
             //MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
             //    provider,
@@ -832,7 +832,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                  param,
                  lmsCompany,
                  info,
-                 timeZone,
+                 //timeZone,
                  trace);
 
             if (retrieveLmsUsers)
@@ -969,7 +969,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     lmsUsers,
                     param);
             }
-            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
+
+            //TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
             //MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
             //    provider,
             //    lmsUser,
@@ -992,7 +993,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                  param,
                  credentials,
                  info,
-                 timeZone,
+                 //timeZone,
                  null);
 
             CreateAnnouncement(
@@ -1583,7 +1584,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             ILmsLicense lmsCompany,
             MeetingInfo meeting,
-            TimeZoneInfo timeZone,
+            //TimeZoneInfo timeZone,
             StringBuilder trace = null)
         {
             if (meeting == null)
@@ -1677,8 +1678,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ClassRoomId = string.IsNullOrWhiteSpace(meeting.Sco.ScoTag) ? null : meeting.Sco.ScoTag,
                 Template = meeting.Sco.SourceScoId,
                 StartTimeStamp =
-                    (long) meeting.Sco.BeginDate.ConvertToUnixTimestamp() +
-                    (long) GetTimezoneShift(timeZone, meeting.Sco.BeginDate),
+                    (long) meeting.Sco.BeginDate.ConvertToUnixTimestamp(),
+                    //+ (long) GetTimezoneShift(timeZone, meeting.Sco.BeginDate),
                 Duration = (meeting.Sco.EndDate - meeting.Sco.BeginDate).ToString(@"h\:mm"),
 
                 //AccessLevel = meeting.GetPublicAccessPermission(),
@@ -1743,14 +1744,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             dto.IsEditable = isEditable;
         }
 
-        private static double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)
-        {
-            if (timezone == null)
-                return 0;
+        //private static double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)
+        //{
+        //    if (timezone == null)
+        //        return 0;
 
-            var offset = timezone.GetUtcOffset(value).TotalMilliseconds;
-            return offset;
-        }
+        //    var offset = timezone.GetUtcOffset(value).TotalMilliseconds;
+        //    return offset;
+        //}
         
         private void SaveLMSUserParameters(LtiParamDTO param, LmsCompany lmsCompany, string adobeConnectUserId, string wstoken)
         {

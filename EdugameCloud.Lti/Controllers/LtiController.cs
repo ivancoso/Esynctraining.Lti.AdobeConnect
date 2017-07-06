@@ -964,7 +964,7 @@ namespace EdugameCloud.Lti.Controllers
                 {
                     seminars = IoC.Resolve<API.AdobeConnect.ISeminarService>().GetLicensesWithContent(acProvider,
                         seminarRecords,
-                        session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany, acSettings.TimeZoneInfo);
+                        session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany/*, acSettings.TimeZoneInfo*/);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -978,7 +978,7 @@ namespace EdugameCloud.Lti.Controllers
             }
 
             //TRICK: we calc shift on serverside
-            acSettings.SetTimezoneShift(null);
+            //acSettings.SetTimezoneShift(null);
 
             string userFullName = param.lis_person_name_full ?? param.lis_person_name_given + " " + param.lis_person_name_family;
             var settings = LicenseSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), Cache);
