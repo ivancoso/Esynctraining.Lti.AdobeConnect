@@ -5,11 +5,11 @@ using System.Runtime.Serialization;
 namespace Esynctraining.AdobeConnect
 {
     [DataContract]
-    [KnownType(typeof(TimeZoneInfo))]
-    [KnownType(typeof(TimeZoneInfo.AdjustmentRule))]
-    [KnownType(typeof(TimeZoneInfo.AdjustmentRule[]))]
-    [KnownType(typeof(TimeZoneInfo.TransitionTime))]
-    [KnownType(typeof(DayOfWeek))]
+    //[KnownType(typeof(TimeZoneInfo))]
+    //[KnownType(typeof(TimeZoneInfo.AdjustmentRule))]
+    //[KnownType(typeof(TimeZoneInfo.AdjustmentRule[]))]
+    //[KnownType(typeof(TimeZoneInfo.TransitionTime))]
+    //[KnownType(typeof(DayOfWeek))]
     public class ACDetailsDTO
     {
         public class TimeZoneMap
@@ -109,17 +109,17 @@ namespace Esynctraining.AdobeConnect
 
         #endregion TimeZones
 
-        public void SetTimeZone(TimeZoneInfo tzInfo)
-        {
-            TimeZoneInfo = tzInfo;
-        }
+        //public void SetTimeZone(TimeZoneInfo tzInfo)
+        //{
+        //    TimeZoneInfo = tzInfo;
+        //}
 
-        public void SetTimezoneShift(TimeZoneInfo timezone)
-        {
-            TimeZoneShiftMinutes = timezone != null 
-                ? Convert.ToInt32(timezone.BaseUtcOffset.TotalMinutes) 
-                : 0;
-        }
+        //public void SetTimezoneShift(TimeZoneInfo timezone)
+        //{
+        //    TimeZoneShiftMinutes = timezone != null 
+        //        ? Convert.ToInt32(timezone.BaseUtcOffset.TotalMinutes) 
+        //        : 0;
+        //}
 
         [DataMember(Name = "version")]
         public string Version { get; set; }
@@ -127,29 +127,32 @@ namespace Esynctraining.AdobeConnect
         [DataMember(Name = "maxMeetingNameLength")]
         public int MaxMeetingNameLength { get; set; }
 
-        [DataMember(Name = "timeZoneShiftMinutes")]
-        public int TimeZoneShiftMinutes { get; set; }
+        [DataMember(Name = "timeZoneJavaId")]
+        public string TimeZoneJavaId { get; set; }
 
-        [DataMember(Name = "timeZoneInfo")]
-        public string TimeZoneInfoString
-        {
-            get
-            {
-                if (TimeZoneInfo == null)
-                    return null;
-                return TimeZoneInfo.ToSerializedString();
-            }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    TimeZoneInfo = null;
+        //[DataMember(Name = "timeZoneShiftMinutes")]
+        //public int TimeZoneShiftMinutes { get; set; }
 
-                TimeZoneInfo = TimeZoneInfo.FromSerializedString(value);
-            }
-        }
+        //[DataMember(Name = "timeZoneInfo")]
+        //public string TimeZoneInfoString
+        //{
+        //    get
+        //    {
+        //        if (TimeZoneInfo == null)
+        //            return null;
+        //        return TimeZoneInfo.ToSerializedString();
+        //    }
+        //    set
+        //    {
+        //        if (string.IsNullOrWhiteSpace(value))
+        //            TimeZoneInfo = null;
 
-        [IgnoreDataMember]
-        public TimeZoneInfo TimeZoneInfo { get; set; }
+        //        TimeZoneInfo = TimeZoneInfo.FromSerializedString(value);
+        //    }
+        //}
+
+        //[IgnoreDataMember]
+        //public TimeZoneInfo TimeZoneInfo { get; set; }
 
         [DataMember(Name = "passwordPolicies")]
         public ACPasswordPoliciesDTO PasswordPolicies { get; set; }

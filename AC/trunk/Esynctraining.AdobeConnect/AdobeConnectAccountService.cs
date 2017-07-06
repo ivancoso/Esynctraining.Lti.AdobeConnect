@@ -5,7 +5,7 @@ using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Logging;
-using NodaTime.TimeZones;
+//using NodaTime.TimeZones;
 
 namespace Esynctraining.AdobeConnect
 {
@@ -83,12 +83,15 @@ namespace Esynctraining.AdobeConnect
                     Version = commonInfo.CommonInfo.Version,
                     PasswordPolicies = ParsePasswordPolicies(fields),
                     Customization = ParseCustomization(fields, provider),
+                    TimeZoneJavaId = commonInfo.CommonInfo.TimeZoneJavaId,
                 };
-                var timeZone = GetTimeZone(commonInfo.CommonInfo);
+                //var timeZone = GetTimeZone(commonInfo.CommonInfo);
                 int session;
                 int.TryParse(GetField(fields, "web-session-timeout-minutes"), out session);
                 dto.SessionTimeout = session;
-                dto.SetTimeZone(timeZone);
+
+                //dto.SetTimeZone(timeZone);
+
                 return dto;
             }
 
@@ -97,51 +100,51 @@ namespace Esynctraining.AdobeConnect
 
         }
 
-        private TimeZoneInfo GetTimeZone(CommonInfo commonInfo)
-        {
-            TimeZoneInfo result = null;
-            if (!string.IsNullOrEmpty(commonInfo.TimeZoneJavaId))
-            {
-                result = GetTimeZoneInfoForTzdbId(commonInfo.TimeZoneJavaId);
-            }
+        //private TimeZoneInfo GetTimeZone(CommonInfo commonInfo)
+        //{
+        //    TimeZoneInfo result = null;
+        //    if (!string.IsNullOrEmpty(commonInfo.TimeZoneJavaId))
+        //    {
+        //        result = GetTimeZoneInfoForTzdbId(commonInfo.TimeZoneJavaId);
+        //    }
 
-            if (result != null)
-                return result;
+        //    if (result != null)
+        //        return result;
 
-            var mapping = ACDetailsDTO.TimeZones.First(x => x.Id == commonInfo.TimeZoneId);
-            result = FindSystemTimeZoneByIdOrDefault(mapping.WindowsTimeZoneId);
-            if (result != null)
-                return result;
+        //    var mapping = ACDetailsDTO.TimeZones.First(x => x.Id == commonInfo.TimeZoneId);
+        //    result = FindSystemTimeZoneByIdOrDefault(mapping.WindowsTimeZoneId);
+        //    if (result != null)
+        //        return result;
 
-            var timeZoneName = $"Custom time zone: {mapping.BaseUtcOffset}";
-            result = TimeZoneInfo.CreateCustomTimeZone(
-                timeZoneName,
-                TimeSpan.FromMinutes((double)mapping.BaseUtcOffset),
-                timeZoneName,
-                timeZoneName);
-            return result;
-        }
+        //    var timeZoneName = $"Custom time zone: {mapping.BaseUtcOffset}";
+        //    result = TimeZoneInfo.CreateCustomTimeZone(
+        //        timeZoneName,
+        //        TimeSpan.FromMinutes((double)mapping.BaseUtcOffset),
+        //        timeZoneName,
+        //        timeZoneName);
+        //    return result;
+        //}
 
-        private TimeZoneInfo GetTimeZoneInfoForTzdbId(string tzdbId)
-        {
-            var olsonMappings = TzdbDateTimeZoneSource.Default.WindowsMapping.MapZones;
-            var map = olsonMappings.FirstOrDefault(x =>
-                x.TzdbIds.Any(z => z.Equals(tzdbId, StringComparison.OrdinalIgnoreCase)));
-            return map != null ? FindSystemTimeZoneByIdOrDefault(map.WindowsId) : null;
-        }
+        //private TimeZoneInfo GetTimeZoneInfoForTzdbId(string tzdbId)
+        //{
+        //    var olsonMappings = TzdbDateTimeZoneSource.Default.WindowsMapping.MapZones;
+        //    var map = olsonMappings.FirstOrDefault(x =>
+        //        x.TzdbIds.Any(z => z.Equals(tzdbId, StringComparison.OrdinalIgnoreCase)));
+        //    return map != null ? FindSystemTimeZoneByIdOrDefault(map.WindowsId) : null;
+        //}
 
-        private TimeZoneInfo FindSystemTimeZoneByIdOrDefault(string timezoneId)
-        {
-            try
-            {
-                return TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
-            }
-            catch (TimeZoneNotFoundException e)
-            {
-                _logger.Error($"Timezone not found. Id: {timezoneId}", e);
-                return null;
-            }
-        }
+        //private TimeZoneInfo FindSystemTimeZoneByIdOrDefault(string timezoneId)
+        //{
+        //    try
+        //    {
+        //        return TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
+        //    }
+        //    catch (TimeZoneNotFoundException e)
+        //    {
+        //        _logger.Error($"Timezone not found. Id: {timezoneId}", e);
+        //        return null;
+        //    }
+        //}
 
         private static CustomizationDTO ParseCustomization(FieldCollectionResult fields, IAdobeConnectProxy provider)
         {
