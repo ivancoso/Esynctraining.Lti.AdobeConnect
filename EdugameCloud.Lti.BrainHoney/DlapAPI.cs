@@ -81,7 +81,7 @@
             {
                 var session = new Session("EduGameCloud", (string)this.settings.BrainHoneyApiUrl) { Verbose = true };
                 string userPrefix = lmsDomain.ToLower()
-                    .Replace(".brainhoney.com", string.Empty)
+                    .Replace(".agilixbuzz.com", string.Empty)
                     .Replace("www.", string.Empty);
 
                 XElement result = session.Login(userPrefix, userName, password);
