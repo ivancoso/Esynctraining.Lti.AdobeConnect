@@ -23,6 +23,23 @@ namespace Esynctraining.Mail.Configuration
             }
         }
 
+        public static IEnumerable<ISystemEmail> GetTo(this INotificationsSettings config, IEmailRecipientSettings recipients)
+        {
+            if (config == null)
+                throw new ArgumentNullException(nameof(config));
+            if (recipients == null)
+                throw new ArgumentNullException(nameof(recipients));
+
+            try
+            {
+                return recipients.ToTokens.Select(token => config.SystemEmails.GetByToken(token));
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new InvalidOperationException($"GetCc failed for {recipients.Token} email", ex);
+            }
+        }
+
         public static IEnumerable<ISystemEmail> GetCc(this INotificationsSettings config, IEmailRecipientSettings recipients)
         {
             if (config == null)
@@ -56,5 +73,7 @@ namespace Esynctraining.Mail.Configuration
                 throw new InvalidOperationException($"GetBcc failed for {recipients.Token} email", ex);
             }
         }
+
     }
+
 }
