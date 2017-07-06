@@ -1966,7 +1966,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsLicense.LmsProviderId);
             var sections = sectionsService.GetCourseSections(lmsLicense, meeting.CourseId.ToString());
-            var sectionsToRemove = meeting.CourseSections.Where(x => updateCourseSectionsDto.SectionIds.All(s => s != x.LmsId));
+            var sectionsToRemove = meeting.CourseSections.Where(x => updateCourseSectionsDto.SectionIds.All(s => s != x.LmsId)).ToList();
             foreach (var lmsCourseSection in sectionsToRemove)
             {
                 meeting.CourseSections.Remove(lmsCourseSection);
