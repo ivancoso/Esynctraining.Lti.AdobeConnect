@@ -31,8 +31,6 @@ namespace EdugameCloud.Lti.Api.Controllers
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
         private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
 
-        private API.AdobeConnect.IAdobeConnectAccountService AcAccountService => IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>();
-
 
         public SeminarController(
             API.AdobeConnect.ISeminarService seminarService,
