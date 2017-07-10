@@ -6,7 +6,7 @@
 
         public const string Canvas = "canvas";
 
-        public const string BrainHoney = "brainhoney";
+        public const string BrainHoney = "buzz";
 
         public const string Blackboard = "blackboard";
 

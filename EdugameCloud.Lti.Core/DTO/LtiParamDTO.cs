@@ -382,6 +382,9 @@ namespace EdugameCloud.Lti.DTO
             if (!string.IsNullOrWhiteSpace(this.custom_canvas_api_domain))
                 return this.custom_canvas_api_domain;
 
+            if (this.tool_consumer_info_product_family_code == "Buzz")
+                return this.tool_consumer_instance_guid;
+
             if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid)
                 || !string.IsNullOrWhiteSpace(this.lis_outcome_service_url)
                 || !string.IsNullOrWhiteSpace(this.ext_ims_lis_memberships_url))

@@ -277,7 +277,7 @@ namespace EdugameCloud.Lti.BrainHoney
                 var param = new LtiParamDTO
                 {
                     context_id = course.CourseId.ToString(CultureInfo.InvariantCulture),
-                    tool_consumer_info_product_family_code = "brainhoney"
+                    tool_consumer_info_product_family_code = "Buzz"
                 };
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
                 var fb = new MeetingFolderBuilder(brainHoneyCompany, adobeConnectProvider, useLmsUserEmailForSearch);
