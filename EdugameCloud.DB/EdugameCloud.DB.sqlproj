@@ -213,6 +213,7 @@
     <None Include="Updates\20170310-DbUpdate-1-8-2-0.sql" />
     <None Include="Updates\20170220-DbUpdate-1-8-1-0.sql" />
     <Build Include="dbo\Tables\LmsCourseSection.sql" />
+    <Build Include="Updates\20170706-DBUpdate-1-8-2-0.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
