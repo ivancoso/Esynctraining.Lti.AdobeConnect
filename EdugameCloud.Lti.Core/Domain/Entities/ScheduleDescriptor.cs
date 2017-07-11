@@ -1,13 +1,13 @@
-﻿namespace EdugameCloud.Lti.Domain.Entities
+﻿using System;
+
+namespace EdugameCloud.Lti.Domain.Entities
 {
-    /// <summary>
-    /// The schedule descriptor.
-    /// </summary>
     public enum ScheduleDescriptor : byte
     {
         /// <summary>
         /// Checks for signals in brain honey
         /// </summary>
+        [Obsolete("No in use")]
         BrainHoneySignals = 0,
 
         /// <summary>

@@ -13,13 +13,13 @@
     {
         #region Fields
         
-        private readonly LmsCompanyModel lmsCompanyModel;
+        private readonly LmsCompanyModel _lmsCompanyModel;
         
-        private readonly LmsUserSessionModel lmsSessionModel;
+        private readonly LmsUserSessionModel _lmsSessionModel;
         
-        private readonly ScheduleModel scheduleModel;
+        private readonly ScheduleModel _scheduleModel;
 
-        private readonly IBrainHoneyScheduling _bhScheduling;
+        //private readonly IBrainHoneyScheduling _bhScheduling;
 
         #endregion
 
@@ -28,13 +28,13 @@
         public LtiScheduleController(
             LmsCompanyModel lmsCompanyModel, 
             LmsUserSessionModel lmsSessionModel,
-            ScheduleModel scheduleModel, 
-            IBrainHoneyScheduling bhScheduling)
+            ScheduleModel scheduleModel)
+            //, IBrainHoneyScheduling bhScheduling)
         {
-            this.lmsCompanyModel = lmsCompanyModel;
-            this.lmsSessionModel = lmsSessionModel;
-            this.scheduleModel = scheduleModel;
-            _bhScheduling = bhScheduling;
+            _lmsCompanyModel = lmsCompanyModel ?? throw new ArgumentNullException(nameof(lmsCompanyModel));
+            _lmsSessionModel = lmsSessionModel ?? throw new ArgumentNullException(nameof(lmsSessionModel));
+            _scheduleModel = scheduleModel ?? throw new ArgumentNullException(nameof(scheduleModel));
+            //_bhScheduling = bhScheduling;
         }
 
         #endregion
@@ -47,7 +47,7 @@
         public virtual ContentResult ForceUpdate(int meetingId)
         {
             string result = null;
-            IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
+            IEnumerable<Schedule> schedules = this._scheduleModel.GetAll();
             foreach (Schedule schedule in schedules)
             {
                 Func<IEnumerable<LmsCompany>, DateTime, int, string> scheduledAction = null;
@@ -56,9 +56,9 @@
                 switch (schedule.ScheduleDescriptor)
                 {
                     case ScheduleDescriptor.BrainHoneySignals:
-                        brainHoneyCompanies =
-                            this.lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
-                        scheduledAction = _bhScheduling.CheckForBrainHoneySignals;
+                        //brainHoneyCompanies =
+                        //    this.lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
+                        //scheduledAction = _bhScheduling.CheckForBrainHoneySignals;
                         break;
                     case ScheduleDescriptor.CleanLmsSessions:
                         scheduledAction = this.CleanLmsSessions;
@@ -66,7 +66,7 @@
                 }
 
                 string error;
-                bool res = this.scheduleModel.ExecuteIfPossible(schedule, scheduledAction, brainHoneyCompanies, meetingId, out error);
+                bool res = this._scheduleModel.ExecuteIfPossible(schedule, scheduledAction, brainHoneyCompanies, meetingId, out error);
                 result += "'" + schedule.ScheduleDescriptor
                           + (res ? "' task succedded; Errors: " + error : "' task failed; Errors: " + error);
             }
@@ -80,7 +80,7 @@
         public virtual ContentResult UpdateIfNecessary(int meetingId)
         {
             string result = null;
-            IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
+            IEnumerable<Schedule> schedules = this._scheduleModel.GetAll();
             foreach (Schedule schedule in schedules)
             {
                 Action<DateTime> scheduledAction = null;
@@ -88,9 +88,9 @@
                 switch (schedule.ScheduleDescriptor)
                 {
                     case ScheduleDescriptor.BrainHoneySignals:
-                        IEnumerable<LmsCompany> brainHoneyCompanies =
-                            this.lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
-                        scheduledAction = dt => _bhScheduling.CheckForBrainHoneySignals(brainHoneyCompanies, dt, meetingId);
+                        //IEnumerable<LmsCompany> brainHoneyCompanies =
+                        //    this._lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
+                        //scheduledAction = dt => _bhScheduling.CheckForBrainHoneySignals(brainHoneyCompanies, dt, meetingId);
                         break;
 
                     case ScheduleDescriptor.CleanLmsSessions:
@@ -98,7 +98,7 @@
                         break;
                 }
 
-                bool res = this.scheduleModel.ExecuteIfNecessary(schedule, scheduledAction);
+                bool res = this._scheduleModel.ExecuteIfNecessary(schedule, scheduledAction);
                 result += "'" + schedule.ScheduleDescriptor + (res ? "' task succedded; " : "' task failed; ");
             }
 
@@ -111,13 +111,13 @@
         
         private string CleanLmsSessions(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, int meetingId = -1)
         {
-            IEnumerable<LmsUserSession> lmsSessions = this.lmsSessionModel.GetAllOlderThen(DateTime.Now.AddDays(-2));
+            IEnumerable<LmsUserSession> lmsSessions = _lmsSessionModel.GetAllOlderThen(DateTime.Now.AddDays(-2));
             foreach (var lmsSession in lmsSessions)
             {
-                this.lmsSessionModel.RegisterDelete(lmsSession, flush: false);
+                _lmsSessionModel.RegisterDelete(lmsSession, flush: false);
             }
 
-            this.lmsSessionModel.Flush();
+            _lmsSessionModel.Flush();
 
             return string.Empty;
         }
