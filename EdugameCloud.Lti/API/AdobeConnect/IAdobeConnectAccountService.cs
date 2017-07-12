@@ -20,8 +20,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider);
 
-        IEnumerable<TemplateDto> GetSharedMeetingTemplates(IAdobeConnectProxy provider, ICache cache);
-
         string LoginIntoAC(
             ILmsLicense lmsCompany,
             LtiParamDTO param,
