@@ -425,10 +425,10 @@
     <Content Include="Content\swf\admin\appStyles.css" />
     <Content Include="Content\swf\admin\resources\icons\add.png" />
     <Content Include="Content\swf\admin\resources\icons\addSmall.png" />
+    <Content Include="Content\swf\admin\resources\icons\agilixbuzz.jpg" />
     <Content Include="Content\swf\admin\resources\icons\announce.png" />
     <Content Include="Content\swf\admin\resources\icons\bird.png" />
     <Content Include="Content\swf\admin\resources\icons\blackboard.jpg" />
-    <Content Include="Content\swf\admin\resources\icons\brainhoney.jpg" />
     <Content Include="Content\swf\admin\resources\icons\canvas.jpg" />
     <Content Include="Content\swf\admin\resources\icons\closeRed.png" />
     <Content Include="Content\swf\admin\resources\icons\collapse.png" />
@@ -564,12 +564,12 @@
     <Content Include="packages.config" />
     <Content Include="Content\lti-files\edugamecloud_1.0.7.zip" />
     <Content Include="Content\lti-instructions\Blackboard.pdf" />
-    <Content Include="Content\lti-instructions\BrainHoney.pdf" />
     <Content Include="Content\lti-instructions\Brightspace.pdf" />
     <Content Include="Content\lti-instructions\Canvas.pdf" />
     <Content Include="Content\lti-instructions\Moodle.pdf" />
     <Content Include="Content\lti-instructions\Sakai.pdf" />
     <Content Include="Content\swf\config\paths.properties" />
+    <Content Include="Content\lti-instructions\AgilixBuzz.pdf" />
     <None Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </None>
