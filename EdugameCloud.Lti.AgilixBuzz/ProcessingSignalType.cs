@@ -1,7 +1,7 @@
-﻿namespace EdugameCloud.Lti.BrainHoney
+﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     /// <summary>
-    /// The parsed brain honey signal.
+    /// The parsed agilixBuzz signal.
     /// </summary>
     internal enum ProcessingSignalType
     {

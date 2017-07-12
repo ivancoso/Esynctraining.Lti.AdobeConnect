@@ -1,0 +1,1357 @@
+{
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v4.5": {
+      "BouncyCastle/1.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        },
+        "runtime": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
+      "Castle.Core/3.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Castle.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Castle.Core.dll": {}
+        }
+      },
+      "Castle.Windsor/3.4.0": {
+        "type": "package",
+        "dependencies": {
+          "Castle.Core": "[3.3.0, 4.0.0)"
+        },
+        "frameworkAssemblies": [
+          "System.Core",
+          "System.Xml"
+        ],
+        "compile": {
+          "lib/net45/Castle.Windsor.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Castle.Windsor.dll": {}
+        }
+      },
+      "ClosedXML/0.76.0": {
+        "type": "package",
+        "dependencies": {
+          "DocumentFormat.OpenXml": "[2.5.0]"
+        },
+        "compile": {
+          "lib/net40-client/ClosedXML.dll": {}
+        },
+        "runtime": {
+          "lib/net40-client/ClosedXML.dll": {}
+        }
+      },
+      "DocumentFormat.OpenXml/2.5.0": {
+        "type": "package",
+        "compile": {
+          "lib/DocumentFormat.OpenXml.dll": {}
+        },
+        "runtime": {
+          "lib/DocumentFormat.OpenXml.dll": {}
+        }
+      },
+      "DotNetOpenAuth.AspNet/4.3.4.13329": {
+        "type": "package",
+        "dependencies": {
+          "DotNetOpenAuth.OAuth.Consumer": "[4.3.4.13329]",
+          "DotNetOpenAuth.OpenId.RelyingParty": "[4.3.4.13329]"
+        },
+        "compile": {
+          "lib/net45-full/DotNetOpenAuth.AspNet.dll": {}
+        },
+        "runtime": {
+          "lib/net45-full/DotNetOpenAuth.AspNet.dll": {}
+        }
+      },
+      "DotNetOpenAuth.Core/4.3.4.13329": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Net.Http": "(, )"
+        },
+        "frameworkAssemblies": [
+          "System.Configuration"
+        ],
+        "compile": {
+          "lib/net45-full/DotNetOpenAuth.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45-full/DotNetOpenAuth.Core.dll": {}
+        }
+      },
+      "DotNetOpenAuth.OAuth.Consumer/4.3.4.13329": {
+        "type": "package",
+        "dependencies": {
+          "DotNetOpenAuth.OAuth.Core": "[4.3.4.13329]"
+        },
+        "compile": {
+          "lib/net45-full/DotNetOpenAuth.OAuth.Consumer.dll": {}
+        },
+        "runtime": {
+          "lib/net45-full/DotNetOpenAuth.OAuth.Consumer.dll": {}
+        }
+      },
+      "DotNetOpenAuth.OAuth.Core/4.3.4.13329": {
+        "type": "package",
+        "dependencies": {
+          "DotNetOpenAuth.Core": "[4.3.4.13329]"
+        },
+        "compile": {
+          "lib/net45-full/DotNetOpenAuth.OAuth.dll": {}
+        },
+        "runtime": {
+          "lib/net45-full/DotNetOpenAuth.OAuth.dll": {}
+        }
+      },
+      "DotNetOpenAuth.OpenId.Core/4.3.4.13329": {
+        "type": "package",
+        "dependencies": {
+          "DotNetOpenAuth.Core": "[4.3.4.13329]"
+        },
+        "compile": {
+          "lib/net45-full/DotNetOpenAuth.OpenId.dll": {}
+        },
+        "runtime": {
+          "lib/net45-full/DotNetOpenAuth.OpenId.dll": {}
+        }
+      },
+      "DotNetOpenAuth.OpenId.RelyingParty/4.3.4.13329": {
+        "type": "package",
+        "dependencies": {
+          "DotNetOpenAuth.OpenId.Core": "[4.3.4.13329]"
+        },
+        "compile": {
+          "lib/net45-full/DotNetOpenAuth.OpenId.RelyingParty.dll": {}
+        },
+        "runtime": {
+          "lib/net45-full/DotNetOpenAuth.OpenId.RelyingParty.dll": {}
+        }
+      },
+      "Esynctraining.AC.Provider/1.0.2.42": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Esynctraining.AC.Provider.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.AC.Provider.dll": {}
+        }
+      },
+      "Esynctraining.AdobeConnect/1.0.1.49": {
+        "type": "package",
+        "dependencies": {
+          "Esynctraining.AC.Provider": "1.0.2.42",
+          "Esynctraining.Core.Only": "1.0.0.27"
+        },
+        "compile": {
+          "lib/net45/Esynctraining.AdobeConnect.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.AdobeConnect.dll": {}
+        }
+      },
+      "Esynctraining.AdobeConnect.Api/1.0.0.19": {
+        "type": "package",
+        "dependencies": {
+          "Esynctraining.AC.Provider": "1.0.2.31",
+          "Esynctraining.AdobeConnect": "1.0.1.38"
+        },
+        "compile": {
+          "lib/net45/Esynctraining.AdobeConnect.Api.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.AdobeConnect.Api.dll": {}
+        }
+      },
+      "Esynctraining.BlackBoardClient/1.0.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Web.Services3": "3.0.0"
+        },
+        "compile": {
+          "lib/net45/Esynctraining.BlackBoardClient.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.BlackBoardClient.dll": {}
+        }
+      },
+      "Esynctraining.Core.Only/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Esynctraining.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.Core.dll": {}
+        }
+      },
+      "Esynctraining.Crypto/1.0.1": {
+        "type": "package",
+        "dependencies": {
+          "BouncyCastle": "1.8.1"
+        },
+        "compile": {
+          "lib/net45/Esynctraining.Crypto.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.Crypto.dll": {}
+        }
+      },
+      "Esynctraining.FluentValidation/1.0.0.3": {
+        "type": "package",
+        "dependencies": {
+          "Esynctraining.Core.Only": "1.0.0.21",
+          "FluentValidation": "6.4.1"
+        },
+        "compile": {
+          "lib/net45/Esynctraining.FluentValidation.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.FluentValidation.dll": {}
+        }
+      },
+      "Esynctraining.MeetingOne.RestClient/1.0.0.6": {
+        "type": "package",
+        "dependencies": {
+          "Esynctraining.Core.Only": "1.0.0.24",
+          "Microsoft.AspNet.WebApi.Client": "5.2.3"
+        },
+        "compile": {
+          "lib/net45/Esynctraining.MeetingOne.RestClient.dll": {},
+          "lib/net45/Esynctraining.MeetingOne.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.MeetingOne.RestClient.dll": {},
+          "lib/net45/Esynctraining.MeetingOne.dll": {}
+        }
+      },
+      "Esynctraining.NHibernate/1.0.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Esynctraining.Core.Only": "1.0.0.21",
+          "NHibernate": "4.0.4.4000"
+        },
+        "compile": {
+          "lib/net45/Esynctraining.NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.NHibernate.dll": {}
+        }
+      },
+      "FluentValidation/6.4.1": {
+        "type": "package",
+        "compile": {
+          "lib/Net45/FluentValidation.dll": {}
+        },
+        "runtime": {
+          "lib/Net45/FluentValidation.dll": {}
+        },
+        "resource": {
+          "lib/Net45/cs/FluentValidation.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/Net45/da/FluentValidation.resources.dll": {
+            "locale": "da"
+          },
+          "lib/Net45/de/FluentValidation.resources.dll": {
+            "locale": "de"
+          },
+          "lib/Net45/es/FluentValidation.resources.dll": {
+            "locale": "es"
+          },
+          "lib/Net45/fa/FluentValidation.resources.dll": {
+            "locale": "fa"
+          },
+          "lib/Net45/fi/FluentValidation.resources.dll": {
+            "locale": "fi"
+          },
+          "lib/Net45/fr/FluentValidation.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/Net45/it/FluentValidation.resources.dll": {
+            "locale": "it"
+          },
+          "lib/Net45/ko/FluentValidation.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/Net45/mk/FluentValidation.resources.dll": {
+            "locale": "mk"
+          },
+          "lib/Net45/nl/FluentValidation.resources.dll": {
+            "locale": "nl"
+          },
+          "lib/Net45/pl/FluentValidation.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/Net45/pt/FluentValidation.resources.dll": {
+            "locale": "pt"
+          },
+          "lib/Net45/ru/FluentValidation.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/Net45/sv/FluentValidation.resources.dll": {
+            "locale": "sv"
+          },
+          "lib/Net45/tr/FluentValidation.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/Net45/zh-CN/FluentValidation.resources.dll": {
+            "locale": "zh-CN"
+          }
+        }
+      },
+      "HtmlAgilityPack/1.4.9": {
+        "type": "package",
+        "compile": {
+          "lib/Net45/HtmlAgilityPack.dll": {}
+        },
+        "runtime": {
+          "lib/Net45/HtmlAgilityPack.dll": {}
+        }
+      },
+      "Iesi.Collections/4.0.0.4000": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Iesi.Collections.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Iesi.Collections.dll": {}
+        }
+      },
+      "Jil/2.15.1": {
+        "type": "package",
+        "dependencies": {
+          "Sigil": "4.7.0"
+        },
+        "frameworkAssemblies": [
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "lib/net45/Jil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Jil.dll": {}
+        }
+      },
+      "LtiLibrary.AspNet/1.6.1": {
+        "type": "package",
+        "dependencies": {
+          "HtmlAgilityPack": "1.4.9",
+          "LtiLibrary.Core": "1.6.1",
+          "Microsoft.AspNet.WebApi.WebHost": "5.2.3"
+        },
+        "compile": {
+          "lib/net45/LtiLibrary.AspNet.dll": {}
+        },
+        "runtime": {
+          "lib/net45/LtiLibrary.AspNet.dll": {}
+        }
+      },
+      "LtiLibrary.Core/1.6.1": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "8.0.3"
+        },
+        "compile": {
+          "lib/net45/LtiLibrary.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/LtiLibrary.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc/5.2.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Razor": "[3.2.3, 3.3.0)",
+          "Microsoft.AspNet.WebPages": "[3.2.3, 3.3.0)"
+        },
+        "compile": {
+          "lib/net45/System.Web.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Web.Mvc.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Razor/3.2.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/System.Web.Razor.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Web.Razor.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebApi.Client/5.2.3": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "6.0.4"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/System.Net.Http.Formatting.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Net.Http.Formatting.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebApi.Core/5.2.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.WebApi.Client": "5.2.3"
+        },
+        "compile": {
+          "lib/net45/System.Web.Http.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Web.Http.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebApi.WebHost/5.2.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.WebApi.Core": "[5.2.3, 5.3.0)"
+        },
+        "compile": {
+          "lib/net45/System.Web.Http.WebHost.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Web.Http.WebHost.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebPages/3.2.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Razor": "[3.2.3, 3.3.0)",
+          "Microsoft.Web.Infrastructure": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/System.Web.Helpers.dll": {},
+          "lib/net45/System.Web.WebPages.Deployment.dll": {},
+          "lib/net45/System.Web.WebPages.Razor.dll": {},
+          "lib/net45/System.Web.WebPages.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Web.Helpers.dll": {},
+          "lib/net45/System.Web.WebPages.Deployment.dll": {},
+          "lib/net45/System.Web.WebPages.Razor.dll": {},
+          "lib/net45/System.Web.WebPages.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebPages.Data/1.0.20105.408": {
+        "type": "package",
+        "compile": {
+          "lib/net40/WebMatrix.Data.dll": {}
+        },
+        "runtime": {
+          "lib/net40/WebMatrix.Data.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebPages.OAuth/3.2.3": {
+        "type": "package",
+        "dependencies": {
+          "DotNetOpenAuth.AspNet": "4.1.4.12333",
+          "Microsoft.AspNet.WebPages.WebData": "[3.2.3, 3.3.0)"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Web.WebPages.OAuth.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Web.WebPages.OAuth.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebPages.WebData/3.2.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.WebPages.Data": "(, )"
+        },
+        "compile": {
+          "lib/net45/WebMatrix.WebData.dll": {}
+        },
+        "runtime": {
+          "lib/net45/WebMatrix.WebData.dll": {}
+        }
+      },
+      "Microsoft.Net.Http/2.0.20505": {
+        "type": "package",
+        "compile": {
+          "lib/net40/System.Net.Http.WebRequest.dll": {},
+          "lib/net40/System.Net.Http.dll": {}
+        },
+        "runtime": {
+          "lib/net40/System.Net.Http.WebRequest.dll": {},
+          "lib/net40/System.Net.Http.dll": {}
+        }
+      },
+      "Microsoft.Web.Infrastructure/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
+        }
+      },
+      "Microsoft.Web.Services3/3.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net20/Microsoft.Web.Services3.dll": {}
+        },
+        "runtime": {
+          "lib/net20/Microsoft.Web.Services3.dll": {}
+        }
+      },
+      "Newtonsoft.Json/10.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "NHibernate/4.0.4.4000": {
+        "type": "package",
+        "dependencies": {
+          "Iesi.Collections": "[4.0.0, 5.0.0)"
+        },
+        "compile": {
+          "lib/net40/NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net40/NHibernate.dll": {}
+        }
+      },
+      "Sigil/4.7.0": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Sigil.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Sigil.dll": {}
+        }
+      },
+      "EdugameCloud.Core/1.8.4": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "ClosedXML": "0.76.0",
+          "DocumentFormat.OpenXml": "2.5.0",
+          "Esynctraining.AC.Provider": "1.0.2.42",
+          "Esynctraining.Core.Only": "1.0.1",
+          "Esynctraining.Crypto": "1.0.1",
+          "Esynctraining.NHibernate": "1.0.0.1",
+          "Newtonsoft.Json": "10.0.3"
+        }
+      },
+      "EdugameCloud.Lti/1.8.4": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "Castle.Windsor": "3.4.0",
+          "DotNetOpenAuth.AspNet": "4.3.4.13329",
+          "DotNetOpenAuth.OpenId.RelyingParty": "4.3.4.13329",
+          "EdugameCloud.Core": "1.8.4",
+          "EdugameCloud.Lti.Core": "1.8.4",
+          "EdugameCloud.Lti.Telephony": "1.8.4",
+          "Esynctraining.AdobeConnect.Api": "1.0.0.19",
+          "Esynctraining.BlackBoardClient": "1.0.0.1",
+          "Esynctraining.Crypto": "1.0.1",
+          "Esynctraining.FluentValidation": "1.0.0.3",
+          "Esynctraining.NHibernate": "1.0.0.1",
+          "Jil": "2.15.1",
+          "LtiLibrary.AspNet": "1.6.1",
+          "Microsoft.AspNet.Mvc": "5.2.3",
+          "Microsoft.AspNet.WebApi.WebHost": "5.2.3",
+          "Microsoft.AspNet.WebPages.OAuth": "3.2.3",
+          "Microsoft.Web.Services3": "3.0.0"
+        }
+      },
+      "EdugameCloud.Lti.Core/1.8.4": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "EdugameCloud.Core": "1.8.4",
+          "Esynctraining.AdobeConnect.Api": "1.0.0.19",
+          "Esynctraining.Crypto": "1.0.1",
+          "Esynctraining.NHibernate": "1.0.0.1",
+          "Newtonsoft.Json": "10.0.3"
+        }
+      },
+      "EdugameCloud.Lti.Telephony/1.8.4": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "EdugameCloud.Lti.Core": "1.8.4",
+          "Esynctraining.AdobeConnect": "1.0.1.49",
+          "Esynctraining.MeetingOne.RestClient": "1.0.0.6"
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BouncyCastle/1.8.1": {
+      "sha512": "r0w4ciJJ916V3dYRdtq8uF4Nz6oAv8Mia1JEAPKgDDRzMTcht8uK/Qam9WtvIg9SaFa+4OTox+GG6huB07nC1g==",
+      "type": "package",
+      "path": "bouncycastle/1.8.1",
+      "files": [
+        "Readme.txt",
+        "bouncycastle.1.8.1.nupkg.sha512",
+        "bouncycastle.nuspec",
+        "lib/BouncyCastle.Crypto.dll"
+      ]
+    },
+    "Castle.Core/3.3.0": {
+      "sha512": "wvlF47qlxKXurxSUWAnX79stVrnkuUPe5lHq26OiXUtMEngPaBcJ+5j+yVdFJ70hjUZpqg7qQK5hCZSex14ekQ==",
+      "type": "package",
+      "path": "castle.core/3.3.0",
+      "files": [
+        "ASL - Apache Software Foundation License.txt",
+        "BreakingChanges.txt",
+        "Changes.txt",
+        "License.txt",
+        "castle.core.3.3.0.nupkg.sha512",
+        "castle.core.nuspec",
+        "lib/net35/Castle.Core.dll",
+        "lib/net35/Castle.Core.xml",
+        "lib/net40-client/Castle.Core.dll",
+        "lib/net40-client/Castle.Core.xml",
+        "lib/net45/Castle.Core.dll",
+        "lib/net45/Castle.Core.xml",
+        "lib/sl4/Castle.Core.dll",
+        "lib/sl4/Castle.Core.xml",
+        "lib/sl5/Castle.Core.dll",
+        "lib/sl5/Castle.Core.xml",
+        "readme.txt"
+      ]
+    },
+    "Castle.Windsor/3.4.0": {
+      "sha512": "KWsWXOCk4fVa0N0dK0mRNOfR03dTQZa8sLg2t+ivPmQyq5Ml0mIs4eCa0PqNLXkbMD4wgvTfmJDPZ9yDh2uUZA==",
+      "type": "package",
+      "path": "castle.windsor/3.4.0",
+      "files": [
+        "ASL - Apache Software Foundation License.txt",
+        "BreakingChanges.txt",
+        "Changes.txt",
+        "License.txt",
+        "castle.windsor.3.4.0.nupkg.sha512",
+        "castle.windsor.nuspec",
+        "lib/net35/Castle.Windsor.dll",
+        "lib/net35/Castle.Windsor.xml",
+        "lib/net40-client/Castle.Windsor.dll",
+        "lib/net40-client/Castle.Windsor.xml",
+        "lib/net40/Castle.Windsor.dll",
+        "lib/net40/Castle.Windsor.xml",
+        "lib/net45/Castle.Windsor.dll",
+        "lib/net45/Castle.Windsor.xml",
+        "lib/sl4/Castle.Windsor.dll",
+        "lib/sl4/Castle.Windsor.xml",
+        "lib/sl5/Castle.Windsor.dll",
+        "lib/sl5/Castle.Windsor.xml",
+        "readme.txt"
+      ]
+    },
+    "ClosedXML/0.76.0": {
+      "sha512": "3rfno1NM5yuWLbYgiO1TQDWWnz16ZXPjaxE28f3n6TmR/3baPf8AnmoA79qNPBlL9/MK8TLiIZeuvwfi6N/vRg==",
+      "type": "package",
+      "path": "closedxml/0.76.0",
+      "files": [
+        "closedxml.0.76.0.nupkg.sha512",
+        "closedxml.nuspec",
+        "lib/net35-client/ClosedXML.XML",
+        "lib/net35-client/ClosedXML.dll",
+        "lib/net40-client/ClosedXML.XML",
+        "lib/net40-client/ClosedXML.dll"
+      ]
+    },
+    "DocumentFormat.OpenXml/2.5.0": {
+      "sha512": "H5jnox0hcLwzAjrpNqDPIItjh7dplF1kk1z8LatpI2h75wBgps1MepEttJFKs7xedQReCMHA0tGpNI0H2B+Mrg==",
+      "type": "package",
+      "path": "documentformat.openxml/2.5.0",
+      "files": [
+        "documentformat.openxml.2.5.0.nupkg.sha512",
+        "documentformat.openxml.nuspec",
+        "lib/DocumentFormat.OpenXml.dll"
+      ]
+    },
+    "DotNetOpenAuth.AspNet/4.3.4.13329": {
+      "sha512": "Gqjn6EA7NPw6qsszshyDoyX5AECrrkDjW9Fs64yWIjUfnIJwj9C/34ic5lqeclqhs3efstrubCE1kH2YAl6hXA==",
+      "type": "package",
+      "path": "dotnetopenauth.aspnet/4.3.4.13329",
+      "files": [
+        "dotnetopenauth.aspnet.4.3.4.13329.nupkg.sha512",
+        "dotnetopenauth.aspnet.nuspec",
+        "lib/net40-full/DotNetOpenAuth.AspNet.dll",
+        "lib/net40-full/DotNetOpenAuth.AspNet.xml",
+        "lib/net45-full/DotNetOpenAuth.AspNet.dll",
+        "lib/net45-full/DotNetOpenAuth.AspNet.xml"
+      ]
+    },
+    "DotNetOpenAuth.Core/4.3.4.13329": {
+      "sha512": "sgTuUWHv5tn1weh8jLqXytGQKWpebhk+D4e/RTNNH21eqCEs/ch+x7YxQxzp2u70DO1Hvcjb6dTDj2rO3grgxA==",
+      "type": "package",
+      "path": "dotnetopenauth.core/4.3.4.13329",
+      "files": [
+        "content/web.config.transform",
+        "dotnetopenauth.core.4.3.4.13329.nupkg.sha512",
+        "dotnetopenauth.core.nuspec",
+        "lib/net35-full/DotNetOpenAuth.Core.dll",
+        "lib/net35-full/DotNetOpenAuth.Core.xml",
+        "lib/net40-full/DotNetOpenAuth.Core.dll",
+        "lib/net40-full/DotNetOpenAuth.Core.xml",
+        "lib/net45-full/DotNetOpenAuth.Core.dll",
+        "lib/net45-full/DotNetOpenAuth.Core.xml"
+      ]
+    },
+    "DotNetOpenAuth.OAuth.Consumer/4.3.4.13329": {
+      "sha512": "J+2v9yoOn4yIFBstU95/5f0iKs/WrSyYzlnv6dlOkSTqMX/Bm0pIg462U0whr0dnRd3U8JKP6yUNKTfvCrscQA==",
+      "type": "package",
+      "path": "dotnetopenauth.oauth.consumer/4.3.4.13329",
+      "files": [
+        "dotnetopenauth.oauth.consumer.4.3.4.13329.nupkg.sha512",
+        "dotnetopenauth.oauth.consumer.nuspec",
+        "lib/net35-full/DotNetOpenAuth.OAuth.Consumer.dll",
+        "lib/net35-full/DotNetOpenAuth.OAuth.Consumer.xml",
+        "lib/net40-full/DotNetOpenAuth.OAuth.Consumer.dll",
+        "lib/net40-full/DotNetOpenAuth.OAuth.Consumer.xml",
+        "lib/net45-full/DotNetOpenAuth.OAuth.Consumer.dll",
+        "lib/net45-full/DotNetOpenAuth.OAuth.Consumer.xml"
+      ]
+    },
+    "DotNetOpenAuth.OAuth.Core/4.3.4.13329": {
+      "sha512": "lvdJweyGX+orYVDX8LfQ/p2Lr5D8brkCPmTP4t5QlgeztV629oJCtKvqZxaB7ir6nO3jKPfiyrSJVgAW0e1d4g==",
+      "type": "package",
+      "path": "dotnetopenauth.oauth.core/4.3.4.13329",
+      "files": [
+        "content/web.config.transform",
+        "dotnetopenauth.oauth.core.4.3.4.13329.nupkg.sha512",
+        "dotnetopenauth.oauth.core.nuspec",
+        "lib/net35-full/DotNetOpenAuth.OAuth.dll",
+        "lib/net35-full/DotNetOpenAuth.OAuth.xml",
+        "lib/net40-full/DotNetOpenAuth.OAuth.dll",
+        "lib/net40-full/DotNetOpenAuth.OAuth.xml",
+        "lib/net45-full/DotNetOpenAuth.OAuth.dll",
+        "lib/net45-full/DotNetOpenAuth.OAuth.xml"
+      ]
+    },
+    "DotNetOpenAuth.OpenId.Core/4.3.4.13329": {
+      "sha512": "r8XKTJ6c+YvOOQcTLMgjWsfAkNxgxp8QVsP6pRXrg1Onp5TpzNZ9ULVzKkyRRipmC0fEGitydRnjKRDD2QxLtg==",
+      "type": "package",
+      "path": "dotnetopenauth.openid.core/4.3.4.13329",
+      "files": [
+        "content/net35-full/web.config.transform",
+        "content/net40-full/web.config.transform",
+        "content/net45-full/web.config.transform",
+        "dotnetopenauth.openid.core.4.3.4.13329.nupkg.sha512",
+        "dotnetopenauth.openid.core.nuspec",
+        "lib/net35-full/DotNetOpenAuth.OpenId.dll",
+        "lib/net35-full/DotNetOpenAuth.OpenId.xml",
+        "lib/net35-full/Mono.Math.dll",
+        "lib/net35-full/Mono.Math.xml",
+        "lib/net35-full/Org.Mentalis.Security.Cryptography.dll",
+        "lib/net35-full/Org.Mentalis.Security.Cryptography.xml",
+        "lib/net40-full/DotNetOpenAuth.OpenId.dll",
+        "lib/net40-full/DotNetOpenAuth.OpenId.xml",
+        "lib/net40-full/Mono.Math.dll",
+        "lib/net40-full/Mono.Math.xml",
+        "lib/net40-full/Org.Mentalis.Security.Cryptography.dll",
+        "lib/net40-full/Org.Mentalis.Security.Cryptography.xml",
+        "lib/net45-full/DotNetOpenAuth.OpenId.dll",
+        "lib/net45-full/DotNetOpenAuth.OpenId.xml",
+        "lib/net45-full/Mono.Math.dll",
+        "lib/net45-full/Mono.Math.xml",
+        "lib/net45-full/Org.Mentalis.Security.Cryptography.dll",
+        "lib/net45-full/Org.Mentalis.Security.Cryptography.xml"
+      ]
+    },
+    "DotNetOpenAuth.OpenId.RelyingParty/4.3.4.13329": {
+      "sha512": "2uME8eTovsaE+/EiDDkr82O7y7yl0LMyoQHuHCdOVizUHrUZewkF/vi7pn1F9pGqs8zeBQqI9y1AZ6XQ3s2REA==",
+      "type": "package",
+      "path": "dotnetopenauth.openid.relyingparty/4.3.4.13329",
+      "files": [
+        "content/web.config.transform",
+        "dotnetopenauth.openid.relyingparty.4.3.4.13329.nupkg.sha512",
+        "dotnetopenauth.openid.relyingparty.nuspec",
+        "lib/net35-full/DotNetOpenAuth.OpenId.RelyingParty.dll",
+        "lib/net35-full/DotNetOpenAuth.OpenId.RelyingParty.xml",
+        "lib/net40-full/DotNetOpenAuth.OpenId.RelyingParty.dll",
+        "lib/net40-full/DotNetOpenAuth.OpenId.RelyingParty.xml",
+        "lib/net45-full/DotNetOpenAuth.OpenId.RelyingParty.dll",
+        "lib/net45-full/DotNetOpenAuth.OpenId.RelyingParty.xml"
+      ]
+    },
+    "Esynctraining.AC.Provider/1.0.2.42": {
+      "sha512": "758abTvaT0e2QBfhEzHiHP6tqB5yymiU8vTHNq2F6EwC9DMiVJwQE7lah6Kg0TYkL9TxmHe+wnl6zql1mGQ4ng==",
+      "type": "package",
+      "path": "esynctraining.ac.provider/1.0.2.42",
+      "files": [
+        "esynctraining.ac.provider.1.0.2.42.nupkg.sha512",
+        "esynctraining.ac.provider.nuspec",
+        "lib/net45/Esynctraining.AC.Provider.dll",
+        "lib/net461/Esynctraining.AC.Provider.dll"
+      ]
+    },
+    "Esynctraining.AdobeConnect/1.0.1.49": {
+      "sha512": "sCaw8GcDDWYwzG5ZhKHXX+7FXsLhxC94g5eyfltOtF4bmIhnpk/mbFjDAmp46M/CzdlJ993Y8qp8dpF8IppoCA==",
+      "type": "package",
+      "path": "esynctraining.adobeconnect/1.0.1.49",
+      "files": [
+        "esynctraining.adobeconnect.1.0.1.49.nupkg.sha512",
+        "esynctraining.adobeconnect.nuspec",
+        "lib/net45/Esynctraining.AdobeConnect.dll",
+        "lib/net461/Esynctraining.AdobeConnect.dll"
+      ]
+    },
+    "Esynctraining.AdobeConnect.Api/1.0.0.19": {
+      "sha512": "zJNDVcCBfpR2fxJ3MjgDALOeUb+weYYaHcEZwheW1mAoQE9OvSRuhBJu4jSGeMtVPHdGmt48669qNM6nUi9zqg==",
+      "type": "package",
+      "path": "esynctraining.adobeconnect.api/1.0.0.19",
+      "files": [
+        "esynctraining.adobeconnect.api.1.0.0.19.nupkg.sha512",
+        "esynctraining.adobeconnect.api.nuspec",
+        "lib/net45/Esynctraining.AdobeConnect.Api.dll",
+        "lib/net45/Esynctraining.AdobeConnect.Api.xml",
+        "lib/net461/Esynctraining.AdobeConnect.Api.dll"
+      ]
+    },
+    "Esynctraining.BlackBoardClient/1.0.0.1": {
+      "sha512": "ghaH+HDjrCFoM9hqdfjPNyq1YAiLv1zXtFhOAv01bm2hD/r7M71dV5O6Ei7NaBA/hz/yg8w+WQJd77p1k0Gn9Q==",
+      "type": "package",
+      "path": "esynctraining.blackboardclient/1.0.0.1",
+      "files": [
+        "esynctraining.blackboardclient.1.0.0.1.nupkg.sha512",
+        "esynctraining.blackboardclient.nuspec",
+        "lib/net45/Esynctraining.BlackBoardClient.dll",
+        "lib/net461/Esynctraining.BlackBoardClient.dll"
+      ]
+    },
+    "Esynctraining.Core.Only/1.0.1": {
+      "sha512": "s/0Da8qWJC72nscUkOe8EgTBcsnn+r8DuiJjtpXcjN/VuAmkhJGXjrpVxELf7/cpBmv5/KN/RD+VLoc3vOiW0A==",
+      "type": "package",
+      "path": "esynctraining.core.only/1.0.1",
+      "files": [
+        "esynctraining.core.only.1.0.1.nupkg.sha512",
+        "esynctraining.core.only.nuspec",
+        "lib/net45/Esynctraining.Core.dll",
+        "lib/net461/Esynctraining.Core.dll",
+        "lib/netstandard1.3/Esynctraining.Core.dll"
+      ]
+    },
+    "Esynctraining.Crypto/1.0.1": {
+      "sha512": "ogc6NMZAiGaskW2WoWqXJ4fz/jnaLlZQ9dNsyv4ZYTl6SPpTaeR1BNgX+PT6Sd6KCweQwXp+dnpbOFjR0LCTWg==",
+      "type": "package",
+      "path": "esynctraining.crypto/1.0.1",
+      "files": [
+        "esynctraining.crypto.1.0.1.nupkg.sha512",
+        "esynctraining.crypto.nuspec",
+        "lib/net45/Esynctraining.Crypto.dll",
+        "lib/net461/Esynctraining.Crypto.dll"
+      ]
+    },
+    "Esynctraining.FluentValidation/1.0.0.3": {
+      "sha512": "9laTP9lUq/Md++cJowG++YczuotrklZOQmMAkNKli+KOs4Zgb45wgtfAoZbnNKpibCglI42lt5F1SMqt0W8enw==",
+      "type": "package",
+      "path": "esynctraining.fluentvalidation/1.0.0.3",
+      "files": [
+        "esynctraining.fluentvalidation.1.0.0.3.nupkg.sha512",
+        "esynctraining.fluentvalidation.nuspec",
+        "lib/net45/Esynctraining.FluentValidation.dll"
+      ]
+    },
+    "Esynctraining.MeetingOne.RestClient/1.0.0.6": {
+      "sha512": "AfWD35LtJg0KBeqKlYi2EatlHKtPRiND4L7V3OQa9g6mMeGwS0RN+ug6Q+mUo8AWK3EhAY7osARCKumbQdOJhA==",
+      "type": "package",
+      "path": "esynctraining.meetingone.restclient/1.0.0.6",
+      "files": [
+        "esynctraining.meetingone.restclient.1.0.0.6.nupkg.sha512",
+        "esynctraining.meetingone.restclient.nuspec",
+        "lib/net45/Esynctraining.MeetingOne.RestClient.dll",
+        "lib/net45/Esynctraining.MeetingOne.dll"
+      ]
+    },
+    "Esynctraining.NHibernate/1.0.0.1": {
+      "sha512": "hMSnCDs2MAVfLy42VM2Sd1maIUUi0KUcHTi8mNWaFT+X5gq0SVPVI1AgdQ0Ldz06zHVG1KjUhEdghlsPGeZgPg==",
+      "type": "package",
+      "path": "esynctraining.nhibernate/1.0.0.1",
+      "files": [
+        "esynctraining.nhibernate.1.0.0.1.nupkg.sha512",
+        "esynctraining.nhibernate.nuspec",
+        "lib/net45/Esynctraining.NHibernate.dll"
+      ]
+    },
+    "FluentValidation/6.4.1": {
+      "sha512": "0W0LTJFIhQxyJQ2CAqCbNPYt/ujNOmRbp3ktqTNRARfx2usyFOj2XO0F8oDSLqnkPngzAiCvYw+WsgBWOGkB8g==",
+      "type": "package",
+      "path": "fluentvalidation/6.4.1",
+      "files": [
+        "fluentvalidation.6.4.1.nupkg.sha512",
+        "fluentvalidation.nuspec",
+        "lib/Net45/FluentValidation.XML",
+        "lib/Net45/FluentValidation.dll",
+        "lib/Net45/FluentValidation.pdb",
+        "lib/Net45/cs/FluentValidation.resources.dll",
+        "lib/Net45/da/FluentValidation.resources.dll",
+        "lib/Net45/de/FluentValidation.resources.dll",
+        "lib/Net45/es/FluentValidation.resources.dll",
+        "lib/Net45/fa/FluentValidation.resources.dll",
+        "lib/Net45/fi/FluentValidation.resources.dll",
+        "lib/Net45/fr/FluentValidation.resources.dll",
+        "lib/Net45/it/FluentValidation.resources.dll",
+        "lib/Net45/ko/FluentValidation.resources.dll",
+        "lib/Net45/mk/FluentValidation.resources.dll",
+        "lib/Net45/nl/FluentValidation.resources.dll",
+        "lib/Net45/pl/FluentValidation.resources.dll",
+        "lib/Net45/pt/FluentValidation.resources.dll",
+        "lib/Net45/ru/FluentValidation.resources.dll",
+        "lib/Net45/sv/FluentValidation.resources.dll",
+        "lib/Net45/tr/FluentValidation.resources.dll",
+        "lib/Net45/zh-CN/FluentValidation.resources.dll",
+        "lib/netstandard1.0/FluentValidation.dll",
+        "lib/netstandard1.0/FluentValidation.pdb",
+        "lib/netstandard1.0/cs/FluentValidation.resources.dll",
+        "lib/netstandard1.0/da/FluentValidation.resources.dll",
+        "lib/netstandard1.0/de/FluentValidation.resources.dll",
+        "lib/netstandard1.0/es/FluentValidation.resources.dll",
+        "lib/netstandard1.0/fa/FluentValidation.resources.dll",
+        "lib/netstandard1.0/fi/FluentValidation.resources.dll",
+        "lib/netstandard1.0/fr/FluentValidation.resources.dll",
+        "lib/netstandard1.0/it/FluentValidation.resources.dll",
+        "lib/netstandard1.0/nl/FluentValidation.resources.dll",
+        "lib/netstandard1.0/pl/FluentValidation.resources.dll",
+        "lib/netstandard1.0/pt/FluentValidation.resources.dll",
+        "lib/netstandard1.0/ru/FluentValidation.resources.dll",
+        "lib/netstandard1.0/sv/FluentValidation.resources.dll",
+        "lib/netstandard1.0/zh-CN/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/FluentValidation.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/FluentValidation.dll.config",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/FluentValidation.pdb",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/Microsoft.Threading.Tasks.Extensions.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/Microsoft.Threading.Tasks.Extensions.xml",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/Microsoft.Threading.Tasks.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/Microsoft.Threading.Tasks.xml",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/System.IO.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/System.IO.xml",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/System.Runtime.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/System.Runtime.xml",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/System.Threading.Tasks.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/System.Threading.Tasks.xml",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/cs/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/da/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/de/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/es/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/fa/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/fi/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/fr/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/it/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/nl/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/pl/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/pt/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/ru/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/sv/FluentValidation.resources.dll",
+        "lib/portable-net40+sl50+wp80+win8+wpa81/zh-CN/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/FluentValidation.XML",
+        "lib/portable-net45+wp80+win8+wpa81/FluentValidation.dll",
+        "lib/portable-net45+wp80+win8+wpa81/FluentValidation.pdb",
+        "lib/portable-net45+wp80+win8+wpa81/cs/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/da/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/de/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/es/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/fa/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/fi/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/fr/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/it/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/nl/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/pl/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/pt/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/ru/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/sv/FluentValidation.resources.dll",
+        "lib/portable-net45+wp80+win8+wpa81/zh-CN/FluentValidation.resources.dll",
+        "lib/uap10.0/FluentValidation.dll",
+        "lib/uap10.0/FluentValidation.pdb",
+        "lib/uap10.0/cs/FluentValidation.resources.dll",
+        "lib/uap10.0/da/FluentValidation.resources.dll",
+        "lib/uap10.0/de/FluentValidation.resources.dll",
+        "lib/uap10.0/es/FluentValidation.resources.dll",
+        "lib/uap10.0/fa/FluentValidation.resources.dll",
+        "lib/uap10.0/fi/FluentValidation.resources.dll",
+        "lib/uap10.0/fr/FluentValidation.resources.dll",
+        "lib/uap10.0/it/FluentValidation.resources.dll",
+        "lib/uap10.0/nl/FluentValidation.resources.dll",
+        "lib/uap10.0/pl/FluentValidation.resources.dll",
+        "lib/uap10.0/pt/FluentValidation.resources.dll",
+        "lib/uap10.0/ru/FluentValidation.resources.dll",
+        "lib/uap10.0/sv/FluentValidation.resources.dll",
+        "lib/uap10.0/zh-CN/FluentValidation.resources.dll"
+      ]
+    },
+    "HtmlAgilityPack/1.4.9": {
+      "sha512": "anZIsi7bbHZ35ZZzvCA+gVWC/mEXVhcJjJvxr3wzUEDsOE4uk0Fa0ZiaxVn83AZpVKVO4RHyqamPkzzJbMUgmQ==",
+      "type": "package",
+      "path": "htmlagilitypack/1.4.9",
+      "files": [
+        "HAPIcon.png",
+        "htmlagilitypack.1.4.9.nupkg.sha512",
+        "htmlagilitypack.nuspec",
+        "lib/Net20/HtmlAgilityPack.dll",
+        "lib/Net20/HtmlAgilityPack.pdb",
+        "lib/Net20/HtmlAgilityPack.xml",
+        "lib/Net40-client/HtmlAgilityPack.dll",
+        "lib/Net40-client/HtmlAgilityPack.pdb",
+        "lib/Net40-client/HtmlAgilityPack.xml",
+        "lib/Net40/HtmlAgilityPack.XML",
+        "lib/Net40/HtmlAgilityPack.dll",
+        "lib/Net40/HtmlAgilityPack.pdb",
+        "lib/Net45/HtmlAgilityPack.XML",
+        "lib/Net45/HtmlAgilityPack.dll",
+        "lib/Net45/HtmlAgilityPack.pdb",
+        "lib/NetCore45/HtmlAgilityPack.dll",
+        "lib/NetCore45/HtmlAgilityPack.pdb",
+        "lib/NetCore45/HtmlAgilityPack.pri",
+        "lib/NetCore45/HtmlAgilityPack.xml",
+        "lib/portable-net45+netcore45+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.dll",
+        "lib/portable-net45+netcore45+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.pdb",
+        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.dll",
+        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid+MonoTouch/HtmlAgilityPack.pdb",
+        "lib/sl3-wp/_._",
+        "lib/sl4/HtmlAgilityPack.XML",
+        "lib/sl4/HtmlAgilityPack.dll",
+        "lib/sl4/HtmlAgilityPack.pdb",
+        "lib/sl5/HtmlAgilityPack.XML",
+        "lib/sl5/HtmlAgilityPack.dll",
+        "lib/sl5/HtmlAgilityPack.pdb",
+        "readme.txt"
+      ]
+    },
+    "Iesi.Collections/4.0.0.4000": {
+      "sha512": "fLQKwZovMOhjte47Op+2YWLpmncQ/siA7hOdmG2eBLTFjp81s+gGkkGnDetOhBqYnmWK8g2kyx1DP9uNaJ68Ew==",
+      "type": "package",
+      "path": "iesi.collections/4.0.0.4000",
+      "files": [
+        "iesi.collections.4.0.0.4000.nupkg.sha512",
+        "iesi.collections.nuspec",
+        "lib/net40/Iesi.Collections.dll",
+        "lib/net40/Iesi.Collections.xml"
+      ]
+    },
+    "Jil/2.15.1": {
+      "sha512": "u87/KLHh9hrNk8mEdvJ6fXsMMKyjBXFmlyD7rSF1+ldWqamiceFK9MM7ZyTG/hzHjp4B0yfQ7HaBu6OtOpvb9w==",
+      "type": "package",
+      "path": "jil/2.15.1",
+      "files": [
+        "jil.2.15.1.nupkg.sha512",
+        "jil.nuspec",
+        "lib/net45/Jil.XML",
+        "lib/net45/Jil.dll",
+        "lib/net45/Jil.pdb",
+        "lib/netstandard1.6/Jil.Core.deps.json",
+        "lib/netstandard1.6/Jil.Core.dll",
+        "lib/netstandard1.6/Jil.Core.pdb",
+        "lib/netstandard1.6/Jil.Core.xml"
+      ]
+    },
+    "LtiLibrary.AspNet/1.6.1": {
+      "sha512": "1pkO+GJTaKH/U+Of7OT8pmmPQSDyUlmKKHIuOXny1WPHWVq0HqkJRtFQjzJpWLWOgXyphdmLT6WpRtIZMu3L7A==",
+      "type": "package",
+      "path": "ltilibrary.aspnet/1.6.1",
+      "files": [
+        "lib/net45/LtiLibrary.AspNet.dll",
+        "lib/net45/LtiLibrary.AspNet.xml",
+        "ltilibrary.aspnet.1.6.1.nupkg.sha512",
+        "ltilibrary.aspnet.nuspec"
+      ]
+    },
+    "LtiLibrary.Core/1.6.1": {
+      "sha512": "wnWEW+7RcMs0ahmajMr7AVEnZ+jbqpgXq0Q21HpSsi8RBBJpHeGWFTeFPZY0xRHJuwMnFUhDcP4UUsABBQ99Gg==",
+      "type": "package",
+      "path": "ltilibrary.core/1.6.1",
+      "files": [
+        "lib/net45/LtiLibrary.Core.dll",
+        "lib/net45/LtiLibrary.Core.xml",
+        "ltilibrary.core.1.6.1.nupkg.sha512",
+        "ltilibrary.core.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Mvc/5.2.3": {
+      "sha512": "i8jZf5QrbcFmjiYWRD7o7qTak/oXKxV80MgP4cZ33A8GC0RBtBIdZ1VHaloGUg+qsHUz5rVkGpwenM+ugDz5PA==",
+      "type": "package",
+      "path": "microsoft.aspnet.mvc/5.2.3",
+      "files": [
+        "Content/Web.config.install.xdt",
+        "Content/Web.config.uninstall.xdt",
+        "Microsoft.AspNet.Mvc.5.2.3.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.nuspec",
+        "lib/net45/System.Web.Mvc.dll",
+        "lib/net45/System.Web.Mvc.xml"
+      ]
+    },
+    "Microsoft.AspNet.Razor/3.2.3": {
+      "sha512": "leta+Q73O7+pR8ThTqXmwaNMSqwZQQ3BHfpUHd8S1XaUWe1jRVLitMHqo1AmY7wPNLyankPA1beiUKEGj8Q3Dw==",
+      "type": "package",
+      "path": "microsoft.aspnet.razor/3.2.3",
+      "files": [
+        "Microsoft.AspNet.Razor.3.2.3.nupkg.sha512",
+        "Microsoft.AspNet.Razor.nuspec",
+        "lib/net45/System.Web.Razor.dll",
+        "lib/net45/System.Web.Razor.xml"
+      ]
+    },
+    "Microsoft.AspNet.WebApi.Client/5.2.3": {
+      "sha512": "3kiI8peSXbXHDDrRuo+QaX0iCEVRe0nvn2dBDRw656uPX32UalbBlSIDUDlJxu05eau4tnuhsikiUuugvvoUoQ==",
+      "type": "package",
+      "path": "microsoft.aspnet.webapi.client/5.2.3",
+      "files": [
+        "Microsoft.AspNet.WebApi.Client.5.2.3.nupkg.sha512",
+        "Microsoft.AspNet.WebApi.Client.nuspec",
+        "lib/net45/System.Net.Http.Formatting.dll",
+        "lib/net45/System.Net.Http.Formatting.xml",
+        "lib/portable-wp8+netcore45+net45+wp81+wpa81/System.Net.Http.Formatting.dll",
+        "lib/portable-wp8+netcore45+net45+wp81+wpa81/System.Net.Http.Formatting.xml"
+      ]
+    },
+    "Microsoft.AspNet.WebApi.Core/5.2.3": {
+      "sha512": "o90QYlRV8VKR1S7+EcJw9w8WSyVFLl+IIzN8ILZ+n2t6rsc/KS8kBxRzA7wCFPRUHhebCfLqilBk39phvanx3g==",
+      "type": "package",
+      "path": "microsoft.aspnet.webapi.core/5.2.3",
+      "files": [
+        "Content/web.config.transform",
+        "lib/net45/System.Web.Http.dll",
+        "lib/net45/System.Web.Http.xml",
+        "microsoft.aspnet.webapi.core.5.2.3.nupkg.sha512",
+        "microsoft.aspnet.webapi.core.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.WebApi.WebHost/5.2.3": {
+      "sha512": "bhm4/BKdS3t6nK2R3NjCpxulcwtMFiHqVBDLuN3W5So1PhZfE+RBs7eVazGOhsEKCk7PoSmiSnl9DG0cpyfHtA==",
+      "type": "package",
+      "path": "microsoft.aspnet.webapi.webhost/5.2.3",
+      "files": [
+        "lib/net45/System.Web.Http.WebHost.dll",
+        "lib/net45/System.Web.Http.WebHost.xml",
+        "microsoft.aspnet.webapi.webhost.5.2.3.nupkg.sha512",
+        "microsoft.aspnet.webapi.webhost.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.WebPages/3.2.3": {
+      "sha512": "zbtxBERla5RE/mhftwbrXOzc0r6lh8WcnjpGW7QQe+PvSDDx1BgsTUGzfCXO/vJznHNpY5oCSYLt8Q5vUu7F0g==",
+      "type": "package",
+      "path": "microsoft.aspnet.webpages/3.2.3",
+      "files": [
+        "Content/Web.config.install.xdt",
+        "Content/Web.config.uninstall.xdt",
+        "Microsoft.AspNet.WebPages.3.2.3.nupkg.sha512",
+        "Microsoft.AspNet.WebPages.nuspec",
+        "lib/net45/System.Web.Helpers.dll",
+        "lib/net45/System.Web.Helpers.xml",
+        "lib/net45/System.Web.WebPages.Deployment.dll",
+        "lib/net45/System.Web.WebPages.Deployment.xml",
+        "lib/net45/System.Web.WebPages.Razor.dll",
+        "lib/net45/System.Web.WebPages.Razor.xml",
+        "lib/net45/System.Web.WebPages.dll",
+        "lib/net45/System.Web.WebPages.xml"
+      ]
+    },
+    "Microsoft.AspNet.WebPages.Data/1.0.20105.408": {
+      "sha512": "yNLqSKwkdriv0PhIZzztG3Mr82jbP3YHDPQ5p4APzPYNL5yssT7BosvrQDdmghRqCqVxxaTM3wVYhaKQ7PB8QA==",
+      "type": "package",
+      "path": "microsoft.aspnet.webpages.data/1.0.20105.408",
+      "files": [
+        "lib/net40/WebMatrix.Data.dll",
+        "microsoft.aspnet.webpages.data.1.0.20105.408.nupkg.sha512",
+        "microsoft.aspnet.webpages.data.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.WebPages.OAuth/3.2.3": {
+      "sha512": "vLMmo5CGKqrwZoGjlcUgQppZa7tW8U/3gaEQ+uNYEQZCsBzRd8BA7XvP+gPW0WKUr/AEY21OxonMSnv4Jcxofg==",
+      "type": "package",
+      "path": "microsoft.aspnet.webpages.oauth/3.2.3",
+      "files": [
+        "lib/net45/Microsoft.Web.WebPages.OAuth.dll",
+        "lib/net45/Microsoft.Web.WebPages.OAuth.xml",
+        "microsoft.aspnet.webpages.oauth.3.2.3.nupkg.sha512",
+        "microsoft.aspnet.webpages.oauth.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.WebPages.WebData/3.2.3": {
+      "sha512": "yCmVtepryxxHdb7r4E4sfINS8mmyGTwSZriZrxdhsJUOmx3KwT6GbdMkQJjbd3mJXspu8liiwCfT5TcyOS3Fqg==",
+      "type": "package",
+      "path": "microsoft.aspnet.webpages.webdata/3.2.3",
+      "files": [
+        "lib/net45/WebMatrix.WebData.dll",
+        "lib/net45/WebMatrix.WebData.xml",
+        "microsoft.aspnet.webpages.webdata.3.2.3.nupkg.sha512",
+        "microsoft.aspnet.webpages.webdata.nuspec"
+      ]
+    },
+    "Microsoft.Net.Http/2.0.20505": {
+      "sha512": "XRsKQP2XEd/DGLerVsU+T2pKQGTFc9ctWsIVbRblL/y+jT/BUo28aJ5mWN40oAeUwwbpXshAc8uO/LRscWav9A==",
+      "type": "package",
+      "path": "microsoft.net.http/2.0.20505",
+      "files": [
+        "lib/net40/System.Net.Http.WebRequest.dll",
+        "lib/net40/System.Net.Http.WebRequest.xml",
+        "lib/net40/System.Net.Http.dll",
+        "lib/net40/System.Net.Http.xml",
+        "microsoft.net.http.2.0.20505.nupkg.sha512",
+        "microsoft.net.http.nuspec"
+      ]
+    },
+    "Microsoft.Web.Infrastructure/1.0.0": {
+      "sha512": "FNmvLn5m2LTU/Rs2KWVo0SIIh9Ek+U0ojex7xeDaSHw/zgEP77A8vY5cVWgUtBGS8MJfDGNn8rpXJWEIQaPwTg==",
+      "type": "package",
+      "path": "microsoft.web.infrastructure/1.0.0",
+      "files": [
+        "Microsoft.Web.Infrastructure.1.0.0.nupkg.sha512",
+        "Microsoft.Web.Infrastructure.nuspec",
+        "lib/net40/Microsoft.Web.Infrastructure.dll"
+      ]
+    },
+    "Microsoft.Web.Services3/3.0.0": {
+      "sha512": "f7TxDOPxdtxqgKma7PTUlpjeBVur9HFFvBR9UEhMU6qQiOOCG2RezmSdiMKuUlCpFB95AXoWB074ZpgCNbUupg==",
+      "type": "package",
+      "path": "microsoft.web.services3/3.0.0",
+      "files": [
+        "lib/net20/Microsoft.Web.Services3.dll",
+        "microsoft.web.services3.3.0.0.nupkg.sha512",
+        "microsoft.web.services3.nuspec"
+      ]
+    },
+    "Newtonsoft.Json/10.0.3": {
+      "sha512": "wBM7i7i3U2WX0ecor4zdVGvgrwFUjuigBoHKiL+nH39fCOpCPjBY3RDqJM32edvdyTAVdjzlccHsg41+/+zpSA==",
+      "type": "package",
+      "path": "newtonsoft.json/10.0.3",
+      "files": [
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.10.0.3.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "tools/install.ps1"
+      ]
+    },
+    "NHibernate/4.0.4.4000": {
+      "sha512": "jAKwpGLeGai8KWj1e3p1K882vlZUJaQeH4RTuscKTyXhsEsiQEe2uKs9S3bY91aPyygMiPXg1CyRopi1K+e5aA==",
+      "type": "package",
+      "path": "nhibernate/4.0.4.4000",
+      "files": [
+        "ConfigurationTemplates/FireBird.cfg.xml",
+        "ConfigurationTemplates/MSSQL.cfg.xml",
+        "ConfigurationTemplates/MySql.cfg.xml",
+        "ConfigurationTemplates/Oracle.cfg.xml",
+        "ConfigurationTemplates/PostgreSQL.cfg.xml",
+        "ConfigurationTemplates/SQLite.cfg.xml",
+        "ConfigurationTemplates/SybaseASE.cfg.xml",
+        "ConfigurationTemplates/SybaseSQLAnywhere.cfg.xml",
+        "NHibernate.license.txt",
+        "NHibernate.readme.html",
+        "NHibernate.releasenotes.txt",
+        "lib/net40/NHibernate.dll",
+        "lib/net40/NHibernate.xml",
+        "nhibernate-configuration.xsd",
+        "nhibernate-mapping.xsd",
+        "nhibernate.4.0.4.4000.nupkg.sha512",
+        "nhibernate.nuspec"
+      ]
+    },
+    "Sigil/4.7.0": {
+      "sha512": "9jcSXlKJHpjiEFbg98qRdQKcY4IPUzpf52pbTVCvKlP0wLI/RlBiTmZ1+VY3rCKmiLQEgYQnXwD8imXXESWWog==",
+      "type": "package",
+      "path": "sigil/4.7.0",
+      "files": [
+        "lib/net20/Sigil.dll",
+        "lib/net20/Sigil.xml",
+        "lib/net30/Sigil.dll",
+        "lib/net30/Sigil.xml",
+        "lib/net35/Sigil.dll",
+        "lib/net35/Sigil.xml",
+        "lib/net40/Sigil.dll",
+        "lib/net40/Sigil.xml",
+        "lib/net45/Sigil.dll",
+        "lib/net45/Sigil.xml",
+        "lib/netstandard1.5/Sigil.dll",
+        "lib/netstandard1.5/Sigil.xml",
+        "sigil.4.7.0.nupkg.sha512",
+        "sigil.nuspec"
+      ]
+    },
+    "EdugameCloud.Core/1.8.4": {
+      "type": "project",
+      "path": "../EdugameCloud.Core/EdugameCloud.Core.csproj",
+      "msbuildProject": "../EdugameCloud.Core/EdugameCloud.Core.csproj"
+    },
+    "EdugameCloud.Lti/1.8.4": {
+      "type": "project",
+      "path": "../EdugameCloud.Lti/EdugameCloud.Lti.csproj",
+      "msbuildProject": "../EdugameCloud.Lti/EdugameCloud.Lti.csproj"
+    },
+    "EdugameCloud.Lti.Core/1.8.4": {
+      "type": "project",
+      "path": "../EdugameCloud.Lti.Core/EdugameCloud.Lti.Core.csproj",
+      "msbuildProject": "../EdugameCloud.Lti.Core/EdugameCloud.Lti.Core.csproj"
+    },
+    "EdugameCloud.Lti.Telephony/1.8.4": {
+      "type": "project",
+      "path": "../EdugameCloud.Lti.Telephony/EdugameCloud.Lti.Telephony.csproj",
+      "msbuildProject": "../EdugameCloud.Lti.Telephony/EdugameCloud.Lti.Telephony.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.5": [
+      "EdugameCloud.Core >= 1.8.4",
+      "EdugameCloud.Lti >= 1.8.4",
+      "EdugameCloud.Lti.Core >= 1.8.4"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\MSI-PC\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.8.4",
+    "restore": {
+      "projectUniqueName": "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Lti.AgilixBuzz\\EdugameCloud.Lti.AgilixBuzz.csproj",
+      "projectName": "EdugameCloud.Lti.AgilixBuzz",
+      "projectPath": "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Lti.AgilixBuzz\\EdugameCloud.Lti.AgilixBuzz.csproj",
+      "outputPath": "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Lti.AgilixBuzz\\obj\\",
+      "projectStyle": "PackageReference",
+      "originalTargetFrameworks": [
+        "net45"
+      ],
+      "frameworks": {
+        "net45": {
+          "projectReferences": {
+            "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Core\\EdugameCloud.Core.csproj": {
+              "projectPath": "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Core\\EdugameCloud.Core.csproj"
+            },
+            "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Lti.Core\\EdugameCloud.Lti.Core.csproj": {
+              "projectPath": "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Lti.Core\\EdugameCloud.Lti.Core.csproj"
+            },
+            "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Lti\\EdugameCloud.Lti.csproj": {
+              "projectPath": "D:\\Sources\\ESyncTraining\\trunk\\csharp\\EdugameCloud.WCFService\\EdugameCloud.Lti\\EdugameCloud.Lti.csproj"
+            }
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "net45": {}
+    }
+  }
+}

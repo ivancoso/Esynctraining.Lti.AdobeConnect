@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.WCFService", "EdugameCloud.WCFService\EdugameCloud.WCFService.csproj", "{1758C513-FDF1-47FA-842F-9C332DA85C17}"
 EndProject
@@ -38,33 +38,31 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Api", "Edu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Api.Host", "EdugameCloud.Lti.Api.Host\EdugameCloud.Lti.Api.Host.csproj", "{D81BD94D-E5C6-4AF0-B1F9-F69B849C3833}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Mp4.Host", "EdugameCloud.Lti.Mp4.Host\EdugameCloud.Lti.Mp4.Host.csproj", "{EA7B7E52-D30F-42B4-AF52-91E615AF5474}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Mp4.Host", "EdugameCloud.Lti.Mp4.Host\EdugameCloud.Lti.Mp4.Host.csproj", "{EA7B7E52-D30F-42B4-AF52-91E615AF5474}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Core", "EdugameCloud.Core\EdugameCloud.Core.csproj", "{0356A403-7B15-4A68-9C81-7B6BFF6956CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Core", "EdugameCloud.Core\EdugameCloud.Core.csproj", "{0356A403-7B15-4A68-9C81-7B6BFF6956CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Core", "EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj", "{6B3DC960-C953-4783-927C-40E438746AC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Core", "EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj", "{6B3DC960-C953-4783-927C-40E438746AC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti", "EdugameCloud.Lti\EdugameCloud.Lti.csproj", "{B45A1C76-37BD-45BA-95B5-21BEFD17B3E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti", "EdugameCloud.Lti\EdugameCloud.Lti.csproj", "{B45A1C76-37BD-45BA-95B5-21BEFD17B3E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.BlackBoard", "EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj", "{410B1611-24EE-4887-8218-31FCBCE1BE02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.BlackBoard", "EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj", "{410B1611-24EE-4887-8218-31FCBCE1BE02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.BrainHoney", "EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj", "{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Canvas", "EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj", "{9CBD846D-100C-4084-B71D-73C40192EF21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Canvas", "EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj", "{9CBD846D-100C-4084-B71D-73C40192EF21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Moodle", "EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj", "{8BDE322E-1592-4C41-AC4A-B9A644175F04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Moodle", "EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj", "{8BDE322E-1592-4C41-AC4A-B9A644175F04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Sakai", "EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj", "{1535300B-D67D-41F1-9D1F-EBCC5AC32B75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Sakai", "EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj", "{1535300B-D67D-41F1-9D1F-EBCC5AC32B75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Desire2Learn", "EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj", "{1D04423B-12E2-41E5-BCE6-A5AA99091110}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Desire2Learn", "EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj", "{1D04423B-12E2-41E5-BCE6-A5AA99091110}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Telephony", "EdugameCloud.Lti.Telephony\EdugameCloud.Lti.Telephony.csproj", "{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Telephony", "EdugameCloud.Lti.Telephony\EdugameCloud.Lti.Telephony.csproj", "{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Core.Logging", "EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj", "{1223FC00-6D40-4356-9744-36474EB76917}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Core.Logging", "EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj", "{1223FC00-6D40-4356-9744-36474EB76917}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Persistence", "EdugameCloud.Lti.Persistence\EdugameCloud.Lti.Persistence.csproj", "{E9BD4EB8-1136-480C-A07D-4E7FA6FFA6C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Persistence", "EdugameCloud.Lti.Persistence\EdugameCloud.Lti.Persistence.csproj", "{E9BD4EB8-1136-480C-A07D-4E7FA6FFA6C4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Persistence", "EdugameCloud.Persistence\EdugameCloud.Persistence.csproj", "{18D11468-DDA0-494C-870B-E261EE31CC25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Persistence", "EdugameCloud.Persistence\EdugameCloud.Persistence.csproj", "{18D11468-DDA0-494C-870B-E261EE31CC25}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Web", "EdugameCloud.Web\EdugameCloud.Web.csproj", "{A96BC47C-CF87-42E2-816C-28FF2FC3C6B1}"
 EndProject
@@ -72,7 +70,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.ACEvents.Web",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Certificates", "EdugameCloud.Certificates\EdugameCloud.Certificates.csproj", "{4323CA31-A7B4-4EEF-97C5-F731F20FBFDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.GetHashCodeTrick", "EdugameCloud.Lti.GetHashCodeTrick\EdugameCloud.Lti.GetHashCodeTrick.csproj", "{D0E5A5AE-9C5E-4C32-B0B5-485BF1C0A3AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.GetHashCodeTrick", "EdugameCloud.Lti.GetHashCodeTrick\EdugameCloud.Lti.GetHashCodeTrick.csproj", "{D0E5A5AE-9C5E-4C32-B0B5-485BF1C0A3AD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.AgilixBuzz", "EdugameCloud.Lti.AgilixBuzz\EdugameCloud.Lti.AgilixBuzz.csproj", "{48CBB08F-362B-4ADD-A48C-175FA094D030}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -314,22 +314,6 @@ Global
 		{410B1611-24EE-4887-8218-31FCBCE1BE02}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{410B1611-24EE-4887-8218-31FCBCE1BE02}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
 		{410B1611-24EE-4887-8218-31FCBCE1BE02}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.Mp4Release|Any CPU.Build.0 = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.MyContentRelease|Any CPU.Build.0 = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.PublicApiRelease|Any CPU.Build.0 = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.RootRelease|Any CPU.Build.0 = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{2A9704FF-ED00-4B8D-B4A9-F60F837F6F55}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{9CBD846D-100C-4084-B71D-73C40192EF21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9CBD846D-100C-4084-B71D-73C40192EF21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CBD846D-100C-4084-B71D-73C40192EF21}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -518,6 +502,24 @@ Global
 		{D0E5A5AE-9C5E-4C32-B0B5-485BF1C0A3AD}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{D0E5A5AE-9C5E-4C32-B0B5-485BF1C0A3AD}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{D0E5A5AE-9C5E-4C32-B0B5-485BF1C0A3AD}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.Mp4Release|Any CPU.Build.0 = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.MyContentRelease|Any CPU.Build.0 = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.PublicApiRelease|Any CPU.Build.0 = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.RootRelease|Any CPU.Build.0 = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{48CBB08F-362B-4ADD-A48C-175FA094D030}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

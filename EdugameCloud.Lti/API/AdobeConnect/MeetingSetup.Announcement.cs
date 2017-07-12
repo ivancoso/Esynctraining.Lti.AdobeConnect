@@ -76,7 +76,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 case (int)LmsProviderEnum.Blackboard:
                     BlackboardApi.CreateAnnouncement(param.course_id, param.user_id, lmsCompany, announcementTitle, announcementMessage);
                     break;
-                case (int)LmsProviderEnum.BrainHoney:
+                case (int)LmsProviderEnum.AgilixBuzz:
                     // string error;
 //                    this.dlapApi.CreateAnnouncement(
 //                        credentials,
@@ -171,7 +171,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 case (int)LmsProviderEnum.Blackboard:
                     BlackboardApi.CreateAnnouncement(param.course_id, param.user_id, lmsCompany, announcementTitle, announcementMessage);
                     break;
-                case (int)LmsProviderEnum.BrainHoney:
+                case (int)LmsProviderEnum.AgilixBuzz:
                     // string error;
                     //                    this.dlapApi.CreateAnnouncement(
                     //                        credentials,

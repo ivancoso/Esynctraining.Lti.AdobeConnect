@@ -1145,9 +1145,9 @@
             The schedule descriptor.
             </summary>
         </member>
-        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleDescriptor.BrainHoneySignals">
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleDescriptor.AgilixBuzzSignals">
             <summary>
-            Checks for signals in brain honey
+              Checks for signals in agilixbuzz
             </summary>
         </member>
         <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleDescriptor.CleanLmsSessions">
@@ -1928,7 +1928,7 @@
         </member>
         <member name="P:EdugameCloud.Lti.DTO.LtiParamDTO.tool_consumer_instance_guid">
             <summary>
-            Gets or sets the custom brain honey domain.
+            Gets or sets the custom agilixbuzz domain.
             </summary>
         </member>
         <member name="P:EdugameCloud.Lti.DTO.LtiParamDTO.lis_outcome_service_url">

@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Web.Mvc;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.BrainHoney;
+    using EdugameCloud.Lti.API.AgilixBuzz;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
 
@@ -19,7 +19,7 @@
         
         private readonly ScheduleModel _scheduleModel;
 
-        //private readonly IBrainHoneyScheduling _bhScheduling;
+        //private readonly IAgilixBuzzScheduling _bhScheduling;
 
         #endregion
 
@@ -29,7 +29,7 @@
             LmsCompanyModel lmsCompanyModel, 
             LmsUserSessionModel lmsSessionModel,
             ScheduleModel scheduleModel)
-            //, IBrainHoneyScheduling bhScheduling)
+        //, IAgilixBuzzScheduling bhScheduling)
         {
             _lmsCompanyModel = lmsCompanyModel ?? throw new ArgumentNullException(nameof(lmsCompanyModel));
             _lmsSessionModel = lmsSessionModel ?? throw new ArgumentNullException(nameof(lmsSessionModel));
@@ -52,13 +52,13 @@
             {
                 Func<IEnumerable<LmsCompany>, DateTime, int, string> scheduledAction = null;
 
-                IEnumerable<LmsCompany> brainHoneyCompanies = null;
+                IEnumerable<LmsCompany> agilixBuzzCompanies = null;
                 switch (schedule.ScheduleDescriptor)
                 {
-                    case ScheduleDescriptor.BrainHoneySignals:
-                        //brainHoneyCompanies =
-                        //    this.lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
-                        //scheduledAction = _bhScheduling.CheckForBrainHoneySignals;
+                    case ScheduleDescriptor.AgilixBuzzSignals:
+                        //agilixBuzzCompanies =
+                        //    this.lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.AgilixBuzz);
+                        //scheduledAction = _bhScheduling.CheckForAgilixBuzzSignals;
                         break;
                     case ScheduleDescriptor.CleanLmsSessions:
                         scheduledAction = this.CleanLmsSessions;
@@ -66,7 +66,7 @@
                 }
 
                 string error;
-                bool res = this._scheduleModel.ExecuteIfPossible(schedule, scheduledAction, brainHoneyCompanies, meetingId, out error);
+                bool res = this._scheduleModel.ExecuteIfPossible(schedule, scheduledAction, agilixBuzzCompanies, meetingId, out error);
                 result += "'" + schedule.ScheduleDescriptor
                           + (res ? "' task succedded; Errors: " + error : "' task failed; Errors: " + error);
             }
@@ -87,10 +87,10 @@
 
                 switch (schedule.ScheduleDescriptor)
                 {
-                    case ScheduleDescriptor.BrainHoneySignals:
-                        //IEnumerable<LmsCompany> brainHoneyCompanies =
-                        //    this._lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
-                        //scheduledAction = dt => _bhScheduling.CheckForBrainHoneySignals(brainHoneyCompanies, dt, meetingId);
+                    case ScheduleDescriptor.AgilixBuzzSignals:
+                        //IEnumerable<LmsCompany> agilixBuzzCompanies =
+                        //    this._lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.AgilixBuzz);
+                        //scheduledAction = dt => _bhScheduling.CheckForAgilixBuzzSignals(Companies, dt, meetingId);
                         break;
 
                     case ScheduleDescriptor.CleanLmsSessions:
@@ -109,7 +109,7 @@
 
         #region Methods
         
-        private string CleanLmsSessions(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, int meetingId = -1)
+        private string CleanLmsSessions(IEnumerable<LmsCompany> agilixBuzzCompanies, DateTime lastScheduledRunDate, int meetingId = -1)
         {
             IEnumerable<LmsUserSession> lmsSessions = _lmsSessionModel.GetAllOlderThen(DateTime.Now.AddDays(-2));
             foreach (var lmsSession in lmsSessions)

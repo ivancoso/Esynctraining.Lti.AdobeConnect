@@ -1,67 +1,67 @@
-﻿/* Moodle = 1,  Canvas = 2, BrainHoney = 3, Blackboard = 4, Sakai = 5, Desire2Learn = 6, */
+﻿/* Moodle = 1,  Canvas = 2, AgilixBuzz = 3, Blackboard = 4, Sakai = 5, Desire2Learn = 6, */
 /* AC: 1 = Host; 2 = Presenter; 3 = Participant */
 {
-	"1": [
-		{
-			"lmsRoleName": "Site administrator",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "Manager",
-			"acRole": 3
-		},
-		{
-			"lmsRoleName": "Course creator",
-			"acRole": 3
-		},
-		{
-			"lmsRoleName": "Teacher",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "Non-editing teacher",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "Student",
-			"acRole": 3
-		},
-		{
-			"lmsRoleName": "Guest",
-			"acRole": 3
-		},
-		{
-			"lmsRoleName": "Authenticated user",
-			"acRole": 3
-		},
-		{
-			"lmsRoleName": "Authenticated user on the front page role",
-			"acRole": 3
-		}
-	],
+  "1": [
+    {
+      "lmsRoleName": "Site administrator",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Manager",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Course creator",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Teacher",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Non-editing teacher",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Student",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Guest",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Authenticated user",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Authenticated user on the front page role",
+      "acRole": 3
+    }
+  ],
 
-	"2": [
-		{
-			"lmsRoleName": "Student",
-			"acRole": 3
-		},
-		{
-			"lmsRoleName": "Teacher",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "TA",
-			"acRole": 2
-		},
-		{
-			"lmsRoleName": "Designer",
-			"acRole": 2
-		},
-		{
-			"lmsRoleName": "Observer",
-			"acRole": 3
-		}
-	],
+  "2": [
+    {
+      "lmsRoleName": "Student",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Teacher",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "TA",
+      "acRole": 2
+    },
+    {
+      "lmsRoleName": "Designer",
+      "acRole": 2
+    },
+    {
+      "lmsRoleName": "Observer",
+      "acRole": 3
+    }
+  ],
 
   "4": [
     {
@@ -90,46 +90,46 @@
     }
   ],
 
-	"5": [
-		{
-			"lmsRoleName": "Instructor",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "Teaching Assistant",
-			"acRole": 2
-		},
-		{
-			"lmsRoleName": "Student",
-			"acRole": 3
-		}
-	],
+  "5": [
+    {
+      "lmsRoleName": "Instructor",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Teaching Assistant",
+      "acRole": 2
+    },
+    {
+      "lmsRoleName": "Student",
+      "acRole": 3
+    }
+  ],
 
-	"6": [
-		{
-			"lmsRoleName": "Administrator",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "Instructor",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "Student",
-			"acRole": 3
-		},
-		{
-			"lmsRoleName": "Super Admin",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "Teaching Assistant",
-			"acRole": 2
-		},
-		{
-			"lmsRoleName": "Advisor",
-			"acRole": 2
-		}
-	]
+  "6": [
+    {
+      "lmsRoleName": "Administrator",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Instructor",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Student",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Super Admin",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Teaching Assistant",
+      "acRole": 2
+    },
+    {
+      "lmsRoleName": "Advisor",
+      "acRole": 2
+    }
+  ]
 
 }

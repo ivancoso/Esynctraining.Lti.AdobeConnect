@@ -162,10 +162,10 @@ namespace EdugameCloud.WCFService
                         BuildOfficeHoursePod(),
                     };
 
-                case (int)LmsProviderEnum.BrainHoney:
+                case (int)LmsProviderEnum.AgilixBuzz:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide(LmsProviderNames.BrainHoney),
+                        BuildUserGuide(LmsProviderNames.AgilixBuzz),
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                     };

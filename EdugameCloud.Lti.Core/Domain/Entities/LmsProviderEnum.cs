@@ -4,7 +4,7 @@
     {
         Moodle = 1,
         Canvas = 2,
-        BrainHoney = 3,
+        AgilixBuzz = 3,
         Blackboard = 4,
         Sakai = 5,
         Desire2Learn = 6,

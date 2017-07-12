@@ -5,10 +5,10 @@ namespace EdugameCloud.Lti.Domain.Entities
     public enum ScheduleDescriptor : byte
     {
         /// <summary>
-        /// Checks for signals in brain honey
+        /// Checks for signals in AgilixBuzz
         /// </summary>
         [Obsolete("No in use")]
-        BrainHoneySignals = 0,
+        AgilixBuzzSignals = 0,
 
         /// <summary>
         /// Checks for LMS sessions to be cleared

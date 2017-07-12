@@ -575,13 +575,13 @@
       <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.AgilixBuzz\EdugameCloud.Lti.AgilixBuzz.csproj">
+      <Project>{48cbb08f-362b-4add-a48c-175fa094d030}</Project>
+      <Name>EdugameCloud.Lti.AgilixBuzz</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
       <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
       <Name>EdugameCloud.Lti.BlackBoard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj">
-      <Project>{42f32f14-1e81-4620-9aa0-ec58bf381283}</Project>
-      <Name>EdugameCloud.Lti.BrainHoney</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj">
       <Project>{1b19293e-b5ca-463a-93a8-ef09cc255275}</Project>

@@ -28,7 +28,7 @@
         // BLTI Forum: http://www.imsglobal.org/community/forum/categories.cfm?catid=44&entercat=y
         // BLTI implementation guide: http://www.imsglobal.org/lti/blti/bltiv1p0/ltiBLTIimgv1p0.html
         // OAuth 1.0 Protocol: http://tools.ietf.org/html/rfc5849
-        // Setting up a domain with a BLTI key/secret and creating BLTI links inside of BrainHoney: http://may2011.brainhoney.com/docs/BasicLTI
+        // Setting up a domain with a BLTI key/secret and creating BLTI links inside of AgilixBuzz: http://may2011.brainhoney.com/docs/BasicLTI
         #region Static Fields
 
         private static readonly ILogger logger;
@@ -214,7 +214,7 @@
             // Use this method to return back the secret associated with this key.
             // In this example I am using the key/secret pair { "MyKey", "Secret12345" }
             // You will need to create your own key/secret pair and replace the code below with the key/secret pair that you create.
-            // The domain in BrainHoney that contains your blti links will then need to be customized with your key/secret pair.
+            // The domain in AgilixBuzz that contains your blti links will then need to be customized with your key/secret pair.
             if (credentials.ConsumerKey == key)
             {
                 return credentials.SharedSecret;

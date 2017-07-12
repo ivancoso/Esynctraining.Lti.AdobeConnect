@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Lti.BrainHoney
+﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     using System;
 

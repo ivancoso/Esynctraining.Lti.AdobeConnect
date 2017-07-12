@@ -4,7 +4,7 @@
 //using System.Linq;
 //using System.Text;
 //using EdugameCloud.Lti.API.AdobeConnect;
-//using EdugameCloud.Lti.API.BrainHoney;
+//using EdugameCloud.Lti.API.AgilixBuzz;
 //using EdugameCloud.Lti.Core.Business.Models;
 //using EdugameCloud.Lti.Domain.Entities;
 //using EdugameCloud.Lti.DTO;
@@ -14,9 +14,9 @@
 //using Esynctraining.Core.Extensions;
 //using Esynctraining.Core.Utils;
 
-//namespace EdugameCloud.Lti.BrainHoney
+//namespace EdugameCloud.Lti.AgilixBuz
 //{
-//    public sealed class ShedulingHelper : IBrainHoneyScheduling
+//    public sealed class ShedulingHelper : IAgilixBuzzScheduling
 //    {
 //        private readonly DlapAPI _dlapApi;
 //        private readonly IMeetingSetup _meetingSetup;
@@ -121,56 +121,56 @@
 //            }
 //        }
 
-//        public string CheckForBrainHoneySignals(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, int meetingId)
+//        public string CheckForAgilixBuzzSignals(IEnumerable<LmsCompany> agilixBuzzCompanies, DateTime lastScheduledRunDate, int meetingId)
 //        {
 //            var errors = new List<string>();
 //            DlapAPI api = _dlapApi;
 
 //            var cache = IoC.Resolve<ICache>();
-            
-//            foreach (LmsCompany brainHoneyCompany in brainHoneyCompanies)
+
+//            foreach (LmsCompany agilixBuzzCompany in agilixBuzzCompanies)
 //            {
 //                string error;
-//                Session session = api.BeginBatch(out error, brainHoneyCompany);
+//                Session session = api.BeginBatch(out error, agilixBuzzCompany);
 
 //                if (error != null)
 //                {
-//                    AddToErrors(errors, error, brainHoneyCompany);
+//                    AddToErrors(errors, error, agilixBuzzCompany);
 //                }
 //                else
 //                {
-//                    if (brainHoneyCompany.LastSignalId == 0)
+//                    if (agilixBuzzCompany.LastSignalId == 0)
 //                    {
-//                        long? signalId = api.GetLastSignalId(brainHoneyCompany, out error, session);
+//                        long? signalId = api.GetLastSignalId(agilixBuzzCompany, out error, session);
 //                        if (error != null)
 //                        {
-//                            AddToErrors(errors, error, brainHoneyCompany);
+//                            AddToErrors(errors, error, agilixBuzzCompany);
 //                        }
 //                        else if (signalId.HasValue)
 //                        {
-//                            this.UpdateLastSignalId(brainHoneyCompany, signalId.Value);
+//                            this.UpdateLastSignalId(agilixBuzzCompany, signalId.Value);
 //                        }
 
 //                        continue;
 //                    }
 
-//                    IAdobeConnectProxy adobeConnectProvider = _acAccountService.GetProvider(brainHoneyCompany);
+//                    IAdobeConnectProxy adobeConnectProvider = _acAccountService.GetProvider(agilixBuzzCompany);
 //                    IEnumerable<TemplateDto> templates = _acAccountService.GetSharedMeetingTemplates(adobeConnectProvider, cache);
 //                    if (!templates.Any())
 //                    {
-//                        error = "No templates found for " + brainHoneyCompany.LmsDomain;
+//                        error = "No templates found for " + agilixBuzzCompany.LmsDomain;
 //                    }
 
 //                    if (error != null)
 //                    {
-//                        AddToErrors(errors, error, brainHoneyCompany);
+//                        AddToErrors(errors, error, agilixBuzzCompany);
 //                    }
 //                    else
 //                    {
-//                        List<Signal> signals = api.GetSignalsList(brainHoneyCompany, out error, session);
+//                        List<Signal> signals = api.GetSignalsList(agilixBuzzCompany, out error, session);
 //                        if (error != null)
 //                        {
-//                            AddToErrors(errors, error, brainHoneyCompany);
+//                            AddToErrors(errors, error, agilixBuzzCompany);
 //                        }
 //                        else
 //                        {
@@ -191,7 +191,7 @@
 //                                            ProcessCourseCreated(
 //                                                signalGroup.RepresentativeSignal,
 //                                                api,
-//                                                brainHoneyCompany,
+//                                                agilixBuzzCompany,
 //                                                session,
 //                                                errors,
 //                                                adobeConnectProvider,
@@ -203,7 +203,7 @@
 //                                        List<string> courseDeletedUsers =
 //                                            ProcessCourseDeleted(
 //                                                signalGroup.RepresentativeSignal,
-//                                                brainHoneyCompany,
+//                                                agilixBuzzCompany,
 //                                                errors,
 //                                                adobeConnectProvider,
 //                                                meetingId);
@@ -219,7 +219,7 @@
 //                            }
 
 //                            ProcessSoleEnrollments(
-//                                brainHoneyCompany,
+//                                agilixBuzzCompany,
 //                                soleEnrollments,
 //                                errors,
 //                                api,
@@ -230,7 +230,7 @@
 //                            Signal lastSignal = signals.LastOrDefault();
 //                            if (lastSignal != null)
 //                            {
-//                                this.UpdateLastSignalId(brainHoneyCompany, lastSignal.SignalId);
+//                                this.UpdateLastSignalId(agilixBuzzCompany, lastSignal.SignalId);
 //                            }
 //                        }
 //                    }
@@ -243,7 +243,7 @@
 //        private List<LmsUserDTO> ProcessCourseCreated(
 //            Signal signal,
 //            DlapAPI api,
-//            LmsCompany brainHoneyCompany,
+//            LmsCompany agilixBuzzCompany,
 //            Session session,
 //            List<string> errors,
 //            IAdobeConnectProxy adobeConnectProvider,
@@ -252,15 +252,15 @@
 //            var result = new List<LmsUserDTO>();
 //            string error;
 //            var courseSignal = (CourseSignal)signal;
-//            Course course = api.GetCourse(brainHoneyCompany, courseSignal.EntityId, out error, session);
+//            Course course = api.GetCourse(agilixBuzzCompany, courseSignal.EntityId, out error, session);
 //            if (error != null)
 //            {
-//                AddToErrors(errors, error, brainHoneyCompany);
+//                AddToErrors(errors, error, agilixBuzzCompany);
 //            }
 //            else
 //            {
 //                List<LmsUserDTO> courseEnrolledUsers = api.GetUsersForCourse(
-//                    brainHoneyCompany,
+//                    agilixBuzzCompany,
 //                    courseSignal.EntityId,
 //                    out error,
 //                    session);
@@ -280,10 +280,10 @@
 //                    tool_consumer_info_product_family_code = "Buzz"
 //                };
 //                var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
-//                var fb = new MeetingFolderBuilder(brainHoneyCompany, adobeConnectProvider, useLmsUserEmailForSearch);
+//                var fb = new MeetingFolderBuilder(agilixBuzzCompany, adobeConnectProvider, useLmsUserEmailForSearch);
 
 //                _meetingSetup.SaveMeeting(
-//                    brainHoneyCompany,
+//                    agilixBuzzCompany,
 //                    adobeConnectProvider,
 //                    param,
 //                    new MeetingDTOInput
@@ -311,8 +311,8 @@
 //        /// <param name="signal">
 //        /// The signal.
 //        /// </param>
-//        /// <param name="brainHoneyCompany">
-//        /// The Brain Honey company.
+//        /// <param name="agilixBuzzCompany">
+//        /// The agilixBuzz Company.
 //        /// </param>
 //        /// <param name="errors">
 //        /// The errors.
@@ -328,21 +328,21 @@
 //        /// </returns>
 //        private List<string> ProcessCourseDeleted(
 //            Signal signal,
-//            LmsCompany brainHoneyCompany,
+//            LmsCompany agilixBuzzCompany,
 //            List<string> errors,
 //            IAdobeConnectProxy adobeConnectProvider,
 //            int meetingId)
 //        {
 //            string error;
 //            List<string> result = this._meetingSetup.DeleteMeeting(
-//                brainHoneyCompany,
+//                agilixBuzzCompany,
 //                adobeConnectProvider,
 //                new LtiParamDTO { context_id = signal.EntityId.ToString(CultureInfo.InvariantCulture) },
 //                meetingId,
 //                out error);
 //            if (error != null)
 //            {
-//                AddToErrors(errors, error, brainHoneyCompany);
+//                AddToErrors(errors, error, agilixBuzzCompany);
 //            }
 
 //            return result;
@@ -350,7 +350,7 @@
 
 //        // ReSharper disable once UnusedParameter.Local
 //        private void ProcessSoleEnrollments(
-//            LmsCompany brainHoneyCompany,
+//            LmsCompany agilixBuzzCompany,
 //            IEnumerable<Signal> soleEnrollments,
 //            List<string> errors,
 //            DlapAPI api,
@@ -371,13 +371,13 @@
 //                    {
 //                        string error;
 //                        Enrollment enrollment = api.GetEnrollment(
-//                            brainHoneyCompany,
+//                            agilixBuzzCompany,
 //                            latestSignal.EntityId,
 //                            out error,
 //                            session);
 //                        if (error != null)
 //                        {
-//                            AddToErrors(errors, error, brainHoneyCompany);
+//                            AddToErrors(errors, error, agilixBuzzCompany);
 //                        }
 //                        else if (enrollment != null && api.IsEnrollmentActive(enrollment.Status))
 //                        {
@@ -389,9 +389,9 @@
 //                                Id = enrollment.UserId,
 //                                IsEditable = true,
 //                            };
-//                            //this._usersSetup.SetLMSUserDefaultACPermissions(provider, brainHoneyCompany, null, lmsUser, null);
+//                            //this._usersSetup.SetLMSUserDefaultACPermissions(provider, agilixBuzzCompany, null, lmsUser, null);
 //                            this._usersSetup.UpdateUser(
-//                                brainHoneyCompany,
+//                                agilixBuzzCompany,
 //                                provider,
 //                                new LtiParamDTO
 //                                {
@@ -410,16 +410,16 @@
 //        /// <summary>
 //        /// The update last signal id.
 //        /// </summary>
-//        /// <param name="brainHoneyCompany">
-//        /// The brain honey company.
+//        /// <param name="agilixBuzzCompany">
+//        /// The agilixBuzz Company.
 //        /// </param>
 //        /// <param name="signalId">
 //        /// The signal id.
 //        /// </param>
-//        private void UpdateLastSignalId(LmsCompany brainHoneyCompany, long signalId)
+//        private void UpdateLastSignalId(LmsCompany agilixBuzzCompany, long signalId)
 //        {
-//            brainHoneyCompany.LastSignalId = signalId;
-//            this._lmsCompanyModel.RegisterSave(brainHoneyCompany);
+//            agilixBuzzCompany.LastSignalId = signalId;
+//            this._lmsCompanyModel.RegisterSave(agilixBuzzCompany);
 //        }
 
 //        /// <summary>
@@ -431,12 +431,12 @@
 //        /// <param name="error">
 //        /// The error.
 //        /// </param>
-//        /// <param name="brainHoneyCompany">
-//        /// The brain honey company.
+//        /// <param name="agilixBuzzCompany">
+//        /// The agilixBuzz company.
 //        /// </param>
-//        private static void AddToErrors(List<string> errors, string error, LmsCompany brainHoneyCompany)
+//        private static void AddToErrors(List<string> errors, string error, LmsCompany agilixBuzzCompany)
 //        {
-//            errors.Add(string.Format("Error with company {0}:{1}", brainHoneyCompany.With(x => x.LmsDomain), error));
+//            errors.Add(string.Format("Error with company {0}:{1}", agilixBuzzCompany.With(x => x.LmsDomain), error));
 //        }
 //    }
 

@@ -270,7 +270,7 @@ namespace EdugameCloud.Lti.DTO
         public string tool_consumer_info_product_family_code { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom brain honey domain.
+        /// Gets or sets the custom AgilixBuzz domain.
         /// </summary>
         public string tool_consumer_instance_guid { get; set; }
 

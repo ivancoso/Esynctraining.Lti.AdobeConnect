@@ -1,7 +1,7 @@
-﻿namespace EdugameCloud.Lti.BrainHoney
+﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     /// <summary>
-    ///     The brain honey enrollment.
+    ///     The AgilixBuz enrollment.
     /// </summary>
     internal sealed class EnrollmentSignal : Signal
     {

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      id="IAgilixBuzzApi"
+      service="EdugameCloud.Lti.API.AgilixBuzz.IAgilixBuzzApi, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.AgilixBuzz.DlapAPI, EdugameCloud.Lti.AgilixBuzz"></component>
+    <!--<component
+      service="EdugameCloud.Lti.API.AgilixBuzz.IAgilixBuzzScheduling, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.AgilixBuzz.ShedulingHelper, EdugameCloud.Lti.AgilixBuzz"></component> -->
+    <component
+      id="AgilixBuzz"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.AgilixBuzz.AgilixBuzzLmsUserService, EdugameCloud.Lti.AgilixBuzz"></component>
+    <component
+      service="EdugameCloud.Lti.AgilixBuzz.DlapAPI, EdugameCloud.Lti.AgilixBuzz"
+      type="EdugameCloud.Lti.AgilixBuzz.DlapAPI, EdugameCloud.Lti.AgilixBuzz"></component>
+  </components>
+</configuration>

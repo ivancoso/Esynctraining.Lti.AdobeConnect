@@ -3,7 +3,7 @@ using System.Linq;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.API.BrainHoney;
+using EdugameCloud.Lti.API.AgilixBuzz;
 using EdugameCloud.Lti.API.Moodle;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Extensions;
@@ -32,9 +32,9 @@ namespace EdugameCloud.Lti.API
 
         #region Properties
 
-        private IBrainHoneyApi DlapAPI
+        private IAgilixBuzzApi DlapAPI
         {
-            get { return IoC.Resolve<IBrainHoneyApi>(); }
+            get { return IoC.Resolve<IAgilixBuzzApi>(); }
         }
 
         private IMoodleApi MoodleAPI
@@ -60,8 +60,8 @@ namespace EdugameCloud.Lti.API
                     bool loginSameAsEmail;
                     success = this.TestACConnection(test, out info, out loginSameAsEmail);
                     break;
-                case LmsProviderNames.BrainHoney:
-                    success = this.TestBrainHoneyConnection(test, out info);
+                case LmsProviderNames.AgilixBuzz:
+                    success = this.TestAgilixBuzzConnection(test, out info);
                     break;
                 case LmsProviderNames.Blackboard:
                     success = this.TestBlackBoardConnection(test, out info);
@@ -115,7 +115,7 @@ namespace EdugameCloud.Lti.API
             return true;
         }
 
-        private bool TestBrainHoneyConnection(ConnectionTestDTO test, out string info)
+        private bool TestAgilixBuzzConnection(ConnectionTestDTO test, out string info)
         {
             if (!TestDomainFormat(test, out info))
                 return false;

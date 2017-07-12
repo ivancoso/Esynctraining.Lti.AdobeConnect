@@ -376,7 +376,7 @@ namespace EdugameCloud.MVC.Links
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
             public static readonly string blackboard_xml = Url("blackboard.xml");
-            public static readonly string brainhoney_xml = Url("brainhoney.xml");
+            public static readonly string agilixbuzz_xml = Url("agilixbuzz.xml");
             public static readonly string brightspace_xml = Url("brightspace.xml");
             public static readonly string canvas_xml = Url("canvas.xml");
             public static readonly string moodle_xml = Url("moodle.xml");
@@ -398,7 +398,7 @@ namespace EdugameCloud.MVC.Links
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
             public static readonly string Blackboard_pdf = Url("Blackboard.pdf");
-            public static readonly string BrainHoney_pdf = Url("BrainHoney.pdf");
+            public static readonly string AgilixBuz_pdf = Url("AgilixBuzz.pdf");
             public static readonly string Brightspace_pdf = Url("Brightspace.pdf");
             public static readonly string Canvas_pdf = Url("Canvas.pdf");
             public static readonly string Moodle_pdf = Url("Moodle.pdf");
@@ -452,7 +452,7 @@ namespace EdugameCloud.MVC.Links
                         public static readonly string announce_png = Url("announce.png");
                         public static readonly string bird_png = Url("bird.png");
                         public static readonly string blackboard_jpg = Url("blackboard.jpg");
-                        public static readonly string brainhoney_jpg = Url("brainhoney.jpg");
+                        public static readonly string agilixbuzzy_jpg = Url("agilixbuzz.jpg");
                         public static readonly string brightspace_jpg = Url("brightspace.jpg");
                         public static readonly string canvas_jpg = Url("canvas.jpg");
                         public static readonly string closeRed_png = Url("closeRed.png");

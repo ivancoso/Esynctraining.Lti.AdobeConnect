@@ -1,7 +1,7 @@
-﻿namespace EdugameCloud.Lti.BrainHoney
+﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     /// <summary>
-    ///     The brain honey course.
+    ///     The AgilixBuzz course.
     /// </summary>
     internal sealed class Course
     {

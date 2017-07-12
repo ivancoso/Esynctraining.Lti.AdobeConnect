@@ -1,9 +1,9 @@
-﻿namespace EdugameCloud.Lti.BrainHoney
+﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     using System;
 
     /// <summary>
-    ///     The brain honey signal.
+    ///     The agilixBuzz signal.
     /// </summary>
     internal class Signal : IEquatable<Signal>
     {

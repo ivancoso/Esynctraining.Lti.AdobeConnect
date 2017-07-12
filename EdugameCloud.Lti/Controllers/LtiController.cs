@@ -518,7 +518,7 @@ namespace EdugameCloud.Lti.Controllers
                             param.PersonNameFamily,
                             lmsCompany);
                         break;
-                    case LmsProviderNames.BrainHoney:
+                    case LmsProviderNames.AgilixBuzz:
                     case LmsProviderNames.Blackboard:
                     case LmsProviderNames.Moodle:
                     case LmsProviderNames.Sakai:

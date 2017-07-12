@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using Esynctraining.Core.Logging;
-using EdugameCloud.Lti.API.BrainHoney;
+using EdugameCloud.Lti.API.AgilixBuzz;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.API;
 using Esynctraining.Core.Domain;
 
-namespace EdugameCloud.Lti.BrainHoney
+namespace EdugameCloud.Lti.AgilixBuzz
 {
-    public class BrainHoneyLmsUserService : LmsUserServiceBase
+    public class AgilixBuzzLmsUserService : LmsUserServiceBase
     {
-        private readonly IBrainHoneyApi dlapApi;
+        private readonly IAgilixBuzzApi dlapApi;
 
 
-        public BrainHoneyLmsUserService(ILogger logger, IBrainHoneyApi dlapApi) : base(logger)
+        public AgilixBuzzLmsUserService(ILogger logger, IAgilixBuzzApi dlapApi) : base(logger)
         {
             this.dlapApi = dlapApi ?? throw new ArgumentNullException(nameof(dlapApi));
         }

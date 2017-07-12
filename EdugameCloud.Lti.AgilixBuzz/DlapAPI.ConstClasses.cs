@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Lti.BrainHoney
+﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     public sealed partial class DlapAPI
     {

@@ -156,10 +156,6 @@
       <Project>{410b1611-24ee-4887-8218-31fcbce1be02}</Project>
       <Name>EdugameCloud.Lti.BlackBoard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj">
-      <Project>{2a9704ff-ed00-4b8d-b4a9-f60f837f6f55}</Project>
-      <Name>EdugameCloud.Lti.BrainHoney</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj">
       <Project>{9cbd846d-100c-4084-b71d-73c40192ef21}</Project>
       <Name>EdugameCloud.Lti.Canvas</Name>

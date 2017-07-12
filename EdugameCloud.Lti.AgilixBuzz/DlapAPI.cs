@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Lti.BrainHoney
+﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     using System;
     using System.Collections.Generic;
@@ -6,14 +6,14 @@
     using System.Xml.XPath;
     using Esynctraining.Core.Logging;
     using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.BrainHoney;
+    using EdugameCloud.Lti.API.AgilixBuzz;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
     // ReSharper disable once InconsistentNaming
-    public sealed partial class DlapAPI : ILmsAPI, IBrainHoneyApi
+    public sealed partial class DlapAPI : ILmsAPI, IAgilixBuzzApi
     {
         #region Fields
 
@@ -79,7 +79,7 @@
         {
             try
             {
-                var session = new Session("EduGameCloud", (string)this.settings.BrainHoneyApiUrl) { Verbose = true };
+                var session = new Session("EduGameCloud", (string)this.settings.AgilixBuzzApiUrl) { Verbose = true };
                 string userPrefix = lmsDomain.ToLower()
                     .Replace(".agilixbuzz.com", string.Empty)
                     .Replace("www.", string.Empty);
@@ -98,7 +98,7 @@
             }
             catch (Exception ex)
             {
-                logger.Error("EdugameCloud.Lti.BrainHoney.DlapAPI.LoginAndCreateASession", ex);
+                logger.Error("EdugameCloud.Lti.AgilixBuzz.DlapAPI.LoginAndCreateASession", ex);
                 error = ex.Message;
                 return null;
             }

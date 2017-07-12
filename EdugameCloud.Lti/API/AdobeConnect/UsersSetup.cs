@@ -501,7 +501,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string lmsUserId = null)
         {
             var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
-            //todo: not param for BrainHoney
+            //todo: not param for AgilixBuzz
             var lmsUser = service.GetUser(lmsCompany, lmsUserId, param.course_id, out error, param);
 
             if (meeting == null)

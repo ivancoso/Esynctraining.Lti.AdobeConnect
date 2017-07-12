@@ -2,9 +2,9 @@
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 
-namespace EdugameCloud.Lti.API.BrainHoney
+namespace EdugameCloud.Lti.API.AgilixBuzz
 {
-    public interface IBrainHoneyApi
+    public interface IAgilixBuzzApi
     {
         List<LmsUserDTO> GetUsersForCourse(
             ILmsLicense company,
