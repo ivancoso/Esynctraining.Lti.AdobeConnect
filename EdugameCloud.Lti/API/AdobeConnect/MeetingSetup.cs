@@ -1840,6 +1840,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         dateBegin.AddMinutes((int)duration.TotalMinutes).ToString(AcDateFormat);
                 }
             }
+
+            if (meetingDTO.Type == (int)LmsMeetingType.VirtualClassroom)
+            {
+                updateItem.Icon = "virtual-classroom";
+            }
         }
 
         //private static void SetupSharedMeetingsFolder(LmsCompany credentials, LmsProvider lmsProvider, IAdobeConnectProxy provider)

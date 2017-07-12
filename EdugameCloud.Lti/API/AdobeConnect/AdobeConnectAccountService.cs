@@ -10,8 +10,6 @@ using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
-using Esynctraining.AdobeConnect.Api.Meeting;
-using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
@@ -170,17 +168,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             return breezeToken;
-        }
-
-        // TODO: USE Esynctraining.AdobeConnect.WebApi.Meeting !!!
-        public IEnumerable<TemplateDto> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            return new MeetingTemplateService(_logger).GetSharedMeetingTemplates(provider, cache, () => CachePolicies.Keys.SharedMeetingTemplates(provider.AdobeConnectRoot.ToString(), ScoShortcutType.shared_meeting_templates.ToString()));
         }
         
     }
