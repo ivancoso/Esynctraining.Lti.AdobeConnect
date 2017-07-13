@@ -168,8 +168,9 @@ namespace Esynctraining.AdobeConnect
 
             int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
             int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
-
-            bool loginSameAsEmail = "YES".Equals(GetField(fields, "login-same-as-email"), StringComparison.OrdinalIgnoreCase);
+            var loginSameAsEmailField = GetField(fields, "login-same-as-email");
+            bool loginSameAsEmail = string.IsNullOrEmpty(loginSameAsEmailField) 
+                || "YES".Equals(loginSameAsEmailField, StringComparison.OrdinalIgnoreCase);
             
             return new ACPasswordPoliciesDTO
             {
