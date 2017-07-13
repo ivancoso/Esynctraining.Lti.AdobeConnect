@@ -413,7 +413,7 @@
     <Content Include="Content\images\logos\singleUser.png" />
     <Content Include="Content\images\tick.png" />
     <Content Include="Content\images\warning.png" />
-    <Content Include="Content\lti-config\agilixbuzz.xml" />
+    <Content Include="Content\lti-config\buzz.xml" />
     <Content Include="Content\lti-config\blackboard.xml" />
     <Content Include="Content\lti-config\brightspace.xml" />
     <Content Include="Content\lti-config\canvas.xml" />
@@ -425,7 +425,7 @@
     <Content Include="Content\swf\admin\appStyles.css" />
     <Content Include="Content\swf\admin\resources\icons\add.png" />
     <Content Include="Content\swf\admin\resources\icons\addSmall.png" />
-    <Content Include="Content\swf\admin\resources\icons\agilixbuzz.jpg" />
+    <Content Include="Content\swf\admin\resources\icons\buzz.jpg" />
     <Content Include="Content\swf\admin\resources\icons\announce.png" />
     <Content Include="Content\swf\admin\resources\icons\bird.png" />
     <Content Include="Content\swf\admin\resources\icons\blackboard.jpg" />
@@ -569,7 +569,7 @@
     <Content Include="Content\lti-instructions\Moodle.pdf" />
     <Content Include="Content\lti-instructions\Sakai.pdf" />
     <Content Include="Content\swf\config\paths.properties" />
-    <Content Include="Content\lti-instructions\AgilixBuzz.pdf" />
+    <Content Include="Content\lti-instructions\Buzz.pdf" />
     <None Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </None>
