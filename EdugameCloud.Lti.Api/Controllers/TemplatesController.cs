@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Domain.Entities;
@@ -15,8 +17,11 @@ namespace EdugameCloud.Lti.Api.Controllers
 {
     public class TemplatesController : BaseApiController
     {
+        [DataContract]
         public class TemplatesRequestDto
         {
+            [Required]
+            [DataMember]
             public int LmsMeetingType { get; set; }
         }
 
@@ -40,9 +45,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 var api = GetAdminProvider();
                 var scoShortcut =
-                    MeetingTypeFactory.GetTemplatesShortcut(request.LmsMeetingType > 0
-                        ? (LmsMeetingType)request.LmsMeetingType
-                        : LmsMeetingType.Meeting);
+                    MeetingTypeFactory.GetTemplatesShortcut((LmsMeetingType)request.LmsMeetingType);
 
                 IEnumerable<TemplateDto> templates = new MeetingTemplateService(Logger).GetCachedTemplates(api, Cache,
                     () => CachePolicies.Keys.SharedMeetingTemplates(api.AdobeConnectRoot.ToString(), scoShortcut.ToString()), scoShortcut);

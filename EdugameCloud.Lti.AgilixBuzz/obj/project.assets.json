@@ -155,7 +155,7 @@
           "lib/net45/Esynctraining.AdobeConnect.dll": {}
         }
       },
-      "Esynctraining.AdobeConnect.Api/1.0.0.19": {
+      "Esynctraining.AdobeConnect.Api/1.0.0.20": {
         "type": "package",
         "dependencies": {
           "Esynctraining.AC.Provider": "1.0.2.31",
@@ -559,7 +559,7 @@
           "EdugameCloud.Core": "1.8.4",
           "EdugameCloud.Lti.Core": "1.8.4",
           "EdugameCloud.Lti.Telephony": "1.8.4",
-          "Esynctraining.AdobeConnect.Api": "1.0.0.19",
+          "Esynctraining.AdobeConnect.Api": "1.0.0.20",
           "Esynctraining.BlackBoardClient": "1.0.0.1",
           "Esynctraining.Crypto": "1.0.1",
           "Esynctraining.FluentValidation": "1.0.0.3",
@@ -577,7 +577,7 @@
         "framework": ".NETFramework,Version=v4.5",
         "dependencies": {
           "EdugameCloud.Core": "1.8.4",
-          "Esynctraining.AdobeConnect.Api": "1.0.0.19",
+          "Esynctraining.AdobeConnect.Api": "1.0.0.20",
           "Esynctraining.Crypto": "1.0.1",
           "Esynctraining.NHibernate": "1.0.0.1",
           "Newtonsoft.Json": "10.0.3"
@@ -807,12 +807,12 @@
         "lib/net461/Esynctraining.AdobeConnect.dll"
       ]
     },
-    "Esynctraining.AdobeConnect.Api/1.0.0.19": {
-      "sha512": "zJNDVcCBfpR2fxJ3MjgDALOeUb+weYYaHcEZwheW1mAoQE9OvSRuhBJu4jSGeMtVPHdGmt48669qNM6nUi9zqg==",
+    "Esynctraining.AdobeConnect.Api/1.0.0.20": {
+      "sha512": "ICztPG3Lpq5PbcoYsfY14VH3iM9ZHK/JLuaIyDq+PXdbrieFsTriZ4bIfbV91CHWqQfTaMb4h1xBkziGxxkpeA==",
       "type": "package",
-      "path": "esynctraining.adobeconnect.api/1.0.0.19",
+      "path": "esynctraining.adobeconnect.api/1.0.0.20",
       "files": [
-        "esynctraining.adobeconnect.api.1.0.0.19.nupkg.sha512",
+        "esynctraining.adobeconnect.api.1.0.0.20.nupkg.sha512",
         "esynctraining.adobeconnect.api.nuspec",
         "lib/net45/Esynctraining.AdobeConnect.Api.dll",
         "lib/net45/Esynctraining.AdobeConnect.Api.xml",
