@@ -71,7 +71,7 @@ namespace Esynctraining.AdobeConnect.Api.Meeting
                 return Enumerable.Empty<TemplateDto>();
             }
 
-            return templates.Values.Select(v => new TemplateDto { Id = v.ScoId, Name = v.Name }).ToList();
+            return templates.Values.Where(x => x.Type == ScoType.meeting.GetACEnum()).Select(v => new TemplateDto { Id = v.ScoId, Name = v.Name }).ToList();
         }
     }
 }

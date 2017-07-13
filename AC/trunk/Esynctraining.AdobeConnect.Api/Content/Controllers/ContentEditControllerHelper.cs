@@ -104,6 +104,11 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
                 {
                     return OperationResult.Error("You do not have permission to access this item.");
                 }
+                if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.duplicate
+                    && ex.Status.InvalidField == "name")
+                {
+                    return OperationResult.Error(Resources.Messages.NameNotUnique);
+                }
 
                 string errorMessage = GetOutputErrorMessage("DeleteFolder", ex);
                 return OperationResult.Error(errorMessage);
