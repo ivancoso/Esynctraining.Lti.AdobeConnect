@@ -1,12 +1,10 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using EdugameCloud.Core.Domain.Entities;
+using Esynctraining.Core.Extensions;
 
 namespace EdugameCloud.Core.Domain.DTO
 {
-    using System.Runtime.Serialization;
-
-    using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Extensions;
-
     /// <summary>
     /// The quiz result DTO.
     /// </summary>
@@ -30,24 +28,27 @@ namespace EdugameCloud.Core.Domain.DTO
         /// </param>
         public QuizResultDTO(QuizResult result)
         {
-            this.quizResultId = result.Id;
-            this.acSessionId = result.ACSessionId;
-            this.quizId = result.Quiz.With(x => x.Id);
-            this.dateCreated = result.DateCreated.ConvertToUnixTimestamp();
-            this.endTime = result.EndTime.ConvertToUnixTimestamp();
-            this.participantName = result.ParticipantName;
-            this.score = result.Score;
-            this.startTime = result.StartTime.ConvertToUnixTimestamp();
-            this.isArchive = result.IsArchive ?? false;
-            this.email = result.Email;
-            this.lmsId = result.LmsId;
-            this.lmsUserParametersId = result.LmsUserParametersId ?? 0;
-            this.acEmail = result.ACEmail;
-            this.isCompleted = result.isCompleted ?? false;
-            this.eventQuizMappingId = result.EventQuizMapping?.Id;
-            this.appInFocusTime = result.AppInFocusTime;
-            this.appMaximizedTime = result.AppMaximizedTime;
-            this.guid = result.Guid;
+            if (result == null)
+                throw new ArgumentNullException(nameof(result));
+
+            quizResultId = result.Id;
+            acSessionId = result.ACSessionId;
+            quizId = result.Quiz.With(x => x.Id);
+            dateCreated = result.DateCreated.ConvertToUnixTimestamp();
+            endTime = result.EndTime.ConvertToUnixTimestamp();
+            participantName = result.ParticipantName;
+            score = result.Score;
+            startTime = result.StartTime.ConvertToUnixTimestamp();
+            isArchive = result.IsArchive ?? false;
+            email = result.Email;
+            lmsId = result.LmsId;
+            lmsUserParametersId = result.LmsUserParametersId ?? 0;
+            acEmail = result.ACEmail;
+            isCompleted = result.isCompleted ?? false;
+            eventQuizMappingId = result.EventQuizMapping?.Id;
+            appInFocusTime = result.AppInFocusTime;
+            appMaximizedTime = result.AppMaximizedTime;
+            guid = result.Guid;
         }
 
         #endregion
@@ -159,7 +160,8 @@ namespace EdugameCloud.Core.Domain.DTO
         [DataMember]
         public Guid guid { get; set; }
 
-
         #endregion
+
     }
+
 }

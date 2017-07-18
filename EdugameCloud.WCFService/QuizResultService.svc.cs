@@ -67,7 +67,7 @@ namespace EdugameCloud.WCFService
                 var quizResultModel = this.QuizResultModel;
                 var isTransient = appletResultDTO.quizResultId == 0;
                 var quizResult = isTransient ? null : quizResultModel.GetOneById(appletResultDTO.quizResultId).Value;
-                quizResult = this.ConvertDto(appletResultDTO, quizResult);
+                quizResult = ConvertDto(appletResultDTO, quizResult);
                 quizResultModel.RegisterSave(quizResult);
                 //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<QuizResult>(NotificationType.Update, appletResultDTO.companyId, quizResult.Id);
                 return new QuizResultDTO(quizResult);

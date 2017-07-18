@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
+    using System;
     using System.Runtime.Serialization;
     using Esynctraining.Core.Extensions;
 
@@ -24,16 +25,19 @@
         /// </param>
         public QuizSessionDTO(QuizSessionFromStoredProcedureDTO dto)
         {
-            this.acSessionId = dto.acSessionId;
-            this.acUserModeId = dto.acUserModeId;
-            this.categoryName = dto.categoryName;
-            this.dateCreated = dto.dateCreated.ConvertToUnixTimestamp();
-            this.language = dto.language;
-            this.activeParticipants = dto.activeParticipants;
-            this.totalParticipants = dto.totalParticipants;
-            this.quizName = dto.quizName;
-            this.subModuleItemId = dto.subModuleItemId;
-            this.eventQuizMappingId = dto.eventQuizMappingId;
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            acSessionId = dto.acSessionId;
+            acUserModeId = dto.acUserModeId;
+            categoryName = dto.categoryName;
+            dateCreated = dto.dateCreated.ConvertToUnixTimestamp();
+            language = dto.language;
+            activeParticipants = dto.activeParticipants;
+            totalParticipants = dto.totalParticipants;
+            quizName = dto.quizName;
+            subModuleItemId = dto.subModuleItemId;
+            eventQuizMappingId = dto.eventQuizMappingId;
         }
 
         #region Public Properties

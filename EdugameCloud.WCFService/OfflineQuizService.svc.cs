@@ -184,7 +184,7 @@ namespace EdugameCloud.WCFService
             if (existing!=null)
                 return new OfflineQuizResultDTO() { errorMessage = "You have already passed this Quiz!" };
 
-            var acSession = ACSessionModel.GetOneById(quizResult.ACSessionId);
+            //var acSession = ACSessionModel.GetOneById(quizResult.ACSessionId);
             var quizEventMapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
             if (quizEventMapping.PostQuiz == null)
                 throw new InvalidOperationException("Post quiz can't be null in mapping");

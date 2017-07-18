@@ -13,7 +13,7 @@
     {
         #region Fields
         
-        private readonly LmsCompanyModel _lmsCompanyModel;
+        //private readonly LmsCompanyModel _lmsCompanyModel;
         
         private readonly LmsUserSessionModel _lmsSessionModel;
         
@@ -26,12 +26,12 @@
         #region Constructors and Destructors
         
         public LtiScheduleController(
-            LmsCompanyModel lmsCompanyModel, 
+            //LmsCompanyModel lmsCompanyModel, 
             LmsUserSessionModel lmsSessionModel,
             ScheduleModel scheduleModel)
         //, IAgilixBuzzScheduling bhScheduling)
         {
-            _lmsCompanyModel = lmsCompanyModel ?? throw new ArgumentNullException(nameof(lmsCompanyModel));
+            //_lmsCompanyModel = lmsCompanyModel ?? throw new ArgumentNullException(nameof(lmsCompanyModel));
             _lmsSessionModel = lmsSessionModel ?? throw new ArgumentNullException(nameof(lmsSessionModel));
             _scheduleModel = scheduleModel ?? throw new ArgumentNullException(nameof(scheduleModel));
             //_bhScheduling = bhScheduling;

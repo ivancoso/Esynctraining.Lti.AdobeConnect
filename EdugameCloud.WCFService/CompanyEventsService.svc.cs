@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
-using System.ServiceModel.Web;
-using System.Text;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
@@ -14,10 +10,7 @@ using EdugameCloud.WCFService.Base;
 using EdugameCloud.WCFService.Contracts;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
-using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
-using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.WCFService
@@ -29,29 +22,15 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class CompanyEventsService : BaseService, ICompanyEventsService
     {
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyAcServerModel CompanyAcServerModel
-        {
-            get { return IoC.Resolve<CompanyAcServerModel>(); }
-        }
+        private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
 
-        private CompanyEventQuizMappingModel CompanyEventQuizMappingModel
-        {
-            get { return IoC.Resolve<CompanyEventQuizMappingModel>(); }
-        }
+        private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
 
-        private QuizModel QuizModel
-        {
-            get { return IoC.Resolve<QuizModel>(); }
-        }
+        private QuizModel QuizModel => IoC.Resolve<QuizModel>();
 
-        private QuizResultModel QuizResultModel
-        {
-            get { return IoC.Resolve<QuizResultModel>(); }
-        }
-       
+        private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
+
+
         public CompanyEventDTO[] GetEventsByCompany(int companyId)
         {
             var defaultAcDomain = CompanyAcServerModel.GetAllByCompany(companyId).FirstOrDefault(x => x.IsDefault);
@@ -86,8 +65,7 @@ namespace EdugameCloud.WCFService
 
             foreach (var content in eventsOnly)
             {
-                
-                result.Add(new CompanyEventDTO()
+                result.Add(new CompanyEventDTO
                 {
                     companyId = defaultAcDomain.Company.Id,
                     dateBegin = DateTime.SpecifyKind(content.BeginDate, DateTimeKind.Utc),
@@ -100,10 +78,10 @@ namespace EdugameCloud.WCFService
                     dateModified = DateTime.SpecifyKind(content.DateModified, DateTimeKind.Utc),
                     isSeminar = content.IsSeminar,
                     isMappedToQuizzes = CompanyEventQuizMappingModel.GetAllByCompanyId(defaultAcDomain.Company.Id).Any(x => x.AcEventScoId == content.ScoId),
-                    meetingUrl = acProxy.GetScoInfo(content.ScoId).ScoInfo?.SourceSco?.UrlPath
+                    meetingUrl = acProxy.GetScoInfo(content.ScoId).ScoInfo?.SourceSco?.UrlPath,
                     //meetingUrl = content.ScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).Success ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).Success && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).ScoInfo.UrlPath : String.Empty : string.Empty,
                 });
-                
+
             }
             return result.ToArray();
         }
@@ -114,7 +92,7 @@ namespace EdugameCloud.WCFService
             var quizResults = QuizResultModel.GetAll(x => x.EventQuizMapping.Id == id);
             if (quizResults.Any())
                 return 0;
-            CompanyEventQuizMappingModel.RegisterDelete(item,true);
+            CompanyEventQuizMappingModel.RegisterDelete(item, true);
             return id;
         }
 
@@ -123,13 +101,13 @@ namespace EdugameCloud.WCFService
             var companyAcDomain = CompanyAcServerModel.GetOneById(eventQuizMapping.companyAcDomainId).Value;
             var preQuiz = QuizModel.GetOneById(eventQuizMapping.preQuizId).Value;
             var postQuiz = QuizModel.GetOneById(eventQuizMapping.postQuizId).Value;
-            var companyEventQuizMapping = new CompanyEventQuizMapping()
+            var companyEventQuizMapping = new CompanyEventQuizMapping
             {
                 Id = eventQuizMapping.eventQuizMappingId,
                 CompanyAcDomain = companyAcDomain,
                 PreQuiz = preQuiz,
                 PostQuiz = postQuiz,
-                AcEventScoId = eventQuizMapping.acEventScoId
+                AcEventScoId = eventQuizMapping.acEventScoId,
             };
             CompanyEventQuizMappingModel.RegisterSave(companyEventQuizMapping, true);
             eventQuizMapping.eventQuizMappingId = companyEventQuizMapping.Id;
@@ -208,5 +186,7 @@ namespace EdugameCloud.WCFService
 
             return new CompanyQuizEventMappingDTO(entity, Settings);
         }
+
     }
+
 }
