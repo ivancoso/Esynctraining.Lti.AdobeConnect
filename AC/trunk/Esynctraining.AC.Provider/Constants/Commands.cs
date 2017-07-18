@@ -27,6 +27,8 @@
 
         public const string ReportBulkUsers = "report-bulk-users";
 
+        public const string ReportActiveMeetings = "report-active-meetings";
+
         /// <summary>
         /// The report bulk attendance.
         /// </summary>

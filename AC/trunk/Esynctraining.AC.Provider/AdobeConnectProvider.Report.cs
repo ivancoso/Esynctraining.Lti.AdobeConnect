@@ -74,7 +74,13 @@ namespace Esynctraining.AC.Provider
                 startIndex,
                 limit);
         }
-        
+
+        public CollectionResult<ReportActiveMeetingsItem> ReportActiveMeetings()
+        {
+            return GetCollection(Commands.ReportActiveMeetings, null, ReportActiveMeetingsHome, ScoHome,
+                ReportActiveMeetingsParser.Parse);
+        }
+
         // Not used from Proxy level
         //public ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0)
         //{

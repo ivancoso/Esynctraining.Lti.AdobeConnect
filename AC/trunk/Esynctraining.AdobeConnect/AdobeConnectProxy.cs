@@ -888,6 +888,11 @@ namespace Esynctraining.AdobeConnect
                 principalId);
         }
 
+        public CollectionResult<ReportActiveMeetingsItem> ReportActiveMeetings()
+        {
+            return Execute(() => { return _provider.ReportActiveMeetings(); });
+        }
+
         public MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
         {
             return Execute(() => { return _provider.ReportMeetingAttendance(scoId, startIndex, limit, returnCurrentUsers); },

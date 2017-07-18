@@ -22,6 +22,7 @@
         private const string ScoNavHome = "//sco-nav";
         private const string CustomFieldsHome = "//custom-fields";
         private const string CustomFieldsField = "//field";
+        private const string ReportActiveMeetingsHome = "//report-active-meetings";
 
         #endregion
 

@@ -154,6 +154,8 @@ namespace Esynctraining.AdobeConnect
 
         TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0);
 
+        CollectionResult<ReportActiveMeetingsItem> ReportActiveMeetings();
+
         MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false);
 
         MeetingSessionCollectionResult ReportMeetingSessions(string scoId, string filter = null, int startIndex = 0, int limit = 0);
