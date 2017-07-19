@@ -18,8 +18,8 @@
             if (p == null)
                 throw new ArgumentNullException(nameof(p));
 
-            msProviderId = p.Id;
-            msProviderName = p.LmsProviderName;
+            lmsProviderId = p.Id;
+            lmsProviderName = p.LmsProviderName;
             shortName = p.ShortName;
         }
 

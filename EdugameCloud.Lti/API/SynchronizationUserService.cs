@@ -48,9 +48,9 @@ namespace EdugameCloud.Lti.API
         public void SynchronizeUsers(ILmsLicense lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null)
         {
             LmsUserServiceBase service = null;
-            if ((LmsProviderEnum)lmsCompany.LmsProviderId == LmsProviderEnum.Desire2Learn)
+            if ((LmsProviderEnum)lmsCompany.LmsProviderId == LmsProviderEnum.Brightspace)
             {
-                service = IoC.Resolve<LmsUserServiceBase>(LmsProviderEnum.Desire2Learn.ToString() + "_Sync");
+                service = IoC.Resolve<LmsUserServiceBase>(LmsProviderEnum.Brightspace.ToString() + "_Sync");
             }
             else
             {

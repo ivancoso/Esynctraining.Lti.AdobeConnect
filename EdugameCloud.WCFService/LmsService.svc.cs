@@ -178,7 +178,7 @@ namespace EdugameCloud.WCFService
                         BuildOfficeHoursePod(),
                     };
 
-                case (int)LmsProviderEnum.Desire2Learn:
+                case (int)LmsProviderEnum.Brightspace:
                     return new FileDownloadDTO[]
                     {
                         BuildUserGuide(LmsProviderEnum.Brightspace),

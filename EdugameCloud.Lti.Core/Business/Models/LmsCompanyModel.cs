@@ -167,7 +167,9 @@ namespace EdugameCloud.Lti.Core.Business.Models
         {
             if (entity.LmsProviderId == (int)LmsProviderEnum.Canvas)
                 return;
-            if (entity.LmsProviderId == (int)LmsProviderEnum.Desire2Learn)
+            if (entity.LmsProviderId == (int)LmsProviderEnum.Brightspace)
+                return;
+            if (entity.LmsProviderId == (int)LmsProviderEnum.Schoology)
                 return;
 
             if (!resultDto.enableProxyToolMode)

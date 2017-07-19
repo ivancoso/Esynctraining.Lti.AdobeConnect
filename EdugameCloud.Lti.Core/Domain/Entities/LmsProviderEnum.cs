@@ -7,7 +7,7 @@
         AgilixBuzz = 3,
         Blackboard = 4,
         Sakai = 5,
-        Desire2Learn = 6,
+        Brightspace = 6,
         //DialogEdu = 7,
         //Bridge = 8,
         Schoology = 9,

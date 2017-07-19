@@ -288,7 +288,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseCourseMeetingsCustomLayout, dto.UseCourseMeetingsCustomLayout);
 
             //OAuth options
-            if (lmsProvider.Id == (int) LmsProviderEnum.Desire2Learn || lmsProvider.Id == (int)LmsProviderEnum.Canvas)
+            if (lmsProvider.Id == (int) LmsProviderEnum.Brightspace || lmsProvider.Id == (int)LmsProviderEnum.Canvas)
             {
                 UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsOAuthSandbox, dto.isSandbox);
                 UpdateOrDeleteSetting(instance, LmsCompanySettingNames.OAuthAppId, dto.oAuthAppId);
