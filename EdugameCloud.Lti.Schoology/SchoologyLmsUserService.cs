@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Schoology;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
@@ -44,8 +45,11 @@ namespace EdugameCloud.Lti.Schoology
             //    lmsCompany.AdminUser.Password,
             //    $"courses/{courseId}/sections").Result;
 
-            var section = _restApiClient.GetRestCall<Section>(lmsCompany.AdminUser.Username,
-                lmsCompany.AdminUser.Password,
+            string clientId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerKey);
+            string clientSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerSecret);
+
+            var section = _restApiClient.GetRestCall<Section>(clientId,
+                clientSecret,
                 $"sections/{courseId}").Result;
 
             var enrollments = new List<Enrollment>();
@@ -56,8 +60,8 @@ namespace EdugameCloud.Lti.Schoology
             //      () => new List<Enrollment>(),
             //      (section, state, localList) =>
             //      {
-            //          var enrollmentCallResult = new SchoologyRestApiClient().GetRestCall<RootObject2>(lmsCompany.AdminUser.Username,
-            //              lmsCompany.AdminUser.Password,
+            //          var enrollmentCallResult = new SchoologyRestApiClient().GetRestCall<RootObject2>(clientId,
+            //              clientSecret,
             //              $"sections/{section.id}/enrollments").Result;
             //          foreach (var enrollment in enrollmentCallResult.enrollment)
             //              localList.Add(enrollment);
@@ -70,8 +74,8 @@ namespace EdugameCloud.Lti.Schoology
             //      }
             //);
 
-            var enrollmentCallResult = new SchoologyRestApiClient().GetRestCall<RootObject2>(lmsCompany.AdminUser.Username,
-                lmsCompany.AdminUser.Password,
+            var enrollmentCallResult = new SchoologyRestApiClient().GetRestCall<RootObject2>(clientId,
+                clientSecret,
                 $"sections/{section.id}/enrollments").Result;
             enrollments = enrollmentCallResult.enrollment;
             enrollments = enrollments.Distinct().ToList();
@@ -82,8 +86,8 @@ namespace EdugameCloud.Lti.Schoology
                   () => new List<User>(),
                   (enrollment, state, localList) =>
                   {
-                      var usr = new SchoologyRestApiClient().GetRestCall<User>(lmsCompany.AdminUser.Username,
-                          lmsCompany.AdminUser.Password,
+                      var usr = new SchoologyRestApiClient().GetRestCall<User>(clientId,
+                          clientSecret,
                           $"users/{enrollment.uid}").Result;
                       usr.admin = enrollment.admin;
                       localList.Add(usr);
