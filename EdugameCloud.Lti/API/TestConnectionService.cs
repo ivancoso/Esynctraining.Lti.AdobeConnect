@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Linq;
-using Esynctraining.Core.Logging;
-using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.API.BlackBoard;
+using System.Net.Http;
 using EdugameCloud.Lti.API.AgilixBuzz;
+using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Moodle;
+using EdugameCloud.Lti.API.Schoology;
 using EdugameCloud.Lti.Core.DTO;
+using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.Core.Utils;
 using Esynctraining.AdobeConnect;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.API.Schoology;
-using System.Net.Http;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API
 {
