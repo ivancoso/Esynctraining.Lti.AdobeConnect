@@ -18,9 +18,9 @@
             if (p == null)
                 throw new ArgumentNullException(nameof(p));
 
-            this.lmsProviderId = p.Id;
-            this.lmsProviderName = p.LmsProviderName;
-            this.shortName = p.ShortName;
+            msProviderId = p.Id;
+            msProviderName = p.LmsProviderName;
+            shortName = p.ShortName;
         }
 
         #endregion

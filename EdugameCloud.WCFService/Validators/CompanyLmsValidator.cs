@@ -31,7 +31,7 @@
             this.RuleFor(x => x.lmsProvider)
                 .NotEmpty()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Lms provider is empty")
-                .Must(x => lmsProviderModel.GetByName(x) != null)
+                .Must(x => lmsProviderModel.GetByShortName(x) != null)
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS Provider Name")
                 .Must(
                     (model, x) =>

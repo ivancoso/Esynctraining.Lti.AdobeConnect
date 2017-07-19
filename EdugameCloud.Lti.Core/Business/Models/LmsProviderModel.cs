@@ -27,7 +27,7 @@
         #endregion
 
         // TRICK: uses cache!
-        public LmsProvider GetByName(string name)
+        public LmsProvider GetByShortName(string name)
         {
             return GetAll().SingleOrDefault(x => x.ShortName.Equals(name, StringComparison.OrdinalIgnoreCase));
         }

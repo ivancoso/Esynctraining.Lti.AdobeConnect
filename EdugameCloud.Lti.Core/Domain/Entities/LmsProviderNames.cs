@@ -6,7 +6,10 @@
 
         public const string Canvas = "canvas";
 
-        public const string AgilixBuzz = "agilixbuzz";
+        /// <summary>
+        /// TRICK: use shortName. LMS returns this value.
+        /// </summary>
+        public const string AgilixBuzz = "buzz";
 
         public const string Blackboard = "blackboard";
 

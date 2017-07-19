@@ -349,7 +349,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 string lmsProvider = param.GetLtiProviderName(provider);
 
-                LmsProvider providerInstance = LmsProviderModel.GetByName(lmsProvider);
+                LmsProvider providerInstance = LmsProviderModel.GetByShortName(lmsProvider);
                 if (providerInstance == null)
                 {
                     Logger.ErrorFormat("Invalid LMS provider name. LMS Provider Name:{0}. oauth_consumer_key:{1}.",
@@ -1018,7 +1018,7 @@ namespace EdugameCloud.Lti.Controllers
                 LmsProviderName = lmsProvider.LmsProviderName,
                 UserGuideLink = !string.IsNullOrEmpty(lmsProvider.UserGuideFileUrl)
                     ? lmsProvider.UserGuideFileUrl
-                    : new Uri(new Uri((string)Settings.BasePath, UriKind.Absolute), $"content/lti-instructions/{lmsProvider.ShortName}.pdf").ToString(),
+                    : new Uri(new Uri((string)Settings.BasePath, UriKind.Absolute), $"content/lti-instructions/{lmsProvider.LmsProviderName}.pdf").ToString(),
             };
 
             bool hasMp4 = settings.HasMp4ServiceLicenseKey | settings.HasMp4ServiceWithSubtitlesLicenseKey;

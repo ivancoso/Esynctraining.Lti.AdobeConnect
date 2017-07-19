@@ -1,6 +1,6 @@
 ﻿	
 	UPDATE [dbo].[LmsProvider]
 	SET 
-		[shortName] = 'agilixbuzz',
+		[shortName] = 'buzz',
 		[lmsProvider] = 'AgilixBuzz'
 	WHERE [lmsProviderId] = 3 

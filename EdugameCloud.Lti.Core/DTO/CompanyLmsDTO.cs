@@ -78,7 +78,7 @@ namespace EdugameCloud.Lti.DTO
             this.userFolderName = instance.UserFolderName;
 
             Uri portalUrl = new Uri((string)settings.PortalUrl, UriKind.Absolute);
-            this.setupUrl = new Uri(portalUrl, $"content/lti-config/{provider.ShortName}.xml").ToString();
+            this.setupUrl = new Uri(portalUrl, $"content/lti-config/{provider.LmsProviderName}.xml").ToString();
 
             this.enableProxyToolMode = instance.EnableProxyToolMode ?? false;
             this.proxyToolPassword = instance.ProxyToolSharedPassword;

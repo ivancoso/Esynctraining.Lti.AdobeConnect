@@ -119,10 +119,10 @@ namespace EdugameCloud.WCFService
                         var pdto = new LmsProviderDTO(p)
                         {
                             configUrl = string.IsNullOrWhiteSpace(p.ConfigurationUrl)
-                                ? new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-config/{p.ShortName}.xml").ToString()
+                                ? new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-config/{p.LmsProviderName}.xml").ToString()
                                 : p.ConfigurationUrl,
 
-                            instructionsUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-instructions/{p.ShortName}.pdf").ToString(),
+                            instructionsUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-instructions/{p.LmsProviderName}.pdf").ToString(),
 
                             defaultRoleMapping = LmsCompanyRoleMappingModel.GetDefaultMapping(p.Id).ToArray(),
                         };
@@ -139,7 +139,7 @@ namespace EdugameCloud.WCFService
                 case (int)LmsProviderEnum.Blackboard:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide(LmsProviderNames.Blackboard),
+                        BuildUserGuide(LmsProviderEnum.Blackboard),
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                         BuildBlackboardJar(),
@@ -148,7 +148,7 @@ namespace EdugameCloud.WCFService
                 case (int)LmsProviderEnum.Moodle:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide(LmsProviderNames.Moodle),
+                        BuildUserGuide(LmsProviderEnum.Moodle),
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                         BuildMoodleZip(),
@@ -157,7 +157,7 @@ namespace EdugameCloud.WCFService
                 case (int)LmsProviderEnum.Canvas:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide(LmsProviderNames.Canvas),
+                        BuildUserGuide(LmsProviderEnum.Canvas),
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                     };
@@ -165,7 +165,7 @@ namespace EdugameCloud.WCFService
                 case (int)LmsProviderEnum.AgilixBuzz:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide(LmsProviderNames.AgilixBuzz),
+                        BuildUserGuide(LmsProviderEnum.AgilixBuzz),
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                     };
@@ -173,7 +173,7 @@ namespace EdugameCloud.WCFService
                 case (int)LmsProviderEnum.Schoology:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide(LmsProviderNames.Schoology),
+                        BuildUserGuide(LmsProviderEnum.Schoology),
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                     };
@@ -181,7 +181,7 @@ namespace EdugameCloud.WCFService
                 case (int)LmsProviderEnum.Desire2Learn:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide(LmsProviderNames.Brightspace),
+                        BuildUserGuide(LmsProviderEnum.Brightspace),
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                     };
@@ -189,7 +189,7 @@ namespace EdugameCloud.WCFService
                 case (int)LmsProviderEnum.Sakai:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide(LmsProviderNames.Sakai),
+                        BuildUserGuide(LmsProviderEnum.Sakai),
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                     };
@@ -539,16 +539,17 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        private FileDownloadDTO BuildUserGuide(string name)
+        private FileDownloadDTO BuildUserGuide(LmsProviderEnum lms)
         {
+            LmsProvider provider = LmsProviderModel.GetById((int)lms);
             var result = new FileDownloadDTO();
 
-            result.downloadUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-instructions/{name}.pdf").ToString();
+            result.downloadUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-instructions/{provider.LmsProviderName}.pdf").ToString();
 
-            result.fileName = string.Format("{0}.pdf", name);
+            result.fileName = string.Format("{0}.pdf", provider.LmsProviderName);
             result.title = "User Guide";
 
-            string path = HttpContext.Current.Server.MapPath($"~/../Content/lti-instructions/{name}.pdf");
+            string path = HttpContext.Current.Server.MapPath($"~/../Content/lti-instructions/{provider.LmsProviderName}.pdf");
             var file = new FileInfo(path);
             result.lastModifyDate = file.CreationTimeUtc;
             result.sizeInBytes = file.Length;

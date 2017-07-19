@@ -88,7 +88,7 @@ namespace EdugameCloud.WCFService
                 }
             }
 
-            if ((this.LmsProviderModel.GetByName(resultDto.lmsProvider).Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
+            if ((this.LmsProviderModel.GetByShortName(resultDto.lmsProvider).Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
             {
                 lmsPassword = resultDto.proxyToolPassword;
             }
@@ -133,7 +133,7 @@ namespace EdugameCloud.WCFService
                 if (lmsConnectionTest.status != OkMessage)
                 {
                     message.AppendFormat("{0} connection failed. ({1}) \r\n",
-                        this.LmsProviderModel.GetByName(resultDto.lmsProvider).LmsProviderName,
+                        this.LmsProviderModel.GetByShortName(resultDto.lmsProvider).LmsProviderName,
                         lmsConnectionTest.info);
                 }
 
@@ -210,7 +210,7 @@ namespace EdugameCloud.WCFService
             }
 
             instance.DateModified = DateTime.Now;
-            var lmsProvider = this.LmsProviderModel.GetByName(dto.lmsProvider);
+            var lmsProvider = this.LmsProviderModel.GetByShortName(dto.lmsProvider);
             instance.LmsProviderId = lmsProvider.Id;
             instance.ModifiedBy = this.UserModel.GetOneById(dto.modifiedBy).Value.Return(x => x.Id, dto.createdBy);
             instance.SharedSecret = dto.sharedSecret;

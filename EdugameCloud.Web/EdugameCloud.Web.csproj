@@ -570,7 +570,7 @@
     <Content Include="Content\lti-instructions\Moodle.pdf" />
     <Content Include="Content\lti-instructions\Sakai.pdf" />
     <Content Include="Content\swf\config\paths.properties" />
-    <Content Include="Content\lti-instructions\Buzz.pdf" />
+    <Content Include="Content\lti-instructions\AgilixBuzz.pdf" />
     <None Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </None>
