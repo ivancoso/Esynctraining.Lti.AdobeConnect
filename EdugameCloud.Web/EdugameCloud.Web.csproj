@@ -426,7 +426,7 @@
     <Content Include="Content\swf\admin\appStyles.css" />
     <Content Include="Content\swf\admin\resources\icons\add.png" />
     <Content Include="Content\swf\admin\resources\icons\addSmall.png" />
-    <Content Include="Content\swf\admin\resources\icons\buzz.jpg" />
+    <Content Include="Content\swf\admin\resources\icons\agilixbuzz.jpg" />
     <Content Include="Content\swf\admin\resources\icons\announce.png" />
     <Content Include="Content\swf\admin\resources\icons\bird.png" />
     <Content Include="Content\swf\admin\resources\icons\blackboard.jpg" />
