@@ -170,6 +170,14 @@ namespace EdugameCloud.WCFService
                         BuildOfficeHoursePod(),
                     };
 
+                case (int)LmsProviderEnum.Schoology:
+                    return new FileDownloadDTO[]
+                    {
+                        BuildUserGuide(LmsProviderNames.Schoology),
+                        BuildMobileDownload(),
+                        BuildOfficeHoursePod(),
+                    };
+
                 case (int)LmsProviderEnum.Desire2Learn:
                     return new FileDownloadDTO[]
                     {

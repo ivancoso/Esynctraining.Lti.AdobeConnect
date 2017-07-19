@@ -74,6 +74,11 @@ namespace EdugameCloud.Lti.DTO
         public string custom_canvas_user_login_id { get; set; }
 
         /// <summary>
+        /// UserName - Used by "schoology"
+        /// </summary>
+        public string custom_username { get; set; }
+
+        /// <summary>
         /// Gets or sets the extended IMS LIST memberships id. (sakai)
         /// </summary>
         public string ext_ims_lis_memberships_id { get; set; }
@@ -224,6 +229,10 @@ namespace EdugameCloud.Lti.DTO
         {
             get
             {
+                //custom_username:mike@esynctraining.com
+                if (this.tool_consumer_info_product_family_code == "schoology")
+                    return this.custom_username;
+
                 return string.IsNullOrWhiteSpace(this.custom_canvas_user_login_id)
                             ? (string.IsNullOrWhiteSpace(ext_d2l_username) 
                                 ? (string.IsNullOrWhiteSpace(this.ext_user_username)

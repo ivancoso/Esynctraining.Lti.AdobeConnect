@@ -356,6 +356,10 @@
       <Project>{2a856007-ffab-4d1d-b8d5-510451bf8b79}</Project>
       <Name>EdugameCloud.Lti.Sakai</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Schoology\EdugameCloud.Lti.Schoology.csproj">
+      <Project>{9d09f5a0-9adb-49ef-985f-89641ecf9e00}</Project>
+      <Name>EdugameCloud.Lti.Schoology</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
       <Name>EdugameCloud.Lti</Name>

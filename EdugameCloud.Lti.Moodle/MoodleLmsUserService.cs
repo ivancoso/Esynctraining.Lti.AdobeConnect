@@ -26,7 +26,9 @@ namespace EdugameCloud.Lti.Moodle
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            return lmsCompany.AdminUser != null || !string.IsNullOrEmpty(lmsCompany.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken));
+            return lmsCompany.AdminUser != null 
+                || !string.IsNullOrEmpty(lmsCompany.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken))
+                || !string.IsNullOrEmpty(lmsCompany.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerKey));
         }
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,

@@ -59,6 +59,7 @@
     <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Schoology\EdugameCloud.Lti.Schoology.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj" />
   </ItemGroup>

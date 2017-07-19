@@ -6,7 +6,7 @@
 
         public const string Canvas = "canvas";
 
-        public const string AgilixBuzz = "buzz";
+        public const string AgilixBuzz = "agilixbuzz";
 
         public const string Blackboard = "blackboard";
 
@@ -17,6 +17,8 @@
         //public const string DialogEdu = "dialogedu";
 
         //public const string Bridge = "bridge";
+
+        public const string Schoology = "schoology";
 
     }
 

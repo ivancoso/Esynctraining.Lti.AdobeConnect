@@ -208,12 +208,9 @@
     <Build Include="dbo\Tables\LmsMeetingSession.sql" />
     <Build Include="dbo\Tables\School.sql" />
     <Build Include="dbo\Tables\QuizQuestionResultAnswer.sql" />
-    <Build Include="Updates\20170207-DbUpdate-1-8-1-0.sql" />
     <Build Include="dbo\Tables\CompanyEventQuizMapping.sql" />
-    <None Include="Updates\20170310-DbUpdate-1-8-2-0.sql" />
-    <None Include="Updates\20170220-DbUpdate-1-8-1-0.sql" />
     <Build Include="dbo\Tables\LmsCourseSection.sql" />
-    <Build Include="Updates\20170706-DBUpdate-1-8-4-0.sql" />
+    <Build Include="dbo\Tables\CompanyAcDomains.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
@@ -222,9 +219,5 @@
     <None Include="Schema-To-Live.scmp" />
     <None Include="Schema-To-LocalLive.scmp" />
     <None Include="Schema-To-LocalDev.scmp" />
-    <None Include="Updates\AddRowsIntoFileTable.sql" />
-    <None Include="Updates\returnRowsAlterSp.sql" />
-    <None Include="Updates\20161210-DbUpdate-1-7-7.sql" />
-    <None Include="Updates\20170125-DbUpdate-1-8-0.sql" />
   </ItemGroup>
 </Project>

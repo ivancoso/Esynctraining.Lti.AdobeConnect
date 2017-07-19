@@ -79,8 +79,10 @@ namespace EdugameCloud.WCFService
             string lmsPassword = resultDto.lmsAdminPassword;
             if (!isTransient && string.IsNullOrWhiteSpace(resultDto.lmsAdminPassword))
             {
-                if ((entity.LmsProviderId == (int)LmsProviderEnum.Moodle && string.IsNullOrWhiteSpace(entity.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken)))
-                || ((entity.LmsProviderId == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode))
+                if (
+                    (entity.LmsProviderId == (int)LmsProviderEnum.Moodle && string.IsNullOrWhiteSpace(entity.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken)))
+                || ((entity.LmsProviderId == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode)
+                )
                 {
                     lmsPassword = entity.AdminUser.Password;
                 }
@@ -270,6 +272,9 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.CanStudentCreateStudyGroup, dto.canStudentCreateStudyGroup);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.MoodleCoreServiceToken, dto.moodleCoreServiceToken);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.MoodleQuizServiceToken, dto.moodleQuizServiceToken);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SchoologyConsumerKey, dto.schoologyConsumerKey);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SchoologyConsumerSecret, dto.schoologyConsumerSecret);
+
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsPdfMeetingUrl, dto.isPdfMeetingUrl);
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());

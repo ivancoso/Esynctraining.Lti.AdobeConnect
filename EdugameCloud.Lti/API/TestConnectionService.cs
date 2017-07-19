@@ -14,6 +14,8 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Utils;
 using Esynctraining.AdobeConnect;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.API.Schoology;
+using System.Net.Http;
 
 namespace EdugameCloud.Lti.API
 {
@@ -27,25 +29,18 @@ namespace EdugameCloud.Lti.API
 
         public TestConnectionService(ILogger logger)
         {
-            this.logger = logger;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #region Properties
 
-        private IAgilixBuzzApi DlapAPI
-        {
-            get { return IoC.Resolve<IAgilixBuzzApi>(); }
-        }
+        private IAgilixBuzzApi DlapAPI => IoC.Resolve<IAgilixBuzzApi>();
 
-        private IMoodleApi MoodleAPI
-        {
-            get { return IoC.Resolve<IMoodleApi>(); }
-        }
+        private IMoodleApi MoodleAPI => IoC.Resolve<IMoodleApi>();
 
-        private IBlackBoardApi SoapAPI
-        {
-            get { return IoC.Resolve<IBlackBoardApi>(); }
-        }
+        private IBlackBoardApi SoapAPI => IoC.Resolve<IBlackBoardApi>();
+
+        private ISchoologyRestApiClient SchoologyApi => IoC.Resolve<ISchoologyRestApiClient>();
 
         #endregion
 
@@ -77,6 +72,9 @@ namespace EdugameCloud.Lti.API
                     break;
                 case LmsProviderNames.Brightspace:
                     success = TestBrightspaceConnection(test, out info);
+                    break;
+                case LmsProviderNames.Schoology:
+                    success = TestSchoologyConnection(test, out info);
                     break;
             }
 
@@ -113,6 +111,28 @@ namespace EdugameCloud.Lti.API
         {
             info = "Not supported";
             return true;
+        }
+
+        private bool TestSchoologyConnection(ConnectionTestDTO test, out string info)
+        {
+            if (!TestDomainFormat(test, out info))
+                return false;
+
+            try
+            {
+                var courses = SchoologyApi.GetRestCall<dynamic>(test.login, test.password, "courses").Result;
+                return courses != null;
+            }
+            catch (AggregateException ex)
+            {
+                logger.Error("[TestSchoologyConnection]", ex);
+                var reqEx = ex.InnerExceptions.First() as HttpRequestException;
+                if (reqEx != null)
+                {
+                    info = reqEx.Message;
+                }
+                return false;
+            }
         }
 
         private bool TestAgilixBuzzConnection(ConnectionTestDTO test, out string info)

@@ -48,6 +48,9 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string EnableVirtualClassrooms = nameof(EnableVirtualClassrooms);
         public const string VirtualClassroomsLabel = nameof(VirtualClassroomsLabel);
 
+        public const string SchoologyConsumerKey = nameof(SchoologyConsumerKey);
+        public const string SchoologyConsumerSecret = nameof(SchoologyConsumerSecret);
+
         public static class Telephony
         {
             public const string ActiveProfile = "Telephony.ActiveProfile";  // None / MeetingOne / Arkadin

@@ -10,6 +10,7 @@
         Desire2Learn = 6,
         //DialogEdu = 7,
         //Bridge = 8,
+        Schoology = 9,
     }
 
 }
