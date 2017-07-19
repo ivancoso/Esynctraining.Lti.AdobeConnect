@@ -93,6 +93,13 @@ namespace EdugameCloud.WCFService
                 lmsPassword = resultDto.proxyToolPassword;
             }
 
+            if ((this.LmsProviderModel.GetByShortName(resultDto.lmsProvider).Id == (int)LmsProviderEnum.Schoology))
+            {
+                // TRICK: for test-connection only
+                resultDto.lmsAdmin = resultDto.schoologyConsumerKey;
+                lmsPassword = resultDto.schoologyConsumerSecret;
+            }
+
             ConnectionInfoDTO lmsConnectionTest;
             if (!string.IsNullOrWhiteSpace(resultDto.moodleCoreServiceToken))
             {
