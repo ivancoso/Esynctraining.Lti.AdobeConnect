@@ -37,6 +37,7 @@
                     (model, x) =>
                     LmsProvidersWithoutAdmin.Contains(x.ToLower())
                     || model.enableProxyToolMode
+                    || (!string.IsNullOrWhiteSpace(model.schoologyConsumerKey) && !string.IsNullOrWhiteSpace(model.schoologyConsumerSecret))
                     || !string.IsNullOrWhiteSpace(model.lmsAdmin))
                 .WithError(
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
