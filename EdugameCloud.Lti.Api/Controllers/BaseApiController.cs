@@ -32,7 +32,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         protected API.AdobeConnect.IAdobeConnectAccountService acAccountService { get; }
 
-        private Esynctraining.AdobeConnect.IAdobeConnectAccountService BaseAcAccountService = IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>();
+        private readonly Esynctraining.AdobeConnect.IAdobeConnectAccountService BaseAcAccountService = IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>();
 
         protected bool IsDebug
         {
@@ -80,7 +80,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         #region Constructors and Destructors
 
-        public BaseApiController(
+        protected BaseApiController(
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, 
@@ -132,7 +132,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
+                //string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
                 throw;
             }
         }
