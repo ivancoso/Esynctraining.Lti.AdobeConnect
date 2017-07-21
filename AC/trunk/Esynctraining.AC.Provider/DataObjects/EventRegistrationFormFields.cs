@@ -28,14 +28,22 @@ namespace Esynctraining.AC.Provider.DataObjects
 
     public class SaveEventFields
     {
-        public SaveEventFields(UserCredentials adminUser, string name, DateTime startDate)
+        public SaveEventFields(UserCredentials adminUser, string name, DateTime startDate, DateTime eventEndDate)
         {
-            AdminUser = adminUser;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Non-empty value expected", nameof(name));
+            if (startDate == DateTime.MinValue || startDate == DateTime.MaxValue)
+                throw new ArgumentOutOfRangeException($"Invalid Start Event value { startDate }", nameof(startDate));
+            if (eventEndDate == DateTime.MinValue || eventEndDate == DateTime.MaxValue)
+                throw new ArgumentOutOfRangeException($"Invalid End Event value { eventEndDate }", nameof(eventEndDate));
+
+            AdminUser = adminUser ?? throw new ArgumentNullException(nameof(adminUser));
+
             Name = name;
             StartDate = startDate;
-            EventTemplateId = ""; //will be set later in code (on 1st get with redirect)
-            //EventTemplateId = "11036";
-            //EventTemplateId = "11065";
+            EndDate = eventEndDate;
+
+            EventTemplateId = string.Empty; //will be set later in code (on 1st get with redirect)
             TimeZoneId = 4;
             EventType = "meeting";
             OwnerPermissionId = "host";
@@ -46,10 +54,9 @@ namespace Esynctraining.AC.Provider.DataObjects
             ShowInCatalog = true;
             DefaultRegistrationType = "advance";
             Lang = "en";
-            UrlPath = String.Empty;
-            Description = String.Empty;
-            EventInfo = String.Empty;
-            EndDate = StartDate.AddHours(1);
+            UrlPath = string.Empty;
+            Description = string.Empty;
+            EventInfo = string.Empty;
         }
 
         public UserCredentials AdminUser { get; set; }

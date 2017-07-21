@@ -4,7 +4,7 @@ using Esynctraining.AC.Provider.DataObjects;
 
 namespace Esynctraining.AC.Provider.Utils
 {
-    public class AcCreateEventHelper
+    public static class AcCreateEventHelper
     {
         public static Dictionary<string, string> GetPostFormFields(SaveEventFields saveEventFields, string owasp)
         {
