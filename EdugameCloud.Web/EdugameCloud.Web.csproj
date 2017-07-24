@@ -564,13 +564,8 @@
     </Content>
     <Content Include="packages.config" />
     <Content Include="Content\lti-files\edugamecloud_1.0.7.zip" />
-    <Content Include="Content\lti-instructions\Blackboard.pdf" />
-    <Content Include="Content\lti-instructions\Brightspace.pdf" />
-    <Content Include="Content\lti-instructions\Canvas.pdf" />
-    <Content Include="Content\lti-instructions\Moodle.pdf" />
-    <Content Include="Content\lti-instructions\Sakai.pdf" />
     <Content Include="Content\swf\config\paths.properties" />
-    <Content Include="Content\lti-instructions\AgilixBuzz.pdf" />
+    <Content Include="Content\lti-instructions\placeholder.json" />
     <None Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </None>
