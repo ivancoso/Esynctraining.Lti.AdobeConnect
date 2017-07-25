@@ -5,11 +5,12 @@
     <Authors>Sergey Isakovich</Authors>
     <Company>eSyncTraining Inc.</Company>
     <Description>MailKit implementation of ISmtpClient</Description>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
-    <Version>1.0.0.1</Version>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
+    <FileVersion>1.0.0.2</FileVersion>
+    <Version>1.0.0.2</Version>
     <PackageTags>mail mailkit smtp</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReleaseNotes>SmtpClient added new method</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

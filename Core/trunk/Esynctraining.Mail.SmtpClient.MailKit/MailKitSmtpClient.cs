@@ -44,6 +44,31 @@ namespace Esynctraining.Mail.SmtpClient.MailKit
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
+            string modelName = typeof(TModel).Name;
+            if (!modelName.EndsWith("Model"))
+                throw new InvalidOperationException("Mail model name should ends with 'Model'");
+            string templateName = modelName.Substring(0, modelName.Length - "Model".Length);
+            var body = await _viewRenderService.TransformAsync(templateName, model);
+
+            return await SendEmailAsync(from, to, subject, body, cced, bcced, attachments);
+        }
+
+        public async Task<bool> SendEmailAsync(
+            ISystemEmail from,
+            IEnumerable<ISystemEmail> to,
+            string subject,
+            string body,
+            IEnumerable<ISystemEmail> cced = null,
+            IEnumerable<ISystemEmail> bcced = null,
+            IEnumerable<Attachment> attachments = null)
+        {
+            if (from == null)
+                throw new ArgumentNullException(nameof(from));
+            if (to == null)
+                throw new ArgumentNullException(nameof(to));
+            if (string.IsNullOrWhiteSpace(subject))
+                throw new ArgumentException("Non-empty value expected", nameof(subject));
+
             var message = new MimeMessage
             {
                 Subject = subject,
@@ -61,12 +86,6 @@ namespace Esynctraining.Mail.SmtpClient.MailKit
             {
                 message.Bcc.AddRange(bcced.Select(x => new MailboxAddress(x.Name, x.Email)));
             }
-
-            string modelName = typeof(TModel).Name;
-            if (!modelName.EndsWith("Model"))
-                throw new InvalidOperationException("Mail model name should ends with 'Model'");
-            string templateName = modelName.Substring(0, modelName.Length - "Model".Length);
-            var body = await _viewRenderService.TransformAsync(templateName, model);
 
             var bodyBuilder = new BodyBuilder
             {
@@ -110,7 +129,7 @@ namespace Esynctraining.Mail.SmtpClient.MailKit
 
                 try
                 {
-                    client.Send(message);
+                    await client.SendAsync(message);
                     _logger.Info($"Email was sent to: { string.Join(",", message.To.Mailboxes.Select(x => x.Address).ToArray()) }");
                 }
                 catch (Exception e)
