@@ -63,7 +63,7 @@ namespace EdugameCloud.Lti
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Component.For<ITelephonyProfileEngine>().ImplementedBy<MeetingOneEngine>().Named("MEETINGONE"));
-            container.Register(Component.For<ITelephonyProfileEngine>().ImplementedBy<ArkadinEngine>().Named("ARKADIN"));
+            //container.Register(Component.For<ITelephonyProfileEngine>().ImplementedBy<ArkadinEngine>().Named("ARKADIN"));
         }
 
     }

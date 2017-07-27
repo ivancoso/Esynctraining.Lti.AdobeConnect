@@ -54,8 +54,7 @@ namespace EdugameCloud.WCFService
         private NewsletterSubscriptionModel NewsletterSubscriptionModel => IoC.Resolve<NewsletterSubscriptionModel>();
         private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
         private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
-        private QuizModel QuizModel => IoC.Resolve<QuizModel>();
-        protected dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
+        private dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
 
         private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
 
