@@ -55,7 +55,7 @@
                     !string.IsNullOrWhiteSpace(model.lmsDomain)
                     && (
                         (model.enableProxyToolMode && !string.IsNullOrWhiteSpace(model.moodleCoreServiceToken))
-                        || (!string.IsNullOrWhiteSpace(model.lmsAdmin) && !string.IsNullOrWhiteSpace(model.lmsAdminPassword))
+                        || !string.IsNullOrWhiteSpace(model.lmsAdmin)
                     )
                 )
                 .When(model => model.lmsProvider == LmsProviderNames.Moodle)
@@ -79,10 +79,6 @@
             this.RuleFor(model => model.additionalLmsDomains)
                .Must((model, x) => ValidLmsDomains(model.lmsDomain, x))
                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "LMS domains should be valid absolute URI addressess.");
-
-            //this.RuleFor(model => model.moodleCoreServiceToken)
-            //   .Must((model, x) => ValidateCreds(model.lmsProvider, model.lmsAdmin, x))
-            //   .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Either Admin Credentials or Core Service Token are required.");
         }
 
         private static bool UniqueLmsDomains(string mainLmsDomain, string[] additionalDomains)

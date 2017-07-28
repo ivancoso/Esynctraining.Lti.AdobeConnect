@@ -35,22 +35,19 @@ namespace EdugameCloud.Lti.Desire2Learn
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            if (!CanRetrieveUsersFromApiForCompany(lmsCompany))
+            var param = extraData as LtiParamDTO;
+
+            var isCurrentUserAndAdmin =
+                param != null
+                && param.lms_user_id == lmsUserId
+                && ((param.roles != null && param.roles.Contains("Administrator"))
+                    || (param.ext_d2l_role != null && param.ext_d2l_role.ToLower().Contains("administrator")));
+
+            //if current user is admin but not allowed to call api - process 'error' parameter in call stack
+            if (isCurrentUserAndAdmin)
             {
-                var param = extraData as LtiParamDTO;
-
-                var isCurrentUserAndAdmin =
-                    param != null
-                    && param.lms_user_id == lmsUserId
-                    && ((param.roles != null && param.roles.Contains("Administrator"))
-                        || (param.ext_d2l_role != null && param.ext_d2l_role.ToLower().Contains("administrator")));
-
-                //if current user is admin but not allowed to call api - process 'error' parameter in call stack
-                if (isCurrentUserAndAdmin)
-                {
-                    error = $"[GetD2LUsers] AdminUser is not set for LmsCompany with id={lmsCompany.Id}";
-                    return null;
-                }
+                error = $"[GetD2LUsers] AdminUser is not set for LmsCompany with id={lmsCompany.Id}";
+                return null;
             }
 
             return GetUsersOldStyle(lmsCompany, courseId, out error, extraData)
@@ -116,7 +113,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                         lmsCompany.LmsDomain,
                         string.Format(
                             d2lApiService.EnrollmentsUrlFormat,
-                            (string) this.settings.BrightspaceApiVersion,
+                            (string)this.settings.BrightspaceApiVersion,
                             courseId)
                         + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
                         lmsCompany);

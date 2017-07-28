@@ -140,7 +140,6 @@
 
         //        if (request.ForceUpdate && LmsCompany.UseSynchronizedUsers
         //            && service != null
-        //            && service.CanRetrieveUsersFromApiForCompany(LmsCompany)
         //            && LmsCompany.LmsCourseMeetings != null)
         //        {
         //            SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false, meetingIds: new[] { request.meetingId });

@@ -20,17 +20,6 @@ namespace EdugameCloud.Lti.Moodle
             this.moodleApi = moodleApi;
         }
 
-
-        public override bool CanRetrieveUsersFromApiForCompany(ILmsLicense lmsCompany)
-        {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
-
-            return lmsCompany.AdminUser != null 
-                || !string.IsNullOrEmpty(lmsCompany.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken))
-                || !string.IsNullOrEmpty(lmsCompany.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerKey));
-        }
-
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
         {

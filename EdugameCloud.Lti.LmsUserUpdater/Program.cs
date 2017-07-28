@@ -47,14 +47,14 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     var lmsCompanyModel = IoC.Resolve<LmsCompanyModel>();
                     var syncService = IoC.Resolve<ISynchronizationUserService>();
                     //var timer = Stopwatch.StartNew();
-                    IEnumerable<LmsCompany> companies = lmsCompanyModel.GetEnabledForSynchronization(parameters.ContainsKey(ConsumerKeyParameterName) 
+                    IEnumerable<LmsCompany> companies = lmsCompanyModel.GetEnabledForSynchronization(parameters.ContainsKey(ConsumerKeyParameterName)
                         ? parameters[ConsumerKeyParameterName]
                         : null);
                     //timer.Stop();
                     //logger.Warn($"Retrieve companies elapsed time: {timer.Elapsed.ToString()}");
                     if (parameters.ContainsKey(ConsumerKeyOutParameterName))
                     {
-                        var excludeKeys = parameters[ConsumerKeyOutParameterName].Split(new[] {',', ';'});
+                        var excludeKeys = parameters[ConsumerKeyOutParameterName].Split(new[] { ',', ';' });
                         companies =
                             companies.Where(x => excludeKeys.All(ek => ek != x.ConsumerKey)).ToList();
                     }
@@ -67,10 +67,10 @@ namespace EdugameCloud.Lti.LmsUserUpdater
 
                     SplitSyncMode mode = parameters.ContainsKey(SplitSyncModeParameterName) ? (SplitSyncMode)Enum.Parse(typeof(SplitSyncMode), parameters[SplitSyncModeParameterName]) : SplitSyncMode.None;
 
-                    companies = companies.Where(x => (mode == SplitSyncMode.None || x.Id %2 == (int)mode)
-                        && !LicenseExpired(x) 
+                    companies = companies.Where(x => (mode == SplitSyncMode.None || x.Id % 2 == (int)mode)
+                        && !LicenseExpired(x)
                         && x.LmsCourseMeetings.Any(y => y.LmsMeetingType != (int)LmsMeetingType.OfficeHours)).ToList();
-                    logger.Info($"[Companies to sync] {string.Join(",", companies.Select(x=> x.Id))}");
+                    logger.Info($"[Companies to sync] {string.Join(",", companies.Select(x => x.Id))}");
                     var groupedByCompany = companies.GroupBy(x => x.LmsProviderId);//.ToDictionary(x => x.Key, y => y.SelectMany(z=>z.LmsCourseMeetings).GroupBy(c => new CourseCompany { CourseId = c.CourseId, LmsCompanyId = c.LmsCompany.Id }));
 
                     //todo: Task for each lms if possible
@@ -79,19 +79,16 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                         var service = lmsFactory.GetUserService((LmsProviderEnum)group.Key);
                         foreach (var lmsCompany in group)
                         {
-                            if (service.CanRetrieveUsersFromApiForCompany(lmsCompany))
+                            try
                             {
-                                try
-                                {
-                                    var timer = Stopwatch.StartNew();
-                                    syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
-                                    timer.Stop();
-                                    logger.Warn($"[Sync time] LicenseId={lmsCompany.Id}, Time={timer.Elapsed.ToString()}");
-                                }
-                                catch (Exception ex)
-                                {
-                                    logger.ErrorFormat(ex, "Unexpected error during execution for LmsCompanyId: {0}.", lmsCompany.Id);
-                                }
+                                var timer = Stopwatch.StartNew();
+                                syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
+                                timer.Stop();
+                                logger.Warn($"[Sync time] LicenseId={lmsCompany.Id}, Time={timer.Elapsed.ToString()}");
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.ErrorFormat(ex, "Unexpected error during execution for LmsCompanyId: {0}.", lmsCompany.Id);
                             }
                         }
                     }
