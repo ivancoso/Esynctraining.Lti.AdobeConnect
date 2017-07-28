@@ -16,7 +16,15 @@
     public sealed class CompanyLmsValidator : AbstractValidator<CompanyLmsDTO>
     {
         public static readonly List<string> LmsProvidersWithoutAdmin =
-            new List<string> { LmsProviderNames.Canvas, LmsProviderNames.Brightspace, LmsProviderNames.Sakai };
+            new List<string>
+            {
+                LmsProviderNames.Canvas,
+                LmsProviderNames.Brightspace,
+                LmsProviderNames.Sakai,
+                LmsProviderNames.Schoology,
+                LmsProviderNames.Haiku
+            };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyLmsValidator"/> class.
         /// </summary>
@@ -37,23 +45,44 @@
                     (model, x) =>
                     LmsProvidersWithoutAdmin.Contains(x.ToLower())
                     || model.enableProxyToolMode
-                    || (!string.IsNullOrWhiteSpace(model.schoologyConsumerKey) && !string.IsNullOrWhiteSpace(model.schoologyConsumerSecret))
                     || !string.IsNullOrWhiteSpace(model.lmsAdmin))
                 .WithError(
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
                     "Invalid LMS Setup. Please provide with administrative Username and Password");
+
+            this.RuleFor(x => x.lmsProvider)
+                .Must((model, x) =>
+                    !string.IsNullOrWhiteSpace(model.lmsDomain)
+                    && (
+                        (model.enableProxyToolMode && !string.IsNullOrWhiteSpace(model.moodleCoreServiceToken))
+                        || (!string.IsNullOrWhiteSpace(model.lmsAdmin) && !string.IsNullOrWhiteSpace(model.lmsAdminPassword))
+                    )
+                )
+                .When(model => model.lmsProvider == LmsProviderNames.Moodle)
+                .WithError(
+                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                    "Invalid LMS Setup. Either Admin Credentials or Core Service Token are required.");
+
+            this.RuleFor(x => x.lmsProvider)
+                .Must((model, x) =>
+                    !string.IsNullOrWhiteSpace(model.schoologyConsumerKey) && !string.IsNullOrWhiteSpace(model.schoologyConsumerSecret)
+                )
+                .When(model => model.lmsProvider == LmsProviderNames.Schoology)
+                .WithError(
+                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                    "Invalid LMS Setup. Please provide ConsumerKey and ConsumerSecret");
 
             this.RuleFor(model => model.additionalLmsDomains)
                .Must((model, x) => UniqueLmsDomains(model.lmsDomain, x))
                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "LMS domains should be unique.");
 
             this.RuleFor(model => model.additionalLmsDomains)
-               .Must((model, x) => UniqueLmsDomains(model.lmsDomain, x))
+               .Must((model, x) => ValidLmsDomains(model.lmsDomain, x))
                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "LMS domains should be valid absolute URI addressess.");
 
-            this.RuleFor(model => model.moodleCoreServiceToken)
-               .Must((model, x) => ValidateCreds(model.lmsProvider, model.lmsAdmin, x))
-               .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Either Admin Credentials or Core Service Token are required.");
+            //this.RuleFor(model => model.moodleCoreServiceToken)
+            //   .Must((model, x) => ValidateCreds(model.lmsProvider, model.lmsAdmin, x))
+            //   .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Either Admin Credentials or Core Service Token are required.");
         }
 
         private static bool UniqueLmsDomains(string mainLmsDomain, string[] additionalDomains)

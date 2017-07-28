@@ -23,6 +23,8 @@
 
         public const string Schoology = "schoology";
 
+        public const string Haiku = "haiku";
+
     }
 
 }
