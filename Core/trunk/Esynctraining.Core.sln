@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mail", "Esynctraining.Mail\Esynctraining.Mail.csproj", "{873245BF-8C4A-423A-9EA0-31811C2F660C}"
 EndProject
@@ -38,6 +38,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Mail.TemplateTransform.AspNetCore", "Esynctraining.Mail.TemplateTransform.AspNetCore\Esynctraining.Mail.TemplateTransform.AspNetCore.csproj", "{7EF30D67-C3F4-45AD-9A68-5F7D9322FEC3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Mail.TemplateTransform.RazorLight", "Esynctraining.Mail.TemplateTransform.RazorLight\Esynctraining.Mail.TemplateTransform.RazorLight.csproj", "{FB1CF772-873F-4FE4-9420-C173B07448AB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.AspNetCore.Test", "Esynctraining.AspNetCore.Test\Esynctraining.AspNetCore.Test.csproj", "{EF4DF1B9-74A8-4419-AF15-E32F1F4D0DD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.ImportExport", "Esynctraining.ImportExport\Esynctraining.ImportExport.csproj", "{7BEC06EA-9CFE-41BA-95D4-8301FC3AFF61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +121,14 @@ Global
 		{FB1CF772-873F-4FE4-9420-C173B07448AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB1CF772-873F-4FE4-9420-C173B07448AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB1CF772-873F-4FE4-9420-C173B07448AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4DF1B9-74A8-4419-AF15-E32F1F4D0DD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4DF1B9-74A8-4419-AF15-E32F1F4D0DD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4DF1B9-74A8-4419-AF15-E32F1F4D0DD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4DF1B9-74A8-4419-AF15-E32F1F4D0DD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BEC06EA-9CFE-41BA-95D4-8301FC3AFF61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BEC06EA-9CFE-41BA-95D4-8301FC3AFF61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BEC06EA-9CFE-41BA-95D4-8301FC3AFF61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BEC06EA-9CFE-41BA-95D4-8301FC3AFF61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

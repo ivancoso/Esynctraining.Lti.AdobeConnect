@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;net461</TargetFrameworks>
+    <Version>1.0.1.0</Version>
+    <PackageTags>import export excel</PackageTags>
+    <Description>Import\Export functionality.</Description>
+    <Authors>eSyncTraining.com</Authors>
+    <Company>eSyncTraining.com</Company>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReleaseNotes>WIP version (used for Goddard Import)</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Excel\ImportModels\**" />
+    <EmbeddedResource Remove="Excel\ImportModels\**" />
+    <None Remove="Excel\ImportModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Excel\ImportModels\IFileImportModel.cs" />
+    <Compile Include="Excel\ImportModels\ImportHelper.cs" />
+    <Compile Include="Excel\ImportModels\ImportOperationResult.cs" />
+    <Compile Include="Excel\ImportModels\ImportResult.cs" />
+    <Compile Include="Excel\ImportModels\MappedColumn.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus.Core" Version="1.5.1" />
+  </ItemGroup>
+
+</Project>
