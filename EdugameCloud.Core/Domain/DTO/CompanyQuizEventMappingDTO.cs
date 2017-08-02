@@ -63,7 +63,7 @@ namespace EdugameCloud.Core.Domain.DTO
 
             if (eventQuizMappingId != 0)
             {
-                registrationUrl = settings.CertificatesUrl + "?eventQuizMappingId=" + entity.Guid;
+                registrationUrl = settings.CertificatesUrl + "/" + entity.Guid;
             }
         }
 

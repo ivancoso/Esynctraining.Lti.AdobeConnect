@@ -218,8 +218,8 @@ namespace EdugameCloud.WCFService
             };
             if (isSuccess)
             {
-                resultDto.certificatePreviewUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Preview?quizResultGuid={postQuizResult.Guid}";
-                resultDto.certificateDownloadUrl = $"{Settings.CertificatesUrl}/QuizCertificate/Download?quizResultGuid={postQuizResult.Guid}";
+                resultDto.certificatePreviewUrl = $"{Settings.CertificatesUrl}/quiz-certificate/{postQuizResult.Guid}/preview";
+                resultDto.certificateDownloadUrl = $"{Settings.CertificatesUrl}/quiz-certificate/{postQuizResult.Guid}/download";
 
                 var emailService = new EmailService();
                 emailService.SendCertificate(postQuizResult.Guid.ToString());
