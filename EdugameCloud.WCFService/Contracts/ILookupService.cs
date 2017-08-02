@@ -10,8 +10,6 @@
     [ServiceContract]
     public interface ILookupService
     {
-        #region Public Methods and Operators
-        
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetAll", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
@@ -22,144 +20,66 @@
         [WebGet(UriTemplate = "GetVersionInfo", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         EGCVersionsDTO GetVersionInfo();
 
-        /// <summary>
-        /// The get languages.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="LanguageDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetLanguages", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         LanguageDTO[] GetLanguages();
 
-        /// <summary>
-        /// The get build version types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="BuildVersionTypeDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetBuildVersionTypes", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         BuildVersionTypeDTO[] GetBuildVersionTypes();
 
-        /// <summary>
-        /// The get question types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="QuestionTypeDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetQuestionTypes", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         QuestionTypeDTO[] GetQuestionTypes();
 
-        /// <summary>
-        /// The get score types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ScoreTypeDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetScoreTypes", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         ScoreTypeDTO[] GetScoreTypes();
 
-        /// <summary>
-        /// The get time zones.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="TimeZoneDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetTimeZones", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         TimeZoneDTO[] GetTimeZones();
 
-        /// <summary>
-        /// The get user roles.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="UserRoleDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetUserRoles", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         UserRoleDTO[] GetUserRoles();
 
-        /// <summary>
-        /// The get quiz formats.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="QuizFormatDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetQuizFormats", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         QuizFormatDTO[] GetQuizFormats();
 
-        /// <summary>
-        /// The survey grouping types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="SurveyGroupingTypeDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetSurveyGroupingTypes", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         SurveyGroupingTypeDTO[] GetSurveyGroupingTypes();
 
-        /// <summary>
-        /// The get countries.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="CountryDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetCountries", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         CountryDTO[] GetCountries();
 
-        /// <summary>
-        /// The get states.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="StateDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetStates", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         StateDTO[] GetStates();
 
-        /// <summary>
-        /// The get schools.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="SchoolDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebGet(UriTemplate = "GetSchools", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        SchoolDTO[] GetSchools();
+        //[OperationContract]
+        //[FaultContract(typeof(Error))]
+        //[WebGet(UriTemplate = "GetSchools", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        //SchoolDTO[] GetSchools();
 
-        /// <summary>
-        /// The get states.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="SNServiceDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetServices", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         SNServiceDTO[] GetServices();
 
-        /// <summary>
-        /// The get states.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="SNMapProviderDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetMapProviders", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
@@ -251,8 +171,7 @@
         //[FaultContract(typeof(Error))]
         //[WebGet(UriTemplate = "GetTweets?name={name}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         //TwitterStatusDTO[] GetTweets(string name);
-        
-        #endregion
 
     }
+
 }

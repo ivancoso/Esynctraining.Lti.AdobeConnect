@@ -11,7 +11,6 @@ namespace EdugameCloud.WCFService
     using Core.Business;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using Esynctraining.Core.Caching;
@@ -54,10 +53,6 @@ namespace EdugameCloud.WCFService
         
         private BuildVersionTypeModel BuildVersionTypeModel => IoC.Resolve<BuildVersionTypeModel>();
         
-        //private StateModel StateModel => IoC.Resolve<StateModel>();
-
-        private SchoolModel SchoolModel => IoC.Resolve<SchoolModel>();
-
         private CountryModel CountryModel => IoC.Resolve<CountryModel>();
         
         private SNServiceModel SNServiceModel => IoC.Resolve<SNServiceModel>();
@@ -94,12 +89,6 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The get version info.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="EGCVersionsDTO"/>.
-        /// </returns>
         public EGCVersionsDTO GetVersionInfo()
         {
             try
@@ -136,12 +125,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The get countries.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="CountryDTO"/>.
-        /// </returns>
         public CountryDTO[] GetCountries()
         {
             try
@@ -155,15 +138,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The get location.
-        /// </summary>
-        /// <param name="geoDTO">
-        /// The geo DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="GeoResultDTO"/>.
-        /// </returns>
         public GeoResultDTO GetLocation(GeoDTO geoDTO)
         {
             string errorString;
@@ -224,15 +198,6 @@ namespace EdugameCloud.WCFService
         //     throw new FaultException<Error>(error, error.errorMessage);
         // }
 
-        /// <summary>
-        /// The get google social profiles.
-        /// </summary>
-        /// <param name="vcfProfile">
-        /// The VCF Profile.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         public string ConvertFromVCF(string vcfProfile)
         {
             try
@@ -247,15 +212,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// Convert to VCF.
-        /// </summary>
-        /// <param name="xmlProfile">
-        /// The xml Profile.
-        /// </param>
-        /// <returns>
-        /// The <see cref="byte"/>.
-        /// </returns>
         public byte[] ConvertToVCF(string xmlProfile)
         {
             var model = new VCFProfileDTO { xmlProfile = xmlProfile };
@@ -295,12 +251,6 @@ namespace EdugameCloud.WCFService
         //    return this.TwitterModel.SearchForTweets(screenname).ToArray();
         //}
 
-        /// <summary>
-        /// The get states.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="StateDTO"/>.
-        /// </returns>
         public StateDTO[] GetStates()
         {
             try
@@ -313,32 +263,20 @@ namespace EdugameCloud.WCFService
                 throw;
             }
         }
+        
+        //public SchoolDTO[] GetSchools()
+        //{
+        //    try
+        //    {
+        //        return this.SchoolModel.GetAll().Select(x => new SchoolDTO(x)).ToArray();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.Error("Lookup.GetSchools", ex);
+        //        throw;
+        //    }
+        //}
 
-        /// <summary>
-        /// The get schools.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="SchoolDTO"/>.
-        /// </returns>
-        public SchoolDTO[] GetSchools()
-        {
-            try
-            {
-                return this.SchoolModel.GetAll().Select(x => new SchoolDTO(x)).ToArray();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Lookup.GetSchools", ex);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// The get services.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="SNServiceDTO"/>.
-        /// </returns>
         public SNServiceDTO[] GetServices()
         {
             try
@@ -352,12 +290,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The get services.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="SNMapProviderDTO"/>.
-        /// </returns>
         public SNMapProviderDTO[] GetMapProviders()
         {
             try
@@ -371,12 +303,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The get build version types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="BuildVersionTypeDTO"/>.
-        /// </returns>
         public BuildVersionTypeDTO[] GetBuildVersionTypes()
         {
             try
@@ -390,12 +316,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The get languages.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="LanguageDTO"/>.
-        /// </returns>
         public LanguageDTO[] GetLanguages()
         {
             try
@@ -407,14 +327,8 @@ namespace EdugameCloud.WCFService
                 Logger.Error("Lookup.GetLanguages", ex);
                 throw;
             }
-}
+        }
 
-        /// <summary>
-        /// The get question types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="QuestionTypeDTO"/>.
-        /// </returns>
         public QuestionTypeDTO[] GetQuestionTypes()
         {
             try
@@ -428,12 +342,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The get time zones.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="TimeZoneDTO"/>.
-        /// </returns>
         public TimeZoneDTO[] GetTimeZones()
         {
             try
@@ -485,19 +393,13 @@ namespace EdugameCloud.WCFService
                 scoreTypes = this.GetScoreTypes(),
                 services = this.GetServices(),
                 states = this.GetStates(),
-                schools = this.GetSchools(),
+                //schools = this.GetSchools(),
                 surveyGroupingTypes = this.GetSurveyGroupingTypes(),
                 timeZones = this.GetTimeZones(),
                 userRoles = this.GetUserRoles(),
             };
         }
 
-        /// <summary>
-        /// The get user roles.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="UserRoleDTO"/>.
-        /// </returns>
         public UserRoleDTO[] GetUserRoles()
         {
             try
@@ -511,12 +413,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The get quiz formats.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="QuizFormatDTO"/>.
-        /// </returns>
         public QuizFormatDTO[] GetQuizFormats()
         {
             try
@@ -530,12 +426,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The survey grouping types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="SurveyGroupingTypeDTO"/>.
-        /// </returns>
         public SurveyGroupingTypeDTO[] GetSurveyGroupingTypes()
         {
             try
@@ -547,23 +437,6 @@ namespace EdugameCloud.WCFService
                 Logger.Error("Lookup.GetSurveyGroupingTypes", ex);
                 throw;
             }
-        }
-        
-
-        private Country ConvertDto(GeoCountryDTO countryDTO, Country instance)
-        {
-            instance.Latitude = countryDTO.latitude;
-            instance.Longitude = countryDTO.longitude;
-            instance.ZoomLevel = countryDTO.zoomLevel;
-            return instance;
-        }
-
-        private State ConvertDto(GeoStateDTO stateDTO, State instance)
-        {
-            instance.Latitude = stateDTO.latitude;
-            instance.Longitude = stateDTO.longitude;
-            instance.ZoomLevel = stateDTO.zoomLevel;
-            return instance;
         }
 
         #endregion

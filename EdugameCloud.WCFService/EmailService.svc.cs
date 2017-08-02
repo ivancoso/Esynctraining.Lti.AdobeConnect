@@ -49,16 +49,16 @@ namespace EdugameCloud.WCFService
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
+    // SG: GetHistory / GetHistoryByCompanyId / ResendEmail / SendEventQuizResultEmail
     public class EmailService : BaseService, IEmailService
     {
         private NewsletterSubscriptionModel NewsletterSubscriptionModel => IoC.Resolve<NewsletterSubscriptionModel>();
+
         private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
+
         private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
-        private dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
 
         private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
-
-        private SchoolModel SchoolModel => IoC.Resolve<SchoolModel>();
 
         private IAdobeConnectAccountService AdobeConnectAccountService => IoC.Resolve<IAdobeConnectAccountService>();
 
@@ -69,15 +69,6 @@ namespace EdugameCloud.WCFService
             return this.EmailHistoryModel.GetAll().Select(x => new EmailHistoryDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="dto">
-        /// The DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="EmailHistoryDTO"/>.
-        /// </returns>
         public EmailHistoryDTO SaveHistory(EmailHistoryDTO dto)
         {
             ValidationResult validationResult;
@@ -239,6 +230,7 @@ namespace EdugameCloud.WCFService
             return users.Select(u => new UserDTO(u)).ToArray();
         }
 
+        // TRICK: used by OfflineQuizService.SendAnswers
         public OperationResultDto SendCertificate(string postQuizResultGuid)
         {
             Guid guid;
@@ -272,61 +264,62 @@ namespace EdugameCloud.WCFService
             return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
         }
 
-        public OperationResultDto SendCertificateToTeacher(string postQuizResultGuid)
-        {
-            Guid guid;
-            var canParse = Guid.TryParse(postQuizResultGuid, out guid);
-            if (!canParse)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, ErrorsTexts.GetResultError_NotFound, "No item with such id found");
-                this.LogError("EmailService.SendCertificateToTeacher", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-            var postQuizResult = QuizResultModel.GetOneByGuid(guid).Value;
-            var emailsNotSend = new List<string>();
-            if (string.IsNullOrEmpty(postQuizResult.ACEmail))
-            {
-                Logger.Warn($"[SendCertificateToTeacher] Email is empty. quizResultId={postQuizResult.Id}");
-                emailsNotSend.Add(postQuizResult.ParticipantName);
-            }
+        //public OperationResultDto SendCertificateToTeacher(string postQuizResultGuid)
+        //{
+        //    Guid guid;
+        //    var canParse = Guid.TryParse(postQuizResultGuid, out guid);
+        //    if (!canParse)
+        //    {
+        //        var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, ErrorsTexts.GetResultError_NotFound, "No item with such id found");
+        //        this.LogError("EmailService.SendCertificateToTeacher", error);
+        //        throw new FaultException<Error>(error, error.errorMessage);
+        //    }
+        //    var postQuizResult = QuizResultModel.GetOneByGuid(guid).Value;
+        //    var emailsNotSend = new List<string>();
+        //    if (string.IsNullOrEmpty(postQuizResult.ACEmail))
+        //    {
+        //        Logger.Warn($"[SendCertificateToTeacher] Email is empty. quizResultId={postQuizResult.Id}");
+        //        emailsNotSend.Add(postQuizResult.ParticipantName);
+        //    }
 
-            var eventMapping = CompanyEventQuizMappingModel.GetOneById(postQuizResult.EventQuizMapping.Id).Value;
-            var acUrl = eventMapping.CompanyAcDomain.AcServer;
-            var login = eventMapping.CompanyAcDomain.Username;
-            var password = eventMapping.CompanyAcDomain.Password;
-            var adobeConnectProxy = AdobeConnectAccountService.GetProvider(new AdobeConnectAccess(new Uri(acUrl), login, password), false);
+        //    var eventMapping = CompanyEventQuizMappingModel.GetOneById(postQuizResult.EventQuizMapping.Id).Value;
+        //    var acUrl = eventMapping.CompanyAcDomain.AcServer;
+        //    var login = eventMapping.CompanyAcDomain.Username;
+        //    var password = eventMapping.CompanyAcDomain.Password;
+        //    var adobeConnectProxy = AdobeConnectAccountService.GetProvider(new AdobeConnectAccess(new Uri(acUrl), login, password), false);
 
-            var loginResult = adobeConnectProxy.Login(new UserCredentials(login, password));
-            if (!loginResult.Success)
-                throw new InvalidOperationException("Can't login to AC");
+        //    var loginResult = adobeConnectProxy.Login(new UserCredentials(login, password));
+        //    if (!loginResult.Success)
+        //        throw new InvalidOperationException("Can't login to AC");
 
-            var dynamicQuestionAnswers = GetDynamicQuestionAnswers(acUrl, eventMapping.AcEventScoId,
-                loginResult.Status.SessionInfo, postQuizResult.ACEmail);
-            var schoolNumber = dynamicQuestionAnswers["school"];
-            var school = SchoolModel.GetOneByName(schoolNumber);
-            var schoolEmail = school.SchoolEmail;
-            if (string.IsNullOrEmpty(schoolEmail))
-            {
-                Logger.Warn($"[SendCertificateToTeacher] Teacher Email is empty. quizResultId={postQuizResult.Id}");
-                emailsNotSend.Add(schoolEmail);
-            }
+        //    var dynamicQuestionAnswers = GetDynamicQuestionAnswers(acUrl, eventMapping.AcEventScoId,
+        //        loginResult.Status.SessionInfo, postQuizResult.ACEmail);
+        //    var schoolNumber = dynamicQuestionAnswers["school"];
+        //    var school = SchoolModel.GetOneByName(schoolNumber);
+        //    var schoolEmail = school.SchoolEmail;
+        //    if (string.IsNullOrEmpty(schoolEmail))
+        //    {
+        //        Logger.Warn($"[SendCertificateToTeacher] Teacher Email is empty. quizResultId={postQuizResult.Id}");
+        //        emailsNotSend.Add(schoolEmail);
+        //    }
 
-            var schoolAccountName = school.AccountName;
-            var model = new TeacherCertificateEmailModel(Settings)
-            {
-                CertificateLink = Settings.CertificatesUrl + "/QuizCertificate/Download?quizResultGuid=" + postQuizResult.Guid,
-                ParticipantName = postQuizResult.ParticipantName,
-                TeacherName = schoolAccountName
-            };
-            bool sentSuccessfully = MailModel.SendEmailSync(schoolAccountName, schoolEmail,
-                        Emails.CertificateSubject,
-                        model, Common.AppEmailName, Common.AppEmail);
-            if (!sentSuccessfully)
-            {
-                emailsNotSend.Add(schoolEmail);
-            }
-            return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
-        }
+        //    var schoolAccountName = school.AccountName;
+        //    var model = new TeacherCertificateEmailModel(Settings)
+        //    {
+        //        CertificateLink =
+        //        $"{Settings.CertificatesUrl}/quiz-certificate/{postQuizResult.Guid}/download",
+        //        ParticipantName = postQuizResult.ParticipantName,
+        //        TeacherName = schoolAccountName
+        //    };
+        //    bool sentSuccessfully = MailModel.SendEmailSync(schoolAccountName, schoolEmail,
+        //                Emails.CertificateSubject,
+        //                model, Common.AppEmailName, Common.AppEmail);
+        //    if (!sentSuccessfully)
+        //    {
+        //        emailsNotSend.Add(schoolEmail);
+        //    }
+        //    return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
+        //}
 
         private static Dictionary<string, string> GetDynamicQuestionAnswers(string acUrl, string scoId, string breezeSession, string userEmail)
         {

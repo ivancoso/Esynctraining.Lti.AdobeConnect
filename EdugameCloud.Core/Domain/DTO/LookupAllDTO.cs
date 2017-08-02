@@ -65,11 +65,8 @@
         [DataMember]
         public StateDTO[] states { get; set; }
 
-        /// <summary>
-        /// Gets or sets the states.
-        /// </summary>
-        [DataMember]
-        public SchoolDTO[] schools { get; set; }
+        //[DataMember]
+        //public SchoolDTO[] schools { get; set; }
 
         /// <summary>
         /// Gets or sets the survey grouping types.

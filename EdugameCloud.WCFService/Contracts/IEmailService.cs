@@ -12,8 +12,6 @@
     [ServiceContract]
     public interface IEmailService
     {
-        #region Public Methods and Operators
-
         /// <summary>
         /// Gets the history.
         /// </summary>
@@ -112,6 +110,6 @@
         [FaultContract(typeof(Error))]
         OperationResultDto SendRegistrationEmail(EventRegistrationDTO registrationInfo);
 
-        #endregion
     }
+
 }

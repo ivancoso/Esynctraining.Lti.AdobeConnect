@@ -1,27 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
-using System.ServiceModel.Web;
-using System.Text;
-using Castle.Components.DictionaryAdapter;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.DTO.OfflineQuiz;
 using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.WCFService.Base;
 using EdugameCloud.WCFService.Contracts;
-using Esynctraining.AC.Provider;
-using Esynctraining.AC.Provider.DataObjects;
-using Esynctraining.AC.Provider.Entities;
-using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
-using FluentValidation.Results;
 
 namespace EdugameCloud.WCFService
 {
@@ -32,32 +22,14 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class OfflineQuizService : BaseService, IOfflineQuizService
     {
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyAcServerModel CompanyAcServerModel
-        {
-            get { return IoC.Resolve<CompanyAcServerModel>(); }
-        }
-
         protected dynamic Settings
         {
             get { return IoC.Resolve<ApplicationSettingsProvider>(); }
         }
 
-        private CompanyEventQuizMappingModel CompanyEventQuizMappingModel
-        {
-            get { return IoC.Resolve<CompanyEventQuizMappingModel>(); }
-        }
-
         private QuizModel QuizModel
         {
             get { return IoC.Resolve<QuizModel>(); }
-        }
-
-        private ACSessionModel ACSessionModel
-        {
-            get { return IoC.Resolve<ACSessionModel>(); }
         }
 
         private CompanyEventQuizMappingModel EventQuizMappingModel
@@ -88,11 +60,6 @@ namespace EdugameCloud.WCFService
         private QuestionModel QuestionModel
         {
             get { return IoC.Resolve<QuestionModel>(); }
-        }
-
-        private ILogger Logger
-        {
-            get { return IoC.Resolve<ILogger>(); }
         }
 
         public OfflineQuizDTO GetQuizByKey(string key)
