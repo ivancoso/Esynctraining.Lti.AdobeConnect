@@ -125,6 +125,16 @@ namespace EdugameCloud.Core.Domain.DTO
 
         #endregion
 
+        public string BuildDownloadUrl(string root)
+        {
+            return $"{root}/quiz-certificate/{quizResultGuid}/download";
+        }
+
+        public string BuildPreviewUrl(string root)
+        {
+            return $"{root}/quiz-certificate/{quizResultGuid}/preview";
+        }
+
     }
 
 }

@@ -116,8 +116,8 @@ namespace EdugameCloud.Core.Business.Models
             {
                 if (playerDto.isPostQuiz)
                 {
-                    playerDto.certPreviewUrl = $"{_settings.CertificatesUrl}/quiz-certificate/{playerDto.quizResultGuid}/preview";
-                    playerDto.certDownloadUrl = $"{_settings.CertificatesUrl}/quiz-certificate/{playerDto.quizResultGuid}/download";
+                    playerDto.certPreviewUrl = playerDto.BuildPreviewUrl(_settings.CertificatesUrl);
+                    playerDto.certDownloadUrl = playerDto.BuildDownloadUrl(_settings.CertificatesUrl);
                 }
             }
 

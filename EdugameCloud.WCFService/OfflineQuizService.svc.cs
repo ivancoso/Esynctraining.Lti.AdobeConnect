@@ -185,8 +185,8 @@ namespace EdugameCloud.WCFService
             };
             if (isSuccess)
             {
-                resultDto.certificatePreviewUrl = $"{Settings.CertificatesUrl}/quiz-certificate/{postQuizResult.Guid}/preview";
-                resultDto.certificateDownloadUrl = $"{Settings.CertificatesUrl}/quiz-certificate/{postQuizResult.Guid}/download";
+                resultDto.certificatePreviewUrl = postQuizResult.BuildPreviewUrl(Settings.CertificatesUrl);
+                resultDto.certificateDownloadUrl = postQuizResult.BuildDownloadUrl(Settings.CertificatesUrl);
 
                 var emailService = new EmailService();
                 emailService.SendCertificate(postQuizResult.Guid.ToString());

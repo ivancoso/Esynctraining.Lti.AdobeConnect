@@ -3,11 +3,7 @@
     using System;
     using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-    using Iesi.Collections.Generic;
 
-    /// <summary>
-    ///     The quiz result.
-    /// </summary>
     public class QuizResult : Entity
     {
         #region Public Properties
@@ -95,6 +91,17 @@
         public QuizResult()
         {
             Results = new List<QuizQuestionResult>();
+        }
+
+
+        public string BuildDownloadUrl(string root)
+        {
+            return $"{root}/quiz-certificate/{Guid}/download";
+        }
+
+        public string BuildPreviewUrl(string root)
+        {
+            return $"{root}/quiz-certificate/{Guid}/preview";
         }
 
     }
