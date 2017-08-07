@@ -94,12 +94,12 @@
         }
 
 
-        public string BuildDownloadUrl(string root)
+        public virtual string BuildDownloadUrl(string root)
         {
             return $"{root}/quiz-certificate/{Guid}/download";
         }
 
-        public string BuildPreviewUrl(string root)
+        public virtual string BuildPreviewUrl(string root)
         {
             return $"{root}/quiz-certificate/{Guid}/preview";
         }
