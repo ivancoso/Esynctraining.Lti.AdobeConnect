@@ -1,17 +1,13 @@
 ﻿// ReSharper disable once CheckNamespace
 
-using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Xml.Linq;
-using EdugameCloud.Core.Business.Models;
 using EdugameCloud.WCFService.Mail.Models;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AdobeConnect;
-using Esynctraining.Core.Providers;
-using Esynctraining.Mail;
 using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
@@ -59,8 +55,6 @@ namespace EdugameCloud.WCFService
         private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
 
         private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
-
-        private IAdobeConnectAccountService AdobeConnectAccountService => IoC.Resolve<IAdobeConnectAccountService>();
 
         #region Public Methods and Operators
 
@@ -386,10 +380,10 @@ namespace EdugameCloud.WCFService
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), Logger, apiUrl);
             var eventInfo = proxy.GetScoInfo(scoId);
             if (!eventInfo.Success)
-                throw new InvalidOperationException("");
+                throw new InvalidOperationException();
             
 
-            List<string> emailsNotSend = new List<string>();
+            var emailsNotSend = new List<string>();
             foreach (var quizResult in quizResults)
             {
                 if (quizResult.Quiz.Id != mapping.PreQuiz.Id)
@@ -542,19 +536,7 @@ namespace EdugameCloud.WCFService
         #endregion
 
         #region Private Methods
-
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="history">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategory"/>.
-        /// </returns>
+        
         private EmailHistory ConvertDto(EmailHistoryDTO history, EmailHistory instance)
         {
             instance = instance ?? new EmailHistory();
@@ -571,19 +553,7 @@ namespace EdugameCloud.WCFService
 
             return instance;
         }
-
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="h">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategory"/>.
-        /// </returns>
+        
         private NewsletterSubscription ConvertDto(NewsletterSubscriptionDTO h, NewsletterSubscription instance)
         {
             instance = instance ?? new NewsletterSubscription();
@@ -596,5 +566,7 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
     }
+
 }

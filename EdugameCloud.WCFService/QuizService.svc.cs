@@ -37,29 +37,11 @@
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     All items test.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="QuizDTO" />.
-        /// </returns>
         public QuizDTO[] GetAll()
         {
             return this.QuizModel.GetAll().Select(x => new QuizDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedQuizDTO"/>.
-        /// </returns>
         public PagedQuizDTO GetPaged(int pageIndex, int pageSize)
         {
             int totalCount;
@@ -70,15 +52,6 @@
             };
         }
 
-        /// <summary>
-        /// The creation of quiz.
-        /// </summary>
-        /// <param name="dto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizDTO"/>.
-        /// </returns>
         public QuizDTO Create(QuizSMIWrapperDTO dto)
         {
             ValidationResult validationResult;
@@ -95,15 +68,6 @@
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="appletResultDTO">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizDTO"/>.
-        /// </returns>
         public QuizDTO Save(QuizDTO appletResultDTO)
         {
             ValidationResult validationResult;
@@ -120,15 +84,6 @@
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizDTO"/>.
-        /// </returns>
         public QuizDTO GetById(int id)
         {
             Quiz appletResult;
@@ -170,104 +125,41 @@
             return new QuizDTO(appletResult);
         }
 
-        /// <summary>
-        /// The get by SMI id.
-        /// </summary>
-        /// <param name="userId">
-        /// The id.
-        /// </param>
-        /// <param name="showLms">
-        /// The show LMS.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizFromStoredProcedureDTO"/>.
-        /// </returns>
         public QuizFromStoredProcedureDTO[] GetQuizzesByUserId(int userId, bool? showLms)
         {
             return
                 this.QuizModel.GetQuizzesByUserId(userId, showLms ?? false)
-                    .ToList()
                     .Select(x => new QuizFromStoredProcedureDTO(x))
                     .ToArray();
         }
 
-        /// <summary>
-        /// The get LMS quizzes.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="lmsUserParametersId">
-        /// The LMS User Parameters Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizFromStoredProcedureDTO"/>.
-        /// </returns>
         public QuizFromStoredProcedureDTO[] GetLmsQuizzes(int userId, int lmsUserParametersId)
         {
             var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
             return
                 this.QuizModel.GetLMSQuizzes(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.Id)
-                    .ToList()
                     .Select(x => new QuizFromStoredProcedureDTO(x))
                     .ToArray();
         }
 
-        /// <summary>
-        /// The get by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizFromStoredProcedureDTO"/>.
-        /// </returns>
         public QuizFromStoredProcedureDTO[] GetSharedQuizzesByUserId(int userId)
         {
             return
                 this.QuizModel.GetSharedForUserQuizzesByUserId(userId)
-                    .ToList()
                     .Select(x => new QuizFromStoredProcedureDTO(x))
                     .ToArray();
         }
 
-        /// <summary>
-        /// The get quiz categories by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SMICategoriesFromStoredProcedureDTO"/>.
-        /// </returns>
         public SMICategoriesFromStoredProcedureDTO[] GetQuizCategoriesbyUserId(int userId)
         {
             return this.QuizModel.GetQuizCategoriesbyUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get quiz sub module items by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO[] GetQuizSMItemsByUserId(int userId)
         {
             return this.SubModuleItemModel.GetQuizSMItemsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get quiz data by quiz id.
-        /// </summary>
-        /// <param name="quizId">
-        /// The quiz id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizDataDTO"/>.
-        /// </returns>
         public QuizDataDTO GetQuizDataByQuizId(int quizId)
         {
             return this.QuizModel.getQuizDataByQuizID(quizId);
@@ -277,18 +169,6 @@
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="itemDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Quiz"/>.
-        /// </returns>
         private Quiz ConvertDto(QuizDTO itemDTO, Quiz instance)
         {
             instance = instance ?? new Quiz();
@@ -309,21 +189,6 @@
             return instance;
         }
 
-        /// <summary>
-        /// The convert quiz and get service response.
-        /// </summary>
-        /// <param name="appletResultDTO">
-        /// The applet result DTO.
-        /// </param>
-        /// <param name="quiz">
-        /// The quiz.
-        /// </param>
-        /// <param name="quizModel">
-        /// The quiz model.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizDTO"/>.
-        /// </returns>
         private QuizDTO ConvertQuizAndGetServiceResponse(
             QuizDTO appletResultDTO,
             Quiz quiz,
@@ -338,5 +203,7 @@
         }
 
         #endregion
+
     }
+
 }

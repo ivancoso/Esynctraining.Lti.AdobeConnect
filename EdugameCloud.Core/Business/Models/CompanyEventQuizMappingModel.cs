@@ -5,6 +5,8 @@ using System.Linq;
 using EdugameCloud.Core.Domain.Entities;
 using Esynctraining.Core.Caching;
 using Esynctraining.NHibernate;
+using Esynctraining.NHibernate.Queries;
+using NHibernate.Linq;
 
 namespace EdugameCloud.Core.Business.Models
 {
@@ -38,5 +40,15 @@ namespace EdugameCloud.Core.Business.Models
         {
             return GetAll(x => x.Guid == guid).FirstOrDefault();
         }
+
+        public bool AnyByQuizId(int quizId)
+        {
+            var query = from map in this.Repository.Session.Query<CompanyEventQuizMapping>()
+                        where map.PreQuiz.Id == quizId || map.PostQuiz.Id == quizId
+                        select map;
+            return query.Any();
+        }
+
     }
+
 }

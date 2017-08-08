@@ -9,8 +9,6 @@ using EdugameCloud.Core.Domain.DTO.OfflineQuiz;
 using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.WCFService.Base;
 using EdugameCloud.WCFService.Contracts;
-using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.WCFService
@@ -22,45 +20,20 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class OfflineQuizService : BaseService, IOfflineQuizService
     {
-        protected dynamic Settings
-        {
-            get { return IoC.Resolve<ApplicationSettingsProvider>(); }
-        }
+        private QuizModel QuizModel => IoC.Resolve<QuizModel>();
 
-        private QuizModel QuizModel
-        {
-            get { return IoC.Resolve<QuizModel>(); }
-        }
+        private CompanyEventQuizMappingModel EventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
 
-        private CompanyEventQuizMappingModel EventQuizMappingModel
-        {
-            get { return IoC.Resolve<CompanyEventQuizMappingModel>(); }
-        }
+        private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
 
-        private QuizResultModel QuizResultModel
-        {
-            get { return IoC.Resolve<QuizResultModel>(); }
-        }
+        private DistractorModel DistractorModel => IoC.Resolve<DistractorModel>();
 
-        private DistractorModel DistractorModel
-        {
-            get { return IoC.Resolve<DistractorModel>(); }
-        }
+        private QuizQuestionResultModel QuizQuestionResultModel => IoC.Resolve<QuizQuestionResultModel>();
 
-        private QuizQuestionResultModel QuizQuestionResultModel
-        {
-            get { return IoC.Resolve<QuizQuestionResultModel>(); }
-        }
+        private QuizQuestionResultAnswerModel QuizQuestionResultAnswerModel => IoC.Resolve<QuizQuestionResultAnswerModel>();
 
-        private QuizQuestionResultAnswerModel QuizQuestionResultAnswerModel
-        {
-            get { return IoC.Resolve<QuizQuestionResultAnswerModel>(); }
-        }
+        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
-        private QuestionModel QuestionModel
-        {
-            get { return IoC.Resolve<QuestionModel>(); }
-        }
 
         public OfflineQuizDTO GetQuizByKey(string key)
         {
@@ -93,16 +66,16 @@ namespace EdugameCloud.WCFService
                     continue;
                 foreach (var quizDistractor in quizDistractors)
                 {
-                    distractors.Add(new OfflineDistractorDTO()
+                    distractors.Add(new OfflineDistractorDTO
                     {
                         questionId = quizDistractor.questionId,
                         distractor = quizDistractor.distractor,
                         distractorOrder = quizDistractor.distractorOrder,
                         distractorId = quizDistractor.distractorId,
-                        distractorType = quizDistractor.distractorType
+                        distractorType = quizDistractor.distractorType,
                     });
                 }
-                questions.Add(new OfflineQuestionDTO()
+                questions.Add(new OfflineQuestionDTO
                 {
                     question = question.question,
                     distractors = distractors.ToArray(),
@@ -114,7 +87,7 @@ namespace EdugameCloud.WCFService
                     isMultipleChoice = question.isMultipleChoice,
                     restrictions = question.restrictions,
                     instruction = question.instruction,
-                    imageVO = question.imageVO
+                    imageVO = question.imageVO,
                 });
             }
             result.questions = questions.ToArray();
@@ -122,10 +95,10 @@ namespace EdugameCloud.WCFService
             result.quizName = postQuiz.quizVO.quizName;
             //var quizResultObj = QuizResultModel.GetOneById(postQuiz.quizVO.quizId).Value;
 
-            result.participant = new ParticipantDTO()
+            result.participant = new ParticipantDTO
             {
                 email = quizResult.ACEmail,
-                participantName = quizResult.ParticipantName
+                participantName = quizResult.ParticipantName,
             };
             return result;
         }
@@ -137,10 +110,9 @@ namespace EdugameCloud.WCFService
             var mapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
             var postQuizId = mapping.PostQuiz.Id;
             var postQuizData = QuizModel.getQuizDataByQuizID(postQuizId);
-            DateTime startTime, endTime;
-            var isDateCorrect = DateTime.TryParse(answerContainer.startTime, out startTime);
-            isDateCorrect = isDateCorrect && DateTime.TryParse(answerContainer.endTime, out endTime);
 
+            var isDateCorrect = DateTime.TryParse(answerContainer.startTime, out DateTime startTime)
+                && DateTime.TryParse(answerContainer.endTime, out DateTime endTime);
             if (!isDateCorrect)
             {
                 throw new InvalidOperationException("Date is not in correct format");
@@ -149,7 +121,7 @@ namespace EdugameCloud.WCFService
             var existingPostQuizResult = QuizResultModel.GetQuizResultsByQuizIds(new List<int> { postQuizId });
             var existing = existingPostQuizResult.FirstOrDefault(x => x.ACEmail == quizResult.ACEmail && x.Quiz.IsPostQuiz && x.EventQuizMapping.Id == mapping.Id);
             if (existing!=null)
-                return new OfflineQuizResultDTO() { errorMessage = "You have already passed this Quiz!" };
+                return new OfflineQuizResultDTO { errorMessage = "You have already passed this Quiz!" };
 
             //var acSession = ACSessionModel.GetOneById(quizResult.ACSessionId);
             var quizEventMapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
@@ -164,10 +136,10 @@ namespace EdugameCloud.WCFService
                 Email = quizResult.Email,
                 ACSessionId = quizResult.ACSessionId,
                 ParticipantName = quizResult.ParticipantName,
-                Quiz = QuizModel.GetOneById(postQuizId).Value,
+                Quiz = mapping.PostQuiz,
                 EventQuizMapping = quizEventMapping,
                 DateCreated = DateTime.Now,
-                Guid = Guid.NewGuid()
+                Guid = Guid.NewGuid(),
             };
 
             var quizPassingScoreInPercents = (float)postQuizResult.Quiz.PassingScore / 100;
@@ -178,7 +150,7 @@ namespace EdugameCloud.WCFService
             QuizResultModel.RegisterSave(postQuizResult);
 
             var isSuccess = scoreInPercents >= quizPassingScoreInPercents;
-            var resultDto = new OfflineQuizResultDTO()
+            var resultDto = new OfflineQuizResultDTO
             {
                 score = (int) Math.Round(scoreInPercents * 100),
                 isSuccess = isSuccess,
@@ -227,11 +199,11 @@ namespace EdugameCloud.WCFService
                 if (answer.singleChoiceAnswer != null)
                 {
                     var quizDistractorAnswer = DistractorModel.GetOneById(answer.singleChoiceAnswer.answeredDistractorId).Value;
-                    var quizQuestionResultAnswer = new QuizQuestionResultAnswer()
+                    var quizQuestionResultAnswer = new QuizQuestionResultAnswer
                     {
                         QuizQuestionResult = questionResult,
                         Value = quizDistractorAnswer.DistractorName,
-                        QuizDistractorAnswer = quizDistractorAnswer
+                        QuizDistractorAnswer = quizDistractorAnswer,
                     };
                     var distractor = distractors.FirstOrDefault(x => x.Id == quizDistractorAnswer.Id);
                     if (distractor == null)
@@ -262,11 +234,11 @@ namespace EdugameCloud.WCFService
                     foreach (var answeredDistractorId in answer.multiChoiceAnswer.answeredDistractorIds)
                     {
                         var distrator = distractors.First(x => x.Id == answeredDistractorId);
-                        var quizQuestionResultAnswer = new QuizQuestionResultAnswer()
+                        var quizQuestionResultAnswer = new QuizQuestionResultAnswer
                         {
                             QuizQuestionResult = questionResult,
                             Value = distrator.DistractorName,
-                            QuizDistractorAnswer = distrator
+                            QuizDistractorAnswer = distrator,
                         };
                         QuizQuestionResultAnswerModel.RegisterSave(quizQuestionResultAnswer);
                     }
@@ -275,5 +247,7 @@ namespace EdugameCloud.WCFService
 
             return score;
         }
+
     }
+
 }

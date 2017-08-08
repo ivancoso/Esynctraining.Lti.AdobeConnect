@@ -6,7 +6,7 @@ namespace EdugameCloud.WCFService
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
+    using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.WCFService.Base;
@@ -14,7 +14,7 @@ namespace EdugameCloud.WCFService
 
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-
+    using Esynctraining.Core.Utils;
     using FluentValidation.Results;
 
     using Resources;
@@ -24,28 +24,15 @@ namespace EdugameCloud.WCFService
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class SubModuleItemService : BaseService, ISubModuleItemService
     {
+        private CompanyEventQuizMappingModel CompanyEventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
+
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     Get all.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="SubModuleItemDTO" />.
-        /// </returns>
         public SubModuleItemDTO[] GetAll()
         {
             return this.SubModuleItemModel.GetAll().Select(x => new SubModuleItemDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="resultDto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO Save(SubModuleItemDTO resultDto)
         {
             ValidationResult validationResult;
@@ -108,15 +95,6 @@ namespace EdugameCloud.WCFService
             return result;
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO GetById(int id)
         {
             SubModuleItem subModuleItem;
@@ -130,15 +108,6 @@ namespace EdugameCloud.WCFService
             return new SubModuleItemDTO(subModuleItem);
         }
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             SubModuleItem moduleItem;
@@ -151,6 +120,21 @@ namespace EdugameCloud.WCFService
                     ErrorsTexts.GetResultError_NotFound);
                 this.LogError("SubModuleItem.DeleteById", error);
                 throw new FaultException<Error>(error, error.errorMessage);
+            }
+
+            var eventQuizMappingModel = CompanyEventQuizMappingModel;
+            foreach (var quiz in moduleItem.Quizes)
+            {
+                bool usedWithinEventMapping = eventQuizMappingModel.AnyByQuizId(quiz.Id);
+                if (usedWithinEventMapping)
+                {
+                    var msg = "This item cannot be removed as it's mapped with an Event. Please delete the Mapping first.";
+                    var error = new Error(
+                        Errors.CODE_ERRORTYPE_GENERIC_ERROR,
+                        msg,
+                        msg);
+                    throw new FaultException<Error>(error, error.errorMessage);
+                }
             }
 
             model.RegisterDelete(moduleItem, true);
