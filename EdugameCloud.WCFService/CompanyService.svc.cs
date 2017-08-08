@@ -10,11 +10,10 @@ namespace EdugameCloud.WCFService
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using EdugameCloud.Core;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Extensions;
-    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
@@ -22,10 +21,10 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.DTO;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
     using Resources;
-    using EdugameCloud.Core;
 
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
@@ -39,8 +38,6 @@ namespace EdugameCloud.WCFService
         private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 
         private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
-
-        private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
 
         private CompanyThemeModel CompanyThemeModel => IoC.Resolve<CompanyThemeModel>();
 
@@ -56,15 +53,6 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             Company company;
@@ -98,12 +86,6 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        /// <summary>
-        /// The request license upgrade.
-        /// </summary>
-        /// <param name="companyId">
-        /// The company Id.
-        /// </param>
         public void RequestLicenseUpgrade(int companyId)
         {
             Company company;
@@ -139,15 +121,6 @@ namespace EdugameCloud.WCFService
             return new[] {companyFlatDto};
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="companyId">
-        /// The company Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyLicenseDTO"/>.
-        /// </returns>
         public CompanyLicenseDTO[] GetLicenseHistoryByCompanyId(int companyId)
         {
             Company company;
@@ -168,15 +141,6 @@ namespace EdugameCloud.WCFService
                     .ToArray();
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyDTO"/>.
-        /// </returns>
         public CompanyDTO GetById(int id)
         {
             Company company;
@@ -194,15 +158,6 @@ namespace EdugameCloud.WCFService
             return new CompanyDTO(company);
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyThemeDTO"/>.
-        /// </returns>
         public CompanyThemeDTO GetThemeByCompanyId(int id)
         {
             Company company;
@@ -220,15 +175,6 @@ namespace EdugameCloud.WCFService
             return company.Theme == null ? null : new CompanyThemeDTO(company.Id, company.Theme);
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyThemeDTO"/>.
-        /// </returns>
         public CompanyThemeDTO GetThemeById(string id)
         {
             Guid themeId;
@@ -259,12 +205,6 @@ namespace EdugameCloud.WCFService
             return new CompanyThemeDTO(company.Id, companyTheme);
         }
 
-        /// <summary>
-        /// The activate by id.
-        /// </summary>
-        /// <param name="companyId">
-        /// The user id.
-        /// </param>
         public void ActivateById(int companyId)
         {
             var model = this.CompanyModel;
@@ -285,12 +225,6 @@ namespace EdugameCloud.WCFService
             //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, company.Id, company.Id);
         }
 
-        /// <summary>
-        /// The deactivate by id.
-        /// </summary>
-        /// <param name="companyId">
-        /// The user id.
-        /// </param>
         public void DeactivateById(int companyId)
         {
             var model = this.CompanyModel;
@@ -311,15 +245,6 @@ namespace EdugameCloud.WCFService
             //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, company.Id, company.Id);
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="companyThemeDTO">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyThemeDTO"/>.
-        /// </returns>
         public CompanyThemeDTO SaveTheme(CompanyThemeDTO companyThemeDTO)
         {
             ValidationResult validationResult;
@@ -338,15 +263,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The get all.
-        /// </summary>
-        /// <param name="companyId">
-        /// The company Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyLmsDTO"/>.
-        /// </returns>
         public CompanyLmsDTO[] GetLMSHistoryByCompanyId(int companyId)
         {
             return this.LmsCompanyModel.GetAllByCompanyId(companyId).Select(x =>
@@ -355,15 +271,6 @@ namespace EdugameCloud.WCFService
             }).ToArray();
         }
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="dto">
-        /// The DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyDTO"/>.
-        /// </returns>
         public CompanyDTO Save(CompanyDTO dto)
         {
             ValidationResult validationResult;
@@ -504,24 +411,6 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The process contact.
-        /// </summary>
-        /// <param name="companyDTO">
-        /// The company DTO. 
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="passwordChanged">
-        /// The password Changed.
-        /// </param>
-        /// <param name="emailChanged">
-        /// The email Changed.
-        /// </param>
-        /// <returns>
-        /// The <see cref="User"/>.
-        /// </returns>
         private User ProcessPrimaryContact(CompanyDTO companyDTO, Company instance, out bool passwordChanged, out bool emailChanged)
         {
             var userModel = this.UserModel;
@@ -560,5 +449,7 @@ namespace EdugameCloud.WCFService
         }
         
         #endregion
+
     }
+
 }

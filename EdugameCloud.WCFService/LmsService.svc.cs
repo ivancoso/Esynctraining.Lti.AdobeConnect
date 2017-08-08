@@ -1,5 +1,4 @@
-﻿using System.ServiceModel.Channels;
-using System.Web.Hosting;
+﻿using System.Web.Hosting;
 
 namespace EdugameCloud.WCFService
 {
@@ -16,7 +15,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.Core;
     using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.DTO;
@@ -104,12 +102,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The get providers.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="LmsProviderDTO"/>.
-        /// </returns>
         public LmsProviderDTO[] GetProviders()
         {
             var providers = LmsProviderModel.GetAll();
@@ -208,76 +200,22 @@ namespace EdugameCloud.WCFService
             }).ToArray();
         }
 
-        /// <summary>
-        /// The get quizzes for user.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="lmsUserParametersId">
-        /// The LMS User Parameters Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsQuizInfoDTO"/>.
-        /// </returns>
         public LmsQuizInfoDTO[] GetQuizzesForUser(int userId, int lmsUserParametersId)
         {
             return this.GetItemsForUser(userId, lmsUserParametersId, false);
         }
 
-        /// <summary>
-        /// The convert quizzes.
-        /// </summary>
-        /// <param name="userId">
-        /// The user Id.
-        /// </param>
-        /// <param name="lmsUserParametersId">
-        /// The LMS User Parameters Id.
-        /// </param>
-        /// <param name="quizIds">
-        /// The quiz Ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizesAndSubModuleItemsDTO"/>.
-        /// </returns>
         public QuizesAndSubModuleItemsDTO ConvertQuizzes(int userId, int lmsUserParametersId, int[] quizIds)
         {
             quizIds = quizIds ?? new int[0];
             return this.Convert(userId, lmsUserParametersId, quizIds, false) as QuizesAndSubModuleItemsDTO;
         }
 
-        /// <summary>
-        /// The get surveys for user.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="lmsUserParametersId">
-        /// The LMS user parameters id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsQuizInfoDTO"/>.
-        /// </returns>
         public LmsQuizInfoDTO[] GetSurveysForUser(int userId, int lmsUserParametersId)
         {
             return this.GetItemsForUser(userId, lmsUserParametersId, true);
         }
 
-        /// <summary>
-        /// The convert surveys.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="lmsUserParametersId">
-        /// The LMS user parameters id.
-        /// </param>
-        /// <param name="quizIds">
-        /// The quiz ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveysAndSubModuleItemsDTO"/>.
-        /// </returns>
         public SurveysAndSubModuleItemsDTO ConvertSurveys(
             int userId,
             int lmsUserParametersId,
@@ -368,21 +306,6 @@ namespace EdugameCloud.WCFService
 
         #region Private Methods
 
-        /// <summary>
-        /// The get items for user.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="lmsUserParametersId">
-        /// The LMS user parameters id.
-        /// </param>
-        /// <param name="isSurvey">
-        /// The is Survey.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsQuizInfoDTO"/>.
-        /// </returns>
         private LmsQuizInfoDTO[] GetItemsForUser(int userId, int lmsUserParametersId, bool isSurvey)
         {
             var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
@@ -442,24 +365,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The convert quizzes.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="lmsUserParametersId">
-        /// The LMS user parameters id.
-        /// </param>
-        /// <param name="quizIds">
-        /// The quiz ids.
-        /// </param>
-        /// <param name="isSurvey">
-        /// The is Survey.
-        /// </param>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
         private object Convert(int userId, int lmsUserParametersId, IEnumerable<int> quizIds, bool isSurvey)
         {
             if (quizIds == null)

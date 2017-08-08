@@ -35,26 +35,11 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     All applet results test.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="AppletResultDTO" />.
-        /// </returns>
         public AppletResultDTO[] GetAll()
         {
             return this.AppletResultModel.GetAll().Select(x => new AppletResultDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="appletResultDTO">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AppletResultDTO"/>.
-        /// </returns>
         public AppletResultDTO Save(AppletResultDTO appletResultDTO)
         {
             ValidationResult validationResult;
@@ -74,16 +59,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="appletResultDTOs">
-        /// The applet result DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AppletResultDTO"/>.
-        /// </returns>
-        // ReSharper disable once InconsistentNaming
         public AppletResultSaveAllDTO SaveAll(AppletResultDTO[] appletResultDTOs)
         {
             appletResultDTOs = appletResultDTOs ?? new AppletResultDTO[] { };
@@ -110,7 +85,7 @@ namespace EdugameCloud.WCFService
 
             if (created.Any())
             {
-                var companyId = appletResultDTOs.FirstOrDefault(x => x.companyId != 0).With(x => x.companyId);
+                //var companyId = appletResultDTOs.FirstOrDefault(x => x.companyId != 0).With(x => x.companyId);
                 //if (companyId != default(int))
                 //{
                 //    IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletResult>(NotificationType.Update, companyId, 0);
@@ -128,15 +103,6 @@ namespace EdugameCloud.WCFService
             return result;
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AppletResultDTO"/>.
-        /// </returns>
         public AppletResultDTO GetById(int id)
         {
             AppletResult appletResult;
@@ -150,15 +116,6 @@ namespace EdugameCloud.WCFService
             return new AppletResultDTO(appletResult);
         }
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             AppletResult appletResult;
@@ -174,7 +131,7 @@ namespace EdugameCloud.WCFService
             }
             
             model.RegisterDelete(appletResult, true);
-            int companyId = appletResult.With(x => x.AppletItem).With(x => x.SubModuleItem).With(x => x.CreatedBy).With(x => x.Company.Id);
+            //int companyId = appletResult.With(x => x.AppletItem).With(x => x.SubModuleItem).With(x => x.CreatedBy).With(x => x.Company.Id);
             //if (companyId != default(int))
             //{
             //    IoC.Resolve<RealTimeNotificationModel>()
@@ -191,18 +148,6 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="resultDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AppletResult"/>.
-        /// </returns>
         private AppletResult ConvertDto(AppletResultDTO resultDTO, AppletResult instance)
         {
             instance = instance ?? new AppletResult();
@@ -224,5 +169,7 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
     }
+
 }

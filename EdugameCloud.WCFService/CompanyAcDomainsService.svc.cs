@@ -21,21 +21,9 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class CompanyAcDomainsService : BaseService, ICompanyAcDomainsService
     {
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyAcServerModel CompanyAcServerModel
-        {
-            get { return IoC.Resolve<CompanyAcServerModel>(); }
-        }
+        private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
 
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CompanyModel CompanyModel
-        {
-            get { return IoC.Resolve<CompanyModel>(); }
-        }
+        private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
 
 
         public ACDomainDTO[] GetAllByCompany(int companyId)
@@ -194,5 +182,7 @@ namespace EdugameCloud.WCFService
             };
             return result;
         }
+
     }
+
 }

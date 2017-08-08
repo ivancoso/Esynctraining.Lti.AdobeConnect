@@ -27,41 +27,13 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the ac user mode model.
-        /// </summary>
-        private ACUserModeModel ACUserModeModel
-        {
-            get
-            {
-                return IoC.Resolve<ACUserModeModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the language model.
-        /// </summary>
-        private LanguageModel LanguageModel
-        {
-            get
-            {
-                return IoC.Resolve<LanguageModel>();
-            }
-        }
+        private ACUserModeModel ACUserModeModel => IoC.Resolve<ACUserModeModel>();
+        private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
         #endregion
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             ACSession session;
@@ -78,15 +50,6 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ACSessionDTO"/>.
-        /// </returns>
         public ACSessionDTO GetById(int id)
         {
             ACSession session;
@@ -103,30 +66,12 @@ namespace EdugameCloud.WCFService
             return new ACSessionDTO(session);
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="smiId">
-        /// The SMI Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ACSessionDTO"/>.
-        /// </returns>
         public ACSessionDTO[] GetBySMIId(int smiId)
         {
             var allBySmiId = this.ACSessionModel.GetAllBySmiId(smiId);
-            return allBySmiId.ToList().Select(x => new ACSessionDTO(x)).ToArray();
+            return allBySmiId.Select(x => new ACSessionDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The registration.
-        /// </summary>
-        /// <param name="session">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ACSessionDTO"/>.
-        /// </returns>
         public ACSessionDTO Save(ACSessionDTO session)
         {
             try
@@ -157,18 +102,6 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="sessionDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ACSession"/>.
-        /// </returns>
         private ACSession ConvertDto(ACSessionDTO sessionDTO, ACSession instance)
         {
             instance = instance ?? new ACSession();
@@ -198,5 +131,7 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
     }
+
 }

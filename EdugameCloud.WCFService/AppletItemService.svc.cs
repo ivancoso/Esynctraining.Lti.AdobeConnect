@@ -40,18 +40,6 @@
             return this.AppletItemModel.GetByUser(userId).Select(x => new AppletItemDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedAppletItemsDTO"/>.
-        /// </returns>
         public PagedAppletItemsDTO GetPaged(int pageIndex, int pageSize)
         {
             int totalCount;
@@ -62,15 +50,6 @@
             };
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="appletResultDTO">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AppletItemDTO"/>.
-        /// </returns>
         public AppletItemDTO Save(AppletItemDTO appletResultDTO)
         {
             ValidationResult validationResult;
@@ -81,7 +60,7 @@
                 var appletItem = isTransient ? null : sessionModel.GetOneById(appletResultDTO.appletItemId).Value;
                 appletItem = this.ConvertDto(appletResultDTO, appletItem);
                 sessionModel.RegisterSave(appletItem, true);
-                int companyId = appletItem.With(x => x.SubModuleItem).With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
+                //int companyId = appletItem.With(x => x.SubModuleItem).With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
                 //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletItem>(NotificationType.Update, companyId, appletItem.Id);
                 return new AppletItemDTO(appletItem);
             }
@@ -91,15 +70,6 @@
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AppletItemDTO"/>.
-        /// </returns>
         public AppletItemDTO GetById(int id)
         {
             AppletItem appletResult;
@@ -113,15 +83,6 @@
             return new AppletItemDTO(appletResult);
         }
 
-        /// <summary>
-        /// The get by SMI id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AppletItemDTO"/>.
-        /// </returns>
         public AppletItemDTO GetBySMIId(int id)
         {
             AppletItem appletResult;
@@ -138,29 +99,11 @@
             return new AppletItemDTO(appletResult);
         }
 
-        /// <summary>
-        /// The get crosswords by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CrosswordDTO"/>.
-        /// </returns>
         public CrosswordDTO[] GetCrosswordsByUserId(int userId)
         {
             return this.AppletItemModel.GetCrosswordsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// Get shared crosswords by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CrosswordDTO"/>.
-        /// </returns>
         public CrosswordDTO[] GetSharedCrosswordsByUserId(int userId)
         {
             return this.AppletItemModel.GetSharedCrosswordsByUserId(userId).ToArray();
@@ -170,18 +113,6 @@
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="itemDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AppletItem"/>.
-        /// </returns>
         private AppletItem ConvertDto(AppletItemDTO itemDTO, AppletItem instance)
         {
             instance = instance ?? new AppletItem();
@@ -198,5 +129,7 @@
         }
 
         #endregion
+
     }
+
 }

@@ -115,7 +115,7 @@ namespace EdugameCloud.WCFService
             if ((moduleItem = model.GetOneById(id).Value) == null)
             {
                 var error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                    Errors.CODE_ERRORTYPE_USER_MESSAGE,
                     ErrorsTexts.GetResultError_Subject,
                     ErrorsTexts.GetResultError_NotFound);
                 this.LogError("SubModuleItem.DeleteById", error);
@@ -141,18 +141,6 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedSubModuleItemsDTO"/>.
-        /// </returns>
         public PagedSubModuleItemsDTO GetPaged(int pageIndex, int pageSize)
         {
             int totalCount;
@@ -164,57 +152,21 @@ namespace EdugameCloud.WCFService
                        };
         }
 
-        /// <summary>
-        /// The get applet sub module items by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO[] GetAppletSubModuleItemsByUserId(int userId)
         {
             return this.SubModuleItemModel.GetAppletSubModuleItemsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get profile sub module items by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO[] GetSNProfileSubModuleItemsByUserId(int userId)
         {
             return this.SubModuleItemModel.GetSNProfileSubModuleItemsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get quiz sub module items by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO[] GetQuizSubModuleItemsByUserId(int userId)
         {
             return this.SubModuleItemModel.GetQuizSMItemsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get test sub module items by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO[] GetTestSubModuleItemsByUserId(int userId)
         {
             return this.SubModuleItemModel.GetTestSubModuleItemsByUserId(userId).ToArray();

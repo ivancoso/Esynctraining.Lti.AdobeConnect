@@ -17,7 +17,7 @@
   <ItemGroup>
     <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.0.20" />
     <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.1" />
-    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Microsoft.Web.Services3" Version="3.0.0" />

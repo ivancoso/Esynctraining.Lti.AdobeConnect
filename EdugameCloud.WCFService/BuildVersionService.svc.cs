@@ -36,15 +36,6 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             BuildVersion buildVersion;
@@ -65,26 +56,11 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        /// <summary>
-        /// Gets all build versions.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="BuildVersionDTO" />.
-        /// </returns>
         public BuildVersionDTO[] GetAll()
         {
             return this.BuildVersionModel.GetAll().Select(x => new BuildVersionDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="BuildVersionDTO"/>.
-        /// </returns>
         public BuildVersionDTO GetById(int id)
         {
             BuildVersion buildVersion;
@@ -101,15 +77,6 @@ namespace EdugameCloud.WCFService
             return new BuildVersionDTO(buildVersion);
         }
 
-        /// <summary>
-        /// The registration.
-        /// </summary>
-        /// <param name="build">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="BuildVersionDTO"/>.
-        /// </returns>
         public BuildVersionDTO Save(BuildVersionDTO build)
         {
             ValidationResult validationResult;
@@ -133,18 +100,6 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="buildDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="BuildVersion"/>.
-        /// </returns>
         private BuildVersion ConvertDto(BuildVersionDTO buildDTO, BuildVersion instance)
         {
             instance = instance ?? new BuildVersion();
@@ -165,5 +120,7 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
     }
+
 }

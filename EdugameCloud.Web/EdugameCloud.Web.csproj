@@ -63,8 +63,8 @@
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.CastleLog4Net.1.0.0.2\lib\net45\Esynctraining.CastleLog4Net.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1\lib\net461\Esynctraining.Core.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.1\lib\net461\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core.SystemWeb, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.SystemWeb.1.0.0.1\lib\net45\Esynctraining.Core.SystemWeb.dll</HintPath>
