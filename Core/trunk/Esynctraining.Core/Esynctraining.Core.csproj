@@ -13,10 +13,10 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.1.0</Version>
-    <PackageReleaseNotes>DataAnnotations for public LTI API</PackageReleaseNotes>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.0.1.1</Version>
+    <PackageReleaseNotes>Added CODE_ERRORTYPE_USER_MESSAGE</PackageReleaseNotes>
+    <AssemblyVersion>1.0.1.1</AssemblyVersion>
+    <FileVersion>1.0.1.1</FileVersion>
   </PropertyGroup>
 
 
@@ -64,6 +64,11 @@
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
   </ItemGroup>
+ 
+
+<ItemGroup>
+  <Folder Include="Properties\" />
+</ItemGroup>
 
   
 

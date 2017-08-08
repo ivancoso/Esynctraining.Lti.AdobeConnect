@@ -111,6 +111,12 @@
         public const int CODE_ERRORTYPE_GENERIC_ERROR = 1010;
 
         /// <summary>
+        /// NOTE: for EGC Admin.
+        /// Error code used to pass error message to user in a raw. without any processing.
+        /// </summary>
+        public const int CODE_ERRORTYPE_USER_MESSAGE = 10000;
+
+        /// <summary>
         /// The code result type success.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:FieldNamesMustNotContainUnderscore", Justification = "Reviewed. Suppression is OK here.")]
