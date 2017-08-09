@@ -115,7 +115,7 @@ namespace EdugameCloud.WCFService
             if ((moduleItem = model.GetOneById(id).Value) == null)
             {
                 var error = new Error(
-                    Errors.CODE_ERRORTYPE_USER_MESSAGE,
+                    Errors.CODE_ERRORTYPE_OBJECT_NOT_FOUND,
                     ErrorsTexts.GetResultError_Subject,
                     ErrorsTexts.GetResultError_NotFound);
                 this.LogError("SubModuleItem.DeleteById", error);
@@ -130,7 +130,7 @@ namespace EdugameCloud.WCFService
                 {
                     var msg = "This item cannot be removed as it's mapped with an Event. Please delete the Mapping first.";
                     var error = new Error(
-                        Errors.CODE_ERRORTYPE_GENERIC_ERROR,
+                        Errors.CODE_ERRORTYPE_USER_MESSAGE,
                         msg,
                         msg);
                     throw new FaultException<Error>(error, error.errorMessage);
