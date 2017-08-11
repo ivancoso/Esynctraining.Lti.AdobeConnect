@@ -155,10 +155,10 @@
         protected static void Validate(string api, string userToken)
         {
             if (string.IsNullOrWhiteSpace(api))
-                throw new ArgumentException("Api can not be empty", "api");
+                throw new ArgumentException("Api can not be empty", nameof(api));
 
-            if (string.IsNullOrWhiteSpace(api))
-                throw new ArgumentException("UserToken can not be empty", "userToken");
+            if (string.IsNullOrWhiteSpace(userToken))
+                throw new ArgumentException("UserToken can not be empty", nameof(userToken));
         }
 
         protected static RestClient CreateRestClient(string api)

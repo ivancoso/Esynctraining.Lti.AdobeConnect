@@ -294,7 +294,9 @@ namespace EdugameCloud.Lti.Canvas
                 return sections.Select(x => new LmsCourseSectionDTO
                 {
                     Id = x.Id.ToString(),
-                    Name = x.Name
+                    Name = x.Name,
+                    Users = x.Students?.Select(s => new LmsUserDTO{Id = s.Id.ToString(), Name = s.Name.ToString()}).ToList()
+                        ?? new List<LmsUserDTO>()
                 }).ToList();
 
             }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace EdugameCloud.Lti.Canvas
 {
@@ -17,7 +18,14 @@ namespace EdugameCloud.Lti.Canvas
         */
         public long? Nonxlist_course_id { get; set; }
         public long? Total_students { get; set; }
-        
-        //students {enrollments}
+
+        public List<CanvasCourseSectionStudentDTO> Students { get; set; }
+    }
+
+    internal sealed class CanvasCourseSectionStudentDTO
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        //other
     }
 }

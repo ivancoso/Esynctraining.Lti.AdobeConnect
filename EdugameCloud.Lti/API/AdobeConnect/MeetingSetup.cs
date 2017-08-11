@@ -195,13 +195,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool isTeacher = this.UsersSetup.IsTeacher(param, lmsCompany);
             if (!isTeacher && lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
             {
+                var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsCompany.LmsProviderId);
+                var sections = sectionsService.GetCourseSections(lmsCompany, courseId.ToString());
                 meetings =
                     meetings.Where(
                         x =>
-                            (LmsMeetingType) x.LmsMeetingType != LmsMeetingType.Meeting ||
-                            x.MeetingRoles.Any(mr => mr.User.Id == lmsUser.Id)).ToList();
-
+                            (LmsMeetingType) x.LmsMeetingType != LmsMeetingType.Meeting
+                            || !x.CourseSections.Any()
+                            || x.CourseSections.Any(cs => sections.Any(s =>s.Id == cs.LmsId && s.Users.Any(u => u.Id == lmsUser.UserId)))).ToList();
             }
+
             trace?.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", sw.Elapsed.ToString());
 
             // NOTE: add office hours meeting, if it exists for the user, but not in current course

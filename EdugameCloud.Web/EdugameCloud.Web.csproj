@@ -583,6 +583,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Web.constrings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
