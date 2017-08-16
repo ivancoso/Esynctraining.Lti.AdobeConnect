@@ -1,7 +1,6 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Web;
 using EdugameCloud.Core.Domain.DTO.OfflineQuiz;
-using EdugameCloud.WCFService.CORS;
 using Esynctraining.Core.Domain.Entities;
 
 namespace EdugameCloud.WCFService.Contracts
@@ -20,5 +19,7 @@ namespace EdugameCloud.WCFService.Contracts
             BodyStyle = WebMessageBodyStyle.Wrapped)]
         [return: MessageParameter(Name = "result")]
         OfflineQuizResultDTO SendAnswers(OfflineQuizAnswerContainerDTO answerContainer);
+
     }
+
 }

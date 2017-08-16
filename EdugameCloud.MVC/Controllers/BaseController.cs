@@ -1,5 +1,5 @@
-﻿using System.Web.Mvc;
-using EdugameCloud.Lti.API;
+﻿using System;
+using System.Web.Mvc;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Providers;
 
@@ -11,7 +11,7 @@ namespace EdugameCloud.MVC.Controllers
         
         protected BaseController(ApplicationSettingsProvider settings)
         {
-            Settings = settings;
+            Settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
         #endregion
@@ -41,7 +41,6 @@ namespace EdugameCloud.MVC.Controllers
 
         #endregion
 
-
         #region Methods
         
         protected RedirectToRouteResult RedirectToAction(ActionResult result)
@@ -51,5 +50,7 @@ namespace EdugameCloud.MVC.Controllers
         }
 
         #endregion
+
     }
+
 }

@@ -6,6 +6,7 @@ using EdugameCloud.Core;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.Entities;
+using EdugameCloud.MVC.Attributes;
 using EdugameCloud.MVC.ViewModels;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Extensions;
@@ -15,20 +16,21 @@ using Esynctraining.Core.Utils;
 namespace EdugameCloud.MVC.Controllers
 {
     [HandleError]
+    [NonDebugModeRequireHttps]
     public partial class HomeController : BaseController
     {
-        private readonly UserActivationModel userActivationModel;
-        private readonly UserModel userModel;
-        private readonly IBuildVersionProcessor versionProcessor;
+        private readonly UserActivationModel _userActivationModel;
+        private readonly UserModel _userModel;
+        private readonly IBuildVersionProcessor _versionProcessor;
 
         private ICache Cache => IoC.Resolve<ICache>(CachePolicies.Names.PersistantCache);
 
         public HomeController(UserModel userModel, UserActivationModel userActivationModel, ApplicationSettingsProvider settings, IBuildVersionProcessor versionProcessor)
             : base(settings)
         {
-            this.userModel = userModel;
-            this.userActivationModel = userActivationModel;
-            this.versionProcessor = versionProcessor;
+            _userModel = userModel ?? throw new ArgumentNullException(nameof(userModel));
+            _userActivationModel = userActivationModel ?? throw new ArgumentNullException(nameof(userActivationModel));
+            _versionProcessor = versionProcessor ?? throw new ArgumentNullException(nameof(versionProcessor));
         }
         
 
@@ -43,16 +45,16 @@ namespace EdugameCloud.MVC.Controllers
                 && !string.IsNullOrWhiteSpace(state))
             {
                 //// crazy hack for canvas OAuth callback ??!!
-                return this.RedirectToAction("callback", "Lti", new { __provider__,  __sid__, code, state, providerKey });
+                return RedirectToAction("callback", "Lti", new { __provider__,  __sid__, code, state, providerKey });
             }
             else
             {
                 var filePattern = (string) Settings.BuildSelector;
                 var path = Server.MapPath("~/Content/swf/admin");
                 var version = CacheUtility.GetCachedItem(Cache, CachePolicies.Keys.VersionFileName(filePattern), () =>
-                    versionProcessor.ProcessVersion(path, filePattern));
+                    _versionProcessor.ProcessVersion(path, filePattern));
                 var versionFileSwf = filePattern.Replace("*", version.ToString());
-                return this.View(
+                return View(
                     EdugameCloudT4.Home.Views.Admin,
                     new HomeViewModel(this) { BuildUrl = Links.Content.swf.admin.Url(versionFileSwf) });
             }
@@ -62,16 +64,16 @@ namespace EdugameCloud.MVC.Controllers
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         public virtual ActionResult Activate(string code)
         {
-            var passwordActivation = this.userActivationModel.GetOneByCode(code).Value;
+            var passwordActivation = _userActivationModel.GetOneByCode(code).Value;
             var contact = passwordActivation.With(x => x.User);
             if (contact != null)
             {
                 contact.Status = UserStatus.Activating;
-                this.userModel.RegisterSave(contact, true);
-                return this.RedirectToAction(EdugameCloudT4.Home.Admin("activate", code));
+                _userModel.RegisterSave(contact, true);
+                return RedirectToAction(EdugameCloudT4.Home.Admin("activate", code));
             }
 
-            return this.RedirectToAction(EdugameCloudT4.Home.Admin());
+            return RedirectToAction(EdugameCloudT4.Home.Admin());
         }
         
         [HttpPost]
@@ -80,10 +82,10 @@ namespace EdugameCloud.MVC.Controllers
         {
             if (referer == "EGC")
             {
-                return this.Content(Convert.ToBase64String(System.IO.File.ReadAllBytes(this.Server.MapPath(Links.Content.swf.config.paths_properties))));
+                return Content(Convert.ToBase64String(System.IO.File.ReadAllBytes(Server.MapPath(Links.Content.swf.config.paths_properties))));
             }
 
-            return this.RedirectToAction(EdugameCloudT4.Home.Admin());
+            return RedirectToAction(EdugameCloudT4.Home.Admin());
         }
         
         #endregion

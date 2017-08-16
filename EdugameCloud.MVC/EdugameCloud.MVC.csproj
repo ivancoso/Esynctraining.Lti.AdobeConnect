@@ -158,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\CustomAuthorize.cs" />
+    <Compile Include="Attributes\NonDebugModeRequireHttpsAttribute.cs" />
     <Compile Include="Attributes\LocalizedDisplayNameAttribute.cs" />
     <Compile Include="BaseController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>

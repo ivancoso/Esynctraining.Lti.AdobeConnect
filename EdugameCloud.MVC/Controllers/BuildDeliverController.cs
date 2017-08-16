@@ -24,18 +24,18 @@
         private static readonly object _publicBuildZipLocker = new object();
 
 
-        private readonly FileModel fileModel;
-        private readonly AuthenticationModel authenticationModel;
-        private readonly UserModel userModel;
-        private readonly ILogger logger;
-        private readonly IBuildVersionProcessor versionProcessor;
+        private readonly FileModel _fileModel;
+        private readonly AuthenticationModel _authenticationModel;
+        private readonly UserModel _userModel;
+        private readonly ILogger _logger;
+        private readonly IBuildVersionProcessor _versionProcessor;
 
 
         private User CurrentUser
         {
             get
             {
-                return (User)this.authenticationModel.GetCurrentUser(x => this.userModel.GetOneByEmail(x).Value);
+                return (User)_authenticationModel.GetCurrentUser(x => this._userModel.GetOneByEmail(x).Value);
             }
         }
 
@@ -48,11 +48,11 @@
             ILogger logger, IBuildVersionProcessor versionProcessor)
             : base(settings)
         {
-            this.fileModel = fileModel;
-            this.userModel = userModel;
-            this.authenticationModel = authenticationModel;
-            this.logger = logger;
-            this.versionProcessor = versionProcessor;
+            _fileModel = fileModel;
+            _userModel = userModel;
+            _authenticationModel = authenticationModel;
+            _logger = logger;
+            _versionProcessor = versionProcessor;
         }
 
 
@@ -64,12 +64,12 @@
             Guid webOrbId;
             if (Guid.TryParse(id, out webOrbId))
             {
-                file = this.fileModel.GetOneByWebOrbId(webOrbId).Value;
+                file = this._fileModel.GetOneByWebOrbId(webOrbId).Value;
             }
 
             if (file != null)
             {
-                byte[] buffer = this.fileModel.GetData(file);
+                byte[] buffer = this._fileModel.GetData(file);
                 if (buffer != null)
                 {
                     return this.File(buffer, GetContentTypeByExtension(file.FileName), file.FileName);
@@ -100,6 +100,7 @@
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [CustomAuthorize]
+        //file/get-public-build
         public virtual ActionResult GetPublicBuild()
         {
             try
@@ -109,11 +110,11 @@
                 {
                     var filePattern = (string)Settings.PublicBuildSelector;
                     var path = Server.MapPath(PublicFolderPath);
-                    Version version = versionProcessor.ProcessVersion(path,
+                    Version version = _versionProcessor.ProcessVersion(path,
                         filePattern);
                     if (version == null)
                     {
-                        logger.Warn("Could'n find any POD build");
+                        _logger.Warn("Could'n find any POD build");
                         return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                     }
 
@@ -155,7 +156,7 @@
             }
             catch (Exception ex)
             {
-                logger.Error("BuildDeliverController.GetPublicBuild.", ex);
+                _logger.Error("BuildDeliverController.GetPublicBuild.", ex);
                 throw;
             }
 
@@ -165,6 +166,7 @@
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [CustomAuthorize]
+        //file/get-mobile-build
         public virtual ActionResult GetMobileBuild()
         {
             try
@@ -174,10 +176,10 @@
                 {
                     var filePattern = (string)Settings.MobileBuildSelector;
                     var path = Server.MapPath(PublicFolderPath);
-                    var version = versionProcessor.ProcessVersion(path, filePattern);
+                    var version = _versionProcessor.ProcessVersion(path, filePattern);
                     if (version == null)
                     {
-                        logger.Warn("Could'n find any mobile POD build");
+                        _logger.Warn("Could'n find any mobile POD build");
                         return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                     }
 
@@ -219,12 +221,13 @@
             }
             catch (Exception ex)
             {
-                logger.Error("BuildDeliverController.GetMobileBuild.", ex);
+                _logger.Error("BuildDeliverController.GetMobileBuild.", ex);
                 throw;
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.NotFound);
         }
+
 
         private static void CopyAllFilesExceptConfig(ZipArchive archive, ZipArchive arc)
         {
@@ -244,7 +247,7 @@
 
             if (string.IsNullOrWhiteSpace(Settings.BaseServiceUrl as string))
             {
-                logger.Error("EnsureServicePathConfigExists. Settings.BaseServiceUrl is empty.");
+                _logger.Error("EnsureServicePathConfigExists. Settings.BaseServiceUrl is empty.");
                 return;
             }
 
@@ -291,7 +294,7 @@
                         }
                         catch (Exception ex)
                         {
-                            logger.Error("EnsureServicePathConfigExists. Error during config writing.", ex);
+                            _logger.Error("EnsureServicePathConfigExists. Error during config writing.", ex);
                             throw new InvalidOperationException("An error occurred, please try again later.");
                         }
                     }
