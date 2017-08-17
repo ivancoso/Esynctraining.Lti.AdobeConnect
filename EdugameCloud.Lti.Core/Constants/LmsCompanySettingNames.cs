@@ -51,6 +51,11 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string SchoologyConsumerKey = nameof(SchoologyConsumerKey);
         public const string SchoologyConsumerSecret = nameof(SchoologyConsumerSecret);
 
+        public const string HaikuConsumerKey = nameof(HaikuConsumerKey);
+        public const string HaikuConsumerSecret = nameof(HaikuConsumerSecret);
+        public const string HaikuToken = nameof(HaikuToken);
+        public const string HaikuTokenSecret = nameof(HaikuTokenSecret);
+
         public static class Telephony
         {
             public const string ActiveProfile = "Telephony.ActiveProfile";  // None / MeetingOne / Arkadin

@@ -132,6 +132,10 @@ namespace EdugameCloud.Lti.DTO
             moodleQuizServiceToken = instance.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
             schoologyConsumerKey = instance.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerKey);
             schoologyConsumerSecret = instance.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerSecret);
+            haikuConsumerKey = instance.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerKey);
+            haikuConsumerSecret = instance.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerSecret);
+            haikuToken = instance.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
+            haikuTokenSecret = instance.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
             isPdfMeetingUrl = instance.GetSetting<bool>(LmsCompanySettingNames.IsPdfMeetingUrl);
             UseCourseSections = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections);
             UseCourseMeetingsCustomLayout = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout);
@@ -487,6 +491,15 @@ namespace EdugameCloud.Lti.DTO
         public string schoologyConsumerKey { get; set; }
         [DataMember]
         public string schoologyConsumerSecret { get; set; }
+
+        [DataMember]
+        public string haikuConsumerKey { get; set; }
+        [DataMember]
+        public string haikuConsumerSecret { get; set; }
+        [DataMember]
+        public string haikuToken { get; set; }
+        [DataMember]
+        public string haikuTokenSecret { get; set; }
 
         [DataMember]
         public bool isPdfMeetingUrl { get; set; }

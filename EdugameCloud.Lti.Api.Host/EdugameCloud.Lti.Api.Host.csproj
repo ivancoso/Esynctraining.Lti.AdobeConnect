@@ -57,6 +57,7 @@
     <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Haiku\EdugameCloud.Lti.Haiku.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Schoology\EdugameCloud.Lti.Schoology.csproj" />

@@ -4,6 +4,7 @@ namespace EdugameCloud.Lti.DTO
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Text.RegularExpressions;
     using System.Web;
     //using System.Web.Mvc;
     using EdugameCloud.Lti.Core.Constants;
@@ -338,6 +339,12 @@ namespace EdugameCloud.Lti.DTO
             //    providerName = LmsProviderNames.DialogEdu;
             //}
 
+            if (externalProvider != null
+                && externalProvider.Equals(LmsProviderNames.Haiku, StringComparison.OrdinalIgnoreCase))
+            {
+                providerName = LmsProviderNames.Haiku;
+            }
+
             // TRICK: for supporting old licenses
             if (providerName == "desire2learn")
                 providerName = LmsProviderNames.Brightspace;
@@ -478,6 +485,13 @@ namespace EdugameCloud.Lti.DTO
 
         public int CalcCourseId()
         {
+            if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("haiku"), false))
+            {
+                var contextId = Regex.Match(this.context_id, @"\d+").Value;
+
+                return int.Parse(contextId);
+            }
+
             if (this.custom_canvas_course_id != 0)
             {
                 return this.custom_canvas_course_id;

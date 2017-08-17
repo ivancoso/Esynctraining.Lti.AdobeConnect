@@ -20,6 +20,17 @@ namespace EdugameCloud.Lti.Core.DTO
         [DataMember]
         public string type { get; set; }
 
+        [DataMember]
+        public string consumerKey { get; set; }
+
+        [DataMember]
+        public string consumerSecret { get; set; }
+
+        [DataMember]
+        public string token { get; set; }
+
+        [DataMember]
+        public string tokenSecret { get; set; }
     }
 
 }

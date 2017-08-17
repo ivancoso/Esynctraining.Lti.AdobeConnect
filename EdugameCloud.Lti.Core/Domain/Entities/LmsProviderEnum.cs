@@ -11,6 +11,7 @@
         //DialogEdu = 7,
         //Bridge = 8,
         Schoology = 9,
+        Haiku = 10
     }
 
 }

@@ -171,6 +171,8 @@ namespace EdugameCloud.Lti.Core.Business.Models
                 return;
             if (entity.LmsProviderId == (int)LmsProviderEnum.Schoology)
                 return;
+            if (entity.LmsProviderId == (int)LmsProviderEnum.Haiku)
+                return;
 
             if (!resultDto.enableProxyToolMode)
             {
