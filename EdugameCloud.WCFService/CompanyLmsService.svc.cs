@@ -282,6 +282,11 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SchoologyConsumerKey, dto.schoologyConsumerKey);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SchoologyConsumerSecret, dto.schoologyConsumerSecret);
 
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuConsumerKey, dto.haikuConsumerKey);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuConsumerSecret, dto.haikuConsumerSecret);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuToken, dto.haikuToken);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuTokenSecret, dto.haikuTokenSecret);
+
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsPdfMeetingUrl, dto.isPdfMeetingUrl);
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());

@@ -370,6 +370,11 @@ namespace EdugameCloud.Lti.Controllers
                     }
                 }
 
+                if (lmsProvider.ToLower() == LmsProviderNames.Haiku)
+                {
+                    param.user_id = param.user_id.TrimEnd('_');
+                }
+
                 var sw = Stopwatch.StartNew();
 
                 LmsCompany lmsCompany =
@@ -523,6 +528,7 @@ namespace EdugameCloud.Lti.Controllers
                     case LmsProviderNames.Moodle:
                     case LmsProviderNames.Sakai:
                     case LmsProviderNames.Schoology:
+                    case LmsProviderNames.Haiku:
                         //                    case LmsProviderNames.IMS:
                         acPrincipal = acUserService.GetOrCreatePrincipal(
                             adobeConnectProvider,

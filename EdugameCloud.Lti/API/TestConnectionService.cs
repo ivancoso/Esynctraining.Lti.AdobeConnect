@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using EdugameCloud.Lti.API.AgilixBuzz;
 using EdugameCloud.Lti.API.BlackBoard;
+using EdugameCloud.Lti.API.Haiku;
 using EdugameCloud.Lti.API.Moodle;
 using EdugameCloud.Lti.API.Schoology;
 using EdugameCloud.Lti.Core.DTO;
@@ -41,6 +42,8 @@ namespace EdugameCloud.Lti.API
 
         private ISchoologyRestApiClient SchoologyApi => IoC.Resolve<ISchoologyRestApiClient>();
 
+        private IHaikuRestApiClient HaikuRestApiClient => IoC.Resolve<IHaikuRestApiClient>();
+
         #endregion
 
         public ConnectionInfoDTO TestConnection(ConnectionTestDTO test)
@@ -74,6 +77,9 @@ namespace EdugameCloud.Lti.API
                     break;
                 case LmsProviderNames.Schoology:
                     success = TestSchoologyConnection(test, out info);
+                    break;
+                case LmsProviderNames.Haiku:
+                    success = TestHaikuConnection(test, out info);
                     break;
             }
 
@@ -132,6 +138,21 @@ namespace EdugameCloud.Lti.API
                 }
                 return false;
             }
+        }
+
+        private bool TestHaikuConnection(ConnectionTestDTO test, out string info)
+        {
+            if (!TestDomainFormat(test, out info))
+                return false;
+
+            if (!HaikuRestApiClient.TestOauth(test.domain, test.consumerKey, test.consumerSecret, test.token, test.tokenSecret))
+            {
+                info = "Can't connect.";
+
+                return false;
+            }
+
+            return true;
         }
 
         private bool TestAgilixBuzzConnection(ConnectionTestDTO test, out string info)
