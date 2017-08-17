@@ -413,7 +413,12 @@
     <Content Include="Content\images\logos\singleUser.png" />
     <Content Include="Content\images\tick.png" />
     <Content Include="Content\images\warning.png" />
-    <Content Include="Content\lti-config\schoology.xml" />
+    <Content Include="Content\lti-config\haiku.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Content\lti-config\schoology.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Content\lti-config\agilixbuzz.xml" />
     <Content Include="Content\lti-config\blackboard.xml" />
     <Content Include="Content\lti-config\brightspace.xml" />

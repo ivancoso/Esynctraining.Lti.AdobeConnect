@@ -72,6 +72,18 @@
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
                     "Invalid LMS Setup. Please provide ConsumerKey and ConsumerSecret");
 
+            this.RuleFor(x => x.lmsProvider)
+                .Must((model, x) =>
+                    !string.IsNullOrWhiteSpace(model.haikuConsumerKey) 
+                    && !string.IsNullOrWhiteSpace(model.haikuConsumerSecret)
+                    && !string.IsNullOrWhiteSpace(model.haikuToken)
+                    && !string.IsNullOrWhiteSpace(model.haikuTokenSecret)
+                )
+                .When(model => model.lmsProvider == LmsProviderNames.Haiku)
+                .WithError(
+                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                    "Invalid LMS Setup. Please provide ConsumerKey, ConsumerSecret, Token and TokenSecret");
+
             this.RuleFor(model => model.additionalLmsDomains)
                .Must((model, x) => UniqueLmsDomains(model.lmsDomain, x))
                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "LMS domains should be unique.");
