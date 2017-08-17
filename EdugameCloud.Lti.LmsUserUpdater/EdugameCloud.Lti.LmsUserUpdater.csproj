@@ -172,6 +172,10 @@
       <Project>{1d04423b-12e2-41e5-bce6-a5aa99091110}</Project>
       <Name>EdugameCloud.Lti.Desire2Learn</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Haiku\EdugameCloud.Lti.Haiku.csproj">
+      <Project>{139294a8-0d29-4857-958b-d9bfb5604728}</Project>
+      <Name>EdugameCloud.Lti.Haiku</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
       <Project>{8bde322e-1592-4c41-ac4a-b9a644175f04}</Project>
       <Name>EdugameCloud.Lti.Moodle</Name>
