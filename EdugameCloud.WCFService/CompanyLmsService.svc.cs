@@ -107,14 +107,32 @@ namespace EdugameCloud.WCFService
             }
             else
             {
-                lmsConnectionTest = TestConnection(new ConnectionTestDTO
+                if (this.LmsProviderModel.GetByShortName(resultDto.lmsProvider).Id == (int)LmsProviderEnum.Haiku)
                 {
-                    domain = resultDto.lmsDomain,
-                    enableProxyToolMode = resultDto.enableProxyToolMode,
-                    login = resultDto.lmsAdmin,
-                    password = lmsPassword,
-                    type = resultDto.lmsProvider,
-                });
+                    lmsConnectionTest = TestConnection(new ConnectionTestDTO
+                    {
+                        domain = resultDto.lmsDomain,
+                        enableProxyToolMode = resultDto.enableProxyToolMode,
+                        login = resultDto.lmsAdmin,
+                        password = lmsPassword,
+                        type = resultDto.lmsProvider,
+                        consumerKey = resultDto.haikuConsumerKey,
+                        consumerSecret = resultDto.haikuConsumerSecret,
+                        token = resultDto.haikuToken,
+                        tokenSecret = resultDto.haikuTokenSecret
+                    });
+                }
+                else
+                {
+                    lmsConnectionTest = TestConnection(new ConnectionTestDTO
+                    {
+                        domain = resultDto.lmsDomain,
+                        enableProxyToolMode = resultDto.enableProxyToolMode,
+                        login = resultDto.lmsAdmin,
+                        password = lmsPassword,
+                        type = resultDto.lmsProvider,
+                    });
+                }
             }
 
             string acPassword = (isTransient || !string.IsNullOrWhiteSpace(resultDto.acPassword)) 
