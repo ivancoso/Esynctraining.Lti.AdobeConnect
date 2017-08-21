@@ -78,6 +78,7 @@ namespace EdugameCloud.Lti.DTO
                 public string GetTemplates { get; set; } = RestWebApiBaseUrl + "templates"; // API
                 public string GetAudioProfiles { get; set; } = RestWebApiBaseUrl + "audioProfiles"; // API
                 public string SearchACMeetings { get; set; } = RestWebApiBaseUrl + "acSearchMeeting"; // API
+                public string SearchACVirtualClassRooms { get; set; } = RestWebApiBaseUrl + "acSearchVirtualClassRoom"; // API
 
                 public string SaveSeminar { get; set; } = RestWebApiBaseUrl + "seminars/edit"; // API
                 public string CreateSeminar { get; set; } = RestWebApiBaseUrl + "seminars/create"; // API

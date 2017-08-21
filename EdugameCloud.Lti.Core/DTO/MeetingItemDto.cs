@@ -40,6 +40,20 @@ namespace EdugameCloud.Lti.Core.DTO
             };
         }
 
+
+        public static MeetingItemDto Build(TrainingItem arg)
+        {
+            if (arg == null)
+                throw new ArgumentNullException(nameof(arg));
+
+            return new MeetingItemDto
+            {
+                Name = arg.Name,
+                Url = arg.UrlPath,
+                ScoId = arg.ScoId,
+            };
+        }
+
     }
 
 }

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Esynctraining.AC.Provider" Version="1.0.2.42" />
+    <PackageReference Include="Esynctraining.AC.Provider" Version="1.0.2.45" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.4.9" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />

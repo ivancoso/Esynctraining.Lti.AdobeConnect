@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Esynctraining.AdobeConnect" Version="1.0.1.51" />
     <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.0.20" />
     <PackageReference Include="Esynctraining.Crypto" Version="1.0.1" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.0.1" />
