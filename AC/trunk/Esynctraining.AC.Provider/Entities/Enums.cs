@@ -355,7 +355,7 @@
         content,
         folder,
         pod_hybrid,
-        virtual_classroom
+        virtual_classroom,
     }
 
 }

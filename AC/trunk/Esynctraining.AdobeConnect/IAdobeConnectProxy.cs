@@ -166,7 +166,9 @@ namespace Esynctraining.AdobeConnect
         MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
 
         MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0);
-        
+
+        CollectionResult<TrainingItem> ReportMyTraining(string filter = "", int startIndex = 0, int limit = 0);
+
         //QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0);
         //ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0);
 

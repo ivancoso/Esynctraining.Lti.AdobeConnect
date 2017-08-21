@@ -39,16 +39,12 @@
         /// </summary>
         public const string ReportMeetingSessions = "report-meeting-sessions";
 
-        /// <summary>
-        /// The report my events.
-        /// </summary>
         public const string ReportMyEvents = "report-my-events";
 
-        /// <summary>
-        /// The report my events.
-        /// </summary>
         public const string ReportMyMeetings = "report-my-meetings";
 
+
+        public const string ReportMyTraining = "report-my-training";
         /// <summary>
         /// The report bulk consolidated transactions.
         /// </summary>

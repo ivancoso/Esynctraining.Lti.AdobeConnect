@@ -153,7 +153,7 @@
                 ? new MeetingSessionCollectionResult(status, MeetingSessionCollectionParser.Parse(doc))
                 : new MeetingSessionCollectionResult(status);
         }
-        
+
         //public EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0)
         //{
         //    // act: "report-my-events"
@@ -165,6 +165,20 @@
         //        ? new EventCollectionResult(status, EventInfoCollectionParser.Parse(doc))
         //        : new EventCollectionResult(status);
         //}
+
+        public CollectionResult<TrainingItem> ReportMyTraining(string filter = "", int startIndex = 0, int limit = 0)
+        {
+            filter = filter
+                .AppendSortingIfNeeded("date-begin", SortOrder.Descending) //default sorting in AC, otherwise paging might be incorrect 
+                .AppendPagingIfNeeded(startIndex, limit);
+            
+            var doc = this.requestProcessor.Process(Commands.ReportMyTraining, filter, out StatusInfo status);
+
+            return ResponseIsOk(doc, status)
+                ? new CollectionResult<TrainingItem>(status, GenericCollectionParser<TrainingItem>.Parse(
+                           doc.SelectSingleNode("//report-my-training"), "row", TrainingItemParser.Parse))
+                : new CollectionResult<TrainingItem>(status);
+        }
 
         public MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0)
         {
