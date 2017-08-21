@@ -194,7 +194,8 @@ namespace EdugameCloud.Web
                         {
                             if (FormsAuthentication.CookiesSupported)
                             {
-                                Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
+                                if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
+                                    Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
                             }
                         }
                     }
@@ -228,14 +229,15 @@ namespace EdugameCloud.Web
                         }
                         else
                         {
-                            Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
+                            if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
+                                Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
                         }
                     }
                     else
                     {
-                        Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
+                        if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
+                            Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
                     }
-
                 }
 
             }
