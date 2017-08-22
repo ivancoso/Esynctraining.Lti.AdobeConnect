@@ -6,45 +6,22 @@
     using System.Text;
     using System.Xml;
     using System.Xml.Linq;
+    using Esynctraining.Core.Logging;
 
-    /// <summary>
-    /// The session.
-    /// </summary>
     internal sealed class Session
     {
-        #region Fields
-
-        /// <summary>
-        /// The cookies.
-        /// </summary>
-        private CookieContainer cookies;
-
-        #endregion
+        private readonly ILogger _logger;
+        private CookieContainer _cookies;
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Session"/> class. 
-        /// Create a new session object
-        /// </summary>
-        /// <param name="agent">
-        /// User agent to identify this session
-        /// </param>
-        /// <param name="server">
-        /// URL to DLAP server
-        /// </param>
-        /// <param name="timeout">
-        /// Request timeout in milliseconds
-        /// </param>
-        /// <param name="verbose">
-        /// The verbose.
-        /// </param>
-        public Session(string agent, string server, int timeout = 30000, bool verbose = false)
+        public Session(ILogger logger, string agent, string server, int timeout = 30000, bool verbose = false)
         {
-            this.Agent = agent;
-            this.Server = server;
-            this.Timeout = timeout;
-            this.Verbose = verbose;
+            _logger = logger;
+            Agent = agent;
+            Server = server;
+            Timeout = timeout;
+            Verbose = verbose;
         }
 
         #endregion
@@ -136,8 +113,8 @@
                 query += "&" + parameters[index] + "=" + parameters[index + 1];
             }
 
-            this.TraceRequest(query, null);
-            return this.ReadResponse(this.Request(query, null, null, this.Timeout));
+            TraceRequest(query, null);
+            return ReadResponse(this.Request(query, null, null, Timeout));
         }
 
         /// <summary>
@@ -157,7 +134,7 @@
         /// </returns>
         public XElement Login(string prefix, string username, string password)
         {
-            this.cookies = new CookieContainer();
+            _cookies = new CookieContainer();
             return this.Post(
                 null, 
                 new XElement(
@@ -193,7 +170,7 @@
         public XElement Post(string cmd, XElement xml)
         {
             string query = string.IsNullOrEmpty(cmd) ? string.Empty : ("?cmd=" + cmd);
-            this.TraceRequest(query, xml);
+            TraceRequest(query, xml);
             using (var data = new MemoryStream())
             {
                 using (var writer = new XmlTextWriter(data, Encoding.UTF8))
@@ -202,7 +179,7 @@
                     writer.Flush();
                     data.Flush();
                     data.Position = 0;
-                    return this.ReadResponse(this.Request(query, data, "text/xml", this.Timeout));
+                    return ReadResponse(Request(query, data, "text/xml", this.Timeout));
                 }
             }
         }
@@ -282,10 +259,10 @@
         /// </returns>
         private HttpWebResponse Request(string query, Stream postData, string contentType, int timeout)
         {
-            var request = (HttpWebRequest)WebRequest.Create(this.Server + query);
-            request.UserAgent = this.Agent;
+            var request = (HttpWebRequest)WebRequest.Create(Server + query);
+            request.UserAgent = Agent;
             request.AllowAutoRedirect = false;
-            request.CookieContainer = this.cookies;
+            request.CookieContainer = _cookies;
             request.Timeout = timeout;
             if (timeout > request.ReadWriteTimeout)
             {
@@ -324,52 +301,33 @@
             return response;
         }
 
-        /// <summary>
-        /// The log.
-        /// </summary>
-        /// <param name="line">
-        /// The line.
-        /// </param>
         private void Log(string line)
         {
-            Console.WriteLine(line);
+            _logger.Debug(line);
         }
 
-        /// <summary>
-        /// The trace request.
-        /// </summary>
-        /// <param name="query">
-        /// The query.
-        /// </param>
-        /// <param name="xml">
-        /// The xml.
-        /// </param>
         private void TraceRequest(string query, XElement xml)
         {
-            if (this.Verbose)
+            if (Verbose)
             {
-                this.Log("Request: " + this.Server + query);
+                Log("Request: " + Server + query);
                 if (xml != null)
                 {
-                    this.Log(xml.ToString());
+                    Log(xml.ToString());
                 }
             }
         }
 
-        /// <summary>
-        /// The trace response.
-        /// </summary>
-        /// <param name="xml">
-        /// The xml.
-        /// </param>
         private void TraceResponse(XElement xml)
         {
-            if (this.Verbose)
+            if (Verbose)
             {
-                this.Log(xml.ToString());
+                Log(xml.ToString());
             }
         }
 
         #endregion
+
     }
+
 }

@@ -449,7 +449,7 @@
             if (!Session.IsSuccess(signalsResult))
             {
                 error = "DLAP. Unable to create user: " + Session.GetMessage(signalsResult);
-                this.logger.Error(error);
+                _logger.Error(error);
             }
 
             try
@@ -487,7 +487,7 @@
             if (!Session.IsSuccess(courseResult))
             {
                 error = "DLAP. Unable to get course: " + Session.GetMessage(courseResult);
-                this.logger.Error(error);
+                _logger.Error(error);
             }
 
             if (session != null)
@@ -553,7 +553,7 @@
             if (!Session.IsSuccess(enrollmentResult))
             {
                 error = "DLAP. Unable to get course: " + Session.GetMessage(enrollmentResult);
-                this.logger.Error(error);
+                _logger.Error(error);
             }
 
             if (session != null)
@@ -609,7 +609,7 @@
             if (!Session.IsSuccess(signalsResult))
             {
                 error = "DLAP. Unable to create user: " + Session.GetMessage(signalsResult);
-                this.logger.Error(error);
+                _logger.Error(error);
             }
 
             IEnumerable<XElement> signals = signalsResult.XPathSelectElements("/signals/signal");

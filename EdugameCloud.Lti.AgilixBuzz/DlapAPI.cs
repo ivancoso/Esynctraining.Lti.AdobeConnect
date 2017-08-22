@@ -17,7 +17,7 @@
     {
         #region Fields
 
-        private readonly ILogger logger;
+        private readonly ILogger _logger;
         private readonly dynamic settings;
 
         #endregion
@@ -36,7 +36,7 @@
         public DlapAPI(ApplicationSettingsProvider settings, ILogger logger)
         {
             this.settings = settings;
-            this.logger = logger;
+            _logger = logger;
         }
 
         #endregion
@@ -79,7 +79,7 @@
         {
             try
             {
-                var session = new Session("EduGameCloud", (string)this.settings.AgilixBuzzApiUrl) { Verbose = true };
+                var session = new Session(_logger, "EduGameCloud", (string)this.settings.AgilixBuzzApiUrl) { Verbose = true };
                 string userPrefix = lmsDomain.ToLower()
                     .Replace(".agilixbuzz.com", string.Empty)
                     .Replace("www.", string.Empty);
@@ -88,7 +88,7 @@
                 if (!Session.IsSuccess(result))
                 {
                     error = "DLAP. Unable to login: " + Session.GetMessage(result);
-                    this.logger.Error(error);
+                    _logger.Error(error);
                     return null;
                 }
 
@@ -98,7 +98,7 @@
             }
             catch (Exception ex)
             {
-                logger.Error("EdugameCloud.Lti.AgilixBuzz.DlapAPI.LoginAndCreateASession", ex);
+                _logger.Error("EdugameCloud.Lti.AgilixBuzz.DlapAPI.LoginAndCreateASession", ex);
                 error = ex.Message;
                 return null;
             }
@@ -136,7 +136,7 @@
             if (!Session.IsSuccess(enrollmentsResult))
             {
                 error = "DLAP. Unable to create user: " + Session.GetMessage(enrollmentsResult);
-                this.logger.Error(error);
+                _logger.Error(error);
             }
 
             IEnumerable<XElement> enrollments = enrollmentsResult.XPathSelectElements("/enrollments/enrollment");
@@ -187,15 +187,6 @@
             return true;
         }
 
-        /// <summary>
-        /// The process role.
-        /// </summary>
-        /// <param name="privileges">
-        /// The privileges.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private static string ProcessRole(string privileges)
         {
             string role = Roles.Student;
@@ -239,18 +230,6 @@
             return role;
         }
         
-        /// <summary>
-        /// The check role.
-        /// </summary>
-        /// <param name="privilegesVal">
-        /// The privileges val.
-        /// </param>
-        /// <param name="roleToCheck">
-        /// The role to check.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         private static bool CheckRole(long privilegesVal, RightsFlags roleToCheck)
         {
             return ((RightsFlags)privilegesVal & roleToCheck) == roleToCheck;
@@ -578,28 +557,7 @@
 
             client.Execute(request);
         } */
-
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+        
         private T LoginIfNecessary<T>(Session session, Func<Session, T> action, ILmsLicense lmsCompany, out string error)
         {
             error = null;
