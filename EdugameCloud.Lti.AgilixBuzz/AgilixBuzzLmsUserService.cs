@@ -37,11 +37,15 @@ namespace EdugameCloud.Lti.AgilixBuzz
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(
+            List<LmsUserDTO> users = dlapApi.GetUsersForCourse(
                 lmsCompany,
                 courseId,
                 out error,
                 param);
+
+            if (!string.IsNullOrWhiteSpace(error))
+                logger.Error("[AgilixBuzz.dlapApi.GetUsersForCourse] error:" + error);
+            
             return GroupUsers(users);
         }
 
