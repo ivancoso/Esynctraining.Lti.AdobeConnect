@@ -50,7 +50,7 @@
             if (lmsUser != null)
             {
                 string lmsDomain = lmsUser.LmsCompany.LmsDomain;
-                return this.LoginAndCreateASession(out error, lmsDomain, lmsUser.Username, lmsUser.Password);
+                return LoginAndCreateASession(out error, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
             error = "ASP.NET Session is expired";
@@ -110,24 +110,6 @@
             return session != null;
         }
         
-        /// <summary>
-        /// The get users for course.
-        /// </summary>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
             ILmsLicense company, 
             int courseid, 
@@ -621,7 +603,7 @@
         private T LoginIfNecessary<T>(Session session, Func<Session, T> action, ILmsLicense lmsCompany, out string error)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error, lmsCompany);
+            session = session ?? BeginBatch(out error, lmsCompany);
             if (session != null)
             {
                 return action(session);
