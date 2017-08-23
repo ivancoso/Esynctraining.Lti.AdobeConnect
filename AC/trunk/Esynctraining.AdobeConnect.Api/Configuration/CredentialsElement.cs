@@ -2,6 +2,7 @@
 
 namespace Esynctraining.AdobeConnect.Api.Configuration
 {
+#if NET45 || NET461
     public class CredentialsElement : ConfigurationElement, ICredentials
     {
         [ConfigurationProperty("userName", IsRequired = true)]
@@ -17,5 +18,5 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
         }
 
     }
-
+#endif
 }

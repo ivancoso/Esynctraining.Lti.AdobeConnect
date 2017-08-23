@@ -68,15 +68,6 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
 
         #endregion
 
-        private DateTime? FixACValue(DateTime? dt, TimeZoneInfo timeZone)
-        {
-            if (dt.HasValue)
-            {
-                return FixACValue(dt.Value, timeZone);
-            }
-            return null;
-        }
-
         private DateTime? FixACValue(DateTime dt, TimeZoneInfo timeZone)
         {
             var tmp = dt < dt1951 ? (DateTime?)null : new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, DateTimeKind.Utc);

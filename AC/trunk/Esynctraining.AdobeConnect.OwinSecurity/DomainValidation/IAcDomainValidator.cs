@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Linq;
 using ConnectExtensions.Services.Client;
+using Esynctraining.AdobeConnect.Security.Abstractions.DomainValidation;
 
 namespace Esynctraining.AdobeConnect.OwinSecurity.DomainValidation
 {
-    public interface IAcDomainValidator
-    {
-        bool IsValid(string companyToken, string acDomain);
-
-    }
-
     /// <summary>
     /// TRICK: uses CompanySubscriptionServiceProxy!!
     /// </summary>
@@ -19,6 +14,31 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.DomainValidation
         {
             var acDomains = new CompanySubscriptionServiceProxy().GetAdobeConnectDomainsByCompanyToken(companyToken).Result;
             return acDomains.Any(x => x.Equals(acDomain, StringComparison.OrdinalIgnoreCase));
+        }
+
+    }
+
+    public class HardCodedDomainValidator : IAcDomainValidator
+    {
+        private readonly string _validCompanyToken;
+        private readonly string _validAcDomain;
+
+
+        public HardCodedDomainValidator(string validCompanyToken, string validAcDomain)
+        {
+            if (string.IsNullOrWhiteSpace(validCompanyToken))
+                throw new ArgumentException("Non-empty value expected", nameof(validCompanyToken));
+            if (string.IsNullOrWhiteSpace(validAcDomain))
+                throw new ArgumentException("Non-empty value expected", nameof(validAcDomain));
+
+            _validCompanyToken = validCompanyToken;
+            _validAcDomain = validAcDomain;
+        }
+
+
+        public bool IsValid(string companyToken, string acDomain)
+        {
+            return _validCompanyToken == companyToken && _validAcDomain == acDomain;
         }
 
     }
@@ -41,18 +61,6 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.DomainValidation
         {
             var acDomains = new PublicLicenseServiceProxy().GetAdobeConnectDomainsByCompanyToken(companyToken, _productId).Result;
             return acDomains.Any(x => x.Equals(acDomain, StringComparison.OrdinalIgnoreCase));
-        }
-
-    }
-
-    /// <summary>
-    /// Returns true.
-    /// </summary>
-    public sealed class NullAcDomainValidator : IAcDomainValidator
-    {
-        public bool IsValid(string companyToken, string acDomain)
-        {
-            return true;
         }
 
     }

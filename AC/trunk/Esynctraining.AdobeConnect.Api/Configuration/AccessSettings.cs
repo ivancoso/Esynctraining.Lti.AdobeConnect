@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 
 namespace Esynctraining.AdobeConnect.Api.Configuration
 {
@@ -41,12 +40,12 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
                 Uri url;
                 if (!Uri.TryCreate(str, UriKind.Absolute, out url))
                 {
-                    throw new ConfigurationErrorsException($"Domain value '{str}' is not valid (Absolute URL expected)");
+                    throw new ArgumentException($"Domain value '{str}' is not valid (Absolute URL expected)");
                 }
 
                 if (!url.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase) &&
                     !url.Scheme.Equals("HTTP", StringComparison.OrdinalIgnoreCase))
-                    throw new ConfigurationErrorsException($"Domain value '{str}' is not valid (HTTP and HTTPS only)");
+                    throw new ArgumentException($"Domain value '{str}' is not valid (HTTP and HTTPS only)");
 
                 _domain = url.ToString().TrimEnd('/');
             }

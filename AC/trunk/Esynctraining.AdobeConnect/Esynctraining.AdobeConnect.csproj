@@ -6,7 +6,7 @@
     <AssemblyTitle>Esynctraining.AdobeConnect</AssemblyTitle>
     <VersionPrefix>1.0.1.17</VersionPrefix>
     <Authors>eSyncTraining.com</Authors>
-    <TargetFrameworks>net45;net461</TargetFrameworks>
+    <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
@@ -30,9 +30,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.0.27" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
   </ItemGroup>
 
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
+  </ItemGroup>
+
+ 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.IO.Compression" />
@@ -41,6 +47,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
+ 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.IO.Compression" />

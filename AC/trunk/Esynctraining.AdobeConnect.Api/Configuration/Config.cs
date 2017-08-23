@@ -2,6 +2,7 @@
 
 namespace Esynctraining.AdobeConnect.Api.Configuration
 {
+#if NET45 || NET461
     public static class Config
     {
         // TODO: implement generic method with 'name' parameter
@@ -16,5 +17,5 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
         }
         
     }
-
+#endif
 }

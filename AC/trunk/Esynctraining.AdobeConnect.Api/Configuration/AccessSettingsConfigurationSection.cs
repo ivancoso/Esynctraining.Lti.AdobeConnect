@@ -3,6 +3,7 @@ using System.Configuration;
 
 namespace Esynctraining.AdobeConnect.Api.Configuration
 {
+#if NET45 || NET461
     public class AccessSettingsConfigurationSection : ConfigurationSection, IAccessSettings
     {
         [ConfigurationProperty("domain", IsRequired = true, Options = ConfigurationPropertyOptions.IsRequired)]
@@ -42,5 +43,5 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
         }
 
     }
-
+#endif
 }
