@@ -117,14 +117,37 @@
             object extraData)
         {
             Session session = extraData as Session;
-
             var result = new List<LmsUserDTO>();
+
+            XElement courseResult = this.LoginIfNecessary(
+                session,
+                s =>
+                s.Get(
+                    Commands.Courses.GetOne,
+                    string.Format(Parameters.Courses.GetOne, courseid).ToParams()),
+                    company,
+                    out error);
+
+            if (courseResult == null)
+            {
+                error = error ?? "DLAP. Unable to retrive result from API";
+                return result;
+            }
+
+            if (!Session.IsSuccess(courseResult))
+            {
+                error = "DLAP. Unable to create course: " + Session.GetMessage(courseResult);
+                this.logger.Error(error);
+            }
+
+            string domainId = courseResult.XPathSelectElement("course").XPathEvaluate("string(@domainid)").ToString();
+
             XElement enrollmentsResult = this.LoginIfNecessary(
                 session, 
                 s =>
                 s.Get(
                     Commands.Enrollments.List, 
-                    string.Format(Parameters.Enrollments.List, s.DomainId, courseid).ToParams()), 
+                    string.Format(Parameters.Enrollments.List, domainId, courseid).ToParams()), 
                     company,
                     out error);
             if (enrollmentsResult == null)
