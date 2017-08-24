@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Castle.MicroKernel.Lifestyle;
 using Castle.Windsor.MsDependencyInjection;
@@ -125,6 +126,7 @@ namespace EdugameCloud.Lti.Mp4.Host
                 .AddFile(Configuration.GetSection("Logging"))
                 .AddFile(Configuration.GetSection("Logging_Serilog_Errors"));
 
+            ServicePointManager.DefaultConnectionLimit = int.Parse(Configuration["AppSettings:ConnectionBatchSize"]);
 
             if (env.IsDevelopment())
             {

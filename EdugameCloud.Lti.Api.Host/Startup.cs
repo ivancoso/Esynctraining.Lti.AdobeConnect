@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Castle.MicroKernel.Lifestyle;
 using Castle.Windsor.MsDependencyInjection;
 using EdugameCloud.Lti.Api.Host.Swagger;
@@ -90,6 +91,8 @@ namespace EdugameCloud.Lti.Api.Host
                 .AddDebug()
                 .AddFile(Configuration.GetSection("Logging"))
                 .AddFile(Configuration.GetSection("Logging_Serilog_Errors"));
+
+            ServicePointManager.DefaultConnectionLimit = int.Parse(Configuration["AppSettings:ConnectionBatchSize"]);
 
             if (env.IsDevelopment())
             {
