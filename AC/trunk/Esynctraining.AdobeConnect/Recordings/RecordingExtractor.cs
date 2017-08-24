@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Esynctraining.AC.Provider;
 
@@ -12,15 +11,11 @@ namespace Esynctraining.AdobeConnect.Recordings
         {
         }
 
-
-        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone)
+        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone,
+            string sortBy, string sortOrder, string search, long? dateFrom, long? dateTo, int skip, int take)
         {
-            return GetRecordings(dtoBuilder, scoId, accountUrl, timeZone, 0, int.MaxValue);
-        }
-
-        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone, int skip, int take)
-        {
-            return GetRecordings(dtoBuilder, scoId, accountUrl, timeZone, skip, take, "date-begin", SortOrder.Descending);
+            bool isAscendingSortOrder = (sortOrder ?? "").StartsWith("asc", StringComparison.OrdinalIgnoreCase);
+            return GetRecordings(dtoBuilder, scoId, accountUrl, timeZone, skip, take, sortBy ?? "date-begin", isAscendingSortOrder ? SortOrder.Ascending : SortOrder.Descending);
         }
 
         private IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone, int skip, int take, string propertySortBy, SortOrder order)

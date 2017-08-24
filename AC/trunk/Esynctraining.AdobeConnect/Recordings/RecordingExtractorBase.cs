@@ -14,12 +14,10 @@ namespace Esynctraining.AdobeConnect.Recordings
         {
             AcProxy = acProxy;
         }
-        
 
-        public abstract IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone);
 
         public abstract IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone,
-            int skip, int take);
+            string sortBy, string sortOrder, string search, long? dateFrom, long? dateTo, int skip, int take);
 
         protected bool IsPublicRecording(string recordingScoId)
         {

@@ -16,6 +16,9 @@ namespace Esynctraining.AdobeConnect
         [Required]
         long BeginAt { get; set; }
 
+        string Duration { get; set; }
+
+        string Name { get; set; }
     }
 
 }
