@@ -5,12 +5,12 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Company>eSyncTraining Inc.</Company>
     <Authors>Sergey Isakovich</Authors>
-    <Version>1.0.0.5</Version>
+    <Version>1.0.3.0</Version>
     <PackageTags>as security identity</PackageTags>
     <Description>security base code; for use by UseOpenIdConnectServer and owin security</Description>
-    <PackageReleaseNotes>fixes</PackageReleaseNotes>
-    <AssemblyVersion>1.0.0.5</AssemblyVersion>
-    <FileVersion>1.0.0.5</FileVersion>
+    <PackageReleaseNotes>netstandard2.0</PackageReleaseNotes>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
