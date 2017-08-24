@@ -6,7 +6,7 @@
     <AssemblyTitle>Esynctraining.AdobeConnect.OwinSecurity</AssemblyTitle>
     <VersionPrefix>1.0.0.13</VersionPrefix>
     <Authors>eSyncTraining.com</Authors>
-    <TargetFrameworks>net45;net461</TargetFrameworks>
+    <TargetFramework>net461</TargetFramework>
     <AssemblyName>Esynctraining.AdobeConnect.OwinSecurity</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect.OwinSecurity</PackageId>
     <PackageTags>AC;AdobeConnect;owin</PackageTags>
@@ -16,6 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.AdobeConnect.Security.Abstractions\Esynctraining.AdobeConnect.Security.Abstractions.csproj" />
     <ProjectReference Include="..\Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj" />
   </ItemGroup>
 

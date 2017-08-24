@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Esynctraining.AdobeConnect.Security.Abstractions.Identity;
 using Microsoft.AspNet.Identity;
 
 namespace Esynctraining.AdobeConnect.OwinSecurity.Identity

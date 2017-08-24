@@ -5,8 +5,8 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.AdobeConnect.OwinSecurity.DomainValidation;
 using Esynctraining.AdobeConnect.OwinSecurity.PermissionProviders;
+using Esynctraining.AdobeConnect.Security.Abstractions.DomainValidation;
 using Esynctraining.Core.Logging;
 using Microsoft.AspNet.Identity;
 

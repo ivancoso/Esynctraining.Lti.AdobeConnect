@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Esynctraining.AdobeConnect.OwinSecurity.Identity;
+using Esynctraining.AdobeConnect.Security.Abstractions.Identity;
 using Esynctraining.Core.Logging;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
@@ -14,11 +15,11 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
     public sealed class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
-        private readonly Func<AdobeConnectUserManager> _userManagerFactory;
+        private readonly Func<Identity.AdobeConnectUserManager> _userManagerFactory;
         private readonly ILogger _logger;
 
 
-        public ApplicationOAuthProvider(string publicClientId, Func<AdobeConnectUserManager> userManagerFactory, ILogger logger)
+        public ApplicationOAuthProvider(string publicClientId, Func<Identity.AdobeConnectUserManager> userManagerFactory, ILogger logger)
         {
             if (publicClientId == null)
                 throw new ArgumentNullException(nameof(publicClientId));
@@ -34,9 +35,9 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            using (AdobeConnectUserManager userManager = _userManagerFactory())
+            using (Identity.AdobeConnectUserManager userManager = _userManagerFactory())
             {
-                AdobeConnectUser user = null;
+                Identity.AdobeConnectUser user = null;
                 try
                 {
                     user = await userManager.FindAsync(context.UserName, context.Password);
@@ -122,8 +123,8 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
             var id = identity.GetUserId();
             var domain = identity.FindFirst("ac_domain");
             var companyToken = identity.FindFirst("c_token");
-            AdobeConnectUser user = null;
-            using (AdobeConnectUserManager userManager = _userManagerFactory())
+            Identity.AdobeConnectUser user = null;
+            using (Identity.AdobeConnectUserManager userManager = _userManagerFactory())
             {
                 try
                 {
