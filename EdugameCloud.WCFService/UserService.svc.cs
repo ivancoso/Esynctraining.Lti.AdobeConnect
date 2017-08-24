@@ -55,15 +55,6 @@
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SocialUserTokensDTO"/>.
-        /// </returns>
         public SocialUserTokensDTO GetSocialUserTokens(string key)
         {
             SocialUserTokens user;
@@ -80,15 +71,6 @@
             return new SocialUserTokensDTO(user);
         }
 
-        /// <summary>
-        /// The activate by id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="logoId">
-        /// The logo Id.
-        /// </param>
         public void UpdateLogo(int userId, Guid logoId)
         {
             var model = this.UserModel;
@@ -120,12 +102,6 @@
             //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
         }
 
-        /// <summary>
-        /// The activate by id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
         public void ActivateById(int userId)
         {
             UserModel model = this.UserModel;
@@ -142,12 +118,6 @@
             //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
         }
 
-        /// <summary>
-        /// The deactivate by id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
         public void DeactivateById(int userId)
         {
             UserModel model = this.UserModel;
@@ -167,12 +137,6 @@
             //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
         }
 
-        /// <summary>
-        /// The deactivate by id.
-        /// </summary>
-        /// <param name="userIds">
-        /// The user id.
-        /// </param>
         public void ActivateByIds(int[] userIds)
         {
             userIds = userIds ?? new int[] { };
@@ -197,12 +161,6 @@
             }
         }
 
-        /// <summary>
-        /// The deactivate by id.
-        /// </summary>
-        /// <param name="userIds">
-        /// The user id.
-        /// </param>
         public void DeactivateByIds(int[] userIds)
         {
             userIds = userIds ?? new int[] { };
@@ -228,15 +186,6 @@
             model.Flush();
         }
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             UserModel model = this.UserModel;
@@ -257,15 +206,6 @@
             return id;
         }
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="userIds">
-        /// The user Ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int[] DeleteByIds(int[] userIds)
         {
             userIds = userIds ?? new int[] { };
@@ -293,12 +233,6 @@
             return res.ToArray();
         }
 
-        /// <summary>
-        /// The forgot password.
-        /// </summary>
-        /// <param name="email">
-        /// The email.
-        /// </param>
         public void ForgotPassword(string email)
         {
             ValidationResult validationResult;
@@ -324,40 +258,17 @@
             this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
         }
 
-        /// <summary>
-        ///     All users test.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="UserDTO" />.
-        /// </returns>
+        // TODO: not in use??
         public UserDTO[] GetAll()
         {
             return this.UserModel.GetAll().Select(x => new UserDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The get all for company.
-        /// </summary>
-        /// <param name="companyId">
-        /// The company id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserWithLoginHistoryDTO"/>.
-        /// </returns>
         public UserWithLoginHistoryDTO[] GetAllForCompany(int companyId)
         {
             return this.UserModel.GetAllForCompany(companyId).ToArray();
         }
 
-        /// <summary>
-        /// The get login history for contact.
-        /// </summary>
-        /// <param name="companyId">
-        /// The company Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserLoginHistoryDTO"/>.
-        /// </returns>
         public UserLoginHistoryDTO[] GetLoginHistoryForCompany(int companyId)
         {
             Company company;
@@ -372,15 +283,6 @@
             return history.Select(x => new UserLoginHistoryDTO(x, company)).ToArray();
         }
 
-        /// <summary>
-        /// The get login history for contact.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserLoginHistoryDTO"/>.
-        /// </returns>
         public UserLoginHistoryDTO[] GetLoginHistoryForUser(int userId)
         {
             if (this.UserModel.GetOneById(userId).Value == null)
@@ -395,18 +297,6 @@
             return history.Select(x => new UserLoginHistoryDTO(x, companies.FirstOrDefault(c => c.Id == x.User.Company.Id))).ToArray();
         }
 
-        /// <summary>
-        /// The get login history paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserLoginHistoryDTO"/>.
-        /// </returns>
         public PagedUserLoginHistoryDTO GetLoginHistoryPaged(int pageIndex, int pageSize)
         {
             var result = new PagedUserLoginHistoryDTO();
@@ -420,15 +310,6 @@
             return result;
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserDTO"/>.
-        /// </returns>
         public UserDTO GetById(int id)
         {
             User user;
@@ -446,15 +327,6 @@
             return new UserDTO(user);
         }
 
-        /// <summary>
-        /// The request session token.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SessionDTO"/>.
-        /// </returns>
         public SessionDTO RequestSessionToken(int userId)
         {
             User user;
@@ -483,15 +355,6 @@
             return this.GetOrSetANewSession(user);
         }
 
-        /// <summary>
-        /// The login.
-        /// </summary>
-        /// <param name="dto">
-        /// The DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserWithSplashScreenDTO"/>.
-        /// </returns>
         public UserWithSplashScreenDTO Login(LoginWithHistoryDTO dto)
         {
             User user;
@@ -596,15 +459,6 @@
             return result;
         }
 
-        /// <summary>
-        /// The upload batch users.
-        /// </summary>
-        /// <param name="batch">
-        /// The batch.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserDTO"/>.
-        /// </returns>
         public UserDTO[] UploadBatchUsers(BatchUsersDTO batch)
         {
             ValidationResult validationResult;
@@ -617,7 +471,7 @@
 
                 if (errorString != null || failedRows != null)
                 {
-                    var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorString, this.CombineFailed(failedRows));
+                    var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorString, CombineFailed(failedRows));
                     this.LogError("User.UploadBatchUsers", error);
                     throw new FaultException<Error>(error, error.errorMessage);
                 }
@@ -630,15 +484,6 @@
             throw new FaultException<Error>(validationError, validationError.errorMessage);
         }
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int GetCompanyIdByEmail(string email)
         {
             User user;
@@ -816,15 +661,6 @@
             this.SendPasswordEmail(contact.FirstName, contact.Email, newPassword);
         }
 
-        /// <summary>
-        /// The activate by id.
-        /// </summary>
-        /// <param name="code">
-        /// The code.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         public bool ActivateByCode(string code)
         {
             var passwordActivation = this.UserActivationModel.GetOneByCode(code).Value;
@@ -845,18 +681,6 @@
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The update password.
-        /// </summary>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="oldPasswordHash">
-        /// The old password.
-        /// </param>
-        /// <param name="newPassword">
-        /// The new password.
-        /// </param>
         public void UpdatePassword(string email, string oldPasswordHash, string newPassword)
         {
             User user;
@@ -891,15 +715,6 @@
 
         #region Methods
 
-        /// <summary>
-        /// The set new session.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SessionDTO"/>.
-        /// </returns>
         private SessionDTO SetNewSession(User user)
         {
             user.SessionToken = Password.CreateAlphaNumericRandomPassword(45);
@@ -919,15 +734,6 @@
             };
         }
 
-        /// <summary>
-        /// The get or set a new session.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SessionDTO"/>.
-        /// </returns>
         private SessionDTO GetOrSetANewSession(User user)
         {
             if (!string.IsNullOrWhiteSpace(user.SessionToken) && user.SessionTokenExpirationDate.HasValue
@@ -943,21 +749,6 @@
             return this.SetNewSession(user);
         }
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="emailChanged">
-        /// The email Changed.
-        /// </param>
-        /// <returns>
-        /// The <see cref="User"/>.
-        /// </returns>
         private User ConvertDto(UserDTO user, User instance, out bool emailChanged)
         {
             emailChanged = instance != null && instance.Email.ToLower() != user.email.ToLower();
@@ -982,20 +773,15 @@
             return instance;
         }
 
-        /// <summary>
-        /// The combine failed.
-        /// </summary>
-        /// <param name="failedRows">
-        /// The failed rows.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string CombineFailed(IEnumerable<string> failedRows)
+        private static string CombineFailed(IEnumerable<string> failedRows)
         {
-            return failedRows.Where(failedRow => !string.IsNullOrWhiteSpace(failedRow)).Aggregate(string.Empty, (current, failedRow) => current + (failedRow + Environment.NewLine));
+            return failedRows
+                .Where(failedRow => !string.IsNullOrWhiteSpace(failedRow))
+                .Aggregate(string.Empty, (current, failedRow) => current + (failedRow + Environment.NewLine));
         }
 
         #endregion
+
     }
+
 }

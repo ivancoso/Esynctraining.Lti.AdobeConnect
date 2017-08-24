@@ -137,7 +137,7 @@
             if (!Session.IsSuccess(courseResult))
             {
                 error = "DLAP. Unable to create course: " + Session.GetMessage(courseResult);
-                this.logger.Error(error);
+                _logger.Error(error);
             }
 
             string domainId = courseResult.XPathSelectElement("course").XPathEvaluate("string(@domainid)").ToString();
