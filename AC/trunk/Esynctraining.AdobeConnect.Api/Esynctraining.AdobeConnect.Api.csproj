@@ -18,12 +18,17 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.0.20</Version>
+    <Version>1.0.3.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
     <DocumentationFile>bin\Release\net45\Esynctraining.AdobeConnect.Api.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="MeetingRecording\Dto\RecordingDto.cs.bak" />
+    <None Remove="MeetingRecording\RecordingDtoBuilder.cs.bak" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Esynctraining.AC.Provider\Esynctraining.AC.Provider.csproj" />
