@@ -42,7 +42,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public IEnumerable<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
             int courseId, 
             int id,
-            Func<IRoomTypeFactory> getRoomTypeFactory)
+            Func<IRoomTypeFactory> getRoomTypeFactory,
+            string sortBy,
+            string sortOder,
+            string search, 
+            long? dateFrom, 
+            long? dateTo, 
+            int skip, 
+            int take)
         {
             LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, courseId, id);
 
@@ -63,7 +70,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var factory = getRoomTypeFactory();
             var recordingsExtractor = factory.GetRecordingExtractor();
-            result = recordingsExtractor.GetRecordings(factory.GetRecordingDtoBuilder(), meetingSco, commonInfo.AccountUrl, timeZone);
+
+            result = recordingsExtractor.GetRecordings(factory.GetRecordingDtoBuilder(), meetingSco, commonInfo.AccountUrl, timeZone,
+                sortBy, sortOder, search, dateFrom, dateTo, skip, take);
 
             ProcessPublishedFlag(lmsCompany, meeting, result);
 

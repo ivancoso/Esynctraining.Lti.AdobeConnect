@@ -1,18 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace EdugameCloud.Lti.Mp4.Host.Dto
+namespace EdugameCloud.Lti.Api.Models
 {
+    // TODO: remove type - we fetch meetingitem within RecordingsService.GetRecordings
+    // we can reuse that info to have type (change API)
     [DataContract]
-    public sealed class RecordingsRequestDto
+    public class TypeMeetingRequestDto : MeetingRequestDto
     {
         [Required]
-        [DataMember(Name = "type")]
-        public int LmsMeetingType { get; set; }
-
-        [Required]
         [DataMember]
-        public int MeetingId { get; set; }
+        public int Type { get; set; }
 
         [DataMember]
         public string SortBy { get; set; }
@@ -34,6 +32,6 @@ namespace EdugameCloud.Lti.Mp4.Host.Dto
 
         [DataMember]
         public int Take { get; set; } = 10;
-    }
 
+    }
 }

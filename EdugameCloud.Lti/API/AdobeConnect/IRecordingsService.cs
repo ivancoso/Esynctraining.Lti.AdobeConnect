@@ -13,7 +13,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
             int courseId, 
             int id,
-            Func<IRoomTypeFactory> getRoomTypeFactory);
+            Func<IRoomTypeFactory> getRoomTypeFactory,
+            string sortBy,
+            string sortOder,
+            string search,
+            long? dateFrom,
+            long? dateTo,
+            int skip,
+            int take);
 
         string UpdateRecording(ILmsLicense lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic,
             string password);

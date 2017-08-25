@@ -22,34 +22,6 @@ namespace EdugameCloud.Lti.Api.Controllers
     [Route("recordings")]
     public partial class RecordingsController : BaseApiController
     {
-        // TODO: remove type - we fetch meetingitem within RecordingsService.GetRecordings
-        // we can reuse that info to have type (change API)
-        [DataContract]
-        public class TypeMeetingRequestDto : MeetingRequestDto
-        {
-            [Required]
-            [DataMember]
-            public int Type { get; set; }
-
-        }
-
-        [DataContract]
-        public class ShareRecordingRequestDto : RequestDto
-        {
-            [Required]
-            [DataMember]
-            public string RecordingId { get; set; }
-
-            [Required]
-            [DataMember]
-            public bool IsPublic { get; set; }
-
-            // TODO: is it used??
-            [DataMember]
-            public string Password { get; set; }
-
-        }
-
         private IRecordingsService RecordingsService => IoC.Resolve<IRecordingsService>();
 
         private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
@@ -85,7 +57,14 @@ namespace EdugameCloud.Lti.Api.Controllers
                     ac,
                     CourseId,
                     request.MeetingId,
-                    getRoomTypeFactory);
+                    getRoomTypeFactory, 
+                    request.SortBy,
+                    request.SortOder,
+                    request.Search,
+                    request.DateFrom,
+                    request.DateTo,
+                    request.Skip,
+                    request.Take);
 
                 // TRICK: for API UNIR uses AutoPublishRecordings==true; So no access to Session for them.
                 if (!LmsCompany.AutoPublishRecordings && !UsersSetup.IsTeacher(Session.LtiSession.LtiParam, LmsCompany))

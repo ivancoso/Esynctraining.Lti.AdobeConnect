@@ -69,7 +69,14 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     ac,
                     Session.LmsCourseId,
                     input.MeetingId,
-                    getRoomTypeFactory);
+                    getRoomTypeFactory,
+                    input.SortBy,
+                    input.SortOder,
+                    input.Search,
+                    input.DateFrom,
+                    input.DateTo,
+                    input.Skip,
+                    input.Take);
 
                 var smap = seminarMapConfig.CreateMapper();
                 var map = mapConfig.CreateMapper();

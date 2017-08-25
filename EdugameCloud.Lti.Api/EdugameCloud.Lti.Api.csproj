@@ -35,14 +35,14 @@
     <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.2.45, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.2.45\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.3.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.3.1\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.1.51, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.1.51\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.3.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.3.3\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.0.20, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.0.20\lib\net461\Esynctraining.AdobeConnect.Api.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect.Api, Version=1.0.3.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.Api.1.0.3.2\lib\net461\Esynctraining.AdobeConnect.Api.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.1\lib\net461\Esynctraining.Core.dll</HintPath>
@@ -310,6 +310,8 @@
     <Compile Include="Filters\LmsAuthorizeAttribute.cs" />
     <Compile Include="Models\ScoContentDto.cs" />
     <Compile Include="Models\ScoShortcutDto.cs" />
+    <Compile Include="Models\ShareRecordingRequestDto.cs" />
+    <Compile Include="Models\TypeMeetingRequestDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ScoShortcutNames.Designer.cs">
       <DependentUpon>ScoShortcutNames.resx</DependentUpon>
