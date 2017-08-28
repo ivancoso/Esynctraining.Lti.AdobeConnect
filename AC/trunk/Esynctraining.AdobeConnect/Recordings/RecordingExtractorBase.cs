@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.AC.Provider.Entities;
 
@@ -16,7 +15,7 @@ namespace Esynctraining.AdobeConnect.Recordings
         }
 
 
-        public abstract IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone,
+        public abstract PagedResult<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone,
             string sortBy, string sortOrder, string search, long? dateFrom, long? dateTo, int skip, int take);
 
         protected bool IsPublicRecording(string recordingScoId)

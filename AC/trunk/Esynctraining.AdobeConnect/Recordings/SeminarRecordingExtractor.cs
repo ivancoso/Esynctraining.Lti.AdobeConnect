@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Esynctraining.AC.Provider;
 
 namespace Esynctraining.AdobeConnect.Recordings
 {
@@ -17,7 +16,7 @@ namespace Esynctraining.AdobeConnect.Recordings
         }
 
 
-        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone,
+        public override PagedResult<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone,
             string sortBy, string sortOrder, string search, long? dateFrom, long? dateTo, int skip, int take)
         {
             var result = new List<IRecordingDto>();
@@ -58,6 +57,8 @@ namespace Esynctraining.AdobeConnect.Recordings
             resultDto = ApplyFilter(search, dateFrom, dateTo, resultDto);
             resultDto = ApplySort(sortBy, sortOrder, resultDto);
 
+            var total = resultDto.Count();
+
             resultDto = resultDto
                 .Skip(skip)
                 .Take(take)
@@ -68,7 +69,9 @@ namespace Esynctraining.AdobeConnect.Recordings
                 recording.IsPublic = IsPublicRecording(recording.Id);
             });
 
-            return resultDto;
+            var pagedResult = new PagedResult<IRecordingDto> { Data = resultDto, Total = total, Skip = skip, Take = take };
+
+            return pagedResult;
         }
 
         private static IEnumerable<IRecordingDto> ApplySort(string sortBy, string sortOrder, IEnumerable<IRecordingDto> resultDto)
