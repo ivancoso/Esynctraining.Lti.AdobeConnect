@@ -24,12 +24,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private readonly MeetingSetup meetingSetup;
         private readonly UsersSetup usersSetup;
         private readonly ILogger logger;
-        private readonly IAdobeConnectProxy _acProxy;
 
 
         public RecordingsService(LmsCourseMeetingModel lmsCourseMeetingModel, LmsUserModel lmsUserModel,
-            IAdobeConnectAccountService acAccountService, MeetingSetup meetingSetup, UsersSetup usersSetup, ILogger logger,
-            IAdobeConnectProxy acProxy)
+            IAdobeConnectAccountService acAccountService, MeetingSetup meetingSetup, UsersSetup usersSetup, ILogger logger)
         {
             this.lmsCourseMeetingModel = lmsCourseMeetingModel;
             this.lmsUserModel = lmsUserModel;
@@ -37,7 +35,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.meetingSetup = meetingSetup;
             this.logger = logger;
             this.usersSetup = usersSetup;
-            this._acProxy = acProxy;
         }
 
 
@@ -90,9 +87,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 .Take(take)
                 .ToList();
 
+            var acProxy = this.acAccountService.GetProvider(lmsCompany);
+            
             Parallel.ForEach(result, (recording) =>
             {
-                recording.IsPublic = IsPublicRecording(recording.Id);
+                recording.IsPublic = IsPublicRecording(recording.Id, acProxy);
             });
 
             var pagedResult = new PagedResult<IRecordingDto> { Data = result, Total = total, Skip = skip, Take = take };
@@ -129,9 +128,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //    return result;
         //}
 
-        private bool IsPublicRecording(string recordingScoId)
+        private bool IsPublicRecording(string recordingScoId, IAdobeConnectProxy acProxy)
         {
-            var moreDetails = _acProxy.GetScoPublicAccessPermissions(recordingScoId, skipAcError: true);
+            var moreDetails = acProxy.GetScoPublicAccessPermissions(recordingScoId, skipAcError: true);
             var isPublic = false;
             if (moreDetails.Success && moreDetails.Values.Any())
             {
