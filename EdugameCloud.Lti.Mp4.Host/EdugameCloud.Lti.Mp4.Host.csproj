@@ -28,7 +28,7 @@
   <PackageReference Include="AutoMapper" Version="6.1.1" />
   <PackageReference Include="Castle.Windsor" Version="3.4.0" />
     <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="2.0.1" />
-    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.2" />
+    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.4" />
     <PackageReference Include="Esynctraining.AspNetCore" Version="1.0.0.4" />
     <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />

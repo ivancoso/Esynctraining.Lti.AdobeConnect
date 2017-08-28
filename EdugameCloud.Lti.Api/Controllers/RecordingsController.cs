@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.Serialization;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.DTO.Recordings;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
@@ -43,7 +41,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("")]
         //[ResponseType(typeof(IEnumerable<Country>))]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public OperationResultWithData<IEnumerable<IRecordingDto>> GetRecordings([FromBody]TypeMeetingRequestDto request)
+        public OperationResultWithData<PagedResult<IRecordingDto>> GetRecordings([FromBody]TypeMeetingRequestDto request)
         {
             try
             {
@@ -52,32 +50,38 @@ namespace EdugameCloud.Lti.Api.Controllers
                 Func<IRoomTypeFactory> getRoomTypeFactory =
                     () => new RoomTypeFactory(ac, (LmsMeetingType)request.Type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
-                IEnumerable<IRecordingDto> recordings = RecordingsService.GetRecordings(
+                var publishOnly = !LmsCompany.AutoPublishRecordings && !UsersSetup.IsTeacher(Session.LtiSession.LtiParam, LmsCompany);
+
+                var recordings = RecordingsService.GetRecordings(
                     LmsCompany,
                     ac,
                     CourseId,
                     request.MeetingId,
-                    getRoomTypeFactory, 
+                    getRoomTypeFactory,
                     request.SortBy,
                     request.SortOder,
                     request.Search,
                     request.DateFrom,
                     request.DateTo,
+                    (input) =>
+                    {
+                        // TRICK: for API UNIR uses AutoPublishRecordings==true; So no access to Session for them.
+                        if (publishOnly)
+                        {
+                            return input.Where(x => x.Published);
+                        }
+
+                        return input;
+                    },
                     request.Skip,
                     request.Take);
-
-                // TRICK: for API UNIR uses AutoPublishRecordings==true; So no access to Session for them.
-                if (!LmsCompany.AutoPublishRecordings && !UsersSetup.IsTeacher(Session.LtiSession.LtiParam, LmsCompany))
-                {
-                    recordings = recordings.Where(x => x.Published);
-                }
 
                 return recordings.ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("GetRecordings", ex);
-                return OperationResultWithData<IEnumerable<IRecordingDto>>.Error(errorMessage);
+                return OperationResultWithData<PagedResult<IRecordingDto>>.Error(errorMessage);
             }
         }
 

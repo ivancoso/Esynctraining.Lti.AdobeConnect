@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
@@ -10,10 +11,8 @@ using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.MeetingRecording.Dto;
-using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -25,10 +24,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private readonly MeetingSetup meetingSetup;
         private readonly UsersSetup usersSetup;
         private readonly ILogger logger;
+        private readonly IAdobeConnectProxy _acProxy;
 
 
         public RecordingsService(LmsCourseMeetingModel lmsCourseMeetingModel, LmsUserModel lmsUserModel,
-            IAdobeConnectAccountService acAccountService, MeetingSetup meetingSetup, UsersSetup usersSetup, ILogger logger)
+            IAdobeConnectAccountService acAccountService, MeetingSetup meetingSetup, UsersSetup usersSetup, ILogger logger,
+            IAdobeConnectProxy acProxy)
         {
             this.lmsCourseMeetingModel = lmsCourseMeetingModel;
             this.lmsUserModel = lmsUserModel;
@@ -36,18 +37,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.meetingSetup = meetingSetup;
             this.logger = logger;
             this.usersSetup = usersSetup;
+            this._acProxy = acProxy;
         }
 
 
-        public IEnumerable<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
+        public PagedResult<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
             int courseId, 
             int id,
             Func<IRoomTypeFactory> getRoomTypeFactory,
             string sortBy,
-            string sortOder,
+            string sortOrder,
             string search, 
             long? dateFrom, 
             long? dateTo, 
+            Func<IEnumerable<IRecordingDto>, IEnumerable<IRecordingDto>> applyAdditionalFilter,
             int skip, 
             int take)
         {
@@ -55,7 +58,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meeting == null)
             {
-                return Enumerable.Empty<RecordingDto>();
+                return new PagedResult<IRecordingDto> { Data = Enumerable.Empty<RecordingDto>(), Total = 0, Skip = skip, Take = take };
             }
 
             TimeZoneInfo timeZone = TimeZoneInfo.Utc; // acAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
@@ -71,12 +74,30 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var factory = getRoomTypeFactory();
             var recordingsExtractor = factory.GetRecordingExtractor();
 
-            result = recordingsExtractor.GetRecordings(factory.GetRecordingDtoBuilder(), meetingSco, commonInfo.AccountUrl, timeZone,
-                sortBy, sortOder, search, dateFrom, dateTo, skip, take);
+            result = recordingsExtractor.GetRecordings(factory.GetRecordingDtoBuilder(), meetingSco, commonInfo.AccountUrl, timeZone);
+
+            result = ApplyFilter(search, dateFrom, dateTo, result);
+            result = ApplySort(sortBy, sortOrder, result);
 
             ProcessPublishedFlag(lmsCompany, meeting, result);
 
-            return result;
+            result = applyAdditionalFilter(result);
+
+            var total = result.Count();
+
+            result = result
+                .Skip(skip)
+                .Take(take)
+                .ToList();
+
+            Parallel.ForEach(result, (recording) =>
+            {
+                recording.IsPublic = IsPublicRecording(recording.Id);
+            });
+
+            var pagedResult = new PagedResult<IRecordingDto> { Data = result, Total = total, Skip = skip, Take = take };
+
+            return pagedResult;
         }
 
         //private static List<RecordingDTO> GetRecordings(string meetingSco, 
@@ -108,7 +129,77 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //    return result;
         //}
 
-        private static List<RecordingDto> GetRecordingsLegacy(string meetingSco, 
+        private bool IsPublicRecording(string recordingScoId)
+        {
+            var moreDetails = _acProxy.GetScoPublicAccessPermissions(recordingScoId, skipAcError: true);
+            var isPublic = false;
+            if (moreDetails.Success && moreDetails.Values.Any())
+            {
+                isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
+            }
+
+            return isPublic;
+        }
+
+        private static IEnumerable<IRecordingDto> ApplySort(string sortBy, string sortOrder, IEnumerable<IRecordingDto> resultDto)
+        {
+            // sorting
+            bool isDescendingSortOrder = (sortOrder ?? "").StartsWith("desc", StringComparison.OrdinalIgnoreCase);
+
+            switch (sortBy)
+            {
+                case "name":
+                    resultDto = isDescendingSortOrder
+                        ? resultDto.OrderByDescending(x => x.Name)
+                        : resultDto.OrderBy(x => x.Name);
+
+                    break;
+                case "duration":
+
+                    resultDto = isDescendingSortOrder
+                        ? resultDto.OrderByDescending(x => x.Duration)
+                        : resultDto.OrderBy(x => x.Duration);
+
+                    break;
+                case "date-created":
+
+                    resultDto = isDescendingSortOrder
+                       ? resultDto.OrderByDescending(x => x.BeginAt)
+                       : resultDto.OrderBy(x => x.BeginAt);
+
+                    break;
+                default:
+
+                    resultDto = resultDto.OrderByDescending(x => x.BeginAt);
+
+                    break;
+            }
+
+            return resultDto;
+        }
+
+        private static IEnumerable<IRecordingDto> ApplyFilter(string search, long? dateFrom, long? dateTo, IEnumerable<IRecordingDto> resultDto)
+        {
+            // filtering
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                resultDto = resultDto.Where(x => x.Name.Contains(search));
+            }
+
+            if (dateFrom.HasValue)
+            {
+                resultDto = resultDto.Where(x => x.BeginAt >= dateFrom.Value);
+            }
+
+            if (dateTo.HasValue)
+            {
+                resultDto = resultDto.Where(x => x.BeginAt <= dateTo.Value);
+            }
+
+            return resultDto;
+        }
+
+        private static IEnumerable<IRecordingDto> GetRecordingsLegacy(string meetingSco, 
             string accountUrl,
             TimeZoneInfo timeZone,
             Esynctraining.AdobeConnect.IAdobeConnectProxy provider)

@@ -9,6 +9,7 @@ using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Mp4.Host.Dto;
 using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.MeetingRecording.Dto;
@@ -42,7 +43,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             IRecordingsService recordingsService,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger,             
+            ILogger logger,
             ICache cache)
             : base(acAccountService, settings, logger, cache)
         {
@@ -54,7 +55,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [Route("")]
         [HttpPost]
-        public virtual async Task<OperationResultWithData<IEnumerable<IMp4StatusContainer>>> GetAllMeetingRecordings([FromBody]RecordingsRequestDto input)
+        public virtual async Task<OperationResultWithData<PagedResult<IMp4StatusContainer>>> GetAllMeetingRecordings([FromBody]RecordingsRequestDto input)
         {
             try
             {
@@ -64,7 +65,9 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 Func<IRoomTypeFactory> getRoomTypeFactory =
                     () => new RoomTypeFactory(ac, (LmsMeetingType)input.LmsMeetingType, IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
-                IEnumerable<IRecordingDto> rawRecordings = RecordingsService.GetRecordings(
+                var publishOnly = !LmsCompany.AutoPublishRecordings && !new LmsRoleService(Settings).IsTeacher(param, LmsCompany);
+
+                var rawRecordings = RecordingsService.GetRecordings(
                     LmsCompany,
                     ac,
                     Session.LmsCourseId,
@@ -75,6 +78,16 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     input.Search,
                     input.DateFrom,
                     input.DateTo,
+                    (records) =>
+                    {
+                        // TRICK: for API UNIR uses AutoPublishRecordings==true; So no access to Session for them.
+                        if (publishOnly)
+                        {
+                            return records.Where(x => x.Published);
+                        }
+
+                        return records;
+                    },
                     input.Skip,
                     input.Take);
 
@@ -83,13 +96,9 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
                 IEnumerable<RecordingWithMp4Dto> recordings =
                     ((LmsMeetingType)input.LmsMeetingType == LmsMeetingType.Seminar)
-                    ? rawRecordings.Select(x => smap.Map<SeminarRecordingWithMp4Dto>(x))
-                    : rawRecordings.Select(x => map.Map<RecordingWithMp4Dto>(x));
+                    ? rawRecordings.Data.Select(x => smap.Map<SeminarRecordingWithMp4Dto>(x))
+                    : rawRecordings.Data.Select(x => map.Map<RecordingWithMp4Dto>(x));
 
-                if (!new LmsRoleService(Settings).IsTeacher(param, LmsCompany) && !LmsCompany.AutoPublishRecordings)
-                {
-                    recordings = recordings.Where(x => x.Published).ToList();
-                }
                 Guid mp4;
                 if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
                     mp4 = Guid.Empty;
@@ -104,12 +113,14 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     _vttLinkBuilder,
                     Logger);
 
-                return result.ToSuccessResult();
+                var pagedResult = new PagedResult<IMp4StatusContainer> { Data = result, Skip = rawRecordings.Skip, Take = rawRecordings.Take, Total = rawRecordings.Total };
+
+                return pagedResult.ToSuccessResult();
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("MP4-GetAllMeetingRecordings", ex);
-                return OperationResultWithData<IEnumerable<IMp4StatusContainer>>.Error(errorMessage);
+                return OperationResultWithData<PagedResult<IMp4StatusContainer>>.Error(errorMessage);
             }
         }
 

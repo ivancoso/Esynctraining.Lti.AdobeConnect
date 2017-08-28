@@ -33,7 +33,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Dto
         public int Skip { get; set; } = 0;
 
         [DataMember]
-        public int Take { get; set; } = 10;
+        public int Take { get; set; } = int.MaxValue;
     }
 
 }

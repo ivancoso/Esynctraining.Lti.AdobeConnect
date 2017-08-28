@@ -9,7 +9,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IRecordingsService
     {
-        IEnumerable<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, 
+        PagedResult<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, 
             Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
             int courseId, 
             int id,
@@ -19,6 +19,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string search,
             long? dateFrom,
             long? dateTo,
+            Func<IEnumerable<IRecordingDto>, IEnumerable<IRecordingDto>> applyAdditionalFilter,
             int skip,
             int take);
 
