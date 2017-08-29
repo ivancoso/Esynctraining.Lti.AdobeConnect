@@ -1527,7 +1527,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public void ProcessDynamicProvisioning(IAdobeConnectProxy provider, ILmsLicense lmsCompany, LmsCourseMeeting courseMeeting, LmsUser lmsUser, LmsUserDTO lmsUserDto)
         {
-            if(lmsUser !=null && lmsUser.PrincipalId != null)
+            if(lmsUser?.PrincipalId != null && lmsUserDto != null)
             { 
                 var acRole = new RoleMappingService().SetAcRole(lmsCompany, lmsUserDto);
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(courseMeeting.GetMeetingScoId(),

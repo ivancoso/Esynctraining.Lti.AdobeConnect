@@ -66,7 +66,17 @@ namespace EdugameCloud.Lti.Api.Controllers
                     && service != null
                     && LmsCompany.LmsCourseMeetings != null)
                 {
-                    SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false, meetingIds: new[] { request.MeetingId });
+                    var meeting = LmsCompany.LmsCourseMeetings.FirstOrDefault(x => x.Id == request.MeetingId);
+                    if (meeting == null)
+                    {
+                        return OperationResultWithData<IList<LmsUserDTO>>.Error(Lti.Resources.Messages.MeetingNotFound);
+                    }
+
+                    if (!meeting.EnableDynamicProvisioning)
+                    {
+                        SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false,
+                            meetingIds: new[] {request.MeetingId});
+                    }
                 }
 
                 string error;

@@ -66,7 +66,7 @@
             foreach (var chunk in userIds.Chunk(2000))
             {
                 var query = from u in this.Repository.Session.Query<LmsUser>()
-                            where u.LmsCompany.Id == companyLmsId && userIds.Contains(u.UserId)
+                            where u.LmsCompany.Id == companyLmsId && chunk.Contains(u.UserId)
                             select u;
 
                 result.AddRange(query.ToList());

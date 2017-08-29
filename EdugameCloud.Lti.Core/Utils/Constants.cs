@@ -8,6 +8,8 @@
         public const string ReturnUriExtensionQueryParameterName = "providerUrl";
 
         public const int SyncUsersCountLimit = 1000;
+
+        public const int MoodleUsersApiRequestTimeout = 3 * 60 * 1000; //3 minutes, in milliseconds
     }
 
 }

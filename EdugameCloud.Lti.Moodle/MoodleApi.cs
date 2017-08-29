@@ -1,4 +1,5 @@
-﻿using EdugameCloud.Lti.Core.Constants;
+﻿using System.Net.Http;
+using EdugameCloud.Lti.Core.Constants;
 
 namespace EdugameCloud.Lti.Moodle
 {
@@ -127,23 +128,23 @@ namespace EdugameCloud.Lti.Moodle
 
         private List<LmsUserDTO> GetUsers(string token, int courseId, ILmsLicense lmsCompany, out string resp)
         {
-            var pairs = new NameValueCollection
+            var pairs = new Dictionary<string, string>
             {
                 { "wsfunction", "core_enrol_get_enrolled_users" },
                 { "wstoken", token },
-                { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
+                { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) },
+                { "options[0][name]", "userfields" },
+                { "options[0][value]", "id,username,firstname,lastname,fullname,email,roles" } //decreasing response size and time, including only fields that are used by MoodleLmsUserParser
             };
 
-            byte[] response;
             string lmsDomain = lmsCompany.LmsDomain;
             bool useSsl = lmsCompany.UseSSL ?? false;
             var url = GetServicesUrl(lmsDomain, useSsl);
-            using (var client = new WebClient())
+            using (var client = new HttpClient())
             {
-                response = client.UploadValues(url, pairs);
+                client.Timeout = TimeSpan.FromMilliseconds(EdugameCloud.Lti.Core.Utils.Constants.MoodleUsersApiRequestTimeout);
+                resp = client.PostAsync(url, new FormUrlEncodedContent(pairs)).Result.Content.ReadAsStringAsync().Result;
             }
-
-            resp = Encoding.UTF8.GetString(response);
 
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(resp);
