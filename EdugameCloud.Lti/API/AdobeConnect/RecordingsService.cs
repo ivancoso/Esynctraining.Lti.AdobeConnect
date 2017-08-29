@@ -160,7 +160,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         : resultDto.OrderBy(x => x.Duration);
 
                     break;
-                case "date-created":
+                case "beginAt":
 
                     resultDto = isDescendingSortOrder
                        ? resultDto.OrderByDescending(x => x.BeginAt)
