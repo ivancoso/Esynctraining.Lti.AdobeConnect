@@ -89,7 +89,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
                     }
                 }
 
-                GroupSessionParticipants(sessionList, timeZone);
+                GroupSessionParticipants(sessionList);
 
                 return sessionList.OrderBy(s => s.sessionNumber).ToList();
             }
@@ -127,7 +127,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
             }
         }
 
-        private void GroupSessionParticipants(IEnumerable<ACSessionDto> sessionList, TimeZoneInfo timeZone)
+        private void GroupSessionParticipants(IEnumerable<ACSessionDto> sessionList)
         {
             foreach (var session in sessionList)
             {
@@ -138,7 +138,12 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
                     attendance.Value.Skip(1).ToList().ForEach(p => session.participants.Remove(p));
                     var attendee = attendance.Value.First();
                     attendee.dateTimeEntered = DateTime.SpecifyKind(attendance.Value.Min(p => p.dateTimeEntered), DateTimeKind.Utc);
-                    attendee.dateTimeLeft = FixACValue(attendance.Value.Max(p => p.dateTimeLeft), timeZone);
+                    //timezone is already applied
+                    var dateTimeLeft = attendance.Value.Max(p => p.dateTimeLeft);
+                    if (dateTimeLeft.HasValue)
+                    {
+                        attendee.dateTimeLeft = DateTime.SpecifyKind(dateTimeLeft.Value, DateTimeKind.Utc);
+                    }
 
                     attendee.durationInHours = attendance.Value.Sum(p => p.durationInHours);
                 }
@@ -187,7 +192,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
                 }
             }
 
-            GroupSessionParticipants(result, timeZone);
+            GroupSessionParticipants(result);
             return result.OrderBy(s => s.sessionNumber).ToList();
         }
 
