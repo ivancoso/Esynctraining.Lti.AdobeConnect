@@ -12,19 +12,7 @@
     /// </summary>
     public abstract class BaseViewModel
     {
-        #region Fields
-
-        /// <summary>
-        /// Gets or sets the page.
-        /// </summary>
-        protected int? page;
-
-        /// <summary>
-        /// The controller.
-        /// </summary>
-        private BaseController controller;
-
-        #endregion
+        private BaseController _controller;
 
         #region Constructors and Destructors
 
@@ -36,23 +24,9 @@
         /// </param>
         protected BaseViewModel(BaseController controller)
         {
-            this.SetController(controller);
+            SetController(controller);
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BaseViewModel"/> class.
-        /// </summary>
-        /// <param name="controller">
-        /// The controller.
-        /// </param>
-        /// <param name="page">
-        /// The page.
-        /// </param>
-        protected BaseViewModel(BaseController controller, int? page)
-        {
-            this.SetController(controller, page);
-        }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseViewModel"/> class.
         /// </summary>
@@ -64,61 +38,37 @@
 
         #region Public Properties
 
-        /// <summary>
-        /// Gets the action name.
-        /// </summary>
         public string ActionName
         {
-            get
-            {
-                return this.controller.With(x => x.ActionName);
-            }
+            get { return _controller.With(x => x.ActionName); }
         }
 
-        /// <summary>
-        /// Gets or sets the back url.
-        /// </summary>
         public string BackUrl { get; set; }
 
-        /// <summary>
-        /// Gets the controller name.
-        /// </summary>
         public string ControllerName
         {
-            get
-            {
-                return this.controller.With(x => x.ControllerName);
-            }
+            get { return _controller.With(x => x.ControllerName); }
         }
 
-        /// <summary>
-        /// Gets the controller settings.
-        /// </summary>
         public dynamic Settings
         {
-            get
-            {
-                return this.controller.With(x => x.Settings);
-            }
+            get { return _controller.With(x => x.Settings); }
         }
 
-        /// <summary>
-        /// Gets the html base url.
-        /// </summary>
         public string HtmlBaseUrl
         {
             get
             {
-                if (this.Settings == null)
+                if (Settings == null)
                     return string.Empty;
 
-                var protoHeader = controller.Request.Headers["X-Forwarded-Proto"];
+                var protoHeader = _controller.Request.Headers["X-Forwarded-Proto"];
                 bool isHttps = (protoHeader != null) && protoHeader.IndexOf("https", StringComparison.OrdinalIgnoreCase) != -1;
 
-                string schema = controller.Request.Url.Scheme;
+                string schema = _controller.Request.Url.Scheme;
                 if (isHttps)
                     schema = "https";
-                var uriBuilder = new UriBuilder(this.Settings.BasePath)
+                var uriBuilder = new UriBuilder(Settings.BasePath)
                 {
                     Scheme = schema,
                     Port = -1, // TRICK: don't add port to url
@@ -127,79 +77,24 @@
             }
         }
 
-        /// <summary>
-        /// Gets the model state.
-        /// </summary>
         public virtual ModelStateDictionary ModelState
         {
-            get
-            {
-                return this.controller.With(x => x.ModelState);
-            }
+            get { return _controller.With(x => x.ModelState); }
         }
 
-        /// <summary>
-        /// Gets or sets the page.
-        /// </summary>
-        public virtual int Page
-        {
-            get
-            {
-                return this.page ?? 1;
-            }
-
-            set
-            {
-                this.page = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the selected language.
-        /// </summary>
         [LocalizedDisplayName("Language", ResourceName = "Shared")]
         public virtual string SelectedLanguage
         {
-            get
-            {
-                return Thread.CurrentThread.CurrentUICulture.Name;
-            }
-
-            set
-            {
-            }
+            get { return Thread.CurrentThread.CurrentUICulture.Name; }
         }
 
         #endregion
 
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The set controller.
-        /// </summary>
-        /// <param name="baseController">
-        /// The base controller.
-        /// </param>
         public virtual void SetController(BaseController baseController)
         {
-            this.controller = baseController;
+            _controller = baseController;
         }
 
-        /// <summary>
-        /// The set controller.
-        /// </summary>
-        /// <param name="baseController">
-        /// The base controller.
-        /// </param>
-        /// <param name="page">
-        /// The page.
-        /// </param>
-        public virtual void SetController(BaseController baseController, int? page)
-        {
-            this.controller = baseController;
-            this.page = page;
-        }
-
-        #endregion
     }
+
 }

@@ -19,21 +19,7 @@
             : base(controller)
         {
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VCFViewModel"/> class.
-        /// </summary>
-        /// <param name="controller">
-        /// The controller.
-        /// </param>
-        /// <param name="page">
-        /// The page.
-        /// </param>
-        public VCFViewModel(BaseController controller, int? page)
-            : base(controller, page)
-        {
-        }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="VCFViewModel"/> class.
         /// </summary>

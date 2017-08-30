@@ -10,9 +10,6 @@
     using EdugameCloud.MVC.Attributes;
     using EdugameCloud.MVC.Controllers;
 
-    /// <summary>
-    ///     The import users view model.
-    /// </summary>
     public class ImportUsersViewModel : BaseViewModel
     {
         #region Constructors and Destructors
@@ -21,44 +18,12 @@
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ImportUsersViewModel"/> class.
-        /// </summary>
-        /// <param name="companies">
-        /// The companies.
-        /// </param>
-        /// <param name="controller">
-        /// The controller.
-        /// </param>
         public ImportUsersViewModel(IEnumerable<Company> companies, BaseController controller)
-            : this(companies, controller, null)
+            : base(controller)
         {
+            SetCompanies(companies);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ImportUsersViewModel"/> class.
-        /// </summary>
-        /// <param name="companies">
-        /// The companies.
-        /// </param>
-        /// <param name="controller">
-        /// The controller.
-        /// </param>
-        /// <param name="page">
-        /// The page.
-        /// </param>
-        public ImportUsersViewModel(IEnumerable<Company> companies, BaseController controller, int? page)
-            : base(controller, page)
-        {
-            this.SetCompanies(companies);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ImportUsersViewModel"/> class.
-        /// </summary>
-        /// <param name="companies">
-        /// The companies.
-        /// </param>
         public ImportUsersViewModel(IEnumerable<Company> companies)
             : this(companies, null)
         {
@@ -101,7 +66,9 @@
         /// </param>
         public void SetCompanies(IEnumerable<Company> companies)
         {
-            this.Companies = companies.Select(x => new SelectListItem { Text = x.CompanyName, Value = x.Id.ToString(CultureInfo.InvariantCulture) });
+            Companies = companies.Select(x => new SelectListItem { Text = x.CompanyName, Value = x.Id.ToString(CultureInfo.InvariantCulture) });
         }
+
     }
+
 }

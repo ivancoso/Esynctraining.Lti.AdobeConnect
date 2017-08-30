@@ -23,28 +23,13 @@
         {
             this.IP = HttpContext.Current.GetIPAddress();
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HomeViewModel"/> class.
-        /// </summary>
-        /// <param name="controller">
-        /// The controller.
-        /// </param>
-        /// <param name="page">
-        /// The page.
-        /// </param>
-        public HomeViewModel(BaseController controller, int? page)
-            : base(controller, page)
-        {
-            this.IP = HttpContext.Current.GetIPAddress();
-        }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeViewModel"/> class.
         /// </summary>
         public HomeViewModel()
         {
-            this.IP = HttpContext.Current.GetIPAddress();
+            IP = HttpContext.Current.GetIPAddress();
         }
 
         #endregion
