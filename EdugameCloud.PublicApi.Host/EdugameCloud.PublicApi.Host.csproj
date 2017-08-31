@@ -192,6 +192,9 @@
     </Content>
     <Content Include="App_Data\EdugameCloud.PublicApi.XML" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Logs\placeholder.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
