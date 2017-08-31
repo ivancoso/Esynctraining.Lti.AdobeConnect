@@ -647,7 +647,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://stage.edugamecloud.com/services</IISUrl>
+          <IISUrl>http://dev.edugamecloud.com/services</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
