@@ -189,6 +189,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CompanyAcDomainsService.svc" />
+    <Content Include="Logs\placeholder.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Mail\Templates\TeacherCertificateEmail.html" />
     <Content Include="Mail\Templates\CertificateEmail.html" />
     <Content Include="Mail\Templates\EventQuizRegistration.html" />
