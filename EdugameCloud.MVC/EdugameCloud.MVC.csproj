@@ -1,348 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A17D2033-4439-4418-8224-96A408B548DB}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EdugameCloud.MVC</RootNamespace>
-    <AssemblyName>EdugameCloud.MVC</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>net461</TargetFramework>
+    <AssemblyVersion>1.8.8.0</AssemblyVersion>
+    <FileVersion>1.8.8.0</FileVersion>
+    <Version>1.8.8</Version>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
-    <IntermediateOutputPath>C:\Users\USER\AppData\Local\Temp\vs7A8D.tmp\Debug\</IntermediateOutputPath>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <IntermediateOutputPath>C:\Users\USER\AppData\Local\Temp\vs7A8D.tmp\Release\</IntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugProxy|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\DebugProxy\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="EPPlus, Version=4.0.5.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\EPPlus.4.0.5\lib\net20\EPPlus.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.3.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.3.1\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
-    </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.3.6, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.3.6\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
-    </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.1\lib\net45\Esynctraining.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Esynctraining.Core.SystemWeb, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.SystemWeb.1.0.0.1\lib\net45\Esynctraining.Core.SystemWeb.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.NHibernate.1.0.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FluentValidation, Version=6.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.6.4.1\lib\Net45\FluentValidation.dll</HintPath>
-    </Reference>
-    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.Common, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportViewer.Runtime.Common.12.0.2402.15\lib\Microsoft.ReportViewer.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportViewer.Runtime.Common.12.0.2402.15\lib\Microsoft.ReportViewer.DataVisualization.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportViewer.Runtime.Common.12.0.2402.15\lib\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.WebForms, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportViewer.Runtime.WebForms.12.0.2402.15\lib\Microsoft.ReportViewer.WebForms.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SqlServer.Types, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SqlServer.Types.Unofficial.12.0.2000.8\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Services" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Activation" />
-    <Reference Include="System.ServiceModel.Discovery" />
-    <Reference Include="System.ServiceModel.Web" />
+    <None Remove="StyleCop.Cache" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="4.0.5" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
+    <PackageReference Include="Esynctraining.Core.SystemWeb" Version="1.0.0.1" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
+    <PackageReference Include="Microsoft.ReportViewer.Runtime.WebForms" Version="12.0.2402.15" />
+    <PackageReference Include="T4MVCExtensions" Version="3.17.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Api\EdugameCloud.Lti.Api.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Web" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="T4MVCExtensions">
-      <HintPath>..\packages\T4MVCExtensions.3.17.4\lib\net40\T4MVCExtensions.dll</HintPath>
-    </Reference>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Attributes\CustomAuthorize.cs" />
-    <Compile Include="Attributes\NonDebugModeRequireHttpsAttribute.cs" />
-    <Compile Include="Attributes\LocalizedDisplayNameAttribute.cs" />
-    <Compile Include="BaseController.generated.cs">
-      <DependentUpon>T4MVC.tt</DependentUpon>
-    </Compile>
-    <Compile Include="BuildDeliverController.generated.cs">
-      <DependentUpon>T4MVC.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\BuildDeliverController.cs" />
-    <Compile Include="Controllers\FileController.LtiReports.cs" />
-    <Compile Include="Controllers\FileController.cs" />
-    <Compile Include="Controllers\ErrorController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Services\ReportServiceFactory.cs" />
-    <Compile Include="ErrorController.generated.cs">
-      <DependentUpon>T4MVC.tt</DependentUpon>
-    </Compile>
-    <Compile Include="FileController.generated.cs">
-      <DependentUpon>T4MVC.tt</DependentUpon>
-    </Compile>
-    <Compile Include="HomeController.generated.cs">
-      <DependentUpon>T4MVC.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ModelBinders\BaseModelBinder.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\MngQuizReportService.cs" />
-    <Compile Include="Services\MngSurveyReportService.cs" />
-    <Compile Include="Services\HFExtendedReportService.cs" />
-    <Compile Include="Resources\WebResources.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WebResources.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Routes\LowerCaseRoute.cs" />
-    <Compile Include="Routes\RoutesExtensions.cs" />
-    <Compile Include="Services\IExtendedReportService.cs" />
-    <Compile Include="SharedController.generated.cs">
-      <DependentUpon>T4MVC.tt</DependentUpon>
-    </Compile>
-    <Compile Include="T4MVC.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>T4MVC.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Validators\BaseValidator.cs" />
-    <Compile Include="Validators\ImportUsersViewModelValidator.cs" />
-    <Compile Include="Validators\VCFViewModelValidator.cs" />
-    <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\ImportQuestionsViewModel.cs" />
-    <Compile Include="ViewModels\ImportUsersViewModel.cs" />
-    <Compile Include="ViewModels\HomeViewModel.cs" />
-    <Compile Include="ViewModels\VCFViewModel.cs" />
-    <Compile Include="ViewResults\ContentResultWithStatusCode.cs" />
-    <Compile Include="Wrappers\HandleErrorInforWrapper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Properties\DataSources\EdugameCloud.Lti.Core.DTO.ACRecordingViewReportDTO.datasource" />
-    <None Include="Resources\WebResources.tt">
+    <None Update="Resources\WebResources.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>WebResources.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="T4MVC.tt.hooks.t4" />
-    <None Include="T4MVC.tt.settings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Reports\MeetingHostReport.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SessionsReportNoQuestionsNoParticipants.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\ParticipantDetails\Survey.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\ParticipantDetails\Collaboration.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\ParticipantDetails\Crossword.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\ParticipantDetails\Quiz.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\QuestionDetails\Collaboration.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\QuestionDetails\Crossword.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\QuestionDetails\Survey.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\QuestionDetails\Quiz.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\QuestionDetails\Survey\AnswersStatistics.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\QuestionDetails\Survey\ParticipantsStatistics.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SessionDetails\Collaboration.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SessionDetails\Quiz.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SessionDetails\Test.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SessionsReportNoQuestions.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SessionDetails\Crossword.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SessionsReport.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\ParticipantDetails\Test.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\QuestionDetails\Test.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SessionDetails\Survey.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SubReports\ParticipantsSubReport.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Reports\Content\header.png" />
-    <Content Include="Reports\Content\header_with_logo.jpg" />
-    <Content Include="Reports\Content\logo.png" />
-    <None Include="T4MVC.tt">
+    <None Update="T4MVC.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>T4MVC.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
-      <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
-      <Name>EdugameCloud.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
-      <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
-      <Name>EdugameCloud.Lti.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
-      <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
-      <Name>EdugameCloud.Lti</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+ 
+
 </Project>

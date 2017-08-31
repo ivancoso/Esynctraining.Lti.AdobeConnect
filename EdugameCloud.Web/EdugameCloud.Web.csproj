@@ -711,7 +711,7 @@
       <Name>EdugameCloud.Lti</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.MVC\EdugameCloud.MVC.csproj">
-      <Project>{a17d2033-4439-4418-8224-96a408b548db}</Project>
+      <Project>{9f3d2cca-8b68-457a-8298-c063df1a8fe3}</Project>
       <Name>EdugameCloud.MVC</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
