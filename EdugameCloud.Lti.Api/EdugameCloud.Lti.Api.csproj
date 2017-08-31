@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EdugameCloud.Lti.GetHashCodeTrick\EdugameCloud.Lti.GetHashCodeTrick.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
   </ItemGroup>
 
