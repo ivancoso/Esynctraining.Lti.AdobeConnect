@@ -1010,6 +1010,29 @@ namespace Esynctraining.AdobeConnect
             return result;
         }
 
+        public StatusInfo UpdateAclField(IEnumerable<AclFieldUpdateTrio> values)
+        {
+            StatusInfo result;
+            try
+            {
+                result = _provider.UpdateAclField(values);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw new AdobeConnectException("UpdateAclField exception", ex);
+            }
+
+            if (result.Code != StatusCodes.ok)
+            {
+                string errorInfo = result.GetErrorInfo();
+                _logger.Error("[AdobeConnectProxy Error] " + errorInfo);
+                throw new AdobeConnectException(result);
+            }
+
+            return result;
+        }
+
         public StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId)
         {
             return Execute(() => { return _provider.UpdatePublicAccessPermissions(aclId, permissionId); },

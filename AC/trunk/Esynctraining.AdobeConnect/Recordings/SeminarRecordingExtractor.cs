@@ -16,8 +16,7 @@ namespace Esynctraining.AdobeConnect.Recordings
         }
 
 
-        public override PagedResult<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone,
-            string sortBy, string sortOrder, string search, long? dateFrom, long? dateTo, int skip, int take)
+        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone)
         {
             var result = new List<IRecordingDto>();
             var seminarRecordings = AcProxy.GetRecordingsList(scoId);
@@ -28,7 +27,6 @@ namespace Esynctraining.AdobeConnect.Recordings
                 foreach (var recording in sessionRecordings.Values.Where(x => x.Icon != "mp4-archive"))
                 {
                     var dto = dtoBuilder.Build(recording, accountUrl, timeZone);
-                    //dto.IsPublic = IsPublicRecording(recording.ScoId);
 
                     ISeminarSessionRecordingDto seminarRecording = dto as ISeminarSessionRecordingDto;
                     if (seminarRecording == null)
@@ -46,90 +44,13 @@ namespace Esynctraining.AdobeConnect.Recordings
                 .Select(x =>
                 {
                     var dto = dtoBuilder.Build(x, accountUrl, timeZone);
-                    //dto.IsPublic = IsPublicRecording(x.ScoId);
                     return dto;
                 })
                 .ToList();
 
             result.AddRange(recordingsWithoutSession);
-
-            IEnumerable<IRecordingDto> resultDto = result;
-            resultDto = ApplyFilter(search, dateFrom, dateTo, resultDto);
-            resultDto = ApplySort(sortBy, sortOrder, resultDto);
-
-            var total = resultDto.Count();
-
-            resultDto = resultDto
-                .Skip(skip)
-                .Take(take)
-                .ToList();
-
-            Parallel.ForEach(resultDto, (recording) =>
-            {
-                recording.IsPublic = IsPublicRecording(recording.Id);
-            });
-
-            var pagedResult = new PagedResult<IRecordingDto> { Data = resultDto, Total = total, Skip = skip, Take = take };
-
-            return pagedResult;
-        }
-
-        private static IEnumerable<IRecordingDto> ApplySort(string sortBy, string sortOrder, IEnumerable<IRecordingDto> resultDto)
-        {
-            // sorting
-            bool isDescendingSortOrder = (sortOrder ?? "").StartsWith("desc", StringComparison.OrdinalIgnoreCase);
-
-            switch (sortBy)
-            {
-                case "name":
-                    resultDto = isDescendingSortOrder
-                        ? resultDto.OrderByDescending(x => x.Name)
-                        : resultDto.OrderBy(x => x.Name);
-
-                    break;
-                case "duration":
-
-                    resultDto = isDescendingSortOrder
-                        ? resultDto.OrderByDescending(x => x.Duration)
-                        : resultDto.OrderBy(x => x.Duration);
-
-                    break;
-                case "date-created":
-
-                    resultDto = isDescendingSortOrder
-                       ? resultDto.OrderByDescending(x => x.BeginAt)
-                       : resultDto.OrderBy(x => x.BeginAt);
-
-                    break;
-                default:
-
-                    resultDto = resultDto.OrderByDescending(x => x.BeginAt);
-
-                    break;
-            }
-
-            return resultDto;
-        }
-
-        private static IEnumerable<IRecordingDto> ApplyFilter(string search, long? dateFrom, long? dateTo, IEnumerable<IRecordingDto> resultDto)
-        {
-            // filtering
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                resultDto = resultDto.Where(x => x.Name.Contains(search));
-            }
-
-            if (dateFrom.HasValue)
-            {
-                resultDto = resultDto.Where(x => x.BeginAt >= dateFrom.Value);
-            }
-
-            if (dateTo.HasValue)
-            {
-                resultDto = resultDto.Where(x => x.BeginAt <= dateTo.Value);
-            }
-
-            return resultDto;
+            
+            return result;
         }
     }
 
