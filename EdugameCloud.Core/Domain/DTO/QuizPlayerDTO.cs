@@ -6,9 +6,6 @@ namespace EdugameCloud.Core.Domain.DTO
 
     using Esynctraining.Core.Extensions;
 
-    /// <summary>
-    /// The quiz player DTO.
-    /// </summary>
     [DataContract]
     public sealed class QuizPlayerDTO
     {
@@ -29,6 +26,9 @@ namespace EdugameCloud.Core.Domain.DTO
         /// </param>
         public QuizPlayerDTO(QuizPlayerFromStoredProcedureDTO dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             this.TotalQuestion = dto.TotalQuestion;
             this.endTime = dto.endTime.ConvertToUnixTimestamp();
             this.acEmail = dto.acEmail;
@@ -40,11 +40,18 @@ namespace EdugameCloud.Core.Domain.DTO
             this.isCompleted = dto.isCompleted;
             this.isPostQuiz = dto.isPostQuiz;
             this.quizResultGuid = dto.quizResultGuid;
-            var theScore = (dto.passingScore == 0 || dto.TotalQuestion <= 0 || (float)dto.score/dto.TotalQuestion >= (float)dto.passingScore/ 100);
-            var scoreWithPercents = ((dto.appMaximizedTime.Value >= 95) && (dto.appInFocusTime.Value >= 95) && theScore);
-            this.isParticipated = 
-                dto.appMaximizedTime == null || dto.appInFocusTime == null 
-                || scoreWithPercents;
+            var theScore = 
+                dto.passingScore == 0 
+                || dto.TotalQuestion <= 0 
+                || (float)dto.score/dto.TotalQuestion >= (float)dto.passingScore/ 100;
+
+            var scoreWithPercents =
+                theScore
+                && (dto.appMaximizedTime.HasValue && dto.appMaximizedTime.Value >= 95) 
+                && (dto.appInFocusTime.HasValue && dto.appInFocusTime.Value >= 95);
+
+            this.isParticipated = dto.appMaximizedTime == null || dto.appInFocusTime == null || scoreWithPercents;
+
             if (dto.isPostQuiz)
                 this.isParticipated = theScore;
         }
