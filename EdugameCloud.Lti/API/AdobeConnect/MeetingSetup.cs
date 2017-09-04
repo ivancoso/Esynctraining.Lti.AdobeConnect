@@ -1742,7 +1742,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                               && (GetGuestAuditRoleMappings(lmsCompany, param).Any()
                                   || (lmsCompany.UseSynchronizedUsers && meeting.DbRecord.EnableDynamicProvisioning)));
 
-            dto.AccessLevel = meeting.GetPublicAccessPermission();
+            dto.AccessLevel = meeting.GetPublicAccessPermission().Replace("-", "_");
             dto.CanJoin = canJoin;
             dto.IsEditable = isEditable;
         }

@@ -272,7 +272,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 Template = seminar.SourceScoId,
                 StartTimeStamp = (long)seminar.BeginDate.ConvertToUnixTimestamp(), // + (long)GetTimezoneShift(timeZone, seminar.BeginDate),
                 Duration = (seminar.EndDate - seminar.BeginDate).ToString(@"h\:mm"),
-                AccessLevel = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
+                // TRICK: .Replace("-", "_") for "view_hidded" on client-side
+                AccessLevel = permissionInfo != null ? permissionInfo.PermissionId.ToString().Replace("-", "_") : "remove",
                 CanJoin = canJoin,
                 IsEditable = isEditable,
                 Type = (int)LmsMeetingType.Seminar,
