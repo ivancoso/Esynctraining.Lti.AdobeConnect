@@ -326,7 +326,6 @@
     <Compile Include="Contracts\ITestResultService.cs" />
     <Compile Include="Contracts\ITestService.cs" />
     <Compile Include="Contracts\IThemeService.cs" />
-    <Compile Include="Contracts\IUploader.cs" />
     <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="Converters\BlackboardResultConverter.cs" />
     <Compile Include="Converters\CanvasResultConverter.cs" />
