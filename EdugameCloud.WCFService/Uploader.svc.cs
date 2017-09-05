@@ -113,36 +113,7 @@
                 throw new FaultException<Error>(error, error.errorMessage);
             }
         }
-
-        /// <summary>
-        /// The is valid.
-        /// </summary>
-        /// <param name="obj">
-        /// The object to check.
-        /// </param>
-        /// <param name="validationResult">
-        /// The validation result.
-        /// </param>
-        /// <typeparam name="T">
-        /// The type of object to check
-        /// </typeparam>
-        /// <returns>
-        /// The validation result <see cref="bool"/>.
-        /// </returns>
-        public bool IsValid<T>(T obj, out ValidationResult validationResult)
-        {
-            validationResult = null;
-            try
-            {
-                validationResult = IoC.Resolve<IValidator<T>>().Validate(obj);
-                return validationResult.IsValid;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
+        
         /// <summary>
         /// The format successful response.
         /// </summary>
@@ -164,5 +135,7 @@
                              };
             return result;
         }
+
     }
+
 }
