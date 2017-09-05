@@ -431,15 +431,14 @@ namespace EdugameCloud.WCFService
             var mapping = CompanyEventQuizMappingModel.GetOneById(registrationInfo.eventQuizMappingId).Value;
             if (mapping == null)
                 return OperationResultDto.Error("There is no event for this info.");
-            var acDomain = CompanyAcServerModel.GetOneById(mapping.CompanyAcDomain.Id).Value;
-            var acUrl = acDomain.AcServer;
-            var apiUrl = new Uri(acUrl);
 
-            var scoId = mapping.AcEventScoId;
+            var acDomain = CompanyAcServerModel.GetOneById(mapping.CompanyAcDomain.Id).Value;
+            var apiUrl = new Uri(acDomain.AcServer);
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), Logger, apiUrl);
-            var eventInfo = proxy.GetScoInfo(scoId);
+            var eventInfo = proxy.GetScoInfo(mapping.AcEventScoId);
             if (!eventInfo.Success)
-                throw new InvalidOperationException("");
+                throw new InvalidOperationException(eventInfo.Status.GetErrorInfo());
+
             List<string> emailsNotSend = new List<string>();
             try
             {

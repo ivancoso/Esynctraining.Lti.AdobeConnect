@@ -479,9 +479,6 @@
       <DependentUpon>MoodleAuthorization.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Uploader.svc.cs">
-      <DependentUpon>Uploader.svc</DependentUpon>
-    </Compile>
     <Compile Include="Validators\ACSessionDTOValidator.cs" />
     <Compile Include="Validators\AppletResultDTOValidator.cs" />
     <Compile Include="Validators\AppletItemDTOValidator.cs" />
@@ -529,7 +526,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Mail\Attachments\svn.ignore" />
-    <Content Include="Uploader.svc" />
     <Content Include="Web.constrings">
       <SubType>Designer</SubType>
     </Content>

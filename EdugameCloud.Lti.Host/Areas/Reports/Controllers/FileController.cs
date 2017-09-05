@@ -18,11 +18,9 @@ using EdugameCloud.Lti.Extensions;
 using EdugameCloud.Lti.Host.Dtos;
 using Esynctraining.AdobeConnect.Api.MeetingReports;
 using Esynctraining.AdobeConnect.Api.MeetingReports.Dto;
-using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Microsoft.Reporting.WebForms;
-using NodaTime.TimeZones;
 
 namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 {
@@ -38,7 +36,6 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         public FileController(
             LmsCourseMeetingModel lmsCourseMeetingModel,
             IReportsService meetingSetup,
-            //LtiReportService ltiReports,
             CompanyModel companyModel,
             ACUserModeModel userModeModel,
             LmsUserSessionModel userSessionModel,
@@ -51,13 +48,11 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
             this.meetingSetup = meetingSetup;
             this.companyModel = companyModel;
             this.userModeModel = userModeModel;
-            //this.ltiReports = ltiReports;
         }
 
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
-        //[ActionName("meeting-attendance-report")]
         public virtual ActionResult MeetingAttendanceReport(string session, int meetingId, string timezone, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
@@ -136,7 +131,6 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
-        //[ActionName("meeting-sessions-report")]
         public virtual ActionResult MeetingSessionsReport(string session, int meetingId, string timezone, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try

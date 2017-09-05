@@ -9,8 +9,6 @@
     /// </summary>
     public static class RoutesExtensions
     {
-        #region Public Methods and Operators
-
         /// <summary>
         /// The map lowercase route.
         /// </summary>
@@ -75,6 +73,6 @@
             return route;
         }
 
-        #endregion
     }
+
 }

@@ -25,6 +25,7 @@ namespace EdugameCloud.MVC.Controllers
 
         private ICache Cache => IoC.Resolve<ICache>(CachePolicies.Names.PersistantCache);
 
+
         public HomeController(UserModel userModel, UserActivationModel userActivationModel, ApplicationSettingsProvider settings, IBuildVersionProcessor versionProcessor)
             : base(settings)
         {
