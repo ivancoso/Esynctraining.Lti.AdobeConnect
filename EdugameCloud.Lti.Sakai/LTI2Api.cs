@@ -25,19 +25,8 @@ namespace EdugameCloud.Lti.Sakai
     // ReSharper disable once InconsistentNaming
     public sealed class LTI2Api : ILmsAPI
     {
-        #region Constants
-
-        /// <summary>
-        /// The OAUTH signature method.
-        /// </summary>
         private const string OAuthSignatureMethod = "HMAC-SHA1";
-
-        /// <summary>
-        /// The OAUTH version.
-        /// </summary>
         private const string OAuthVersion = "1.0";
-
-        #endregion
 
         private readonly ILogger _logger;
 
@@ -169,15 +158,15 @@ namespace EdugameCloud.Lti.Sakai
             string ltiVersion)
         {
             TimeSpan timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            string ltiMessageType = MessageTypes.ReadMemberships, 
-                   oauthNonce =
+            string ltiMessageType = MessageTypes.ReadMemberships;
+            string oauthNonce =
                        Convert.ToBase64String(
-                           new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture))), 
-                   oauthTimestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture), 
-                   oauthCallback = "about:blank", 
-                   key = company.ConsumerKey, 
-                   secret = company.SharedSecret, 
-                   url = serviceUrl;
+                           new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture)));
+            string oauthTimestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture);
+            string oauthCallback = "about:blank";
+            string key = company.ConsumerKey;
+            string secret = company.SharedSecret;
+            string url = serviceUrl;
 
             ltiVersion = ltiVersion ?? LtiVersions.LTI1p0;
 
