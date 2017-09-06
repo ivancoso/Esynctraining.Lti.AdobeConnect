@@ -17,6 +17,7 @@
     <PackageReference Include="Esynctraining.Core.SystemWeb" Version="1.0.0.1" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
     <PackageReference Include="Microsoft.ReportViewer.Runtime.WebForms" Version="12.0.2402.15" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
     <PackageReference Include="T4MVCExtensions" Version="3.17.4" />
   </ItemGroup>
 
