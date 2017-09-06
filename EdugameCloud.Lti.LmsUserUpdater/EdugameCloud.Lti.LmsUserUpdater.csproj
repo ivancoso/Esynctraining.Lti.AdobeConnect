@@ -85,9 +85,8 @@
       <HintPath>..\packages\Esynctraining.NHibernate.1.0.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.Windsor, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Windsor.1.0.0.1\lib\net45\Esynctraining.Windsor.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Esynctraining.Windsor, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Windsor.1.0.0.2\lib\net45\Esynctraining.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="FluentValidation, Version=6.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentValidation.6.4.1\lib\Net45\FluentValidation.dll</HintPath>

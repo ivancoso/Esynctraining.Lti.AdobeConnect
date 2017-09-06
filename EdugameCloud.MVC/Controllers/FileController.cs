@@ -1486,7 +1486,7 @@
                         {
                             result = ga.Value.Count(),
                             resultPercent = ((double)ga.Value.Count() / activePlayers).ToString("0.0%"),
-                            totalResults = groupedAnswers.Count(),
+                            totalResults = groupedAnswers.Count,
                             answer = ga.Key
                         });
         }

@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <Version>1.8.8</Version>
+
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +39,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
 
   <ItemGroup>

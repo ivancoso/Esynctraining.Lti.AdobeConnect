@@ -5,6 +5,8 @@
     <AssemblyVersion>1.8.8.0</AssemblyVersion>
     <FileVersion>1.8.8.0</FileVersion>
     <Version>1.8.8</Version>
+
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,22 +17,25 @@
     <PackageReference Include="EPPlus" Version="4.0.5" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
     <PackageReference Include="Esynctraining.Core.SystemWeb" Version="1.0.0.1" />
+    <PackageReference Include="FluentValidation" Version="6.4.1" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
     <PackageReference Include="Microsoft.ReportViewer.Runtime.WebForms" Version="12.0.2402.15" />
-    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
-    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
     <PackageReference Include="T4MVCExtensions" Version="3.17.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj" />
-    <ProjectReference Include="..\EdugameCloud.Lti.Api\EdugameCloud.Lti.Api.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
 
   <ItemGroup>

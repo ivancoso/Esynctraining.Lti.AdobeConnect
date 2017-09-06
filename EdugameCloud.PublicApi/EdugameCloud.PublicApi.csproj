@@ -46,8 +46,8 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1\lib\net45\Esynctraining.Core.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.1\lib\net461\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Crypto, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Crypto.1.0.1\lib\net45\Esynctraining.Crypto.dll</HintPath>
