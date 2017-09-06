@@ -20,7 +20,7 @@
         /// Gets or sets the saved.
         /// </summary>
         [DataMember]
-        public SurveyResultDTO[] saved { get; set; }
+        public SurveyResultSaveResultDTO[] saved { get; set; }
 
         #endregion
     }

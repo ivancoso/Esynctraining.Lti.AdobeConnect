@@ -5,6 +5,18 @@
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
 
+    // TODO: move to separate file
+    [DataContract]
+    public class SurveyResultSaveResultDTO : SurveyResultDTO
+    {
+        [DataMember]
+        public SurveyQuestionResultSaveAllDTO surveyQuestionResult { get; set; }
+
+        public SurveyResultSaveResultDTO(SurveyResult result) : base(result)
+        {
+        }
+    }
+
     /// <summary>
     ///     The survey result DTO.
     /// </summary>
@@ -120,6 +132,9 @@
 
         [DataMember]
         public string acEmail { get; set; }
+
+        [DataMember]
+        public SurveyQuestionResultDTO[] results { get; set; }
 
         #endregion
     }
