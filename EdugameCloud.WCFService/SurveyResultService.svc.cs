@@ -10,17 +10,19 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
     //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
-
+    using EdugameCloud.WCFService.Converters;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
-
+    using Newtonsoft.Json;
     using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
@@ -34,6 +36,20 @@ namespace EdugameCloud.WCFService
 
         private SurveyModel SurveyModel => IoC.Resolve<SurveyModel>();
 
+        private SurveyQuestionResultModel SurveyQuestionResultModel => IoC.Resolve<SurveyQuestionResultModel>();
+
+        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
+
+        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
+
+        private SurveyQuestionResultAnswerModel SurveyQuestionResultAnswerModel => IoC.Resolve<SurveyQuestionResultAnswerModel>();
+
+        private DistractorModel DistractorModel => IoC.Resolve<DistractorModel>();
+
+        private ConverterFactory ConverterFactory => IoC.Resolve<ConverterFactory>();
+
+        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
+
         #endregion
 
         #region Public Methods and Operators
@@ -46,7 +62,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public SurveyResultDTO[] GetAll()
         {
-            return this.SurveyResultModel.GetAll().Select(x => new SurveyResultDTO(x)).ToArray();
+            return this.SurveyResultModel.GetAll().Select(x => new SurveyResultDTO(x)).Take(10).ToArray();
         }
 
         /// <summary>
@@ -88,40 +104,54 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public SurveyResultSaveAllDTO SaveAll(SurveyResultDTO[] results)
         {
-            results = results ?? new SurveyResultDTO[] { };
-            var result = new SurveyResultSaveAllDTO();
-            var faults = new List<string>();
-            var created = new List<SurveyResult>();
-            foreach (var surveyResultDTO in results)
+            try
             {
-                ValidationResult validationResult;
-                if (this.IsValid(surveyResultDTO, out validationResult))
+                results = results ?? new SurveyResultDTO[] { };
+                var result = new SurveyResultSaveAllDTO();
+                var faults = new List<string>();
+                var created = new List<SurveyResultSaveResultDTO>();
+                foreach (var surveyResultDTO in results)
                 {
-                    var surveyResultModel = this.SurveyResultModel;
-                    var isTransient = surveyResultDTO.surveyResultId == 0;
-                    var surveyResult = isTransient ? null : surveyResultModel.GetOneById(surveyResultDTO.surveyResultId).Value;
-                    surveyResult = this.ConvertDto(surveyResultDTO, surveyResult);
-                    surveyResultModel.RegisterSave(surveyResult);
-                    created.Add(surveyResult);
+                    ValidationResult validationResult;
+                    if (this.IsValid(surveyResultDTO, out validationResult))
+                    {
+                        var surveyResultModel = this.SurveyResultModel;
+                        var isTransient = surveyResultDTO.surveyResultId == 0;
+                        var surveyResult = isTransient ? null : surveyResultModel.GetOneById(surveyResultDTO.surveyResultId).Value;
+                        surveyResult = this.ConvertDto(surveyResultDTO, surveyResult);
+                        surveyResultModel.RegisterSave(surveyResult);
+
+                        var surveySaveResult = new SurveyResultSaveResultDTO(surveyResult);
+                        created.Add(surveySaveResult);
+
+                        var surveyQuestionResult = SaveAll(surveyResult, surveyResultDTO.results);
+                        surveySaveResult.surveyQuestionResult = surveyQuestionResult;
+                    }
+                    else
+                    {
+                        faults.AddRange(this.UpdateResultToString(validationResult));
+                    }
                 }
-                else
+
+                if (created.Any())
                 {
-                    faults.AddRange(this.UpdateResultToString(validationResult));
+                    //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SurveyResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
+                    result.saved = created.ToArray();
                 }
-            }
 
-            if (created.Any())
+                if (faults.Any())
+                {
+                    result.faults = faults.ToArray();
+                }
+
+                return result;
+            }
+            catch(Exception ex)
             {
-                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SurveyResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
-                result.saved = created.Select(x => new SurveyResultDTO(x)).ToArray();
-            }
+                Logger.Error($"SurveyResultService.SaveAll json={JsonConvert.SerializeObject(results ?? new SurveyResultDTO[] { })}", ex);
 
-            if (faults.Any())
-            {
-                result.faults = faults.ToArray();
+                throw;
             }
-
-            return result;
         }
 
         /// <summary>
@@ -216,6 +246,197 @@ namespace EdugameCloud.WCFService
             instance.LmsUserParametersId = resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null;
             instance.ACEmail = resultDTO.acEmail.With(x => x.Trim());
             return instance;
+        }
+
+        /// <summary>
+        /// The convert DTO.
+        /// </summary>
+        /// <param name="resultDTO">
+        /// The result DTO.
+        /// </param>
+        /// <param name="instance">
+        /// The instance.
+        /// </param>
+        /// <returns>
+        /// The <see cref="QuizQuestionResult"/>.
+        /// </returns>
+        private SurveyQuestionResult ConvertDto(SurveyQuestionResultDTO resultDTO, SurveyQuestionResult instance)
+        {
+            instance = instance ?? new SurveyQuestionResult();
+            instance.Question = resultDTO.question;
+            instance.IsCorrect = resultDTO.isCorrect;
+            instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
+            instance.SurveyResult = this.SurveyResultModel.GetOneById(resultDTO.surveyResultId).Value;
+            instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
+            return instance;
+        }
+
+        /// <summary>
+        /// The convert DTO.
+        /// </summary>
+        /// <param name="resultDTO">
+        /// The result DTO.
+        /// </param>
+        /// <param name="instance">
+        /// The instance.
+        /// </param>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        /// <returns>
+        /// The <see cref="QuizQuestionResult"/>.
+        /// </returns>
+        private SurveyQuestionResultAnswer ConvertDto(SurveyQuestionResultAnswerDTO resultDTO, SurveyQuestionResultAnswer instance, SurveyQuestionResult result)
+        {
+            instance = instance ?? new SurveyQuestionResultAnswer();
+            instance.Value = resultDTO.value;
+            instance.SurveyDistractorAnswer = resultDTO.surveyDistractorAnswerId.HasValue ? this.DistractorModel.GetOneById(resultDTO.surveyDistractorAnswerId.Value).Value : null;
+            instance.SurveyDistractor = resultDTO.surveyDistractorId.HasValue ? this.DistractorModel.GetOneById(resultDTO.surveyDistractorId.Value).Value : null;
+            instance.SurveyQuestionResult = result;
+            return instance;
+        }
+
+        private SurveyQuestionResultSaveAllDTO SaveAll(SurveyResult instance, SurveyQuestionResultDTO[] results)
+        {
+            foreach (var item in results)
+            {
+                item.surveyResultId = instance.Id;
+            }
+
+            results = results ?? new SurveyQuestionResultDTO[] { };
+            var result = new SurveyQuestionResultSaveAllDTO();
+            var faults = new List<string>();
+            var created = new List<SurveyQuestionResult>();
+            foreach (var surveyQuestionResultDTO in results)
+            {
+                ValidationResult validationResult;
+                if (this.IsValid(surveyQuestionResultDTO, out validationResult))
+                {
+                    var sessionModel = this.SurveyQuestionResultModel;
+                    var isTransient = surveyQuestionResultDTO.surveyQuestionResultId == 0;
+                    var surveyQuestionResult = isTransient ? null : sessionModel.GetOneById(surveyQuestionResultDTO.surveyQuestionResultId).Value;
+                    surveyQuestionResult = this.ConvertDto(surveyQuestionResultDTO, surveyQuestionResult);
+                    sessionModel.RegisterSave(surveyQuestionResult, true);
+                    if (isTransient && surveyQuestionResultDTO.answers != null && surveyQuestionResultDTO.answers.Any())
+                    {
+                        var answers = this.CreateAnswers(surveyQuestionResultDTO, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
+                        foreach (var answ in answers)
+                            surveyQuestionResult.Answers.Add(answ);
+                    }
+
+                    created.Add(surveyQuestionResult);
+                }
+                else
+                {
+                    faults.AddRange(this.UpdateResultToString(validationResult));
+                }
+            }
+
+            if (created.Any())
+            {
+                result.saved = created.Select(x => new SurveyQuestionResultDTO(x, x.Answers)).ToArray();
+            }
+
+            if (faults.Any())
+            {
+                result.faults = faults.ToArray();
+            }
+
+            this.ConvertAndSendSurveyResult(results);
+
+            return result;
+        }
+
+        /// <summary>
+        /// The create distractors.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        /// <param name="answerModel">
+        /// The distractor model.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{SurveyQuestionResultAnswer}"/>.
+        /// </returns>
+        private List<SurveyQuestionResultAnswer> CreateAnswers(SurveyQuestionResultDTO dto, SurveyQuestionResult result, SurveyQuestionResultAnswerModel answerModel)
+        {
+            var created = new List<SurveyQuestionResultAnswer>();
+            foreach (var answerDTO in dto.answers)
+            {
+                answerDTO.surveyQuestionResultId = result.Id;
+                ValidationResult distractorValidationResult;
+                if (this.IsValid(answerDTO, out distractorValidationResult))
+                {
+                    SurveyQuestionResultAnswer answer = null;
+                    try
+                    {
+                        var isAnswerTransient = answerDTO.surveyQuestionResultAnswerId == 0;
+                        answer = isAnswerTransient
+                                     ? null
+                                     : answerModel.GetOneById(answerDTO.surveyQuestionResultAnswerId).Value;
+                        answer = this.ConvertDto(answerDTO, answer, result);
+                        answerModel.RegisterSave(answer, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.ErrorFormat("Saving answers:" + ex);
+                    }
+                    finally
+                    {
+                        created.Add(answer);
+                    }
+                }
+            }
+
+            return created;
+        }
+
+        // TODO: review
+        private void ConvertAndSendSurveyResult(IEnumerable<SurveyQuestionResultDTO> results)
+        {
+            foreach (var userAnswer in results.GroupBy(r => r.surveyResultId))
+            {
+                var surveyResult = this.SurveyResultModel.GetOneById(userAnswer.Key).Value;
+                if (surveyResult == null)
+                {
+                    continue;
+                }
+
+                var lmsUserParameters = surveyResult.LmsUserParametersId.HasValue ? this.LmsUserParametersModel.GetOneById(surveyResult.LmsUserParametersId.Value).Value : null;
+                if (lmsUserParameters == null)
+                {
+                    return;
+                }
+
+                var lmsSurveyId = surveyResult.Survey.LmsSurveyId;
+                if (lmsSurveyId == null)
+                {
+                    continue;
+                }
+
+                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
+
+                converter.ConvertAndSendSurveyResultToLms(results, surveyResult, lmsUserParameters);
+
+                /*
+                switch (lmsUserParameters.CompanyLms.LmsProvider.Id)
+                {
+                    case (int)LmsProviderEnum.Moodle:
+                        this.ConvertAndSendSurveyResultToMoodle(userAnswer, lmsUserParameters, surveyResult);
+                        break;
+                    case (int)LmsProviderEnum.Canvas:
+                        this.ConvertAndSendSurveyResultToCanvas(userAnswer, lmsUserParameters, lmsSurveyId.Value);
+                        break;
+                    case (int)LmsProviderEnum.Blackboard:
+                        this.ConvertAndSendSurveyResultToBlackboard(userAnswer, lmsUserParameters, lmsSurveyId.Value, surveyResult.Survey.SubModuleItem.Id);
+                        break;
+                }
+                 * */
+            }
         }
 
         #endregion

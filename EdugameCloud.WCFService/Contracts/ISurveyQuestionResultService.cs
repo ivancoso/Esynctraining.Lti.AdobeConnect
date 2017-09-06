@@ -62,19 +62,6 @@
         [FaultContract(typeof(Error))]
         SurveyQuestionResultDTO Save(SurveyQuestionResultDTO resultDto);
 
-        /// <summary>
-        /// The save questions results.
-        /// </summary>
-        /// <param name="results">
-        /// The results.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveyQuestionResultDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        SurveyQuestionResultSaveAllDTO SaveAll(SurveyQuestionResultDTO[] results);
-
         #endregion
     }
 }

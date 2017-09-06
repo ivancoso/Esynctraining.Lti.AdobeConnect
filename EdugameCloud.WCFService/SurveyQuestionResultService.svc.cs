@@ -11,7 +11,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.Core.Business.Models;
-    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.Converters;
@@ -42,13 +41,7 @@ namespace EdugameCloud.WCFService
         private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
 
         private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
-
-        private QuizResultConverter QuizResultConverter => IoC.Resolve<QuizResultConverter>();
-
-        private ConverterFactory ConverterFactory => IoC.Resolve<ConverterFactory>();
-
-        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
-
+        
         #endregion
 
         #region Public Methods and Operators
@@ -97,61 +90,6 @@ namespace EdugameCloud.WCFService
             var error = this.GenerateValidationError(validationResult);
             this.LogError("SurveyQuestionResult.Save", error);
             throw new FaultException<Error>(error, error.errorMessage);
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveyQuestionResultSaveAllDTO"/>.
-        /// </returns>
-        public SurveyQuestionResultSaveAllDTO SaveAll(SurveyQuestionResultDTO[] results)
-        {
-            results = results ?? new SurveyQuestionResultDTO[] { };
-            var result = new SurveyQuestionResultSaveAllDTO();
-            var faults = new List<string>();
-            var created = new List<SurveyQuestionResult>();
-            foreach (var surveyQuestionResultDTO in results)
-            {
-                ValidationResult validationResult;
-                if (this.IsValid(surveyQuestionResultDTO, out validationResult))
-                {
-                    var sessionModel = this.SurveyQuestionResultModel;
-                    var isTransient = surveyQuestionResultDTO.surveyQuestionResultId == 0;
-                    var surveyQuestionResult = isTransient ? null : sessionModel.GetOneById(surveyQuestionResultDTO.surveyQuestionResultId).Value;
-                    surveyQuestionResult = this.ConvertDto(surveyQuestionResultDTO, surveyQuestionResult);
-                    sessionModel.RegisterSave(surveyQuestionResult, true);
-                    if (isTransient && surveyQuestionResultDTO.answers != null && surveyQuestionResultDTO.answers.Any())
-                    {
-                        var answers = this.CreateAnswers(surveyQuestionResultDTO, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
-                        foreach (var answ in answers)
-                            surveyQuestionResult.Answers.Add(answ);
-                    }
-
-                    created.Add(surveyQuestionResult);
-                }
-                else
-                {
-                    faults.AddRange(this.UpdateResultToString(validationResult));
-                }
-            }
-
-            if (created.Any())
-            {
-                result.saved = created.Select(x => new SurveyQuestionResultDTO(x, x.Answers)).ToArray();
-            }
-
-            if (faults.Any())
-            {
-                result.faults = faults.ToArray();
-            }
-            
-            this.ConvertAndSendSurveyResult(results);
-            
-            return result;
         }
 
         /// <summary>
@@ -253,50 +191,6 @@ namespace EdugameCloud.WCFService
             }
 
             return created;
-        }
-
-
-        public void ConvertAndSendSurveyResult(IEnumerable<SurveyQuestionResultDTO> results)
-        {
-            foreach (var userAnswer in results.GroupBy(r => r.surveyResultId))
-            {
-                var surveyResult = this.SurveyResultModel.GetOneById(userAnswer.Key).Value;
-                if (surveyResult == null)
-                {
-                    continue;
-                }
-
-                var lmsUserParameters = surveyResult.LmsUserParametersId.HasValue ? this.LmsUserParametersModel.GetOneById(surveyResult.LmsUserParametersId.Value).Value : null;
-                if (lmsUserParameters == null)
-                {
-                    return;
-                }
-
-                var lmsSurveyId = surveyResult.Survey.LmsSurveyId;
-                if (lmsSurveyId == null)
-                {
-                    continue;
-                }
-
-                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
-
-                converter.ConvertAndSendSurveyResultToLms(results, surveyResult, lmsUserParameters);
-
-                /*
-                switch (lmsUserParameters.CompanyLms.LmsProvider.Id)
-                {
-                    case (int)LmsProviderEnum.Moodle:
-                        this.ConvertAndSendSurveyResultToMoodle(userAnswer, lmsUserParameters, surveyResult);
-                        break;
-                    case (int)LmsProviderEnum.Canvas:
-                        this.ConvertAndSendSurveyResultToCanvas(userAnswer, lmsUserParameters, lmsSurveyId.Value);
-                        break;
-                    case (int)LmsProviderEnum.Blackboard:
-                        this.ConvertAndSendSurveyResultToBlackboard(userAnswer, lmsUserParameters, lmsSurveyId.Value, surveyResult.Survey.SubModuleItem.Id);
-                        break;
-                }
-                 * */
-            }
         }
 
         /// <summary>
