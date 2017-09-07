@@ -8,10 +8,6 @@
     <FileVersion>1.8.8.0</FileVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Controllers\BaseApiController.cs" />
   </ItemGroup>
@@ -52,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj" />
-    <ProjectReference Include="..\EdugameCloud.Lti.Api\EdugameCloud.Lti.Api.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Api.Core\EdugameCloud.Lti.Api.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj" />
   </ItemGroup>
   <ItemGroup>

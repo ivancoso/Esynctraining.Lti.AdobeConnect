@@ -66,7 +66,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// TRICK: do not use in most of your code.
         /// </summary>
-        internal LmsUserSession SessionSave
+        protected LmsUserSession SessionSave
         {
             get { return _session; }
             set { _session = value; }
@@ -122,7 +122,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var lmsUser = Session.LmsUser;
                 if (lmsUser.PrincipalId == null)
                 {
-                    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
+                    throw new WarningMessageException("User doesn't have account in Adobe Connect.");
                 }
 
                 adminProvider = GetAdminProvider();

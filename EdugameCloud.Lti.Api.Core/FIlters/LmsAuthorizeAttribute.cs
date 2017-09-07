@@ -223,7 +223,7 @@ namespace EdugameCloud.Lti.Api.Filters
 
     }
 
-    internal sealed class TeacherOnlyAttribute : LmsAuthorizeBaseAttribute
+    public sealed class TeacherOnlyAttribute : LmsAuthorizeBaseAttribute
     {
         private readonly LmsRoleService _lmsRoleService;
 
