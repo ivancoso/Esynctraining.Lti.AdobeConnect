@@ -175,7 +175,8 @@
                     var jsonResult = new WebBodyFormatMessageProperty(WebContentFormat.Json);
                     msg.Properties.Add(WebBodyFormatMessageProperty.Name, jsonResult);
                 }
-                else if (wasCalledOn.EndsWith("amf", StringComparison.InvariantCultureIgnoreCase))
+                else if (wasCalledOn.EndsWith("amf", StringComparison.InvariantCultureIgnoreCase) 
+                    || wasCalledOn.EndsWith("amfssl", StringComparison.InvariantCultureIgnoreCase))
                 {
                     string stackTrace = this.IsDev ? error.StackTrace : string.Empty;
                     if (!(error is FaultException<Error>))
