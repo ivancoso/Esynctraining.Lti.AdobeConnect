@@ -2,22 +2,17 @@
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
-    using EdugameCloud.WCFService.Converters;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
-    using FluentValidation.Results;
     using Resources;
 
     /// <summary>
@@ -30,18 +25,8 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        private SurveyResultModel SurveyResultModel => IoC.Resolve<SurveyResultModel>();
-
-        private DistractorModel DistractorModel => IoC.Resolve<DistractorModel>();
-
         private SurveyQuestionResultModel SurveyQuestionResultModel => IoC.Resolve<SurveyQuestionResultModel>();
 
-        private SurveyQuestionResultAnswerModel SurveyQuestionResultAnswerModel => IoC.Resolve<SurveyQuestionResultAnswerModel>();
-
-        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
-
-        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
-        
         #endregion
 
         #region Public Methods and Operators
@@ -55,41 +40,6 @@ namespace EdugameCloud.WCFService
         public SurveyQuestionResultDTO[] GetAll()
         {
             return this.SurveyQuestionResultModel.GetAll().Select(x => new SurveyQuestionResultDTO(x)).ToArray();
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="resultDto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveyQuestionResultDTO"/>.
-        /// </returns>
-        public SurveyQuestionResultDTO Save(SurveyQuestionResultDTO resultDto)
-        {
-            ValidationResult validationResult;
-            if (this.IsValid(resultDto, out validationResult))
-            {
-                var surveyQuestionResultModel = this.SurveyQuestionResultModel;
-                var isTransient = resultDto.surveyQuestionResultId == 0;
-                var surveyQuestionResult = isTransient ? null : surveyQuestionResultModel.GetOneById(resultDto.surveyQuestionResultId).Value;
-                surveyQuestionResult = this.ConvertDto(resultDto, surveyQuestionResult);
-                surveyQuestionResultModel.RegisterSave(surveyQuestionResult);
-                
-                if (isTransient && resultDto.answers != null && resultDto.answers.Any())
-                {
-                    var answers = this.CreateAnswers(resultDto, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
-                    foreach (var answ in answers)
-                        surveyQuestionResult.Answers.Add(answ);
-                }
-
-                return new SurveyQuestionResultDTO(surveyQuestionResult, surveyQuestionResult.Answers);
-            }
-
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("SurveyQuestionResult.Save", error);
-            throw new FaultException<Error>(error, error.errorMessage);
         }
 
         /// <summary>
@@ -139,106 +89,6 @@ namespace EdugameCloud.WCFService
 
             model.RegisterDelete(quizResult, true);
             return id;
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// The create distractors.
-        /// </summary>
-        /// <param name="dto">
-        /// The DTO.
-        /// </param>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <param name="answerModel">
-        /// The distractor model.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{SurveyQuestionResultAnswer}"/>.
-        /// </returns>
-        private List<SurveyQuestionResultAnswer> CreateAnswers(SurveyQuestionResultDTO dto, SurveyQuestionResult result, SurveyQuestionResultAnswerModel answerModel)
-        {
-            var created = new List<SurveyQuestionResultAnswer>();
-            foreach (var answerDTO in dto.answers)
-            {
-                answerDTO.surveyQuestionResultId = result.Id;
-                ValidationResult distractorValidationResult;
-                if (this.IsValid(answerDTO, out distractorValidationResult))
-                {
-                    SurveyQuestionResultAnswer answer = null;
-                    try
-                    {
-                        var isAnswerTransient = answerDTO.surveyQuestionResultAnswerId == 0;
-                        answer = isAnswerTransient
-                                     ? null
-                                     : answerModel.GetOneById(answerDTO.surveyQuestionResultAnswerId).Value;
-                        answer = this.ConvertDto(answerDTO, answer, result);
-                        answerModel.RegisterSave(answer, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.ErrorFormat("Saving answers:" + ex);
-                    }
-                    finally
-                    {
-                        created.Add(answer);
-                    }
-                }
-            }
-
-            return created;
-        }
-
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="resultDTO">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizQuestionResult"/>.
-        /// </returns>
-        private SurveyQuestionResultAnswer ConvertDto(SurveyQuestionResultAnswerDTO resultDTO, SurveyQuestionResultAnswer instance, SurveyQuestionResult result)
-        {
-            instance = instance ?? new SurveyQuestionResultAnswer();
-            instance.Value = resultDTO.value;
-            instance.SurveyDistractorAnswer = resultDTO.surveyDistractorAnswerId.HasValue ? this.DistractorModel.GetOneById(resultDTO.surveyDistractorAnswerId.Value).Value : null;
-            instance.SurveyDistractor = resultDTO.surveyDistractorId.HasValue ? this.DistractorModel.GetOneById(resultDTO.surveyDistractorId.Value).Value : null;
-            instance.SurveyQuestionResult = result;
-            return instance;
-        }
-
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="resultDTO">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizQuestionResult"/>.
-        /// </returns>
-        private SurveyQuestionResult ConvertDto(SurveyQuestionResultDTO resultDTO, SurveyQuestionResult instance)
-        {
-            instance = instance ?? new SurveyQuestionResult();
-            instance.Question = resultDTO.question;
-            instance.IsCorrect = resultDTO.isCorrect;
-            instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
-            instance.SurveyResult = this.SurveyResultModel.GetOneById(resultDTO.surveyResultId).Value;
-            instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
-            return instance;
         }
 
         #endregion

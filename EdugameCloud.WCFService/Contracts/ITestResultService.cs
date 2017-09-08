@@ -50,19 +50,6 @@
         TestResultDTO GetById(int id);
 
         /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="result">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestResultDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        TestResultDTO Save(TestResultDTO result);
-
-        /// <summary>
         /// The save all.
         /// </summary>
         /// <param name="results">

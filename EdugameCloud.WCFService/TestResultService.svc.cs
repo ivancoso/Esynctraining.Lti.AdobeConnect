@@ -20,7 +20,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
-
+    using Newtonsoft.Json;
     using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
@@ -31,6 +31,12 @@ namespace EdugameCloud.WCFService
         #region Properties
 
         private TestResultModel TestResultModel => IoC.Resolve<TestResultModel>();
+
+        private TestQuestionResultModel TestQuestionResultModel => IoC.Resolve<TestQuestionResultModel>();
+
+        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
+
+        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
         private TestModel TestModel => IoC.Resolve<TestModel>();
 
@@ -52,34 +58,6 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The save update.
         /// </summary>
-        /// <param name="appletResultDTO">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestResultDTO"/>.
-        /// </returns>
-        public TestResultDTO Save(TestResultDTO appletResultDTO)
-        {
-            ValidationResult validationResult;
-            if (this.IsValid(appletResultDTO, out validationResult))
-            {
-                var quizResultModel = this.TestResultModel;
-                var isTransient = appletResultDTO.testResultId == 0;
-                var quizResult = isTransient ? null : quizResultModel.GetOneById(appletResultDTO.testResultId).Value;
-                quizResult = this.ConvertDto(appletResultDTO, quizResult);
-                quizResultModel.RegisterSave(quizResult);
-                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<TestResult>(NotificationType.Update, appletResultDTO.companyId, quizResult.Id);
-                return new TestResultDTO(quizResult);
-            }
-
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("TestResult.Save", error);
-            throw new FaultException<Error>(error, error.errorMessage);
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
         /// <param name="results">
         /// The applet Result DTOs.
         /// </param>
@@ -89,39 +67,54 @@ namespace EdugameCloud.WCFService
         public TestResultSaveAllDTO SaveAll(TestResultDTO[] results)
         {
             results = results ?? new TestResultDTO[] { };
-            var result = new TestResultSaveAllDTO();
-            var faults = new List<string>();
-            var created = new List<TestResult>();
-            foreach (var appletResultDTO in results)
+
+            try
             {
-                ValidationResult validationResult;
-                if (this.IsValid(appletResultDTO, out validationResult))
+                var result = new TestResultSaveAllDTO();
+                var faults = new List<string>();
+                var created = new List<TestResultSaveResultDTO>();
+                foreach (var appletResultDTO in results)
                 {
-                    var sessionModel = this.TestResultModel;
-                    var isTransient = appletResultDTO.testResultId == 0;
-                    var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.testResultId).Value;
-                    appletResult = this.ConvertDto(appletResultDTO, appletResult);
-                    sessionModel.RegisterSave(appletResult);
-                    created.Add(appletResult);
+                    ValidationResult validationResult;
+                    if (this.IsValid(appletResultDTO, out validationResult))
+                    {
+                        var sessionModel = this.TestResultModel;
+                        var isTransient = appletResultDTO.testResultId == 0;
+                        var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.testResultId).Value;
+                        appletResult = this.ConvertDto(appletResultDTO, appletResult);
+                        sessionModel.RegisterSave(appletResult);
+
+                        var testSaveResult = new TestResultSaveResultDTO(appletResult);
+                        created.Add(testSaveResult);
+
+                        var testQuestionResult = SaveAll(appletResult, appletResultDTO.results);
+                        testSaveResult.testQuestionResult = testQuestionResult;
+                    }
+                    else
+                    {
+                        faults.AddRange(this.UpdateResultToString(validationResult));
+                    }
                 }
-                else
+
+                if (created.Any())
                 {
-                    faults.AddRange(this.UpdateResultToString(validationResult));
+                    //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<TestResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
+                    result.saved = created.ToArray();
                 }
-            }
 
-            if (created.Any())
+                if (faults.Any())
+                {
+                    result.faults = faults.ToArray();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
             {
-                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<TestResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
-                result.saved = created.Select(x => new TestResultDTO(x)).ToArray();
-            }
+                Logger.Error($"TestResultService.SaveAll json={JsonConvert.SerializeObject(results)}", ex);
 
-            if (faults.Any())
-            {
-                result.faults = faults.ToArray();
+                throw;
             }
-
-            return result;
         }
 
         /// <summary>
@@ -219,6 +212,80 @@ namespace EdugameCloud.WCFService
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
             instance.IsCompleted = resultDTO.isCompleted;
             return instance;
+        }
+
+        /// <summary>
+        /// The convert DTO.
+        /// </summary>
+        /// <param name="resultDTO">
+        /// The result DTO.
+        /// </param>
+        /// <param name="instance">
+        /// The instance.
+        /// </param>
+        /// <returns>
+        /// The <see cref="QuizQuestionResult"/>.
+        /// </returns>
+        private TestQuestionResult ConvertDto(TestQuestionResultDTO resultDTO, TestQuestionResult instance)
+        {
+            instance = instance ?? new TestQuestionResult();
+            instance.Question = resultDTO.question;
+            instance.IsCorrect = resultDTO.isCorrect;
+            instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
+            instance.TestResult = this.TestResultModel.GetOneById(resultDTO.testResultId).Value;
+            instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
+            return instance;
+        }
+
+        /// <summary>
+        /// The save update.
+        /// </summary>
+        /// <param name="results">
+        /// The applet Result DTOs.
+        /// </param>
+        /// <returns>
+        /// The <see cref="TestQuestionResultDTO"/>.
+        /// </returns>
+        private TestQuestionResultSaveAllDTO SaveAll(TestResult testResult, TestQuestionResultDTO[] results)
+        {
+            foreach (var item in results)
+            {
+                item.testResultId = testResult.Id;
+            }
+
+            results = results ?? new TestQuestionResultDTO[] { };
+            var result = new TestQuestionResultSaveAllDTO();
+            var faults = new List<string>();
+            var created = new List<TestQuestionResult>();
+            foreach (var appletResultDTO in results)
+            {
+                ValidationResult validationResult;
+                if (this.IsValid(appletResultDTO, out validationResult))
+                {
+                    var sessionModel = this.TestQuestionResultModel;
+                    var isTransient = appletResultDTO.testQuestionResultId == 0;
+                    var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.testQuestionResultId).Value;
+                    appletResult = this.ConvertDto(appletResultDTO, appletResult);
+                    sessionModel.RegisterSave(appletResult);
+                    created.Add(appletResult);
+                }
+                else
+                {
+                    faults.AddRange(this.UpdateResultToString(validationResult));
+                }
+            }
+
+            if (created.Any())
+            {
+                result.saved = created.Select(x => new TestQuestionResultDTO(x)).ToArray();
+            }
+
+            if (faults.Any())
+            {
+                result.faults = faults.ToArray();
+            }
+
+            return result;
         }
 
         #endregion

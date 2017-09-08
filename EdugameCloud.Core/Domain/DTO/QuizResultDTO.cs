@@ -5,6 +5,18 @@ using Esynctraining.Core.Extensions;
 
 namespace EdugameCloud.Core.Domain.DTO
 {
+    // TODO: move to separate file
+    [DataContract]
+    public class QuizResultSaveResultDTO : QuizResultDTO
+    {
+        [DataMember]
+        public QuizQuestionResultSaveAllDTO quizQuestionResult { get; set; }
+
+        public QuizResultSaveResultDTO(QuizResult result) : base(result)
+        {
+        }
+    }
+
     /// <summary>
     /// The quiz result DTO.
     /// </summary>
@@ -160,6 +172,9 @@ namespace EdugameCloud.Core.Domain.DTO
         [DataMember]
         public Guid guid { get; set; }
 
+        [DataMember]
+        public QuizQuestionResultDTO[] results { get; set; }
+        
         #endregion
 
     }

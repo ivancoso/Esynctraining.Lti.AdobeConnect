@@ -49,19 +49,6 @@
         [FaultContract(typeof(Error))]
         SurveyQuestionResultDTO GetById(int id);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="resultDto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveyQuestionResultDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        SurveyQuestionResultDTO Save(SurveyQuestionResultDTO resultDto);
-
         #endregion
     }
 }

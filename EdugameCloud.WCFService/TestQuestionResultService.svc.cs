@@ -29,13 +29,7 @@
     {
         #region Properties
 
-        private TestResultModel TestResultModel => IoC.Resolve<TestResultModel>();
-
         private TestQuestionResultModel TestQuestionResultModel => IoC.Resolve<TestQuestionResultModel>();
-
-        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
-
-        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
         #endregion
 
@@ -50,79 +44,6 @@
         public TestQuestionResultDTO[] GetAll()
         {
             return this.TestQuestionResultModel.GetAll().Select(x => new TestQuestionResultDTO(x)).ToArray();
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="resultDto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestQuestionResultDTO"/>.
-        /// </returns>
-        public TestQuestionResultDTO Save(TestQuestionResultDTO resultDto)
-        {
-            ValidationResult validationResult;
-            if (this.IsValid(resultDto, out validationResult))
-            {
-                var quizQuestionResultModel = this.TestQuestionResultModel;
-                var isTransient = resultDto.testQuestionResultId == 0;
-                var quizQuestionResult = isTransient ? null : quizQuestionResultModel.GetOneById(resultDto.testQuestionResultId).Value;
-                quizQuestionResult = this.ConvertDto(resultDto, quizQuestionResult);
-                quizQuestionResultModel.RegisterSave(quizQuestionResult);
-                return new TestQuestionResultDTO(quizQuestionResult);
-            }
-
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("TestQuestionResult.Save", error);
-            throw new FaultException<Error>(error, error.errorMessage);
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestQuestionResultDTO"/>.
-        /// </returns>
-        public TestQuestionResultSaveAllDTO SaveAll(TestQuestionResultDTO[] results)
-        {
-            results = results ?? new TestQuestionResultDTO[] { };
-            var result = new TestQuestionResultSaveAllDTO();
-            var faults = new List<string>();
-            var created = new List<TestQuestionResult>();
-            foreach (var appletResultDTO in results)
-            {
-                ValidationResult validationResult;
-                if (this.IsValid(appletResultDTO, out validationResult))
-                {
-                    var sessionModel = this.TestQuestionResultModel;
-                    var isTransient = appletResultDTO.testQuestionResultId == 0;
-                    var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.testQuestionResultId).Value;
-                    appletResult = this.ConvertDto(appletResultDTO, appletResult);
-                    sessionModel.RegisterSave(appletResult);
-                    created.Add(appletResult);
-                }
-                else
-                {
-                    faults.AddRange(this.UpdateResultToString(validationResult));
-                }
-            }
-
-            if (created.Any())
-            {
-                result.saved = created.Select(x => new TestQuestionResultDTO(x)).ToArray();
-            }
-
-            if (faults.Any())
-            {
-                result.faults = faults.ToArray();
-            }
-
-            return result;
         }
 
         /// <summary>
@@ -172,33 +93,6 @@
 
             model.RegisterDelete(quizResult, true);
             return id;
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="resultDTO">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizQuestionResult"/>.
-        /// </returns>
-        private TestQuestionResult ConvertDto(TestQuestionResultDTO resultDTO, TestQuestionResult instance)
-        {
-            instance = instance ?? new TestQuestionResult();
-            instance.Question = resultDTO.question;
-            instance.IsCorrect = resultDTO.isCorrect;
-            instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
-            instance.TestResult = this.TestResultModel.GetOneById(resultDTO.testResultId).Value;
-            instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
-            return instance;
         }
 
         #endregion

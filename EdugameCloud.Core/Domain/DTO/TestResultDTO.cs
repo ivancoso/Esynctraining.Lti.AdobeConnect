@@ -6,6 +6,18 @@
 
     using Esynctraining.Core.Extensions;
 
+    // TODO: move to separate file
+    [DataContract]
+    public class TestResultSaveResultDTO : TestResultDTO
+    {
+        [DataMember]
+        public TestQuestionResultSaveAllDTO testQuestionResult { get; set; }
+
+        public TestResultSaveResultDTO(TestResult result) : base(result)
+        {
+        }
+    }
+
     /// <summary>
     ///     The test result DTO.
     /// </summary>
@@ -124,6 +136,9 @@
         /// </summary>
         [DataMember]
         public bool isCompleted { get; set; }
+
+        [DataMember]
+        public TestQuestionResultDTO[] results { get; set; }
 
         #endregion
     }

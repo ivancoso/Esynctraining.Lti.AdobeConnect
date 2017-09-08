@@ -50,19 +50,6 @@
         SurveyResultDTO GetById(int id);
 
         /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="surveyResultDTO">
-        /// The survey result.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveyResultDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        SurveyResultDTO Save(SurveyResultDTO surveyResultDTO);
-
-        /// <summary>
         /// The save all.
         /// </summary>
         /// <param name="results">

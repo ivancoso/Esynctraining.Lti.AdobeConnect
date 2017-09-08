@@ -68,34 +68,6 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The save update.
         /// </summary>
-        /// <param name="surveyResultDTO">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveyResultDTO"/>.
-        /// </returns>
-        public SurveyResultDTO Save(SurveyResultDTO surveyResultDTO)
-        {
-            ValidationResult validationResult;
-            if (this.IsValid(surveyResultDTO, out validationResult))
-            {
-                var surveyResultModel = this.SurveyResultModel;
-                var isTransient = surveyResultDTO.surveyResultId == 0;
-                var surveyResult = isTransient ? null : surveyResultModel.GetOneById(surveyResultDTO.surveyResultId).Value;
-                surveyResult = this.ConvertDto(surveyResultDTO, surveyResult);
-                surveyResultModel.RegisterSave(surveyResult);
-                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SurveyResult>(NotificationType.Update, surveyResultDTO.companyId, surveyResult.Id);
-                return new SurveyResultDTO(surveyResult);
-            }
-
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("SurveyResult.Save", error);
-            throw new FaultException<Error>(error, error.errorMessage);
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
         /// <param name="results">
         /// The applet Result DTOs.
         /// </param>
@@ -104,9 +76,10 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public SurveyResultSaveAllDTO SaveAll(SurveyResultDTO[] results)
         {
+            results = results ?? new SurveyResultDTO[] { };
+
             try
             {
-                results = results ?? new SurveyResultDTO[] { };
                 var result = new SurveyResultSaveAllDTO();
                 var faults = new List<string>();
                 var created = new List<SurveyResultSaveResultDTO>();
@@ -148,7 +121,7 @@ namespace EdugameCloud.WCFService
             }
             catch(Exception ex)
             {
-                Logger.Error($"SurveyResultService.SaveAll json={JsonConvert.SerializeObject(results ?? new SurveyResultDTO[] { })}", ex);
+                Logger.Error($"SurveyResultService.SaveAll json={JsonConvert.SerializeObject(results)}", ex);
 
                 throw;
             }
@@ -296,6 +269,15 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
+        /// <summary>
+        /// The save update.
+        /// </summary>
+        /// <param name="results">
+        /// The applet Result DTOs.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SurveyQuestionResultSaveAllDTO"/>.
+        /// </returns>
         private SurveyQuestionResultSaveAllDTO SaveAll(SurveyResult instance, SurveyQuestionResultDTO[] results)
         {
             foreach (var item in results)

@@ -57,19 +57,6 @@ namespace EdugameCloud.WCFService.Contracts
         QuizResultDTO GetByGuid(Guid guid);
 
         /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="result">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizResultDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        QuizResultDTO Save(QuizResultDTO result);
-
-        /// <summary>
         /// The save all.
         /// </summary>
         /// <param name="results">

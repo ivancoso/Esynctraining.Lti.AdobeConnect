@@ -49,32 +49,6 @@
         [FaultContract(typeof(Error))]
         TestQuestionResultDTO GetById(int id);
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="resultDto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestQuestionResultDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        TestQuestionResultDTO Save(TestQuestionResultDTO resultDto);
-
-        /// <summary>
-        /// The save questions results.
-        /// </summary>
-        /// <param name="results">
-        /// The results.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestQuestionResultSaveAllDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        TestQuestionResultSaveAllDTO SaveAll(TestQuestionResultDTO[] results);
-
         #endregion
     }
 }
