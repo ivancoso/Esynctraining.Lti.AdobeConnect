@@ -185,6 +185,14 @@ namespace EdugameCloud.WCFService
                         BuildMobileDownload(),
                         BuildOfficeHoursePod(),
                     };
+
+                case (int)LmsProviderEnum.Haiku:
+                    return new FileDownloadDTO[]
+                    {
+                        BuildUserGuide(LmsProviderEnum.Haiku),
+                        BuildMobileDownload(),
+                        BuildOfficeHoursePod(),
+                    };
             }
 
             var error = new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Invalid lmsProviderId", "Not supported LMS.");
