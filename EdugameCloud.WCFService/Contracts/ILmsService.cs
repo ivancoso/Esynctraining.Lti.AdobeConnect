@@ -144,6 +144,11 @@
             BodyStyle = WebMessageBodyStyle.Wrapped)]
         OperationResultDto DeletePrincipals(int lmsCompanyId, string login, string password, string[] principalIds);
 
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "PublishQuiz", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
+        OperationResultDto PublishQuiz(int lmsUserParametersId, int courseId, int quizId);
     }
 
 }

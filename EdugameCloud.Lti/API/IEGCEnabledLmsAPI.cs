@@ -64,5 +64,7 @@
         /// The answers.
         /// </param>
         void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null);
+
+        void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId);
     }
 }

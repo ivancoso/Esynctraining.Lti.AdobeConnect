@@ -153,5 +153,9 @@ namespace EdugameCloud.Lti.BlackBoard
                 out contentId);
         }
 
+        public void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

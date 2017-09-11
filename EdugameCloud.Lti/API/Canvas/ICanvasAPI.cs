@@ -16,8 +16,6 @@ namespace EdugameCloud.Lti.API.Canvas
 
         //void AddMoreDetailsForUser(string api, string usertoken, LmsUserDTO user);
 
-        
-
         LmsUserDTO GetUser(string api, string userToken, string userId);
 
     }

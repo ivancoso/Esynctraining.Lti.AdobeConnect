@@ -310,6 +310,24 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        public OperationResultDto PublishQuiz(int lmsUserParametersId, int courseId, int quizId)
+        {
+            var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
+            if (lmsUserParameters != null)
+            {
+                var lmsApi = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
+
+                lmsApi.PublishQuiz(lmsUserParameters, courseId, quizId);
+
+                return OperationResultDto.Success();
+            }
+
+            var error = new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No lms user parameters found");
+
+            this.LogError("AppletResult.PublishQuiz", error);
+            throw new FaultException<Error>(error, error.errorMessage);
+        }
+
         #endregion
 
         #region Private Methods

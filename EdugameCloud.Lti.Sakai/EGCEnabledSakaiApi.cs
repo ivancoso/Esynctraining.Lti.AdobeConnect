@@ -194,5 +194,9 @@ namespace EdugameCloud.Lti.Sakai
             }
         }
 
+        public void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

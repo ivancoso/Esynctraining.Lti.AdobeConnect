@@ -151,7 +151,7 @@
         #endregion
 
         #region Methods
-   
+
         protected static void Validate(string api, string userToken)
         {
             if (string.IsNullOrWhiteSpace(api))

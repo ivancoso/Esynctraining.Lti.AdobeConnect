@@ -516,6 +516,43 @@ namespace EdugameCloud.Lti.Canvas
             });
         }
 
+        public void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId)
+        {
+            var api = lmsUserParameters.CompanyLms.LmsDomain;
+            var userToken = lmsUserParameters.LmsUser.Token;
+
+            IRestResponse<CanvasQuiz> response;
+
+            try
+            {
+                Validate(api, userToken);
+
+                var client = CreateRestClient(api);
+
+                RestRequest request = CreateRequest(
+                    api,
+                    $"/api/v1/courses/{courseId}/quizzes/{quizId}",
+                    Method.PUT,
+                    userToken);
+
+                request.AddParameter("quiz[published]", true);
+
+                response = client.Execute<CanvasQuiz>(request);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.PublishQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}", api, userToken, courseId, quizId);
+                throw;
+            }
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.ErrorFormat("[CanvasAPI.PublishQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}. {4}",
+                    api, userToken, courseId, quizId, BuildInformation(response));
+
+                throw new InvalidOperationException(string.Format("[CanvasAPI.PublishQuiz] Canvas returns '{0}'", response.StatusDescription));
+            }
+        }
 
         private static string ExtractNextPageLink(IRestResponse<List<CanvasLmsUserDTO>> response)
         {
@@ -665,6 +702,15 @@ namespace EdugameCloud.Lti.Canvas
             return response.Data;
         }
 
+        
+
+        // TODO: move
+        private class CanvasQuiz
+        {
+            public int Id { get; set; }
+
+            public bool Published { get; set; }
+        }
     }
 
 }
