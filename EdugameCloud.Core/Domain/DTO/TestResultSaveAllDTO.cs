@@ -20,7 +20,7 @@
         /// Gets or sets the saved.
         /// </summary>
         [DataMember]
-        public TestResultDTO[] saved { get; set; }
+        public TestResultSaveResultDTO[] saved { get; set; }
 
         #endregion
     }

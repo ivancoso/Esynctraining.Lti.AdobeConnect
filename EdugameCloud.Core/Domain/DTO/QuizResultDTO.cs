@@ -21,7 +21,6 @@ namespace EdugameCloud.Core.Domain.DTO
     /// The quiz result DTO.
     /// </summary>
     [DataContract]
-    [KnownType(typeof(QuizResultSaveResultDTO))]
     public class QuizResultDTO
     {
         #region Constructors and Destructors

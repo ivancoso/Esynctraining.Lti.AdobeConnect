@@ -22,7 +22,6 @@
     ///     The test result DTO.
     /// </summary>
     [DataContract]
-    [KnownType(typeof(TestResultSaveResultDTO))]
     public class TestResultDTO
     {
         #region Constructors and Destructors
