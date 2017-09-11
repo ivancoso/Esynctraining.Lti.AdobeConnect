@@ -21,6 +21,7 @@
     ///     The survey result DTO.
     /// </summary>
     [DataContract]
+    [KnownType(typeof(SurveyResultSaveResultDTO))]
     public class SurveyResultDTO
     {
         #region Constructors and Destructors
