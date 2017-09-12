@@ -248,12 +248,13 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private TestQuestionResultSaveAllDTO SaveAll(TestResult testResult, TestQuestionResultDTO[] results)
         {
+            results = results ?? new TestQuestionResultDTO[] { };
+
             foreach (var item in results)
             {
                 item.testResultId = testResult.Id;
             }
 
-            results = results ?? new TestQuestionResultDTO[] { };
             var result = new TestQuestionResultSaveAllDTO();
             var faults = new List<string>();
             var created = new List<TestQuestionResult>();

@@ -280,12 +280,13 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private SurveyQuestionResultSaveAllDTO SaveAll(SurveyResult instance, SurveyQuestionResultDTO[] results)
         {
+            results = results ?? new SurveyQuestionResultDTO[] { };
+
             foreach (var item in results)
             {
                 item.surveyResultId = instance.Id;
             }
 
-            results = results ?? new SurveyQuestionResultDTO[] { };
             var result = new SurveyQuestionResultSaveAllDTO();
             var faults = new List<string>();
             var created = new List<SurveyQuestionResult>();

@@ -264,12 +264,13 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private QuizQuestionResultSaveAllDTO SaveAll(QuizResult quizResult, QuizQuestionResultDTO[] results)
         {
+            results = results ?? new QuizQuestionResultDTO[] { };
+
             foreach (var item in results)
             {
                 item.quizResultId = quizResult.Id;
             }
 
-            results = results ?? new QuizQuestionResultDTO[] { };
             var result = new QuizQuestionResultSaveAllDTO();
             var faults = new List<string>();
             var created = new List<QuizQuestionResult>();
