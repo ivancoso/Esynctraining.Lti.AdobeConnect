@@ -281,7 +281,8 @@ Global
 		{1D04423B-12E2-41E5-BCE6-A5AA99091110}.WebRequesterRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
 		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.Mp4Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.MyContentRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.PublicApiRelease|Any CPU.ActiveCfg = Debug|Any CPU
