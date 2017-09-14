@@ -109,7 +109,8 @@ Global
 		{D1C6AF7C-0560-4C09-8650-1A07BBCF92EB}.WebRequesterRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12}.Mp4Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12}.MyContentRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12}.PublicApiRelease|Any CPU.ActiveCfg = Debug|Any CPU
@@ -150,7 +151,7 @@ Global
 		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.WebRequesterRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DDBBDBC-1479-4592-9E0A-EE25B5AC947B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DDBBDBC-1479-4592-9E0A-EE25B5AC947B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0DDBBDBC-1479-4592-9E0A-EE25B5AC947B}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{0DDBBDBC-1479-4592-9E0A-EE25B5AC947B}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DDBBDBC-1479-4592-9E0A-EE25B5AC947B}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DDBBDBC-1479-4592-9E0A-EE25B5AC947B}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{0DDBBDBC-1479-4592-9E0A-EE25B5AC947B}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -384,7 +385,7 @@ Global
 		{9F3D2CCA-8B68-457A-8298-C063DF1A8FE3}.WebRequesterRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{7791F921-CC88-4704-B95E-D8C614DFE9D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7791F921-CC88-4704-B95E-D8C614DFE9D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7791F921-CC88-4704-B95E-D8C614DFE9D4}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{7791F921-CC88-4704-B95E-D8C614DFE9D4}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{7791F921-CC88-4704-B95E-D8C614DFE9D4}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7791F921-CC88-4704-B95E-D8C614DFE9D4}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{7791F921-CC88-4704-B95E-D8C614DFE9D4}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
