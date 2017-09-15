@@ -41,6 +41,16 @@ namespace EdugameCloud.Core.Business.Models
             return items;
         }
 
+        public IEnumerable<CompanyAcServer> GetCompaniesByServerName(string serverName)
+        {
+            var query = new DefaultQueryOver<CompanyAcServer, int>().GetQueryOver()
+                .Where(Restrictions.On<CompanyAcServer>(s => s.AcServer).IsLike(@"") 
+                    || Restrictions.On<CompanyAcServer>(s => s.AcServer).IsInsensitiveLike(serverName, MatchMode.Anywhere))
+                    .TransformUsing(Transformers.DistinctRootEntity);
+
+           return this.Repository.FindAll(query).ToList();
+        }
+
 
         public override void RegisterSave(CompanyAcServer entity)
         {

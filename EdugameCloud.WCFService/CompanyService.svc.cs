@@ -1,6 +1,5 @@
 // ReSharper disable CheckNamespace
 
-
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
@@ -48,6 +47,8 @@ namespace EdugameCloud.WCFService
         private LanguageModel LanguageModel => IoC.Resolve<LanguageModel>();
 
         private UserRoleModel UserRoleModel => IoC.Resolve<UserRoleModel>();
+
+        private CompanyAcServerModel CompanyAcServerModel => IoC.Resolve<CompanyAcServerModel>();
 
         #endregion
 
@@ -405,6 +406,15 @@ namespace EdugameCloud.WCFService
                 dtoResult.lmsVO = new CompanyLmsDTO(lms, lmsProvider, Settings);
             }
             return dtoResult;
+        }
+
+        public CompanyFlatDTO[] GetByAdvancedFilter(CompanyAdvancedFilterDTO filter)
+        {
+            var userCompanyIds = this.UserModel.GetCompanyIdsByUsersProperties(filter.firstName, filter.lastName, filter.email);
+            var serverCompanies = this.CompanyAcServerModel.GetCompaniesByServerName(filter.acServer);
+
+            var ids = serverCompanies.Select(c => c.Company.Id).Concat(userCompanyIds).Distinct().ToList();
+            return this.CompanyModel.GetCompaniesFlatByIds(ids).ToArray();
         }
 
         #endregion

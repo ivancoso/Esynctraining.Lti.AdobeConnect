@@ -49,6 +49,17 @@
             return companies.Select(CompanyFlatDTO.CreateCompanyFlatDto).ToList();
         }
 
+        public IEnumerable<CompanyFlatDTO> GetCompaniesFlatByIds(List<int> ids)
+        {
+            var queryOver = new DefaultQueryOver<Company, int>().GetQueryOver().AndRestrictionOn(x => x.Id).IsIn(ids)
+                .Fetch(x => x.Licenses).Eager
+                .TransformUsing(Transformers.DistinctRootEntity);
+
+            var companies = this.Repository.FindAll(queryOver);
+
+            return companies.Select(CompanyFlatDTO.CreateCompanyFlatDto).ToList();
+        }
+
         public Company GetWithRelated(int companyId)
         {
             var queryOver = new DefaultQueryOver<Company, int>().GetQueryOver()

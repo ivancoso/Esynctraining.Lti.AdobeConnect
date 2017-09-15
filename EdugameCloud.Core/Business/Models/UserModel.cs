@@ -228,6 +228,24 @@
             return this.Repository.FindOne<int>(queryOver);
         }
 
+        public IEnumerable<int> GetCompanyIdsByUsersProperties(string firstName, string lastName, string email)
+        {
+            firstName = firstName ?? string.Empty;
+            lastName = lastName ?? string.Empty;
+            email = email ?? string.Empty;
+
+            QueryOver<User, User> queryOver =
+                new QueryOverUser().GetQueryOver()
+                .And(Restrictions.On<User>(u => u.FirstName).IsLike(@"") || Restrictions.On<User>(u => u.FirstName).IsInsensitiveLike(firstName, MatchMode.Anywhere))
+                .And(Restrictions.On<User>(u => u.LastName).IsLike(@"") || Restrictions.On<User>(u => u.LastName).IsInsensitiveLike(lastName, MatchMode.Anywhere))
+                .And(Restrictions.On<User>(u => u.Email).IsLike(@"") || Restrictions.On<User>(u => u.Email).IsInsensitiveLike(email, MatchMode.Anywhere))
+                .Select(u => u.Company.Id)
+                .TransformUsing(Transformers.DistinctRootEntity);
+
+            return this.Repository.FindAll<int>(queryOver);
+        }
+
+
         /// <summary>
         /// The get one by email.
         /// </summary>

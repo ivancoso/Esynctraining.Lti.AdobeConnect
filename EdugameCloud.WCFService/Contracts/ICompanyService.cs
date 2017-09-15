@@ -167,6 +167,16 @@ namespace EdugameCloud.WCFService.Contracts
         [FaultContract(typeof(Error))]
         CompanyLmsDTO[] GetLMSHistoryByCompanyId(int companyId);
 
+        /// <summary>
+        ///     Filter companies by extension filter.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="CompanyDTO" />.
+        /// </returns>
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        CompanyFlatDTO[] GetByAdvancedFilter(CompanyAdvancedFilterDTO filter);
+
         #endregion
     }
 }
