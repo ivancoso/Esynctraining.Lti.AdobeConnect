@@ -230,17 +230,29 @@
 
         public IEnumerable<int> GetCompanyIdsByUsersProperties(string firstName, string lastName, string email)
         {
-            firstName = firstName ?? string.Empty;
-            lastName = lastName ?? string.Empty;
-            email = email ?? string.Empty;
+            if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName) && string.IsNullOrEmpty(email))
+            {
+                return new List<int>();
+            }
 
-            QueryOver<User, User> queryOver =
-                new QueryOverUser().GetQueryOver()
-                .And(Restrictions.On<User>(u => u.FirstName).IsLike(@"") || Restrictions.On<User>(u => u.FirstName).IsInsensitiveLike(firstName, MatchMode.Anywhere))
-                .And(Restrictions.On<User>(u => u.LastName).IsLike(@"") || Restrictions.On<User>(u => u.LastName).IsInsensitiveLike(lastName, MatchMode.Anywhere))
-                .And(Restrictions.On<User>(u => u.Email).IsLike(@"") || Restrictions.On<User>(u => u.Email).IsInsensitiveLike(email, MatchMode.Anywhere))
-                .Select(u => u.Company.Id)
-                .TransformUsing(Transformers.DistinctRootEntity);
+            QueryOver<User, User> queryOver = new QueryOverUser().GetQueryOver();
+
+            if (!string.IsNullOrEmpty(firstName))
+            {
+                queryOver.And(Restrictions.On<User>(u => u.FirstName).IsInsensitiveLike(firstName, MatchMode.Anywhere));
+            }
+
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                queryOver.And(Restrictions.On<User>(u => u.LastName).IsInsensitiveLike(lastName, MatchMode.Anywhere));
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                queryOver.And(Restrictions.On<User>(u => u.Email).IsInsensitiveLike(email, MatchMode.Anywhere));
+            }
+
+            queryOver.Select(u => u.Company.Id).TransformUsing(Transformers.DistinctRootEntity);
 
             return this.Repository.FindAll<int>(queryOver);
         }

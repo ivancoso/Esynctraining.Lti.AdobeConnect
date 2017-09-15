@@ -60,6 +60,23 @@
             return companies.Select(CompanyFlatDTO.CreateCompanyFlatDto).ToList();
         }
 
+        public IEnumerable<CompanyFlatDTO> GetCompaniesFlatByName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return new List<CompanyFlatDTO>();
+            }
+
+            var queryOver = new DefaultQueryOver<Company, int>().GetQueryOver()
+                .AndRestrictionOn(x => x.CompanyName).IsInsensitiveLike(name, MatchMode.Anywhere)
+                .Fetch(x => x.Licenses).Eager
+                .TransformUsing(Transformers.DistinctRootEntity);
+
+            var companies = this.Repository.FindAll(queryOver);
+
+            return companies.Select(CompanyFlatDTO.CreateCompanyFlatDto).ToList();
+        }
+
         public Company GetWithRelated(int companyId)
         {
             var queryOver = new DefaultQueryOver<Company, int>().GetQueryOver()

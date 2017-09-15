@@ -43,10 +43,12 @@ namespace EdugameCloud.Core.Business.Models
 
         public IEnumerable<CompanyAcServer> GetCompaniesByServerName(string serverName)
         {
+            if (string.IsNullOrEmpty(serverName))
+                return new List<CompanyAcServer>();
+
             var query = new DefaultQueryOver<CompanyAcServer, int>().GetQueryOver()
-                .Where(Restrictions.On<CompanyAcServer>(s => s.AcServer).IsLike(@"") 
-                    || Restrictions.On<CompanyAcServer>(s => s.AcServer).IsInsensitiveLike(serverName, MatchMode.Anywhere))
-                    .TransformUsing(Transformers.DistinctRootEntity);
+                .Where(Restrictions.On<CompanyAcServer>(s => s.AcServer).IsInsensitiveLike(serverName, MatchMode.Anywhere))
+                .TransformUsing(Transformers.DistinctRootEntity);
 
            return this.Repository.FindAll(query).ToList();
         }
