@@ -1,7 +1,3 @@
-USE [EduGameCloud.Dev]
-GO
-
-/****** Object:  Table [dbo].[LmsCourseSection]    Script Date: 7/3/2017 2:49:44 PM ******/
 SET ANSI_NULLS ON
 GO
 

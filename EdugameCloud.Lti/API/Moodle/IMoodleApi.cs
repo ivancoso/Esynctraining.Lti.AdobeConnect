@@ -9,7 +9,7 @@ namespace EdugameCloud.Lti.API.Moodle
     {
         List<LmsUserDTO> GetUsersForCourse(
             ILmsLicense company,
-            int courseid,
+            int courseId,
             out string error);
 
         bool LoginAndCheckSession(
