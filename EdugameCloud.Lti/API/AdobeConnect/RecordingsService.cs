@@ -9,10 +9,10 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.MeetingRecording.Dto;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
+using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -246,7 +246,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             // ReSharper disable UnusedVariable
             var accessResult = provider.UpdatePublicAccessPermissions(id, isPublic ? PermissionId.view : PermissionId.remove);
-            var passwordResult = provider.UpdateAclField(id, AclFieldId.meeting_passcode, password);
+
+            if (!string.IsNullOrEmpty(password))
+            {
+                var passwordResult = provider.UpdateAclFieldWithRequiredPasscode(id, AclFieldId.meeting_passcode, password);
+            }
+            
+
             // ReSharper restore UnusedVariable
             var recordingUrl = (lmsCompany.AcServer.EndsWith("/")
                 ? lmsCompany.AcServer.Substring(0, lmsCompany.AcServer.Length - 1)
