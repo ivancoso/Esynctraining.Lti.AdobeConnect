@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -13,16 +11,10 @@ namespace EdugameCloud.Lti.Schoology
     public class SchoologyRestApiClient : ISchoologyRestApiClient
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private readonly HttpClient _client;
-
-
-        public SchoologyRestApiClient()
+        private static readonly HttpClient _client = new HttpClient
         {
-            _client = new HttpClient
-            {
-                BaseAddress = new Uri("https://api.schoology.com/v1/"),
-            };
-        }
+            BaseAddress = new Uri("https://api.schoology.com/v1/"),
+        };
 
 
         public async Task<T> GetRestCall<T>(string clientId, string clientSecret, string relativeUrl)
