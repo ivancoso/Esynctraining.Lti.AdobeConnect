@@ -4,14 +4,12 @@ namespace EdugameCloud.Lti.Moodle
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Globalization;
     using System.Linq;
-    using Esynctraining.Core.Logging;
-    using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
 
     /// <summary>
@@ -38,7 +36,7 @@ namespace EdugameCloud.Lti.Moodle
                 var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
                 var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
                     ? GetQuizzes(moodleServiceToken, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms)
-                    : this.LoginIfNecessary(
+                    : LoginIfNecessary(
                     null,
                     c =>
                     {
@@ -51,7 +49,7 @@ namespace EdugameCloud.Lti.Moodle
                 {
                     error = error ?? "Moodle XML. Unable to retrive result from API";
 
-                    logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+                    _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
 
                     return Enumerable.Empty<LmsQuizInfoDTO>();
                 }
@@ -61,7 +59,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
                 throw;
             }
         }
@@ -96,7 +94,7 @@ namespace EdugameCloud.Lti.Moodle
                     var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
                     var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
                         ? GetQuiz(moodleServiceToken, isSurvey, quizId, lmsUserParameters.CompanyLms)
-                        : this.LoginIfNecessary(
+                        : LoginIfNecessary(
                         null,
                         c =>
                         {
@@ -108,7 +106,7 @@ namespace EdugameCloud.Lti.Moodle
                     {
                         error = error ?? "Moodle XML. Unable to retrive result from API";
 
-                        logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+                        _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
 
                         return result;
                     }
@@ -121,7 +119,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
                 throw;
             }
         }
@@ -147,7 +145,7 @@ namespace EdugameCloud.Lti.Moodle
                 var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
                 var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
                     ? SendQuiz(moodleServiceToken, isSurvey, json, lmsUserParameters)
-                    : this.LoginIfNecessary(
+                    : LoginIfNecessary(
                     null,
                     c =>
                     {
@@ -158,7 +156,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", lmsUserParameters.Id, isSurvey, json);
+                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", lmsUserParameters.Id, isSurvey, json);
                 throw;
             }
         }
@@ -172,15 +170,13 @@ namespace EdugameCloud.Lti.Moodle
         private LmsQuizDTO SendQuiz(string token, bool isSurvey, string json, LmsUserParameters lmsUserParameters)
         {
             json = json.Replace("\"", "\"");
-            var pairs = new NameValueCollection
+            var pairs = new Dictionary<string, string>
             {
                 { "wsfunction", isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report" },
                 { "wstoken",  token },
                 { "reportObject", json }
             };
-            string lmsDomain = lmsUserParameters.CompanyLms.LmsDomain;
-            bool useSsl = lmsUserParameters.CompanyLms.UseSSL ?? false;
-            var url = GetServicesUrl(lmsDomain, useSsl);
+            var url = GetServicesUrl(lmsUserParameters.CompanyLms);
             var xmlDoc = UploadValues(url, pairs);
 
             string errorMessage = string.Empty;
@@ -189,7 +185,7 @@ namespace EdugameCloud.Lti.Moodle
 
             if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
             {
-                logger.ErrorFormat("[EGCEnabledMoodleApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
+                _logger.ErrorFormat("[EGCEnabledMoodleApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
                     lmsUserParameters.Id,
                     isSurvey,
                     errorMessage,
@@ -200,38 +196,34 @@ namespace EdugameCloud.Lti.Moodle
             return result;
         }
 
-        private IEnumerable<LmsQuizInfoDTO> GetQuizzes(string token, bool isSurvey, int courseId, LmsCompany lmsCompany)
+        private IEnumerable<LmsQuizInfoDTO> GetQuizzes(string token, bool isSurvey, int courseId, ILmsLicense lmsCompany)
         {
             var functionName = isSurvey
                 ? "local_edugamecloud_get_total_survey_list"
                 : "local_edugamecloud_get_total_quiz_list";
 
-            var pairs = new NameValueCollection
+            var pairs = new Dictionary<string, string>
             {
                 { "wsfunction", functionName },
                 { "wstoken",  token },
                 { "course", courseId.ToString( CultureInfo.InvariantCulture) }
             };
-            string lmsDomain = lmsCompany.LmsDomain;
-            bool useSsl = lmsCompany.UseSSL ?? false;
-            var url = GetServicesUrl(lmsDomain, useSsl);
+            var url = GetServicesUrl(lmsCompany);
             var xmlDoc = UploadValues(url, pairs);
 
             return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
         }
 
-        private LmsQuizDTO GetQuiz(string token, bool isSurvey, int courseId, LmsCompany lmsCompany)
+        private LmsQuizDTO GetQuiz(string token, bool isSurvey, int courseId, ILmsLicense lmsCompany)
         {
-            var pairs = new NameValueCollection
+            var pairs = new Dictionary<string, string>
             {
                 { "wsfunction", isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id" },
                 { "wstoken",  token },
                 {  isSurvey ? "surveyId" : "quizId",  courseId.ToString(CultureInfo.InvariantCulture) }
             };
 
-            string lmsDomain = lmsCompany.LmsDomain;
-            bool useSsl = lmsCompany.UseSSL ?? false;
-            var url = GetServicesUrl(lmsDomain, useSsl);
+            var url = GetServicesUrl(lmsCompany);
             var xmlDoc = UploadValues(url, pairs);
             string errorMessage = string.Empty;
             string err = string.Empty;
