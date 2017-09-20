@@ -50,7 +50,6 @@ namespace EdugameCloud.Lti.Sakai
             var testsUrl = $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessments&sourcedid={ course }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&secret=07951-BAUER-41481-CRLSHM&user_id={lmsUserParameters.LmsUser.UserId }&ext_sakai_provider_eid={ WebUtility.UrlEncode(lmsUserParameters.LmsUser.Username) }";
 
             string testsJson;
-
             using (var webClient = new WebClient())
             {
                 testsJson = webClient.DownloadString(testsUrl);
@@ -119,14 +118,16 @@ namespace EdugameCloud.Lti.Sakai
 
         public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null)
         {
-            //var session = GetReadOnlySession(lmsProviderName);
-            //LtiParamDTO param = session.LtiSession.LtiParam;
-            //var param = SessionModel.
-            //var url =GetApiUrl(param);
             var url = 
-                $@"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_submit_results2" +
-                $"&contentId={json }&sourcedid={ lmsUserParameters.CourseName }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com" +
-                $"&secret=07951-BAUER-41481-CRLSHM&ext_sakai_provider_eid={ lmsUserParameters.LmsUser.Username }&user_id={ WebUtility.UrlEncode(lmsUserParameters.LmsUser.UserId) }";
+                $@"http://sakai11.esynctraining.com/egcint/service/?" +
+                $"lti_message_type=egc_submit_results2" +
+                $"&contentId={ json }" +
+                $"&sourcedid={ lmsUserParameters.CourseName }" +
+                $"&lti_version=LTI-1p0" +
+                $"&oauth_consumer_key=esynctraining.com" +
+                $"&secret=07951-BAUER-41481-CRLSHM" +
+                $"&ext_sakai_provider_eid={ lmsUserParameters.LmsUser.Username }" +
+                $"&user_id={ WebUtility.UrlEncode(lmsUserParameters.LmsUser.UserId) }";
 
             //stud = @"[\"false\", \"test\", \"2\"]"
 
