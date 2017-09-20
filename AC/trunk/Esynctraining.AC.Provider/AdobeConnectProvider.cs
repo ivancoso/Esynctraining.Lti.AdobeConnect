@@ -463,6 +463,20 @@
                 : new FieldCollectionResult(status);
         }
 
+        public StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, AclFieldId fieldId, string value)
+        {
+            return UpdateAclFieldWithRequiredPasscode(aclId, fieldId.ToXmlString(), value);
+        }
+
+        public StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, string fieldId, string value)
+        {
+            StatusInfo status;
+
+            this.requestProcessor.Process(Commands.Sco.FieldUpdate, string.Format(CommandParams.Features.FieldUpdateWithRequiredPasscode, aclId, fieldId, value), out status);
+
+            return status;
+        }
+
         public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
         {
             return UpdateAclField(aclId, fieldId.ToXmlString(), value);

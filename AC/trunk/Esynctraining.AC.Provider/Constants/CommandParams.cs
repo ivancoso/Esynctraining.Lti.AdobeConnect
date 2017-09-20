@@ -240,6 +240,11 @@
             public const string FieldUpdate = "acl-id={0}&field-id={1}&value={2}";
 
             /// <summary>
+            /// The field update with Required passcode.
+            /// </summary>
+            public const string FieldUpdateWithRequiredPasscode = "acl-id={0}&field-id={1}&value={2}&is-mtg-passcode-req=true&permission-id=view-only&principal-id=public-access";
+
+            /// <summary>
             /// The field info.
             /// </summary>
             public const string FieldInfo = "acl-id={0}&filter-field-id={1}";
