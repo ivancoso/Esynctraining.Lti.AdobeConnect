@@ -203,6 +203,10 @@ namespace Esynctraining.AdobeConnect
 
         #endregion Telephony
 
+        StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, AclFieldId fieldId, string value);
+        StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, string fieldId, string value);
+
+
         StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value);
         StatusInfo UpdateAclField(string aclId, string fieldId, string value); //there could be custom Id for Acl field
         StatusInfo UpdateAclField(IEnumerable<AclFieldUpdateTrio> values);

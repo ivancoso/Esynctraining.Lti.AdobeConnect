@@ -963,7 +963,54 @@ namespace Esynctraining.AdobeConnect
         {
             return _provider.SearchScoByName(name);
         }
-        
+
+        public StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, AclFieldId fieldId, string value)
+        {
+            StatusInfo result;
+            try
+            {
+                result = _provider.UpdateAclFieldWithRequiredPasscode(aclId, fieldId, value);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw new AdobeConnectException("UpdateAclFieldWithRequiredPasscode exception", ex);
+            }
+
+            if (result.Code != StatusCodes.ok)
+            {
+                string errorInfo = result.GetErrorInfo();
+                _logger.Error("[AdobeConnectProxy Error] " + errorInfo);
+                throw new AdobeConnectException(result);
+            }
+
+            return result;
+        }
+
+        public StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, string fieldId, string value)
+        {
+            StatusInfo result;
+            try
+            {
+                result = _provider.UpdateAclFieldWithRequiredPasscode(aclId, fieldId, value);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw new AdobeConnectException("UpdateAclFieldWithRequiredPasscode exception", ex);
+            }
+
+            if (result.Code != StatusCodes.ok)
+            {
+                string errorInfo = result.GetErrorInfo();
+                _logger.Error("[AdobeConnectProxy Error] " + errorInfo);
+                throw new AdobeConnectException(result);
+            }
+
+            return result;
+        }
+
+
         public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
         {
             StatusInfo result;
