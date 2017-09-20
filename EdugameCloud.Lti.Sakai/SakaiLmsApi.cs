@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Web.Script.Serialization;
 using System.Xml;
@@ -20,21 +21,13 @@ namespace EdugameCloud.Lti.Sakai
 {
     public class SakaiLmsApi : ILmsAPI, ISakaiLmsApi
     {
+        private static readonly HttpClient _httpClient = new HttpClient();
+
         #region Fields
 
-        /// <summary>
-        ///     The logger.
-        /// </summary>
-        // ReSharper disable once NotAccessedField.Local
-        // ReSharper disable once InconsistentNaming
-        protected readonly ILogger logger;
+        protected readonly ILogger _logger;
 
-        /// <summary>
-        ///     The settings.
-        /// </summary>
-        // ReSharper disable once NotAccessedField.Local
-        // ReSharper disable once InconsistentNaming
-        private readonly dynamic settings;
+        private readonly dynamic _settings;
 
         #endregion
 
@@ -51,8 +44,8 @@ namespace EdugameCloud.Lti.Sakai
         /// </param>
         public SakaiLmsApi(ApplicationSettingsProvider settings, ILogger logger)
         {
-            this.settings = settings;
-            this.logger = logger;
+            _settings = settings;
+            _logger = logger;
         }
 
         #endregion
@@ -81,24 +74,18 @@ namespace EdugameCloud.Lti.Sakai
                 SakaiSession token = null;
 
                 var result = new List<LmsUserDTO>();
-                List<LmsUserDTO> enrollmentsResult = this.LoginIfNecessary(
+                List<LmsUserDTO> enrollmentsResult = LoginIfNecessary(
                     token,
                     c =>
                     {
-                        var pairs = new NameValueCollection
+                        var pairs = new Dictionary<string, string>
                         {
                             { "wsfunction", "core_enrol_get_enrolled_users" },
                             { "wstoken", c.Token },
                             { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
                         };
 
-                        byte[] response;
-                        using (var client = new WebClient())
-                        {
-                            response = client.UploadValues(c.Url, pairs);
-                        }
-
-                        string resp = Encoding.UTF8.GetString(response);
+                        string resp = PostValues(c.Url, pairs);
 
                         try
                         {
@@ -108,7 +95,7 @@ namespace EdugameCloud.Lti.Sakai
                         }
                         catch (Exception ex)
                         {
-                            logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
+                            _logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
 
                             return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
                         }
@@ -126,7 +113,7 @@ namespace EdugameCloud.Lti.Sakai
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse] LmsCompanyId:{0}. CourseId:{1}.", company.Id, courseId);
+                _logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse] LmsCompanyId:{0}. CourseId:{1}.", company.Id, courseId);
                 throw;
             }
         }
@@ -184,25 +171,18 @@ namespace EdugameCloud.Lti.Sakai
 
             try
             {
-                var pairs = new NameValueCollection
+                var pairs = new Dictionary<string, string>
                 {
                     { "username", userName },
                     { "password", password },
                     { "service", this.SakaiServiceShortName }
                 };
 
-                byte[] response;
                 string url = this.GetTokenUrl(lmsDomain, useSsl);
-
-                using (var client = new WebClient())
-                {
-                    response = client.UploadValues(url, pairs);
-                }
-
-                resp = Encoding.UTF8.GetString(response);
+                resp = PostValues(url, pairs);
                 if (!recursive && resp.Contains(@"""errorcode"":""sslonlyaccess"""))
                 {
-                    return this.LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
+                    return LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
                 }
 
                 var token = new JavaScriptSerializer().Deserialize<SakaiTokenDTO>(resp);
@@ -226,7 +206,7 @@ namespace EdugameCloud.Lti.Sakai
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[SakaiApi.LoginAndCreateAClient] LmsDomain:{0}. Username:{1}. Password:{2}.", lmsDomain, userName, password);
+                _logger.ErrorFormat(ex, "[SakaiApi.LoginAndCreateAClient] LmsDomain:{0}. Username:{1}. Password:{2}.", lmsDomain, userName, password);
 
                 error = string.Format(
                     "Not able to login into: {0} for user: {1};{2} error: {3}",
@@ -238,123 +218,45 @@ namespace EdugameCloud.Lti.Sakai
             }
         }
 
-        /// <summary>
-        /// The create rest client.
-        /// </summary>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SakaiSession"/>.
-        /// </returns>
-        private SakaiSession BeginBatch(out string error, LmsCompany lmsCompany)
+        private SakaiSession BeginBatch(out string error, ILmsLicense lmsCompany)
         {
             if (lmsCompany == null)
-            {
-                error = "No company lms settings";
-                return null;
-            }
+                throw new ArgumentNullException(nameof(lmsCompany));
+
             LmsUser lmsUser = lmsCompany.AdminUser;
             if (lmsUser != null)
             {
                 string lmsDomain = lmsUser.LmsCompany.LmsDomain;
                 bool useSsl = lmsUser.LmsCompany.UseSSL ?? false;
-                return this.LoginAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
+                return LoginAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
             error = "ASP.NET Session is expired";
             return null;
         }
 
-        /// <summary>
-        /// The fix domain.
-        /// </summary>
-        /// <param name="domain">
-        /// The domain.
-        /// </param>
-        /// <param name="useSsl">
-        /// The use SSL.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string FixDomain(string domain, bool useSsl)
+        private static string FixDomain(string domain, bool useSsl)
         {
             domain = domain.ToLower().AddHttpProtocol(useSsl);
-
             if (domain.Last() != '/')
             {
                 domain = domain + '/';
             }
-
-            if (((string)this.settings.SakaiChangeUrl).Equals("TRUE", StringComparison.OrdinalIgnoreCase))
-            {
-                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "192.168.10.60").Replace("Sakai.esynctraining.com", "192.168.10.60");
-            }
-
             return domain;
         }
 
-        /// <summary>
-        /// The get services url.
-        /// </summary>
-        /// <param name="domain">
-        /// The domain.
-        /// </param>
-        /// <param name="useSsl">
-        /// The use SSL.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private string GetServicesUrl(string domain, bool useSsl)
         {
-            var serviceUrl = (string)this.settings.SakaiServiceUrl;
-            return this.FixDomain(domain, useSsl) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
+            var serviceUrl = (string)_settings.SakaiServiceUrl;
+            return FixDomain(domain, useSsl) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
         }
 
-        /// <summary>
-        /// The get token url.
-        /// </summary>
-        /// <param name="domain">
-        /// The domain.
-        /// </param>
-        /// <param name="useSsl">
-        /// The use SSL.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private string GetTokenUrl(string domain, bool useSsl)
         {
-            var tokenUrl = (string)this.settings.SakaiTokenUrl;
-            return this.FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
+            var tokenUrl = (string)_settings.SakaiTokenUrl;
+            return FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
         }
 
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="lmsUser">
-        /// The LMS User.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         internal T LoginIfNecessary<T>(
             SakaiSession session,
             Func<SakaiSession, T> action,
@@ -362,7 +264,7 @@ namespace EdugameCloud.Lti.Sakai
             LmsUser lmsUser = null)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error, lmsUser.Return(x => x.LmsCompany, null));
+            session = session ?? BeginBatch(out error, lmsUser.Return(x => x.LmsCompany, null));
             if (session != null)
             {
                 return action(session);
@@ -375,11 +277,11 @@ namespace EdugameCloud.Lti.Sakai
         internal T LoginIfNecessary<T>(
             SakaiSession session,
             Func<SakaiSession, T> action,
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             out string error)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error, lmsCompany);
+            session = session ?? BeginBatch(out error, lmsCompany);
             if (session != null)
             {
                 return action(session);
@@ -388,35 +290,14 @@ namespace EdugameCloud.Lti.Sakai
             return default(T);
         }
 
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         internal T LoginIfNecessary<T>(
             SakaiSession session,
             Func<SakaiSession, Tuple<T, string>> action,
-            LmsCompany lmsCompany,
+            ILmsLicense lmsCompany,
             out string error)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error, lmsCompany);
+            session = session ?? BeginBatch(out error, lmsCompany);
             if (session != null && string.IsNullOrWhiteSpace(error))
             {
                 var res = action(session);
@@ -431,34 +312,35 @@ namespace EdugameCloud.Lti.Sakai
             return default(T);
         }
 
-        /// <summary>
-        /// The upload values.
-        /// </summary>
-        /// <param name="url">
-        /// The url.
-        /// </param>
-        /// <param name="pairs">
-        /// The pairs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="XmlDocument"/>.
-        /// </returns>
-        protected static XmlDocument UploadValues(string url, NameValueCollection pairs)
+        protected XmlDocument UploadValues(string url, Dictionary<string, string> pairs)
         {
-            byte[] response;
-            using (var client = new WebClient())
+            string resp = PostValues(url, pairs);
+
+            try
             {
-                response = client.UploadValues(url, pairs);
+                var xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(resp);
+                return xmlDoc;
             }
+            catch (XmlException)
+            {
+                _logger.Error($"Can't parse response to XML: {resp}");
+                throw;
+            }
+        }
 
-            string resp = Encoding.UTF8.GetString(response);
+        protected static string PostValues(string url, Dictionary<string, string> pairs)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                throw new ArgumentException("Non-empty value expected", nameof(url));
+            if (pairs == null)
+                throw new ArgumentNullException(nameof(pairs));
 
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(resp);
-            return xmlDoc;
+            return _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs)).Result.Content.ReadAsStringAsync().Result;
         }
 
         #endregion
 
     }
+
 }

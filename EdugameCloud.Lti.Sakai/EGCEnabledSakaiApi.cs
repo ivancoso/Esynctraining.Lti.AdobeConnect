@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using EdugameCloud.Lti.API.Sakai;
@@ -27,7 +26,7 @@ namespace EdugameCloud.Lti.Sakai
         {
             try
             {
-                var quizResult = this.LoginIfNecessary(
+                var quizResult = LoginIfNecessary(
                     null,
                     c =>
                     {
@@ -35,7 +34,7 @@ namespace EdugameCloud.Lti.Sakai
                             ? "local_edugamecloud_get_total_survey_list"
                             : "local_edugamecloud_get_total_quiz_list";
 
-                        var pairs = new NameValueCollection
+                        var pairs = new Dictionary<string, string>
                         {
                             { "wsfunction", functionName },
                             { "wstoken", c.Token },
@@ -53,7 +52,7 @@ namespace EdugameCloud.Lti.Sakai
                 {
                     error = error ?? "Sakai XML. Unable to retrive result from API";
 
-                    logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+                    _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
 
                     return Enumerable.Empty<LmsQuizInfoDTO>();
                 }
@@ -63,7 +62,7 @@ namespace EdugameCloud.Lti.Sakai
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
                 throw;
             }
         }
@@ -95,11 +94,11 @@ namespace EdugameCloud.Lti.Sakai
                 foreach (int quizId in quizIds)
                 {
                     int id = quizId;
-                    var quizResult = this.LoginIfNecessary(
+                    var quizResult = LoginIfNecessary(
                         null,
                         c =>
                         {
-                            var pairs = new NameValueCollection
+                            var pairs = new Dictionary<string, string>
                             {
                                 { "wsfunction", isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id" },
                                 { "wstoken", c.Token },
@@ -117,7 +116,7 @@ namespace EdugameCloud.Lti.Sakai
                     {
                         error = error ?? "Sakai XML. Unable to retrive result from API";
 
-                        logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+                        _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
 
                         return result;
                     }
@@ -130,7 +129,7 @@ namespace EdugameCloud.Lti.Sakai
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
                 throw;
             }
         }
@@ -154,12 +153,12 @@ namespace EdugameCloud.Lti.Sakai
             try
             {
                 // ReSharper disable once UnusedVariable
-                var quizResult = this.LoginIfNecessary(
+                var quizResult = LoginIfNecessary(
                     null,
                     c =>
                     {
                         json = json.Replace("\"", "\"");
-                        var pairs = new NameValueCollection
+                        var pairs = new Dictionary<string, string>
                         {
                             { "wsfunction", isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report" },
                             { "wstoken", c.Token },
@@ -174,7 +173,7 @@ namespace EdugameCloud.Lti.Sakai
 
                         if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
                         {
-                            logger.ErrorFormat("[EGCEnabledSakaiApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
+                            _logger.ErrorFormat("[EGCEnabledSakaiApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
                                 lmsUserParameters.Id,
                                 isSurvey,
                                 errorMessage,
@@ -189,7 +188,7 @@ namespace EdugameCloud.Lti.Sakai
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", lmsUserParameters.Id, isSurvey, json);
+                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", lmsUserParameters.Id, isSurvey, json);
                 throw;
             }
         }
@@ -198,5 +197,7 @@ namespace EdugameCloud.Lti.Sakai
         {
             throw new NotImplementedException();
         }
+
     }
+
 }

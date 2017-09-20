@@ -288,7 +288,7 @@ namespace EdugameCloud.Lti.Moodle
             }
         }
 
-        protected string PostValues(string url, Dictionary<string, string> pairs)
+        protected static string PostValues(string url, Dictionary<string, string> pairs)
         {
             if (string.IsNullOrWhiteSpace(url))
                 throw new ArgumentException("Non-empty value expected", nameof(url));
