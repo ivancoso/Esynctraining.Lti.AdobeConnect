@@ -7,11 +7,14 @@ namespace EdugameCloud.HttpClient
 {
     public class HttpClientWrapper
     {
-        private readonly System.Net.Http.HttpClient _httpClient  = new System.Net.Http.HttpClient();
+        private readonly System.Net.Http.HttpClient _httpClient;
 
         #region Constructors
 
-        public HttpClientWrapper(){}
+        public HttpClientWrapper()
+        {
+            _httpClient = new System.Net.Http.HttpClient();
+        }
 
         public HttpClientWrapper(System.Net.Http.HttpClient httpClient)
         {
@@ -22,7 +25,7 @@ namespace EdugameCloud.HttpClient
 
         #region Public Methods
 
-        public string PostValues(string url, Dictionary<string, string> pairs)
+        public string PostValues(string url, IEnumerable<KeyValuePair<string, string>> pairs)
         {
             if (string.IsNullOrWhiteSpace(url))
                 throw new ArgumentException("Non-empty value expected", nameof(url));
