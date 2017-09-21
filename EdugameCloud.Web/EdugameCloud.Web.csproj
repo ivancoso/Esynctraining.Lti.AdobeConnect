@@ -588,6 +588,7 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="machineKey.config" />
+    <Content Include="robots.txt" />
     <Content Include="Views\File\ImportQuestions.cshtml" />
     <Content Include="Views\File\ImportUsers.cshtml" />
     <Content Include="Views\File\VCF.cshtml" />
