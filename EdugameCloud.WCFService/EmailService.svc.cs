@@ -62,7 +62,7 @@ namespace EdugameCloud.WCFService
             {
                 if (dto.body != null)
                 {
-                    var message = dto.body;//.With(x => x.InnerXml);
+                    var message = dto.body;
                     message = Regex.Replace(message, "<[^>]*(>|$)", string.Empty);
                     message = message.Replace("\r\n", "\n").Replace("\r", "\n").Replace("&nbsp;", " ").Replace("&#39;", @"'");
                     message = Regex.Replace(message, @"[ ]{2,}", " ");
@@ -74,9 +74,7 @@ namespace EdugameCloud.WCFService
                     dto.message = message;
                 }
 
-                var isTransient = dto.emailHistoryId == 0;
-                var emailHistory = isTransient ? null : EmailHistoryModel.GetOneById(dto.emailHistoryId).Value;
-                emailHistory = this.ConvertDto(dto, emailHistory);
+                var emailHistory = ConvertDto(dto);
 
                 this.EmailHistoryModel.RegisterSave(emailHistory, true);
 
@@ -157,12 +155,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// Logs error to server log.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="NewsletterSubscriptionDTO"/>.
-        /// </returns>      
         public NewsletterSubscriptionDTO[] GetNewsletterSubscription()
         {
             return this.NewsletterSubscriptionModel.GetAll().Select(x => new NewsletterSubscriptionDTO(x)).ToArray();
@@ -183,7 +175,7 @@ namespace EdugameCloud.WCFService
             var dto = new NewsletterSubscriptionDTO { email = email, dateSubscribed = DateTime.Now.ConvertToUnixTimestamp(), isActive = true };
             if (this.IsValid(dto, out validationResult))
             {
-                var newsletterSubscription = this.ConvertDto(dto, null);
+                var newsletterSubscription = ConvertDto(dto);
                 this.NewsletterSubscriptionModel.RegisterSave(newsletterSubscription, true);
                 ////IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<EmailHistory>(NotificationType.Update, emailHistory.Id);
 
@@ -517,32 +509,32 @@ namespace EdugameCloud.WCFService
                 .ToList();
         }
 
-        private EmailHistory ConvertDto(EmailHistoryDTO history, EmailHistory instance)
+        private EmailHistory ConvertDto(EmailHistoryDTO history)
         {
-            instance = instance ?? new EmailHistory();
-            instance.Body = history.body; //.With(x => x.InnerXml);
-            instance.Date = history.date.ConvertFromUnixTimeStamp();
-            instance.Message = history.message;
-            instance.SentBcc = history.sentBcc;
-            instance.SentCc = history.sentCc;
-            instance.SentFrom = history.sentFrom;
-            instance.SentTo = history.sentTo;
-            instance.Subject = history.subject;
-            instance.User = this.UserModel.GetOneByEmail(history.sentTo).Value;
-            instance.Status = history.status;
-
-            return instance;
+            return new EmailHistory
+            {
+                Body = history.body,
+                Date = history.date.ConvertFromUnixTimeStamp(),
+                Message = history.message,
+                SentBcc = history.sentBcc,
+                SentCc = history.sentCc,
+                SentFrom = history.sentFrom,
+                SentTo = history.sentTo,
+                Subject = history.subject,
+                User = this.UserModel.GetOneByEmail(history.sentTo).Value,
+                Status = history.status
+            };
         }
         
-        private NewsletterSubscription ConvertDto(NewsletterSubscriptionDTO h, NewsletterSubscription instance)
+        private NewsletterSubscription ConvertDto(NewsletterSubscriptionDTO h)
         {
-            instance = instance ?? new NewsletterSubscription();
-            instance.Email = h.email;
-            instance.IsActive = h.isActive;
-            instance.DateSubscribed = h.dateSubscribed.ConvertFromUnixTimeStamp();
-            instance.DateUnsubscribed = h.dateUnsubscribed.ConvertFromUnixTimeStamp();
-
-            return instance;
+            return new NewsletterSubscription
+            {
+                Email = h.email,
+                IsActive = h.isActive,
+                DateSubscribed = h.dateSubscribed.ConvertFromUnixTimeStamp(),
+                DateUnsubscribed = h.dateUnsubscribed.ConvertFromUnixTimeStamp()
+            };
         }
 
         #endregion
