@@ -109,20 +109,12 @@
 
         #region Methods
 
-        /// <summary>
-        /// Add canvas url to return url
-        /// </summary>
-        /// <param name="returnUrl">Return url</param>
-        /// <param name="canvasUrl">Canvas url</param>
-        /// <returns>
-        /// Cleaned url
-        /// </returns>
-        public static string AddCanvasUrlToReturnUrl(string returnUrl, string canvasUrl)
-        {
-            var builder = new UriBuilder(returnUrl);
-            builder.AppendQueryArgument(Core.Utils.Constants.ReturnUriExtensionQueryParameterName, canvasUrl);
-            return builder.Uri.AbsoluteUri;
-        }
+        //public static string AddCanvasUrlToReturnUrl(string returnUrl, string canvasUrl)
+        //{
+        //    var builder = new UriBuilder(returnUrl);
+        //    builder.AppendQueryArgument(Core.Utils.Constants.ReturnUriExtensionQueryParameterName, canvasUrl);
+        //    return builder.Uri.AbsoluteUri;
+        //}
 
         /// <summary>
         /// The add provider key to return url.

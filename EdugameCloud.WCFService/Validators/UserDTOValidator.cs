@@ -31,7 +31,9 @@
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
             this.RuleFor(model => model.firstName).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_USER, "Empty first name");
             this.RuleFor(model => model.lastName).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_USER, "Empty last name");
-            this.RuleFor(model => model.email).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_USER, "Empty email").Must((model, x) => this.ValidateEmailAlreadyExists(model.userId, x)).WithError(Errors.CODE_ERRORTYPE_USER_EXISTING, "Email already exist");
+            this.RuleFor(model => model.email)
+                .NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_USER, "Empty email")
+                .Must((model, x) => this.ValidateEmailAlreadyExists(model.userId, x)).WithError(Errors.CODE_ERRORTYPE_USER_EXISTING, "Email already exists");
 //            this.RuleFor(model => model.password).Must((model, x) => model.userId != 0 || !string.IsNullOrWhiteSpace(x)).WithError(Errors.CODE_ERRORTYPE_INVALID_USER, "Password is empty for new user");
 //            this.RuleFor(model => model.companyId).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_USER, "Company is empty");
             this.RuleFor(model => model.languageId).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_USER, "Language is empty");

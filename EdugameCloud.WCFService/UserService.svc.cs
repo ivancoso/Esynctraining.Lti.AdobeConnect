@@ -501,15 +501,6 @@
             return user.Company.With(x => x.Id);
         }
 
-        /// <summary>
-        /// The registration.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserDTO"/>.
-        /// </returns>
         [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1515:SingleLineCommentMustBePrecededByBlankLine", Justification = "Reviewed. Suppression is OK here.")]
         public UserDTO Save(UserDTO user)
         {
