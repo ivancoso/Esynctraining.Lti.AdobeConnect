@@ -54,26 +54,6 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     All results.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="SurveyResultDTO" />.
-        /// </returns>
-        public SurveyResultDTO[] GetAll()
-        {
-            return this.SurveyResultModel.GetAll().Select(x => new SurveyResultDTO(x)).Take(10).ToArray();
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveyResultSaveAllDTO"/>.
-        /// </returns>
         public SurveyResultSaveAllDTO SaveAll(SurveyResultDTO[] results)
         {
             results = results ?? new SurveyResultDTO[] { };
@@ -125,63 +105,6 @@ namespace EdugameCloud.WCFService
 
                 throw;
             }
-        }
-
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SurveyResultDTO"/>.
-        /// </returns>
-        public SurveyResultDTO GetById(int id)
-        {
-            SurveyResult surveyResult;
-            if ((surveyResult = this.SurveyResultModel.GetOneById(id).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("SurveyResult.GetById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            return new SurveyResultDTO(surveyResult);
-        }
-
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        public int DeleteById(int id)
-        {
-            SurveyResult surveyResult;
-            var model = this.SurveyResultModel;
-            if ((surveyResult = model.GetOneById(id).Value) == null)
-            {
-                var error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-                    ErrorsTexts.GetResultError_Subject,
-                    ErrorsTexts.GetResultError_NotFound);
-                this.LogError("SurveyResult.DeleteById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            model.RegisterDelete(surveyResult, true);
-            //IoC.Resolve<RealTimeNotificationModel>()
-            //    .NotifyClientsAboutChangesInTable<SurveyResult>(
-            //        NotificationType.Delete,
-            //        surveyResult.With(x => x.Survey)
-            //            .With(x => x.SubModuleItem)
-            //            .With(x => x.CreatedBy)
-            //            .With(x => x.Company.Id),
-            //        surveyResult.Id);
-            return id;
         }
 
         #endregion

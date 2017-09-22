@@ -53,26 +53,6 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     All list.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="QuizResultDTO" />.
-        /// </returns>
-        public QuizResultDTO[] GetAll()
-        {
-            return this.QuizResultModel.GetAll().Select(x => new QuizResultDTO(x)).ToArray();
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizResultSaveAllDTO"/>.
-        /// </returns>
         public QuizResultSaveAllDTO SaveAll(QuizResultDTO[] results)
         {
             results = results ?? new QuizResultDTO[] { };
@@ -124,66 +104,6 @@ namespace EdugameCloud.WCFService
 
                 throw;
             }
-        }
-
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizResultDTO"/>.
-        /// </returns>
-        public QuizResultDTO GetById(int id)
-        {
-            QuizResult quizResult;
-            if ((quizResult = this.QuizResultModel.GetOneById(id).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("QuizResult.GetById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            return new QuizResultDTO(quizResult);
-        }
-
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        public int DeleteById(int id)
-        {
-            QuizResult quizResult;
-            var model = this.QuizResultModel;
-            if ((quizResult = model.GetOneById(id).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("QuizResult.DeleteById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            model.RegisterDelete(quizResult, true);
-            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<QuizResult>(NotificationType.Delete, quizResult.With(x => x.Quiz).With(x => x.SubModuleItem).With(x => x.CreatedBy).With(x => x.Company.Id), quizResult.Id);
-            return id;
-        }
-
-        public QuizResultDTO GetByGuid(Guid guid)
-        {
-            QuizResult quizResult;
-            if ((quizResult = this.QuizResultModel.GetOneByGuid(guid).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("QuizResult.GetById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            return new QuizResultDTO(quizResult);
         }
 
         #endregion

@@ -44,26 +44,6 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     All list.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="TestResultDTO" />.
-        /// </returns>
-        public TestResultDTO[] GetAll()
-        {
-            return this.TestResultModel.GetAll().Select(x => new TestResultDTO(x)).ToArray();
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestResultSaveAllDTO"/>.
-        /// </returns>
         public TestResultSaveAllDTO SaveAll(TestResultDTO[] results)
         {
             results = results ?? new TestResultDTO[] { };
@@ -115,66 +95,6 @@ namespace EdugameCloud.WCFService
 
                 throw;
             }
-        }
-
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestResultDTO"/>.
-        /// </returns>
-        public TestResultDTO GetById(int id)
-        {
-            TestResult quizResult;
-            if ((quizResult = this.TestResultModel.GetOneById(id).Value) == null)
-            {
-                var error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-                    ErrorsTexts.GetResultError_Subject,
-                    ErrorsTexts.GetResultError_NotFound);
-                this.LogError("TestResult.GetById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            return new TestResultDTO(quizResult);
-        }
-
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        public int DeleteById(int id)
-        {
-            TestResult quizResult;
-            var model = this.TestResultModel;
-            if ((quizResult = model.GetOneById(id).Value) == null)
-            {
-                var error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-                    ErrorsTexts.GetResultError_Subject,
-                    ErrorsTexts.GetResultError_NotFound);
-                this.LogError("TestResult.DeleteById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            model.RegisterDelete(quizResult, true);
-            //IoC.Resolve<RealTimeNotificationModel>()
-            //    .NotifyClientsAboutChangesInTable<TestResult>(
-            //        NotificationType.Delete,
-            //        quizResult.With(x => x.Test)
-            //            .With(x => x.SubModuleItem)
-            //            .With(x => x.CreatedBy)
-            //            .With(x => x.Company.Id),
-            //        quizResult.Id);
-            return id;
         }
 
         #endregion

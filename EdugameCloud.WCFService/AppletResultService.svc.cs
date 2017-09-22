@@ -34,31 +34,7 @@ namespace EdugameCloud.WCFService
         private AppletItemModel AppletItemModel => IoC.Resolve<AppletItemModel>();
 
         #region Public Methods and Operators
-
-        public AppletResultDTO[] GetAll()
-        {
-            return this.AppletResultModel.GetAll().Select(x => new AppletResultDTO(x)).ToArray();
-        }
-
-        public AppletResultDTO Save(AppletResultDTO appletResultDTO)
-        {
-            ValidationResult validationResult;
-            if (this.IsValid(appletResultDTO, out validationResult))
-            {
-                var sessionModel = this.AppletResultModel;
-                var isTransient = appletResultDTO.appletResultId == 0;
-                var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.appletResultId).Value;
-                appletResult = this.ConvertDto(appletResultDTO, appletResult);
-                sessionModel.RegisterSave(appletResult, true);
-                //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<AppletResult>(NotificationType.Update, appletResultDTO.companyId, appletResult.Id);
-                return new AppletResultDTO(appletResult);
-            }
-
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("AppleiResult.Save", error);
-            throw new FaultException<Error>(error, error.errorMessage);
-        }
-
+        
         public AppletResultSaveAllDTO SaveAll(AppletResultDTO[] appletResultDTOs)
         {
             appletResultDTOs = appletResultDTOs ?? new AppletResultDTO[] { };
@@ -102,48 +78,7 @@ namespace EdugameCloud.WCFService
 
             return result;
         }
-
-        public AppletResultDTO GetById(int id)
-        {
-            AppletResult appletResult;
-            if ((appletResult = this.AppletResultModel.GetOneById(id).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("AppletResult.GetById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            return new AppletResultDTO(appletResult);
-        }
-
-        public int DeleteById(int id)
-        {
-            AppletResult appletResult;
-            var model = this.AppletResultModel;
-            if ((appletResult = model.GetOneById(id).Value) == null)
-            {
-                var error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-                    ErrorsTexts.GetResultError_Subject,
-                    ErrorsTexts.GetResultError_NotFound);
-                this.LogError("AppletResult.DeleteById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-            
-            model.RegisterDelete(appletResult, true);
-            //int companyId = appletResult.With(x => x.AppletItem).With(x => x.SubModuleItem).With(x => x.CreatedBy).With(x => x.Company.Id);
-            //if (companyId != default(int))
-            //{
-            //    IoC.Resolve<RealTimeNotificationModel>()
-            //        .NotifyClientsAboutChangesInTable<AppletResult>(
-            //            NotificationType.Delete,
-            //            companyId,
-            //            appletResult.Id);
-            //}
-
-            return id;
-        }
-
+        
         #endregion
 
         #region Methods
