@@ -126,11 +126,11 @@ namespace EdugameCloud.WCFService
             if (item != null)
             {
                 var cc = item.SentCc != null
-                             ? this.FormEmailList(item.SentCc)
+                             ? FormEmailList(item.SentCc)
                              : new List<MailAddress>();
 
                 var bcc = item.SentBcc != null
-                             ? this.FormEmailList(item.SentBcc)
+                             ? FormEmailList(item.SentBcc)
                              : new List<MailAddress>();
 
                 MailModel.SendEmail(
