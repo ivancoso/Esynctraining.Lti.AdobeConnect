@@ -24,22 +24,6 @@
         QuestionTypeDTO[] GetAll();
 
         /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedQuestionDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        PagedQuestionTypeDTO GetPaged(int pageIndex, int pageSize);
-
-        /// <summary>
         /// The all.
         /// </summary>
         /// <returns>

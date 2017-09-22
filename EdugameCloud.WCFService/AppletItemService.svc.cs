@@ -39,17 +39,7 @@
         {
             return this.AppletItemModel.GetByUser(userId).Select(x => new AppletItemDTO(x)).ToArray();
         }
-
-        public PagedAppletItemsDTO GetPaged(int pageIndex, int pageSize)
-        {
-            int totalCount;
-            return new PagedAppletItemsDTO
-            {
-                objects = this.AppletItemModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new AppletItemDTO(x)).ToArray(),
-                totalCount = totalCount
-            };
-        }
-
+        
         public AppletItemDTO Save(AppletItemDTO appletResultDTO)
         {
             ValidationResult validationResult;

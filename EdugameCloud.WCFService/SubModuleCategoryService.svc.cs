@@ -176,28 +176,6 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedSubModuleCategoryDTO"/>.
-        /// </returns>
-        public PagedSubModuleCategoryDTO GetPaged(int pageIndex, int pageSize)
-        {
-            int totalCount;
-            return new PagedSubModuleCategoryDTO
-            {
-                objects = this.SubModuleCategoryModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new SubModuleCategoryDTO(x)).ToArray(),
-                totalCount = totalCount
-            };
-        }
-
-        /// <summary>
         /// The get applet categories by user id.
         /// </summary>
         /// <param name="userId">

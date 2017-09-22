@@ -80,22 +80,6 @@
         CrosswordDTO[] GetSharedCrosswordsByUserId(int userId);
 
         /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedAppletItemsDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        PagedAppletItemsDTO GetPaged(int pageIndex, int pageSize);
-
-        /// <summary>
         /// The save.
         /// </summary>
         /// <param name="appletItemDTO">

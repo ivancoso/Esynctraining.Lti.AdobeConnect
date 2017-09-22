@@ -125,29 +125,6 @@
             return id;
         }
 
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedQuestionTypeDTO"/>.
-        /// </returns>
-        // TODO: do we use it??
-        public PagedQuestionTypeDTO GetPaged(int pageIndex, int pageSize)
-        {
-            int totalCount;
-            return new PagedQuestionTypeDTO
-            {
-                objects = this.QuestionTypeModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new QuestionTypeDTO(x)).ToArray(),
-                totalCount = totalCount
-            };
-        }
-
         #endregion
 
         #region Methods

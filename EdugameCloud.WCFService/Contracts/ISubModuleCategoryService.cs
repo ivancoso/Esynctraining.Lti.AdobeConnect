@@ -8,13 +8,11 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     The SubModuleCategory Service interface.
+    /// The SubModuleCategory Service interface.
     /// </summary>
     [ServiceContract]
     public interface ISubModuleCategoryService
     {
-        #region Public Methods and Operators
-
         /// <summary>
         /// Deletes user by id.
         /// </summary>
@@ -71,23 +69,6 @@
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetById?id={id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         SubModuleCategoryDTO GetById(int id);
-
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedSubModuleCategoryDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebGet(UriTemplate = "GetPaged?pageIndex={pageIndex}&pageSize={pageSize}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        PagedSubModuleCategoryDTO GetPaged(int pageIndex, int pageSize);
 
         /// <summary>
         /// The get quiz categories by user id.
@@ -175,6 +156,6 @@
             BodyStyle = WebMessageBodyStyle.Bare)]
         SubModuleCategorySaveAllDTO SaveAll(SubModuleCategoryDTO[] results);
 
-        #endregion
     }
+
 }

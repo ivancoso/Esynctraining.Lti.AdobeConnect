@@ -8,13 +8,11 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     The SubModuleItem Service interface.
+    /// The SubModuleItem Service interface.
     /// </summary>
     [ServiceContract]
     public interface ISubModuleItemService
     {
-        #region Public Methods and Operators
-
         /// <summary>
         /// Deletes user by id.
         /// </summary>
@@ -83,6 +81,7 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetPaged?pageIndex={pageIndex}&pageSize={pageSize}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        // IS: Checked. is in use.
         PagedSubModuleItemsDTO GetPaged(int pageIndex, int pageSize);
 
         /// <summary>
@@ -171,6 +170,6 @@
             BodyStyle = WebMessageBodyStyle.Bare)]
         SubModuleItemSaveAllDTO SaveAll(SubModuleItemDTO[] results);
 
-        #endregion
     }
+
 }

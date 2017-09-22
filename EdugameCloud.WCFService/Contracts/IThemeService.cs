@@ -11,8 +11,6 @@
     [ServiceContract]
     public interface IThemeService
     {
-        #region Public Methods and Operators
-
         /// <summary>
         /// The all.
         /// </summary>
@@ -22,22 +20,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         ThemeDTO[] GetAll();
-
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedThemeDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        PagedThemeDTO GetPaged(int pageIndex, int pageSize);
 
         /// <summary>
         /// Deletes user by id.
@@ -78,6 +60,6 @@
         [FaultContract(typeof(Error))]
         ThemeDTO Save(ThemeDTO resultDto);
 
-        #endregion
     }
+
 }

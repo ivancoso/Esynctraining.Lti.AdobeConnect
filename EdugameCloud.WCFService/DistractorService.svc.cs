@@ -153,28 +153,6 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedDistractorDTO"/>.
-        /// </returns>
-        public PagedDistractorDTO GetPaged(int pageIndex, int pageSize)
-        {
-            int totalCount;
-            return new PagedDistractorDTO
-            {
-                objects = this.DistractorModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new DistractorDTO(x)).ToArray(),
-                totalCount = totalCount
-            };
-        }
-
         #endregion
 
         #region Methods

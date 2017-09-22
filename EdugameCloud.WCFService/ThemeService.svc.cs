@@ -115,28 +115,6 @@
             return id;
         }
 
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedThemeDTO"/>.
-        /// </returns>
-        public PagedThemeDTO GetPaged(int pageIndex, int pageSize)
-        {
-            int totalCount;
-            return new PagedThemeDTO
-            {
-                objects = this.ThemeModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new ThemeDTO(x)).ToArray(),
-                totalCount = totalCount
-            };
-        }
-
         #endregion
 
         #region Methods

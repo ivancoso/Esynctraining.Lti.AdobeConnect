@@ -142,6 +142,7 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
+        // IS: Checked. is in use.
         public PagedSubModuleItemsDTO GetPaged(int pageIndex, int pageSize)
         {
             int totalCount;
