@@ -8,11 +8,13 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Script.Serialization;
 using System.Xml;
+using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
+using Esynctraining.BlackBoardClient;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -21,7 +23,7 @@ namespace EdugameCloud.Lti.Sakai
 {
     public class SakaiLmsApi : ILmsAPI, ISakaiLmsApi
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 
         #region Fields
 
@@ -85,7 +87,7 @@ namespace EdugameCloud.Lti.Sakai
                             { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
                         };
 
-                        string resp = PostValues(c.Url, pairs);
+                        string resp = _httpClientWrapper.PostValues(c.Url, pairs);
 
                         try
                         {
@@ -179,7 +181,7 @@ namespace EdugameCloud.Lti.Sakai
                 };
 
                 string url = this.GetTokenUrl(lmsDomain, useSsl);
-                resp = PostValues(url, pairs);
+                resp = _httpClientWrapper.PostValues(url, pairs);
                 if (!recursive && resp.Contains(@"""errorcode"":""sslonlyaccess"""))
                 {
                     return LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
@@ -314,7 +316,7 @@ namespace EdugameCloud.Lti.Sakai
 
         protected XmlDocument UploadValues(string url, Dictionary<string, string> pairs)
         {
-            string resp = PostValues(url, pairs);
+            string resp = _httpClientWrapper.PostValues(url, pairs);
 
             try
             {
@@ -327,16 +329,6 @@ namespace EdugameCloud.Lti.Sakai
                 _logger.Error($"Can't parse response to XML: {resp}");
                 throw;
             }
-        }
-
-        protected static string PostValues(string url, Dictionary<string, string> pairs)
-        {
-            if (string.IsNullOrWhiteSpace(url))
-                throw new ArgumentException("Non-empty value expected", nameof(url));
-            if (pairs == null)
-                throw new ArgumentNullException(nameof(pairs));
-
-            return _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs)).Result.Content.ReadAsStringAsync().Result;
         }
 
         #endregion

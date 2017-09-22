@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -16,6 +17,7 @@ namespace EdugameCloud.Lti.Sakai
     internal sealed class SakaiApi : ISakaiApi
     {
         private readonly ILogger _logger;
+        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 
         public SakaiApi(ILogger logger)
         {
@@ -49,11 +51,7 @@ namespace EdugameCloud.Lti.Sakai
             var course = lmsUserParameters.CourseName;
             var testsUrl = $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessments&sourcedid={ course }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&secret=07951-BAUER-41481-CRLSHM&user_id={lmsUserParameters.LmsUser.UserId }&ext_sakai_provider_eid={ WebUtility.UrlEncode(lmsUserParameters.LmsUser.Username) }";
 
-            string testsJson;
-            using (var webClient = new WebClient())
-            {
-                testsJson = webClient.DownloadString(testsUrl);
-            }
+            string testsJson = _httpClientWrapper.DownloadString(testsUrl); ;
 
             SakaiSiteDto[] tests = null;
             if (!testsJson.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
@@ -72,16 +70,13 @@ namespace EdugameCloud.Lti.Sakai
             foreach (var test in tests)
             {
                 //var json = JsonConvert.SerializeObject(apiParam);
-                string resp;
                 var assessmentId = test.publishedAssessmentId;
                 var quizzesIds = new List<int>();
                 quizzesIds.Add(assessmentId);
                 var url = 
                     $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid={ course }&assessmentId={ assessmentId }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&secret=07951-BAUER-41481-CRLSHM&user_id={lmsUserParameters.LmsUser.UserId }&ext_sakai_provider_eid={ WebUtility.UrlEncode(lmsUserParameters.LmsUser.Username) }";
-                using (var webClient = new WebClient())
-                {
-                    resp = webClient.DownloadString(url);
-                }
+
+                string resp = _httpClientWrapper.DownloadString(url);
 
                 var lqd = new LmsQuizDTO()
                 {
@@ -133,12 +128,7 @@ namespace EdugameCloud.Lti.Sakai
 
             var resultsJson = JsonConvert.SerializeObject(answers);
 
-            using (var webClient = new WebClient())
-            {
-                webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
-                webClient.UploadString(url, resultsJson);
-            }
-
+            _httpClientWrapper.UploadJsonString(url, resultsJson);
 
         }
 

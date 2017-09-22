@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.DTO;
@@ -12,6 +13,8 @@ namespace EdugameCloud.Lti.Sakai
 {
     internal sealed class SakaiCalendarExportService : ICalendarExportService
     {
+        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
+
         public IEnumerable<MeetingSessionDTO> SaveEvents(int meetingId, IEnumerable<MeetingSessionDTO> eventDtos, LtiParamDTO param)
         {
             var apiParam = new SakaiApiObject
@@ -32,12 +35,7 @@ namespace EdugameCloud.Lti.Sakai
             };
 
             var json = JsonConvert.SerializeObject(apiParam);
-            string resp;
-            using (var webClient = new WebClient())
-            {
-                webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
-                resp = webClient.UploadString(GetApiUrl(param), "POST", json);
-            }
+            string resp = _httpClientWrapper.UploadJsonString(GetApiUrl(param), json);
 
             var events = JsonConvert.DeserializeObject<ExternalEventDto[]>(resp);
             var sessions = events.Select(ConvertFromApiDtoToSessionDto).ToList();
@@ -84,12 +82,7 @@ namespace EdugameCloud.Lti.Sakai
             };
 
             var json = JsonConvert.SerializeObject(apiParam);
-            string resp;
-            using (var webClient = new WebClient())
-            {
-                webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
-                resp = webClient.UploadString(GetApiUrl(param), "POST", json);
-            }
+            string resp = _httpClientWrapper.UploadJsonString(GetApiUrl(param), json);
 
             return resp.Replace("\n", String.Empty).Replace("\r", String.Empty).Split(',');
         }

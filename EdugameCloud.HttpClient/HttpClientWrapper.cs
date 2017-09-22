@@ -16,11 +16,6 @@ namespace EdugameCloud.HttpClient
             _httpClient = new System.Net.Http.HttpClient();
         }
 
-        public HttpClientWrapper(System.Net.Http.HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
         #endregion Constructors
 
         #region Public Methods
@@ -43,10 +38,10 @@ namespace EdugameCloud.HttpClient
             return content.ReadAsStringAsync().Result;
         }
 
-        public HttpResponseMessage UploadJsonString(string address, string data)
+        public string UploadJsonString(string address, string data)
         {
             var content = new StringContent(data, Encoding.UTF8, "application/json");
-            return _httpClient.PostAsync(address, content).Result;
+            return _httpClient.PostAsync(address, content).Result.Content.ReadAsStringAsync().Result;
         }
 
         #endregion Public Methods
