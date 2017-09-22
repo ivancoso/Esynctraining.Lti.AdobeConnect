@@ -219,10 +219,8 @@
     <Content Include="Mail\Templates\Trial.html" />
     <Content Include="CompanyLmsService.svc" />
     <Content Include="EmailService.svc" />
-    <Content Include="TestQuestionResultService.svc" />
     <Content Include="TestResultService.svc" />
     <Content Include="TestService.svc" />
-    <Content Include="SurveyQuestionResultService.svc" />
     <Content Include="SurveyResultService.svc" />
     <Content Include="SurveyService.svc" />
     <Content Include="SNMemberService.svc" />
@@ -239,7 +237,6 @@
     <Content Include="LookupService.svc" />
     <Content Include="CompanyService.svc" />
     <Content Include="CompanyLicenseService.svc" />
-    <Content Include="QuizQuestionResultService.svc" />
     <Content Include="QuizService.svc" />
     <Content Include="AppletItemService.svc" />
     <Content Include="ACSessionService.svc" />
@@ -309,7 +306,6 @@
     <Compile Include="Contracts\ILookupService.cs" />
     <Compile Include="Contracts\IQuestionService.cs" />
     <Compile Include="Contracts\IQuestionTypeService.cs" />
-    <Compile Include="Contracts\IQuizQuestionResultService.cs" />
     <Compile Include="Contracts\IQuizResultService.cs" />
     <Compile Include="Contracts\IQuizService.cs" />
     <Compile Include="Contracts\IReportingService.cs" />
@@ -320,10 +316,8 @@
     <Compile Include="Contracts\ISocialService.cs" />
     <Compile Include="Contracts\ISubModuleCategoryService.cs" />
     <Compile Include="Contracts\ISubModuleItemService.cs" />
-    <Compile Include="Contracts\ISurveyQuestionResultService.cs" />
     <Compile Include="Contracts\ISurveyResultService.cs" />
     <Compile Include="Contracts\ISurveyService.cs" />
-    <Compile Include="Contracts\ITestQuestionResultService.cs" />
     <Compile Include="Contracts\ITestResultService.cs" />
     <Compile Include="Contracts\ITestService.cs" />
     <Compile Include="Contracts\IThemeService.cs" />
@@ -367,17 +361,11 @@
     </Compile>
     <Compile Include="ExtendedHttpBehavior\ExtendedQueryStringConverter.cs" />
     <Compile Include="ExtendedHttpBehavior\ExtendedWebHttpBehaviour.cs" />
-    <Compile Include="TestQuestionResultService.svc.cs">
-      <DependentUpon>TestQuestionResultService.svc</DependentUpon>
-    </Compile>
     <Compile Include="TestResultService.svc.cs">
       <DependentUpon>TestResultService.svc</DependentUpon>
     </Compile>
     <Compile Include="TestService.svc.cs">
       <DependentUpon>TestService.svc</DependentUpon>
-    </Compile>
-    <Compile Include="SurveyQuestionResultService.svc.cs">
-      <DependentUpon>SurveyQuestionResultService.svc</DependentUpon>
     </Compile>
     <Compile Include="SurveyResultService.svc.cs">
       <DependentUpon>SurveyResultService.svc</DependentUpon>
@@ -426,9 +414,6 @@
     </Compile>
     <Compile Include="CompanyLicenseService.svc.cs">
       <DependentUpon>CompanyLicenseService.svc</DependentUpon>
-    </Compile>
-    <Compile Include="QuizQuestionResultService.svc.cs">
-      <DependentUpon>QuizQuestionResultService.svc</DependentUpon>
     </Compile>
     <Compile Include="QuizService.svc.cs">
       <DependentUpon>QuizService.svc</DependentUpon>
