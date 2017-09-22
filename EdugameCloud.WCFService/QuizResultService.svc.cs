@@ -68,9 +68,8 @@ namespace EdugameCloud.WCFService
                     if (this.IsValid(appletResultDTO, out validationResult))
                     {
                         var sessionModel = this.QuizResultModel;
-                        var isTransient = appletResultDTO.quizResultId == 0;
-                        var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.quizResultId).Value;
-                        appletResult = this.ConvertDto(appletResultDTO, appletResult);
+
+                        var appletResult = this.ConvertDto(appletResultDTO);
                         sessionModel.RegisterSave(appletResult);
 
                         var quizSaveResult = new QuizResultSaveResultDTO(appletResult);
@@ -122,9 +121,9 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="QuizResult"/>.
         /// </returns>
-        private QuizResult ConvertDto(QuizResultDTO resultDTO, QuizResult instance)
+        private QuizResult ConvertDto(QuizResultDTO resultDTO)
         {
-            instance = instance ?? new QuizResult();
+            var instance = new QuizResult();
             instance.Score = resultDTO.score;
             instance.StartTime = resultDTO.startTime.ConvertFromUnixTimeStamp();
             instance.EndTime = resultDTO.endTime.ConvertFromUnixTimeStamp();
