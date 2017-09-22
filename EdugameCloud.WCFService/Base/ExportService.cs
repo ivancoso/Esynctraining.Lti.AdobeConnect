@@ -32,21 +32,12 @@
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the distractor model.
-        /// </summary>
-        protected DistractorModel DistractorModel
-        {
-            get
-            {
-                return IoC.Resolve<DistractorModel>();
-            }
-        }
+        protected DistractorModel DistractorModel => IoC.Resolve<DistractorModel>();
 
         /// <summary>
         /// Gets the export path.
         /// </summary>
-        protected string ExportPath
+        private string ExportPath
         {
             get
             {
@@ -57,7 +48,7 @@
         /// <summary>
         /// Gets the import path.
         /// </summary>
-        protected string ImportPath
+        private string ImportPath
         {
             get
             {
@@ -65,98 +56,26 @@
             }
         }
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        protected QuestionForLikertModel QuestionForLikertModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForLikertModel>();
-            }
-        }
+        protected QuestionForLikertModel QuestionForLikertModel => IoC.Resolve<QuestionForLikertModel>();
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        protected QuestionForTrueFalseModel QuestionForTrueFalseModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForTrueFalseModel>();
-            }
-        }
+        protected QuestionForTrueFalseModel QuestionForTrueFalseModel => IoC.Resolve<QuestionForTrueFalseModel>();
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        protected QuestionForOpenAnswerModel QuestionForOpenAnswerModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForOpenAnswerModel>();
-            }
-        }
+        protected QuestionForOpenAnswerModel QuestionForOpenAnswerModel => IoC.Resolve<QuestionForOpenAnswerModel>();
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        protected QuestionForRateModel QuestionForRateModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForRateModel>();
-            }
-        }
+        protected QuestionForRateModel QuestionForRateModel => IoC.Resolve<QuestionForRateModel>();
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        protected QuestionForSingleMultipleChoiceModel QuestionForSingleMultipleChoiceModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForSingleMultipleChoiceModel>();
-            }
-        }
+        protected QuestionForSingleMultipleChoiceModel QuestionForSingleMultipleChoiceModel => IoC.Resolve<QuestionForSingleMultipleChoiceModel>();
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        protected QuestionForWeightBucketModel QuestionForWeightBucketModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForWeightBucketModel>();
-            }
-        }
+        protected QuestionForWeightBucketModel QuestionForWeightBucketModel => IoC.Resolve<QuestionForWeightBucketModel>();
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        protected QuestionModel QuestionModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionModel>();
-            }
-        }
+        protected QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
-        /// <summary>
-        /// Gets the question type model.
-        /// </summary>
-        protected QuestionTypeModel QuestionTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionTypeModel>();
-            }
-        }
+        protected QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
 
         /// <summary>
         /// Gets the schemas path.
         /// </summary>
-        protected string SchemasPath
+        private string SchemasPath
         {
             get
             {
@@ -167,7 +86,7 @@
         /// <summary>
         /// Gets the storage path.
         /// </summary>
-        protected string StoragePath
+        private string StoragePath
         {
             get
             {
@@ -257,7 +176,7 @@
         /// <returns>
         /// Serialized string.
         /// </returns>
-        protected string ExportToString(SubModuleItem smi, List<int> questionIds = null)
+        private string ExportToString(SubModuleItem smi, List<int> questionIds = null)
         {
             string result = string.Empty;
             List<Question> questionsSource = this.QuestionModel.GetByQuestionIdsAndSmiID(smi.Id, questionIds).ToList();
@@ -313,7 +232,7 @@
         /// <returns>
         /// List of questions.
         /// </returns>
-        protected List<EdugameQuestion> GetEdugameQuestions(
+        private List<EdugameQuestion> GetEdugameQuestions(
             List<Question> questions, 
             List<QuestionFor> customQuestions, 
             List<Distractor> distractors, 
@@ -503,7 +422,7 @@
         /// <returns>
         /// Questions collection.
         /// </returns>
-        protected EdugameQuestions ImportFromString(string data, FormatsEnum format)
+        private EdugameQuestions ImportFromString(string data, FormatsEnum format)
         {
             var result = new EdugameQuestions();
             try
@@ -542,7 +461,7 @@
         /// <returns>
         /// The <see cref="QuestionFor"/>.
         /// </returns>
-        protected QuestionFor ProcessCustomQuestionType(Question question, EdugameQuestion dto)
+        private QuestionFor ProcessCustomQuestionType(Question question, EdugameQuestion dto)
         {
             switch (question.QuestionType.Id)
             {
