@@ -2,7 +2,6 @@
 namespace EdugameCloud.WCFService
 {
     using System;
-    using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
@@ -13,12 +12,9 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Contracts;
 
     using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
-
-    using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
@@ -34,50 +30,15 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        public int DeleteById(int id)
-        {
-            ACSession session;
-            if ((session = this.ACSessionModel.GetOneById(id).Value) == null)
-            {
-                var error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_SESSION,
-                    ErrorsTexts.SessionError_Subject,
-                    ErrorsTexts.SessionError_NotFound);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            this.ACSessionModel.RegisterDelete(session, true);
-            return id;
-        }
-
-        public ACSessionDTO GetById(int id)
-        {
-            ACSession session;
-            if ((session = this.ACSessionModel.GetOneById(id).Value) == null)
-            {
-                var error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_SESSION,
-                    ErrorsTexts.SessionError_Subject,
-                    ErrorsTexts.SessionError_NotFound);
-                this.LogError("ACSession.GetById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            return new ACSessionDTO(session);
-        }
-
-        public ACSessionDTO[] GetBySMIId(int smiId)
-        {
-            var allBySmiId = this.ACSessionModel.GetAllBySmiId(smiId);
-            return allBySmiId.Select(x => new ACSessionDTO(x)).ToArray();
-        }
-
         public ACSessionDTO Save(ACSessionDTO session)
         {
+            if (session == null)
+                throw new ArgumentNullException(nameof(session));
+
             try
             {
                 ValidationResult validationResult;
-                if (this.IsValid(session, out validationResult))
+                if (IsValid(session, out validationResult))
                 {
                     ACSessionModel sessionModel = this.ACSessionModel;
                     bool isTransient = session.acSessionId == 0;

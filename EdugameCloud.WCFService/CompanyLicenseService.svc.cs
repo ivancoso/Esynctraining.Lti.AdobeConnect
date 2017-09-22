@@ -133,18 +133,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The get all.
-        /// </summary>
-        /// <param name="licenseId">
-        /// The license Id.
-        /// </param>
-        /// <param name="seatsCount">
-        /// The seats Count.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int UpdateSeatsCount(int licenseId, int seatsCount)
         {
             var model = this.CompanyLicenseModel;
