@@ -13,6 +13,8 @@
         /// <summary>
         /// The played.
         /// </summary>
-        Played = 2
+        Played = 2,
+
     }
+
 }

@@ -146,13 +146,13 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="QuizQuestionResult"/>.
         /// </returns>
-        private TestQuestionResult ConvertDto(TestQuestionResultDTO resultDTO, TestQuestionResult instance)
+        private TestQuestionResult ConvertDto(TestQuestionResultDTO resultDTO, TestQuestionResult instance, TestResult testResult)
         {
             instance = instance ?? new TestQuestionResult();
             instance.Question = resultDTO.question;
             instance.IsCorrect = resultDTO.isCorrect;
             instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
-            instance.TestResult = this.TestResultModel.GetOneById(resultDTO.testResultId).Value;
+            instance.TestResult = testResult;
             instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
             return instance;
         }
@@ -170,11 +170,6 @@ namespace EdugameCloud.WCFService
         {
             results = results ?? new TestQuestionResultDTO[] { };
 
-            foreach (var item in results)
-            {
-                item.testResultId = testResult.Id;
-            }
-
             var result = new TestQuestionResultSaveAllDTO();
             var faults = new List<string>();
             var created = new List<TestQuestionResult>();
@@ -186,7 +181,7 @@ namespace EdugameCloud.WCFService
                     var sessionModel = this.TestQuestionResultModel;
                     var isTransient = appletResultDTO.testQuestionResultId == 0;
                     var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.testQuestionResultId).Value;
-                    appletResult = this.ConvertDto(appletResultDTO, appletResult);
+                    appletResult = this.ConvertDto(appletResultDTO, appletResult, testResult);
                     sessionModel.RegisterSave(appletResult);
                     created.Add(appletResult);
                 }
