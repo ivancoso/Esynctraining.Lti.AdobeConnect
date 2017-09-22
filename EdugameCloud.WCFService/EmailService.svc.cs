@@ -1,46 +1,38 @@
 ﻿// ReSharper disable once CheckNamespace
 
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Xml.Linq;
+using System.Linq;
+using System.Net.Mail;
+using System.ServiceModel;
+using System.ServiceModel.Activation;
+using System.Text.RegularExpressions;
+using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Core.Domain.Entities;
+using EdugameCloud.WCFService.Base;
+using EdugameCloud.WCFService.Contracts;
 using EdugameCloud.WCFService.Mail.Models;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AdobeConnect;
+using Esynctraining.Core.Domain.Entities;
+using Esynctraining.Core.Enums;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Utils;
+using FluentValidation.Results;
 using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
+using Resources;
 using Calendar = Ical.Net.Calendar;
 
 namespace EdugameCloud.WCFService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net.Mail;
-    using System.ServiceModel;
-    using System.ServiceModel.Activation;
-    using System.Text.RegularExpressions;
-
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.WCFService.Base;
-    using EdugameCloud.WCFService.Contracts;
-
-    using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Utils;
-
-    using FluentValidation.Results;
-
-    using Resources;
-
     /// <summary>
-    ///     The email service.
+    /// The email service.
     /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]
@@ -315,54 +307,53 @@ namespace EdugameCloud.WCFService
         //    return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
         //}
 
-        private static Dictionary<string, string> GetDynamicQuestionAnswers(string acUrl, string scoId, string breezeSession, string userEmail)
-        {
-            var userStateSchoolAnswersUrl =
-                $"{acUrl}/api/xml?action=report-event-participants-complete-information&sco-id={scoId}&session={breezeSession}";
+        //private static Dictionary<string, string> GetDynamicQuestionAnswers(string acUrl, string scoId, string breezeSession, string userEmail)
+        //{
+        //    var userStateSchoolAnswersUrl =
+        //        $"{acUrl}/api/xml?action=report-event-participants-complete-information&sco-id={scoId}&session={breezeSession}";
 
-            var reply = string.Empty;
+        //    var reply = string.Empty;
 
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
-                var request = new HttpRequestMessage(HttpMethod.Get, userStateSchoolAnswersUrl);
-                reply = client.SendAsync(request).Result.Content.ReadAsStringAsync().Result;
-            }
+        //    using (var client = new HttpClient())
+        //    {
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
+        //        var request = new HttpRequestMessage(HttpMethod.Get, userStateSchoolAnswersUrl);
+        //        reply = client.SendAsync(request).Result.Content.ReadAsStringAsync().Result;
+        //    }
 
-            var doc = XDocument.Parse(reply);
-            var questions = doc.Root?.Descendants("registration_questions").Descendants("question").ToList();
-            var stateNode =
-                questions?.FirstOrDefault(
-                    x =>
-                        x.Attribute("description")
-                            .Value.ToString()
-                            .ToLower()
-                            .Equals("state", StringComparison.OrdinalIgnoreCase));
-            var schoolNode =
-                questions?.FirstOrDefault(
-                    x =>
-                        x.Attribute("description")
-                            .Value.ToString()
-                            .ToLower()
-                            .Equals("school", StringComparison.OrdinalIgnoreCase));
+        //    var doc = XDocument.Parse(reply);
+        //    var questions = doc.Root?.Descendants("registration_questions").Descendants("question").ToList();
+        //    var stateNode =
+        //        questions?.FirstOrDefault(
+        //            x =>
+        //                x.Attribute("description")
+        //                    .Value.ToString()
+        //                    .ToLower()
+        //                    .Equals("state", StringComparison.OrdinalIgnoreCase));
+        //    var schoolNode =
+        //        questions?.FirstOrDefault(
+        //            x =>
+        //                x.Attribute("description")
+        //                    .Value.ToString()
+        //                    .ToLower()
+        //                    .Equals("school", StringComparison.OrdinalIgnoreCase));
 
-            var stateQuestionId = stateNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
-            var schoolQuestionId = schoolNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
+        //    var stateQuestionId = stateNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
+        //    var schoolQuestionId = schoolNode?.Attribute("id")?.Value.ToString() ?? string.Empty;
 
-            var userAnswers = doc.Root?.Descendants("user_list").Descendants("user").ToList();
-            var userAnswer =
-                userAnswers?.FirstOrDefault(
-                    x =>
-                        x.Attribute("login")
-                            .Value.ToString()
-                            .ToLower()
-                            .Equals(userEmail, StringComparison.OrdinalIgnoreCase));
-            var stateAnswer = userAnswer?.Attribute("registration_question_" + stateQuestionId)?.Value ?? String.Empty;
-            var schoolAnswer = userAnswer?.Attribute("registration_question_" + schoolQuestionId)?.Value ?? String.Empty;
-            var result = new Dictionary<string, string>() { { "state", stateAnswer }, { "school", schoolAnswer } };
-            return result;
-        }
-
+        //    var userAnswers = doc.Root?.Descendants("user_list").Descendants("user").ToList();
+        //    var userAnswer =
+        //        userAnswers?.FirstOrDefault(
+        //            x =>
+        //                x.Attribute("login")
+        //                    .Value.ToString()
+        //                    .ToLower()
+        //                    .Equals(userEmail, StringComparison.OrdinalIgnoreCase));
+        //    var stateAnswer = userAnswer?.Attribute("registration_question_" + stateQuestionId)?.Value ?? String.Empty;
+        //    var schoolAnswer = userAnswer?.Attribute("registration_question_" + schoolQuestionId)?.Value ?? String.Empty;
+        //    var result = new Dictionary<string, string>() { { "state", stateAnswer }, { "school", schoolAnswer } };
+        //    return result;
+        //}
 
         public OperationResultDto SendEventQuizResultEmail(int[] quizResultIds)
         {
@@ -424,7 +415,6 @@ namespace EdugameCloud.WCFService
 
             return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
         }
-
 
         public OperationResultDto SendRegistrationEmail(EventRegistrationDTO registrationInfo)
         {
@@ -515,16 +505,11 @@ namespace EdugameCloud.WCFService
             return emailsNotSend.Any() ? OperationResultDto.Error("Not all emails were sent correctly") : OperationResultDto.Success();
         }
 
-        /// <summary>
-        /// The form email list.
-        /// </summary>
-        /// <param name="emailsList">
-        /// The CC list.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{MailAddress}"/>.
-        /// </returns>
-        private List<MailAddress> FormEmailList(string emailsList)
+        #endregion
+
+        #region Private Methods
+
+        private static List<MailAddress> FormEmailList(string emailsList)
         {
             return emailsList.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                 .Where(i => !string.IsNullOrWhiteSpace(i))
@@ -532,10 +517,6 @@ namespace EdugameCloud.WCFService
                 .ToList();
         }
 
-        #endregion
-
-        #region Private Methods
-        
         private EmailHistory ConvertDto(EmailHistoryDTO history, EmailHistory instance)
         {
             instance = instance ?? new EmailHistory();
