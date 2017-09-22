@@ -3,6 +3,7 @@ namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.ServiceModel;
@@ -14,6 +15,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using Esynctraining.Core.Caching;
+    using Esynctraining.Core.Comparers;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
@@ -440,6 +442,31 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
+        protected Version ProcessVersion(string swfFolder, string buildSelector)
+        {
+            if (string.IsNullOrWhiteSpace(swfFolder))
+                throw new ArgumentNullException("swfFolder");
+            if (string.IsNullOrWhiteSpace(buildSelector))
+                throw new ArgumentNullException("buildSelector");
+
+            if (Directory.Exists(swfFolder))
+            {
+                var versions = new List<KeyValuePair<Version, string>>();
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach (var file in Directory.GetFiles(swfFolder, buildSelector))
+                {
+                    var fileName = Path.GetFileName(file);
+                    var version = fileName.GetBuildVersion();
+                    versions.Add(new KeyValuePair<Version, string>(version, fileName));
+                }
+
+                versions.Sort(new BuildVersionComparer());
+                return versions.FirstOrDefault().With(x => x.Key);
+            }
+
+            return null;
+        }
 
     }
 

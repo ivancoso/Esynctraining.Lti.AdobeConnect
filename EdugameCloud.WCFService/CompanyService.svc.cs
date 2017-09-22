@@ -7,6 +7,7 @@ namespace EdugameCloud.WCFService
     using System.Collections.Generic;
     using System.Data.SqlTypes;
     using System.Linq;
+    using System.Net.Mail;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using EdugameCloud.Core;
@@ -18,6 +19,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.DTO;
+    using EdugameCloud.WCFService.Mail.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
@@ -472,7 +474,122 @@ namespace EdugameCloud.WCFService
 
             return result;
         }
-        
+
+        private void SendEnterpriseEmail(User user, string activationCode, Company company)
+        {
+            var license = company.Licenses.FirstOrDefault();
+            var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
+
+            var model = new EnterpriseModel(this.Settings)
+            {
+                CompanyName = company.CompanyName,
+                MailSubject = Emails.TrialSubject,
+                TrialContactEmail = (string)this.Settings.TrialContactEmail,
+                TrialDays = days,
+                UserName = user.Email,
+                FirstName = user.FirstName,
+                ActivationCode = activationCode,
+                ExpirationDate = license.Return(x => x.ExpiryDate.ToShortDateString(), string.Empty),
+            };
+            var bcced = new List<MailAddress>
+            {
+                new MailAddress(this.Settings.TrialContactEmail),
+                new MailAddress(Common.JacquieEmail, Common.JacquieName)
+            };
+
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
+                user.FirstName,
+                user.Email,
+                Emails.TrialSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail,
+                bcced: bcced);
+
+            this.SaveHistory(
+                sentSuccessfully,
+                user.FirstName,
+                user.Email,
+                Emails.TrialSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail,
+                bcced: bcced);
+        }
+
+        private void SendTrialEmail(User user, string activationCode, Company company)
+        {
+            var license = company.Licenses.FirstOrDefault();
+            var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
+
+            var model = new TrialModel(this.Settings)
+            {
+                CompanyName = company.CompanyName,
+                MailSubject = Emails.TrialSubject,
+                TrialContactEmail = (string)this.Settings.TrialContactEmail,
+                TrialDays = days,
+                UserName = user.Email,
+                ActivationCode = activationCode,
+                FirstName = user.FirstName
+            };
+            var bcced = new List<MailAddress>
+                        {
+                            new MailAddress(this.Settings.TrialContactEmail),
+                            new MailAddress(Common.JacquieEmail, Common.JacquieName)
+                        };
+
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
+                user.FirstName,
+                user.Email,
+                Emails.TrialSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail,
+                bcced: bcced);
+
+            this.SaveHistory(
+                sentSuccessfully,
+                user.FirstName,
+                user.Email,
+                Emails.TrialSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail,
+                bcced: bcced);
+        }
+
+        private void SendLicenseUpgradeEmail(Company company)
+        {
+            var license = company.Licenses.FirstOrDefault();
+            var model = new LicenseUpgradeModel(this.Settings)
+            {
+                CompanyName = company.CompanyName,
+                MailSubject = Emails.LicenseUpgradeRequested,
+                PrimaryEmail = company.PrimaryContact.With(x => x.Email),
+                PrimaryName = company.PrimaryContact.With(x => x.FullName),
+                SeatsCount = license.With(x => x.TotalLicensesCount),
+                IsTrial = license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false),
+                ExpirationDate = license.ExpiryDate.Date.ToShortDateString(),
+            };
+
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
+                "License Admin",
+                (string)this.Settings.TrialContactEmail,
+                Emails.LicenseUpgradeRequested,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail);
+
+            this.SaveHistory(
+                sentSuccessfully,
+                "License Admin",
+                (string)this.Settings.TrialContactEmail,
+                Emails.LicenseUpgradeRequested,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail);
+        }
+
         #endregion
 
     }

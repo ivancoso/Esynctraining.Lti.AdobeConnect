@@ -2,15 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Net.Mail;
     using System.ServiceModel;
-    using System.ServiceModel.Channels;
     using System.Text.RegularExpressions;
     using System.Web;
-    using Esynctraining.Core.Logging;
     using Castle.MicroKernel;
     using EdugameCloud.Core.Authentication;
     using EdugameCloud.Core.Business.Models;
@@ -19,56 +16,23 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Providers.Mailer.Models;
     using EdugameCloud.WCFService.Mail.Models;
-    using Esynctraining.Core.Comparers;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+    using Esynctraining.Mail;
     using FluentValidation;
     using FluentValidation.Results;
     using Resources;
-    using Esynctraining.Mail;
 
     /// <summary>
     /// The base service.
     /// </summary>
     public abstract class BaseService
     {
-        #region Fields
-        
-        private const string ACErrorMessageTitle = "Adobe Connect Error";
-
-
-        private string authHeaderName;
-
-        #endregion
-
         #region Properties
-        
-        private string AuthHeaderName
-        {
-            get
-            {
-                this.authHeaderName = this.authHeaderName ?? this.Settings.AuthHeaderName;
-                return this.authHeaderName;
-            }
-        }
-
-        private HttpRequestMessageProperty CurrentRequest
-        {
-            get
-            {
-                object httpRequestValue = null;
-                if (OperationContext.Current.With(x => x.IncomingMessageProperties)
-                    .With(x => x.TryGetValue("httpRequest", out httpRequestValue)) && httpRequestValue != null)
-                {
-                    return (HttpRequestMessageProperty)httpRequestValue;
-                }
-
-                return null;
-            }
-        }
 
         ///// <summary>
         ///// Gets the current user.
@@ -177,31 +141,6 @@
 
         #region Public Methods and Operators
         
-        protected Version ProcessVersion(string swfFolder, string buildSelector)
-        {
-            if (string.IsNullOrWhiteSpace(swfFolder))
-                throw new ArgumentNullException("swfFolder");
-            if (string.IsNullOrWhiteSpace(buildSelector))
-                throw new ArgumentNullException("buildSelector");
-
-            if (Directory.Exists(swfFolder))
-            {
-                var versions = new List<KeyValuePair<Version, string>>();
-                // ReSharper disable once LoopCanBeConvertedToQuery
-                foreach (var file in Directory.GetFiles(swfFolder, buildSelector))
-                {
-                    var fileName = Path.GetFileName(file);
-                    var version = fileName.GetBuildVersion();
-                    versions.Add(new KeyValuePair<Version, string>(version, fileName));
-                }
-
-                versions.Sort(new BuildVersionComparer());
-                return versions.FirstOrDefault().With(x => x.Key);
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// The is valid.
         /// </summary>
@@ -291,48 +230,6 @@
             this.SendActivationEmail(user.FirstName, user.Email, user.Company,  userActivation.ActivationCode, bcced);
         }
         
-        protected void SendEnterpriseEmail(User user, string activationCode, Company company)
-        {
-            var license = company.Licenses.FirstOrDefault();
-            var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
-
-            var model = new EnterpriseModel(this.Settings)
-            {
-                CompanyName = company.CompanyName,
-                MailSubject = Emails.TrialSubject,
-                TrialContactEmail = (string)this.Settings.TrialContactEmail,
-                TrialDays = days,
-                UserName = user.Email,
-                FirstName = user.FirstName,
-                ActivationCode = activationCode,
-                ExpirationDate = license.Return(x => x.ExpiryDate.ToShortDateString(), string.Empty),
-            };
-            var bcced = new List<MailAddress>
-            {
-                new MailAddress(this.Settings.TrialContactEmail),
-                new MailAddress(Common.JacquieEmail, Common.JacquieName)
-            };
-
-            bool sentSuccessfully = this.MailModel.SendEmailSync(
-                user.FirstName,
-                user.Email,
-                Emails.TrialSubject,
-                model,
-                Common.AppEmailName,
-                Common.AppEmail,
-                bcced: bcced);
-
-            this.SaveHistory(
-                sentSuccessfully,
-                user.FirstName,
-                user.Email,
-                Emails.TrialSubject,
-                model,
-                Common.AppEmailName,
-                Common.AppEmail,
-                bcced: bcced);
-        }
-        
         protected CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
         {
             if (licenseVo.isTrial)
@@ -346,47 +243,6 @@
             }
 
             return CompanyLicenseStatus.Pro;
-        }
-        
-        protected void SendTrialEmail(User user, string activationCode, Company company)
-        {
-            var license = company.Licenses.FirstOrDefault();
-            var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
-            
-            var model = new TrialModel(this.Settings)
-                        {
-                            CompanyName = company.CompanyName,
-                            MailSubject = Emails.TrialSubject,
-                            TrialContactEmail = (string)this.Settings.TrialContactEmail,
-                            TrialDays = days,
-                            UserName = user.Email,
-                            ActivationCode = activationCode,
-                            FirstName = user.FirstName
-                        };
-            var bcced = new List<MailAddress>
-                        {
-                            new MailAddress(this.Settings.TrialContactEmail),
-                            new MailAddress(Common.JacquieEmail, Common.JacquieName)
-                        };
-
-            bool sentSuccessfully = this.MailModel.SendEmailSync(
-                user.FirstName,
-                user.Email,
-                Emails.TrialSubject,
-                model,
-                Common.AppEmailName,
-                Common.AppEmail,
-                bcced: bcced);
-
-            this.SaveHistory(
-                sentSuccessfully,
-                user.FirstName,
-                user.Email,
-                Emails.TrialSubject,
-                model,
-                Common.AppEmailName,
-                Common.AppEmail,
-                bcced: bcced);
         }
         
         protected PagedRecentReportsDTO GetBaseRecentSplashScreenReports(int userId, int pageIndex, int pageSize)
@@ -407,71 +263,6 @@
                 objects = this.ACSessionModel.GetSplashScreenReportsPaged(userId, pageIndex, pageSize, out totalCount).ToArray(),
                 totalCount = totalCount
             };
-        }
-
-        /// <summary>
-        /// The send trial email.
-        /// </summary>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        protected void SendLicenseUpgradeEmail(Company company)
-        {
-            var license = company.Licenses.FirstOrDefault();
-            var model = new LicenseUpgradeModel(this.Settings)
-            {
-                CompanyName = company.CompanyName,
-                MailSubject = Emails.LicenseUpgradeRequested,
-                PrimaryEmail = company.PrimaryContact.With(x => x.Email),
-                PrimaryName = company.PrimaryContact.With(x => x.FullName),
-                SeatsCount = license.With(x => x.TotalLicensesCount),
-                IsTrial = license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false),
-                ExpirationDate = license.ExpiryDate.Date.ToShortDateString(),
-            };
-
-            bool sentSuccessfully = this.MailModel.SendEmailSync(
-                "License Admin",
-                (string)this.Settings.TrialContactEmail,
-                Emails.LicenseUpgradeRequested,
-                model,
-                Common.AppEmailName,
-                Common.AppEmail);
-
-            this.SaveHistory(
-                sentSuccessfully,
-                "License Admin",
-                (string)this.Settings.TrialContactEmail,
-                Emails.LicenseUpgradeRequested,
-                model,
-                Common.AppEmailName,
-                Common.AppEmail);
-        }
-        
-        protected void SendPasswordEmail(string firstName, string email, string password)
-        {
-            var model = new ChangePasswordModel(this.Settings)
-            {
-                FirstName = firstName,
-                Password = password,
-                TrialContactEmail = this.Settings.TrialContactEmail,
-            };
-
-            bool sentSuccessfully = this.MailModel.SendEmailSync(
-                firstName,
-                email,
-                Emails.ChangePasswordSubject,
-                model,
-                Common.AppEmailName,
-                Common.AppEmail);
-
-            this.SaveHistory(
-                sentSuccessfully,
-                firstName,
-                email,
-                Emails.ChangePasswordSubject,
-                model,
-                Common.AppEmailName,
-                Common.AppEmail);
         }
         
         protected void SendActivationLinkEmail(string firstName, string email, string activationCode)
@@ -501,7 +292,7 @@
                 Common.AppEmail);
         }
         
-        protected void SendActivationEmail(string firstName, string email, Company company, string activationCode, List<MailAddress> bcced = null)
+        private void SendActivationEmail(string firstName, string email, Company company, string activationCode, List<MailAddress> bcced = null)
         {
             var cced = GetCCed(email, company);
             var blindCopies = new List<MailAddress>();
@@ -600,7 +391,7 @@
             return list;
         }
         
-        private void SaveHistory<TModel>(
+        protected void SaveHistory<TModel>(
             bool mailWasSentSuccessfully,
             string toName, string toEmail, 
             string subject,

@@ -140,13 +140,17 @@ namespace EdugameCloud.WCFService
             instance.AppMaximizedTime = resultDTO.appMaximizedTime;
             instance.Guid = resultDTO.guid;
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
+
+            /**/
             instance.Quiz = this.QuizModel.GetOneById(resultDTO.quizId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
-            instance.LmsId = resultDTO.lmsId;
-            instance.LmsUserParametersId = resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null;
-            instance.isCompleted = resultDTO.isCompleted;
             if (resultDTO.eventQuizMappingId.HasValue && resultDTO.eventQuizMappingId.Value != 0)
                 instance.EventQuizMapping = EventQuizMappingModel.GetOneById(resultDTO.eventQuizMappingId.Value).Value;
+            /**/
+
+            instance.LmsId = resultDTO.lmsId;
+            instance.LmsUserParametersId = resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null;
+            instance.isCompleted = resultDTO.isCompleted;            
             return instance;
         }
 

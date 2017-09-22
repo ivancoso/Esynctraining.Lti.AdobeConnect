@@ -10,6 +10,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Providers.Mailer.Models;
     //using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.DTO;
@@ -705,6 +706,33 @@
         #endregion
 
         #region Methods
+
+        private void SendPasswordEmail(string firstName, string email, string password)
+        {
+            var model = new ChangePasswordModel(this.Settings)
+            {
+                FirstName = firstName,
+                Password = password,
+                TrialContactEmail = this.Settings.TrialContactEmail,
+            };
+
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
+                firstName,
+                email,
+                Emails.ChangePasswordSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail);
+
+            this.SaveHistory(
+                sentSuccessfully,
+                firstName,
+                email,
+                Emails.ChangePasswordSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail);
+        }
 
         private SessionDTO SetNewSession(User user)
         {
