@@ -35,40 +35,7 @@
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        ///     All items test.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="TestDTO" />.
-        /// </returns>
-        public TestDTO[] GetAll()
-        {
-            return this.TestModel.GetAll().Select(x => new TestDTO(x)).ToArray();
-        }
-
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedTestDTO"/>.
-        /// </returns>
-        public PagedTestDTO GetPaged(int pageIndex, int pageSize)
-        {
-            int totalCount;
-            return new PagedTestDTO
-            {
-                objects = this.TestModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new TestDTO(x)).ToArray(),
-                totalCount = totalCount
-            };
-        }
-
+        
         /// <summary>
         /// The creation of quiz.
         /// </summary>

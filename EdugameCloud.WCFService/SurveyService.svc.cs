@@ -35,22 +35,7 @@ namespace EdugameCloud.WCFService
         #endregion
 
         #region Public Methods and Operators
-
-        public SurveyDTO[] GetAll()
-        {
-            return this.SurveyModel.GetAll().Select(x => new SurveyDTO(x)).ToArray();
-        }
-
-        public PagedSurveyDTO GetPaged(int pageIndex, int pageSize)
-        {
-            int totalCount;
-            return new PagedSurveyDTO
-            {
-                objects = this.SurveyModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new SurveyDTO(x)).ToArray(),
-                totalCount = totalCount
-            };
-        }
-
+        
         public SurveyDTO Create(SurveySMIWrapperDTO dto)
         {
             ValidationResult validationResult;

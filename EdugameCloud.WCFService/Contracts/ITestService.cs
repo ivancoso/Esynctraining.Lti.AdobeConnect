@@ -6,23 +6,11 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     The Test Service interface.
+    /// The Test Service interface.
     /// </summary>
     [ServiceContract]
     public interface ITestService
     {
-        #region Public Methods and Operators
-
-        /// <summary>
-        ///     The all.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="TestDTO" />.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        TestDTO[] GetAll();
-
         /// <summary>
         /// Get user by id.
         /// </summary>
@@ -48,22 +36,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         TestWithSmiDTO GetBySMIId(int smiId);
-
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedTestDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        PagedTestDTO GetPaged(int pageIndex, int pageSize);
 
         /// <summary>
         /// The get test categories by user id.
@@ -156,6 +128,6 @@
         [FaultContract(typeof(Error))]
         TestWithSmiDTO Create(TestSMIWrapperDTO dto);
 
-        #endregion
     }
+
 }

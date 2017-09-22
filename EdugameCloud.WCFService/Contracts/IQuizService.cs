@@ -8,24 +8,11 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     The Quiz Service interface.
+    /// The Quiz Service interface.
     /// </summary>
     [ServiceContract]
     public interface IQuizService
     {
-        #region Public Methods and Operators
-
-        /// <summary>
-        ///     The all.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="QuizDTO" />.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebGet(UriTemplate = "GetAll", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        QuizDTO[] GetAll();
-
         /// <summary>
         /// Get user by subModuleId.
         /// </summary>
@@ -53,23 +40,6 @@
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetBySMIId?smiId={smiId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         QuizDTO GetBySMIId(int smiId);
-
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedQuizDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebGet(UriTemplate = "GetPaged?pageIndex={pageIndex}&pageSize={pageSize}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        PagedQuizDTO GetPaged(int pageIndex, int pageSize);
 
         /// <summary>
         /// The get quiz categories by user subModuleId.
@@ -189,6 +159,6 @@
             BodyStyle = WebMessageBodyStyle.Bare)]
         QuizDTO Create(QuizSMIWrapperDTO dto);
 
-        #endregion
     }
+
 }

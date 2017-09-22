@@ -6,23 +6,11 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     The Survey Service interface.
+    /// The Survey Service interface.
     /// </summary>
     [ServiceContract]
     public interface ISurveyService
     {
-        #region Public Methods and Operators
-
-        /// <summary>
-        ///     The all.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="SurveyDTO" />.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        SurveyDTO[] GetAll();
-
         /// <summary>
         /// Get user by subModuleId.
         /// </summary>
@@ -48,22 +36,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         SurveyDTO GetBySMIId(int smiId);
-
-        /// <summary>
-        /// The get paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PagedSurveyDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        PagedSurveyDTO GetPaged(int pageIndex, int pageSize);
 
         /// <summary>
         /// The get survey categories by user subModuleId.
@@ -175,6 +147,6 @@
         [FaultContract(typeof(Error))]
         SurveyDTO Create(SurveySMIWrapperDTO dto);
 
-        #endregion
     }
+
 }

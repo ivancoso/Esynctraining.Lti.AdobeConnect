@@ -36,22 +36,7 @@
         #endregion
 
         #region Public Methods and Operators
-
-        public QuizDTO[] GetAll()
-        {
-            return this.QuizModel.GetAll().Select(x => new QuizDTO(x)).ToArray();
-        }
-
-        public PagedQuizDTO GetPaged(int pageIndex, int pageSize)
-        {
-            int totalCount;
-            return new PagedQuizDTO
-            {
-                objects = this.QuizModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new QuizDTO(x)).ToArray(),
-                totalCount = totalCount
-            };
-        }
-
+        
         public QuizDTO Create(QuizSMIWrapperDTO dto)
         {
             ValidationResult validationResult;

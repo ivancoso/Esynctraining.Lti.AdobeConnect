@@ -36,12 +36,7 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The get all.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="DistractorDTO"/>.
-        /// </returns>
+        // ISA: Checked; really is in use
         public DistractorDTO[] GetAll()
         {
             return this.DistractorModel.GetAll().Select(x => new DistractorDTO(x)).ToArray();

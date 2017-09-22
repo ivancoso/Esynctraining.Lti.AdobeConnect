@@ -28,6 +28,7 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
+        // ISA: Checked; really is in use
         public SubModuleItemDTO[] GetAll()
         {
             return this.SubModuleItemModel.GetAll().Select(x => new SubModuleItemDTO(x)).ToArray();
