@@ -1,12 +1,10 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
+    using System;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
 
-    /// <summary>
-    ///     The applet item DTO.
-    /// </summary>
     [DataContract]
     public class ACSessionDTO
     {
@@ -27,6 +25,9 @@
         /// </param>
         public ACSessionDTO(ACSession result)
         {
+            if (result == null)
+                throw new ArgumentNullException(nameof(result));
+
             this.acSessionId = result.Id;
             this.subModuleItemId = result.SubModuleItem.With(x => x.Id);
             this.acUserModeId = result.ACUserMode.With(x => x.Id);

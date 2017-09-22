@@ -45,7 +45,6 @@
 
             var companies = this.Repository.FindAll(queryOver);
 
-            var now = DateTime.Now;
             return companies.Select(CompanyFlatDTO.CreateCompanyFlatDto).ToList();
         }
 
