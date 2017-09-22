@@ -447,7 +447,7 @@ namespace EdugameCloud.WCFService
                     Email = registrationInfo.Email
                 };
 
-                var attachments = new List<Attachment>();
+                var attachments = new List<System.Net.Mail.Attachment>();
 
                 //var duration = model.EventEndDate - model.EventStartDate;
 
@@ -483,7 +483,7 @@ namespace EdugameCloud.WCFService
                 var contype = new System.Net.Mime.ContentType("text/calendar");
                 contype.Parameters.Add("method", "REQUEST");
                 contype.Parameters.Add("name", "EventInformation.ics");
-                var calendarItem = new Attachment(new MemoryStream(bytes), contype);
+                var calendarItem = new System.Net.Mail.Attachment(new MemoryStream(bytes), contype);
                 calendarItem.TransferEncoding = System.Net.Mime.TransferEncoding.Base64;
                 attachments.Add(calendarItem);
 
