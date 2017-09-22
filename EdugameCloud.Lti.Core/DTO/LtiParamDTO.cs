@@ -275,6 +275,11 @@ namespace EdugameCloud.Lti.DTO
         public string roles { get; set; }
 
         /// <summary>
+        /// Gets or sets the custom BlackBoard role.
+        /// </summary>
+        public string custom_role { get; set; }
+
+        /// <summary>
         /// Gets or sets the tool consumer info product family code.
         /// </summary>
         public string tool_consumer_info_product_family_code { get; set; }

@@ -27,6 +27,20 @@ namespace EdugameCloud.Lti.API
             if (param.roles == null)
                 return false;
 
+            // ACLTI-1132 Blackboard: IsTeacher Functionality
+            if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Blackboard && !string.IsNullOrWhiteSpace(param.custom_role))
+            {
+                var isTeacher = lmsCompany.RoleMappings
+                    .Where(x => x.IsTeacherRole)
+                    .Select(x => x.LmsRoleName)
+                    .Any(x => param.custom_role.Equals(x.Trim(), StringComparison.InvariantCultureIgnoreCase));
+
+                if (isTeacher)
+                {
+                    return isTeacher;
+                }
+            }
+
             return
                 //defaultTeacherRoles
                 (!string.IsNullOrWhiteSpace((string)settings.TeacherRoles) && ((string)settings.TeacherRoles).Split(',')
