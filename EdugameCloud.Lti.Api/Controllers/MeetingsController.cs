@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
@@ -11,14 +10,13 @@ using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
     public class MeetingsController : BaseApiController
     {
-        private readonly MeetingSetup meetingSetup;
+        private readonly MeetingSetup _meetingSetup;
 
         #region Constructors and Destructors
 
@@ -29,7 +27,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             ILogger logger, ICache cache)
             : base(acAccountService, settings, logger, cache)
         {
-            this.meetingSetup = meetingSetup;
+            _meetingSetup = meetingSetup;
         }
 
         #endregion
@@ -43,7 +41,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             var acProvider = this.GetAdminProvider();
 
             // TODO: implement. will be use be External API only
-            IEnumerable<MeetingDTO> meetings = meetingSetup.GetMeetings(
+            IEnumerable<MeetingDTO> meetings = _meetingSetup.GetMeetings(
                    LmsCompany,
                    CourseId,
                    acProvider,
@@ -69,7 +67,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
                 var fb = new MeetingFolderBuilder(Session.LmsCompany, ac, useLmsUserEmailForSearch, meeting.GetMeetingType());
 
-                OperationResult ret = this.meetingSetup.SaveMeeting(
+                OperationResult ret = this._meetingSetup.SaveMeeting(
                     LmsCompany,
                     ac,
                     param,
@@ -100,7 +98,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
                 var fb = new MeetingFolderBuilder(Session.LmsCompany, ac, useLmsUserEmailForSearch, meeting.GetMeetingType());
 
-                var ret = this.meetingSetup.SaveMeeting(
+                var ret = _meetingSetup.SaveMeeting(
                     LmsCompany,
                     ac,
                     param,
@@ -128,7 +126,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 var param = Session.LtiSession.LtiParam;
 
-                OperationResult result = this.meetingSetup.DeleteMeeting(
+                OperationResult result = _meetingSetup.DeleteMeeting(
                     LmsCompany,
                     this.GetAdminProvider(),
                     param,
@@ -156,7 +154,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var param = Session.LtiSession.LtiParam;
                 var provider = this.GetAdminProvider();
 
-                OperationResult result = meetingSetup.ReuseExistedAdobeConnectMeeting(LmsCompany, Session.LmsUser,
+                OperationResult result = _meetingSetup.ReuseExistedAdobeConnectMeeting(LmsCompany, Session.LmsUser,
                     provider,
                     param,
                     model,

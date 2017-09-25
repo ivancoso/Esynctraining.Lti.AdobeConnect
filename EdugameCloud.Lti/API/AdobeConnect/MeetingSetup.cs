@@ -905,20 +905,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 MeetingNameJson = json,
             };
 
-            var lmsUsers = new List<LmsUserDTO>();
-
-            if (retrieveLmsUsers)
+            // TRICK: always read users from LMS - we need to sync participant list
+            List<LmsUserDTO>  lmsUsers = UsersSetup.GetLMSUsers(credentials,
+                    meeting,
+                    meeting.CourseId,
+                    out string error,
+                    param);
+            if (error != null)
             {
-                string error;
-                lmsUsers = this.UsersSetup.GetLMSUsers(credentials,
-                        meeting,
-                        meeting.CourseId,
-                        out error,
-                        param);
-                if (error != null)
-                {
-                    return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
-                }
+                return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
             }
 
             if (originalMeeting != null)
@@ -962,7 +957,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             if (lmsUsers.Count <= EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit)
             {
-                this.UsersSetup.SetDefaultUsers(
+                UsersSetup.SetDefaultUsers(
                     credentials,
                     meeting,
                     provider,
