@@ -136,14 +136,17 @@
             return instance;
         }
 
-        private QuizQuestionResult ConvertDto(QuizQuestionResultDTO resultDTO, QuizQuestionResult instance, QuizResult quizResult)
+        private QuizQuestionResult ConvertDto(QuizQuestionResultDTO resultDTO, QuizResult quizResult)
         {
-            instance = instance ?? new QuizQuestionResult();
-            instance.Question = resultDTO.question;
-            instance.IsCorrect = resultDTO.isCorrect;
-            instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
-            instance.QuizResult = quizResult;
-            instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
+            var instance = new QuizQuestionResult
+            {
+                Question = resultDTO.question,
+                IsCorrect = resultDTO.isCorrect,
+                QuestionType = QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value,
+                QuizResult = quizResult,
+                QuestionRef = QuestionModel.GetOneById(resultDTO.questionId).Value
+            };
+
             return instance;
         }
 
@@ -159,14 +162,9 @@
                 if (this.IsValid(appletResultDTO, out var validationResult))
                 {
                     QuizQuestionResultModel sessionModel = this.QuizQuestionResultModel;
-                    bool isTransient = appletResultDTO.quizQuestionResultId == 0;
-                    QuizQuestionResult appletResult = isTransient
-                                                          ? null
-                                                          : sessionModel.GetOneById(
-                                                              appletResultDTO.quizQuestionResultId).Value;
-                    appletResult = this.ConvertDto(appletResultDTO, appletResult, quizResult);
+                    var appletResult = ConvertDto(appletResultDTO, quizResult);
                     sessionModel.RegisterSave(appletResult);
-                    if (isTransient && appletResultDTO.answers != null && appletResultDTO.answers.Any())
+                    if (appletResultDTO.answers != null && appletResultDTO.answers.Any())
                     {
                         var answers = this.CreateAnswers(appletResultDTO, appletResult);
                         foreach (var answ in answers)
@@ -176,7 +174,7 @@
                 }
                 else
                 {
-                    faults.AddRange(this.UpdateResultToString(validationResult));
+                    faults.AddRange(UpdateResultToString(validationResult));
                 }
             }
 

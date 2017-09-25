@@ -130,14 +130,17 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        private SurveyQuestionResult ConvertDto(SurveyQuestionResultDTO resultDTO, SurveyQuestionResult instance, SurveyResult surveyResult)
+        private SurveyQuestionResult ConvertDto(SurveyQuestionResultDTO resultDTO, SurveyResult surveyResult)
         {
-            instance = instance ?? new SurveyQuestionResult();
-            instance.Question = resultDTO.question;
-            instance.IsCorrect = resultDTO.isCorrect;
-            instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
-            instance.SurveyResult = surveyResult;
-            instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
+            var instance = new SurveyQuestionResult
+            {
+                Question = resultDTO.question,
+                IsCorrect = resultDTO.isCorrect,
+                QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value,
+                SurveyResult = surveyResult,
+                QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value
+            };
+
             return instance;
         }
 
@@ -164,11 +167,9 @@ namespace EdugameCloud.WCFService
                 if (this.IsValid(surveyQuestionResultDTO, out validationResult))
                 {
                     var sessionModel = this.SurveyQuestionResultModel;
-                    var isTransient = surveyQuestionResultDTO.surveyQuestionResultId == 0;
-                    var surveyQuestionResult = isTransient ? null : sessionModel.GetOneById(surveyQuestionResultDTO.surveyQuestionResultId).Value;
-                    surveyQuestionResult = this.ConvertDto(surveyQuestionResultDTO, surveyQuestionResult, instance);
+                    var surveyQuestionResult = this.ConvertDto(surveyQuestionResultDTO, instance);
                     sessionModel.RegisterSave(surveyQuestionResult, true);
-                    if (isTransient && surveyQuestionResultDTO.answers != null && surveyQuestionResultDTO.answers.Any())
+                    if (surveyQuestionResultDTO.answers != null && surveyQuestionResultDTO.answers.Any())
                     {
                         var answers = this.CreateAnswers(surveyQuestionResultDTO, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
                         foreach (var answ in answers)

@@ -115,14 +115,16 @@
             return instance;
         }
 
-        private TestQuestionResult ConvertDto(TestQuestionResultDTO resultDTO, TestQuestionResult instance, TestResult testResult)
+        private TestQuestionResult ConvertDto(TestQuestionResultDTO resultDTO, TestResult testResult)
         {
-            instance = instance ?? new TestQuestionResult();
-            instance.Question = resultDTO.question;
-            instance.IsCorrect = resultDTO.isCorrect;
-            instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
-            instance.TestResult = testResult;
-            instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
+            var instance = new TestQuestionResult
+            {
+                Question = resultDTO.question,
+                IsCorrect = resultDTO.isCorrect,
+                QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value,
+                TestResult = testResult,
+                QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value
+            };
             return instance;
         }
 
@@ -138,9 +140,7 @@
                 if (this.IsValid(appletResultDTO, out var validationResult))
                 {
                     var sessionModel = this.TestQuestionResultModel;
-                    var isTransient = appletResultDTO.testQuestionResultId == 0;
-                    var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.testQuestionResultId).Value;
-                    appletResult = this.ConvertDto(appletResultDTO, appletResult, testResult);
+                    var appletResult = this.ConvertDto(appletResultDTO, testResult);
                     sessionModel.RegisterSave(appletResult);
                     created.Add(appletResult);
                 }
