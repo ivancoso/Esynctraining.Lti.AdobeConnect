@@ -1,8 +1,9 @@
 ﻿namespace EdugameCloud.Lti.WebRequester
 {
     using System;
+    using System.IO;
     using System.Net;
-    
+    using System.Reflection;
     using log4net;
     using log4net.Config;
 
@@ -21,13 +22,14 @@
         /// </param>
         public static void Main(string[] args)
         {
-            XmlConfigurator.Configure();
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
             string url = args[0];
             if (!string.IsNullOrEmpty(url))
             {
                 WebRequest(url);
             }
-             
+
         }
 
         /// <summary>
