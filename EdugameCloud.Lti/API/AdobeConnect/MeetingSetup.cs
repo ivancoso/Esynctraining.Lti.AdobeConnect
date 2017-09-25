@@ -1003,7 +1003,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (retrieveLmsUsers)
             {
-                string error;
                 var users = this.UsersSetup.GetUsers(credentials,
                     provider,
                     param.course_id,
