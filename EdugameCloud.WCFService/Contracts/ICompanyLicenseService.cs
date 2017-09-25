@@ -6,24 +6,9 @@
 
     using Esynctraining.Core.Domain.Entities;
 
-    /// <summary>
-    ///     The CompanyLicense Service interface.
-    /// </summary>
     [ServiceContract]
     public interface ICompanyLicenseService
     {
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The all.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="CompanyLicenseDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        CompanyLicenseDTO[] GetAll();
-
         /// <summary>
         /// Deletes user by id.
         /// </summary>
@@ -79,6 +64,6 @@
         [FaultContract(typeof(Error))]
         int UpdateSeatsCount(int licenseId, int seatsCount);
 
-        #endregion
     }
+
 }

@@ -68,17 +68,6 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        /// The get all.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="CompanyLicenseDTO"/>.
-        /// </returns>
-        public CompanyLicenseDTO[] GetAll()
-        {
-            return this.CompanyLicenseModel.GetAll().Select(x => new CompanyLicenseDTO(x)).ToArray();
-        }
-
-        /// <summary>
         /// The get by id.
         /// </summary>
         /// <param name="id">

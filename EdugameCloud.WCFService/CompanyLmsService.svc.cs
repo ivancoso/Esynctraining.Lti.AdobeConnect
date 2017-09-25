@@ -9,7 +9,6 @@ namespace EdugameCloud.WCFService
     using System.ServiceModel.Activation;
     using System.Text;
     using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.DTO;
     using EdugameCloud.Lti.Domain.Entities;
@@ -40,10 +39,6 @@ namespace EdugameCloud.WCFService
 
         private LmsCompanySettingModel LmsCompanySettingModel => IoC.Resolve<LmsCompanySettingModel>();
 
-        private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
-
-        private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
-        
         private LmsUserModel LmsUserModel => IoC.Resolve<LmsUserModel>();
         
         private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
