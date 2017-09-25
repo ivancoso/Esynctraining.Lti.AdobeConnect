@@ -8,9 +8,9 @@
     [DataContract]
     public class BatchUsersDTO
     {
-        #region Public Properties
         /// <summary>
         /// Gets or sets the batch type.
+        /// "csv" || "xls" || "xlsx"
         /// </summary>
         [DataMember]
         public string type { get; set; }
@@ -27,6 +27,6 @@
         [DataMember]
         public string csvOrExcelContent { get; set; }
 
-        #endregion
     }
+
 }
