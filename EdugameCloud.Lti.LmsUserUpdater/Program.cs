@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 using Esynctraining.Core.Providers;
+using Microsoft.Extensions.Configuration;
 
 namespace EdugameCloud.Lti.LmsUserUpdater
 {
@@ -29,9 +28,14 @@ namespace EdugameCloud.Lti.LmsUserUpdater
             // prevent two instances from running
             bool created;
 
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appSettings.json");
+
+            var configuration = configurationBuilder.Build();
+
             using (Mutex m = new Mutex(true, neMutexName, out created))
             {
-                IoCStart.Init();
+                IoCStart.Init(configuration);
                 ILogger logger = IoC.Resolve<ILogger>();
                 dynamic settings = IoC.Resolve<ApplicationSettingsProvider>();
 

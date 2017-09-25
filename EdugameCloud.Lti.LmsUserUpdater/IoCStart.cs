@@ -1,19 +1,36 @@
-﻿using Castle.Core.Resource;
+﻿using System.Collections.Specialized;
+using Castle.Core.Resource;
+using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using EdugameCloud.Persistence;
 using Esynctraining.CastleLog4Net;
+using Esynctraining.Core.Providers;
 using Esynctraining.Windsor;
+using Microsoft.Extensions.Configuration;
 
 namespace EdugameCloud.Lti.LmsUserUpdater
 {
     internal static class IoCStart
     {
-        public static void Init()
+        public static void Init(IConfigurationRoot configuration)
         {
             var container = new WindsorContainer();
             WindsorIoC.Initialize(container);
             container.RegisterComponents();
-            container.RegisterComponentsConsole();
+
+            var configurationSection = configuration.GetSection("AppSettings");
+            var collection = new NameValueCollection();
+            foreach (var appSetting in configurationSection.GetChildren())
+            {
+                collection.Add(appSetting.Key, appSetting.Value);
+            }
+
+            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.Transient);
+
+            container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
+                    .DynamicParameters((k, d) => d.Add("collection", collection))
+                    .LifeStyle.Singleton);
+
             container.Install(new LoggerWindsorInstaller());
             container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
             RegisterLtiComponents(container);
