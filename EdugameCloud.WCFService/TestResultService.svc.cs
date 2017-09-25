@@ -1,5 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
-namespace EdugameCloud.WCFService
+﻿namespace EdugameCloud.WCFService
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +9,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -55,13 +53,10 @@ namespace EdugameCloud.WCFService
                 var created = new List<TestResultSaveResultDTO>();
                 foreach (var appletResultDTO in results)
                 {
-                    ValidationResult validationResult;
-                    if (this.IsValid(appletResultDTO, out validationResult))
+                    if (this.IsValid(appletResultDTO, out var validationResult))
                     {
                         var sessionModel = this.TestResultModel;
-                        var isTransient = appletResultDTO.testResultId == 0;
-                        var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.testResultId).Value;
-                        appletResult = this.ConvertDto(appletResultDTO, appletResult);
+                        var appletResult = this.ConvertDto(appletResultDTO);
                         sessionModel.RegisterSave(appletResult);
 
                         var testSaveResult = new TestResultSaveResultDTO(appletResult);
@@ -78,7 +73,6 @@ namespace EdugameCloud.WCFService
 
                 if (created.Any())
                 {
-                    //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<TestResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
                     result.saved = created.ToArray();
                 }
 
@@ -101,51 +95,26 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="resultDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestResult"/>.
-        /// </returns>
-        private TestResult ConvertDto(TestResultDTO resultDTO, TestResult instance)
+        private TestResult ConvertDto(TestResultDTO resultDTO)
         {
-            instance = instance ?? new TestResult();
-            instance.Score = resultDTO.score;
-            instance.StartTime = resultDTO.startTime.ConvertFromUnixTimeStamp();
-            instance.EndTime = resultDTO.endTime.ConvertFromUnixTimeStamp();
-            instance.Email = resultDTO.email.With(x => x.Trim());
-            instance.ACEmail = resultDTO.acEmail.With(x => x.Trim());
-            instance.IsArchive = resultDTO.isArchive;
-            if (instance.IsTransient())
+            var instance = new TestResult
             {
-                instance.DateCreated = DateTime.Now;
-            }
+                Score = resultDTO.score,
+                StartTime = resultDTO.startTime.ConvertFromUnixTimeStamp(),
+                EndTime = resultDTO.endTime.ConvertFromUnixTimeStamp(),
+                Email = resultDTO.email.With(x => x.Trim()),
+                ACEmail = resultDTO.acEmail.With(x => x.Trim()),
+                IsArchive = resultDTO.isArchive,
+                DateCreated = DateTime.Now,
+                ParticipantName = resultDTO.participantName.With(x => x.Trim()),
+                Test = this.TestModel.GetOneById(resultDTO.testId).Value,
+                ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id),
+                IsCompleted = resultDTO.isCompleted
+            };
 
-            instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
-            instance.Test = this.TestModel.GetOneById(resultDTO.testId).Value;
-            instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
-            instance.IsCompleted = resultDTO.isCompleted;
             return instance;
         }
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="resultDTO">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizQuestionResult"/>.
-        /// </returns>
         private TestQuestionResult ConvertDto(TestQuestionResultDTO resultDTO, TestQuestionResult instance, TestResult testResult)
         {
             instance = instance ?? new TestQuestionResult();
@@ -157,15 +126,6 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestQuestionResultDTO"/>.
-        /// </returns>
         private TestQuestionResultSaveAllDTO SaveAll(TestResult testResult, TestQuestionResultDTO[] results)
         {
             results = results ?? new TestQuestionResultDTO[] { };
@@ -175,8 +135,7 @@ namespace EdugameCloud.WCFService
             var created = new List<TestQuestionResult>();
             foreach (var appletResultDTO in results)
             {
-                ValidationResult validationResult;
-                if (this.IsValid(appletResultDTO, out validationResult))
+                if (this.IsValid(appletResultDTO, out var validationResult))
                 {
                     var sessionModel = this.TestQuestionResultModel;
                     var isTransient = appletResultDTO.testQuestionResultId == 0;

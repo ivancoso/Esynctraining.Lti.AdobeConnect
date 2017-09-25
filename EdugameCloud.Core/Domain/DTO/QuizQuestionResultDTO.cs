@@ -38,7 +38,6 @@
         public QuizQuestionResultDTO(QuizQuestionResult result)
         {
             this.quizQuestionResultId = result.Id;
-            this.quizResultId = result.QuizResult.With(x => x.Id);
             this.questionId = result.QuestionRef.With(x => x.Id);
             this.question = result.Question;
             this.questionTypeId = result.QuestionType.With(x => x.Id);
@@ -78,28 +77,6 @@
         /// </summary>
         [DataMember]
         public int quizQuestionResultId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the quiz result id.
-        /// </summary>
-        [DataMember]
-        public int quizResultId { get; set; }
-
-        ///// <summary>
-        ///// Gets or sets the answer disctractors.
-        ///// </summary>
-        //[DataMember]
-        //public int[] answerDistractors
-        //{
-        //    get
-        //    {
-        //        return this.answerDistractorsField ?? new int[] { };
-        //    }
-        //    set
-        //    {
-        //        this.answerDistractorsField = value;
-        //    }
-        //}
 
         /// <summary>
         /// Gets or sets the answers.

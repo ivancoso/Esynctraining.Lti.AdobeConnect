@@ -1,5 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
-namespace EdugameCloud.WCFService
+﻿namespace EdugameCloud.WCFService
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +11,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
-    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.Converters;
@@ -109,18 +107,6 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="resultDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizResult"/>.
-        /// </returns>
         private QuizResult ConvertDto(QuizResultDTO resultDTO)
         {
             var instance = new QuizResult();
@@ -130,10 +116,7 @@ namespace EdugameCloud.WCFService
             instance.Email = resultDTO.email.With(x => x.Trim());
             instance.ACEmail = resultDTO.acEmail.With(x => x.Trim());
             instance.IsArchive = resultDTO.isArchive;
-            if (instance.IsTransient())
-            {
-                instance.DateCreated = DateTime.Now;
-            }
+            instance.DateCreated = DateTime.Now;
 
             instance.AppInFocusTime = resultDTO.appInFocusTime;
             instance.AppMaximizedTime = resultDTO.appMaximizedTime;
@@ -153,54 +136,27 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="resultDTO">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizQuestionResult"/>.
-        /// </returns>
-        private QuizQuestionResult ConvertDto(QuizQuestionResultDTO resultDTO, QuizQuestionResult instance)
+        private QuizQuestionResult ConvertDto(QuizQuestionResultDTO resultDTO, QuizQuestionResult instance, QuizResult quizResult)
         {
             instance = instance ?? new QuizQuestionResult();
             instance.Question = resultDTO.question;
             instance.IsCorrect = resultDTO.isCorrect;
             instance.QuestionType = this.QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value;
-            instance.QuizResult = this.QuizResultModel.GetOneById(resultDTO.quizResultId).Value;
+            instance.QuizResult = quizResult;
             instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
             return instance;
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuizQuestionResultDTO"/>.
-        /// </returns>
         private QuizQuestionResultSaveAllDTO SaveAll(QuizResult quizResult, QuizQuestionResultDTO[] results)
         {
             results = results ?? new QuizQuestionResultDTO[] { };
-
-            foreach (var item in results)
-            {
-                item.quizResultId = quizResult.Id;
-            }
 
             var result = new QuizQuestionResultSaveAllDTO();
             var faults = new List<string>();
             var created = new List<QuizQuestionResult>();
             foreach (QuizQuestionResultDTO appletResultDTO in results)
             {
-                ValidationResult validationResult;
-                if (this.IsValid(appletResultDTO, out validationResult))
+                if (this.IsValid(appletResultDTO, out var validationResult))
                 {
                     QuizQuestionResultModel sessionModel = this.QuizQuestionResultModel;
                     bool isTransient = appletResultDTO.quizQuestionResultId == 0;
@@ -208,7 +164,7 @@ namespace EdugameCloud.WCFService
                                                           ? null
                                                           : sessionModel.GetOneById(
                                                               appletResultDTO.quizQuestionResultId).Value;
-                    appletResult = this.ConvertDto(appletResultDTO, appletResult);
+                    appletResult = this.ConvertDto(appletResultDTO, appletResult, quizResult);
                     sessionModel.RegisterSave(appletResult);
                     if (isTransient && appletResultDTO.answers != null && appletResultDTO.answers.Any())
                     {
@@ -234,7 +190,7 @@ namespace EdugameCloud.WCFService
                 result.faults = faults.ToArray();
             }
 
-            this.ConvertAndSendQuizResult(results);
+            this.ConvertAndSendQuizResult(quizResult, results);
 
             return result;
         }
@@ -253,8 +209,7 @@ namespace EdugameCloud.WCFService
                     switch (result.QuestionType.Id)
                     {
                         case (int)QuestionTypeEnum.SingleMultipleChoiceText:
-                            int distractorId;
-                            if (int.TryParse(answerString, out distractorId))
+                            if (int.TryParse(answerString, out var distractorId))
                             {
                                 var distractor = result.QuestionRef.Distractors.FirstOrDefault(x => x.Id == distractorId);
                                 if (distractor != null)
@@ -293,32 +248,27 @@ namespace EdugameCloud.WCFService
             return created;
         }
 
-        private void ConvertAndSendQuizResult(IEnumerable<QuizQuestionResultDTO> results)
+        private void ConvertAndSendQuizResult(QuizResult quizResult, IEnumerable<QuizQuestionResultDTO> results)
         {
-            foreach (var userAnswer in results.GroupBy(r => r.quizResultId))
+            if (quizResult == null)
+                return;
+
+            var lmsUserParameters = quizResult.LmsUserParametersId.HasValue
+                ? this.LmsUserParametersModel.GetOneById(quizResult.LmsUserParametersId.Value).Value
+                : null;
+
+            if (lmsUserParameters == null || lmsUserParameters.LmsUser == null)
             {
-                var quizResult = this.QuizResultModel.GetOneById(userAnswer.Key).Value;
-                if (quizResult == null)
-                {
-                    continue;
-                }
-
-                var lmsUserParameters = quizResult.LmsUserParametersId.HasValue ? this.LmsUserParametersModel.GetOneById(quizResult.LmsUserParametersId.Value).Value : null;
-                if (lmsUserParameters == null || lmsUserParameters.LmsUser == null)
-                {
-                    return;
-                }
-
-                var lmsQuizId = quizResult.Quiz.LmsQuizId;
-                if (lmsQuizId == null)
-                {
-                    continue;
-                }
-
-                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
-
-                converter.ConvertAndSendQuizResultToLms(userAnswer, quizResult, lmsUserParameters);
+                return;
             }
+
+            var lmsQuizId = quizResult.Quiz.LmsQuizId;
+            if (lmsQuizId == null)
+                return;
+            var converter =
+                this.ConverterFactory.GetResultConverter((LmsProviderEnum) lmsUserParameters.CompanyLms.LmsProviderId);
+
+            converter.ConvertAndSendQuizResultToLms(results, quizResult, lmsUserParameters);
         }
 
         #endregion

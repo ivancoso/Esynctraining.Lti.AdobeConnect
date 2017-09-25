@@ -39,7 +39,6 @@
         public SurveyQuestionResultDTO(SurveyQuestionResult result, IEnumerable<SurveyQuestionResultAnswer> answers = null)
         {
             this.surveyQuestionResultId = result.Id;
-            this.surveyResultId = result.SurveyResult.With(x => x.Id);
             this.questionId = result.QuestionRef.With(x => x.Id);
             this.question = result.Question;
             this.questionTypeId = result.QuestionType.With(x => x.Id);
@@ -103,12 +102,6 @@
         /// </summary>
         [DataMember]
         public int surveyQuestionResultId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the survey result id.
-        /// </summary>
-        [DataMember]
-        public int surveyResultId { get; set; }
 
         #endregion
     }
