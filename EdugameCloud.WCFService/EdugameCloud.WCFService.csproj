@@ -475,8 +475,6 @@
     <Compile Include="Validators\CompanyDTOValidator.cs" />
     <Compile Include="Validators\BuildVersionDTOValidator.cs" />
     <Compile Include="Validators\BatchUsersDTOValidator.cs" />
-    <Compile Include="Validators\GeoStateDTOValidator.cs" />
-    <Compile Include="Validators\GeoCountryDTOValidator.cs" />
     <Compile Include="Validators\CompanyThemeDTOValidator.cs" />
     <Compile Include="Validators\TestDTOValidator.cs" />
     <Compile Include="Validators\TestQuestionResultDTOValidator.cs" />
