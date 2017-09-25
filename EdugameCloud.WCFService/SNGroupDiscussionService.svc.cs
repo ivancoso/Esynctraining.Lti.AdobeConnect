@@ -7,18 +7,14 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
     using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
-
-    using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
@@ -29,91 +25,13 @@
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        public int DeleteById(int id)
-        {
-            SNGroupDiscussion groupDiscussion;
-            var model = this.SNGroupDiscussionModel;
-            if ((groupDiscussion = model.GetOneById(id).Value) == null)
-            {
-                var error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-                    ErrorsTexts.GetResultError_Subject,
-                    ErrorsTexts.GetResultError_NotFound);
-                this.LogError("SNGroupDiscussion.DeleteById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            model.RegisterDelete(groupDiscussion, true);
-            this.UpdateCache();
-            return id;
-        }
-
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNGroupDiscussionDTO"/>.
-        /// </returns>
-        public SNGroupDiscussionDTO GetById(int id)
-        {
-            SNGroupDiscussion groupDiscussion;
-            if ((groupDiscussion = this.SNGroupDiscussionModel.GetOneById(id).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_SESSION, ErrorsTexts.EntityGetError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("SNGroupDiscussion.GetById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            return new SNGroupDiscussionDTO(groupDiscussion);
-        }
-
-        /// <summary>
-        /// Get by AC session id.
-        /// </summary>
-        /// <param name="sessionId">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNGroupDiscussionDTO"/>.
-        /// </returns>
-        public SNGroupDiscussionDTO GetByAcSessionId(int sessionId)
-        {
-            SNGroupDiscussion groupDiscussion;
-            if ((groupDiscussion = this.SNGroupDiscussionModel.GetOneByACSessionId(sessionId).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_SESSION, ErrorsTexts.EntityGetError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("SNGroupDiscussion.GetByAcSessionId", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            return new SNGroupDiscussionDTO(groupDiscussion);
-        }
-
-        /// <summary>
-        /// Saves discussion.
-        /// </summary>
-        /// <param name="discussion">
-        /// The SN GroupDiscussion DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNGroupDiscussionDTO"/>.
-        /// </returns>
         public SNGroupDiscussionDTO Save(SNGroupDiscussionDTO discussion)
         {
+            if (discussion == null)
+                throw new ArgumentNullException(nameof(discussion));
+
             ValidationResult validationResult;
-            if (this.IsValid(discussion, out validationResult))
+            if (IsValid(discussion, out validationResult))
             {
                 var model = this.SNGroupDiscussionModel;
                 bool isTransient = discussion.snGroupDiscussionId == 0;
@@ -126,7 +44,7 @@
             }
 
             var error = this.GenerateValidationError(validationResult);
-            this.LogError("SNGroupDiscussion.Save", error);
+            LogError("SNGroupDiscussion.Save", error);
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
@@ -134,9 +52,6 @@
 
         #region Methods
 
-        /// <summary>
-        /// The update cache.
-        /// </summary>
         private void UpdateCache()
         {
         }
@@ -171,4 +86,5 @@
 
         #endregion
     }
+
 }
