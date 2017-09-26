@@ -1,7 +1,9 @@
 ﻿namespace EdugameCloud.Lti.Core.Business.Models
 {
     using System.Collections.Generic;
+    using EdugameCloud.Core.Business;
     using EdugameCloud.Lti.Domain.Entities;
+    using Esynctraining.Core.Caching;
     using Esynctraining.NHibernate;
     using Esynctraining.NHibernate.Queries;
 
@@ -10,6 +12,8 @@
     /// </summary>
     public sealed class LmsQuestionTypeModel : BaseModel<LmsQuestionType, int>
     {
+        private readonly ICache _cache;
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -18,9 +22,10 @@
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public LmsQuestionTypeModel(IRepository<LmsQuestionType, int> repository)
+        public LmsQuestionTypeModel(IRepository<LmsQuestionType, int> repository, ICache cache)
             : base(repository)
         {
+            _cache = cache;
         }
 
         #endregion
@@ -36,8 +41,11 @@
         /// </returns>
         public IEnumerable<LmsQuestionType> GetAllByProvider(int lmsProviderId)
         {
-            var query = new DefaultQueryOver<LmsQuestionType, int>().GetQueryOver().Where(x => x.LmsProvider.Id == lmsProviderId);
-            return this.Repository.FindAll(query);
+            return CacheUtility.GetCachedItem(_cache, CachePolicies.Keys.LmsQuestionTypes(), () =>
+            {
+                var query = new DefaultQueryOver<LmsQuestionType, int>().GetQueryOver().Where(x => x.LmsProvider.Id == lmsProviderId);
+                return this.Repository.FindAll(query);
+            });
         }
 
     }

@@ -74,6 +74,11 @@ namespace EdugameCloud.Core.Business
                 return "QuestionTypes";
             }
 
+            public static string LmsQuestionTypes()
+            {
+                return "LmsQuestionTypes";
+            }
+
             public static string SurveyGroupingTypes()
             {
                 return "SurveyGroupingTypes";
