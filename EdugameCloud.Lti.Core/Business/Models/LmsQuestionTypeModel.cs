@@ -31,15 +31,6 @@
 
         #endregion
 
-        /// <summary>
-        /// The get all active.
-        /// </summary>
-        /// <param name="lmsProviderId">
-        /// The LMS Provider Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{QuestionType}"/>.
-        /// </returns>
         public IEnumerable<LmsQuestionType> GetAllByProvider(int lmsProviderId)
         {
             return GetAll().Where(x => x.LmsProvider.Id == lmsProviderId);
