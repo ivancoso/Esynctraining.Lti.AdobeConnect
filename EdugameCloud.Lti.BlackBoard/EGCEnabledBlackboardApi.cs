@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Esynctraining.BlackBoardClient;
 using Esynctraining.BlackBoardClient.Content;
+using System.Threading.Tasks;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
@@ -21,12 +22,13 @@ namespace EdugameCloud.Lti.BlackBoard
         {
         }
 
-        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
+        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
         {
-            var quizzes = this.GetItemsForUser(lmsUserParameters, isSurvey, null, out error);
-            if (quizzes == null)
+            var quizzes = await GetItemsForUserAsync(lmsUserParameters, isSurvey, null);
+            if (quizzes.Data == null)
                 throw new InvalidOperationException("There was a problem establishing connection to an api");
-            return quizzes.Select(q => new LmsQuizInfoDTO
+
+            var result = quizzes.Data.Select(q => new LmsQuizInfoDTO
             {
                 id = q.id,
                 name = q.title,
@@ -35,12 +37,14 @@ namespace EdugameCloud.Lti.BlackBoard
                 lastModifiedLMS = q.lastModifiedLMS,
                 isPublished = q.published
             });
+
+            return (Data: result, Error: quizzes.Error);
         }
 
-        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds)
         {
             WebserviceWrapper client = null;
-
+            string error;
             var tests = this.LoginIfNecessary(
                 ref client,
                 c =>
@@ -126,12 +130,12 @@ namespace EdugameCloud.Lti.BlackBoard
                     return new List<LmsQuizDTO> { };
                 },
                 lmsUserParameters.CompanyLms,
-                    out error);
+                out error);
 
-            return tests;
+            return (Data: tests, Error: error);
         }
 
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string contentId, bool isSurvey, string[] answers)
+        public async Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string contentId, bool isSurvey, string[] answers)
         {
             WebserviceWrapper client = null;
 

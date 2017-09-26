@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace EdugameCloud.WCFService.Converters
 {
     using System.Linq;
-
+    using System.Threading.Tasks;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.BlackBoard;
@@ -23,7 +23,7 @@ namespace EdugameCloud.WCFService.Converters
         }
 
 
-        public override void ConvertAndSendQuizResultToLms(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
+        public override async Task ConvertAndSendQuizResultToLmsAsync(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
         {
             Dictionary<int, string> answers = new Dictionary<int, string>();
 
@@ -48,10 +48,10 @@ namespace EdugameCloud.WCFService.Converters
                 ret.Add(answers.ContainsKey(question.LmsQuestionId.GetValueOrDefault()) ? answers[question.LmsQuestionId.GetValueOrDefault()] : "0");
             }
 
-            BlackboardApi.SendAnswers(lmsUserParameters, quizResult.Quiz.LmsQuizId.GetValueOrDefault().ToString(), false, ret.ToArray());
+            await BlackboardApi.SendAnswersAsync(lmsUserParameters, quizResult.Quiz.LmsQuizId.GetValueOrDefault().ToString(), false, ret.ToArray());
         }
 
-        public override void ConvertAndSendSurveyResultToLms(IEnumerable<SurveyQuestionResultDTO> results, SurveyResult surveyResult, LmsUserParameters lmsUserParameters)
+        public override async Task ConvertAndSendSurveyResultToLmsAsync(IEnumerable<SurveyQuestionResultDTO> results, SurveyResult surveyResult, LmsUserParameters lmsUserParameters)
         {
             Dictionary<int, string> answers = new Dictionary<int, string>();
 
@@ -87,7 +87,7 @@ namespace EdugameCloud.WCFService.Converters
                 ret.Add(answers.ContainsKey(question.LmsQuestionId.GetValueOrDefault()) ? answers[question.LmsQuestionId.GetValueOrDefault()] : "0");
             }
 
-            BlackboardApi.SendAnswers(lmsUserParameters, surveyResult.Survey.LmsSurveyId.GetValueOrDefault().ToString(), true, ret.ToArray());
+            await BlackboardApi.SendAnswersAsync(lmsUserParameters, surveyResult.Survey.LmsSurveyId.GetValueOrDefault().ToString(), true, ret.ToArray());
         }
 
         /// <summary>

@@ -6,7 +6,7 @@ namespace EdugameCloud.WCFService
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
+    using System.Threading.Tasks;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -16,14 +16,11 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.Converters;
-    using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
     using Newtonsoft.Json;
-    using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]
@@ -54,7 +51,7 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        public SurveyResultSaveAllDTO SaveAll(SurveyResultDTO[] results)
+        public async Task<SurveyResultSaveAllDTO> SaveAllAsync(SurveyResultDTO[] results)
         {
             results = results ?? new SurveyResultDTO[] { };
 
@@ -75,7 +72,7 @@ namespace EdugameCloud.WCFService
                         var surveySaveResult = new SurveyResultSaveResultDTO(surveyResult);
                         created.Add(surveySaveResult);
 
-                        var surveyQuestionResult = SaveAll(surveyResult, surveyResultDTO.results);
+                        var surveyQuestionResult = await SaveAllAsync(surveyResult, surveyResultDTO.results);
                         surveySaveResult.surveyQuestionResult = surveyQuestionResult;
                     }
                     else
@@ -154,7 +151,7 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        private SurveyQuestionResultSaveAllDTO SaveAll(SurveyResult instance, SurveyQuestionResultDTO[] results)
+        private async Task<SurveyQuestionResultSaveAllDTO> SaveAllAsync(SurveyResult instance, SurveyQuestionResultDTO[] results)
         {
             results = results ?? new SurveyQuestionResultDTO[] { };
 
@@ -194,7 +191,7 @@ namespace EdugameCloud.WCFService
                 result.faults = faults.ToArray();
             }
 
-            this.ConvertAndSendSurveyResult(instance, results);
+            await this.ConvertAndSendSurveyResultAsync(instance, results);
 
             return result;
         }
@@ -233,7 +230,7 @@ namespace EdugameCloud.WCFService
         }
 
         // TODO: review
-        private void ConvertAndSendSurveyResult(SurveyResult surveyResult, IEnumerable<SurveyQuestionResultDTO> results)
+        private async Task ConvertAndSendSurveyResultAsync(SurveyResult surveyResult, IEnumerable<SurveyQuestionResultDTO> results)
         {
             if (surveyResult == null)
                 return;
@@ -254,7 +251,7 @@ namespace EdugameCloud.WCFService
             var converter =
                 this.ConverterFactory.GetResultConverter((LmsProviderEnum) lmsUserParameters.CompanyLms.LmsProviderId);
 
-            converter.ConvertAndSendSurveyResultToLms(results, surveyResult, lmsUserParameters);
+            await converter.ConvertAndSendSurveyResultToLmsAsync(results, surveyResult, lmsUserParameters);
         }
 
         #endregion

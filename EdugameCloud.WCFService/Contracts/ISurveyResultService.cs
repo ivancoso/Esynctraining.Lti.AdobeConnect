@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.WCFService.Contracts
 {
     using System.ServiceModel;
+    using System.Threading.Tasks;
     using EdugameCloud.Core.Domain.DTO;
 
     using Esynctraining.Core.Domain.Entities;
@@ -22,7 +23,7 @@
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
-        SurveyResultSaveAllDTO SaveAll(SurveyResultDTO[] results);
+        Task<SurveyResultSaveAllDTO> SaveAllAsync(SurveyResultDTO[] results);
 
     }
 

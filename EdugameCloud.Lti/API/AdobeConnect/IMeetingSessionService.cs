@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -7,11 +8,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IMeetingSessionService
     {
-        IEnumerable<MeetingSessionDTO> CreateBatch(CreateMeetingSessionsBatchDto dto, LtiParamDTO param);
+        Task<IEnumerable<MeetingSessionDTO>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LtiParamDTO param);
         IEnumerable<MeetingSessionDTO> GetSessions(int meetingId);
-        MeetingSessionDTO CreateSession(int meetingId, LtiParamDTO param);
-        MeetingSessionDTO SaveSession(int meetingId, MeetingSessionDTO ev, LtiParamDTO param);
-        void DeleteSession(int meetingId, int id, LtiParamDTO param);
-        void DeleteMeetingSessions(LmsCourseMeeting meeting, LtiParamDTO param);
+        Task<MeetingSessionDTO> CreateSessionAsync(int meetingId, LtiParamDTO param);
+        Task<MeetingSessionDTO> SaveSessionAsync(int meetingId, MeetingSessionDTO ev, LtiParamDTO param);
+        Task DeleteSessionAsync(int meetingId, int id, LtiParamDTO param);
+        Task DeleteMeetingSessionsAsync(LmsCourseMeeting meeting, LtiParamDTO param);
     }
 }

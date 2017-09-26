@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DotNetOpenAuth.Messaging;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -26,7 +27,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             _calendarExportService = calendarExportService;
         }
 
-        public IEnumerable<MeetingSessionDTO> CreateBatch(CreateMeetingSessionsBatchDto dto, LtiParamDTO param)
+        public async Task<IEnumerable<MeetingSessionDTO>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(dto.MeetingId).Value;
             FixDateTimeFields(dto);
@@ -75,7 +76,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (_calendarExportService != null)
             {
-                listOfEvents = _calendarExportService.SaveEvents(meeting.Id, listOfEvents, param).ToList();
+                listOfEvents = (await _calendarExportService.SaveEventsAsync(meeting.Id, listOfEvents, param))
+                    .ToList();
             }
 
             meeting.MeetingSessions.AddRange(listOfEvents.Select(x => new LmsMeetingSession
@@ -96,7 +98,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return meeting.MeetingSessions.Select(ConvertFromEntity).ToArray();
         }
 
-        public MeetingSessionDTO CreateSession(int meetingId, LtiParamDTO param)
+        public async Task<MeetingSessionDTO> CreateSessionAsync(int meetingId, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
             MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(meeting.MeetingNameJson)
@@ -120,7 +122,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (_calendarExportService != null)
             {
-                var sakaiEventResult = _calendarExportService.SaveEvents(meetingId, new MeetingSessionDTO[] {ev}, param);
+                var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] {ev}, param);
                 ev = sakaiEventResult.Single();
             }
             var dbEvent = new LmsMeetingSession
@@ -136,7 +138,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return ConvertFromEntity(dbEvent);
         }
 
-        public MeetingSessionDTO SaveSession(int meetingId, MeetingSessionDTO dto, LtiParamDTO param)
+        public async Task<MeetingSessionDTO> SaveSessionAsync(int meetingId, MeetingSessionDTO dto, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
             var dbEvent = meeting.MeetingSessions.SingleOrDefault(x => x.Id == dto.Id)
@@ -150,7 +152,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (_calendarExportService != null)
             {
                 dto.EventId = dbEvent.EventId;
-                var sakaiEventResult = _calendarExportService.SaveEvents(meetingId, new MeetingSessionDTO[] {dto}, param);
+                var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] {dto}, param);
                 dto = sakaiEventResult.Single();
             }
             dbEvent.Name = dto.Name;
@@ -162,7 +164,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return ConvertFromEntity(dbEvent);
         }
 
-        public void DeleteSession(int meetingId, int id, LtiParamDTO param)
+        public async Task DeleteSessionAsync(int meetingId, int id, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = null;
             LmsMeetingSession dbEvent = null;
@@ -179,12 +181,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            var deleteResult = _calendarExportService?.DeleteEvents(new[] {dbEvent.EventId}, param).Single();
-            if (!string.IsNullOrWhiteSpace(deleteResult)
-                && !dbEvent.EventId.Equals(deleteResult, StringComparison.InvariantCultureIgnoreCase))
+            if (_calendarExportService != null)
             {
-                //todo: logging
-                throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
+                var deleteResult = (await _calendarExportService.DeleteEventsAsync(new[] { dbEvent.EventId }, param))
+                    .Single();
+
+                if (!string.IsNullOrWhiteSpace(deleteResult)
+                    && !dbEvent.EventId.Equals(deleteResult, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // TODO: logging
+                    throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
+                }
             }
 
             if (meetingId != 0)
@@ -194,7 +201,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public void DeleteMeetingSessions(LmsCourseMeeting meeting, LtiParamDTO param)
+        public async Task DeleteMeetingSessionsAsync(LmsCourseMeeting meeting, LtiParamDTO param)
         {
             if (meeting.MeetingSessions.Any())
             {
@@ -202,7 +209,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (_calendarExportService != null)
                 {
-                    var deleteResultIds = _calendarExportService.DeleteEvents(events, param);
+                    var deleteResultIds = await _calendarExportService.DeleteEventsAsync(events, param);
 
                     if (!events.SetEquals(deleteResultIds))
                     {

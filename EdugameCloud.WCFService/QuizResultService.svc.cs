@@ -5,7 +5,7 @@
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
+    using System.Threading.Tasks;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -14,14 +14,11 @@
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.Converters;
-    using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
     using Newtonsoft.Json;
-    using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]
@@ -51,7 +48,7 @@
 
         #region Public Methods and Operators
 
-        public QuizResultSaveAllDTO SaveAll(QuizResultDTO[] results)
+        public async Task<QuizResultSaveAllDTO> SaveAllAsync(QuizResultDTO[] results)
         {
             results = results ?? new QuizResultDTO[] { };
 
@@ -79,7 +76,7 @@
                         var quizSaveResult = new QuizResultSaveResultDTO(appletResult);
                         created.Add(quizSaveResult);
 
-                        var quizQuestionResult = SaveAll(appletResult, appletResultDTO.results);
+                        var quizQuestionResult = await SaveAllAsync(appletResult, appletResultDTO.results);
                         quizSaveResult.quizQuestionResult = quizQuestionResult;
                     }
                     else
@@ -175,7 +172,7 @@
             return instance;
         }
 
-        private QuizQuestionResultSaveAllDTO SaveAll(QuizResult quizResult, QuizQuestionResultDTO[] results)
+        private async Task<QuizQuestionResultSaveAllDTO> SaveAllAsync(QuizResult quizResult, QuizQuestionResultDTO[] results)
         {
             results = results ?? new QuizQuestionResultDTO[] { };
 
@@ -213,7 +210,7 @@
                 result.faults = faults.ToArray();
             }
 
-            this.ConvertAndSendQuizResult(quizResult, results);
+            await this.ConvertAndSendQuizResultAsync(quizResult, results);
 
             return result;
         }
@@ -271,7 +268,7 @@
             return created;
         }
 
-        private void ConvertAndSendQuizResult(QuizResult quizResult, IEnumerable<QuizQuestionResultDTO> results)
+        private async Task ConvertAndSendQuizResultAsync(QuizResult quizResult, IEnumerable<QuizQuestionResultDTO> results)
         {
             if (quizResult == null)
                 return;
@@ -291,7 +288,7 @@
             var converter =
                 this.ConverterFactory.GetResultConverter((LmsProviderEnum) lmsUserParameters.CompanyLms.LmsProviderId);
 
-            converter.ConvertAndSendQuizResultToLms(results, quizResult, lmsUserParameters);
+            await converter.ConvertAndSendQuizResultToLmsAsync(results, quizResult, lmsUserParameters);
         }
 
         #endregion

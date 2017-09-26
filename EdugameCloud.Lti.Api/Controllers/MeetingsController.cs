@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
@@ -119,14 +120,14 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("meeting/delete")]
         [HttpPost]
         [Filters.LmsAuthorizeBase]
-        public virtual OperationResult DeleteMeeting([FromBody]DeleteMeetingDto model)
+        public virtual async Task<OperationResult> DeleteMeeting([FromBody]DeleteMeetingDto model)
         {
             bool? softDelete = model.Remove;
             try
             {
                 var param = Session.LtiSession.LtiParam;
 
-                OperationResult result = _meetingSetup.DeleteMeeting(
+                OperationResult result = await _meetingSetup.DeleteMeetingAsync(
                     LmsCompany,
                     this.GetAdminProvider(),
                     param,

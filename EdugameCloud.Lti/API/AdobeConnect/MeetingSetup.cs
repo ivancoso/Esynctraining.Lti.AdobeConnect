@@ -25,7 +25,6 @@ using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.Meeting;
-using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
@@ -54,6 +53,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return publicAccessPermission != null ? publicAccessPermission.PermissionStringValue : MeetingPermissionId.remove.ToString();
             }
 
+        }
+
+        // TODO:
+        public class LoginResult
+        {
+            public string BreezeSession { get; set; }
+
+            public Principal User { get; set; }
         }
 
         private static readonly string AcDateFormat = "yyyy-MM-ddTHH:mm"; // AdobeConnectProviderConstants.DateFormat
@@ -98,7 +105,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
-        public OperationResult DeleteMeeting(
+        public async Task<OperationResult> DeleteMeetingAsync(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
@@ -137,7 +144,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var meetingSessionService =
                 LmsFactory.GetMeetingSessionService((LmsProviderEnum) lmsCompany.LmsProviderId);
-            meetingSessionService.DeleteMeetingSessions(meeting, param);
+
+            await meetingSessionService.DeleteMeetingSessionsAsync(meeting, param);
 
             this.LmsCourseMeetingModel.RegisterDelete(meeting, flush: true);
                         
@@ -152,7 +160,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 foreach (var m in meetings)
                 {
-                    meetingSessionService.DeleteMeetingSessions(m, param);
+                    await meetingSessionService.DeleteMeetingSessionsAsync(m, param);
                     this.LmsCourseMeetingModel.RegisterDelete(m, flush: false);
                 }
                 this.LmsCourseMeetingModel.Flush();
@@ -418,13 +426,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     isTeacher && forcedAddInInstallation ? "?lightning=true&" : "?",
                     "session=" + breezeToken);
             }
-        }
-
-        public class LoginResult
-        {
-            public string BreezeSession { get; set; }
-
-            public Principal User { get; set; }
         }
 
         public LoginResult ACLogin(ILmsLicense lmsCompany, LtiParamDTO param, LmsUser lmsUser, IAdobeConnectProxy adminProvider)
@@ -1025,21 +1026,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return updatedMeeting.ToSuccessResult();
         }
 
-        public List<string> DeleteMeeting(
+        public async Task<(List<string> data, string error)> DeleteMeetingAsync(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            int id,
-            out string error)
+            int id)
         {
-            error = null;
             var model = this.LmsCourseMeetingModel;
             LmsCourseMeeting meeting = model.GetOneByCourseAndId(lmsCompany.Id, param.course_id, id);
 
             if (meeting == null)
             {
-                error = Resources.Messages.MeetingNotFound;
-                return new List<string>();
+                return (data: new List<string>(), error: Resources.Messages.MeetingNotFound);
             }
 
             // TRICK: before deletion
@@ -1054,7 +1052,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var meetingSessionService =
                 LmsFactory.GetMeetingSessionService((LmsProviderEnum)lmsCompany.LmsProviderId);
-            meetingSessionService.DeleteMeetingSessions(meeting, param);
+
+            await meetingSessionService.DeleteMeetingSessionsAsync(meeting, param);
 
             model.RegisterDelete(meeting, true);
 
@@ -1072,7 +1071,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 DeleteAudioProfile(lmsCompany, meeting, provider);
             }
 
-            return enrollments.Select(x => x.Login).ToList();
+            return (data: enrollments.Select(x => x.Login).ToList(), error: null);
         }
         
         //public void SetupFolders(LmsCompany credentials, IAdobeConnectProxy provider)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AdobeConnect;
@@ -18,12 +19,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IFolderBuilder fb,
             bool retrieveLmsUsers = false);
 
-        List<string> DeleteMeeting(
+        Task<(List<string> data, string error)> DeleteMeetingAsync(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            int id,
-            out string error);
+            int id);
         
         MeetingSetup.LoginResult ACLogin(ILmsLicense lmsCompany,
             LtiParamDTO param, 

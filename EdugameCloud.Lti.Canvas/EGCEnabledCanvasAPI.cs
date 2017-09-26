@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Core;
@@ -378,7 +379,7 @@ namespace EdugameCloud.Lti.Canvas
         /// <returns>
         /// The <see cref="IEnumerable{LmsQuizDTO}"/>.
         /// </returns>
-        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds)
         {
             try
             {
@@ -456,8 +457,7 @@ namespace EdugameCloud.Lti.Canvas
                     q.courseName = course.name;
                 }
 
-                error = string.Empty;
-                return response.Data;
+                return (Data: response.Data, Error: string.Empty);
             }
             catch (Exception ex)
             {
@@ -482,7 +482,7 @@ namespace EdugameCloud.Lti.Canvas
         /// <exception cref="NotImplementedException">
         /// Not yet implemented
         /// </exception>
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
+        public Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
         {
             throw new NotImplementedException();
         }
@@ -502,10 +502,10 @@ namespace EdugameCloud.Lti.Canvas
         /// <returns>
         /// The <see cref="IEnumerable{LmsQuizInfoDTO}"/>.
         /// </returns>
-        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
+        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
         {
-            var quizzes = this.GetItemsForUser(lmsUserParameters, isSurvey, null, out error);
-            return quizzes.Select(q => new LmsQuizInfoDTO
+            var quizzes = await GetItemsForUserAsync(lmsUserParameters, isSurvey, null);
+            var result = quizzes.Data.Select(q => new LmsQuizInfoDTO
             {
                 id = q.id,
                 name = q.title,
@@ -514,6 +514,8 @@ namespace EdugameCloud.Lti.Canvas
                 lastModifiedLMS = q.lastModifiedLMS,
                 isPublished = q.published
             });
+
+            return (Data: result, Error: quizzes.Error);
         }
 
         public void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId)

@@ -15,6 +15,7 @@ namespace EdugameCloud.WCFService.Converters
     using Esynctraining.Core.Utils;
 
     using RestSharp;
+    using System.Threading.Tasks;
 
     public class MoodleResultConverter : QuizResultConverter
     {
@@ -26,7 +27,7 @@ namespace EdugameCloud.WCFService.Converters
             }
         }
 
-        public override void ConvertAndSendQuizResultToLms(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
+        public override async Task ConvertAndSendQuizResultToLmsAsync(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
         {
             var toSend = new List<MoodleQuizResultDTO>();
 
@@ -71,10 +72,11 @@ namespace EdugameCloud.WCFService.Converters
                         });
 
             string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
-            this.MoodleApi.SendAnswers(lmsUserParameters, json, false, null);
+
+            await this.MoodleApi.SendAnswersAsync(lmsUserParameters, json, false, null);
         }
 
-        public override void ConvertAndSendSurveyResultToLms(IEnumerable<SurveyQuestionResultDTO> results, SurveyResult surveyResult, LmsUserParameters lmsUserParameters)
+        public override async Task ConvertAndSendSurveyResultToLmsAsync(IEnumerable<SurveyQuestionResultDTO> results, SurveyResult surveyResult, LmsUserParameters lmsUserParameters)
         {
             var toSend = new List<MoodleQuizResultDTO>();
 
@@ -123,7 +125,8 @@ namespace EdugameCloud.WCFService.Converters
                         });
 
             string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
-            this.MoodleApi.SendAnswers(lmsUserParameters, json, true, null);
+
+            await this.MoodleApi.SendAnswersAsync(lmsUserParameters, json, true, null);
         }
 
         private object[] ProcessAnswers(Question question, QuizQuestionResultDTO answer)

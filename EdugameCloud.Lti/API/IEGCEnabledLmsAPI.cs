@@ -1,9 +1,9 @@
 ﻿namespace EdugameCloud.Lti.API
 {
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    using NHibernate.Mapping;
 
     /// <summary>
     /// The EGC enabled LMS API interface.
@@ -26,7 +26,7 @@
         /// <returns>
         /// The <see cref="IEnumerable{LmsQuizInfoDTO}"/>.
         /// </returns>
-        IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error);
+        Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey);
 
         /// <summary>
         /// The get quiz list for user.
@@ -46,7 +46,7 @@
         /// <returns>
         /// The <see cref="List"/>.
         /// </returns>
-        IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error);
+        Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds);
 
         /// <summary>
         /// The send answers.
@@ -63,7 +63,7 @@
         /// <param name="answers">
         /// The answers.
         /// </param>
-        void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null);
+        Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null);
 
         void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId);
     }

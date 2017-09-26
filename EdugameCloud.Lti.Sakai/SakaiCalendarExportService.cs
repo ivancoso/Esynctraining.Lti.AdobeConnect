@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Threading.Tasks;
 using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
@@ -15,7 +15,7 @@ namespace EdugameCloud.Lti.Sakai
     {
         private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 
-        public IEnumerable<MeetingSessionDTO> SaveEvents(int meetingId, IEnumerable<MeetingSessionDTO> eventDtos, LtiParamDTO param)
+        public async Task<IEnumerable<MeetingSessionDTO>> SaveEventsAsync(int meetingId, IEnumerable<MeetingSessionDTO> eventDtos, LtiParamDTO param)
         {
             var apiParam = new SakaiApiObject
             {
@@ -35,7 +35,7 @@ namespace EdugameCloud.Lti.Sakai
             };
 
             var json = JsonConvert.SerializeObject(apiParam);
-            string resp = _httpClientWrapper.UploadJsonString(GetApiUrl(param), json);
+            string resp = await _httpClientWrapper.UploadJsonStringAsync(GetApiUrl(param), json);
 
             var events = JsonConvert.DeserializeObject<ExternalEventDto[]>(resp);
             var sessions = events.Select(ConvertFromApiDtoToSessionDto).ToList();
@@ -50,17 +50,7 @@ namespace EdugameCloud.Lti.Sakai
             return sessions;
         }
 
-        public string GetApiUrl(LtiParamDTO param)
-        {
-            var scheme = param.lis_outcome_service_url != null
-                         && param.lis_outcome_service_url.IndexOf(HttpScheme.Https, StringComparison.InvariantCultureIgnoreCase) >= 0
-                ? HttpScheme.Https
-                : HttpScheme.Http;
-
-            return $"{scheme}{param.lms_domain}/egcint/service/";
-        }
-
-        public IEnumerable<string> DeleteEvents(IEnumerable<string> eventIds, LtiParamDTO param)
+        public async Task<IEnumerable<string>> DeleteEventsAsync(IEnumerable<string> eventIds, LtiParamDTO param)
         {
             var events = eventIds.Select(x => new SakaiEventDelete()
             {
@@ -82,9 +72,19 @@ namespace EdugameCloud.Lti.Sakai
             };
 
             var json = JsonConvert.SerializeObject(apiParam);
-            string resp = _httpClientWrapper.UploadJsonString(GetApiUrl(param), json);
+            string resp = await _httpClientWrapper.UploadJsonStringAsync(GetApiUrl(param), json);
 
             return resp.Replace("\n", String.Empty).Replace("\r", String.Empty).Split(',');
+        }
+
+        private string GetApiUrl(LtiParamDTO param)
+        {
+            var scheme = param.lis_outcome_service_url != null
+                         && param.lis_outcome_service_url.IndexOf(HttpScheme.Https, StringComparison.InvariantCultureIgnoreCase) >= 0
+                ? HttpScheme.Https
+                : HttpScheme.Http;
+
+            return $"{scheme}{param.lms_domain}/egcint/service/";
         }
 
         private ExternalEventDto ConvertSessionDtoToApiDto(MeetingSessionDTO dto)

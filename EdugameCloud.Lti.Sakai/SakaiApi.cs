@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API.Sakai;
@@ -24,11 +25,11 @@ namespace EdugameCloud.Lti.Sakai
             _logger = logger;
         }
 
-        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
+        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
         {
-            var quizDtos = GetItemsForUser(lmsUserParameters, isSurvey, null, out error);
+            var quizDtos = await GetItemsForUserAsync(lmsUserParameters, isSurvey, null);
 
-            var result = quizDtos.Select(q => new LmsQuizInfoDTO
+            var result = quizDtos.Data.Select(q => new LmsQuizInfoDTO
             {
                 id = q.id,
                 name = q.title,
@@ -38,10 +39,10 @@ namespace EdugameCloud.Lti.Sakai
                 isPublished = q.published
             });
 
-            return result;
+            return (Data: result, Error: quizDtos.Error);
         }
 
-        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds)
         {
             var apiParam = new SakaiExtendedParams
             {
@@ -51,7 +52,7 @@ namespace EdugameCloud.Lti.Sakai
             var course = lmsUserParameters.CourseName;
             var testsUrl = $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessments&sourcedid={ course }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&secret=07951-BAUER-41481-CRLSHM&user_id={lmsUserParameters.LmsUser.UserId }&ext_sakai_provider_eid={ WebUtility.UrlEncode(lmsUserParameters.LmsUser.Username) }";
 
-            string testsJson = _httpClientWrapper.DownloadString(testsUrl); ;
+            string testsJson = await _httpClientWrapper.DownloadStringAsync(testsUrl);
 
             SakaiSiteDto[] tests = null;
             if (!testsJson.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
@@ -76,7 +77,7 @@ namespace EdugameCloud.Lti.Sakai
                 var url = 
                     $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid={ course }&assessmentId={ assessmentId }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&secret=07951-BAUER-41481-CRLSHM&user_id={lmsUserParameters.LmsUser.UserId }&ext_sakai_provider_eid={ WebUtility.UrlEncode(lmsUserParameters.LmsUser.Username) }";
 
-                string resp = _httpClientWrapper.DownloadString(url);
+                string resp = await _httpClientWrapper.DownloadStringAsync(url);
 
                 var lqd = new LmsQuizDTO()
                 {
@@ -104,14 +105,14 @@ namespace EdugameCloud.Lti.Sakai
                         lqd.Images = temp.ToDictionary(x => x.Key, x => x.Value);
                     }
                 }
+
                 quizDto.Add(lqd);
             }
-            error = string.Empty;
-            return quizDto.ToList();
 
+            return (Data: quizDto.ToList(), Error: string.Empty);
         }
 
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null)
+        public async Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null)
         {
             var url = 
                 $@"http://sakai11.esynctraining.com/egcint/service/?" +
@@ -128,7 +129,7 @@ namespace EdugameCloud.Lti.Sakai
 
             var resultsJson = JsonConvert.SerializeObject(answers);
 
-            _httpClientWrapper.UploadJsonString(url, resultsJson);
+            await _httpClientWrapper.UploadJsonStringAsync(url, resultsJson);
 
         }
 

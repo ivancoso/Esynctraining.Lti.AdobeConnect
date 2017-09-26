@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace EdugameCloud.HttpClient
 {
@@ -20,28 +21,28 @@ namespace EdugameCloud.HttpClient
 
         #region Public Methods
 
-        public string PostValues(string url, IEnumerable<KeyValuePair<string, string>> pairs)
+        public async Task<string> PostValuesAsync(string url, IEnumerable<KeyValuePair<string, string>> pairs)
         {
             if (string.IsNullOrWhiteSpace(url))
                 throw new ArgumentException("Non-empty value expected", nameof(url));
             if (pairs == null)
                 throw new ArgumentNullException(nameof(pairs));
 
-            var response = _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs)).Result;
-            return response.Content.ReadAsStringAsync().Result;
+            var response = await _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+            return await response.Content.ReadAsStringAsync();
         }
 
-        public string DownloadString(string url)
+        public async Task<string> DownloadStringAsync(string url)
         {
-            HttpResponseMessage response = _httpClient.GetAsync(url).Result;
-            HttpContent content = response.Content;
-            return content.ReadAsStringAsync().Result;
+            var response = await _httpClient.GetAsync(url);
+            return await response.Content.ReadAsStringAsync();
         }
 
-        public string UploadJsonString(string address, string data)
+        public async Task<string> UploadJsonStringAsync(string address, string data)
         {
             var content = new StringContent(data, Encoding.UTF8, "application/json");
-            return _httpClient.PostAsync(address, content).Result.Content.ReadAsStringAsync().Result;
+            var response = await _httpClient.PostAsync(address, content);
+            return await response.Content.ReadAsStringAsync();
         }
 
         #endregion Public Methods

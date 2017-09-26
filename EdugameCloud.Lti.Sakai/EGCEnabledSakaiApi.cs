@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -22,11 +23,11 @@ namespace EdugameCloud.Lti.Sakai
             get { return "edugamecloud"; }
         }
 
-        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
+        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
         {
             try
             {
-                var quizResult = LoginIfNecessary(
+                var quizResult = await LoginIfNecessaryAsync(
                     null,
                     c =>
                     {
@@ -41,24 +42,23 @@ namespace EdugameCloud.Lti.Sakai
                             { "course", lmsUserParameters.Course.ToString( CultureInfo.InvariantCulture) }
                         };
 
-                        var xmlDoc = UploadValues(c.Url, pairs);
+                        // TODO: await?
+                        var xmlDoc = UploadValuesAsyn(c.Url, pairs).Result;
 
                         return SakaiQuizInfoParser.Parse(xmlDoc, isSurvey);
                     },
-                    out error,
                     lmsUserParameters.LmsUser);
 
-                if (quizResult == null)
+                if (quizResult.Data == null)
                 {
-                    error = error ?? "Sakai XML. Unable to retrive result from API";
+                    var error = quizResult.Error ?? "Sakai XML. Unable to retrive result from API";
 
                     _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
 
-                    return Enumerable.Empty<LmsQuizInfoDTO>();
+                    return (Data: Enumerable.Empty<LmsQuizInfoDTO>(), Error: error);
                 }
 
-                error = string.Empty;
-                return quizResult;
+                return (Data: quizResult.Data, Error: string.Empty);
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace EdugameCloud.Lti.Sakai
         /// <returns>
         /// The <see cref="IEnumerable{LmsQuizDTO}"/>.
         /// </returns>
-        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace EdugameCloud.Lti.Sakai
                 foreach (int quizId in quizIds)
                 {
                     int id = quizId;
-                    var quizResult = LoginIfNecessary(
+                    var quizResult = await LoginIfNecessaryAsync(
                         null,
                         c =>
                         {
@@ -105,27 +105,27 @@ namespace EdugameCloud.Lti.Sakai
                                 {  isSurvey ? "surveyId" : "quizId",  id.ToString(CultureInfo.InvariantCulture) }
                             };
 
-                            var xmlDoc = UploadValues(c.Url, pairs);
+                            // TODO: await?
+                            var xmlDoc = UploadValuesAsyn(c.Url, pairs).Result;
                             string errorMessage = string.Empty;
                             string err = string.Empty;
                             return SakaiQuizParser2.Parse(xmlDoc, ref errorMessage, ref err);
                         },
-                        out error,
                         lmsUserParameters.LmsUser);
-                    if (quizResult == null)
+
+                    if (quizResult.Data == null)
                     {
-                        error = error ?? "Sakai XML. Unable to retrive result from API";
+                        var error = quizResult.Error ?? "Sakai XML. Unable to retrive result from API";
 
                         _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
 
-                        return result;
+                        return (Data: result, Error: error);
                     }
 
-                    result.Add(quizResult);
+                    result.Add(quizResult.Data);
                 }
 
-                error = string.Empty;
-                return result;
+                return (Data: result, Error: string.Empty);
             }
             catch (Exception ex)
             {
@@ -146,14 +146,14 @@ namespace EdugameCloud.Lti.Sakai
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
+        public async Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
         {
             string error;
 
             try
             {
                 // ReSharper disable once UnusedVariable
-                var quizResult = LoginIfNecessary(
+                var quizResult = await LoginIfNecessaryAsync(
                     null,
                     c =>
                     {
@@ -165,7 +165,8 @@ namespace EdugameCloud.Lti.Sakai
                             { "reportObject", json }
                         };
 
-                        var xmlDoc = UploadValues(c.Url, pairs);
+                        // TODO: await?
+                        var xmlDoc = UploadValuesAsyn(c.Url, pairs).Result;
 
                         string errorMessage = string.Empty;
                         string err = string.Empty;
@@ -183,7 +184,6 @@ namespace EdugameCloud.Lti.Sakai
 
                         return result;
                     },
-                    out error,
                     lmsUserParameters.LmsUser);
             }
             catch (Exception ex)

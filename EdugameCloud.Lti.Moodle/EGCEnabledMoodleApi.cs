@@ -6,6 +6,7 @@ namespace EdugameCloud.Lti.Moodle
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Threading.Tasks;
     using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
@@ -28,9 +29,9 @@ namespace EdugameCloud.Lti.Moodle
             get { return "edugamecloud"; }
         }
 
-        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
+        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
         {
-            error = null;
+            string error = null;
             try
             {
                 var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
@@ -51,11 +52,10 @@ namespace EdugameCloud.Lti.Moodle
 
                     _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
 
-                    return Enumerable.Empty<LmsQuizInfoDTO>();
+                    return (Data: Enumerable.Empty<LmsQuizInfoDTO>(), Error: error);
                 }
 
-                error = string.Empty;
-                return quizResult;
+                return (Data: quizResult, Error: string.Empty);
             }
             catch (Exception ex)
             {
@@ -82,12 +82,12 @@ namespace EdugameCloud.Lti.Moodle
         /// <returns>
         /// The <see cref="IEnumerable{LmsQuizDTO}"/>.
         /// </returns>
-        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds)
         {
             try
             {
                 var result = new List<LmsQuizDTO>();
-                error = null;
+                string error = null;
                 foreach (int quizId in quizIds)
                 {
                     int id = quizId;
@@ -102,20 +102,20 @@ namespace EdugameCloud.Lti.Moodle
                         },
                         out error,
                         lmsUserParameters.LmsUser);
+
                     if (quizResult == null)
                     {
                         error = error ?? "Moodle XML. Unable to retrive result from API";
 
                         _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
 
-                        return result;
+                        return (Data: result, Error: error);
                     }
 
                     result.Add(quizResult);
                 }
 
-                error = string.Empty;
-                return result;
+                return (Data: result, Error: string.Empty);
             }
             catch (Exception ex)
             {
@@ -136,7 +136,7 @@ namespace EdugameCloud.Lti.Moodle
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
+        public async Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
         {
             string error;
 

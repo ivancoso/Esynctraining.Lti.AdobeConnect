@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 
@@ -6,13 +7,11 @@ namespace EdugameCloud.Lti.Sakai
 {
     public interface ISakaiLmsApi
     {
-        List<LmsUserDTO> GetUsersForCourse(
+        Task<(List<LmsUserDTO> Data, string Error)> GetUsersForCourseAsync(
             LmsCompany company,
-            int courseid,
-            out string error);
+            int courseid);
 
-        bool LoginAndCheckSession(
-            out string error,
+        Task<(bool Data, string Error)> LoginAndCheckSessionAsync(
             bool useSsl,
             string lmsDomain,
             string userName,

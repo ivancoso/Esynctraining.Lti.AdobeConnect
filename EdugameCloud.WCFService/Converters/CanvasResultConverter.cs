@@ -4,7 +4,7 @@ namespace EdugameCloud.WCFService.Converters
 {
     using System.Collections.Generic;
     using System.Linq;
-
+    using System.Threading.Tasks;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.Canvas;
@@ -24,7 +24,7 @@ namespace EdugameCloud.WCFService.Converters
         }
 
 
-        public override void ConvertAndSendQuizResultToLms(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
+        public override async Task ConvertAndSendQuizResultToLmsAsync(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
         {
             var quizSubmission = _canvasApi.CreateQuizSubmission(
                 lmsUserParameters.CompanyLms.LmsDomain,
@@ -68,7 +68,7 @@ namespace EdugameCloud.WCFService.Converters
             }
         }
 
-        public override void ConvertAndSendSurveyResultToLms(IEnumerable<SurveyQuestionResultDTO> results, 
+        public override async Task ConvertAndSendSurveyResultToLmsAsync(IEnumerable<SurveyQuestionResultDTO> results, 
             SurveyResult surveyResult, 
             LmsUserParameters lmsUserParameters)
         {
