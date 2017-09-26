@@ -62,14 +62,7 @@
                 var created = new List<QuizResultSaveResultDTO>();
 
                 //TRICK to get eventQuizMappingId
-                int? eventQuizMappingId = null;
-                if (results.Any())
-                {
-                    int acSessionId = results.First().acSessionId;
-                    var quizResults = this.QuizResultModel.GetQuizResultsByAcSessionId(acSessionId);
-                    var quizResult = quizResults.FirstOrDefault(q => q.EventQuizMapping != null);
-                    eventQuizMappingId = quizResult?.EventQuizMapping.Id ?? eventQuizMappingId;
-                }
+                var eventQuizMappingId = GetEventQuizMappingId(results);
                 //
 
 
@@ -119,6 +112,25 @@
         #endregion
 
         #region Methods
+
+        private int? GetEventQuizMappingId(QuizResultDTO[] results)
+        {
+            int? eventQuizMappingId = null;
+
+            if (!results.Any())
+                return eventQuizMappingId;
+
+            QuizResultDTO quizResultDTO = results.FirstOrDefault(r => r.eventQuizMappingId.HasValue);
+            if (quizResultDTO != null)
+                return quizResultDTO.eventQuizMappingId;
+
+
+            int acSessionId = results.First().acSessionId;
+            var quizResults = this.QuizResultModel.GetQuizResultsByAcSessionId(acSessionId);
+            var quizResult = quizResults.FirstOrDefault(q => q.EventQuizMapping != null);
+            eventQuizMappingId = quizResult?.EventQuizMapping.Id ?? eventQuizMappingId;
+            return eventQuizMappingId;
+        }
 
         private QuizResult ConvertDto(QuizResultDTO resultDTO, int? eventQuizMappingId)
         {
