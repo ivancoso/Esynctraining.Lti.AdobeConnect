@@ -412,7 +412,7 @@ namespace EdugameCloud.WCFService
 
         public CompanyFlatDTO[] GetByAdvancedFilter(CompanyAdvancedFilterDTO filter)
         {
-            List<int> result = new List<int>();
+            List<int> result = null;
             if (!string.IsNullOrEmpty(filter.firstName) || !string.IsNullOrEmpty(filter.lastName) || !string.IsNullOrEmpty(filter.email))
             {
                 var userCompanyIds = UserModel.GetCompanyIdsByUsersProperties(filter.firstName, filter.lastName, filter.email).ToList();
@@ -422,13 +422,13 @@ namespace EdugameCloud.WCFService
             if (!string.IsNullOrEmpty(filter.acServer))
             {
                 var serverCompanyIds = CompanyAcServerModel.GetCompaniesByServerName(filter.acServer).Select(c => c.Company.Id).ToList();
-                result = !result.Any() ? serverCompanyIds : result.Intersect(serverCompanyIds).ToList();
+                result = result?.Intersect(serverCompanyIds).ToList() ?? serverCompanyIds;
             }
 
             if (!string.IsNullOrEmpty(filter.companyName))
             {
                 var comapniesByName = CompanyModel.GetCompaniesFlatByName(filter.companyName).Select(c => c.id).ToList();
-                result = !result.Any() ? comapniesByName : result.Intersect(comapniesByName).ToList();
+                result = result?.Intersect(comapniesByName).ToList() ?? comapniesByName;
             }
 
             return this.CompanyModel.GetCompaniesFlatByIds(result).ToArray();
