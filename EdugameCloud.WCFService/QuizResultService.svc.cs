@@ -60,6 +60,19 @@
                 var result = new QuizResultSaveAllDTO();
                 var faults = new List<string>();
                 var created = new List<QuizResultSaveResultDTO>();
+
+                //TRICK to get eventQuizMappingId
+                int? eventQuizMappingId = null;
+                if (results.Any())
+                {
+                    int acSessionId = results.First().acSessionId;
+                    var quizResults = this.QuizResultModel.GetQuizResultsByAcSessionId(acSessionId);
+                    var quizResult = quizResults.FirstOrDefault(q => q.EventQuizMapping != null);
+                    eventQuizMappingId = quizResult?.EventQuizMapping.Id ?? eventQuizMappingId;
+                }
+                //
+
+
                 foreach (var appletResultDTO in results)
                 {
                     ValidationResult validationResult;
@@ -67,7 +80,7 @@
                     {
                         var sessionModel = this.QuizResultModel;
 
-                        var appletResult = this.ConvertDto(appletResultDTO);
+                        var appletResult = this.ConvertDto(appletResultDTO, eventQuizMappingId);
                         sessionModel.RegisterSave(appletResult);
 
                         var quizSaveResult = new QuizResultSaveResultDTO(appletResult);
@@ -107,7 +120,7 @@
 
         #region Methods
 
-        private QuizResult ConvertDto(QuizResultDTO resultDTO)
+        private QuizResult ConvertDto(QuizResultDTO resultDTO, int? eventQuizMappingId)
         {
             var instance = new QuizResult();
             instance.Score = resultDTO.score;
@@ -126,8 +139,8 @@
             /**/
             instance.Quiz = this.QuizModel.GetOneById(resultDTO.quizId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
-            if (resultDTO.eventQuizMappingId.HasValue && resultDTO.eventQuizMappingId.Value != 0)
-                instance.EventQuizMapping = EventQuizMappingModel.GetOneById(resultDTO.eventQuizMappingId.Value).Value;
+            if (eventQuizMappingId.HasValue && eventQuizMappingId.Value != 0)
+                instance.EventQuizMapping = EventQuizMappingModel.GetOneById(eventQuizMappingId.Value).Value;
             /**/
 
             instance.LmsId = resultDTO.lmsId;
