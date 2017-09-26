@@ -32,7 +32,7 @@
         public static UserActivation Build(User user)
         {
             if (user == null)
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
 
             return new UserActivation
             {

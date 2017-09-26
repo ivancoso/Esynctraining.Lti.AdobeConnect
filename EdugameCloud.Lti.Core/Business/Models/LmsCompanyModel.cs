@@ -2,7 +2,6 @@
 using System.Linq;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.NHibernate;
