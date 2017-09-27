@@ -45,6 +45,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string recordingId,
             int id);
 
+        string GetPasscode(ILmsLicense lmsCompany, string scoId);
+
     }
 
 }
