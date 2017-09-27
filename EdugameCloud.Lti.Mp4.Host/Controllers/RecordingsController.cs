@@ -157,22 +157,6 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
         }
 
-        [Route("passcode")]
-        [HttpPost]
-        public virtual async Task<OperationResultWithData<string>> GetRecordingPasscode([FromBody]RecordingActionRequestDto input)
-        {
-            try
-            {
-                string passCode = RecordingsService.GetPasscode(LmsCompany, input.RecordingId);
-                return passCode.ToSuccessResult();
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("MP4-GetPasscodeRecordings", ex);
-                return OperationResultWithData<string>.Error(errorMessage);
-            }
-        }
-
     }
 
 }

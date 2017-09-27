@@ -140,15 +140,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return isPublic;
         }
 
-        private string GetPasscodeForRecording(string recordingScoId, IAdobeConnectProxy acProxy)
-        {
-            var info = acProxy.GetScoInfo(recordingScoId);
-            if (!info.Success)
-                return string.Empty;
-
-            return info.ScoInfo.MeetingPasscode;
-        }
-
         private static IEnumerable<IRecordingDto> ApplySort(string sortBy, string sortOrder, IEnumerable<IRecordingDto> resultDto)
         {
             // sorting
@@ -409,10 +400,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Success();
         }
 
-        public string GetPasscode(ILmsLicense lmsCompany, string scoId)
+        public string GetPasscode(ILmsLicense lmsCompany, IAdobeConnectProxy provider, string scoId)
         {
-            var acProxy = acAccountService.GetProvider(lmsCompany);
-            return GetPasscodeForRecording(scoId, acProxy);
+            var info = provider.GetScoInfo(scoId);
+
+            if (!info.Success)
+                return string.Empty;
+
+            return info.ScoInfo.MeetingPasscode;
         }
 
     }
