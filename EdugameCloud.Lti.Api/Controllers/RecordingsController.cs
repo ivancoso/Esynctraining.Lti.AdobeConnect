@@ -236,6 +236,22 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
+        [Route("passcode")]
+        [HttpPost]
+        public virtual OperationResultWithData<string> GetRecordingPasscode([FromBody]RecordingRequestDto input)
+        {
+            try
+            {
+                string passCode = RecordingsService.GetPasscode(LmsCompany, input.RecordingId);
+                return passCode.ToSuccessResult();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("MP4-GetPasscodeRecordings", ex);
+                return OperationResultWithData<string>.Error(errorMessage);
+            }
+        }
+
         //[HttpGet]
         //public virtual ActionResult EditRecording(string lmsProviderName, string recordingUrl)
         //{

@@ -29,6 +29,7 @@ namespace EdugameCloud.Lti.DTO
                 public string GetRecordings { get; set; } = RestWebApiBaseUrl + "recordings"; // API   + "lti-mp4/recordings"
                 public string PublishRecording { get; set; } = RestWebApiBaseUrl + "recordings/publish";  // API
                 public string UnpublishRecording { get; set; } = RestWebApiBaseUrl + "recordings/unpublish"; // API
+                public string GetRecordingPasscode { get; set; } = RestWebApiBaseUrl + "recordings/passcode"; // API
 
                 public string ShareRecording { get; set; } = RestWebApiBaseUrl + "recordings/share";  // API
                 public string EditRecordingInformation { get; set; } = RestWebApiBaseUrl + "recordings/edit";  // API
