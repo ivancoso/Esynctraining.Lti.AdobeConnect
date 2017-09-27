@@ -184,7 +184,8 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="Distractor"/>.
         /// </returns>
-        internal static Distractor ConvertDto(DistractorDTO q, Distractor instance, bool updateQuestionDate, FileModel fileModel, QuestionModel questionModel, UserModel userModel, SubModuleItemModel subModuleItemModel)
+        internal static Distractor ConvertDto(DistractorDTO q, Distractor instance, bool updateQuestionDate, 
+            FileModel fileModel, QuestionModel questionModel, UserModel userModel, SubModuleItemModel subModuleItemModel)
         {
             instance = instance ?? new Distractor();
             instance.IsActive = q.isActive;

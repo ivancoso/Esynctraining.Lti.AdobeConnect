@@ -102,7 +102,9 @@ namespace EdugameCloud.Core.Business.Models
                 .WhereRestrictionOn(x => x.QuestionRef.Id).IsIn(questionIds)
                 .AndRestrictionOn(x => x.SurveyResult.Id).IsIn(res.players.Select(q => q.surveyResultId).ToList());
 
-            var distractorsQuery = new DefaultQueryOver<Distractor, int>().GetQueryOver().WhereRestrictionOn(x => x.Question.Id).IsIn(questionIds);
+            var distractorsQuery = new DefaultQueryOver<Distractor, int>().GetQueryOver()
+                .WhereRestrictionOn(x => x.Question.Id)
+                .IsIn(questionIds);
 
             var surveyQuestionResults = this.surveyQuestionResultRepository.FindAll(query).ToList();
 
@@ -116,8 +118,15 @@ namespace EdugameCloud.Core.Business.Models
             
             foreach (var questionForAdminDTO in res.questions)
             {
-                questionForAdminDTO.questionResultIds = surveyQuestionResults.Where(x => x.QuestionRef.Id == questionForAdminDTO.questionId).Select(x => x.Id).ToArray();
-                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToArray();
+                questionForAdminDTO.questionResultIds = surveyQuestionResults
+                    .Where(x => x.QuestionRef.Id == questionForAdminDTO.questionId)
+                    .Select(x => x.Id)
+                    .ToArray();
+
+                questionForAdminDTO.distractors = distractors
+                    .Where(x => x.Question.Id == questionForAdminDTO.questionId)
+                    .Select(x => new DistractorDTO(x))
+                    .ToArray();
             }
 
             foreach (var surveyPlayerDTO in res.players)

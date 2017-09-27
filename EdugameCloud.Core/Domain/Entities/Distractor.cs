@@ -9,8 +9,6 @@
     /// </summary>
     public class Distractor : Entity
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the created by.
         /// </summary>
@@ -88,6 +86,6 @@
         /// </summary>
         public virtual int? LmsProviderId { get; set; }
 
-        #endregion
     }
+
 }
