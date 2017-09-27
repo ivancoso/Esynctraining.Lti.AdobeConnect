@@ -51,7 +51,7 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        public async Task<SurveyResultSaveAllDTO> SaveAllAsync(SurveyResultDTO[] results)
+        public async Task<SurveyResultSaveAllDTO> SaveAll(SurveyResultDTO[] results)
         {
             results = results ?? new SurveyResultDTO[] { };
 

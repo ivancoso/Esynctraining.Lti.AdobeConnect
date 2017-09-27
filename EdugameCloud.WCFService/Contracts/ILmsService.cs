@@ -52,7 +52,7 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetQuizzesForUser?userId={userId}&lmsUserParametersId={lmsUserParametersId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Task<LmsQuizInfoDTO[]> GetQuizzesForUserAsync(int userId, int lmsUserParametersId);
+        Task<LmsQuizInfoDTO[]> GetQuizzesForUser(int userId, int lmsUserParametersId);
 
         /// <summary>
         /// The get authentication parameters by id.
@@ -93,7 +93,7 @@
         [FaultContract(typeof(Error))]
         [WebInvoke(UriTemplate = "ConvertQuizzes", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        Task<QuizesAndSubModuleItemsDTO> ConvertQuizzesAsync(int userId, int lmsUserParametersId, int[] quizIds);
+        Task<QuizesAndSubModuleItemsDTO> ConvertQuizzes(int userId, int lmsUserParametersId, int[] quizIds);
 
         /// <summary>
         /// The get surveys for user.
@@ -110,7 +110,7 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetSurveysForUser?userId={userId}&lmsUserParametersId={lmsUserParametersId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        Task<LmsQuizInfoDTO[]> GetSurveysForUserAsync(int userId, int lmsUserParametersId);
+        Task<LmsQuizInfoDTO[]> GetSurveysForUser(int userId, int lmsUserParametersId);
 
         /// <summary>
         /// The convert surveys.
@@ -131,7 +131,7 @@
         [FaultContract(typeof(Error))]
         [WebInvoke(UriTemplate = "ConvertSurveys", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        Task<SurveysAndSubModuleItemsDTO> ConvertSurveysAsync(int userId, int lmsUserParametersId, int[] quizIds);
+        Task<SurveysAndSubModuleItemsDTO> ConvertSurveys(int userId, int lmsUserParametersId, int[] quizIds);
 
         [OperationContract]
         [FaultContract(typeof(Error))]

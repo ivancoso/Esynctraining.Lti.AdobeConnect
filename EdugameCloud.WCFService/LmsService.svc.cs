@@ -34,7 +34,6 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using Resources;
-    using ILmsService = EdugameCloud.WCFService.Contracts.ILmsService;
 
     /// <summary>
     /// The LMS service.
@@ -42,7 +41,7 @@ namespace EdugameCloud.WCFService
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
-    public class LmsService : BaseService, ILmsService
+    public class LmsService : BaseService, EdugameCloud.WCFService.Contracts.ILmsService
     {
         #region Properties
 
@@ -209,23 +208,23 @@ namespace EdugameCloud.WCFService
             }).ToArray();
         }
 
-        public async Task<LmsQuizInfoDTO[]> GetQuizzesForUserAsync(int userId, int lmsUserParametersId)
+        public async Task<LmsQuizInfoDTO[]> GetQuizzesForUser(int userId, int lmsUserParametersId)
         {
             return await this.GetItemsForUserAsync(userId, lmsUserParametersId, false);
         }
 
-        public async Task<QuizesAndSubModuleItemsDTO> ConvertQuizzesAsync(int userId, int lmsUserParametersId, int[] quizIds)
+        public async Task<QuizesAndSubModuleItemsDTO> ConvertQuizzes(int userId, int lmsUserParametersId, int[] quizIds)
         {
             quizIds = quizIds ?? new int[0];
             return await this.Convert(userId, lmsUserParametersId, quizIds, false) as QuizesAndSubModuleItemsDTO;
         }
 
-        public async Task<LmsQuizInfoDTO[]> GetSurveysForUserAsync(int userId, int lmsUserParametersId)
+        public async Task<LmsQuizInfoDTO[]> GetSurveysForUser(int userId, int lmsUserParametersId)
         {
             return await this.GetItemsForUserAsync(userId, lmsUserParametersId, true);
         }
 
-        public async Task<SurveysAndSubModuleItemsDTO> ConvertSurveysAsync(
+        public async Task<SurveysAndSubModuleItemsDTO> ConvertSurveys(
             int userId,
             int lmsUserParametersId,
             int[] quizIds)

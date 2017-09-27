@@ -23,7 +23,7 @@
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
-        Task<SurveyResultSaveAllDTO> SaveAllAsync(SurveyResultDTO[] results);
+        Task<SurveyResultSaveAllDTO> SaveAll(SurveyResultDTO[] results);
 
     }
 

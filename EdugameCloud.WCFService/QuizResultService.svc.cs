@@ -48,7 +48,7 @@
 
         #region Public Methods and Operators
 
-        public async Task<QuizResultSaveAllDTO> SaveAllAsync(QuizResultDTO[] results)
+        public async Task<QuizResultSaveAllDTO> SaveAll(QuizResultDTO[] results)
         {
             results = results ?? new QuizResultDTO[] { };
 
