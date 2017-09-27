@@ -248,7 +248,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("MP4-GetPasscodeRecordings", ex);
+                string errorMessage = GetOutputErrorMessage("GetRecordingPasscode", ex);
                 return OperationResultWithData<string>.Error(errorMessage);
             }
         }
