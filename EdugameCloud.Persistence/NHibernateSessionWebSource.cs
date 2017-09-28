@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Persistence
 {
+    using System;
     using System.Collections;
     using System.Runtime.Remoting.Contexts;
     using System.Web;
@@ -29,10 +30,14 @@
                 {
                     get
                     {
-                        var webHashtable = HttpContext.Current.Items[LocalDataHashtableKey] as Hashtable;
+                        var currentContext = HttpContext.Current;
+                        if (currentContext == null)
+                            throw new InvalidOperationException("HttpContext.Current == null");
+
+                        var webHashtable = currentContext.Items[LocalDataHashtableKey] as Hashtable;
                         if (webHashtable == null)
                         {
-                            HttpContext.Current.Items[LocalDataHashtableKey] = webHashtable = new Hashtable();
+                            currentContext.Items[LocalDataHashtableKey] = webHashtable = new Hashtable();
                         }
 
                         return webHashtable;
