@@ -51,13 +51,12 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        public async Task<SurveyResultSaveAllDTO> SaveAll(SurveySummaryResultDTO sResult)
+        public async Task SaveAll(SurveySummaryResultDTO sResult)
         {
             sResult = sResult ?? new SurveySummaryResultDTO { surveyResults = new SurveyResultDTO[] {}};
 
             try
             {
-                var result = new SurveyResultSaveAllDTO();
                 foreach (var surveyResultDTO in sResult.surveyResults)
                 {
                     ValidationResult validationResult;
@@ -69,8 +68,6 @@ namespace EdugameCloud.WCFService
                         await SaveAllAsync(surveyResult, surveyResultDTO.results);
                     }
                 }
-
-                return result;
             }
             catch(Exception ex)
             {
@@ -129,7 +126,7 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        private async Task<SurveyQuestionResultSaveAllDTO> SaveAllAsync(SurveyResult instance, SurveyQuestionResultDTO[] results)
+        private async Task SaveAllAsync(SurveyResult instance, SurveyQuestionResultDTO[] results)
         {
             results = results ?? new SurveyQuestionResultDTO[] { };
 
@@ -146,37 +143,18 @@ namespace EdugameCloud.WCFService
                     sessionModel.RegisterSave(surveyQuestionResult, true);
                     if (surveyQuestionResultDTO.answers != null && surveyQuestionResultDTO.answers.Any())
                     {
-                        var answers = this.CreateAnswers(surveyQuestionResultDTO, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
-                        foreach (var answ in answers)
-                            surveyQuestionResult.Answers.Add(answ);
+                        this.CreateAnswers(surveyQuestionResultDTO, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
                     }
 
-                    created.Add(surveyQuestionResult);
                 }
-                else
-                {
-                    faults.AddRange(this.UpdateResultToString(validationResult));
-                }
-            }
-
-            if (created.Any())
-            {
-                result.saved = created.Select(x => new SurveyQuestionResultDTO(x, x.Answers)).ToArray();
-            }
-
-            if (faults.Any())
-            {
-                result.faults = faults.ToArray();
             }
 
             await this.ConvertAndSendSurveyResultAsync(instance, results);
 
-            return result;
         }
 
-        private List<SurveyQuestionResultAnswer> CreateAnswers(SurveyQuestionResultDTO dto, SurveyQuestionResult result, SurveyQuestionResultAnswerModel answerModel)
+        private void CreateAnswers(SurveyQuestionResultDTO dto, SurveyQuestionResult result, SurveyQuestionResultAnswerModel answerModel)
         {
-            var created = new List<SurveyQuestionResultAnswer>();
             foreach (var answerDTO in dto.answers)
             {
                 answerDTO.surveyQuestionResultId = result.Id;
@@ -197,14 +175,8 @@ namespace EdugameCloud.WCFService
                     {
                         Logger.ErrorFormat("Saving answers:" + ex);
                     }
-                    finally
-                    {
-                        created.Add(answer);
-                    }
                 }
             }
-
-            return created;
         }
 
         // TODO: review

@@ -27,34 +27,92 @@
     {
         #region Properties
 
-        private QuizResultModel QuizResultModel => IoC.Resolve<QuizResultModel>();
+        private QuizResultModel _quizResultModel;
+        private QuizResultModel QuizResultModel
+        {
+            get
+            {
+                return _quizResultModel ?? (_quizResultModel = IoC.Resolve<QuizResultModel>());
+            }
+        }
 
-        private QuizModel QuizModel => IoC.Resolve<QuizModel>();
-        private CompanyEventQuizMappingModel EventQuizMappingModel => IoC.Resolve<CompanyEventQuizMappingModel>();
+        private QuizModel _quizModel;
+        private QuizModel QuizModel
+        {
+            get
+            {
+                return _quizModel ?? (_quizModel = IoC.Resolve<QuizModel>());
+            }
+        }
 
-        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
+        private CompanyEventQuizMappingModel _eventQuizMappingModel;
+        private CompanyEventQuizMappingModel EventQuizMappingModel
+        {
+            get
+            {
+                return _eventQuizMappingModel ?? (_eventQuizMappingModel = IoC.Resolve<CompanyEventQuizMappingModel>());
+            }
+        }
 
-        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
+        private QuestionModel _questionModel;
+        private QuestionModel QuestionModel
+        {
+            get
+            {
+                return _questionModel ?? (_questionModel = IoC.Resolve<QuestionModel>());
+            }
+        }
 
-        private QuizQuestionResultModel QuizQuestionResultModel => IoC.Resolve<QuizQuestionResultModel>();
+        private QuestionTypeModel _questionTypeModel;
+        private QuestionTypeModel QuestionTypeModel
+        {
+            get { return _questionTypeModel ?? (_questionTypeModel = IoC.Resolve<QuestionTypeModel>()); }
+        }
 
-        private ConverterFactory ConverterFactory => IoC.Resolve<ConverterFactory>();
 
-        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
+        private QuizQuestionResultModel _quizQuestionResultModel;
+        private QuizQuestionResultModel QuizQuestionResultModel
+        {
+            get
+            {
+                return _quizQuestionResultModel ?? (_quizQuestionResultModel = IoC.Resolve<QuizQuestionResultModel>());
+            }
+        }
 
-        private QuizQuestionResultAnswerModel QuizQuestionResultAnswerModel => IoC.Resolve<QuizQuestionResultAnswerModel>();
+        private ConverterFactory _converterFactory;
+        private ConverterFactory ConverterFactory
+        {
+            get { return _converterFactory ?? (_converterFactory = IoC.Resolve<ConverterFactory>()); }
+        }
+
+        private LmsUserParametersModel _lmsUserParametersModel;
+        private LmsUserParametersModel LmsUserParametersModel
+        {
+            get
+            {
+                return _lmsUserParametersModel ?? (_lmsUserParametersModel ?? IoC.Resolve<LmsUserParametersModel>());
+            }
+        }
+
+        private QuizQuestionResultAnswerModel _quizQuestionResultAnswerModel;
+        private QuizQuestionResultAnswerModel QuizQuestionResultAnswerModel
+        {
+            get
+            {
+                return _quizQuestionResultAnswerModel ?? (_quizQuestionResultAnswerModel = IoC.Resolve<QuizQuestionResultAnswerModel>());
+            }
+        }
 
         #endregion
 
         #region Public Methods and Operators
 
-        public async Task<QuizResultSaveAllDTO> SaveAll(QuizSummaryResultDTO quizResult)
+        public async Task SaveAll(QuizSummaryResultDTO quizResult)
         {
             quizResult = quizResult ?? new QuizSummaryResultDTO { quizResults = new QuizResultDTO[] {} };
 
             try
             {
-                var result = new QuizResultSaveAllDTO();
 
                 //TRICK to get eventQuizMappingId
                 var eventQuizMappingId = GetEventQuizMappingId(quizResult);
@@ -74,8 +132,6 @@
                         await SaveAllAsync(appletResult, appletResultDTO.results);
                     }
                 }
-
-                return result;
             }
             catch (Exception ex)
             {
@@ -148,13 +204,10 @@
             return instance;
         }
 
-        private async Task<QuizQuestionResultSaveAllDTO> SaveAllAsync(QuizResult quizResult, QuizQuestionResultDTO[] results)
+        private async Task SaveAllAsync(QuizResult quizResult, QuizQuestionResultDTO[] results)
         {
             results = results ?? new QuizQuestionResultDTO[] { };
 
-            var result = new QuizQuestionResultSaveAllDTO();
-            var faults = new List<string>();
-            var created = new List<QuizQuestionResult>();
             foreach (QuizQuestionResultDTO appletResultDTO in results)
             {
                 if (this.IsValid(appletResultDTO, out var validationResult))
@@ -164,36 +217,16 @@
                     sessionModel.RegisterSave(appletResult);
                     if (appletResultDTO.answers != null && appletResultDTO.answers.Any())
                     {
-                        var answers = this.CreateAnswers(appletResultDTO, appletResult);
-                        foreach (var answ in answers)
-                            appletResult.Answers.Add(answ);
+                        this.CreateAnswers(appletResultDTO, appletResult);
                     }
-                    created.Add(appletResult);
                 }
-                else
-                {
-                    faults.AddRange(UpdateResultToString(validationResult));
-                }
-            }
-
-            if (created.Any())
-            {
-                result.saved = created.Select(x => new QuizQuestionResultDTO(x)).ToArray();
-            }
-
-            if (faults.Any())
-            {
-                result.faults = faults.ToArray();
             }
 
             await this.ConvertAndSendQuizResultAsync(quizResult, results);
-
-            return result;
         }
 
-        private List<QuizQuestionResultAnswer> CreateAnswers(QuizQuestionResultDTO dto, QuizQuestionResult result)
+        private void CreateAnswers(QuizQuestionResultDTO dto, QuizQuestionResult result)
         {
-            var created = new List<QuizQuestionResultAnswer>();
             foreach (var answerString in dto.answers)
             {
                 var answer = new QuizQuestionResultAnswer();
@@ -237,11 +270,9 @@
                 }
                 finally
                 {
-                    created.Add(answer);
                 }
             }
 
-            return created;
         }
 
         private async Task ConvertAndSendQuizResultAsync(QuizResult quizResult, IEnumerable<QuizQuestionResultDTO> results)

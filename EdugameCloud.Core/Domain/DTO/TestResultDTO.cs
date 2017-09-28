@@ -6,14 +6,6 @@
 
     using Esynctraining.Core.Extensions;
 
-    // TODO: move to separate file
-    [DataContract]
-    public class TestResultSaveResultDTO : TestResultDTO
-    {
-        [DataMember]
-        public TestQuestionResultSaveAllDTO testQuestionResult { get; set; }
-    }
-
     /// <summary>
     ///     The test result DTO.
     /// </summary>

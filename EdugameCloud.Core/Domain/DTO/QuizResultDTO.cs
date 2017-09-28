@@ -5,15 +5,6 @@ using Esynctraining.Core.Extensions;
 
 namespace EdugameCloud.Core.Domain.DTO
 {
-    // TODO: move to separate file
-    [DataContract]
-    public class QuizResultSaveResultDTO : QuizResultDTO
-    {
-        [DataMember]
-        public QuizQuestionResultSaveAllDTO quizQuestionResult { get; set; }
-
-    }
-
     /// <summary>
     /// The quiz result DTO.
     /// </summary>

@@ -107,13 +107,10 @@
             return instance;
         }
 
-        private TestQuestionResultSaveAllDTO SaveAll(TestResult testResult, TestQuestionResultDTO[] results)
+        private void SaveAll(TestResult testResult, TestQuestionResultDTO[] results)
         {
             results = results ?? new TestQuestionResultDTO[] { };
 
-            var result = new TestQuestionResultSaveAllDTO();
-            var faults = new List<string>();
-            var created = new List<TestQuestionResult>();
             foreach (var appletResultDTO in results)
             {
                 if (this.IsValid(appletResultDTO, out var validationResult))
@@ -121,25 +118,8 @@
                     var sessionModel = this.TestQuestionResultModel;
                     var appletResult = this.ConvertDto(appletResultDTO, testResult);
                     sessionModel.RegisterSave(appletResult);
-                    created.Add(appletResult);
-                }
-                else
-                {
-                    faults.AddRange(this.UpdateResultToString(validationResult));
                 }
             }
-
-            if (created.Any())
-            {
-                result.saved = created.Select(x => new TestQuestionResultDTO(x)).ToArray();
-            }
-
-            if (faults.Any())
-            {
-                result.faults = faults.ToArray();
-            }
-
-            return result;
         }
 
         #endregion
