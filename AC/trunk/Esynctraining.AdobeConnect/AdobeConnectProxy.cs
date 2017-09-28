@@ -964,12 +964,12 @@ namespace Esynctraining.AdobeConnect
             return _provider.SearchScoByName(name);
         }
 
-        public StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, AclFieldId fieldId, string value)
+        public StatusInfo UpdateAclFieldWithPasscode(string aclId, AclFieldId fieldId, string value, bool isPasscodeRequired)
         {
             StatusInfo result;
             try
             {
-                result = _provider.UpdateAclFieldWithRequiredPasscode(aclId, fieldId, value);
+                result = _provider.UpdateAclFieldWithPasscode(aclId, fieldId, value, isPasscodeRequired);
             }
             catch (Exception ex)
             {
@@ -987,12 +987,12 @@ namespace Esynctraining.AdobeConnect
             return result;
         }
 
-        public StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, string fieldId, string value)
+        public StatusInfo UpdateAclFieldWithPasscode(string aclId, string fieldId, string value, bool isPasscodeRequired)
         {
             StatusInfo result;
             try
             {
-                result = _provider.UpdateAclFieldWithRequiredPasscode(aclId, fieldId, value);
+                result = _provider.UpdateAclFieldWithPasscode(aclId, fieldId, value, isPasscodeRequired);
             }
             catch (Exception ex)
             {

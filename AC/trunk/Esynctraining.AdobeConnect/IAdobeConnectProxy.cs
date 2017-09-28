@@ -203,8 +203,8 @@ namespace Esynctraining.AdobeConnect
 
         #endregion Telephony
 
-        StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, AclFieldId fieldId, string value);
-        StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, string fieldId, string value);
+        StatusInfo UpdateAclFieldWithPasscode(string aclId, AclFieldId fieldId, string value, bool isPasscodeRequired);
+        StatusInfo UpdateAclFieldWithPasscode(string aclId, string fieldId, string value, bool isPasscodeRequired);
 
 
         StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value);

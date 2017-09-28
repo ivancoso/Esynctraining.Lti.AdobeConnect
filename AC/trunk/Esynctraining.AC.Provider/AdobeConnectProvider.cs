@@ -1,4 +1,5 @@
-﻿namespace Esynctraining.AC.Provider
+﻿
+namespace Esynctraining.AC.Provider
 {
     using System;
     using System.Collections.Generic;
@@ -463,16 +464,16 @@
                 : new FieldCollectionResult(status);
         }
 
-        public StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, AclFieldId fieldId, string value)
+        public StatusInfo UpdateAclFieldWithPasscode(string aclId, AclFieldId fieldId, string value, bool isPasscodeRequired)
         {
-            return UpdateAclFieldWithRequiredPasscode(aclId, fieldId.ToXmlString(), value);
+            return UpdateAclFieldWithPasscode(aclId, fieldId.ToXmlString(), value, isPasscodeRequired);
         }
 
-        public StatusInfo UpdateAclFieldWithRequiredPasscode(string aclId, string fieldId, string value)
+        public StatusInfo UpdateAclFieldWithPasscode(string aclId, string fieldId, string value, bool isPasscodeRequired)
         {
             StatusInfo status;
 
-            this.requestProcessor.Process(Commands.Sco.FieldUpdate, string.Format(CommandParams.Features.FieldUpdateWithRequiredPasscode, aclId, fieldId, value), out status);
+            this.requestProcessor.Process(Commands.Sco.FieldUpdate, string.Format(CommandParams.Features.FieldUpdateWithPasscode, aclId, fieldId, value, isPasscodeRequired ? "true" : "false"), out status);
 
             return status;
         }
