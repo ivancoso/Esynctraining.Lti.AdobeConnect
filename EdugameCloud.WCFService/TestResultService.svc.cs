@@ -28,15 +28,44 @@
     {
         #region Properties
 
-        private TestResultModel TestResultModel => IoC.Resolve<TestResultModel>();
+        private TestResultModel _testResultModel;
+        private TestResultModel TestResultModel
+        {
+            get
+            {
+                return _testResultModel ?? (_testResultModel = IoC.Resolve<TestResultModel>());
+            }
+        }
 
-        private TestQuestionResultModel TestQuestionResultModel => IoC.Resolve<TestQuestionResultModel>();
+        private TestQuestionResultModel _testQuestionResultModel;
+        private TestQuestionResultModel TestQuestionResultModel
+        {
+            get
+            {
+                return _testQuestionResultModel ?? (_testQuestionResultModel = IoC.Resolve<TestQuestionResultModel>());
+            }
+        }
 
-        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
+        private QuestionTypeModel _questionTypeModel;
+        private QuestionTypeModel QuestionTypeModel
+        {
+            get { return _questionTypeModel ?? (_questionTypeModel = IoC.Resolve<QuestionTypeModel>()); }
+        }
 
-        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
+        private QuestionModel _questionModel;
+        private QuestionModel QuestionModel
+        {
+            get { return _questionModel ?? (_questionModel = IoC.Resolve<QuestionModel>()); }
+        }
 
-        private TestModel TestModel => IoC.Resolve<TestModel>();
+        private TestModel _testModel;
+        private TestModel TestModel
+        {
+            get
+            {
+                return _testModel ?? (_testModel = IoC.Resolve<TestModel>());
+            }
+        }
 
         #endregion
 

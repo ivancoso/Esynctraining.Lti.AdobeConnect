@@ -29,23 +29,81 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        private SurveyResultModel SurveyResultModel => IoC.Resolve<SurveyResultModel>();
+        private SurveyResultModel _surveyResultModel;
+        private SurveyResultModel SurveyResultModel
+        {
+            get
+            {
+                return _surveyResultModel ?? (_surveyResultModel = IoC.Resolve<SurveyResultModel>());
+            }
+        }
 
-        private SurveyModel SurveyModel => IoC.Resolve<SurveyModel>();
+        private SurveyModel _surveyModel;
+        private SurveyModel SurveyModel
+        {
+            get
+            {
+                return _surveyModel ?? (_surveyModel = IoC.Resolve<SurveyModel>());
+            }
+        }
 
-        private SurveyQuestionResultModel SurveyQuestionResultModel => IoC.Resolve<SurveyQuestionResultModel>();
+        private SurveyQuestionResultModel _surveyQuestionResultModel;
+        private SurveyQuestionResultModel SurveyQuestionResultModel
+        {
+            get
+            {
+                return _surveyQuestionResultModel ?? (_surveyQuestionResultModel = IoC.Resolve<SurveyQuestionResultModel>());
+            }
+        }
 
-        private QuestionTypeModel QuestionTypeModel => IoC.Resolve<QuestionTypeModel>();
+        private QuestionTypeModel _questionTypeModel;
+        private QuestionTypeModel QuestionTypeModel
+        {
+            get
+            {
+                return _questionTypeModel ?? (_questionTypeModel = IoC.Resolve<QuestionTypeModel>());
+            }
+        }
 
-        private QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
+        private QuestionModel _questionModel;
+        private QuestionModel QuestionModel
+        {
+            get
+            {
+                return _questionModel ?? (_questionModel = IoC.Resolve<QuestionModel>());
+            }
+        }
 
-        private SurveyQuestionResultAnswerModel SurveyQuestionResultAnswerModel => IoC.Resolve<SurveyQuestionResultAnswerModel>();
+        private SurveyQuestionResultAnswerModel _surveyQuestionResultAnswerModel;
+        private SurveyQuestionResultAnswerModel SurveyQuestionResultAnswerModel
+        {
+            get
+            {
+                return _surveyQuestionResultAnswerModel ?? (_surveyQuestionResultAnswerModel = IoC.Resolve<SurveyQuestionResultAnswerModel>());
+            }
+        }
 
-        private DistractorModel DistractorModel => IoC.Resolve<DistractorModel>();
+        private DistractorModel _distractorModel;
+        private DistractorModel DistractorModel
+        {
+            get
+            {
+                return _distractorModel ?? (_distractorModel = IoC.Resolve<DistractorModel>());
+            }
+        }
 
-        private ConverterFactory ConverterFactory => IoC.Resolve<ConverterFactory>();
+        private ConverterFactory _converterFactory;
 
-        private LmsUserParametersModel LmsUserParametersModel => IoC.Resolve<LmsUserParametersModel>();
+        private ConverterFactory ConverterFactory
+        {
+            get { return _converterFactory ?? (_converterFactory = IoC.Resolve<ConverterFactory>()); }
+        }
+
+        private LmsUserParametersModel _lmsUserParametersModel;
+        private LmsUserParametersModel LmsUserParametersModel
+        {
+            get { return _lmsUserParametersModel ?? (_lmsUserParametersModel = IoC.Resolve<LmsUserParametersModel>()); }
+        }
 
         #endregion
 
