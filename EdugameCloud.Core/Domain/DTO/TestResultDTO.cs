@@ -12,10 +12,6 @@
     {
         [DataMember]
         public TestQuestionResultSaveAllDTO testQuestionResult { get; set; }
-
-        public TestResultSaveResultDTO(TestResult result) : base(result)
-        {
-        }
     }
 
     /// <summary>
@@ -31,28 +27,6 @@
         /// </summary>
         public TestResultDTO()
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TestResultDTO"/> class.
-        /// </summary>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        public TestResultDTO(TestResult result)
-        {
-            this.testResultId = result.Id;
-            this.acSessionId = result.ACSessionId;
-            this.testId = result.Test.With(x => x.Id);
-            this.dateCreated = result.DateCreated.ConvertToUnixTimestamp();
-            this.endTime = result.EndTime.ConvertToUnixTimestamp();
-            this.participantName = result.ParticipantName;
-            this.score = result.Score;
-            this.startTime = result.StartTime.ConvertToUnixTimestamp();
-            this.isArchive = result.IsArchive ?? false;
-            this.email = result.Email;
-            this.acEmail = result.ACEmail;
-            this.isCompleted = result.IsCompleted ?? false;
         }
 
         #endregion
@@ -76,24 +50,6 @@
         /// </summary>
         [DataMember]
         public bool isArchive { get; set; }
-
-        /// <summary>
-        /// Gets or sets the applet name.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int acSessionId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the quiz id.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int testId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the company id.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int companyId { get; set; }
 
         /// <summary>
         /// Gets or sets the date created.

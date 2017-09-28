@@ -11,10 +11,6 @@
     {
         [DataMember]
         public SurveyQuestionResultSaveAllDTO surveyQuestionResult { get; set; }
-
-        public SurveyResultSaveResultDTO(SurveyResult result) : base(result)
-        {
-        }
     }
 
     /// <summary>
@@ -32,28 +28,6 @@
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SurveyResultDTO"/> class.
-        /// </summary>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        public SurveyResultDTO(SurveyResult result)
-        {
-            surveyResultId = result.Id;
-            acSessionId = result.ACSessionId;
-            surveyId = result.Survey.With(x => x.Id);
-            dateCreated = result.DateCreated.ConvertToUnixTimestamp();
-            endTime = result.EndTime.ConvertToUnixTimestamp();
-            participantName = result.ParticipantName;
-            score = result.Score;
-            startTime = result.StartTime.ConvertToUnixTimestamp();
-            isArchive = result.IsArchive ?? false;
-            email = result.Email;
-            lmsUserParametersId = result.LmsUserParametersId ?? 0;
-            acEmail = result.ACEmail;
-        }
-
         #endregion
 
         #region Public Properties
@@ -69,24 +43,6 @@
         /// </summary>
         [DataMember]
         public bool isArchive { get; set; }
-
-        /// <summary>
-        /// Gets or sets the applet name.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int acSessionId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the quiz id.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int surveyId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the company id.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int companyId { get; set; }
 
         /// <summary>
         /// Gets or sets the date created.

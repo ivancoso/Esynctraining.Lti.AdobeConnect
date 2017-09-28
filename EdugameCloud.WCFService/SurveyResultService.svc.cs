@@ -51,52 +51,30 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        public async Task<SurveyResultSaveAllDTO> SaveAll(SurveyResultDTO[] results)
+        public async Task<SurveyResultSaveAllDTO> SaveAll(SurveySummaryResultDTO sResult)
         {
-            results = results ?? new SurveyResultDTO[] { };
+            sResult = sResult ?? new SurveySummaryResultDTO { surveyResults = new SurveyResultDTO[] {}};
 
             try
             {
                 var result = new SurveyResultSaveAllDTO();
-                var faults = new List<string>();
-                var created = new List<SurveyResultSaveResultDTO>();
-                foreach (var surveyResultDTO in results)
+                foreach (var surveyResultDTO in sResult.surveyResults)
                 {
                     ValidationResult validationResult;
                     if (this.IsValid(surveyResultDTO, out validationResult))
                     {
                         var surveyResultModel = this.SurveyResultModel;
-                        var surveyResult = this.ConvertDto(surveyResultDTO);
+                        var surveyResult = this.ConvertDto(surveyResultDTO, sResult);
                         surveyResultModel.RegisterSave(surveyResult);
-
-                        var surveySaveResult = new SurveyResultSaveResultDTO(surveyResult);
-                        created.Add(surveySaveResult);
-
-                        var surveyQuestionResult = await SaveAllAsync(surveyResult, surveyResultDTO.results);
-                        surveySaveResult.surveyQuestionResult = surveyQuestionResult;
+                        await SaveAllAsync(surveyResult, surveyResultDTO.results);
                     }
-                    else
-                    {
-                        faults.AddRange(this.UpdateResultToString(validationResult));
-                    }
-                }
-
-                if (created.Any())
-                {
-                    //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<SurveyResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
-                    result.saved = created.ToArray();
-                }
-
-                if (faults.Any())
-                {
-                    result.faults = faults.ToArray();
                 }
 
                 return result;
             }
             catch(Exception ex)
             {
-                Logger.Error($"SurveyResultService.SaveAll json={JsonConvert.SerializeObject(results)}", ex);
+                Logger.Error($"SurveyResultService.SaveAll json={JsonConvert.SerializeObject(sResult)}", ex);
 
                 throw;
             }
@@ -106,7 +84,7 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        private SurveyResult ConvertDto(SurveyResultDTO resultDTO)
+        private SurveyResult ConvertDto(SurveyResultDTO resultDTO, SurveySummaryResultDTO sResult)
         {
             var instance = new SurveyResult
             {
@@ -117,8 +95,8 @@ namespace EdugameCloud.WCFService
                 IsArchive = resultDTO.isArchive,
                 DateCreated = DateTime.Now,
                 ParticipantName = resultDTO.participantName.With(x => x.Trim()),
-                Survey = this.SurveyModel.GetOneById(resultDTO.surveyId).Value,
-                ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id),
+                Survey = this.SurveyModel.GetOneById(sResult.surveyId).Value,
+                ACSessionId = this.ACSessionModel.GetOneById(sResult.acSessionId).Value.With(x => x.Id),
                 LmsUserParametersId =
                     resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null,
                 ACEmail = resultDTO.acEmail.With(x => x.Trim())

@@ -12,9 +12,6 @@ namespace EdugameCloud.Core.Domain.DTO
         [DataMember]
         public QuizQuestionResultSaveAllDTO quizQuestionResult { get; set; }
 
-        public QuizResultSaveResultDTO(QuizResult result) : base(result)
-        {
-        }
     }
 
     /// <summary>
@@ -32,37 +29,6 @@ namespace EdugameCloud.Core.Domain.DTO
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QuizResultDTO"/> class.
-        /// </summary>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        public QuizResultDTO(QuizResult result)
-        {
-            if (result == null)
-                throw new ArgumentNullException(nameof(result));
-
-            quizResultId = result.Id;
-            acSessionId = result.ACSessionId;
-            quizId = result.Quiz.With(x => x.Id);
-            dateCreated = result.DateCreated.ConvertToUnixTimestamp();
-            endTime = result.EndTime.ConvertToUnixTimestamp();
-            participantName = result.ParticipantName;
-            score = result.Score;
-            startTime = result.StartTime.ConvertToUnixTimestamp();
-            isArchive = result.IsArchive ?? false;
-            email = result.Email;
-            lmsId = result.LmsId;
-            lmsUserParametersId = result.LmsUserParametersId ?? 0;
-            acEmail = result.ACEmail;
-            isCompleted = result.isCompleted ?? false;
-            eventQuizMappingId = result.EventQuizMapping?.Id;
-            appInFocusTime = result.AppInFocusTime;
-            appMaximizedTime = result.AppMaximizedTime;
-            guid = result.Guid;
-        }
-
         #endregion
 
         #region Public Properties
@@ -78,24 +44,6 @@ namespace EdugameCloud.Core.Domain.DTO
         /// </summary>
         [DataMember]
         public string acEmail { get; set; }
-
-        /// <summary>
-        /// Gets or sets the applet name.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int acSessionId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the quiz id.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int quizId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the company id.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public int companyId { get; set; }
 
         /// <summary>
         /// Gets or sets the date created.
@@ -165,9 +113,6 @@ namespace EdugameCloud.Core.Domain.DTO
 
         [DataMember]
         public int appMaximizedTime { get; set; }
-
-        [DataMember]
-        public int? eventQuizMappingId { get; set; }
 
         [DataMember]
         public Guid guid { get; set; }

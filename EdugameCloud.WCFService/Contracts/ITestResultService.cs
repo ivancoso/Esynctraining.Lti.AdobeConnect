@@ -22,7 +22,7 @@
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
-        TestResultSaveAllDTO SaveAll(TestResultDTO[] results);
+        TestResultSaveAllDTO SaveAll(TestSummaryResultDTO testResult);
 
     }
 

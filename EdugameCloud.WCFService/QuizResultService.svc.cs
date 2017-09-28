@@ -48,59 +48,38 @@
 
         #region Public Methods and Operators
 
-        public async Task<QuizResultSaveAllDTO> SaveAll(QuizResultDTO[] results)
+        public async Task<QuizResultSaveAllDTO> SaveAll(QuizSummaryResultDTO quizResult)
         {
-            results = results ?? new QuizResultDTO[] { };
+            quizResult = quizResult ?? new QuizSummaryResultDTO { quizResults = new QuizResultDTO[] {} };
 
             try
             {
                 var result = new QuizResultSaveAllDTO();
-                var faults = new List<string>();
-                var created = new List<QuizResultSaveResultDTO>();
 
                 //TRICK to get eventQuizMappingId
-                var eventQuizMappingId = GetEventQuizMappingId(results);
+                var eventQuizMappingId = GetEventQuizMappingId(quizResult);
                 //
 
 
-                foreach (var appletResultDTO in results)
+                foreach (var appletResultDTO in quizResult.quizResults)
                 {
                     ValidationResult validationResult;
                     if (this.IsValid(appletResultDTO, out validationResult))
                     {
                         var sessionModel = this.QuizResultModel;
 
-                        var appletResult = this.ConvertDto(appletResultDTO, eventQuizMappingId);
+                        var appletResult = this.ConvertDto(appletResultDTO, eventQuizMappingId, quizResult);
                         sessionModel.RegisterSave(appletResult);
 
-                        var quizSaveResult = new QuizResultSaveResultDTO(appletResult);
-                        created.Add(quizSaveResult);
-
-                        var quizQuestionResult = await SaveAllAsync(appletResult, appletResultDTO.results);
-                        quizSaveResult.quizQuestionResult = quizQuestionResult;
+                        await SaveAllAsync(appletResult, appletResultDTO.results);
                     }
-                    else
-                    {
-                        faults.AddRange(this.UpdateResultToString(validationResult));
-                    }
-                }
-
-                if (created.Any())
-                {
-                    //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<QuizResult>(NotificationType.Update, results.FirstOrDefault().With(x => x.companyId), 0);
-                    result.saved = created.ToArray();
-                }
-
-                if (faults.Any())
-                {
-                    result.faults = faults.ToArray();
                 }
 
                 return result;
             }
             catch (Exception ex)
             {
-                Logger.Error($"QuizResultService.SaveAll json={JsonConvert.SerializeObject(results)}", ex);
+                Logger.Error($"QuizResultService.SaveAll json={JsonConvert.SerializeObject(quizResult)}", ex);
 
                 throw;
             }
@@ -110,26 +89,23 @@
 
         #region Methods
 
-        private int? GetEventQuizMappingId(QuizResultDTO[] results)
+        private int? GetEventQuizMappingId(QuizSummaryResultDTO result)
         {
             int? eventQuizMappingId = null;
 
-            if (!results.Any())
+            if (!result.quizResults.Any())
                 return eventQuizMappingId;
 
-            QuizResultDTO quizResultDTO = results.FirstOrDefault(r => r.eventQuizMappingId.HasValue);
-            if (quizResultDTO != null)
-                return quizResultDTO.eventQuizMappingId;
+            if (result.eventQuizMappingId.HasValue)
+                return result.eventQuizMappingId;
 
-
-            int acSessionId = results.First().acSessionId;
-            var quizResults = this.QuizResultModel.GetQuizResultsByAcSessionId(acSessionId);
+            var quizResults = this.QuizResultModel.GetQuizResultsByAcSessionId(result.acSessionId);
             var quizResult = quizResults.FirstOrDefault(q => q.EventQuizMapping != null);
             eventQuizMappingId = quizResult?.EventQuizMapping.Id ?? eventQuizMappingId;
             return eventQuizMappingId;
         }
 
-        private QuizResult ConvertDto(QuizResultDTO resultDTO, int? eventQuizMappingId)
+        private QuizResult ConvertDto(QuizResultDTO resultDTO, int? eventQuizMappingId, QuizSummaryResultDTO quizResult)
         {
             var instance = new QuizResult();
             instance.Score = resultDTO.score;
@@ -146,8 +122,8 @@
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
 
             /**/
-            instance.Quiz = this.QuizModel.GetOneById(resultDTO.quizId).Value;
-            instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
+            instance.Quiz = this.QuizModel.GetOneById(quizResult.quizId).Value;
+            instance.ACSessionId = this.ACSessionModel.GetOneById(quizResult.acSessionId).Value.With(x => x.Id);
             if (eventQuizMappingId.HasValue && eventQuizMappingId.Value != 0)
                 instance.EventQuizMapping = EventQuizMappingModel.GetOneById(eventQuizMappingId.Value).Value;
             /**/

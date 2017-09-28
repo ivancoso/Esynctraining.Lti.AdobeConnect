@@ -22,13 +22,11 @@
         public QuizResultDTOValidator(QuizResultModel quizResultModel)
         {
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
-            this.RuleFor(model => model.quizId).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Quiz id is empty");
-            this.RuleFor(model => model.acSessionId).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "ACSession id is empty");
             this.RuleFor(model => model.participantName).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Participant name is empty");
             this.RuleFor(model => model.email)
                 .Must((model, x) => (!model.isArchive && string.IsNullOrWhiteSpace(x)) || (model.isArchive && !string.IsNullOrWhiteSpace(x)))
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Email should be provided only in isArchive mode")
-                .Must((model, x) => (!model.isArchive && string.IsNullOrWhiteSpace(x)) || quizResultModel.GetOneByACSessionIdAndEmail(model.acSessionId, x).Value == null)
+                .Must((model, x) => (!model.isArchive && string.IsNullOrWhiteSpace(x)))
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_SESSION, "You have already passed this quiz");
         }
 

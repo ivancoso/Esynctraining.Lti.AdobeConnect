@@ -42,50 +42,29 @@
 
         #region Public Methods and Operators
 
-        public TestResultSaveAllDTO SaveAll(TestResultDTO[] results)
+        public TestResultSaveAllDTO SaveAll(TestSummaryResultDTO testResult)
         {
-            results = results ?? new TestResultDTO[] { };
+            testResult = testResult ?? new TestSummaryResultDTO { testResults = new TestResultDTO[] {}};
 
             try
             {
                 var result = new TestResultSaveAllDTO();
-                var faults = new List<string>();
-                var created = new List<TestResultSaveResultDTO>();
-                foreach (var appletResultDTO in results)
+                foreach (var appletResultDTO in testResult.testResults)
                 {
                     if (this.IsValid(appletResultDTO, out var validationResult))
                     {
                         var sessionModel = this.TestResultModel;
-                        var appletResult = this.ConvertDto(appletResultDTO);
+                        var appletResult = this.ConvertDto(appletResultDTO, testResult);
                         sessionModel.RegisterSave(appletResult);
-
-                        var testSaveResult = new TestResultSaveResultDTO(appletResult);
-                        created.Add(testSaveResult);
-
-                        var testQuestionResult = SaveAll(appletResult, appletResultDTO.results);
-                        testSaveResult.testQuestionResult = testQuestionResult;
+                        SaveAll(appletResult, appletResultDTO.results);
                     }
-                    else
-                    {
-                        faults.AddRange(this.UpdateResultToString(validationResult));
-                    }
-                }
-
-                if (created.Any())
-                {
-                    result.saved = created.ToArray();
-                }
-
-                if (faults.Any())
-                {
-                    result.faults = faults.ToArray();
                 }
 
                 return result;
             }
             catch (Exception ex)
             {
-                Logger.Error($"TestResultService.SaveAll json={JsonConvert.SerializeObject(results)}", ex);
+                Logger.Error($"TestResultService.SaveAll json={JsonConvert.SerializeObject(testResult)}", ex);
 
                 throw;
             }
@@ -95,7 +74,7 @@
 
         #region Methods
 
-        private TestResult ConvertDto(TestResultDTO resultDTO)
+        private TestResult ConvertDto(TestResultDTO resultDTO, TestSummaryResultDTO testResult)
         {
             var instance = new TestResult
             {
@@ -107,8 +86,8 @@
                 IsArchive = resultDTO.isArchive,
                 DateCreated = DateTime.Now,
                 ParticipantName = resultDTO.participantName.With(x => x.Trim()),
-                Test = this.TestModel.GetOneById(resultDTO.testId).Value,
-                ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id),
+                Test = this.TestModel.GetOneById(testResult.testId).Value,
+                ACSessionId = this.ACSessionModel.GetOneById(testResult.acSessionId).Value.With(x => x.Id),
                 IsCompleted = resultDTO.isCompleted
             };
 

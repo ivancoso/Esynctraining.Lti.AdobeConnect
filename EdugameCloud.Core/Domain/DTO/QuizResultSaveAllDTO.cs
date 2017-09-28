@@ -8,20 +8,5 @@
     [DataContract]
     public class QuizResultSaveAllDTO
     {
-        #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the faults.
-        /// </summary>
-        [DataMember]
-        public string[] faults { get; set; }
-
-        /// <summary>
-        /// Gets or sets the saved.
-        /// </summary>
-        [DataMember]
-        public QuizResultSaveResultDTO[] saved { get; set; }
-
-        #endregion
     }
 }
