@@ -7,6 +7,7 @@ using Castle.MicroKernel.Lifestyle.Scoped;
 
 namespace Esynctraining.Core.Wcf
 {
+    [Obsolete]
     internal sealed class EsyncWcfOperationScopeAccessor : IScopeAccessor, IDisposable
     {
         #region Fields

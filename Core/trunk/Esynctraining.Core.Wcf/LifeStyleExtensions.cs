@@ -1,4 +1,5 @@
-﻿using Castle.MicroKernel.Registration;
+﻿using System;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Registration.Lifestyle;
 
 namespace Esynctraining.Core.Wcf
@@ -6,6 +7,7 @@ namespace Esynctraining.Core.Wcf
     /// <summary>
     /// The life style extensions.
     /// </summary>
+    [Obsolete]
     public static class LifeStyleExtensions
     {
         /// <summary>
