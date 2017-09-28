@@ -18,7 +18,6 @@ namespace EdugameCloud.Lti.Api.Host
         {
             var container = new WindsorContainer();
 
-            container.Register(Component.For<ILocalData>().ImplementedBy<AspNetCoreNHibernateSessionSource.Local.LocalData>());
             container.Register(Component.For<ISessionSource>().ImplementedBy<AspNetCoreNHibernateSessionSource>().LifeStyle.Scoped());
 
             WindsorIoC.Initialize(container);

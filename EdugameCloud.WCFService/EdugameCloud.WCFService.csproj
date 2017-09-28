@@ -88,10 +88,6 @@
     <Reference Include="Esynctraining.Core, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.1\lib\net461\Esynctraining.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Core.Wcf, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Wcf.1.0.0.1\lib\net45\Esynctraining.Core.Wcf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Esynctraining.FluentValidation, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.FluentValidation.1.0.0.3\lib\net45\Esynctraining.FluentValidation.dll</HintPath>
     </Reference>

@@ -1,10 +1,7 @@
 ﻿namespace EdugameCloud.Persistence
 {
     using System;
-    using System.Collections;
     using System.Runtime.Remoting.Contexts;
-    using System.Web;
-    using Esynctraining.Core.Utils;
     using NHibernate;
 
     /// <summary>
@@ -13,90 +10,31 @@
     [Synchronization]
     public sealed class NHibernateSessionWebSource : ISessionSource
     {
-        #region Inner Class
-
-        public static class Local
-        {
-            private static readonly object LocalDataHashtableKey = new object();
-
-            private static readonly ILocalData Current = new LocalData();
-
-
-            public static ILocalData Data => Current;
-            
-            private class LocalData : ILocalData
-            {
-                private static Hashtable LocalHashtable
-                {
-                    get
-                    {
-                        var currentContext = HttpContext.Current;
-                        if (currentContext == null)
-                            throw new InvalidOperationException("HttpContext.Current == null");
-
-                        var webHashtable = currentContext.Items[LocalDataHashtableKey] as Hashtable;
-                        if (webHashtable == null)
-                        {
-                            currentContext.Items[LocalDataHashtableKey] = webHashtable = new Hashtable();
-                        }
-
-                        return webHashtable;
-                    }
-                }
-
-                public object this[object key]
-                {
-                    get { return LocalHashtable[key]; }
-                    set { LocalHashtable[key] = value; }
-                }
-
-
-                public void Clear()
-                {
-                    LocalHashtable.Clear();
-                }
-
-            }
-
-        }
-
-        #endregion
-
-        private static readonly object NHibernateHashtableKey = new object();
-
-
-        public ISession Session => Local.Data[NHibernateHashtableKey] as ISession;
+        public ISession Session { get; private set; }
 
 
         public NHibernateSessionWebSource(ISessionFactory sessionFactory)
         {
-            if (Local.Data[NHibernateHashtableKey] == null)
-            {
-                Local.Data[NHibernateHashtableKey] = sessionFactory.OpenSession();
-            }
+            if (sessionFactory == null)
+                throw new ArgumentNullException(nameof(sessionFactory));
+
+            Session = sessionFactory.OpenSession();
         }
 
 
         public void Dispose()
         {
-            if (this.Session != null)
+            if (Session != null)
             {
                 try
                 {
-                    this.Session.Flush();
+                    Session.Flush();
                 }
                 finally
                 {
-                    try
+                    if (Session != null)
                     {
-                        if (this.Session != null)
-                        {
-                            this.Session.Dispose();
-                        }
-                    }
-                    finally
-                    {
-                        Local.Data[NHibernateHashtableKey] = null;
+                        Session.Dispose();
                     }
                 }
             }
