@@ -18,7 +18,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.CastleLog4Net;
     //using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Wcf;
+    //using Esynctraining.Core.Wcf;
     using FluentValidation;
     using Lti;
 
