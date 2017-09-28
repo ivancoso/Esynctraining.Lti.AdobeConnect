@@ -8,8 +8,6 @@
     /// </summary>
     public class LmsUserParameters : Entity
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the AC id.
         /// </summary>
@@ -50,6 +48,6 @@
         /// </summary>
         public virtual DateTime LastLoggedIn { get; set; }
 
-        #endregion
     }
+
 }

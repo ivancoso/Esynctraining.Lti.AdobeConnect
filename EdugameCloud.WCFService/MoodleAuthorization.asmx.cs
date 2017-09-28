@@ -76,17 +76,17 @@ namespace EdugameCloud.ASMXService
         {
             var dto = new LmsUserParametersDTO
             {
-                acId = acId,
-                course = course,
-                domain = domain,
+                AcId = acId,
+                Course = course,
+                Domain = domain,
                 provider = provider,
-                wstoken = wstoken,
+                WsToken = wstoken,
             };
             var result = new ServiceResponse<LmsUserParametersDTO>();
             ValidationResult validationResult;
             if (this.IsValid(dto, out validationResult))
             {
-                var param = this.LmsUserParametersModel.GetOneByAcId(dto.acId).Value;
+                var param = this.LmsUserParametersModel.GetOneByAcId(dto.AcId).Value;
                 param = this.ConvertDto(dto, param);
                 this.LmsUserParametersModel.RegisterSave(param, true);
 
@@ -96,7 +96,7 @@ namespace EdugameCloud.ASMXService
 
             result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
-            return new LmsUserParametersDTO { errorMessage = result.error.errorMessage, errorDetails = result.error.errorDetail };
+            return new LmsUserParametersDTO { ErrorMessage = result.error.errorMessage, ErrorDetails = result.error.errorDetail };
         }
 
         #region Methods
@@ -217,11 +217,11 @@ namespace EdugameCloud.ASMXService
         private LmsUserParameters ConvertDto(LmsUserParametersDTO q, LmsUserParameters instance)
         {
             instance = instance ?? new LmsUserParameters();
-            instance.AcId = q.acId;
-            instance.Course = q.course;
-            instance.Wstoken = q.wstoken;
-            instance.LmsUser = q.lmsUserId.HasValue && q.lmsUserId.Value != 0
-                                   ? this.LmsUserModel.GetOneById(q.lmsUserId.Value).Value
+            instance.AcId = q.AcId;
+            instance.Course = q.Course;
+            instance.Wstoken = q.WsToken;
+            instance.LmsUser = q.LmsUserId.HasValue && q.LmsUserId.Value != 0
+                                   ? this.LmsUserModel.GetOneById(q.LmsUserId.Value).Value
                                    : null;
 
             return instance;

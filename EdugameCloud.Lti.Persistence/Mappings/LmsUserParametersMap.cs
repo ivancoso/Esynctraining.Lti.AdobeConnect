@@ -8,8 +8,6 @@ namespace EdugameCloud.Lti.Persistence.Mappings
     /// </summary>
     public sealed class LmsUserParametersMap : BaseClassMap<LmsUserParameters>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="LmsUserParametersMap"/> class.
         /// </summary>
@@ -27,6 +25,6 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.References(x => x.CompanyLms).Column("companyLmsId").Nullable();
         }
 
-        #endregion
     }
+
 }

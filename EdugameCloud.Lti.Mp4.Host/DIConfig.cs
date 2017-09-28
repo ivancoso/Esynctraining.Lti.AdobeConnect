@@ -4,7 +4,6 @@ using Castle.Windsor;
 using EdugameCloud.Persistence;
 using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Providers;
-using Esynctraining.Core.Utils;
 using Esynctraining.Mp4Service.Tasks.Client;
 using Esynctraining.Windsor;
 using FluentValidation;

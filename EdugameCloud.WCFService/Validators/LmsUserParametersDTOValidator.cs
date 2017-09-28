@@ -11,8 +11,6 @@
     /// </summary>
     public sealed class LmsUserParametersDTOValidator : AbstractValidator<LmsUserParametersDTO>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="LmsUserParametersDTOValidator"/> class. 
         /// </summary>
@@ -21,25 +19,29 @@
         /// </param>
         public LmsUserParametersDTOValidator(LmsUserModel lmsUserModel)
         {
-            this.CascadeMode = CascadeMode.StopOnFirstFailure;
-            this.RuleFor(model => model.acId)
+            CascadeMode = CascadeMode.StopOnFirstFailure;
+
+            RuleFor(model => model.AcId)
                 .NotEmpty()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "AC id is empty");
-            this.RuleFor(model => model.domain)
+
+            RuleFor(model => model.Domain)
                 .NotEmpty()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Domain is empty");
-            this.RuleFor(model => model.provider)
+
+            RuleFor(model => model.provider)
                 .NotEmpty()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Provider is empty");
-            this.RuleFor(model => model.wstoken)
+
+            RuleFor(model => model.WsToken)
                 .NotEmpty()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Wstoken is empty");
 
-            this.RuleFor(model => model.lmsUserId)
+            RuleFor(model => model.LmsUserId)
                 .Must(x => x == null || x == 0 || lmsUserModel.GetOneById(x.Value).Value != null)
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Specified LMS user does not exist");
         }
 
-        #endregion
     }
+
 }

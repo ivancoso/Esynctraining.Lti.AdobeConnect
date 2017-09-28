@@ -1,9 +1,8 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
+    using System;
     using System.Runtime.Serialization;
-
     using EdugameCloud.Lti.Domain.Entities;
-
     using Esynctraining.Core.Extensions;
 
     /// <summary>
@@ -23,53 +22,58 @@
 
         public LmsUserParametersDTO(LmsUserParameters param, LmsProvider lmsProvider)
         {
-            this.lmsUserParametersId = param.Id;
-            this.acId = param.AcId;
-            this.course = param.Course;
-            this.domain = param.CompanyLms.LmsDomain;
-            this.provider = lmsProvider.ShortName;
-            this.wstoken = param.Wstoken;
-            this.lmsUserId = param.LmsUser.Return(x => x.Id, (int?)null);
-            this.courseName = param.CourseName;
-            this.userEmail = param.UserEmail;
+            if (param == null)
+                throw new ArgumentNullException(nameof(param));
+            if (lmsProvider == null)
+                throw new ArgumentNullException(nameof(lmsProvider));
+
+            LmsUserParametersId = param.Id;
+            AcId = param.AcId;
+            Course = param.Course;
+            Domain = param.CompanyLms.LmsDomain;
+            provider = lmsProvider.ShortName;
+            WsToken = param.Wstoken;
+            LmsUserId = param.LmsUser.Return(x => x.Id, (int?)null);
+            CourseName = param.CourseName;
+            UserEmail = param.UserEmail;
         }
 
         #endregion
 
         #region Public Properties
 
-        [DataMember]
-        public int lmsUserParametersId { get; set; }
+        [DataMember(Name = "lmsUserParametersId")]
+        public int LmsUserParametersId { get; set; }
 
-        [DataMember]
-        public string acId { get; set; }
+        [DataMember(Name = "acId")]
+        public string AcId { get; set; }
 
-        [DataMember]
-        public int course { get; set; }
+        [DataMember(Name = "course")]
+        public int Course { get; set; }
 
-        [DataMember]
-        public string domain { get; set; }
+        [DataMember(Name = "domain")]
+        public string Domain { get; set; }
 
-        [DataMember]
-        public string errorDetails { get; set; }
+        [DataMember(Name = "errorDetails")]
+        public string ErrorDetails { get; set; }
 
-        [DataMember]
-        public string errorMessage { get; set; }
+        [DataMember(Name = "errorMessage")]
+        public string ErrorMessage { get; set; }
 
-        [DataMember]
-        public int? lmsUserId { get; set; }
+        [DataMember(Name = "lmsUserId")]
+        public int? LmsUserId { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "provider")]
         public string provider { get; set; }
 
-        [DataMember]
-        public string wstoken { get; set; }
+        [DataMember(Name = "wstoken")]
+        public string WsToken { get; set; }
 
-        [DataMember]
-        public string userEmail { get; set; }
+        [DataMember(Name = "userEmail")]
+        public string UserEmail { get; set; }
 
-        [DataMember]
-        public string courseName { get; set; }
+        [DataMember(Name = "courseName")]
+        public string CourseName { get; set; }
 
         #endregion
 

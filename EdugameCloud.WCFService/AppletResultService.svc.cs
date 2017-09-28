@@ -7,22 +7,14 @@ namespace EdugameCloud.WCFService
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Extensions;
-    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
-
-    using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
     using FluentValidation.Results;
-
-    using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]
