@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <PackageReference Include="D2L.Extensibility.AuthSdk" Version="1.2.1" />
-    <PackageReference Include="Esynctraining.AC.Provider" Version="1.0.3.2" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.0.1" />
     <PackageReference Include="RestSharp" Version="105.2.3" />
   </ItemGroup>

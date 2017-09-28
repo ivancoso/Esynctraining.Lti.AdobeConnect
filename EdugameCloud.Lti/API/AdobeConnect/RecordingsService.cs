@@ -246,14 +246,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             // ReSharper disable UnusedVariable
             var accessResult = provider.UpdatePublicAccessPermissions(id, isPublic ? PermissionId.view : PermissionId.remove);
-
-            if (!string.IsNullOrEmpty(password))
-            {
-                var passwordResult = provider.UpdateAclFieldWithRequiredPasscode(id, AclFieldId.meeting_passcode, password);
-            }
+            var passwordResult = provider.UpdateAclFieldWithPasscode(id, AclFieldId.meeting_passcode, password, !string.IsNullOrEmpty(password));
             
-
-            // ReSharper restore UnusedVariable
             var recordingUrl = (lmsCompany.AcServer.EndsWith("/")
                 ? lmsCompany.AcServer.Substring(0, lmsCompany.AcServer.Length - 1)
                 : lmsCompany.AcServer) + recording.UrlPath;

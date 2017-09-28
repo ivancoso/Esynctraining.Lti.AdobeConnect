@@ -15,8 +15,7 @@
     <PackageReference Include="Castle.Windsor" Version="3.4.0" />
     <PackageReference Include="DotNetOpenAuth.AspNet" Version="4.3.4.13329" />
     <PackageReference Include="DotNetOpenAuth.OpenId.RelyingParty" Version="4.3.4.13329" />
-    <PackageReference Include="Esynctraining.AdobeConnect" Version="1.0.3.8" />
-    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.5" />
+    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.6" />
     <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.1" />
     <PackageReference Include="Esynctraining.Crypto" Version="1.0.1" />
     <PackageReference Include="Esynctraining.FluentValidation" Version="1.0.0.3" />
