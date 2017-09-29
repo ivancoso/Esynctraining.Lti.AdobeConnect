@@ -12,8 +12,8 @@ namespace Esynctraining.FluentValidation
     /// </summary>
     public class WindsorValidatorFactory : ValidatorFactoryBase
     {
-        private readonly IServiceLocator container;
-        private readonly ILogger logger;
+        private readonly IServiceLocator _container;
+        private readonly ILogger _logger;
 
         #region Constructors and Destructors
 
@@ -25,13 +25,8 @@ namespace Esynctraining.FluentValidation
         /// </param>
         public WindsorValidatorFactory(IServiceLocator container, ILogger logger)
         {
-            if (container == null)
-                throw new ArgumentNullException("container");
-            if (logger == null)
-                throw new ArgumentNullException("logger");
-
-            this.container = container;
-            this.logger = logger;
+            _container = container ?? throw new ArgumentNullException(nameof(container));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #endregion
@@ -56,15 +51,14 @@ namespace Esynctraining.FluentValidation
                     var genericArgType = validatorType.GetGenericArguments().FirstOrDefault();
                     if (genericArgType != null && genericArgType.IsClass && genericArgType != typeof(string) && genericArgType.Name != "BaseViewModel")
                     {
-                        return this.container.GetInstance(validatorType) as IValidator;
+                        return this._container.GetInstance(validatorType) as IValidator;
                     }
                 }
                 return null;
             }
             catch (Exception ex)
             {
-
-
+                _logger.Error($"CreateInstance failed for { validatorType.ToString() }", ex);
                 return null;
             }
         }

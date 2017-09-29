@@ -40,7 +40,10 @@ namespace Esynctraining.FluentValidation
         public static IRuleBuilderOptions<T, TProperty> WithError<T, TProperty>(
             this IRuleBuilderOptions<T, TProperty> rule, int errorKey, string message)
         {
-            return rule.Configure(delegate (PropertyRule config) { config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource { ErrorKey = errorKey, ErrorMessage = message }; });
+            return rule.Configure(delegate (PropertyRule config)
+            {
+                config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource { ErrorKey = errorKey, ErrorMessage = message };
+            });
         }
 
         /// <summary>
@@ -67,7 +70,14 @@ namespace Esynctraining.FluentValidation
         public static IRuleBuilderOptions<T, TProperty> WithDynamicError<T, TProperty>(
             this IRuleBuilderOptions<T, TProperty> rule, int errorKey, Func<string> message)
         {
-            return rule.Configure(delegate (PropertyRule config) { config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource { ErrorKey = errorKey, ErrorMessageSource = message }; });
+            return rule.Configure(delegate (PropertyRule config)
+            {
+                config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource
+                {
+                    ErrorKey = errorKey,
+                    ErrorMessageSource = message,
+                };
+            });
         }
 
         /// <summary>
@@ -93,7 +103,13 @@ namespace Esynctraining.FluentValidation
         /// </returns>
         public static IRuleBuilderOptions<T, TProperty> WithDynamicError<T, TProperty>(this IRuleBuilderOptions<T, TProperty> rule, Func<string> message)
         {
-            return rule.Configure(delegate (PropertyRule config) { config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource { ErrorMessageSource = message }; });
+            return rule.Configure(delegate (PropertyRule config) 
+            {
+                config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource
+                {
+                    ErrorMessageSource = message,
+                };
+            });
         }
 
         #endregion
@@ -203,11 +219,12 @@ namespace Esynctraining.FluentValidation
         /// </returns>
         public string GetString(object context)
         {
-            var message = this.ErrorMessageSource == null ? this.ErrorMessage : this.ErrorMessageSource.With(x => x.Invoke());
-            return this.ErrorKey == default(int) ? message : this.ErrorKey + "#_#" + message;
+            var message = ErrorMessageSource == null ? ErrorMessage : ErrorMessageSource();
+            return ErrorKey == default(int) ? message : ErrorKey + "#_#" + message;
         }
 
         #endregion
+
     }
 
 }
