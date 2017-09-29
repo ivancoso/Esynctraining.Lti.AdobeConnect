@@ -54,9 +54,8 @@
     <Reference Include="Esynctraining.Crypto, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Crypto.1.0.2\lib\net461\Esynctraining.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.NHibernate.1.0.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Esynctraining.NHibernate, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.NHibernate.1.0.1\lib\net461\Esynctraining.NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\Iesi.Collections.4.0.2\lib\net461\Iesi.Collections.dll</HintPath>

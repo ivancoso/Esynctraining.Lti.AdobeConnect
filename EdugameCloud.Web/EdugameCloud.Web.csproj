@@ -14,7 +14,7 @@
     <RootNamespace>EdugameCloud.Web</RootNamespace>
     <AssemblyName>EdugameCloud.Web</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>443</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
@@ -76,8 +76,8 @@
     <Reference Include="Esynctraining.Mvc, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Mvc.1.0.0.1\lib\net45\Esynctraining.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.NHibernate.1.0.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
+    <Reference Include="Esynctraining.NHibernate, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.NHibernate.1.0.1\lib\net461\Esynctraining.NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Windsor, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Windsor.1.0.0.2\lib\net45\Esynctraining.Windsor.dll</HintPath>
@@ -744,7 +744,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50254</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://dev.edugamecloud.com</IISUrl>
+          <IISUrl>http://localhost</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
