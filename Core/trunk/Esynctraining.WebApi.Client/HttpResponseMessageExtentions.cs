@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
@@ -11,7 +10,7 @@ namespace Esynctraining.WebApi.Client
         public static ApiException CreateApiException(this HttpResponseMessage response)
         {
             if (response == null)
-                throw new ArgumentNullException("response");
+                throw new ArgumentNullException(nameof(response));
 
             var httpErrorObject = response.Content.ReadAsStringAsync().Result;
             try
@@ -26,7 +25,7 @@ namespace Esynctraining.WebApi.Client
 
                 string responseUri = response.RequestMessage.RequestUri.ToString();
                 ApiException ex = ((deserializedErrorObject != null) && !string.IsNullOrWhiteSpace(deserializedErrorObject.message))
-                    ? new ApiException(deserializedErrorObject.message, response, deserializedErrorObject)
+                    ? new ApiException(deserializedErrorObject.message + "." + deserializedErrorObject.exceptionMessage, response, deserializedErrorObject)
                     : new ApiException(responseUri, response, deserializedErrorObject);
 
                 // Sometimes, there may be Model Errors:
@@ -41,16 +40,16 @@ namespace Esynctraining.WebApi.Client
                     }
                 }
                 // Othertimes, there may not be Model Errors:
-                else
-                {
-                    var error =
-                        JsonConvert.DeserializeObject<Dictionary<string, string>>(httpErrorObject);
-                    foreach (var kvp in error)
-                    {
-                        // Wrap the errors up into the base Exception.Data Dictionary:
-                        ex.Data.Add(kvp.Key, kvp.Value);
-                    }
-                }
+                //else
+                //{
+                //    var error =
+                //        JsonConvert.DeserializeObject<Dictionary<string, string>>(httpErrorObject);
+                //    foreach (var kvp in error)
+                //    {
+                //        // Wrap the errors up into the base Exception.Data Dictionary:
+                //        ex.Data.Add(kvp.Key, kvp.Value);
+                //    }
+                //}
                 return ex;
             }
             catch (Exception ex)

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
-    <Version>1.0.0.5</Version>
+    <TargetFrameworks>net461;netstandard1.3</TargetFrameworks>
+    <Version>1.0.1.0</Version>
     <Authors>eSyncTraining.com</Authors>
     <Company>eSyncTraining.com</Company>
     <PackageProjectUrl>http://esynctraining.com/</PackageProjectUrl>
@@ -12,10 +12,13 @@
     <PackageTags>core webapi client</PackageTags>
     <PackageReleaseNotes>Migrate to core project</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
 
 </Project>
