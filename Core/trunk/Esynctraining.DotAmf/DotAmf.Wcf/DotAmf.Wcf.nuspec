@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>DotAmf.Wcf</id>
-    <version>1.0.0.12</version>
+    <version>1.0.0.14</version>
     <title>DotAmf.Wcf</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -10,9 +10,9 @@
     <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>WCF service extensions for full AMF/AMFX support.</description>
-    <copyright>Copyright © 2014-2015 eSyncTraining.com</copyright>
+    <copyright>Copyright © 2014-2017 eSyncTraining.com</copyright>
     <tags>amf, wcf</tags>
-    <releaseNotes>Update for .NET 4.5.</releaseNotes>
+    <releaseNotes>Support async service methods.</releaseNotes>
     <dependencies>
     </dependencies>
     <references>

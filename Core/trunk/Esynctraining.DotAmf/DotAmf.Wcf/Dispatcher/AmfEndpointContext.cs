@@ -228,9 +228,20 @@ namespace DotAmf.ServiceModel.Dispatcher
             var types = new List<Type>();
 
             // Get return types and methods parameters
-            foreach (MethodInfo method in endpoint.Contract.Operations.Select(operation => operation.SyncMethod))
+            foreach (MethodInfo method in endpoint.Contract.Operations
+                .Where(x => x.SyncMethod != null)
+                .Select(operation => operation.SyncMethod))
             {
                 types.Add(method.ReturnType);
+                types.AddRange(method.GetParameters().Select(param => param.ParameterType));
+            }
+
+            foreach (MethodInfo method in endpoint.Contract.Operations
+                .Where(x => x.TaskMethod != null)
+                .Select(operation => operation.TaskMethod))
+            {
+                var actualReturn = method.ReturnType.GetGenericArguments().First();
+                types.Add(actualReturn);
                 types.AddRange(method.GetParameters().Select(param => param.ParameterType));
             }
 
