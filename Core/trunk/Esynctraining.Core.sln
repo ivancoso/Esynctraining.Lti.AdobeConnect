@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mail", "Esynctraining.Mail\Esynctraining.Mail.csproj", "{873245BF-8C4A-423A-9EA0-31811C2F660C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.NHibernate", "Esynctraining.NHibernate\Esynctraining.NHibernate.csproj", "{8C3CE318-AE62-4BD4-99F4-7E6535ABF169}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Windsor", "Esynctraining.Windsor\Esynctraining.Windsor.csproj", "{FE048076-0422-48F3-8955-B32ABFD62595}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Wcf", "Esynctraining.Core.Wcf\Esynctraining.Core.Wcf.csproj", "{FB054AF9-5332-4A82-9311-13B8AB09193D}"
@@ -43,7 +41,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.ImportExport"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Mail.TemplateTransform.RazorLight2", "Esynctraining.Mail.TemplateTransform.RazorLight2\Esynctraining.Mail.TemplateTransform.RazorLight2.csproj", "{23D45AC1-5D12-4966-9D18-0E0F19B7FA8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.FluentValidation", "Esynctraining.FluentValidation\Esynctraining.FluentValidation.csproj", "{C230FA77-40A8-41E0-91B4-D3B5BDFE889E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.FluentValidation", "Esynctraining.FluentValidation\Esynctraining.FluentValidation.csproj", "{C230FA77-40A8-41E0-91B4-D3B5BDFE889E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.WebApi.Client", "Esynctraining.WebApi.Client\Esynctraining.WebApi.Client.csproj", "{BE553125-9AAC-4943-B5D0-FE06B377929B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.NHibernate", "Esynctraining.NHibernate\Esynctraining.NHibernate.csproj", "{F141F515-7447-4A46-AEE3-697E0D400034}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,10 +57,6 @@ Global
 		{873245BF-8C4A-423A-9EA0-31811C2F660C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{873245BF-8C4A-423A-9EA0-31811C2F660C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{873245BF-8C4A-423A-9EA0-31811C2F660C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C3CE318-AE62-4BD4-99F4-7E6535ABF169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C3CE318-AE62-4BD4-99F4-7E6535ABF169}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C3CE318-AE62-4BD4-99F4-7E6535ABF169}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C3CE318-AE62-4BD4-99F4-7E6535ABF169}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE048076-0422-48F3-8955-B32ABFD62595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE048076-0422-48F3-8955-B32ABFD62595}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE048076-0422-48F3-8955-B32ABFD62595}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -135,6 +133,14 @@ Global
 		{C230FA77-40A8-41E0-91B4-D3B5BDFE889E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C230FA77-40A8-41E0-91B4-D3B5BDFE889E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C230FA77-40A8-41E0-91B4-D3B5BDFE889E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE553125-9AAC-4943-B5D0-FE06B377929B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE553125-9AAC-4943-B5D0-FE06B377929B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE553125-9AAC-4943-B5D0-FE06B377929B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE553125-9AAC-4943-B5D0-FE06B377929B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F141F515-7447-4A46-AEE3-697E0D400034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F141F515-7447-4A46-AEE3-697E0D400034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F141F515-7447-4A46-AEE3-697E0D400034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F141F515-7447-4A46-AEE3-697E0D400034}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
