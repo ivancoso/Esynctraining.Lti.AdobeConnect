@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Esynctraining.AdobeConnect" Version="1.0.3.7" />
+    <PackageReference Include="Esynctraining.AdobeConnect" Version="1.0.3.9" />
     <PackageReference Include="Esynctraining.MeetingOne.RestClient" Version="1.0.0.6" />
   </ItemGroup>
 

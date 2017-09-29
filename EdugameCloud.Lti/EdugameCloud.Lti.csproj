@@ -12,15 +12,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Castle.Windsor" Version="3.4.0" />
+    <PackageReference Include="Castle.Windsor" Version="4.1.0" />
     <PackageReference Include="DotNetOpenAuth.AspNet" Version="4.3.4.13329" />
     <PackageReference Include="DotNetOpenAuth.OpenId.RelyingParty" Version="4.3.4.13329" />
     <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.6" />
     <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.1" />
-    <PackageReference Include="Esynctraining.Crypto" Version="1.0.1" />
+    <PackageReference Include="Esynctraining.Crypto" Version="1.0.2" />
     <PackageReference Include="Esynctraining.FluentValidation" Version="1.0.0.3" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.0.1" />
-    <PackageReference Include="Jil" Version="2.15.3" />
+    <PackageReference Include="Jil" Version="2.15.4" />
     <PackageReference Include="LtiLibrary.AspNet" Version="1.6.1" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
     <PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="5.2.3" />
