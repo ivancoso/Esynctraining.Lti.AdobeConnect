@@ -10,7 +10,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
     using System.Linq;
     using System.Net;
     using System.Text;
-
+    using com.wiris.editor.services;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 

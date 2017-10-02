@@ -4,6 +4,7 @@ namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
     using Esynctraining.Core.Domain.Entities;
+    using Esynctraining.Crypto;
 
     /// <summary>
     ///     The contact.

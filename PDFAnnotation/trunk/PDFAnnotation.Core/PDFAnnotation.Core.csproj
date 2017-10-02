@@ -146,46 +146,52 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="nuget.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
     <None Include="PDFAnnotation.Core.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BouncyCastle.NetCore.1.8.1.3\lib\net20\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Esynctraining.Core.Only.1.0.1.1\lib\net45\Esynctraining.Core.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.1\lib\net45\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core.FullText, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.FullText.1.0.0.2\lib\net45\Esynctraining.Core.FullText.dll</HintPath>
-      <Private>True</Private>
+    </Reference>
+    <Reference Include="Esynctraining.Crypto, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Crypto.1.0.2\lib\net45\Esynctraining.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Esynctraining.NHibernate.1.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.NHibernate.1.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.PdfProcessor">
+    <Reference Include="Esynctraining.PdfProcessor, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.PdfProcessor.1.0.0.3\lib\net40\Esynctraining.PdfProcessor.dll</HintPath>
     </Reference>
-    <Reference Include="FluentNHibernate">
-      <HintPath>..\packages\FluentNHibernate.2.0.1.0\lib\net40\FluentNHibernate.dll</HintPath>
+    <Reference Include="Ghostscript.NET, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ghostscript.NET.1.1.2\lib\net40\Ghostscript.NET.dll</HintPath>
     </Reference>
-    <Reference Include="Ghostscript.NET, Version=1.2.1.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Ghostscript.NET.1.2.1\lib\net40\Ghostscript.NET.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Iesi.Collections.4.0.2\lib\net40\Iesi.Collections.dll</HintPath>
+      <HintPath>..\packages\Iesi.Collections.4.0.2\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="itextsharp, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\iTextSharp.5.5.12\lib\itextsharp.dll</HintPath>
+    <Reference Include="itextsharp, Version=5.4.4.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.4.4\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
+      <HintPath>..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -201,13 +207,12 @@
     <Reference Include="System.Xml.Serialization" />
     <Reference Include="WcfRestContrib, Version=1.7.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="WIRIScommon">
-      <HintPath>..\..\WIRISeditor\Bin\WIRIScommon.dll</HintPath>
+      <HintPath>..\ExternalLibraries\WIRIS\WIRIScommon.dll</HintPath>
     </Reference>
     <Reference Include="WIRISeditor">
-      <HintPath>..\..\WIRISeditor\Bin\WIRISeditor.dll</HintPath>
+      <HintPath>..\ExternalLibraries\WIRIS\WIRISeditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
