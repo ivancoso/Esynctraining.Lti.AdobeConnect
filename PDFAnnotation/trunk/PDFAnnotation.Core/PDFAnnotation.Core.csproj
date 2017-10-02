@@ -152,7 +152,6 @@
     <None Include="PDFAnnotation.Core.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="_CreateNewNuGetPackage\Config.ps1" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
