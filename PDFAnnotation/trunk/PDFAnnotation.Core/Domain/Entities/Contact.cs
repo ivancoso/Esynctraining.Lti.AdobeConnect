@@ -3,16 +3,12 @@
 namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
-    using System.Linq;
     using Esynctraining.Core.Domain.Entities;
-  //  using Esynctraining.Core.FullText;
-    using Esynctraining.Core.Utils;
-    using Iesi.Collections.Generic;
 
     /// <summary>
     ///     The contact.
     /// </summary>
-  //  [FullTextEnabled]
+    //  [FullTextEnabled]
     public class Contact : Entity
     {
         #region Fields

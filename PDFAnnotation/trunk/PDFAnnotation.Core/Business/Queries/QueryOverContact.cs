@@ -2,8 +2,6 @@
 
 namespace PDFAnnotation.Core.Business.Queries
 {
-   // using Esynctraining.Core.Business.Queries;
-
     using NHibernate.Criterion;
 
     using PDFAnnotation.Core.Domain.Entities;

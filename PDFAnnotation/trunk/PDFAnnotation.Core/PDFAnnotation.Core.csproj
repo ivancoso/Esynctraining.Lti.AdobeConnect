@@ -164,16 +164,15 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Reference Include="Esynctraining.Core">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.24\lib\net45\Esynctraining.Core.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Esynctraining.Core.Only.1.0.1.1\lib\net45\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core.FullText, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.FullText.1.0.0.2\lib\net45\Esynctraining.Core.FullText.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.NHibernate.1.0.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Esynctraining.NHibernate, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Esynctraining.NHibernate.1.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.PdfProcessor">
       <HintPath>..\packages\Esynctraining.PdfProcessor.1.0.0.3\lib\net40\Esynctraining.PdfProcessor.dll</HintPath>
@@ -181,22 +180,21 @@
     <Reference Include="FluentNHibernate">
       <HintPath>..\packages\FluentNHibernate.2.0.1.0\lib\net40\FluentNHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Ghostscript.NET, Version=1.2.1.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Ghostscript.NET.1.2.1\lib\net40\Ghostscript.NET.dll</HintPath>
     </Reference>
-    <Reference Include="itextsharp, Version=5.5.9.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
-      <HintPath>..\packages\iTextSharp.5.5.9\lib\itextsharp.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Iesi.Collections.4.0.2\lib\net40\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\iTextSharp.5.5.12\lib\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\SmartPdfWhiteboard\trunk\csharp\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

@@ -2326,7 +2326,6 @@
                 throw new DirectoryNotFoundException(
                     "Source directory does not exist or could not be found: "
                     + sourceDir.Name);
-                return false;
             }
 
             if (!Directory.Exists(newPah))
