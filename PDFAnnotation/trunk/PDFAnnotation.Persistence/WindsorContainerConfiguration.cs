@@ -7,7 +7,6 @@
     using Castle.Facilities.WcfIntegration;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
     using Esynctraining.Persistence;
 
@@ -45,7 +44,6 @@
             if (wcf)
             {
                 container.AddFacility<WcfFacility>();
-                container.Register(Component.For<AuthenticationModel>().ImplementedBy(typeof(AuthenticationModel)).LifeStyle.PerWcfOperation());
             }
 
             container.Register(Component.For<Configuration>().LifeStyle.Singleton.Activator<NHibernateConfigurationActivator>());
@@ -82,13 +80,12 @@
             container.Register(Component.For<FullTextModel>().LifeStyle.Singleton);
             container.Register(Component.For<Pdf2SwfConverter>().LifeStyle.Singleton);
             container.Register(Types.FromAssemblyNamed("PDFAnnotation.Core").Pick().If(Component.IsInNamespace("PDFAnnotation.Core.Business.Models", true)).WithService.Self().Configure(c => c.LifestyleTransient()));
-            container.Register(Types.FromAssemblyNamed("Esynctraining.Core").Pick().If(Component.IsInNamespace("Esynctraining.Core.Business.Models")).Unless(type => type == typeof(AuthenticationModel) || type == typeof(FullTextModel)).WithService.Self().Configure(c => c.LifestyleTransient()));
+            container.Register(Types.FromAssemblyNamed("Esynctraining.Core").Pick().If(Component.IsInNamespace("Esynctraining.Core.Business.Models"))
+                .Unless(type => /*type == typeof(AuthenticationModel) ||*/ type == typeof(FullTextModel)).WithService.Self().Configure(c => c.LifestyleTransient()));
             
             if (web)
             {
-                container.Register(Component.For<AuthenticationModel>().ImplementedBy(typeof(AuthenticationModel)).LifeStyle.PerWebRequest);
               //  container.Register(Component.For<XDocumentWrapper>().LifeStyle.Transient);
-                
             }
 
           //  container.AddFacility(new LoggingFacility(LoggerImplementation.Log4net, "log4net.cfg.xml"));
