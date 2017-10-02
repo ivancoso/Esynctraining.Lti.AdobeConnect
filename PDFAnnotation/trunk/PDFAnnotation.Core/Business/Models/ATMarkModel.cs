@@ -1,8 +1,4 @@
-﻿using com.wiris.editor.toolbar;
-using Esynctraining.NHibernate;
-using FluentNHibernate.Utils;
-using NHibernate.Criterion;
-using NHibernate.Linq;
+﻿using Esynctraining.NHibernate;
 using PDFAnnotation.Core.Domain.DTO;
 
 namespace PDFAnnotation.Core.Business.Models
@@ -10,9 +6,6 @@ namespace PDFAnnotation.Core.Business.Models
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
 
     using PDFAnnotation.Core.Domain.Entities;
 

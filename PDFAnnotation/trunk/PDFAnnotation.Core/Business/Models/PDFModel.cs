@@ -1,10 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Text.RegularExpressions;
-using System.Web.UI.WebControls;
-using com.wiris.editor.services;
-using PDFAnnotation.Core.Domain.DTO.Enums;
+﻿using System.Text.RegularExpressions;
 using PDFAnnotation.Core.Wrappers;
 
 

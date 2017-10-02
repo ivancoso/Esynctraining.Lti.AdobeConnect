@@ -1,15 +1,10 @@
 ﻿namespace PDFAnnotation.Core.Business.Models
 {
     using System;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-
+    using Esynctraining.NHibernate;
     using NHibernate;
     using NHibernate.Criterion;
-
     using PDFAnnotation.Core.Domain.Entities;
-    using Esynctraining.NHibernate;
     /// <summary>
     /// The schedule model.
     /// </summary>

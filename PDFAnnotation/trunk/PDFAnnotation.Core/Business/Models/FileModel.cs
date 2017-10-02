@@ -1,9 +1,4 @@
-﻿
-
-using Esynctraining.Core.Domain.Entities;
-using PDFAnnotation.Core.Contracts;
-
-namespace PDFAnnotation.Core.Business.Models
+﻿namespace PDFAnnotation.Core.Business.Models
 {
     using System;
     using System.Collections.Generic;

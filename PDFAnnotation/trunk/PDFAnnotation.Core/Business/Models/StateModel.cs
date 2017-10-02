@@ -2,18 +2,13 @@
 
 namespace PDFAnnotation.Core.Business.Models
 {
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
-    ///     The state model.
+    /// The state model.
     /// </summary>
     public class StateModel : BaseModel<State, int>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="StateModel"/> class. 
         /// </summary>
@@ -25,6 +20,6 @@ namespace PDFAnnotation.Core.Business.Models
         {
         }
 
-        #endregion
     }
+
 }

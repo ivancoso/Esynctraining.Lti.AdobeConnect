@@ -2,9 +2,6 @@
 
 namespace PDFAnnotation.Core.Business.Models
 {
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
