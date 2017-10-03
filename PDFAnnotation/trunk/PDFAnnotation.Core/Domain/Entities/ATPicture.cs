@@ -1,10 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PDFAnnotation.Core.Contracts;
-
-namespace PDFAnnotation.Core.Domain.Entities
+﻿namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
     using Esynctraining.Core.Domain.Entities;

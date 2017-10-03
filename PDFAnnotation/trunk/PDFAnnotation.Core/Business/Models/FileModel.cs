@@ -2036,7 +2036,7 @@
         internal static string FileStoragePhysicalPath(dynamic settings)
         {
             dynamic fileStorage = settings.FileStorage;
-            return fileStorage.StartsWith("~") ? HttpContext.Current.Server.MapPath(fileStorage) : fileStorage;
+            return fileStorage;
         }
 
         /// <summary>
@@ -2127,7 +2127,7 @@
         public string StoragePhysicalPath()
         {
             dynamic fileStorage = this.settings.FileStorage; //WebOrbStorage
-            return fileStorage.StartsWith("~") ? HttpContext.Current.Server.MapPath(fileStorage) : fileStorage;
+            return fileStorage;
         }
 
         /// <summary>

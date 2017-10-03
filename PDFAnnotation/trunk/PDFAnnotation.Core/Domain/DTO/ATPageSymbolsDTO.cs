@@ -3,8 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
-    using System.Web.Script.Serialization;
-
+    
     using PDFAnnotation.Core.Utils;
 
     /// <summary>
@@ -35,9 +34,12 @@
         {
             this.pageIndex = pageIndex;
             this.symbols = symbols.ToArray();
-            var jsonSerializer = new JavaScriptSerializer();
-            jsonSerializer.MaxJsonLength = int.MaxValue;
-            this.symbolsJSON = jsonSerializer.Serialize(this.symbols);
+
+            //var jsonSerializer = new JavaScriptSerializer();
+            //jsonSerializer.MaxJsonLength = int.MaxValue;
+            //this.symbolsJSON = jsonSerializer.Serialize(this.symbols);
+
+            this.symbolsJSON = Newtonsoft.Json.JsonConvert.SerializeObject(this.symbols);
         }
 
         #endregion

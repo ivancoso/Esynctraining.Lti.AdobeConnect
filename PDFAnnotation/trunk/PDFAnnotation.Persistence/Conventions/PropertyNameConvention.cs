@@ -1,15 +1,6 @@
 ﻿namespace PDFAnnotation.Persistence.Conventions
 {
     using System.Collections.Generic;
-    using System.Globalization;
-
-    using Esynctraining.Core.Utils;
-
-    using FluentNHibernate.Conventions;
-    using FluentNHibernate.Conventions.Instances;
-
-    using PDFAnnotation.Core.Domain.Entities;
-
     /// <summary>
     /// The property name convention.
     /// </summary>

@@ -1,213 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3E05DE78-D386-414A-9505-33861FF180F9}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PDFAnnotation.Core</RootNamespace>
-    <AssemblyName>PDFAnnotation.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net461</TargetFramework>
+    <Authors>eSyncTraining.com</Authors>
+    <Company>eSyncTraining.com</Company>
+    <PackageProjectUrl>http://esynctraining.com/</PackageProjectUrl>
+    <Description>Provides core functionality for pdf annotations projects</Description>
+    <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
+    <PackageTags>pdf annotation</PackageTags>
+    <PackageIconUrl>http://dotnet.esynctraining.com:2399/esync128.png</PackageIconUrl>
+    <Version>1.1.0.16</Version>
+    <AssemblyVersion>1.1.0.16</AssemblyVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\Debug\PDFAnnotation.Core.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Business\Models\AddressModel.cs" />
-    <Compile Include="Business\Models\ATAnnotationModel.cs" />
-    <Compile Include="Domain\Enums\StickyNoteIconsNames.cs" />
-    <Compile Include="Domain\DTO\ObjectsForMarkDTO.cs" />
-    <Compile Include="Domain\Entities\ATAnnotation.cs" />
-    <Compile Include="Business\Models\ATDrawingModel.cs" />
-    <Compile Include="Business\Models\ATFormulaModel.cs" />
-    <Compile Include="Business\Models\ATHighlightStrikeOutModel.cs" />
-    <Compile Include="Business\Models\ATMarkModel.cs" />
-    <Compile Include="Business\Models\ATPictureModel.cs" />
-    <Compile Include="Business\Models\CategoryModel.cs" />
-    <Compile Include="Business\Models\CompanyContactModel.cs" />
-    <Compile Include="Business\Models\CompanyModel.cs" />
-    <Compile Include="Business\Models\ContactModel.cs" />
-    <Compile Include="Business\Models\ContactTypeModel.cs" />
-    <Compile Include="Business\Models\CountryModel.cs" />
-    <Compile Include="Business\Models\PasswordActivationModel.cs" />
-    <Compile Include="Business\Models\StateModel.cs" />
-    <Compile Include="Business\Models\TopicModel.cs" />
-    <Compile Include="Business\Models\PDFModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Business\Models\ATRotationModel.cs" />
-    <Compile Include="Business\Models\ATShapeModel.cs" />
-    <Compile Include="Business\Models\ATTextItemModel.cs" />
-    <Compile Include="Business\Models\FileModel.cs" />
-    <Compile Include="Business\Models\ScheduleModel.cs" />
-    <Compile Include="Business\Queries\QueryOverContact.cs" />
-    <Compile Include="Business\TimeExtensions.cs" />
-    <Compile Include="Constants\ClientConstants.cs" />
-    <Compile Include="Constants\EntityTypes.cs" />
-    <Compile Include="Contracts\ICompanyService.cs" />
-    <Compile Include="Contracts\IContactService.cs" />
-    <Compile Include="Contracts\ITopicService.cs" />
-    <Compile Include="Contracts\ICategoryService.cs" />
-    <Compile Include="Contracts\IFileService.cs" />
-    <Compile Include="Contracts\ILookupService.cs" />
-    <Compile Include="Contracts\IPDFService.cs" />
-    <Compile Include="Contracts\IRestService.cs" />
-    <Compile Include="Converters\JsonDateTimeConverter.cs" />
-    <Compile Include="Domain\DTO\AddressDTO.cs" />
-    <Compile Include="Domain\DTO\ATDrawingMarkDTO.cs" />
-    <Compile Include="Domain\DTO\ATHighlightStrikeOutMarkDTO.cs" />
-    <Compile Include="Domain\DTO\CategoryContactDTO.cs" />
-    <Compile Include="Domain\DTO\CompanyContactDTO.cs" />
-    <Compile Include="Domain\DTO\CompanyDTO.cs" />
-    <Compile Include="Domain\DTO\CompanyForCreationDTO.cs" />
-    <Compile Include="Domain\DTO\CompanyWithDetailsDTO.cs" />
-    <Compile Include="Domain\DTO\ConfigDTO.cs" />
-    <Compile Include="Domain\DTO\ContactDTO.cs" />
-    <Compile Include="Domain\DTO\ContactTypeDTO.cs" />
-    <Compile Include="Domain\DTO\ContactWithDetailsDTO.cs" />
-    <Compile Include="Domain\DTO\CountryDTO.cs" />
-    <Compile Include="Domain\DTO\FileConvertationDTO.cs" />
-    <Compile Include="Domain\DTO\FileTopicDTO.cs" />
-    <Compile Include="Domain\DTO\LookupDTO.cs" />
-    <Compile Include="Domain\DTO\StateDTO.cs" />
-    <Compile Include="Domain\DTO\TopicPageWrapper.cs" />
-    <Compile Include="Domain\DTO\TopicDTO.cs" />
-    <Compile Include="Domain\DTO\IBaseMarkDTO.cs" />
-    <Compile Include="Domain\DTO\IBoxedMarkDTO.cs" />
-    <Compile Include="Domain\DTO\ATMarkDTO.cs" />
-    <Compile Include="Domain\DTO\ATPageSymbolsDTO.cs" />
-    <Compile Include="Domain\DTO\ATShapeMarkDTO.cs" />
-    <Compile Include="Domain\DTO\ATTextItemDTO.cs" />
-    <Compile Include="Domain\DTO\CategoryDTO.cs" />
-    <Compile Include="Domain\DTO\ExtendedCategoryDTO.cs" />
-    <Compile Include="Domain\DTO\GroupedCategoriesDTO.cs" />
-    <Compile Include="Domain\DTO\FileDTO.cs" />
-    <Compile Include="Domain\DTO\GenericEmailDTO.cs" />
-    <Compile Include="Domain\DTO\LoginDTO.cs" />
-    <Compile Include="Domain\DTO\TabFirstPageWrapper.cs" />
-    <Compile Include="Domain\Entities\Address.cs" />
-    <Compile Include="Domain\Entities\ATDrawing.cs" />
-    <Compile Include="Domain\Entities\ATFormula.cs" />
-    <Compile Include="Domain\Entities\ATHighlightStrikeOut.cs" />
-    <Compile Include="Domain\Entities\ATMark.cs" />
-    <Compile Include="Domain\Entities\ATPicture.cs" />
-    <Compile Include="Domain\Entities\ATRotation.cs" />
-    <Compile Include="Domain\Entities\ATShape.cs" />
-    <Compile Include="Domain\Entities\ATTextItem.cs" />
-    <Compile Include="Domain\Entities\Category.cs" />
-    <Compile Include="Domain\Entities\Company.cs" />
-    <Compile Include="Domain\Entities\CompanyContact.cs" />
-    <Compile Include="Domain\Entities\Contact.cs" />
-    <Compile Include="Domain\Entities\ContactStatusEnum.cs" />
-    <Compile Include="Domain\Entities\ContactType.cs" />
-    <Compile Include="Domain\Entities\ContactTypeEnum.cs" />
-    <Compile Include="Domain\Entities\Country.cs" />
-    <Compile Include="Domain\Entities\DateTimeWithZone.cs" />
-    <Compile Include="Domain\Entities\File.cs" />
-    <Compile Include="Domain\Entities\FileStatus.cs" />
-    <Compile Include="Domain\Entities\PasswordActivation.cs" />
-    <Compile Include="Domain\Entities\Schedule.cs" />
-    <Compile Include="Domain\Entities\State.cs" />
-    <Compile Include="Domain\Entities\Topic.cs" />
-    <Compile Include="Domain\Entities\ScheduleDescriptor.cs" />
-    <Compile Include="Domain\Entities\ScheduleType.cs" />
-    <Compile Include="Domain\Entities\UploadFileStatus.cs" />
-    <Compile Include="Extensions\ArrayExtensions.cs" />
-    <Compile Include="Extensions\NHibernateExtensions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\CharRenderInfo.cs" />
-    <Compile Include="Utils\Pdf2SwfConverter.cs" />
-    <Compile Include="Utils\Point.cs" />
-    <Compile Include="Utils\PointsConverter.cs" />
-    <Compile Include="Utils\TextSymbolsExtractionStategy.cs" />
-    <Compile Include="Wrappers\CustomPDFDate.cs" />
+    <PackageReference Include="Esynctraining.Core.FullText" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Crypto" Version="1.0.2" />
+    <PackageReference Include="Esynctraining.NHibernate" Version="1.0.1" />
+    <PackageReference Include="Esynctraining.PdfProcessor" Version="1.0.0.3" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="wcfrestcontrib" Version="1.7.14" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="nuget.config" />
-    <None Include="packages.config" />
-    <None Include="PDFAnnotation.Core.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BouncyCastle.NetCore.1.8.1.3\lib\net20\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.1\lib\net45\Esynctraining.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Esynctraining.Core.FullText, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.FullText.1.0.0.2\lib\net45\Esynctraining.Core.FullText.dll</HintPath>
-    </Reference>
-    <Reference Include="Esynctraining.Crypto, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Crypto.1.0.2\lib\net45\Esynctraining.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="Esynctraining.NHibernate, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.NHibernate.1.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="Esynctraining.PdfProcessor, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.PdfProcessor.1.0.0.3\lib\net40\Esynctraining.PdfProcessor.dll</HintPath>
-    </Reference>
-    <Reference Include="Ghostscript.NET, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ghostscript.NET.1.1.2\lib\net40\Ghostscript.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Iesi.Collections.4.0.2\lib\net40\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="itextsharp, Version=5.4.4.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
-      <HintPath>..\packages\iTextSharp.5.4.4\lib\itextsharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.IdentityModel.Selectors" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.XML" />
-    <Reference Include="System.Xml.Serialization" />
-    <Reference Include="WcfRestContrib, Version=1.7.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
-    </Reference>
     <Reference Include="WIRIScommon">
       <HintPath>..\ExternalLibraries\WIRIS\WIRIScommon.dll</HintPath>
     </Reference>
@@ -215,16 +32,11 @@
       <HintPath>..\ExternalLibraries\WIRIS\WIRISeditor.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <ItemGroup>
+    <Compile Update="Business\Models\PDFModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

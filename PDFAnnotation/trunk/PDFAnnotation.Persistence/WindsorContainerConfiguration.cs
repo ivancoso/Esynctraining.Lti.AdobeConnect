@@ -11,12 +11,12 @@
     using Esynctraining.Persistence;
 
     using NHibernate;
-    using PDFAnnotation.Core.Utils;
 
     using Configuration = NHibernate.Cfg.Configuration;
     using Esynctraining.NHibernate;
-    using Esynctraining.Core.FullText;    
-    
+    using Esynctraining.Core.FullText;
+    using PDFAnnotation.Core.Utils;
+
     /// <summary>
     /// The windsor container configuration.
     /// </summary>

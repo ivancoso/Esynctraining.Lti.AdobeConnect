@@ -1,5 +1,3 @@
-using PDFAnnotation.Core.Contracts;
-
 namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Esynctraining.Core.Domain.Entities;
-using PDFAnnotation.Core.Contracts;
 using PDFAnnotation.Core.Domain.Entities;
 
 namespace PDFAnnotation.Core.Business.Models
