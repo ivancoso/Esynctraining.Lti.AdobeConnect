@@ -12,6 +12,7 @@
     <PackageTags>pdf annotation persistence</PackageTags>
     <AssemblyVersion>1.1.0.20</AssemblyVersion>
     <FileVersion>1.1.0.20</FileVersion>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
   <ItemGroup>

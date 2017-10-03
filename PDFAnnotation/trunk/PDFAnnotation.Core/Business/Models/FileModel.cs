@@ -10,7 +10,6 @@
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using System.Web;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.FullText;
     using Esynctraining.Core.Logging;
