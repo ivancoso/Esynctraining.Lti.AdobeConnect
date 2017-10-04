@@ -59,21 +59,21 @@
             }
             else if (web)
             {
-                container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.PerWebRequest);
+                container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.Scoped());
             }
 
             container.Register(Component.For(typeof(IRepository<,>)).ImplementedBy(typeof(Repository<,>)).LifeStyle.Transient);
             
-            if (!console)
-            {
-                container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings)).DynamicParameters((k, d) => d.Add("globalizationSection", ConfigurationManager.GetSection("system.web/globalization") as GlobalizationSection)).LifeStyle.Singleton);
-            }
-            else
-            {
-            // ReSharper disable RedundantCast (The cast is actually needed here for castle windsor to know the type of null)
-                container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", ConfigurationManager.AppSettings)).DynamicParameters((k, d) => d.Add("globalizationSection", (GlobalizationSection)null)).LifeStyle.Singleton);
-            // ReSharper restore RedundantCast
-            }
+            //if (!console)
+            //{
+            //    container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings)).DynamicParameters((k, d) => d.Add("globalizationSection", ConfigurationManager.GetSection("system.web/globalization") as GlobalizationSection)).LifeStyle.Singleton);
+            //}
+            //else
+            //{
+            //// ReSharper disable RedundantCast (The cast is actually needed here for castle windsor to know the type of null)
+            //    container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", ConfigurationManager.AppSettings)).DynamicParameters((k, d) => d.Add("globalizationSection", (GlobalizationSection)null)).LifeStyle.Singleton);
+            //// ReSharper restore RedundantCast
+            //}
 
             container.Register(Component.For<HttpServerUtilityBase>().ImplementedBy<HttpServerUtilityWrapper>().DynamicParameters((k, d) => d.Insert("httpServerUtility", HttpContext.Current.Server)).LifeStyle.Transient);
 
