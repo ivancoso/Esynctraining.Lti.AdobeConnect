@@ -16,6 +16,7 @@ namespace Esynctraining.Ip.WebApi.Host.Controllers
         }
 
         [HttpGet]
+        [HttpPost]
         [ResponseCache(NoStore = true, Duration = 0, Location = ResponseCacheLocation.None)]
         public OperationResultWithData<string> GetUserAgentRemoteAddress()
         {
