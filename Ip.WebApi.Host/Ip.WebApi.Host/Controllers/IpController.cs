@@ -21,8 +21,8 @@ namespace Esynctraining.Ip.WebApi.Host.Controllers
         public OperationResultWithData<string> GetUserAgentRemoteAddress()
         {
             _logger.Info($"GetUserAgentRemoteAddress. RemoteIpAddress: {Request.HttpContext.Connection.RemoteIpAddress}");
-            
-            return new OperationResultWithData<string> { IsSuccess = true, Data = Request.HttpContext.Connection.RemoteIpAddress.ToString() };
+
+            return Request.HttpContext.Connection.RemoteIpAddress.ToString().ToSuccessResult();
         }
     }
 }
