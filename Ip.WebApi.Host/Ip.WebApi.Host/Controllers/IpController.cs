@@ -3,7 +3,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ip.WebApi.Host.Controllers
+namespace Esynctraining.Ip.WebApi.Host.Controllers
 {
     [Route("my-ip")]
     public class IpController : ControllerBase

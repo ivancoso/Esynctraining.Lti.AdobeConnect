@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace AnonymousChat.WebApi.Host
+namespace Esynctraining.Ip.WebApi.Host
 {
     public class Startup
     {

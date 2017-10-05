@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 
-namespace AnonymousChat.WebApi.Host
+namespace Esynctraining.Ip.WebApi.Host
 {
     public class Program
     {
