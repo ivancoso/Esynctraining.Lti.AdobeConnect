@@ -17,11 +17,11 @@ namespace Esynctraining.Ip.WebApi.Host.Controllers
 
         [HttpGet]
         [ResponseCache(NoStore = true, Duration = 0, Location = ResponseCacheLocation.None)]
-        public OperationResult GetUserAgentRemoteAddress()
+        public OperationResultWithData<string> GetUserAgentRemoteAddress()
         {
             _logger.Info($"GetUserAgentRemoteAddress. RemoteIpAddress: {Request.HttpContext.Connection.RemoteIpAddress}");
             
-            return new OperationResult { IsSuccess = true, Message = Request.HttpContext.Connection.RemoteIpAddress.ToString() };
+            return new OperationResultWithData<string> { IsSuccess = true, Data = Request.HttpContext.Connection.RemoteIpAddress.ToString() };
         }
     }
 }
