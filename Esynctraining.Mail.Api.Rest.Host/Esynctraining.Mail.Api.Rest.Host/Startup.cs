@@ -72,8 +72,8 @@ namespace AnonymousChat.WebApi.Host
                 .ConfigureSingleton<ISmtpSettings, SmtpSettings>(Configuration.GetSection("SmtpSettings"), x => x)
                 .ConfigureSingleton<ITemplateSettings, TemplateSettings>(Configuration.GetSection("MailTemplateSettings"), x => x)
                 .ConfigureSingleton<INotificationsSettings, NotificationsSettings>(Configuration.GetSection("Mailer"), x => x)
-                .AddScoped<ITemplateTransformer, ViewRenderService>()
-                .AddScoped<ISmtpClient, MailKitSmtpClient>()
+                .AddSingleton<ITemplateTransformer, ViewRenderService>()
+                .AddSingleton<ISmtpClient, MailKitSmtpClient>()
                 ;
 
             if (!HostingEnvironment.IsProduction())
