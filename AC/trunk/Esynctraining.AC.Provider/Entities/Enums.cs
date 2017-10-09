@@ -118,7 +118,12 @@
         /// <summary>
         /// seminar session has already been scheduled for this time
         /// </summary>
-        session_schedule_conflict
+        session_schedule_conflict,
+
+        /// <summary>
+        /// moving folder into itself
+        /// </summary>
+        illegal_parent
     }
 
     public enum ScoType
