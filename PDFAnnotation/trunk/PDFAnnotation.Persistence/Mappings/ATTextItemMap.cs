@@ -1,16 +1,12 @@
 namespace PDFAnnotation.Persistence.Mappings
 {
-    using Esynctraining.Persistence.Mappings;
-
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
-    ///     The TextItem Fluent NHibernate mapping class.
+    /// The TextItem Fluent NHibernate mapping class.
     /// </summary>
     public class ATTextItemMap : BaseClassMap<ATTextItem>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="ATTextItemMap" /> class.
         /// </summary>
@@ -30,6 +26,6 @@ namespace PDFAnnotation.Persistence.Mappings
             this.References(x => x.Mark).Not.Nullable();
         }
 
-        #endregion
     }
+
 }

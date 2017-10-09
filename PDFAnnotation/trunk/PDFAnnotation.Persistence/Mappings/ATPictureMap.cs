@@ -1,5 +1,4 @@
-﻿using Esynctraining.Persistence.Mappings;
-using PDFAnnotation.Core.Domain.Entities;
+﻿using PDFAnnotation.Core.Domain.Entities;
 
 namespace PDFAnnotation.Persistence.Mappings
 {
@@ -8,8 +7,6 @@ namespace PDFAnnotation.Persistence.Mappings
     /// </summary>
     public class ATPictureMap : BaseClassMap<ATPicture>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ATPictureMap"/> class.
         /// </summary>
@@ -28,6 +25,6 @@ namespace PDFAnnotation.Persistence.Mappings
             this.References(x => x.Mark).Not.Nullable();
         }
 
-        #endregion
     }
+
 }

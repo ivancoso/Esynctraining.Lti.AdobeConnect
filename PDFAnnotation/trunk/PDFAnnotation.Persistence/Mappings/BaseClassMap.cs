@@ -13,8 +13,6 @@
     public abstract class BaseClassMap<T> : ClassMap<T>
         where T : Entity
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseClassMap{T}"/> class.
         /// </summary>
@@ -23,6 +21,6 @@
             this.Id(x => x.Id).GeneratedBy.Identity();
         }
 
-        #endregion
     }
+
 }

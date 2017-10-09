@@ -1,7 +1,5 @@
 ﻿namespace PDFAnnotation.Persistence.Mappings
 {
-    using Esynctraining.Persistence.Mappings;
-
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
@@ -9,8 +7,6 @@
     /// </summary>
     public class ATRotationMap : BaseClassMap<ATRotation>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ATRotationMap"/> class.
         /// </summary>
@@ -19,6 +15,6 @@
             this.References(x => x.Mark).Not.Nullable();
         }
 
-        #endregion
     }
+
 }

@@ -1,8 +1,5 @@
 ﻿namespace PDFAnnotation.Persistence.Mappings
 {
-    using Esynctraining.Core.Enums;
-    using Esynctraining.Persistence.Mappings;
-
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
@@ -10,8 +7,6 @@
     /// </summary>
     public class FileMap : BaseClassMapGuid<File>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FileMap"/> class.
         /// </summary>
@@ -45,10 +40,8 @@
 
             this.HasMany(x => x.Marks).Cascade.Delete().Inverse().ExtraLazyLoad();
             this.HasMany(x => x.ChildrenFiles).KeyColumn("parentFileId").Cascade.Delete().Inverse().ExtraLazyLoad();
-
-
         }
 
-        #endregion
     }
+
 }

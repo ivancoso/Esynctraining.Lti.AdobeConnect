@@ -1,7 +1,5 @@
 ﻿namespace PDFAnnotation.Persistence.Mappings
 {
-    using Esynctraining.Persistence.Mappings;
-
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
@@ -9,8 +7,6 @@
     /// </summary>
     public class ScheduleMap : BaseClassMap<Schedule>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleMap"/> class.
         /// </summary>
@@ -23,6 +19,6 @@
             this.Map(x => x.ScheduleType).CustomType<ScheduleType>().Not.Nullable();
         }
 
-        #endregion
     }
+
 }

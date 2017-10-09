@@ -1,17 +1,14 @@
-using Esynctraining.Persistence.Mappings;
 using PDFAnnotation.Core.Domain.Entities;
 
 namespace PDFAnnotation.Persistence.Mappings.CompanyContactMapping
 {
     /// <summary>
-    ///     The CompanyContact Fluent NHibernate mapping class.
+    /// The CompanyContact Fluent NHibernate mapping class.
     /// </summary>
     public class CompanyContactMap : BaseClassMap<CompanyContact>
     {
-        #region Constructors and Destructors
-
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CompanyContactMap" /> class.
+        /// Initializes a new instance of the <see cref="CompanyContactMap" /> class.
         /// </summary>
         public CompanyContactMap()
         {
@@ -20,6 +17,6 @@ namespace PDFAnnotation.Persistence.Mappings.CompanyContactMapping
             this.References(x => x.ContactType).Not.Nullable();
         }
 
-        #endregion
     }
+
 }

@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Esynctraining.Persistence.Mappings;
-using FluentNHibernate.Mapping;
-using NHibernate;
-using PDFAnnotation.Core.Domain.Entities;
-
+﻿using PDFAnnotation.Core.Domain.Entities;
 
 namespace PDFAnnotation.Persistence.Mappings
 {
@@ -16,8 +7,6 @@ namespace PDFAnnotation.Persistence.Mappings
     /// </summary>
     public class ATFormulaMap : BaseClassMap<ATFormula>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ATFormulaMap"/> class.
         /// </summary>
@@ -31,6 +20,6 @@ namespace PDFAnnotation.Persistence.Mappings
             this.References(x => x.Mark).Not.Nullable();
         }
 
-        #endregion
     }
+
 }

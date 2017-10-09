@@ -1,16 +1,13 @@
 ﻿namespace PDFAnnotation.Persistence.Mappings
 {
-    using FluentNHibernate.Mapping;
-
     using Core.Domain.Entities;
+    using FluentNHibernate.Mapping;
 
     /// <summary>
     /// The mark map.
     /// </summary>
     public class ATMarkMap : ClassMap<ATMark>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ATMarkMap"/> class.
         /// </summary>
@@ -39,6 +36,6 @@
             this.HasMany(x => x.Annotations).LazyLoad().Cascade.Delete().Inverse();
         }
 
-        #endregion
     }
+
 }

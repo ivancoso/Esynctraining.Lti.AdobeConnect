@@ -1,18 +1,14 @@
 namespace PDFAnnotation.Persistence.Mappings
 {
-    using Esynctraining.Persistence.Mappings;
-
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
-    ///     The Topic Fluent NHibernate mapping class.
+    /// The Topic Fluent NHibernate mapping class.
     /// </summary>
     public class TopicMap : BaseClassMap<Topic>
     {
-        #region Constructors and Destructors
-
         /// <summary>
-        ///     Initializes a new instance of the <see cref="TopicMap" /> class.
+        /// Initializes a new instance of the <see cref="TopicMap" /> class.
         /// </summary>
         public TopicMap()
         {
@@ -23,6 +19,6 @@ namespace PDFAnnotation.Persistence.Mappings
             this.HasMany(x => x.Files).Cascade.Delete().Inverse().ExtraLazyLoad();
         }
 
-        #endregion
     }
+
 }

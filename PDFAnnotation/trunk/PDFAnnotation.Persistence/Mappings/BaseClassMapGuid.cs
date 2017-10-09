@@ -13,8 +13,6 @@
     public abstract class BaseClassMapGuid<T> : ClassMap<T>
         where T : EntityGuid
     {
-        #region Constructors and Destructors
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="BaseClassMapGuid{T}" /> class.
         /// </summary>
@@ -23,6 +21,6 @@
             this.Id(x => x.Id).GeneratedBy.GuidComb();
         }
 
-        #endregion
     }
+
 }

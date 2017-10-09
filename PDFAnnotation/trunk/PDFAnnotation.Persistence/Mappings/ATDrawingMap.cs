@@ -1,18 +1,14 @@
 namespace PDFAnnotation.Persistence.Mappings
 {
-    using Esynctraining.Persistence.Mappings;
-
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
-    ///     The ATDrawing Fluent NHibernate mapping class.
+    /// The ATDrawing Fluent NHibernate mapping class.
     /// </summary>
     public class ATDrawingMap : BaseClassMap<ATDrawing>
     {
-        #region Constructors and Destructors
-
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ATDrawingMap" /> class.
+        /// Initializes a new instance of the <see cref="ATDrawingMap" /> class.
         /// </summary>
         public ATDrawingMap()
         {
@@ -21,6 +17,6 @@ namespace PDFAnnotation.Persistence.Mappings
             this.References(x => x.Mark).Not.Nullable();
         }
 
-        #endregion
     }
+
 }

@@ -1,5 +1,4 @@
-﻿using Esynctraining.Persistence.Mappings;
-using PDFAnnotation.Core.Domain.Entities;
+﻿using PDFAnnotation.Core.Domain.Entities;
 
 namespace PDFAnnotation.Persistence.Mappings.CompanyContactMapping
 {
@@ -8,8 +7,6 @@ namespace PDFAnnotation.Persistence.Mappings.CompanyContactMapping
     /// </summary>
     public class StateMap : BaseClassMap<State>
     {
-        #region Constructors and Destructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="StateMap"/> class.
         /// </summary>
@@ -21,6 +18,6 @@ namespace PDFAnnotation.Persistence.Mappings.CompanyContactMapping
             this.References(x => x.Country).Nullable();
         }
 
-        #endregion
     }
+
 }
