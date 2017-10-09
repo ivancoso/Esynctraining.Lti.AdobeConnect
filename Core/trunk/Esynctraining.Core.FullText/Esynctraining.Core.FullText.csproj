@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -11,6 +11,7 @@
     <Authors>eSyncTraining.com</Authors>
     <Company>eSyncTraining.com</Company>
     <Copyright>Copyright © 2013-2016 eSyncTraining.com</Copyright>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +19,12 @@
     <PackageReference Include="Iesi.Collections" Version="4.0.2" />
     <PackageReference Include="Lucene.Net" Version="3.0.3" />
     <PackageReference Include="NHibernate" Version="4.1.1.4000" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
   </ItemGroup>
 
 </Project>
