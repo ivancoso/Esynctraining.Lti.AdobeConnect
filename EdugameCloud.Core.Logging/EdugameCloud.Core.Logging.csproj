@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Castle.Windsor" Version="4.1.0" />
+    <PackageReference Include="Castle.Windsor" Version="3.4.0" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
   </ItemGroup>
 
