@@ -61,10 +61,6 @@
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public string GetResultantText()
         {
             int i = 0;

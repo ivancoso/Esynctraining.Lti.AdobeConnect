@@ -8,22 +8,23 @@
     [Serializable]
     public class CharRenderInfo
     {
+        private static readonly FieldInfo GraphicStatePropInfo = typeof(TextRenderInfo).GetField("gs", BindingFlags.NonPublic | BindingFlags.Instance);
+
         public int index;
         public int pageIndex;
         public int x, y, width, height, fontSize;
         public string value;
-
-        private static readonly FieldInfo GraphicStatePropInfo = typeof(TextRenderInfo).GetField("gs", BindingFlags.NonPublic | BindingFlags.Instance);
+        
 
         public CharRenderInfo()
         {
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="renderInfo"></param>
+
         public CharRenderInfo(TextRenderInfo renderInfo)
         {
+            if (renderInfo == null)
+                throw new ArgumentNullException(nameof(renderInfo));
+
             var curBaseline = renderInfo.GetBaseline().GetStartPoint();
             var topRight = renderInfo.GetAscentLine().GetEndPoint();
 
@@ -38,5 +39,7 @@
             var gs = (GraphicsState)GraphicStatePropInfo.GetValue(renderInfo);
             this.fontSize = (int)gs.FontSize;
         }
+
     }
+
 }

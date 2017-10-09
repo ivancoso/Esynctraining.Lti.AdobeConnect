@@ -9,17 +9,6 @@
     /// </summary>
     public static class PointsConverter
     {
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The parse.
-        /// </summary>
-        /// <param name="points">
-        /// The points.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{T}"/>.
-        /// </returns>
         public static IEnumerable<Point> Parse(string points)
         {
             string[] array = points.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
@@ -36,6 +25,6 @@
             }
         }
 
-        #endregion
     }
+
 }

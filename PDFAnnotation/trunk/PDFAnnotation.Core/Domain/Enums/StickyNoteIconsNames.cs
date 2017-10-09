@@ -2,12 +2,9 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-
-    using iTextSharp.text.pdf;
 
     /// <summary>
-    ///     The border styles. <see href="http://www.verypdf.com/document/pdf-format-reference/pg_0612.htm" />.
+    /// The border styles. <see href="http://www.verypdf.com/document/pdf-format-reference/pg_0612.htm" />.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder",
         Justification = "Reviewed. Suppression is OK here.")]
@@ -102,105 +99,105 @@
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Checkmark = "Checkmark";
+        public static readonly string Checkmark = "Checkmark";
 
         /// <summary>
         /// The circle.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Circle = "Circle";
+        public static readonly string Circle = "Circle";
 
         /// <summary>
         /// The comment.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Comment = "Comment";
+        public static readonly string Comment = "Comment";
 
         /// <summary>
         /// The cross.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Cross = "Cross";
+        public static readonly string Cross = "Cross";
 
         /// <summary>
         /// The help.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Help = "Help";
+        public static readonly string Help = "Help";
 
         /// <summary>
         /// The insert.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Insert = "Insert";
+        public static readonly string Insert = "Insert";
 
         /// <summary>
         /// The key.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Key = "Key";
+        public static readonly string Key = "Key";
 
         /// <summary>
         /// The new paragraph.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string NewParagraph = "NewParagraph";
+        public static readonly string NewParagraph = "NewParagraph";
 
         /// <summary>
         /// The note.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Note = "Note";
+        public static readonly string Note = "Note";
 
         /// <summary>
         /// The paraghraph.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here."), SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Paraghraph = "Paraghraph";
+        public static readonly string Paraghraph = "Paraghraph";
 
         /// <summary>
         /// The right arrow.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string RightArrow = "RightArrow";
+        public static readonly string RightArrow = "RightArrow";
 
         /// <summary>
         /// The right pointer.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string RightPointer = "RightPointer";
+        public static readonly string RightPointer = "RightPointer";
 
         /// <summary>
         /// The star.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string Star = "Star";
+        public static readonly string Star = "Star";
 
         /// <summary>
         /// The up arrow.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string UpArrow = "UpArrow";
+        public static readonly string UpArrow = "UpArrow";
 
         /// <summary>
         /// The up left arrow.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate",
             Justification = "Reviewed. Suppression is OK here.")]
-        public static string UpLeftArrow = "UpLeftArrow";
+        public static readonly string UpLeftArrow = "UpLeftArrow";
 
         #endregion
 
@@ -269,5 +266,7 @@
         }
 
         #endregion
+
     }
+
 }

@@ -1,128 +1,71 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Data.SqlClient;
-using System.Linq;
-using Esynctraining.Core.Enums;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.PdfProcessor;
-using Esynctraining.PdfProcessor.Actions;
-using Esynctraining.PdfProcessor.Renders;
 using iTextSharp.text.pdf;
+using PDFAnnotation.Core.Business.Models;
+using PDFAnnotation.Core.Domain.DTO;
+using PDFAnnotation.Core.Domain.Entities;
 
 namespace PDFAnnotation.Core.Utils
 {
-    using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Threading.Tasks;
-
-    //using Castle.Core.Logging;
-
-    using Esynctraining.Core.Providers;
-
-    using PDFAnnotation.Core.Business.Models;
-    using PDFAnnotation.Core.Domain.DTO;
-    using Domain.Entities;
     /// <summary>
     /// The PDF to SWF converter.
-    /// </summary>
-    /// <summary>
-    ///     The PDF to SWF converter.
     /// </summary>
     public class Pdf2SwfConverter
     {
         #region Fields
 
-        /// <summary>
-        ///     The logger.
-        /// </summary>
-        private readonly ILogger logger;
-
-        /// <summary>
-        ///     The pdf processor.
-        /// </summary>
-        private readonly PdfProcessorHelper pdfProcessor;
-
-        /// <summary>
-        ///     The settings.
-        /// </summary>
-        private readonly dynamic settings;
+        private readonly ILogger _logger;
+        private readonly PdfProcessorHelper _pdfProcessor;
+        private readonly dynamic _settings;
 
         #endregion
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="pdfProcessor"></param>
-        /// <param name="settings"></param>
         public Pdf2SwfConverter(ILogger logger, PdfProcessorHelper pdfProcessor, ApplicationSettingsProvider settings)
         {
-            this.logger = logger;
-            this.pdfProcessor = pdfProcessor;
-            this.settings = settings;
+            _logger = logger;
+            _pdfProcessor = pdfProcessor;
+            _settings = settings;
         }
 
         #endregion
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The convert.
-        /// </summary>
-        /// <param name="pdfFilePath">
-        /// The PDF file path.
-        /// </param>
-        /// <param name="swfFilePath">
-        /// The SWF file path.
-        /// </param>
         public void Convert(string pdfFilePath, string swfFilePath)
         {
-            string args = ((string)this.settings.SWFToolsCommandPattern).Replace("{pdfFile}", pdfFilePath).Replace("{swfFile}", swfFilePath);
+            string args = ((string)this._settings.SWFToolsCommandPattern).Replace("{pdfFile}", pdfFilePath).Replace("{swfFile}", swfFilePath);
             bool renderAsBitmap = false;
             bool overwriteSource = false;
-            this.Convert(args, pdfFilePath, ref renderAsBitmap, ref overwriteSource, null, null);
+            Convert(args, pdfFilePath, ref renderAsBitmap, ref overwriteSource, null, null);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="file"></param>
-        /// <param name="failedFolder"></param>
-        /// <param name="connectionString"></param>
-        /// <param name="ms"></param>
-        /// <returns></returns>
         public bool ConvertIfNotExist(Domain.Entities.File file, string failedFolder, string connectionString, byte[] ms = null)
         {
-            return this.ConvertIfNotExist(new FileDTO(file), failedFolder, connectionString, ms);
+            return ConvertIfNotExist(new FileDTO(file), failedFolder, connectionString, ms);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="fileDTO"></param>
-        /// <param name="failedFolder"></param>
-        /// <param name="connectionString"></param>
-        /// <param name="ms"></param>
-        /// <returns></returns>
         public bool ConvertIfNotExist(FileDTO fileDTO, string failedFolder, string connectionString, byte[] ms = null)
         {
             try
             {
-                var fileStoragePhysicalPath = (string)FileModel.FileStoragePhysicalPath(this.settings);
-                var permSWFPattern = (string)this.settings.PermSWFPattern;
-                var permSWFPagePattern = (string)this.settings.PermSWFPagePattern;
-                this.EnsureDirectoryExist(fileStoragePhysicalPath);
+                var fileStoragePhysicalPath = (string)FileModel.FileStoragePhysicalPath(this._settings);
+                EnsureDirectoryExist(fileStoragePhysicalPath);
                 var fileId = fileDTO.fileId;
                 int numberOfPages = fileDTO.numberOfPages;
                 var workingDir = Path.Combine(fileStoragePhysicalPath, fileId.ToString());
-                this.EnsureDirectoryExist(workingDir);
+                EnsureDirectoryExist(workingDir);
                 var pdfFile = Path.Combine(workingDir, "document.pdf");
                 var swfFile = Path.Combine(workingDir, "document.swf");
                 var swfPagedFile = Path.Combine(workingDir, "%.swf");
-             //   bool isDebugEnabled = this.logger.IsDebugEnabled;
 
                 if (!System.IO.File.Exists(pdfFile) && ms != null)
                 {
@@ -139,59 +82,36 @@ namespace PDFAnnotation.Core.Utils
                     return true;
                 }
 
-                this.SafelyDeleteSwfFile(swfFile);
+                SafelyDeleteSwfFile(swfFile);
 
-                string baseArgs = ((string)this.settings.SWFToolsCommandPattern).Replace("{pdfFile}", pdfFile);
+                string baseArgs = ((string)_settings.SWFToolsCommandPattern).Replace("{pdfFile}", pdfFile);
 
-                var logger = this.logger;
+                var logger = _logger;
 
                 Task.Factory.StartNew(
                     () =>
                     {
-                        var s = new Stopwatch();
-                        //if (isDebugEnabled)
-                        //{
-                        //    logger.Debug("Save SWF pages in background");
-                        //    s.Start();
-                        //}
-
-                        this.UpdateFileWithStatus(connectionString, new Guid(fileId), UploadFileStatus.Rendering, logger);
+                        UpdateFileWithStatus(connectionString, new Guid(fileId), UploadFileStatus.Rendering, logger);
                         try
                         {
-                            pdfProcessor.CheckIfDocumentWasScannedAndFixIfNecessary(pdfFile);
+                            _pdfProcessor.CheckIfDocumentWasScannedAndFixIfNecessary(pdfFile);
                         }
                         catch (Exception ex)
                         {
-                            this.CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, new Guid(fileId), logger, "_rendering");
+                            CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, new Guid(fileId), logger, "_rendering");
                         }
 
-
-                        //if (isDebugEnabled)
-                        //{
-                        //    logger.DebugFormat("Process images PDF took {0}s", s.ElapsedMilliseconds / 1000.0);
-                        //    s.Restart();
-                        //}
-
-                        this.UpdateFileWithStatus(connectionString, new Guid(fileId), UploadFileStatus.Converting, logger);
+                        UpdateFileWithStatus(connectionString, new Guid(fileId), UploadFileStatus.Converting, logger);
                         bool renderAsBitmap = false;
                         bool overWriteSource = false;
                         bool bigPageSucceded = this.Convert(baseArgs.Replace("{swfFile}", swfFile), pdfFile, ref renderAsBitmap, ref overWriteSource, () => System.IO.File.Exists(swfFile), (fail) => this.CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, new Guid(fileId), logger, "_converting", UploadFileStatus.ConvertingFailed, fail));
-                        //if (isDebugEnabled)
-                        //{
-                        //    logger.DebugFormat("Convert SWF took {0}s", s.ElapsedMilliseconds / 1000.0);
-                        //    s.Restart();
-                        //}
 
                         if (bigPageSucceded)
                         {
                             // convert page files
-                            this.UpdateFileWithStatus(connectionString, new Guid(fileId), UploadFileStatus.Converted, logger);
+                            UpdateFileWithStatus(connectionString, new Guid(fileId), UploadFileStatus.Converted, logger);
 
-                            this.Convert(baseArgs.Replace("{swfFile}", swfPagedFile), pdfFile, ref renderAsBitmap, ref overWriteSource, () => this.CheckIfSwfPagedFilesExist(swfPagedFile, numberOfPages), (fail) => this.CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, new Guid(fileId), logger, "_pages", UploadFileStatus.ConvertingPagesFailed, fail));
-                            //if (isDebugEnabled)
-                            //{
-                            //    logger.DebugFormat("Convert SWF pages took {0}s", s.ElapsedMilliseconds / 1000.0);
-                            //}
+                            Convert(baseArgs.Replace("{swfFile}", swfPagedFile), pdfFile, ref renderAsBitmap, ref overWriteSource, () => this.CheckIfSwfPagedFilesExist(swfPagedFile, numberOfPages), (fail) => this.CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, new Guid(fileId), logger, "_pages", UploadFileStatus.ConvertingPagesFailed, fail));
                         }
                     });
 
@@ -199,7 +119,7 @@ namespace PDFAnnotation.Core.Utils
             }
             catch (Exception ex)
             {
-                this.logger.Error("Converting error", ex);
+                _logger.Error("Converting error", ex);
                 return false;
             }
         }
@@ -241,10 +161,10 @@ namespace PDFAnnotation.Core.Utils
             {
                 if (status.HasValue)
                 {
-                    this.UpdateFileWithStatus(connectionString, fileId, status.Value, log);
+                    UpdateFileWithStatus(connectionString, fileId, status.Value, log);
                 }
 
-                this.EnsureDirectoryExist(failedFolder);
+                EnsureDirectoryExist(failedFolder);
 
 
                 System.IO.File.Copy(pdfFile, Path.Combine(failedFolder, fileId + (string.IsNullOrWhiteSpace(posfix) ? string.Empty : posfix) + ".pdf"));
@@ -279,7 +199,9 @@ namespace PDFAnnotation.Core.Utils
         private bool UpdateFileWithStatus(string connectionString, Guid id, UploadFileStatus status, ILogger log)
         {
             var typeName = typeof(Domain.Entities.File).Name;
-            string updateStatusCommand = string.Format("update [{0}] set {1} = @status where {2} = @id", typeName, Inflector.Uncapitalize(Lambda.Property<Domain.Entities.File>(x => x.UploadFileStatus)), Inflector.Uncapitalize(typeName + Lambda.Property<Domain.Entities.File>(x => x.Id)));
+            string updateStatusCommand = string.Format("update [{0}] set {1} = @status where {2} = @id", typeName, 
+                Inflector.Uncapitalize(Lambda.Property<Domain.Entities.File>(x => x.UploadFileStatus)), 
+                Inflector.Uncapitalize(typeName + Lambda.Property<Domain.Entities.File>(x => x.Id)));
             using (var con = new SqlConnection(connectionString))
             {
                 try
@@ -309,16 +231,6 @@ namespace PDFAnnotation.Core.Utils
             return false;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="filePath"></param>
-        /// <param name="renderEverythingAsBitmap"></param>
-        /// <param name="overwriteSource"></param>
-        /// <param name="checkSuccess"></param>
-        /// <param name="copyToCarantineAndLog"></param>
-        /// <returns></returns>
         private bool Convert(string args, string filePath, ref bool renderEverythingAsBitmap, ref bool overwriteSource, Func<bool> checkSuccess = null, Action<string> copyToCarantineAndLog = null)
         {
             var initialArgs = args;
@@ -336,32 +248,32 @@ namespace PDFAnnotation.Core.Utils
             var proc = new Process
             {
                 StartInfo =
-                                   {
-                                       FileName = (string)this.settings.SWFToolsPath,
-                                       Arguments = args,
-                                       UseShellExecute = false,
-                                       WindowStyle = ProcessWindowStyle.Hidden,
-                                       CreateNoWindow = true,
-                                       RedirectStandardOutput = true
-                                   }
+                {
+                    FileName = (string)_settings.SWFToolsPath,
+                    Arguments = args,
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                }
             };
 
             if (proc.Start())
             {
                 string result = proc.StandardOutput.ReadToEnd();
-                this.logger.Info("Converter message:" + result);
+                _logger.Info("Converter message:" + result);
                 proc.WaitForExit();
                 proc.Close();
                 if (!renderEverythingAsBitmap && result.Contains("This file is too complex to render- SWF only supports 65536 shapes at once"))
                 {
                     renderEverythingAsBitmap = true;
-                    this.Convert(initialArgs, filePath, ref renderEverythingAsBitmap, ref overwriteSource);
+                    Convert(initialArgs, filePath, ref renderEverythingAsBitmap, ref overwriteSource);
                 }
 
                 if (!overwriteSource && result.Contains("PDF disallows copying"))
                 {
                     overwriteSource = true;
-                    this.Convert(initialArgs, filePath, ref renderEverythingAsBitmap, ref overwriteSource);
+                    Convert(initialArgs, filePath, ref renderEverythingAsBitmap, ref overwriteSource);
                 }
                 else if (overwriteSource)
                 {
@@ -402,25 +314,20 @@ namespace PDFAnnotation.Core.Utils
             }
             catch (Exception ex)
             {
-                this.logger.Info("TryToOverwriteProtection for source file:" + filePath, ex);
+                _logger.Info("TryToOverwriteProtection for source file:" + filePath, ex);
                 return false;
             }
         }
 
-        /// <summary>
-        /// The ensure directory exist.
-        /// </summary>
-        /// <param name="workingFolder">
-        /// The working folder.
-        /// </param>
         private void EnsureDirectoryExist(string workingFolder)
         {
-            if (!Directory.Exists(workingFolder))
-            {
-                Directory.CreateDirectory(workingFolder);
-            }
+            if (Directory.Exists(workingFolder))
+                return;
+            Directory.CreateDirectory(workingFolder);
         }
 
         #endregion
+
     }
+
 }

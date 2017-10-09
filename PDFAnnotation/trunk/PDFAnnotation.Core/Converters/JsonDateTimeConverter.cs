@@ -10,115 +10,50 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
-    /// <summary>
-    ///     The JSON date time converter.
-    /// </summary>
-    public class JsonDateTimeConverter : DateTimeConverterBase
-    {
-        #region Public Methods and Operators
+    //public class JsonDateTimeConverter : DateTimeConverterBase
+    //{
+    //    public static DateTimeWithZone ConvertFromCustomJson(string json, string dotNetId, float? timeZoneOffset)
+    //    {
+    //        Match r = new Regex(@"(?<year>(\d){4})-(?<month>(\d){2})-(?<day>(\d){2})T(?<hour>(\d){2}):(?<min>(\d){2}):(?<sec>(\d){2})").Match(json);
+    //        TimeZoneInfo targetTimeZone = GetTimezone(dotNetId, timeZoneOffset);
+    //        return new DateTimeWithZone(new DateTime(r.GetInt("year"), r.GetInt("month"), r.GetInt("day"), r.GetInt("hour"), r.GetInt("min"), r.GetInt("sec"), DateTimeKind.Unspecified), targetTimeZone);
+    //    }
+        
+    //    public static TimeZoneInfo GetTimezone(string dotNetId, float? timeZoneOffset)
+    //    {
+    //        TimeZoneInfo res = null;
+    //        if (!string.IsNullOrWhiteSpace(dotNetId))
+    //        {
+    //            try
+    //            {
+    //                res = TimeZoneInfo.FindSystemTimeZoneById(dotNetId);
+    //            }
+    //            catch 
+    //            {
 
-        /// <summary>
-        /// The convert from custom JSON.
-        /// </summary>
-        /// <param name="json">
-        /// The JSON.
-        /// </param>
-        /// <param name="dotNetId">
-        /// The dot Net Id.
-        /// </param>
-        /// <param name="timeZoneOffset">
-        /// The time zone offset.
-        /// </param>
-        /// <returns>
-        /// The <see cref="DateTime"/>.
-        /// </returns>
-        public static DateTimeWithZone ConvertFromCustomJson(string json, string dotNetId, float? timeZoneOffset)
-        {
-            Match r = new Regex(@"(?<year>(\d){4})-(?<month>(\d){2})-(?<day>(\d){2})T(?<hour>(\d){2}):(?<min>(\d){2}):(?<sec>(\d){2})").Match(json);
-            TimeZoneInfo targetTimeZone = GetTimezone(dotNetId, timeZoneOffset);
-            return new DateTimeWithZone(new DateTime(r.GetInt("year"), r.GetInt("month"), r.GetInt("day"), r.GetInt("hour"), r.GetInt("min"), r.GetInt("sec"), DateTimeKind.Unspecified), targetTimeZone);
-        }
+    //            }
+    //        }
 
-        /// <summary>
-        /// The get timezone.
-        /// </summary>
-        /// <param name="dotNetId">
-        /// The dot net id.
-        /// </param>
-        /// <param name="timeZoneOffset">
-        /// The time zone offset.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TimeZoneInfo"/>.
-        /// </returns>
-        public static TimeZoneInfo GetTimezone(string dotNetId, float? timeZoneOffset)
-        {
-            TimeZoneInfo res = null;
-            if (!string.IsNullOrWhiteSpace(dotNetId))
-            {
-                try
-                {
-                    res = TimeZoneInfo.FindSystemTimeZoneById(dotNetId);
-                }
-                catch 
-                {
+    //        if (res == null)
+    //        {
+    //            res = TimeZoneInfo.GetSystemTimeZones().FirstOrDefault(x => Math.Abs(x.BaseUtcOffset.ToFloat() - (timeZoneOffset ?? -5f)) < float.Epsilon);
+    //        }
+    //        return res;
+    //    }
 
-                }
-            }
+        
+    //    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-            if (res == null)
-            {
-                res = TimeZoneInfo.GetSystemTimeZones().FirstOrDefault(x => Math.Abs(x.BaseUtcOffset.ToFloat() - (timeZoneOffset ?? -5f)) < float.Epsilon);
-            }
-            return res;
-        }
+    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    //    {
+    //        var dt = (DateTime)value;
+    //        writer.WriteValue(dt.ToString("s", CultureInfo.InvariantCulture) + dt.ToString("zzz"));
+    //    }
 
-        /// <summary>
-        /// The read JSON.
-        /// </summary>
-        /// <param name="reader">
-        /// The reader.
-        /// </param>
-        /// <param name="objectType">
-        /// The object type.
-        /// </param>
-        /// <param name="existingValue">
-        /// The existing value.
-        /// </param>
-        /// <param name="serializer">
-        /// The serializer.
-        /// </param>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
-        /// <exception cref="NotImplementedException">
-        ///  Not implemented
-        /// </exception>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// The write JSON.
-        /// </summary>
-        /// <param name="writer">
-        /// The writer.
-        /// </param>
-        /// <param name="value">
-        /// The value.
-        /// </param>
-        /// <param name="serializer">
-        /// The serializer.
-        /// </param>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var dt = (DateTime)value;
-            writer.WriteValue(dt.ToString("s", CultureInfo.InvariantCulture) + dt.ToString("zzz"));
-        }
-
-        #endregion
-    }
+    //}
 
     /// <summary>
     /// The JSON extensions.

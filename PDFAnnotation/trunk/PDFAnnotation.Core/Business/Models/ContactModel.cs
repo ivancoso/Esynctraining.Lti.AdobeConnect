@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.FullText;
     using Esynctraining.NHibernate;
     using Esynctraining.NHibernate.Queries;
@@ -240,7 +241,7 @@
         public virtual IEnumerable<Contact> GetAllByEmails(List<string> emails)
         {
             List<Contact> result = new List<Contact>();
-            var chunkedEmailsList = emails.ToArray().Split(2100);
+            var chunkedEmailsList = emails.Chunk(210);
             foreach (var chunk in chunkedEmailsList)
             {
                 result.AddRange(GetByEmails(chunk));   
@@ -249,7 +250,7 @@
             return result;
         }
 
-        private IEnumerable<Contact> GetByEmails(List<string> emails)
+        private IEnumerable<Contact> GetByEmails(IEnumerable<string> emails)
         {
             var queryOver = new QueryOverContact().GetQueryOver();
             var disjunction = new Disjunction();
