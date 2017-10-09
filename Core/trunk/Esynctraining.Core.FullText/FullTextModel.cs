@@ -7,22 +7,18 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Web;
-
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
     using Logging;
-    using NHibernate.Util;
-
     using Lucene.Net.Analysis.Standard;
     using Lucene.Net.Documents;
     using Lucene.Net.Index;
     using Lucene.Net.QueryParsers;
     using Lucene.Net.Search;
     using Lucene.Net.Store;
-
+    using NHibernate.Util;
     using Version = Lucene.Net.Util.Version;
 
     /// <summary>
@@ -30,38 +26,14 @@
     /// </summary>
     public class FullTextModel
     {
-        #region Static Fields
-
-        /// <summary>
-        /// The _ full search directory.
-        /// </summary>
-        private static FSDirectory fullSearchDirectory;
-
-        /// <summary>
-        /// The index path.
-        /// </summary>
-        private static string indexPath;
-
-        #endregion
-
-        #region Fields
-
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private readonly ILogger logger;
-
-        /// <summary>
-        /// The locker.
-        /// </summary>
         private readonly static object locker = new object();
 
-        /// <summary>
-        /// The settings.
-        /// </summary>
-        private readonly dynamic settings;
+        /// The _ full search directory.
+        private static FSDirectory _fullSearchDirectory;
 
-        #endregion
+        private readonly ILogger _logger;
+        private readonly dynamic _settings;
+
 
         #region Constructors and Destructors
 
@@ -76,8 +48,8 @@
         /// </param>
         public FullTextModel(ILogger logger, ApplicationSettingsProvider settings)
         {
-            this.logger = logger;
-            this.settings = settings;
+            _logger = logger;
+            _settings = settings;
         }
 
         #endregion
@@ -91,29 +63,22 @@
         {
             get
             {
-                if (fullSearchDirectory == null)
+                if (_fullSearchDirectory == null)
                 {
                     lock (locker)
                     {
-                        if (fullSearchDirectory == null)
+                        if (_fullSearchDirectory == null)
                         {
-                            // this is collected in my configuration settings.
-                            var indexLocation = (string)this.settings.FullText_IndexLocation;
-                            if (HttpContext.Current != null && indexLocation.StartsWith("~"))
+                            var indexLocation = (string)_settings.FullText_IndexLocation;
+
+                            _fullSearchDirectory = FSDirectory.Open(new DirectoryInfo(indexLocation));
+
+                            if (IndexWriter.IsLocked(_fullSearchDirectory))
                             {
-                                indexLocation = HttpContext.Current.Server.MapPath(indexLocation);
+                                IndexWriter.Unlock(_fullSearchDirectory);
                             }
 
-                            indexPath = indexLocation;
-
-                            fullSearchDirectory = FSDirectory.Open(new DirectoryInfo(indexPath));
-
-                            if (IndexWriter.IsLocked(fullSearchDirectory))
-                            {
-                                IndexWriter.Unlock(fullSearchDirectory);
-                            }
-
-                            string lockFilePath = Path.Combine(indexPath, "write.lock");
+                            string lockFilePath = Path.Combine(indexLocation, "write.lock");
                             if (File.Exists(lockFilePath))
                             {
                                 File.Delete(lockFilePath);
@@ -122,7 +87,7 @@
                     }
                 }
 
-                return fullSearchDirectory;
+                return _fullSearchDirectory;
             }
         }
 
@@ -141,7 +106,8 @@
         /// </returns>
         public static bool IsIndexable(Type type)
         {
-            return FullTextEnabled(type) && type.GetProperties().SelectMany(x => x.GetCustomAttributes(typeof(FullTextIndexedAttribute), true)).Any();
+            return FullTextEnabled(type) 
+                && type.GetProperties().SelectMany(x => x.GetCustomAttributes(typeof(FullTextIndexedAttribute), true)).Any();
         }
 
         /// <summary>
@@ -183,7 +149,7 @@
                 return;
             }
 
-            List<PropertyInfo> indexables = this.GetIndexableProperties(entity);
+            List<PropertyInfo> indexables = GetIndexableProperties(entity);
             if (indexables.Count == 0)
             {
                 return;
@@ -194,14 +160,14 @@
             string entityIdName = string.Format("{0}Id", entityName);
             string entityIdValue = entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
 
-            //            this.logger.DebugFormat("Deleting FT Index for {0} {1}...", entityIdName, entityIdValue);
+            _logger.DebugFormat("Deleting FT Index for {0} {1}...", entityIdName, entityIdValue);
             var searchQuery = new TermQuery(new Term(entityIdName, entityIdValue));
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
             using (
                 var writer = new IndexWriter(this.FullSearchDirectory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
             {
                 writer.DeleteDocuments(searchQuery);
-                //                this.logger.DebugFormat("Deleted the FT index for {0} {1}", entityIdName, entityIdValue);
+                _logger.DebugFormat("Deleted the FT index for {0} {1}", entityIdName, entityIdValue);
             }
         }
 
@@ -217,7 +183,7 @@
         /// </returns>
         public List<PropertyInfo> GetIndexableProperties(object obj)
         {
-            return this.GetIndexableProperties(obj.GetType()).ToList();
+            return GetIndexableProperties(obj.GetType()).ToList();
         }
 
         /// <summary>
@@ -245,7 +211,8 @@
         /// </returns>
         public static bool FullTextEnabled(Type type)
         {
-            return (typeof(Entity).IsAssignableFrom(type) || typeof(EntityGuid).IsAssignableFrom(type)) && type.GetCustomAttributes(typeof(FullTextEnabledAttribute), true).Any();
+            return (typeof(Entity).IsAssignableFrom(type) || typeof(EntityGuid).IsAssignableFrom(type))
+                && type.GetCustomAttributes(typeof(FullTextEnabledAttribute), true).Any();
         }
 
         /// <summary>
@@ -289,7 +256,7 @@
                 return;
             }
 
-            List<PropertyInfo> indexables = this.GetIndexableProperties(entity);
+            List<PropertyInfo> indexables = GetIndexableProperties(entity);
             if (indexables.Count == 0)
             {
                 return;
@@ -301,7 +268,7 @@
             string entityIdName = string.Format("{0}Id", entityName);
             string entityIdValue = entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
 
-            //            this.logger.DebugFormat("Inserting FT Index for {0} {1}...", entityIdName, entityIdValue);
+            _logger.DebugFormat("Inserting FT Index for {0} {1}...", entityIdName, entityIdValue);
 
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
             using (
@@ -309,7 +276,7 @@
             {
                 Document doc = this.CreateDocument(entity, entityIdName, entityIdValue, indexables);
                 writer.AddDocument(doc);
-                //                this.logger.DebugFormat("Inserted the FT index for {0} {1}", entityIdName, entityIdValue);
+                _logger.DebugFormat("Inserted the FT index for {0} {1}", entityIdName, entityIdValue);
             }
         }
 
@@ -335,7 +302,7 @@
 
             List<PropertyInfo> indexables = this.GetIndexableProperties(entityType);
 
-            //            this.logger.DebugFormat("Populating the Full-text index with values from the {0} entity...", entityName);
+            _logger.DebugFormat("Populating the Full-text index with values from the {0} entity...", entityName);
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
             using (
                 var writer = new IndexWriter(this.FullSearchDirectory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
@@ -348,7 +315,7 @@
                 }
             }
 
-            //            this.logger.DebugFormat("Index population of {0} is complete.", entityName);
+            _logger.DebugFormat("Index population of {0} is complete.", entityName);
         }
 
         /// <summary>
@@ -371,7 +338,7 @@
 
             List<PropertyInfo> indexables = this.GetIndexableProperties(entityType);
 
-            //            this.logger.DebugFormat("Populating the Full-text index with values from the {0} entity...", entityName);
+            _logger.DebugFormat("Populating the Full-text index with values from the {0} entity...", entityName);
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
             using (var writer = new IndexWriter(this.FullSearchDirectory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
             {
@@ -383,7 +350,7 @@
                 }
             }
 
-            //            this.logger.DebugFormat("Index population of {0} is complete.", entityName);
+            _logger.DebugFormat("Index population of {0} is complete.", entityName);
         }
 
         /// <summary>
@@ -465,11 +432,11 @@
                 return new TId[] { };
             }
 
-            //            this.logger.DebugFormat(
-            //                "Searching Type {0} for max results of {2} with search string '{3}'...", 
-            //                type.Name, 
-            //                maxRows, 
-            //                searchText);
+            _logger.DebugFormat(
+                "Searching Type {0} for max results of {2} with search string '{3}'...",
+                type.Name,
+                maxRows,
+                searchText);
             using (var searcher = new IndexSearcher(this.FullSearchDirectory, true))
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
             {
@@ -493,7 +460,7 @@
                 ScoreDoc[] hits = searcher.Search(query, null, maxRows, Sort.RELEVANCE).ScoreDocs;
                 TId[] results = hits.Select(x => idParser(searcher.Doc(x.Doc).Get(string.Format("{0}Id", type.Name)))).ToArray();
 
-                //                this.logger.DebugFormat("Found {0} hits for '{1}'.", results.Count(), searchText);
+                _logger.DebugFormat("Found {0} hits for '{1}'.", results.Count(), searchText);
                 return results;
             }
         }
@@ -521,7 +488,7 @@
             string entityIdName = string.Format("{0}Id", entityName);
             string entityIdValue = entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
 
-            //            this.logger.DebugFormat("Updating FT Index for {0} {1}...", entityIdName, entityIdValue);
+            _logger.DebugFormat("Updating FT Index for {0} {1}...", entityIdName, entityIdValue);
 
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
             using (var writer = new IndexWriter(this.FullSearchDirectory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
@@ -530,7 +497,7 @@
                 var val = doc.GetFieldable(entityIdName).StringValue;
                 var term = new Term(entityIdName, val);
                 writer.UpdateDocument(term, doc);
-                //                this.logger.DebugFormat("Updated the FT index for {0} {1}", entityIdName, entityIdValue);
+                _logger.DebugFormat("Updated the FT index for {0} {1}", entityIdName, entityIdValue);
             }
         }
 
@@ -563,13 +530,13 @@
             IEnumerable<PropertyInfo> indexables)
         {
             var doc = new Document();
-            //            this.logger.DebugFormat("Adding {0} of {1}...", entityIdName, entityIdValue);
+            _logger.DebugFormat("Adding {0} of {1}...", entityIdName, entityIdValue);
             doc.Add(new Field(entityIdName, entityIdValue, Field.Store.YES, Field.Index.NOT_ANALYZED));
             foreach (PropertyInfo property in indexables)
             {
                 string propertyName = property.Name;
                 string propertyValue = property.GetValue(entity, null).Return(x => x.ToString(), string.Empty);
-                //                this.logger.DebugFormat("Adding property '{0}'...", propertyName);
+                _logger.DebugFormat("Adding property '{0}'...", propertyName);
                 doc.Add(new Field(propertyName, propertyValue, Field.Store.YES, Field.Index.ANALYZED));
             }
 
@@ -577,5 +544,7 @@
         }
 
         #endregion
+
     }
+
 }

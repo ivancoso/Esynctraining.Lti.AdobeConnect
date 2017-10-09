@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Provides fulltext searching support for Nhibernate entities</Description>
+    <PackageTags>core fulltext Lucene</PackageTags>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.0.1</Version>
+    <Authors>eSyncTraining.com</Authors>
+    <Company>eSyncTraining.com</Company>
+    <Copyright>Copyright © 2013-2016 eSyncTraining.com</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.2" />
+    <PackageReference Include="Lucene.Net" Version="3.0.3" />
+    <PackageReference Include="NHibernate" Version="4.1.1.4000" />
+  </ItemGroup>
+
+</Project>

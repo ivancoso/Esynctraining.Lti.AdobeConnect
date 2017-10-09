@@ -14,23 +14,17 @@
                                               IPostDeleteEventListener,
                                               IPostInsertEventListener
     {
-        #region Fields
+        private readonly FullTextModel _fullTextModel;
 
-        /// <summary>
-        ///     The full text model.
-        /// </summary>
-        private readonly FullTextModel fullTextModel;
-
-        #endregion
 
         #region Constructors and Destructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="LuceneFTIndexEventListener" /> class.
+        /// Initializes a new instance of the <see cref="LuceneFTIndexEventListener" /> class.
         /// </summary>
         public LuceneFTIndexEventListener()
         {
-            this.fullTextModel = IoC.Resolve<FullTextModel>();
+            _fullTextModel = IoC.Resolve<FullTextModel>();
         }
 
         #endregion
@@ -45,7 +39,7 @@
         /// </param>
         public void OnPostDelete(PostDeleteEvent e)
         {
-            this.fullTextModel.DeleteIndexForEntity(e.Entity);
+            _fullTextModel.DeleteIndexForEntity(e.Entity);
         }
 
         /// <summary>
@@ -56,7 +50,7 @@
         /// </param>
         public void OnPostInsert(PostInsertEvent e)
         {
-            this.fullTextModel.InsertIndexOnEntity(e.Entity);
+            _fullTextModel.InsertIndexOnEntity(e.Entity);
         }
 
         /// <summary>
@@ -67,7 +61,7 @@
         /// </param>
         public void OnPostUpdate(PostUpdateEvent e)
         {
-            this.fullTextModel.UpdateIndexOnEntity(e.Entity);
+            _fullTextModel.UpdateIndexOnEntity(e.Entity);
         }
 
         #endregion
