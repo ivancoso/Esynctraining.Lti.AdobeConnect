@@ -1,7 +1,6 @@
 ﻿namespace PDFAnnotation.Core.Business.Models
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Esynctraining.Core.Extensions;
@@ -15,7 +14,6 @@
     using PDFAnnotation.Core.Business.Queries;
     using PDFAnnotation.Core.Domain.DTO;
     using PDFAnnotation.Core.Domain.Entities;
-    using PDFAnnotation.Core.Extensions;
 
     public class ContactModel : BaseModel<Contact, int>
     {
