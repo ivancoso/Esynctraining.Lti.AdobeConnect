@@ -965,8 +965,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     var sections = sectionsService.GetCourseSections(lmsLicense, meeting.CourseId.ToString());
                     if (originalMeeting != null)
                     {
-                        ((List<LmsCourseSection>) meeting.CourseSections).AddRange(
-                            originalMeeting.CourseSections.Where(x => sections.Any(s => s.Id == x.LmsId)));
+                        foreach (var cs in originalMeeting.CourseSections.Where(x => sections.Any(s => s.Id == x.LmsId)))
+                        {
+                            meeting.CourseSections.Add(cs);
+                        }
                     }
                     else
                     {
