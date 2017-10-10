@@ -9,9 +9,10 @@
     <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
     <PackageTags>pdf annotation</PackageTags>
     <PackageIconUrl>http://dotnet.esynctraining.com:2399/esync128.png</PackageIconUrl>
-    <Version>1.1.0.16</Version>
-    <AssemblyVersion>1.1.0.16</AssemblyVersion>
+    <Version>1.2.0.1</Version>
+    <AssemblyVersion>1.2.0.1</AssemblyVersion>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <FileVersion>1.2.0.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
