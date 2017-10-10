@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <Version>1.1.0.20</Version>
+    <Version>1.2.0.1</Version>
     <Authors>eSyncTraining.com</Authors>
     <Company>eSyncTraining.com</Company>
     <PackageProjectUrl>http://esynctraining.com/</PackageProjectUrl>
@@ -10,8 +10,8 @@
     <Description>Provides core functionality for pdf annotations projects (nhibernate mappings)</Description>
     <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
     <PackageTags>pdf annotation persistence</PackageTags>
-    <AssemblyVersion>1.1.0.20</AssemblyVersion>
-    <FileVersion>1.1.0.20</FileVersion>
+    <AssemblyVersion>1.2.0.1</AssemblyVersion>
+    <FileVersion>1.2.0.1</FileVersion>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
