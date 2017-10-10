@@ -63,7 +63,12 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
             {
                 if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
                 {
-                    return OperationResultWithData<FolderDto>.Error("You do not have permission to access this item.");
+                    return OperationResultWithData<FolderDto>.Error(Resources.Messages.AccessDenied);
+                }
+                if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.duplicate 
+                    && ex.Status.InvalidField == "name")
+                {
+                    return OperationResultWithData<FolderDto>.Error(Resources.Messages.NameNotUnique);
                 }
 
                 string errorMessage = GetOutputErrorMessage("CreateFolder", ex);
@@ -102,7 +107,7 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
             {
                 if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
                 {
-                    return OperationResult.Error("You do not have permission to access this item.");
+                    return OperationResult.Error(Resources.Messages.AccessDenied);
                 }
                 if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.duplicate
                     && ex.Status.InvalidField == "name")
@@ -134,7 +139,7 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
                 {
                     if (scoResult.Status.Code == StatusCodes.no_access && scoResult.Status.SubCode == StatusSubCodes.denied)
                     {
-                        return OperationResult.Error("You do not have permission to access this item.");
+                        return OperationResult.Error(Resources.Messages.AccessDenied);
                     }
                     throw new AdobeConnectException(scoResult.Status);
                 }
@@ -159,7 +164,7 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
             {
                 if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
                 {
-                    return OperationResult.Error("You do not have permission to access this item.");
+                    return OperationResult.Error(Resources.Messages.AccessDenied);
                 }
 
                 string errorMessage = GetOutputErrorMessage("EditSco", ex);
@@ -193,7 +198,7 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
             {
                 if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
                 {
-                    return OperationResult.Error("You do not have permission to access this item.");
+                    return OperationResult.Error(Resources.Messages.AccessDenied);
                 }
 
                 string errorMessage = GetOutputErrorMessage("DeleteFolder", ex);
