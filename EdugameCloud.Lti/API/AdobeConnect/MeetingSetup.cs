@@ -873,7 +873,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
         
         // TODO: move MeetingReuseDTO
-        public OperationResult ReuseExistedAdobeConnectMeeting(ILmsLicense credentials,
+        public OperationResult ReuseExistedAdobeConnectMeeting(ILmsLicense lmsLicense,
             LmsUser lmsUser,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
@@ -887,7 +887,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(Resources.Messages.MeetingNotFoundInAC);
             }
 
-            LmsCourseMeeting originalMeeting = this.LmsCourseMeetingModel.GetLtiCreatedByCompanyAndScoId(credentials, dto.ScoId);
+            LmsCourseMeeting originalMeeting = this.LmsCourseMeetingModel.GetLtiCreatedByCompanyAndScoId(lmsLicense, dto.ScoId);
             int? sourceLtiCreatedMeetingId = originalMeeting?.Id;
             
             var json = JsonSerializer.JsonSerialize(new MeetingNameInfo
@@ -897,7 +897,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             var meeting = new LmsCourseMeeting
             {
-                LmsCompanyId = credentials.Id,
+                LmsCompanyId = lmsLicense.Id,
                 CourseId = param.course_id,
                 LmsMeetingType = (int)dto.GetMeetingType(),
                 ScoId = dto.ScoId,
@@ -907,7 +907,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             };
 
             // TRICK: always read users from LMS - we need to sync participant list
-            List<LmsUserDTO>  lmsUsers = UsersSetup.GetLMSUsers(credentials,
+            List<LmsUserDTO>  lmsUsers = UsersSetup.GetLMSUsers(lmsLicense,
                     meeting,
                     meeting.CourseId,
                     out string error,
@@ -956,10 +956,42 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 }
             }
+
             if (lmsUsers.Count <= EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit)
             {
+                if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+                {
+                    var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsLicense.LmsProviderId);
+                    var sections = sectionsService.GetCourseSections(lmsLicense, meeting.CourseId.ToString());
+                    if (originalMeeting != null)
+                    {
+                        ((List<LmsCourseSection>) meeting.CourseSections).AddRange(
+                            originalMeeting.CourseSections.Where(x => sections.Any(s => s.Id == x.LmsId)));
+                    }
+                    else
+                    {
+                        var firstSection = sections.OrderBy(x => x.Id).FirstOrDefault(); //
+                        if (firstSection != null)
+                        {
+                            meeting.CourseSections.Add(new LmsCourseSection
+                            {
+                                LmsId = firstSection.Id,
+                                Name = firstSection.Name,
+                                Meeting = meeting
+                            });
+                        }
+                    }
+
+                    lmsUsers =
+                        lmsUsers.Where(
+                                x =>
+                                    x.SectionIds == null ||
+                                    x.SectionIds.Any(s => meeting.CourseSections.Any(cs => s == cs.LmsId)))
+                            .ToList();
+                }
+
                 UsersSetup.SetDefaultUsers(
-                    credentials,
+                    lmsLicense,
                     meeting,
                     provider,
                     param.lms_user_id,
@@ -983,28 +1015,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingInfo info = this.GetAcMeetingInfo(
                            provider,
                            new List<string> { "public-access", lmsUser.PrincipalId },
-                           credentials.Id,
+                           lmsLicense.Id,
                            meeting.GetMeetingScoId(),
                            meeting,
                            null);
             MeetingDTO updatedMeeting = this.BuildDto(
                  lmsUser,
                  param,
-                 credentials,
+                 lmsLicense,
                  info,
                  //timeZone,
                  null);
 
             CreateAnnouncement(
                     (LmsMeetingType)meeting.LmsMeetingType,
-                    credentials,
+                    lmsLicense,
                     param,
                     updatedMeeting,
                     info.Sco.BeginDate);
 
             if (retrieveLmsUsers)
             {
-                var users = this.UsersSetup.GetUsers(credentials,
+                var users = this.UsersSetup.GetUsers(lmsLicense,
                     provider,
                     param.course_id,
                     param,
