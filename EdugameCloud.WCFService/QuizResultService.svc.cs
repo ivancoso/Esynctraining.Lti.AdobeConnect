@@ -109,7 +109,10 @@
 
         public async Task SaveAll(QuizSummaryResultDTO quizResult)
         {
-            quizResult = quizResult ?? new QuizSummaryResultDTO { quizResults = new QuizResultDTO[] {} };
+            if (quizResult == null)
+                throw new ArgumentNullException(nameof(quizResult));
+            if (quizResult.quizResults == null)
+                quizResult.quizResults = new QuizResultDTO[0];
 
             try
             {

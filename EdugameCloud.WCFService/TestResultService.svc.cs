@@ -73,7 +73,10 @@
 
         public TestResultSaveAllDTO SaveAll(TestSummaryResultDTO testResult)
         {
-            testResult = testResult ?? new TestSummaryResultDTO { testResults = new TestResultDTO[] {}};
+            if (testResult == null)
+                throw new ArgumentNullException(nameof(testResult));
+            if (testResult.testResults == null)
+                testResult.testResults = new TestResultDTO[0];
 
             try
             {

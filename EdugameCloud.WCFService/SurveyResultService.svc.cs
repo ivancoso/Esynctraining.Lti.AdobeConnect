@@ -111,8 +111,11 @@ namespace EdugameCloud.WCFService
 
         public async Task SaveAll(SurveySummaryResultDTO sResult)
         {
-            sResult = sResult ?? new SurveySummaryResultDTO { surveyResults = new SurveyResultDTO[] {}};
-
+            if (sResult == null)
+                throw new ArgumentNullException(nameof(sResult));
+            if (sResult.surveyResults == null)
+                sResult.surveyResults = new SurveyResultDTO[0];
+            
             try
             {
                 foreach (var surveyResultDTO in sResult.surveyResults)

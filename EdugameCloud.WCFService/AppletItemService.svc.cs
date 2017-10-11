@@ -37,11 +37,17 @@
 
         public AppletItemDTO[] GetByUser(int userId)
         {
+            if (userId <= 0)
+                throw new ArgumentOutOfRangeException(nameof(userId));
+
             return this.AppletItemModel.GetByUser(userId).Select(x => new AppletItemDTO(x)).ToArray();
         }
         
         public AppletItemDTO Save(AppletItemDTO appletResultDTO)
         {
+            if (appletResultDTO == null)
+                throw new ArgumentNullException(nameof(appletResultDTO));
+
             ValidationResult validationResult;
             if (this.IsValid(appletResultDTO, out validationResult))
             {
