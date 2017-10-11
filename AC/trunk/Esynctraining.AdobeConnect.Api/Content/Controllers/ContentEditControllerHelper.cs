@@ -52,27 +52,25 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
 
                 if (!updatedSco.Success)
                 {
+                    if (updatedSco.Status.Code == StatusCodes.no_access &&
+                        updatedSco.Status.SubCode == StatusSubCodes.denied)
+                    {
+                        return OperationResultWithData<FolderDto>.Error(Resources.Messages.AccessDenied);
+                    }
+
+                    if (updatedSco.Status.Code == StatusCodes.invalid &&
+                        updatedSco.Status.SubCode == StatusSubCodes.duplicate
+                        && updatedSco.Status.InvalidField == "name")
+                    {
+                        return OperationResultWithData<FolderDto>.Error(Resources.Messages.NameNotUnique);
+                    }
+
                     _logger.Error(updatedSco.Status.GetErrorInfo());
                     return OperationResultWithData<FolderDto>.Error(updatedSco.Status.GetErrorInfo());
                 }
 
                 dto.ScoId = updatedSco.ScoInfo.ScoId;
                 return dto.ToSuccessResult();
-            }
-            catch (AdobeConnectException ex)
-            {
-                if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
-                {
-                    return OperationResultWithData<FolderDto>.Error(Resources.Messages.AccessDenied);
-                }
-                if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.duplicate 
-                    && ex.Status.InvalidField == "name")
-                {
-                    return OperationResultWithData<FolderDto>.Error(Resources.Messages.NameNotUnique);
-                }
-
-                string errorMessage = GetOutputErrorMessage("CreateFolder", ex);
-                return OperationResultWithData<FolderDto>.Error(errorMessage);
             }
             catch (Exception ex)
             {
