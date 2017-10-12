@@ -56,6 +56,7 @@
                 this.phone = profile.Phone;
                 this.mapSettingsVO = profile.MapSettings == null ? null : new SNMapSettingsDTO(profile.MapSettings);
                 this.subModuleItemId = profile.SubModuleItem.With(x => x.Id);
+                this.dateModified = profile.SubModuleItem.With(x => x.DateModified).ConvertToUnixTimestamp();
             }
         }
 
@@ -68,6 +69,12 @@
         /// </summary>
         [DataMember]
         public int subModuleItemId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the date modified.
+        /// </summary>
+        [DataMember]
+        public double dateModified { get; set; }
 
         /// <summary>
         /// Gets or sets the map settings.
