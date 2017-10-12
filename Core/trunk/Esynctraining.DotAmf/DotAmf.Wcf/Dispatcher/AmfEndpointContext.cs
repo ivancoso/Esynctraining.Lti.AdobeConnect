@@ -240,8 +240,9 @@ namespace DotAmf.ServiceModel.Dispatcher
                 .Where(x => x.TaskMethod != null)
                 .Select(operation => operation.TaskMethod))
             {
-                var actualReturn = method.ReturnType.GetGenericArguments().First();
-                types.Add(actualReturn);
+                var actualReturn = method.ReturnType.GetGenericArguments().FirstOrDefault();
+                if (actualReturn != null)
+                    types.Add(actualReturn);
                 types.AddRange(method.GetParameters().Select(param => param.ParameterType));
             }
 
