@@ -1,8 +1,8 @@
-﻿namespace EdugameCloud.WCFService
+﻿using System.Threading.Tasks;
+
+namespace EdugameCloud.WCFService
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
@@ -11,15 +11,9 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
-
-    using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
-    using FluentValidation.Results;
     using Newtonsoft.Json;
-    using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]
@@ -71,7 +65,7 @@
 
         #region Public Methods and Operators
 
-        public TestResultSaveAllDTO SaveAll(TestSummaryResultDTO testResult)
+        public async Task SaveAll(TestSummaryResultDTO testResult)
         {
             if (testResult == null)
                 throw new ArgumentNullException(nameof(testResult));
@@ -80,7 +74,6 @@
 
             try
             {
-                var result = new TestResultSaveAllDTO();
                 foreach (var appletResultDTO in testResult.testResults)
                 {
                     if (this.IsValid(appletResultDTO, out var validationResult))
@@ -91,8 +84,6 @@
                         SaveAll(appletResult, appletResultDTO.results);
                     }
                 }
-
-                return result;
             }
             catch (Exception ex)
             {

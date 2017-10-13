@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.WCFService.Contracts
+﻿using System.Threading.Tasks;
+
+namespace EdugameCloud.WCFService.Contracts
 {
     using System.ServiceModel;
     using EdugameCloud.Core.Domain.DTO;
@@ -22,7 +24,7 @@
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
-        TestResultSaveAllDTO SaveAll(TestSummaryResultDTO testResult);
+        Task SaveAll(TestSummaryResultDTO testResult);
 
     }
 
