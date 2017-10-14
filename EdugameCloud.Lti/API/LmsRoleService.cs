@@ -8,12 +8,15 @@ namespace EdugameCloud.Lti.API
 {
     public class LmsRoleService
     {
-        private readonly dynamic settings;
+        private readonly string _teacherRoles;
 
 
         public LmsRoleService(ApplicationSettingsProvider settings)
         {
-            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+
+            _teacherRoles = (string)(settings as dynamic).TeacherRoles;
         }
 
 
@@ -43,7 +46,7 @@ namespace EdugameCloud.Lti.API
 
             return
                 //defaultTeacherRoles
-                (!string.IsNullOrWhiteSpace((string)settings.TeacherRoles) && ((string)settings.TeacherRoles).Split(',')
+                (!string.IsNullOrWhiteSpace(_teacherRoles) && _teacherRoles.Split(',')
                     .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0))
                 //licenseSpecificTeacherRoles
                 || lmsCompany.RoleMappings.Where(x => x.IsTeacherRole).Select(x => x.LmsRoleName)

@@ -27,7 +27,7 @@ namespace EdugameCloud.Lti.API
         };
 
 
-        protected ILogger logger { get; private set; }
+        protected ILogger logger { get; }
 
 
         protected LmsUserServiceBase(ILogger logger)
