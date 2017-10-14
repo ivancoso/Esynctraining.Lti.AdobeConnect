@@ -1,21 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Xml;
 using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API;
-using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
-using Esynctraining.BlackBoardClient;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -47,8 +41,8 @@ namespace EdugameCloud.Lti.Sakai
         /// </param>
         public SakaiLmsApi(ApplicationSettingsProvider settings, ILogger logger)
         {
-            _settings = settings;
-            _logger = logger;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #endregion

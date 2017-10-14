@@ -4,22 +4,27 @@
     <component
       id="SakaiAPI"
       service="EdugameCloud.Lti.Sakai.LTI2Api, EdugameCloud.Lti.Sakai"
-      type="EdugameCloud.Lti.Sakai.LTI2Api, EdugameCloud.Lti.Sakai"></component>
+      type="EdugameCloud.Lti.Sakai.LTI2Api, EdugameCloud.Lti.Sakai"
+      lifestyle="singleton"></component>
     <component
       id="Sakai"
       service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Sakai.SakaiLmsUserService, EdugameCloud.Lti.Sakai"></component>
+      type="EdugameCloud.Lti.Sakai.SakaiLmsUserService, EdugameCloud.Lti.Sakai"
+      lifestyle="singleton"></component>
     <component
       id="ISakaiApi"
       service="EdugameCloud.Lti.API.Sakai.ISakaiApi, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Sakai.SakaiApi, EdugameCloud.Lti.Sakai"></component>
+      type="EdugameCloud.Lti.Sakai.SakaiApi, EdugameCloud.Lti.Sakai"
+      lifestyle="singleton"></component>
     <component
       id="SakaiCalendarExportService"
       service="EdugameCloud.Lti.API.AdobeConnect.ICalendarExportService, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Sakai.SakaiCalendarExportService, EdugameCloud.Lti.Sakai"></component>
+      type="EdugameCloud.Lti.Sakai.SakaiCalendarExportService, EdugameCloud.Lti.Sakai"
+      lifestyle="singleton"></component>
     <component
       id="IEGCEnabledSakaiAPI"
       service="EdugameCloud.Lti.API.Sakai.IEGCEnabledSakaiApi, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Sakai.SakaiApi, EdugameCloud.Lti.Sakai"></component>
+      type="EdugameCloud.Lti.Sakai.SakaiApi, EdugameCloud.Lti.Sakai"
+      lifestyle="singleton"></component>
   </components>
 </configuration>

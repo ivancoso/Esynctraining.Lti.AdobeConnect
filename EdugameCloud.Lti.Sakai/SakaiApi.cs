@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Sakai.Dto;
-using Esynctraining.Core.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -17,12 +15,10 @@ namespace EdugameCloud.Lti.Sakai
 {
     internal sealed class SakaiApi : ISakaiApi
     {
-        private readonly ILogger _logger;
         private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 
-        public SakaiApi(ILogger logger)
+        public SakaiApi()
         {
-            _logger = logger;
         }
 
         public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)

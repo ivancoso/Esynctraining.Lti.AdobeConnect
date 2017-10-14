@@ -13,20 +13,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public class AudioProfilesService : IAudioProfilesService
     {
-        private readonly LmsCourseMeetingModel meetingModel;
-        private readonly ILogger logger;
+        private readonly LmsCourseMeetingModel _meetingModel;
+        private readonly ILogger _logger;
         private readonly Esynctraining.AdobeConnect.Api.AudioProfiles.AudioProfilesService _innerService;
 
 
         public AudioProfilesService(LmsCourseMeetingModel meetingModel, ILogger logger)
         {
-            if (meetingModel == null)
-                throw new ArgumentNullException(nameof(meetingModel));
-            if (logger == null)
-                throw new ArgumentNullException(nameof(logger));
-
-            this.meetingModel = meetingModel;
-            this.logger = logger;
+            _meetingModel = meetingModel ?? throw new ArgumentNullException(nameof(meetingModel));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _innerService = new Esynctraining.AdobeConnect.Api.AudioProfiles.AudioProfilesService(logger);
         }
 
@@ -39,7 +34,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(lmsCompany));
 
             var usedAudioProfiles = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique) 
-                ? meetingModel.GetByCompanyWithAudioProfiles(lmsCompany).Select(x => x.AudioProfileId).ToList() 
+                ? _meetingModel.GetByCompanyWithAudioProfiles(lmsCompany).Select(x => x.AudioProfileId).ToList() 
                 : new List<string>();
             
             var profiles = _innerService.GetAudioProfiles(provider, principalId)
@@ -71,7 +66,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (status.Code == StatusCodes.ok)
                 return OperationResult.Success();
 
-            logger.ErrorFormat($"Error occured when tried to RemoveAudioProfileFromMeeting. MeetingScoId={meetingScoId}. AC Error: {status.GetErrorInfo()}");
+            _logger.ErrorFormat($"Error occured when tried to RemoveAudioProfileFromMeeting. MeetingScoId={meetingScoId}. AC Error: {status.GetErrorInfo()}");
             return OperationResult.Error("Unexpected error. Please refresh page and try again.");
         }
         

@@ -14,12 +14,12 @@ namespace EdugameCloud.Lti.BlackBoard
 {
     public class BlackboardLmsUserService : LmsUserServiceBase
     {
-        private readonly IBlackBoardApi soapApi;
+        private readonly IBlackBoardApi _soapApi;
 
 
         public BlackboardLmsUserService(ILogger logger, IBlackBoardApi soapApi) : base(logger)
         {
-            this.soapApi = soapApi ?? throw new ArgumentNullException(nameof(soapApi)); 
+            _soapApi = soapApi ?? throw new ArgumentNullException(nameof(soapApi)); 
         }
 
 
@@ -51,7 +51,7 @@ namespace EdugameCloud.Lti.BlackBoard
             string[] userIds = null;
 
             WebserviceWrapper client = null;
-            List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
+            List<LmsUserDTO> users = _soapApi.GetUsersForCourse(
                 lmsCompany,
                 courseId,
                 userIds,
@@ -69,7 +69,7 @@ namespace EdugameCloud.Lti.BlackBoard
                     client.logout();
                 // NOTE: set to null to re-create session.
                 client = null;
-                users = this.soapApi.GetUsersForCourse(
+                users = _soapApi.GetUsersForCourse(
                     lmsCompany,
                     courseId,
                     userIds,

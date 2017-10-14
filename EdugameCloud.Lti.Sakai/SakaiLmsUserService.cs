@@ -10,12 +10,12 @@ namespace EdugameCloud.Lti.Sakai
 {
     internal sealed class SakaiLmsUserService : LmsUserServiceBase
     {
-        private readonly LTI2Api lti2Api;
+        private readonly LTI2Api _lti2Api;
 
 
         public SakaiLmsUserService(ILogger logger, LTI2Api lti2Api) : base(logger)
         {
-            this.lti2Api = lti2Api ?? throw new ArgumentNullException(nameof(lti2Api));
+            _lti2Api = lti2Api ?? throw new ArgumentNullException(nameof(lti2Api));
         }
 
 
@@ -32,7 +32,7 @@ namespace EdugameCloud.Lti.Sakai
             var paramDto = param as LtiParamDTO;
             if (paramDto != null)
             {
-                List<LmsUserDTO> users = this.lti2Api.GetUsersForCourse(
+                List<LmsUserDTO> users = _lti2Api.GetUsersForCourse(
                     lmsCompany,
                     paramDto.ext_ims_lis_memberships_url ?? paramDto.ext_ims_lti_tool_setting_url,
                     paramDto.ext_ims_lis_memberships_id,

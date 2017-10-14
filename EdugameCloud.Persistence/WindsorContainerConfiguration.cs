@@ -9,39 +9,47 @@
 
     public static class WindsorContainerConfiguration
     {
-        public static void RegisterComponents(this IWindsorContainer container)
+        public static IWindsorContainer RegisterComponents(this IWindsorContainer container)
         {
-            container.Install(new NHibernateWindsorInstaller());
-
-            container.Install(
+            container
+                .Install(
+                new NHibernateWindsorInstaller(),
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.Core/Esynctraining.Core.Windsor.xml"))
-            );
+            )
+            .RegisterEgcComponents();
 
-            //container.Register(Component.For(typeof(RealTimeNotificationModel)).ImplementedBy(typeof(RealTimeNotificationModel)).LifeStyle.Transient);
-
-            container.RegisterEgcComponents();
+            return container;
         }
 
-        public static void RegisterEgcComponents(this IWindsorContainer container)
+        public static IWindsorContainer RegisterEgcComponents(this IWindsorContainer container)
         {
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Core").Pick()
+            container
+                .Register(
+                Classes.FromAssemblyNamed("EdugameCloud.Core").Pick()
                 .If(Component.IsInNamespace("EdugameCloud.Core.Business.Models"))
                 .WithService.Self()
-                .Configure(c => c.LifestyleTransient()));
+                .Configure(c => c.LifestyleTransient()),
 
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Core")
-                .BasedOn(typeof(BaseConverter<,>)).WithService.Base().LifestyleTransient());
+                Classes.FromAssemblyNamed("EdugameCloud.Core")
+                .BasedOn(typeof(BaseConverter<,>))
+                .WithService.Base().LifestyleTransient()
+                );
+
+            return container;
         }
 
-        public static void RegisterComponentsConsole(this IWindsorContainer container)
+        public static IWindsorContainer RegisterComponentsConsole(this IWindsorContainer container)
         {
-            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.Transient);
+            container
+                .Register(
+                Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.Transient,
             
-            container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
+                Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
                 .DynamicParameters((k, d) => d.Add("collection", ConfigurationManager.AppSettings))
-                //.DynamicParameters((k, d) => d.Add("globalizationSection", (GlobalizationSection)null))
-                .LifeStyle.Singleton);
-            
+                .LifeStyle.Singleton
+                );
+
+            return container;
         }
 
     }

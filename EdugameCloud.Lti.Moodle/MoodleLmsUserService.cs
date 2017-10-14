@@ -1,24 +1,24 @@
 using System;
 using System.Collections.Generic;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Moodle;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
+using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.Moodle
 {
     public class MoodleLmsUserService : LmsUserServiceBase
     {
-        private readonly IMoodleApi moodleApi;
+        private readonly IMoodleApi _moodleApi;
 
 
         public MoodleLmsUserService(ILogger logger, IMoodleApi moodleApi) : base(logger)
         {
-            this.moodleApi = moodleApi;
+            _moodleApi = moodleApi ?? throw new ArgumentNullException(nameof(moodleApi));
         }
+
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.Moodle
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            List<LmsUserDTO> users = this.moodleApi.GetUsersForCourse(lmsCompany, courseId, out error);
+            List<LmsUserDTO> users = _moodleApi.GetUsersForCourse(lmsCompany, courseId, out error);
             return GroupUsers(users);
         }
 

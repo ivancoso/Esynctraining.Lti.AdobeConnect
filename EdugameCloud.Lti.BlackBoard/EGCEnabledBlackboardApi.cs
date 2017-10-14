@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Esynctraining.Core.Logging;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
+using Esynctraining.BlackBoardClient;
+using Esynctraining.BlackBoardClient.Content;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Esynctraining.BlackBoardClient;
-using Esynctraining.BlackBoardClient.Content;
-using System.Threading.Tasks;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
     public sealed class EGCEnabledBlackboardApi : SoapBlackBoardApi, IEGCEnabledBlackBoardApi
     {
-        public EGCEnabledBlackboardApi(ApplicationSettingsProvider settings, ILogger logger)
-            : base(settings, logger)
+        public EGCEnabledBlackboardApi(ILogger logger)
+            : base(logger)
         {
         }
 

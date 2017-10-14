@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
-using Esynctraining.Core.Extensions;
-using Esynctraining.Core.Providers;
 using Esynctraining.BlackBoardClient;
+using Esynctraining.BlackBoardClient.Announcements;
 using Esynctraining.BlackBoardClient.CourseMembership;
 using Esynctraining.BlackBoardClient.User;
-using Esynctraining.BlackBoardClient.Announcements;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
@@ -81,35 +80,15 @@ namespace EdugameCloud.Lti.BlackBoard
 
         #region Fields
 
-        /// <summary>
-        ///     The logger.
-        /// </summary>
-        // ReSharper disable once NotAccessedField.Local
-        private readonly ILogger logger;
-
-        /// <summary>
-        ///     The settings.
-        /// </summary>
-        // ReSharper disable once NotAccessedField.Local
-        private readonly dynamic settings;
+        private readonly ILogger _logger;
 
         #endregion
 
         #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SoapBlackBoardApi"/> class.
-        /// </summary>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        /// <param name="logger">
-        /// The logger.
-        /// </param>
-        public SoapBlackBoardApi(ApplicationSettingsProvider settings, ILogger logger)
+        
+        public SoapBlackBoardApi(ILogger logger)
         {
-            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #endregion
@@ -146,8 +125,8 @@ namespace EdugameCloud.Lti.BlackBoard
                 EgcLtiToolDescription,
                 registrationPassword,
                 initialPassword,
-                this.ToolMethods.ToArray(),
-                this.TicketMethods.ToArray());
+                ToolMethods.ToArray(),
+                TicketMethods.ToArray());
 
             if (HadError(client, out error))
             {
@@ -172,7 +151,7 @@ namespace EdugameCloud.Lti.BlackBoard
         {
             var courseIdFixed = string.Format("_{0}_1", courseId);
 
-            var enrollmentsResult = this.LoginIfNecessary(
+            var enrollmentsResult = LoginIfNecessary(
                 ref client,
                 c =>
                 {
@@ -434,7 +413,7 @@ namespace EdugameCloud.Lti.BlackBoard
                 VendorEgc,
                 ProgramLti,
                 TimeSpan.FromMinutes(1).Seconds,
-                new CastleLoggerAdapter(logger));
+                new CastleLoggerAdapter(_logger));
 
             if (HadError(client, out error))
             {

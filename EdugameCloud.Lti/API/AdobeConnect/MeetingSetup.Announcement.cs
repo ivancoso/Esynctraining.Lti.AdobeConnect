@@ -23,21 +23,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #region Properties
 
-        private IBlackBoardApi BlackboardApi
-        {
-            get
-            {
-                return IoC.Resolve<IBlackBoardApi>();
-            }
-        }
+        private IBlackBoardApi BlackboardApi => IoC.Resolve<IBlackBoardApi>();
 
-        private ICanvasAPI CanvasApi
-        {
-            get
-            {
-                return IoC.Resolve<ICanvasAPI>();
-            }
-        }
+        private ICanvasAPI CanvasApi => IoC.Resolve<ICanvasAPI>();
         
         #endregion
 

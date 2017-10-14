@@ -218,13 +218,13 @@
         {
             var data = SNGroupDiscussionModel.GetOneByACSessionId(sessionId).Value;
             return new SNReportingDataDTO
-                       {
-                           discussion = data == null ? null : new SNGroupDiscussionDTO(data),
-                           members =
-                               SNMemberModel.GetAllByACSessionId(sessionId)
-                               .Select(x => new SNMemberDTO(x))
-                               .ToArray()
-                       };
+            {
+                discussion = data == null ? null : new SNGroupDiscussionDTO(data),
+                members =
+                    SNMemberModel.GetAllByACSessionId(sessionId)
+                    .Select(x => new SNMemberDTO(x))
+                    .ToArray()
+            };
         }
 
         /// <summary>

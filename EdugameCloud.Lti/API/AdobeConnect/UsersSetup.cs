@@ -48,21 +48,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #region Fields
         
-        private readonly dynamic settings;
-        private readonly IAdobeConnectUserService acUserService;
-        private readonly IAdobeConnectAccountService acAccountService;
-        private readonly ILogger logger;
-        private LmsFactory lmsFactory;
+        private readonly dynamic _settings;
+        private readonly IAdobeConnectUserService _acUserService;
+        private readonly IAdobeConnectAccountService _acAccountService;
+        private readonly ILogger _logger;
 
         #endregion
 
-        private LmsFactory LmsFactory
-        {
-            get
-            {
-                return lmsFactory ?? (lmsFactory = IoC.Resolve<LmsFactory>());
-            }
-        }
+        private LmsFactory LmsFactory => IoC.Resolve<LmsFactory>();
 
         private LmsCompanyModel LmsCompanyModel => IoC.Resolve<LmsCompanyModel>();
 
@@ -74,10 +67,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectAccountService acAccountService,
             ILogger logger)
         {
-            this.settings = settings;
-            this.acUserService = acUserService;
-            this.acAccountService = acAccountService;
-            this.logger = logger;
+            _settings = settings;
+            _acUserService = acUserService;
+            _acAccountService = acAccountService;
+            _logger = logger;
         }
 
         #endregion
@@ -114,7 +107,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.missing && ex.Status.InvalidField == "name")
                     {
-                        logger.Warn("AC failed to add some users to MeetingHosts group. Trying to add them one-by-one...");
+                        _logger.Warn("AC failed to add some users to MeetingHosts group. Trying to add them one-by-one...");
                         foreach (string principal in usersToAdd)
                         {
                             try
@@ -152,7 +145,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (registeredUser != null)
                 {
-                    var loginResult = acAccountService.LoginIntoAC(lmsCompany, param, registeredUser, 
+                    var loginResult = _acAccountService.LoginIntoAC(lmsCompany, param, registeredUser, 
                         adobeConnectPassword, provider, updateAcUser: false);
 
                     if (loginResult != null)
@@ -220,7 +213,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 return serviceResult.Data;
             }
-            logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, " +
+            _logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, " +
                 "courseId={2}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), courseId);
             var users = service.GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
             if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections) && meeting.Return(x => x.Id, 0) > 0)
@@ -294,7 +287,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meeting == null)
             {
-                logger.ErrorFormat("[GetUsers] Meeting not found in DB. LmsCompanyID: {0}. CourseID: {1}. ID: {2}.", 
+                _logger.ErrorFormat("[GetUsers] Meeting not found in DB. LmsCompanyID: {0}. CourseID: {1}. ID: {2}.", 
                     lmsCompany.Id,
                     courseId,
                     id);
@@ -385,7 +378,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             Principal principal = null;
                             try
                             {
-                                principal = acUserService.GetOrCreatePrincipal2(
+                                principal = _acUserService.GetOrCreatePrincipal2(
                                     provider,
                                     login,
                                     user.GetEmail(),
@@ -396,7 +389,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             }
                             catch (Exception ex)
                             {
-                                logger.Error("GetUsers - GetOrCreatePrincipal", ex);
+                                _logger.Error("GetUsers - GetOrCreatePrincipal", ex);
                             }
                             if (principal != null)
                             {
@@ -549,7 +542,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (string.IsNullOrEmpty(lmsDbUser.PrincipalId))
             {
-                Principal principal = acUserService.GetOrCreatePrincipal2(
+                Principal principal = _acUserService.GetOrCreatePrincipal2(
                     provider,
                     login,
                     user.GetEmail(),
@@ -589,7 +582,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public bool IsTeacher(LtiParamDTO param, ILmsLicense lmsCompany)
         {
-            return new LmsRoleService(this.settings).IsTeacher(param, lmsCompany);
+            return new LmsRoleService(this._settings).IsTeacher(param, lmsCompany);
         }
 
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
@@ -792,7 +785,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             Principal principal = null;
             try
             {
-                principal = acUserService.GetOrCreatePrincipal(
+                principal = _acUserService.GetOrCreatePrincipal(
                     provider,
                     lmsUserDto.GetLogin(),
                     lmsUserDto.GetEmail(),
@@ -806,7 +799,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     error = ex.Message;
                 }
-                logger.Error("CreatePrincipalAndUpdateLmsUserPrincipalId", ex);
+                _logger.Error("CreatePrincipalAndUpdateLmsUserPrincipalId", ex);
             }
 
             if (principal != null)
@@ -940,7 +933,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
 
                 sw.Stop();
-                logger.InfoFormat("SaveMeeting: SetDefaultUsers.GetByCompanyLms: time: {0}.", sw.Elapsed.ToString());
+                _logger.InfoFormat("SaveMeeting: SetDefaultUsers.GetByCompanyLms: time: {0}.", sw.Elapsed.ToString());
             }
 
             var sw2 = Stopwatch.StartNew();
@@ -948,7 +941,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.ProcessUsersInAC(lmsCompany, provider, meetingScoId, users, principalCache, lmsUsers, true, (LmsMeetingType)meeting.LmsMeetingType);
 
             sw2.Stop();
-            logger.InfoFormat("SaveMeeting: SetDefaultUsers.ProcessUsersInAC: time: {0}.", sw2.Elapsed.ToString());
+            _logger.InfoFormat("SaveMeeting: SetDefaultUsers.ProcessUsersInAC: time: {0}.", sw2.Elapsed.ToString());
         }
 
         public void SetLMSUserDefaultACPermissions2(
@@ -1007,12 +1000,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // NOTE: now we create AC principal within Users/GetAll method. So user will always have ac_id here.
             if (user.AcId == null)
             {
-                logger.WarnFormat("[UpdateUser]. ac_id == null. LmsCompanyId:{0}. Id:{1}. UserLogin:{2}.", lmsCompany.Id, id, user.GetLogin());
+                _logger.WarnFormat("[UpdateUser]. ac_id == null. LmsCompanyId:{0}. Id:{1}. UserLogin:{2}.", lmsCompany.Id, id, user.GetLogin());
 
                 // Get all users from COURSE
                 // Process if they have empty\duplicate with current user
 
-                Principal principal = acUserService.GetOrCreatePrincipal(
+                Principal principal = _acUserService.GetOrCreatePrincipal(
                     provider,
                     user.GetLogin(),
                     user.GetEmail(),
@@ -1156,7 +1149,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meeting == null)
             {
-                logger.ErrorFormat("Meeting not found. LmsCompanyId: {0}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, id);
+                _logger.ErrorFormat("Meeting not found. LmsCompanyId: {0}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, id);
                 error = Resources.Messages.MeetingNotFound;
                 return null;
             }
@@ -1209,7 +1202,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meeting == null)
             {
-                logger.ErrorFormat("Meeting not found. LmsCompanyId: {0}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, meetingId);
+                _logger.ErrorFormat("Meeting not found. LmsCompanyId: {0}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, meetingId);
                 error = Resources.Messages.MeetingNotFound;
                 return;
             }
@@ -1502,7 +1495,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider, 
             List<LmsUserDTO> users)
         {
-            var cacheMode = this.settings.Lti_AcUserCache_Mode as string;
+            var cacheMode = this._settings.Lti_AcUserCache_Mode as string;
 
             if (string.IsNullOrEmpty(cacheMode) || cacheMode.Equals("DISABLED", StringComparison.OrdinalIgnoreCase))
             {
@@ -1536,12 +1529,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("GetAllPrincipals.CONNECT", ex);
+                    _logger.Error("GetAllPrincipals.CONNECT", ex);
                     throw;
                 }
             }
 
-            logger.Error("Unsupported cache mode: " + cacheMode);
+            _logger.Error("Unsupported cache mode: " + cacheMode);
             return null;
         }
 
@@ -1566,7 +1559,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 
                 // TODO: do we need this FORCE?
                 // YES: !principal.PrincipalId.Equals(lmsUser.PrincipalId) - we use it to refresh PrincipalId
-                Principal principal = acUserService.GetOrCreatePrincipal2(
+                Principal principal = _acUserService.GetOrCreatePrincipal2(
                     provider, 
                     login, 
                     email, 
@@ -1621,7 +1614,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     if (reRunOnError)
                     {
-                        logger.Error("UpdateScoPermissionForPrincipal - 1st try. Status.Code=" + status.Code.ToString());
+                        _logger.Error("UpdateScoPermissionForPrincipal - 1st try. Status.Code=" + status.Code.ToString());
 
                         //IoC.Resolve<IPrincipalCache>().RecreatePrincipalCache(IoC.Resolve<LmsCompanyModel>().GetAll());
 
@@ -1642,7 +1635,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
                     else
                     {
-                        logger.Error("UpdateScoPermissionForPrincipal - 2nd try. Status.Code=" + status.Code.ToString());
+                        _logger.Error("UpdateScoPermissionForPrincipal - 2nd try. Status.Code=" + status.Code.ToString());
                         throw new InvalidOperationException(
                             "UpdateScoPermissionForPrincipal. Status.Code=" + status.Code.ToString());
                     }

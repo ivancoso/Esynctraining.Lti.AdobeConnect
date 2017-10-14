@@ -18,30 +18,33 @@ namespace EdugameCloud.Lti
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Core").Pick()
-                .If(Component.IsInNamespace("EdugameCloud.Lti.Core.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
+                .If(Component.IsInNamespace("EdugameCloud.Lti.Core.Business.Models"))
+                .WithService.Self().Configure(c => c.LifestyleTransient()));
 
-            container.Register(Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>().Named("IMeetingSetup"));
-            container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
-            container.Register(Component.For<IUsersSetup>().ImplementedBy<UsersSetup>().Named("IUsersSetup"));
-            container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
-            container.Register(Component.For<IReportsService>().ImplementedBy<ReportsService>());
-            container.Register(Component.For<ICache>().ImplementedBy<PersistantCacheWrapper>().LifestyleSingleton().Named(CachePolicies.Names.PersistantCache));
-            container.Register(Component.For<IBuildVersionProcessor>().ImplementedBy<BuildVersionProcessor>().LifestyleSingleton());
+            container.Register(
+                Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>().Named("IMeetingSetup"),
+                Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>(),
+                Component.For<IUsersSetup>().ImplementedBy<UsersSetup>().Named("IUsersSetup"),
+                Component.For<UsersSetup>().ImplementedBy<UsersSetup>(),
+                Component.For<IReportsService>().ImplementedBy<ReportsService>(),
+                Component.For<ICache>().ImplementedBy<PersistantCacheWrapper>().LifestyleSingleton().Named(CachePolicies.Names.PersistantCache),
+                Component.For<IBuildVersionProcessor>().ImplementedBy<BuildVersionProcessor>().LifestyleSingleton(),
 
-            container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
-            container.Register(Component.For<IJsonSerializer>().ImplementedBy<JilSerializer>());
-            container.Register(Component.For<IMeetingNameFormatterFactory>().ImplementedBy<MeetingNameFormatterFactory>());
+                Component.For<LmsFactory>().ImplementedBy<LmsFactory>().LifestyleSingleton(),
+                Component.For<IJsonSerializer>().ImplementedBy<JilSerializer>().LifestyleSingleton(),
+                Component.For<IMeetingNameFormatterFactory>().ImplementedBy<MeetingNameFormatterFactory>().LifestyleSingleton(),
 
-            container.Register(Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>());
-            container.Register(Component.For<ISynchronizationUserService>().ImplementedBy<SynchronizationUserService>());
-            container.Register(Component.For<IAdobeConnectAccountService>().ImplementedBy<AdobeConnectAccountService>());
-            container.Register(Component.For<IRecordingsService>().ImplementedBy<RecordingsService>());
-            container.Register(Component.For<IAudioProfilesService>().ImplementedBy<AudioProfilesService>());
-            container.Register(Component.For<ISeminarService>().ImplementedBy<SeminarService>());
+                Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>().LifestyleSingleton(),
+                Component.For<ISynchronizationUserService>().ImplementedBy<SynchronizationUserService>().LifeStyle.Transient,
+                Component.For<IAdobeConnectAccountService>().ImplementedBy<AdobeConnectAccountService>().LifestyleSingleton(),
+                Component.For<IRecordingsService>().ImplementedBy<RecordingsService>().LifeStyle.Transient,
+                Component.For<IAudioProfilesService>().ImplementedBy<AudioProfilesService>().LifeStyle.Transient,
+                Component.For<ISeminarService>().ImplementedBy<SeminarService>().LifestyleSingleton(),
 
-            container.Register(Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>());
-            container.Register(Component.For<LmsRoleService>().ImplementedBy<LmsRoleService>());
-            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<ImsUserService>().Named("Ims"));
+                Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>().LifestyleSingleton(),
+                Component.For<LmsRoleService>().ImplementedBy<LmsRoleService>().LifestyleSingleton(),
+                Component.For<LmsUserServiceBase>().ImplementedBy<ImsUserService>().Named("Ims").LifestyleSingleton()
+                );
             
             container.Install(
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.AdobeConnect/Esynctraining.AdobeConnect.Windsor.xml"))

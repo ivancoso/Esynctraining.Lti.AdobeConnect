@@ -13,12 +13,12 @@ namespace EdugameCloud.Lti.Canvas
 {
     public class CanvasLmsUserService : LmsUserServiceBase
     {
-        private readonly IEGCEnabledCanvasAPI canvasApi;
+        private readonly IEGCEnabledCanvasAPI _canvasApi;
 
 
         public CanvasLmsUserService(IEGCEnabledCanvasAPI canvasApi, ILogger logger) : base(logger)
         {
-            this.canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
+            _canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
         }
 
 
@@ -41,7 +41,7 @@ namespace EdugameCloud.Lti.Canvas
                 throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
-            var user = canvasApi.GetCourseUser(
+            var user = _canvasApi.GetCourseUser(
                 lmsUserId,
                 lmsCompany,
                 token,
@@ -89,7 +89,7 @@ namespace EdugameCloud.Lti.Canvas
         private List<LmsUserDTO> FetchUsers(ILmsLicense lmsCompany, int courseId)
         {
             string token = lmsCompany.AdminUser.Token;
-            List<LmsUserDTO> users = canvasApi.GetUsersForCourse(
+            List<LmsUserDTO> users = _canvasApi.GetUsersForCourse(
                 lmsCompany.LmsDomain,
                 token,
                 courseId);
@@ -97,6 +97,7 @@ namespace EdugameCloud.Lti.Canvas
             // IF emails are NOT included (for student + lmsCompany.AdminUser == null)
             if (users.Any(x => string.IsNullOrEmpty(x.PrimaryEmail)))
             {
+                // TODO: details about ampty email users
                 logger.ErrorFormat("[Canvas GetUsers] API did not return emails. CourseID={0}. LMSCompanyID:{1}.", courseId, lmsCompany.Id);
             }
 

@@ -41,8 +41,8 @@ namespace EdugameCloud.Lti.Moodle
 
         public MoodleApi(ApplicationSettingsProvider settings, ILogger logger)
         {
-            _settings = settings;
-            _logger = logger;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
 

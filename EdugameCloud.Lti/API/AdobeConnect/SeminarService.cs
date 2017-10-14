@@ -22,6 +22,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         // TODO: reuse from Esynctraining.AdobeConnect.SeminarService
         private readonly ILogger _logger;
 
+        // TRICK: SeminarService is singleton, but we use actual UsersSetup(per-request)
         private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
 
 
