@@ -118,13 +118,15 @@ namespace EdugameCloud.WCFService
             
             try
             {
+                Survey survey = this.SurveyModel.GetOneById(sResult.surveyId).Value;
+                int acSessionId = this.ACSessionModel.GetOneById(sResult.acSessionId).Value.With(x => x.Id);
                 foreach (var surveyResultDTO in sResult.surveyResults)
                 {
                     ValidationResult validationResult;
                     if (this.IsValid(surveyResultDTO, out validationResult))
                     {
                         var surveyResultModel = this.SurveyResultModel;
-                        var surveyResult = this.ConvertDto(surveyResultDTO, sResult);
+                        var surveyResult = this.ConvertDto(surveyResultDTO, survey, acSessionId);
                         surveyResultModel.RegisterSave(surveyResult);
                         await SaveAllAsync(surveyResult, surveyResultDTO.results);
                     }
@@ -142,7 +144,7 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        private SurveyResult ConvertDto(SurveyResultDTO resultDTO, SurveySummaryResultDTO sResult)
+        private SurveyResult ConvertDto(SurveyResultDTO resultDTO, Survey survey, int acSessionId)
         {
             var instance = new SurveyResult
             {
@@ -153,8 +155,8 @@ namespace EdugameCloud.WCFService
                 IsArchive = resultDTO.isArchive,
                 DateCreated = DateTime.Now,
                 ParticipantName = resultDTO.participantName.With(x => x.Trim()),
-                Survey = this.SurveyModel.GetOneById(sResult.surveyId).Value,
-                ACSessionId = this.ACSessionModel.GetOneById(sResult.acSessionId).Value.With(x => x.Id),
+                Survey = survey,
+                ACSessionId = acSessionId,
                 LmsUserParametersId =
                     resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null,
                 ACEmail = resultDTO.acEmail.With(x => x.Trim())

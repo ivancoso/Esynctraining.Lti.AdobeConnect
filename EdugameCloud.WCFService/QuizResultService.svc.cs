@@ -121,15 +121,21 @@
                 var eventQuizMappingId = GetEventQuizMappingId(quizResult);
                 //
 
+                Quiz quiz = this.QuizModel.GetOneById(quizResult.quizId).Value;
+                int acSessionId = this.ACSessionModel.GetOneById(quizResult.acSessionId).Value.With(x => x.Id);
+
+                CompanyEventQuizMapping companyEventQuizMapping = null;
+                if (eventQuizMappingId.HasValue && eventQuizMappingId.Value != 0)
+                    companyEventQuizMapping = EventQuizMappingModel.GetOneById(eventQuizMappingId.Value).Value;
+
 
                 foreach (var appletResultDTO in quizResult.quizResults)
                 {
                     ValidationResult validationResult;
                     if (this.IsValid(appletResultDTO, out validationResult))
                     {
-                        var sessionModel = this.QuizResultModel;
-
-                        var appletResult = this.ConvertDto(appletResultDTO, eventQuizMappingId, quizResult);
+                        var sessionModel = this.QuizResultModel;                        
+                        var appletResult = this.ConvertDto(appletResultDTO, quiz, acSessionId, companyEventQuizMapping);
                         sessionModel.RegisterSave(appletResult);
 
                         await SaveAllAsync(appletResult, appletResultDTO.results);
@@ -164,7 +170,7 @@
             return eventQuizMappingId;
         }
 
-        private QuizResult ConvertDto(QuizResultDTO resultDTO, int? eventQuizMappingId, QuizSummaryResultDTO quizResult)
+        private QuizResult ConvertDto(QuizResultDTO resultDTO, Quiz quiz, int acSessionId, CompanyEventQuizMapping companyEventQuizMapping)
         {
             var instance = new QuizResult();
             instance.Score = resultDTO.score;
@@ -181,10 +187,9 @@
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
 
             /**/
-            instance.Quiz = this.QuizModel.GetOneById(quizResult.quizId).Value;
-            instance.ACSessionId = this.ACSessionModel.GetOneById(quizResult.acSessionId).Value.With(x => x.Id);
-            if (eventQuizMappingId.HasValue && eventQuizMappingId.Value != 0)
-                instance.EventQuizMapping = EventQuizMappingModel.GetOneById(eventQuizMappingId.Value).Value;
+            instance.Quiz = quiz;
+            instance.ACSessionId = acSessionId;
+            instance.EventQuizMapping = companyEventQuizMapping;
             /**/
 
             instance.LmsId = resultDTO.lmsId;

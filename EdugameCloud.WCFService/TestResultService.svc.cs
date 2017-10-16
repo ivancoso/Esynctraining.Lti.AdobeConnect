@@ -74,12 +74,15 @@ namespace EdugameCloud.WCFService
 
             try
             {
+                Test test = this.TestModel.GetOneById(testResult.testId).Value;
+                int acSessionId = this.ACSessionModel.GetOneById(testResult.acSessionId).Value.With(x => x.Id);
+
                 foreach (var appletResultDTO in testResult.testResults)
                 {
                     if (this.IsValid(appletResultDTO, out var validationResult))
                     {
                         var sessionModel = this.TestResultModel;
-                        var appletResult = this.ConvertDto(appletResultDTO, testResult);
+                        var appletResult = this.ConvertDto(appletResultDTO, test, acSessionId);
                         sessionModel.RegisterSave(appletResult);
                         SaveAll(appletResult, appletResultDTO.results);
                     }
@@ -97,7 +100,7 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        private TestResult ConvertDto(TestResultDTO resultDTO, TestSummaryResultDTO testResult)
+        private TestResult ConvertDto(TestResultDTO resultDTO, Test test, int acSessionId)
         {
             var instance = new TestResult
             {
@@ -109,8 +112,8 @@ namespace EdugameCloud.WCFService
                 IsArchive = resultDTO.isArchive,
                 DateCreated = DateTime.Now,
                 ParticipantName = resultDTO.participantName.With(x => x.Trim()),
-                Test = this.TestModel.GetOneById(testResult.testId).Value,
-                ACSessionId = this.ACSessionModel.GetOneById(testResult.acSessionId).Value.With(x => x.Id),
+                Test = test,
+                ACSessionId = acSessionId,
                 IsCompleted = resultDTO.isCompleted
             };
 
