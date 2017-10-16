@@ -235,6 +235,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
+        private static bool IsValidPassCode(string passCode)
+        {
+            if (string.IsNullOrEmpty(passCode))
+            {
+                return true;
+            }
+
+            if ((passCode.Length < 4 || passCode.Length > 12))
+            {
+                return false;
+            }
+
+            return passCode.All(c => Char.IsLetterOrDigit(c));
+        }
+
         public string UpdateRecording(ILmsLicense lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic, string password)
         {
             var recording = provider.GetScoInfo(id).ScoInfo;
@@ -244,9 +259,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return string.Empty;
             }
 
-            // ReSharper disable UnusedVariable
-            var accessResult = provider.UpdatePublicAccessPermissions(id, isPublic ? PermissionId.view : PermissionId.remove);
-            var passwordResult = provider.UpdateAclFieldWithPasscode(id, AclFieldId.meeting_passcode, password, !string.IsNullOrEmpty(password));
+            if (!IsValidPassCode(password))
+            {
+                throw new Core.WarningMessageException("Your passcode must be 4 to 12 characters long (letters or numbers)");
+            }
+
+            provider.UpdatePublicAccessPermissions(id, isPublic ? PermissionId.view : PermissionId.remove);
+            provider.UpdateAclFieldWithPasscode(id, AclFieldId.meeting_passcode, password, !string.IsNullOrEmpty(password));
             
             var recordingUrl = (lmsCompany.AcServer.EndsWith("/")
                 ? lmsCompany.AcServer.Substring(0, lmsCompany.AcServer.Length - 1)
