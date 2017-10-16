@@ -17,6 +17,7 @@ namespace EdugameCloud.Lti.Moodle
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
+    using EdugameCloud.HttpClient;
 
     /// <summary>
     /// The Moodle API.
@@ -24,10 +25,8 @@ namespace EdugameCloud.Lti.Moodle
     // ReSharper disable once InconsistentNaming
     public class MoodleApi : ILmsAPI, IMoodleApi
     {
-        private static readonly HttpClient _httpClient = new HttpClient
-        {
-            Timeout = TimeSpan.FromMilliseconds(Core.Utils.Constants.MoodleUsersApiRequestTimeout),
-        };
+
+        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper(TimeSpan.FromMilliseconds(Core.Utils.Constants.MoodleUsersApiRequestTimeout));
 
         protected readonly ILogger _logger;
         private readonly dynamic _settings;
@@ -295,7 +294,7 @@ namespace EdugameCloud.Lti.Moodle
             if (pairs == null)
                 throw new ArgumentNullException(nameof(pairs));
 
-            return _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs)).Result.Content.ReadAsStringAsync().Result;
+            return _httpClientWrapper.PostValuesAsync(url, pairs).Result;
         }
 
         protected string GetServicesUrl(ILmsLicense lmsCompany)

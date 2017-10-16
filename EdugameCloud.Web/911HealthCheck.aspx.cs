@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EdugameCloud.HttpClient;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
@@ -9,6 +10,7 @@ using System.Net;
 using System.Net.Mail;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.UI;
@@ -20,6 +22,8 @@ namespace EdugameCloud.Web
     // <add key="XSDProfileLocation" value="d:\Freelance\eSyncTraining\EdugameCloud\trunk\csharp\EdugameCloud.WCFService\EdugameCloud.Web\Content\xsd\vcfProfile.xsd" />
     public partial class _911HealthCheck : System.Web.UI.Page
     {
+        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
+
         private int CurrentTaskNo
         {
             get
@@ -199,17 +203,14 @@ namespace EdugameCloud.Web
                 if (!Path.IsPathRooted(value) && Uri.TryCreate(value, UriKind.Absolute, out uri) && !string.IsNullOrEmpty(Path.GetExtension(value)))
                 {
                     // Got an URI, try hitting
-                    using (var client = new WebClient())
+                    try
                     {
-                        try
-                        {
-                            client.DownloadString(uri);
-                        }
-                        catch (Exception x)
-                        {
-                            MarkAsFail(URLReachableLabel, x.Message, "Unreachable URL: " + key + "=" + uri.ToString());
-                            allUrlOK = false;
-                        }
+                        var result = _httpClientWrapper.DownloadStringAsync(uri).Result;
+                    }
+                    catch (Exception x)
+                    {
+                        MarkAsFail(URLReachableLabel, x.Message, "Unreachable URL: " + key + "=" + uri.ToString());
+                        allUrlOK = false;
                     }
                 }
             }
@@ -372,17 +373,15 @@ namespace EdugameCloud.Web
                 if (!Path.IsPathRooted(value) && Uri.TryCreate(value, UriKind.Absolute, out uri) && !string.IsNullOrEmpty(Path.GetExtension(value)))
                 {
                     // Got an URI, try hitting
-                    using (var client = new WebClient())
+                    try
                     {
-                        try
-                        {
-                            client.DownloadString(uri);
-                        }
-                        catch (Exception x)
-                        {
-                            MarkAsFail(ServicesURLReachableLabel, x.Message, "Unreachable URL: " + key + "=" + uri.ToString());
-                            allUrlOK = false;
-                        }
+                        var result = _httpClientWrapper.DownloadStringAsync(uri).Result;
+                    }
+                    catch (Exception x)
+                    {
+                        MarkAsFail(ServicesURLReachableLabel, x.Message,
+                            "Unreachable URL: " + key + "=" + uri.ToString());
+                        allUrlOK = false;
                     }
                 }
             }
@@ -463,16 +462,13 @@ namespace EdugameCloud.Web
                 string gateway = lines.First(x => x.StartsWith("gateway")).Replace(" ", string.Empty).Replace("gateway", string.Empty).Replace("=", string.Empty);
 
                 var uri = new Uri(new Uri(gateway), @"UserService.svc");
-                using (var client = new WebClient())
+                try
                 {
-                    try
-                    {
-                        client.DownloadString(uri);
-                    }
-                    catch (Exception x)
-                    {
-                        MarkAsFail(SecurityServiceLabel, x.Message, "Unreachable URL: " + uri.ToString());
-                    }
+                    var result = _httpClientWrapper.DownloadStringAsync(uri).Result;
+                }
+                catch (Exception x)
+                {
+                    MarkAsFail(SecurityServiceLabel, x.Message, "Unreachable URL: " + uri.ToString());
                 }
 
                 MarkAsPass(SecurityServiceLabel);

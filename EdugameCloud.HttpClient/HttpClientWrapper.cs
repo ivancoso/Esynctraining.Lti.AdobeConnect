@@ -17,9 +17,32 @@ namespace EdugameCloud.HttpClient
             _httpClient = new System.Net.Http.HttpClient();
         }
 
+        public HttpClientWrapper(TimeSpan timeSpan)
+        {
+            _httpClient = new System.Net.Http.HttpClient
+            {
+                Timeout = timeSpan
+            };
+        }
+
+        public HttpClientWrapper(Uri uri)
+        {
+            _httpClient = new System.Net.Http.HttpClient
+            {
+                BaseAddress = uri
+            };
+        }
+
+
         #endregion Constructors
 
         #region Public Methods
+
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage)
+        {
+            HttpResponseMessage response = await _httpClient.SendAsync(httpRequestMessage);
+            return response;
+        }
 
         public async Task<string> PostValuesAsync(string url, IEnumerable<KeyValuePair<string, string>> pairs)
         {
@@ -37,6 +60,13 @@ namespace EdugameCloud.HttpClient
             var response = await _httpClient.GetAsync(url);
             return await response.Content.ReadAsStringAsync();
         }
+
+        public async Task<string> DownloadStringAsync(Uri url)
+        {
+            var response = await _httpClient.GetAsync(url);
+            return await response.Content.ReadAsStringAsync();
+        }
+
 
         public async Task<string> UploadJsonStringAsync(string address, string data)
         {

@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj" />
+    <ProjectReference Include="..\EdugameCloud.HttpClient\EdugameCloud.HttpClient.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Telephony\EdugameCloud.Lti.Telephony.csproj" />
   </ItemGroup>

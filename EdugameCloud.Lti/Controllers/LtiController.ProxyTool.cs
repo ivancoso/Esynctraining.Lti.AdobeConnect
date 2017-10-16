@@ -1,4 +1,7 @@
-﻿namespace EdugameCloud.Lti.Controllers
+﻿using System.Threading.Tasks;
+using EdugameCloud.HttpClient;
+
+namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -18,7 +21,7 @@
     {
         private readonly ILogger logger;
         private readonly dynamic settings;
-        
+        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 
         public LtiProxyToolController(
             ApplicationSettingsProvider settings,
@@ -31,7 +34,7 @@
 
         [HttpGet]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
-        public virtual ActionResult RegisterProxyTool(string lmsDomain)
+        public virtual async Task<ActionResult> RegisterProxyTool(string lmsDomain)
         {
             if (string.IsNullOrWhiteSpace(lmsDomain))
             {
@@ -40,7 +43,7 @@
             }
 
             lmsDomain = lmsDomain.TrimEnd(@"\/".ToCharArray());
-            var blackBoardProfile = ParseBlackBoardSharedInfo(lmsDomain);
+            var blackBoardProfile = await ParseBlackBoardSharedInfo(lmsDomain);
             return this.View(
                 "ProxyToolPassword",
                 new ProxyToolPasswordModel
@@ -76,14 +79,14 @@
             return soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
         }
 
-        private BBConsumerProfileDTO ParseBlackBoardSharedInfo(string lmsDomain)
+        private async Task<BBConsumerProfileDTO> ParseBlackBoardSharedInfo(string lmsDomain)
         {
             var res = new BBConsumerProfileDTO();
             try
             {
                 var uriBuilder = new UriBuilder(lmsDomain + "/webapps/ws/wsadmin/tcprofile");
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                var xmlResponse = new WebClient().DownloadString(uriBuilder.Uri);
+                var xmlResponse = await _httpClientWrapper.DownloadStringAsync(uriBuilder.Uri);
                 var response = XElement.Parse(xmlResponse);
                 var name = response.XPathEvaluate("string(/tool-consumer-info/name)").ToString();
                 res.Name = name;

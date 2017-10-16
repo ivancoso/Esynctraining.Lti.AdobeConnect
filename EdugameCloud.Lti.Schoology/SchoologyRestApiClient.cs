@@ -5,16 +5,20 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.API.Schoology;
+using EdugameCloud.HttpClient;
 
 namespace EdugameCloud.Lti.Schoology
 {
     public class SchoologyRestApiClient : ISchoologyRestApiClient
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private static readonly HttpClient _client = new HttpClient
-        {
-            BaseAddress = new Uri("https://api.schoology.com/v1/"),
-        };
+
+        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper(new Uri("https://api.schoology.com/v1/"));
+
+        //private static readonly HttpClient _client = new HttpClient
+        //{
+        //    BaseAddress = new Uri("https://api.schoology.com/v1/"),
+        //};
 
 
         public async Task<T> GetRestCall<T>(string clientId, string clientSecret, string relativeUrl)
@@ -41,7 +45,7 @@ namespace EdugameCloud.Lti.Schoology
                 header.AppendFormat("{0}=\"{1}\", ", key, nameValueCollection[key]);
 
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("OAuth", header.ToString().TrimEnd(',', ' '));
-            var response = await _client.SendAsync(requestMessage);
+            var response = await _httpClientWrapper.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsAsync<T>();
         }
