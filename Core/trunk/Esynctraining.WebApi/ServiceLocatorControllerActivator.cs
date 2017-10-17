@@ -25,28 +25,27 @@ namespace Esynctraining.WebApi
             var controller =
                 (IHttpController)this.container.GetInstance(controllerType);
 
-            // TODO: think about it more 
-            //request.RegisterForDispose(
-            //    new Release(
-            //        () => this.container.Release(controller)));
+            request.RegisterForDispose(
+                new Release(
+                    () => this.container.Release(controller)));
 
             return controller;
         }
 
-        //private class Release : IDisposable
-        //{
-        //    private readonly Action release;
+        private class Release : IDisposable
+        {
+            private readonly Action release;
 
-        //    public Release(Action release)
-        //    {
-        //        this.release = release;
-        //    }
+            public Release(Action release)
+            {
+                this.release = release;
+            }
 
-        //    public void Dispose()
-        //    {
-        //        this.release();
-        //    }
-        //}
+            public void Dispose()
+            {
+                this.release();
+            }
+        }
 
     }
 

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Esynctraining.Windsor</id>
-        <version>1.0.0.2</version>
+        <version>1.0.0.3</version>
         <title>Esynctraining.Windsor</title>
         <authors>eSyncTraining.com</authors>
         <owners>eSyncTraining.com</owners>
@@ -15,7 +15,7 @@
         <tags>core windsor</tags>
         <dependencies>
             <dependency id="Castle.Windsor" version="3.3.0" />
-            <dependency id="Esynctraining.Core.Only" version="1.0.1.1" />
+            <dependency id="Esynctraining.Core.Only" version="1.0.1.2" />
         </dependencies>
         <references>
             <reference file="Esynctraining.Windsor.dll" />

@@ -39,6 +39,11 @@ namespace Esynctraining.Core.Utils
         /// <returns>The requested service instance.</returns>
         TService GetInstance<TService>(string key);
 
+        /// <summary>
+        /// Releases a component instance
+        /// </summary>
+        /// <param name="controller"></param>
+        void Release(object instance);
     }
 
 }

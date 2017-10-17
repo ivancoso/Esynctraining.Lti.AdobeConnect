@@ -39,6 +39,11 @@ namespace Esynctraining.Windsor
             return container.Resolve<TService>(key);
         }
 
+        public void Release(object instance)
+        {
+            container.Release(instance);
+        }
+
     }
 
 }
