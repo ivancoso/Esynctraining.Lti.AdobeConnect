@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Castle.Windsor" Version="4.1.0" />
-    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.2" />
   </ItemGroup>
 
 </Project>
