@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.HttpClient
 {
     public class HttpClientWrapper
     {
         private readonly System.Net.Http.HttpClient _httpClient;
+        protected ILogger Logger
+        {
+            get { return IoC.Resolve<ILogger>(); }
+        }
 
         #region Constructors
 
@@ -52,6 +58,17 @@ namespace EdugameCloud.HttpClient
                 throw new ArgumentNullException(nameof(pairs));
 
             var response = await _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+            if (!response.IsSuccessStatusCode)
+            {
+                Logger.Error(response.ToString());
+                if (response.Content != null)
+                {
+                    Logger.Error(await response.Content.ReadAsStringAsync());
+                }
+                
+            }
+
+            response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
 
