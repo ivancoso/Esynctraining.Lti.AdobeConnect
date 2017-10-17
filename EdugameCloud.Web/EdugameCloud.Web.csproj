@@ -715,6 +715,10 @@
       <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.HttpClient\EdugameCloud.HttpClient.csproj">
+      <Project>{7cb63896-15d1-47b1-87a0-a1d073ca9e4e}</Project>
+      <Name>EdugameCloud.HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
       <Name>EdugameCloud.Lti</Name>
