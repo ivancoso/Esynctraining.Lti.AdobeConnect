@@ -88,6 +88,8 @@
         [DataMember]
         public TestQuestionResultDTO[] results { get; set; }
 
+        public int acSessionId { get; set; }
+
         #endregion
     }
 }

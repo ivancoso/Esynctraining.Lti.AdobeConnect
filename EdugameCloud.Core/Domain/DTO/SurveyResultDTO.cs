@@ -92,6 +92,8 @@
         [DataMember]
         public SurveyQuestionResultDTO[] results { get; set; }
 
+        public int acSessionId { get; set; }
+
         #endregion
     }
 }

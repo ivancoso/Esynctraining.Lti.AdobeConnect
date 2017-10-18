@@ -74,11 +74,15 @@ namespace EdugameCloud.WCFService
 
             try
             {
+                if (!this.IsValid(testResult, out var valResult))
+                    return;
+
                 Test test = this.TestModel.GetOneById(testResult.testId).Value;
                 int acSessionId = this.ACSessionModel.GetOneById(testResult.acSessionId).Value.With(x => x.Id);
 
                 foreach (var appletResultDTO in testResult.testResults)
                 {
+                    appletResultDTO.acSessionId = testResult.acSessionId;
                     if (this.IsValid(appletResultDTO, out var validationResult))
                     {
                         var sessionModel = this.TestResultModel;

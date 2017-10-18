@@ -477,6 +477,8 @@
     <Compile Include="Validators\BuildVersionDTOValidator.cs" />
     <Compile Include="Validators\BatchUsersDTOValidator.cs" />
     <Compile Include="Validators\CompanyThemeDTOValidator.cs" />
+    <Compile Include="Validators\QuizSummaryResultDTOValidator.cs" />
+    <Compile Include="Validators\SurveySummaryResultDTOValidator.cs" />
     <Compile Include="Validators\TestDTOValidator.cs" />
     <Compile Include="Validators\TestQuestionResultDTOValidator.cs" />
     <Compile Include="Validators\TestResultDTOValidator.cs" />
@@ -487,6 +489,7 @@
     <Compile Include="Validators\SurveyDTOValidator.cs" />
     <Compile Include="Validators\SurveyQuestionResultDTOValidator.cs" />
     <Compile Include="Validators\SurveyResultDTOValidator.cs" />
+    <Compile Include="Validators\TestSummaryResultDTOValidator.cs" />
     <Compile Include="Validators\VCFProfileDTOValidator.cs" />
     <Compile Include="Validators\UserDTOValidator.cs" />
     <Compile Include="Validators\SNMemberDTOValidator.cs" />

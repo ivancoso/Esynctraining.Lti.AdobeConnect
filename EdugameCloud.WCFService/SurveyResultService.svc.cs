@@ -118,10 +118,15 @@ namespace EdugameCloud.WCFService
             
             try
             {
+
+                if (!this.IsValid(sResult, out ValidationResult valResult))
+                    return;
+
                 Survey survey = this.SurveyModel.GetOneById(sResult.surveyId).Value;
                 int acSessionId = this.ACSessionModel.GetOneById(sResult.acSessionId).Value.With(x => x.Id);
                 foreach (var surveyResultDTO in sResult.surveyResults)
                 {
+                    surveyResultDTO.acSessionId = sResult.acSessionId;
                     ValidationResult validationResult;
                     if (this.IsValid(surveyResultDTO, out validationResult))
                     {

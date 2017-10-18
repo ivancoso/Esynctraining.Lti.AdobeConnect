@@ -128,9 +128,12 @@
                 if (eventQuizMappingId.HasValue && eventQuizMappingId.Value != 0)
                     companyEventQuizMapping = EventQuizMappingModel.GetOneById(eventQuizMappingId.Value).Value;
 
+                if (!IsValid(quizResult, out ValidationResult validationSummaryDtoResult))
+                    return;
 
                 foreach (var appletResultDTO in quizResult.quizResults)
                 {
+                    appletResultDTO.acSessionId = quizResult.acSessionId;
                     ValidationResult validationResult;
                     if (this.IsValid(appletResultDTO, out validationResult))
                     {
@@ -161,7 +164,7 @@
             if (!result.quizResults.Any())
                 return eventQuizMappingId;
 
-            if (result.eventQuizMappingId.HasValue)
+            if (result.eventQuizMappingId.HasValue && result.eventQuizMappingId.Value != 0)
                 return result.eventQuizMappingId;
 
             var quizResults = this.QuizResultModel.GetQuizResultsByAcSessionId(result.acSessionId);

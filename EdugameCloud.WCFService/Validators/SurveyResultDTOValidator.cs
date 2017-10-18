@@ -26,7 +26,7 @@
             this.RuleFor(model => model.email)
                 .Must((model, x) => (!model.isArchive && string.IsNullOrWhiteSpace(x)) || (model.isArchive && !string.IsNullOrWhiteSpace(x)))
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Email should be provided only in isArchive mode")
-                .Must((model, x) => (!model.isArchive && string.IsNullOrWhiteSpace(x)))
+                .Must((model, x) => (!model.isArchive && string.IsNullOrWhiteSpace(x)) || surveyResultModel.GetOneByACSessionIdAndEmail(model.acSessionId, x).Value == null)
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_SESSION, "You have already passed this survey");
         }
     }
