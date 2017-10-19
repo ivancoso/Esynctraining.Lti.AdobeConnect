@@ -1,38 +1,19 @@
-﻿using System;
-using System.Runtime.Serialization;
-using EdugameCloud.Core.Domain.Entities;
+﻿using EdugameCloud.Core.Domain.Entities;
 using Esynctraining.Core.Extensions;
+using System;
+using System.Runtime.Serialization;
 
 namespace EdugameCloud.Core.Domain.DTO
 {
-    /// <summary>
-    /// The quiz result DTO.
-    /// </summary>
     [DataContract]
-    public class QuizResultDTO
+    public class EventQuizResultDTO
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QuizResultDTO"/> class.
-        /// </summary>
-        public QuizResultDTO()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QuizResultDTO"/> class.
-        /// </summary>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        public QuizResultDTO(QuizResult result)
+        public EventQuizResultDTO(QuizResult result)
         {
             if (result == null)
                 throw new ArgumentNullException(nameof(result));
 
             quizResultId = result.Id;
-            acSessionId = result.ACSessionId;
             dateCreated = result.DateCreated.ConvertToUnixTimestamp();
             endTime = result.EndTime.ConvertToUnixTimestamp();
             participantName = result.ParticipantName;
@@ -47,9 +28,8 @@ namespace EdugameCloud.Core.Domain.DTO
             appInFocusTime = result.AppInFocusTime;
             appMaximizedTime = result.AppMaximizedTime;
             guid = result.Guid;
+            eventQuizMappingId = result.EventQuizMapping.Id;
         }
-
-        #endregion
 
         #region Public Properties
 
@@ -140,10 +120,9 @@ namespace EdugameCloud.Core.Domain.DTO
         [DataMember]
         public QuizQuestionResultDTO[] results { get; set; }
 
-        public int acSessionId { get; set; }
+        [DataMember]
+        public int? eventQuizMappingId { get; set; }
 
         #endregion
-
     }
-
 }

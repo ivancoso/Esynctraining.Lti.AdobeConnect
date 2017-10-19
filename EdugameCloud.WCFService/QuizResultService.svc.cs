@@ -16,6 +16,9 @@
     using EdugameCloud.WCFService.Converters;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
+    using Esynctraining.Core.Domain.Entities;
+    using Esynctraining.Core.Enums;
+    using Resources;
 
     using FluentValidation.Results;
     using Newtonsoft.Json;
@@ -151,6 +154,19 @@
 
                 throw;
             }
+        }
+
+        public async Task<EventQuizResultDTO> GetByGuid(Guid guid)
+        {
+            QuizResult quizResult;
+            if ((quizResult = this.QuizResultModel.GetOneByGuid(guid).Value) == null)
+            {
+                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
+                this.LogError("QuizResult.GetById", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+
+            return new EventQuizResultDTO(quizResult);
         }
 
         #endregion
