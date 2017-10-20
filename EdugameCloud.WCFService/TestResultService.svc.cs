@@ -74,20 +74,19 @@ namespace EdugameCloud.WCFService
 
             try
             {
-                if (!this.IsValid(testResult, out var valResult))
+                if (!IsValid(testResult, out var valResult))
                     return;
 
-                Test test = this.TestModel.GetOneById(testResult.testId).Value;
-                int acSessionId = this.ACSessionModel.GetOneById(testResult.acSessionId).Value.With(x => x.Id);
+                Test test = TestModel.GetOneById(testResult.testId).Value;
+                int acSessionId = ACSessionModel.GetOneById(testResult.acSessionId).Value.With(x => x.Id);
 
                 foreach (var appletResultDTO in testResult.testResults)
                 {
                     appletResultDTO.acSessionId = testResult.acSessionId;
-                    if (this.IsValid(appletResultDTO, out var validationResult))
+                    if (IsValid(appletResultDTO, out var validationResult))
                     {
-                        var sessionModel = this.TestResultModel;
-                        var appletResult = this.ConvertDto(appletResultDTO, test, acSessionId);
-                        sessionModel.RegisterSave(appletResult);
+                        var appletResult = ConvertDto(appletResultDTO, test, acSessionId);
+                        TestResultModel.RegisterSave(appletResult);
                         SaveAll(appletResult, appletResultDTO.results);
                     }
                 }
@@ -104,7 +103,7 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        private TestResult ConvertDto(TestResultDTO resultDTO, Test test, int acSessionId)
+        private static TestResult ConvertDto(TestResultDTO resultDTO, Test test, int acSessionId)
         {
             var instance = new TestResult
             {
@@ -139,19 +138,18 @@ namespace EdugameCloud.WCFService
 
         private void SaveAll(TestResult testResult, TestQuestionResultDTO[] results)
         {
-            results = results ?? new TestQuestionResultDTO[] { };
-
             foreach (var appletResultDTO in results)
             {
-                if (this.IsValid(appletResultDTO, out var validationResult))
+                if (IsValid(appletResultDTO, out var validationResult))
                 {
-                    var sessionModel = this.TestQuestionResultModel;
-                    var appletResult = this.ConvertDto(appletResultDTO, testResult);
-                    sessionModel.RegisterSave(appletResult);
+                    var appletResult = ConvertDto(appletResultDTO, testResult);
+                    TestQuestionResultModel.RegisterSave(appletResult);
                 }
             }
         }
 
         #endregion
+
     }
+
 }
