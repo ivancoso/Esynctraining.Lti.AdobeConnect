@@ -127,12 +127,10 @@ namespace EdugameCloud.WCFService
                 foreach (var surveyResultDTO in sResult.surveyResults)
                 {
                     surveyResultDTO.acSessionId = sResult.acSessionId;
-                    ValidationResult validationResult;
-                    if (this.IsValid(surveyResultDTO, out validationResult))
+                    if (IsValid(surveyResultDTO, out ValidationResult validationResult))
                     {
-                        var surveyResultModel = this.SurveyResultModel;
-                        var surveyResult = this.ConvertDto(surveyResultDTO, survey, acSessionId);
-                        surveyResultModel.RegisterSave(surveyResult);
+                        var surveyResult = ConvertDto(surveyResultDTO, survey, acSessionId);
+                        SurveyResultModel.RegisterSave(surveyResult);
                         await SaveAllAsync(surveyResult, surveyResultDTO.results);
                     }
                 }
@@ -149,7 +147,7 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        private SurveyResult ConvertDto(SurveyResultDTO resultDTO, Survey survey, int acSessionId)
+        private static SurveyResult ConvertDto(SurveyResultDTO resultDTO, Survey survey, int acSessionId)
         {
             var instance = new SurveyResult
             {
@@ -196,28 +194,21 @@ namespace EdugameCloud.WCFService
 
         private async Task SaveAllAsync(SurveyResult instance, SurveyQuestionResultDTO[] results)
         {
-            results = results ?? new SurveyQuestionResultDTO[] { };
-
-            var result = new SurveyQuestionResultSaveAllDTO();
-            var faults = new List<string>();
-            var created = new List<SurveyQuestionResult>();
             foreach (var surveyQuestionResultDTO in results)
             {
-                ValidationResult validationResult;
-                if (this.IsValid(surveyQuestionResultDTO, out validationResult))
+                if (IsValid(surveyQuestionResultDTO, out ValidationResult validationResult))
                 {
-                    var sessionModel = this.SurveyQuestionResultModel;
-                    var surveyQuestionResult = this.ConvertDto(surveyQuestionResultDTO, instance);
-                    sessionModel.RegisterSave(surveyQuestionResult, true);
+                    var surveyQuestionResult = ConvertDto(surveyQuestionResultDTO, instance);
+                    SurveyQuestionResultModel.RegisterSave(surveyQuestionResult, true);
+
                     if (surveyQuestionResultDTO.answers != null && surveyQuestionResultDTO.answers.Any())
                     {
-                        this.CreateAnswers(surveyQuestionResultDTO, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
+                        CreateAnswers(surveyQuestionResultDTO, surveyQuestionResult, SurveyQuestionResultAnswerModel);
                     }
-
                 }
             }
 
-            await this.ConvertAndSendSurveyResultAsync(instance, results);
+            await ConvertAndSendSurveyResultAsync(instance, results);
 
         }
 
@@ -267,7 +258,7 @@ namespace EdugameCloud.WCFService
                 return;
 
             var converter =
-                this.ConverterFactory.GetResultConverter((LmsProviderEnum) lmsUserParameters.CompanyLms.LmsProviderId);
+                ConverterFactory.GetResultConverter((LmsProviderEnum) lmsUserParameters.CompanyLms.LmsProviderId);
 
             await converter.ConvertAndSendSurveyResultToLmsAsync(results, surveyResult, lmsUserParameters);
         }
