@@ -373,12 +373,14 @@ namespace EdugameCloud.WCFService
                 {
                     throw new InvalidOperationException("Wrong quiz mapping");
                 }
-                if (string.IsNullOrEmpty(quizResult.ACEmail))
+                if (string.IsNullOrEmpty(quizResult.ACEmail) && string.IsNullOrEmpty(quizResult.Email))
                 {
                     Logger.Warn($"[SendEventQuizResultEmail] Email is empty. quizResultId={quizResult.Id}");
                     emailsNotSend.Add(quizResult.ParticipantName);
                     continue;
                 }
+
+                string email = null;
                 try
                 {
                     //todo: create model based on success/fail
@@ -390,18 +392,20 @@ namespace EdugameCloud.WCFService
                         PostQuizUrl = Settings.CertificatesUrl + "/UI/#/?quizResultGuid=" + quizResult.Guid
                         //PostQuizUrl = "https://app.edugamecloud.com"
                     };
-                    bool sentSuccessfully = MailModel.SendEmailSync(quizResult.ParticipantName, quizResult.ACEmail,
+
+                    email = !string.IsNullOrEmpty(quizResult.ACEmail) ? quizResult.ACEmail : quizResult.Email;
+                    bool sentSuccessfully = MailModel.SendEmailSync(quizResult.ParticipantName, email,
                         Emails.GoddardPostQuizSubject,
                         model, Common.AppEmailName, Common.AppEmail);
                     if (!sentSuccessfully)
                     {
-                        emailsNotSend.Add(quizResult.ACEmail);
+                        emailsNotSend.Add(email);
                     }
                 }
                 catch (Exception e)
                 {
                     Logger.Error($"[SendEventQuizResultEmail] error.", e);
-                    emailsNotSend.Add(quizResult.ACEmail);
+                    emailsNotSend.Add(email);
                 }
             }
 
