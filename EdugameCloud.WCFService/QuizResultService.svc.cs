@@ -137,12 +137,10 @@
                 foreach (var appletResultDTO in quizResult.quizResults)
                 {
                     appletResultDTO.acSessionId = quizResult.acSessionId;
-                    ValidationResult validationResult;
-                    if (this.IsValid(appletResultDTO, out validationResult))
+                    if (IsValid(appletResultDTO, out ValidationResult validationResult))
                     {
-                        var sessionModel = this.QuizResultModel;                        
-                        var appletResult = this.ConvertDto(appletResultDTO, quiz, acSessionId, companyEventQuizMapping);
-                        sessionModel.RegisterSave(appletResult);
+                        var appletResult = ConvertDto(appletResultDTO, quiz, acSessionId, companyEventQuizMapping);
+                        QuizResultModel.RegisterSave(appletResult);
 
                         await SaveAllAsync(appletResult, appletResultDTO.results);
                     }
@@ -189,21 +187,21 @@
             return eventQuizMappingId;
         }
 
-        private QuizResult ConvertDto(QuizResultDTO resultDTO, Quiz quiz, int acSessionId, CompanyEventQuizMapping companyEventQuizMapping)
+        private static QuizResult ConvertDto(QuizResultDTO resultDTO, Quiz quiz, int acSessionId, CompanyEventQuizMapping companyEventQuizMapping)
         {
             var instance = new QuizResult();
             instance.Score = resultDTO.score;
             instance.StartTime = resultDTO.startTime.ConvertFromUnixTimeStamp();
             instance.EndTime = resultDTO.endTime.ConvertFromUnixTimeStamp();
-            instance.Email = resultDTO.email.With(x => x.Trim());
-            instance.ACEmail = resultDTO.acEmail.With(x => x.Trim());
+            instance.Email = resultDTO.email?.Trim();
+            instance.ACEmail = resultDTO.acEmail?.Trim();
             instance.IsArchive = resultDTO.isArchive;
             instance.DateCreated = DateTime.Now;
 
             instance.AppInFocusTime = resultDTO.appInFocusTime;
             instance.AppMaximizedTime = resultDTO.appMaximizedTime;
             instance.Guid = resultDTO.guid;
-            instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
+            instance.ParticipantName = resultDTO.participantName?.Trim();
 
             /**/
             instance.Quiz = quiz;
@@ -233,23 +231,20 @@
 
         private async Task SaveAllAsync(QuizResult quizResult, QuizQuestionResultDTO[] results)
         {
-            results = results ?? new QuizQuestionResultDTO[] { };
-
             foreach (QuizQuestionResultDTO appletResultDTO in results)
             {
-                if (this.IsValid(appletResultDTO, out var validationResult))
+                if (IsValid(appletResultDTO, out var validationResult))
                 {
-                    QuizQuestionResultModel sessionModel = this.QuizQuestionResultModel;
                     var appletResult = ConvertDto(appletResultDTO, quizResult);
-                    sessionModel.RegisterSave(appletResult);
+                    QuizQuestionResultModel.RegisterSave(appletResult);
                     if (appletResultDTO.answers != null && appletResultDTO.answers.Any())
                     {
-                        this.CreateAnswers(appletResultDTO, appletResult);
+                        CreateAnswers(appletResultDTO, appletResult);
                     }
                 }
             }
 
-            await this.ConvertAndSendQuizResultAsync(quizResult, results);
+            await ConvertAndSendQuizResultAsync(quizResult, results);
         }
 
         private void CreateAnswers(QuizQuestionResultDTO dto, QuizQuestionResult result)
@@ -294,9 +289,6 @@
                 catch (Exception ex)
                 {
                     Logger.ErrorFormat("Saving answers:" + ex);
-                }
-                finally
-                {
                 }
             }
 
