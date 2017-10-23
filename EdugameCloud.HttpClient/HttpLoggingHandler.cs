@@ -8,9 +8,11 @@ namespace EdugameCloud.HttpClient
 {
     public class HttpLoggingHandler : DelegatingHandler
     {
-        protected ILogger Logger
+
+        private ILogger _logger;
+        private ILogger Logger
         {
-            get { return IoC.Resolve<ILogger>(); }
+            get { return _logger ?? (_logger = IoC.Resolve<ILogger>()) ; }
         }
 
         public HttpLoggingHandler(HttpMessageHandler innerHandler)
