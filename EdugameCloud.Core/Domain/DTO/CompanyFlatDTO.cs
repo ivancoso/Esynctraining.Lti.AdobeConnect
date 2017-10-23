@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using EdugameCloud.Core.Domain.Entities;
+using Esynctraining.Core.Extensions;
 
 namespace EdugameCloud.Core.Domain.DTO
 {
@@ -25,10 +26,10 @@ namespace EdugameCloud.Core.Domain.DTO
         public bool isExpiredTrial { get; set; }
 
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         [DataMember]
-        public DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         public static CompanyFlatDTO CreateCompanyFlatDto(Company company)
         {
@@ -50,8 +51,8 @@ namespace EdugameCloud.Core.Domain.DTO
                 name = company.CompanyName,
                 isActive = company.Status == CompanyStatus.Active,
 
-                dateCreated = company.DateCreated,
-                dateModified = company.DateModified,
+                dateCreated = company.DateCreated.ConvertToUnixTimestamp(),
+                dateModified = company.DateModified.ConvertToUnixTimestamp(),
 
                 isActiveTrial = isTrial && (license.ExpiryDate >= now),
                 isExpiredTrial = isTrial && (license.ExpiryDate < now),
