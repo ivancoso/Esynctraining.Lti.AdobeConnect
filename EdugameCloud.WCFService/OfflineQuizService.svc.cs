@@ -40,11 +40,13 @@ namespace EdugameCloud.WCFService
             var guid = Guid.Parse(key);
             var quizResult = QuizResultModel.GetOneByGuid(guid).Value;
 
+            string usedEmail = !string.IsNullOrEmpty(quizResult.ACEmail) ? quizResult.ACEmail : quizResult.Email;
+
             var mapping = EventQuizMappingModel.GetOneById(quizResult.EventQuizMapping.Id).Value;
 
             var postQuizId = mapping.PostQuiz.Id;
             var postQuizResults = QuizResultModel.GetQuizResultsByQuizIds(new[] {postQuizId}.ToList());
-            if (postQuizResults.Any(x => x.ACEmail == quizResult.ACEmail && x.Quiz.IsPostQuiz && x.EventQuizMapping.Id == mapping.Id))
+            if (postQuizResults.Any(x => (x.ACEmail == usedEmail || x.Email == usedEmail) && x.Quiz.IsPostQuiz && x.EventQuizMapping.Id == mapping.Id))
             {
                 return new OfflineQuizDTO()
                 {
@@ -97,7 +99,7 @@ namespace EdugameCloud.WCFService
 
             result.participant = new ParticipantDTO
             {
-                email = quizResult.ACEmail,
+                email = usedEmail,
                 participantName = quizResult.ParticipantName,
             };
             return result;
