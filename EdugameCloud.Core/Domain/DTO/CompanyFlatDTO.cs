@@ -24,6 +24,12 @@ namespace EdugameCloud.Core.Domain.DTO
         [DataMember]
         public bool isExpiredTrial { get; set; }
 
+        [DataMember]
+        public DateTime dateCreated { get; set; }
+
+        [DataMember]
+        public DateTime dateModified { get; set; }
+
         public static CompanyFlatDTO CreateCompanyFlatDto(Company company)
         {
             if (company == null)
@@ -43,6 +49,9 @@ namespace EdugameCloud.Core.Domain.DTO
                 id = company.Id,
                 name = company.CompanyName,
                 isActive = company.Status == CompanyStatus.Active,
+
+                dateCreated = company.DateCreated,
+                dateModified = company.DateModified,
 
                 isActiveTrial = isTrial && (license.ExpiryDate >= now),
                 isExpiredTrial = isTrial && (license.ExpiryDate < now),
