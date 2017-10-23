@@ -78,7 +78,13 @@ namespace EdugameCloud.WCFService
                     return;
 
                 Test test = TestModel.GetOneById(testResult.testId).Value;
-                int acSessionId = ACSessionModel.GetOneById(testResult.acSessionId).Value.With(x => x.Id);
+                ACSession acSession = ACSessionModel.GetOneById(testResult.acSessionId).Value;
+                if (acSession == null)
+                {
+                    throw new ArgumentException($"There are not session with acSessionId : {testResult.acSessionId}");
+                }
+                
+                int acSessionId = acSession.With(x => x.Id);
 
                 foreach (var appletResultDTO in testResult.testResults)
                 {
@@ -90,6 +96,11 @@ namespace EdugameCloud.WCFService
                         SaveAll(appletResult, appletResultDTO.results);
                     }
                 }
+            }
+            catch (ArgumentException ex)
+            {
+                Logger.Error($"TestResultService.SaveAll: {ex.Message}");
+                throw;
             }
             catch (Exception ex)
             {

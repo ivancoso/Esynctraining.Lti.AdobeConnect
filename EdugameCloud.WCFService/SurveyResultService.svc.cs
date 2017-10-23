@@ -119,11 +119,17 @@ namespace EdugameCloud.WCFService
             try
             {
 
-                if (!this.IsValid(sResult, out ValidationResult valResult))
+                if (!IsValid(sResult, out ValidationResult valResult))
                     return;
 
-                Survey survey = this.SurveyModel.GetOneById(sResult.surveyId).Value;
-                int acSessionId = this.ACSessionModel.GetOneById(sResult.acSessionId).Value.With(x => x.Id);
+                Survey survey = SurveyModel.GetOneById(sResult.surveyId).Value;
+                ACSession acSession = ACSessionModel.GetOneById(sResult.acSessionId).Value;
+                if (acSession == null)
+                {
+                    throw new ArgumentException($"There are not session with acSessionId : {sResult.acSessionId}");
+                }
+                int acSessionId = acSession.With(x => x.Id);
+
                 foreach (var surveyResultDTO in sResult.surveyResults)
                 {
                     surveyResultDTO.acSessionId = sResult.acSessionId;
@@ -135,7 +141,12 @@ namespace EdugameCloud.WCFService
                     }
                 }
             }
-            catch(Exception ex)
+            catch (ArgumentException ex)
+            {
+                Logger.Error($"SurveyResultService.SaveAll: {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
             {
                 Logger.Error($"SurveyResultService.SaveAll json={JsonConvert.SerializeObject(sResult)}", ex);
 
@@ -182,9 +193,9 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        private SurveyQuestionResultAnswer ConvertDto(SurveyQuestionResultAnswerDTO resultDTO, SurveyQuestionResultAnswer instance, SurveyQuestionResult result)
+        private SurveyQuestionResultAnswer ConvertDto(SurveyQuestionResultAnswerDTO resultDTO, SurveyQuestionResult result)
         {
-            instance = instance ?? new SurveyQuestionResultAnswer();
+            SurveyQuestionResultAnswer instance = new SurveyQuestionResultAnswer();
             instance.Value = resultDTO.value;
             instance.SurveyDistractorAnswer = resultDTO.surveyDistractorAnswerId.HasValue ? this.DistractorModel.GetOneById(resultDTO.surveyDistractorAnswerId.Value).Value : null;
             instance.SurveyDistractor = resultDTO.surveyDistractorId.HasValue ? this.DistractorModel.GetOneById(resultDTO.surveyDistractorId.Value).Value : null;
@@ -217,17 +228,11 @@ namespace EdugameCloud.WCFService
             foreach (var answerDTO in dto.answers)
             {
                 answerDTO.surveyQuestionResultId = result.Id;
-                ValidationResult distractorValidationResult;
-                if (this.IsValid(answerDTO, out distractorValidationResult))
+                if (IsValid(answerDTO, out ValidationResult distractorValidationResult))
                 {
-                    SurveyQuestionResultAnswer answer = null;
                     try
                     {
-                        var isAnswerTransient = answerDTO.surveyQuestionResultAnswerId == 0;
-                        answer = isAnswerTransient
-                                     ? null
-                                     : answerModel.GetOneById(answerDTO.surveyQuestionResultAnswerId).Value;
-                        answer = this.ConvertDto(answerDTO, answer, result);
+                        var answer = ConvertDto(answerDTO, result);
                         answerModel.RegisterSave(answer, true);
                     }
                     catch (Exception ex)

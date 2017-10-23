@@ -93,7 +93,7 @@
         {
             get
             {
-                return _lmsUserParametersModel ?? (_lmsUserParametersModel ?? IoC.Resolve<LmsUserParametersModel>());
+                return _lmsUserParametersModel ?? (_lmsUserParametersModel = IoC.Resolve<LmsUserParametersModel>());
             }
         }
 
@@ -125,7 +125,12 @@
                 //
 
                 Quiz quiz = this.QuizModel.GetOneById(quizResult.quizId).Value;
-                int acSessionId = this.ACSessionModel.GetOneById(quizResult.acSessionId).Value.With(x => x.Id);
+                ACSession acSession = ACSessionModel.GetOneById(quizResult.acSessionId).Value;
+                if (acSession == null)
+                {
+                    throw new ArgumentException($"There are not session with acSessionId : {quizResult.acSessionId}");
+                }
+                int acSessionId = acSession.With(x => x.Id);
 
                 CompanyEventQuizMapping companyEventQuizMapping = null;
                 if (eventQuizMappingId.HasValue && eventQuizMappingId.Value != 0)
@@ -145,6 +150,11 @@
                         await SaveAllAsync(appletResult, appletResultDTO.results);
                     }
                 }
+            }
+            catch (ArgumentException ex)
+            {
+                Logger.Error($"QuizResultService.SaveAll: {ex.Message}");
+                throw;
             }
             catch (Exception ex)
             {
@@ -221,7 +231,7 @@
             {
                 Question = resultDTO.question,
                 IsCorrect = resultDTO.isCorrect,
-                QuestionType = QuestionTypeModel.GetOneById(resultDTO.questionTypeId).Value,
+                QuestionType = QuestionTypeModel.GetById(resultDTO.questionTypeId),
                 QuizResult = quizResult,
                 QuestionRef = QuestionModel.GetOneById(resultDTO.questionId).Value
             };

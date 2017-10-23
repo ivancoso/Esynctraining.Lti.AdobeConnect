@@ -1,12 +1,11 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Caching;
     using Esynctraining.NHibernate;
     using Esynctraining.NHibernate.Queries;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class QuestionTypeModel : BaseModel<QuestionType, int>
     {
@@ -34,6 +33,10 @@
             });
         }
 
+        public QuestionType GetById(int id)
+        {
+            return GetAll().FirstOrDefault(x => x.Id == id);
+        }
     }
 
 }
