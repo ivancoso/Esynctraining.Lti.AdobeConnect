@@ -25,7 +25,7 @@ namespace EdugameCloud.WCFService.Contracts
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
-        Task SaveAll(QuizSummaryResultDTO quizResult);
+        Task<OperationResultDto> SaveAll(QuizSummaryResultDTO quizResult);
 
         [OperationContract]
         [FaultContract(typeof(Error))]

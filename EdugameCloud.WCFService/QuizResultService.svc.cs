@@ -1,4 +1,7 @@
-﻿namespace EdugameCloud.WCFService
+﻿using DotAmf.ServiceModel.Messaging;
+using DotNetOpenAuth.Messaging;
+
+namespace EdugameCloud.WCFService
 {
     using System;
     using System.Collections.Generic;
@@ -110,12 +113,14 @@
 
         #region Public Methods and Operators
 
-        public async Task SaveAll(QuizSummaryResultDTO quizResult)
+        public async Task<OperationResultDto> SaveAll(QuizSummaryResultDTO quizResult)
         {
             if (quizResult == null)
                 throw new ArgumentNullException(nameof(quizResult));
             if (quizResult.quizResults == null)
                 quizResult.quizResults = new QuizResultDTO[0];
+
+            IList<string> errorMessages = new List<string>();
 
             try
             {
@@ -124,7 +129,7 @@
                 var eventQuizMappingId = GetEventQuizMappingId(quizResult);
                 //
 
-                Quiz quiz = this.QuizModel.GetOneById(quizResult.quizId).Value;
+                Quiz quiz = QuizModel.GetOneById(quizResult.quizId).Value;
                 ACSession acSession = ACSessionModel.GetOneById(quizResult.acSessionId).Value;
                 if (acSession == null)
                 {
@@ -137,7 +142,10 @@
                     companyEventQuizMapping = EventQuizMappingModel.GetOneById(eventQuizMappingId.Value).Value;
 
                 if (!IsValid(quizResult, out ValidationResult validationSummaryDtoResult))
-                    return;
+                {
+                    errorMessages = UpdateResultToString(validationSummaryDtoResult);
+                    return OperationResultDto.Error(string.Join(";", errorMessages));
+                }
 
                 foreach (var appletResultDTO in quizResult.quizResults)
                 {
@@ -148,6 +156,10 @@
                         QuizResultModel.RegisterSave(appletResult);
 
                         await SaveAllAsync(appletResult, appletResultDTO.results);
+                    }
+                    else
+                    {
+                        errorMessages.AddRange(UpdateResultToString(validationResult));
                     }
                 }
             }
@@ -162,6 +174,11 @@
 
                 throw;
             }
+
+            if (errorMessages.Any())
+                return OperationResultDto.Error(string.Join(";", errorMessages));
+
+            return OperationResultDto.Success();
         }
 
         public async Task<EventQuizResultDTO> GetByGuid(Guid guid)
