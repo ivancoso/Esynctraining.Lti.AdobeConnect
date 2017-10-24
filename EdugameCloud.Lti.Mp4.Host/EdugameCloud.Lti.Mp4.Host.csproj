@@ -32,7 +32,7 @@
     <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.2" />
     <PackageReference Include="Esynctraining.Mp4Service.Tasks.Client" Version="1.0.2.3" />
-    <PackageReference Include="Esynctraining.Windsor" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Windsor" Version="1.0.0.3" />
     <PackageReference Include="FluentValidation" Version="7.1.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="1.1.3" />
