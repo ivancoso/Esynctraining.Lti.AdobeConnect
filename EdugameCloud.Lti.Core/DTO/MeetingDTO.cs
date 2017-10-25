@@ -49,7 +49,7 @@
         /// <summary>
         /// Internal eSyncTraining DB meeting record ID.
         /// </summary>
-        [Required]
+        //[Required] // todo: separate models and actions for create and update
         [DataMember]
         public long? Id { get; set; }
 
