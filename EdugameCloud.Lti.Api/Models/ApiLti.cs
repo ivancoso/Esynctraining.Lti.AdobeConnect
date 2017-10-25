@@ -37,6 +37,17 @@ namespace EdugameCloud.Lti.Api.Models
 
     }
 
+    [DataContract]
+    public class RecordingPasscodeRequestDto
+    {
+        /// <summary>
+        /// AC sco-id of the recording.
+        /// </summary>
+        [Required]
+        [DataMember]
+        public string RecordingId { get; set; }
+
+    }
 
     [DataContract]
     public sealed class SearchRequestDto : RequestDto

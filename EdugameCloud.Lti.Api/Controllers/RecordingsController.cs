@@ -239,7 +239,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("passcode")]
         [HttpPost]
         [LmsAuthorizeBase]
-        public virtual OperationResultWithData<string> GetRecordingPasscode([FromBody]RecordingRequestDto input)
+        public virtual OperationResultWithData<string> GetRecordingPasscode([FromBody]RecordingPasscodeRequestDto input)
         {
             try
             {
