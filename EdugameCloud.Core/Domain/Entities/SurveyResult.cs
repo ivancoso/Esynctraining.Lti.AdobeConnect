@@ -67,6 +67,9 @@
         /// </summary>
         public virtual int? LmsUserParametersId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the AC email.
+        /// </summary>
         public virtual string ACEmail { get; set; }
 
         #endregion

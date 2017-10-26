@@ -13,7 +13,7 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the email.
+        /// Gets or sets the AC email.
         /// </summary>
         public virtual string ACEmail { get; set; }
 

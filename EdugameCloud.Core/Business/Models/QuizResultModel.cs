@@ -59,6 +59,30 @@ namespace EdugameCloud.Core.Business.Models
             return this.Repository.FindOne(query);
         }
 
+        /// <summary>
+        /// The get one by ac session id and AcEmail.
+        /// </summary>
+        /// <param name="adobeConnectSessionId">
+        /// The adobe connect session id.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{QuizResult}"/>.
+        /// </returns>
+        public IFutureValue<QuizResult> GetOneByACSessionIdAndAcEmail(int adobeConnectSessionId, string email)
+        {
+            var query =
+                new DefaultQueryOver<QuizResult, int>().GetQueryOver()
+                    .Where(x => x.ACSessionId == adobeConnectSessionId)
+                    .AndRestrictionOn(x => x.ACEmail)
+                    .IsNotNull.AndRestrictionOn(x => x.ACEmail)
+                    .IsInsensitiveLike(email).Take(1);
+            return this.Repository.FindOne(query);
+        }
+
+
         public IFutureValue<QuizResult> GetOneByGuid(Guid guid)
         {
             var query = new DefaultQueryOver<QuizResult, int>().GetQueryOver()
