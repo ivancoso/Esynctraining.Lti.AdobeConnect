@@ -93,7 +93,10 @@ namespace EdugameCloud.WCFService
                     {
                         var appletResult = ConvertDto(appletResultDTO, test, acSessionId);
                         TestResultModel.RegisterSave(appletResult);
-                        SaveAll(appletResult, appletResultDTO.results);
+                        if (appletResultDTO.results != null)
+                        {
+                            SaveAll(appletResult, appletResultDTO.results);
+                        }
                     }
                 }
             }

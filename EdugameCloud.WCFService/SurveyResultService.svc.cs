@@ -137,7 +137,11 @@ namespace EdugameCloud.WCFService
                     {
                         var surveyResult = ConvertDto(surveyResultDTO, survey, acSessionId);
                         SurveyResultModel.RegisterSave(surveyResult);
-                        await SaveAllAsync(surveyResult, surveyResultDTO.results);
+
+                        if (surveyResultDTO.results != null)
+                        {
+                            await SaveAllAsync(surveyResult, surveyResultDTO.results);
+                        }
                     }
                 }
             }

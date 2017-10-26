@@ -155,7 +155,10 @@ namespace EdugameCloud.WCFService
                         var appletResult = ConvertDto(appletResultDTO, quiz, acSessionId, companyEventQuizMapping);
                         QuizResultModel.RegisterSave(appletResult);
 
-                        await SaveAllAsync(appletResult, appletResultDTO.results);
+                        if (appletResultDTO.results != null)
+                        {
+                            await SaveAllAsync(appletResult, appletResultDTO.results);
+                        }
                     }
                     else
                     {
