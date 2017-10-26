@@ -894,20 +894,24 @@
                         var details =
                             new[] { acSession }.Select(
                                 s =>
-                                new
+                                {
+                                    var players = sessionResults[s].players.Where(p => p.score > 0);
+                                    return new
                                     {
                                         acSessionId,
                                         totalQuestions = s.TotalQuestion,
                                         s.TotalScore,
                                         total = s.totalParticipants,
                                         active = s.activeParticipants,
-                                        averageScore =
-                                    sessionResults[s].players.Where(p => p.score > 0).Average(p => p.score),
-                                        averageTime =
-                                    (long)
-                                    sessionResults[s].players.Where(p => p.score > 0)
-                                        .Average(p => (p.endTime.ConvertFromUnixTimeStamp() - p.startTime.ConvertFromUnixTimeStamp()).Ticks)
-                                    }).ToList();
+                                        averageScore = players.Any() ? players.Average(p => p.score) : 0,
+                                        averageTime = players.Any()
+                                            ? (long) players.Average(
+                                                p =>
+                                                    (p.endTime.ConvertFromUnixTimeStamp() -
+                                                     p.startTime.ConvertFromUnixTimeStamp()).Ticks)
+                                            : 0
+                                    };
+                                }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
                     };
 
