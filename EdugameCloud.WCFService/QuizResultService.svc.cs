@@ -135,7 +135,7 @@ namespace EdugameCloud.WCFService
                 {
                     throw new ArgumentException($"There are not session with acSessionId : {quizResult.acSessionId}");
                 }
-                int acSessionId = acSession.With(x => x.Id);
+                int acSessionId = acSession.Id;
 
                 CompanyEventQuizMapping companyEventQuizMapping = null;
                 if (eventQuizMappingId.HasValue && eventQuizMappingId.Value != 0)
@@ -143,7 +143,7 @@ namespace EdugameCloud.WCFService
 
                 if (!IsValid(quizResult, out ValidationResult validationSummaryDtoResult))
                 {
-                    errorMessages = UpdateResultToString(validationSummaryDtoResult);
+                    errorMessages = UpdateResultToShortString(validationSummaryDtoResult);
                     return OperationResultDto.Error(string.Join(";", errorMessages));
                 }
 
@@ -162,13 +162,13 @@ namespace EdugameCloud.WCFService
                     }
                     else
                     {
-                        errorMessages.AddRange(UpdateResultToString(validationResult));
+                        errorMessages.AddRange(UpdateResultToShortString(validationResult));
                     }
                 }
             }
             catch (ArgumentException ex)
             {
-                Logger.Error($"QuizResultService.SaveAll: {ex.Message}");
+                Logger.Error("QuizResultService.SaveAll:", ex);
                 throw;
             }
             catch (Exception ex)
@@ -178,10 +178,9 @@ namespace EdugameCloud.WCFService
                 throw;
             }
 
-            if (errorMessages.Any())
-                return OperationResultDto.Error(string.Join(";", errorMessages));
-
-            return OperationResultDto.Success();
+            return errorMessages.Any() 
+                ? OperationResultDto.Error(string.Join(";", errorMessages)) 
+                : OperationResultDto.Success();
         }
 
         public async Task<EventQuizResultDTO> GetByGuid(Guid guid)

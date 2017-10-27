@@ -59,6 +59,7 @@
 
         /// <summary>
         /// Gets or sets the email.
+        /// This field is populated if a user passed the survey on a record.
         /// </summary>
         public virtual string Email { get; set; }
 
@@ -69,6 +70,7 @@
 
         /// <summary>
         /// Gets or sets the AC email.
+        /// This field is populated if a registered in AdobeConnect user passed the survey either online or on a record.
         /// </summary>
         public virtual string ACEmail { get; set; }
 

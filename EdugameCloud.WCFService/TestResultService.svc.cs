@@ -84,7 +84,7 @@ namespace EdugameCloud.WCFService
                     throw new ArgumentException($"There are not session with acSessionId : {testResult.acSessionId}");
                 }
                 
-                int acSessionId = acSession.With(x => x.Id);
+                int acSessionId = acSession.Id;
 
                 foreach (var appletResultDTO in testResult.testResults)
                 {
@@ -102,7 +102,7 @@ namespace EdugameCloud.WCFService
             }
             catch (ArgumentException ex)
             {
-                Logger.Error($"TestResultService.SaveAll: {ex.Message}");
+                Logger.Error("TestResultService.SaveAll: ", ex);
                 throw;
             }
             catch (Exception ex)

@@ -390,7 +390,21 @@
 
             return list;
         }
-        
+
+        protected List<string> UpdateResultToShortString(ValidationResult validationResult)
+        {
+            var result = new List<string>();
+            var list = UpdateResultToString(validationResult);
+
+            foreach (var item in list)
+            {
+                var errorDetails = item.Split(new[] { "#_#" }, StringSplitOptions.RemoveEmptyEntries);
+                result.Add(errorDetails.ElementAtOrDefault(1));
+            }
+
+            return result;
+        }
+
         protected void SaveHistory<TModel>(
             bool mailWasSentSuccessfully,
             string toName, string toEmail, 
