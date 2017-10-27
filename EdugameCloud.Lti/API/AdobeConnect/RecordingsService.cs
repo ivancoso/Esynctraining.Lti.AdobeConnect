@@ -264,7 +264,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new Core.WarningMessageException("Your passcode must be 4 to 12 characters long (letters or numbers)");
             }
 
-            provider.UpdatePublicAccessPermissions(id, isPublic ? PermissionId.view : PermissionId.remove);
+            provider.UpdatePublicAccessPermissions(id, isPublic ? PermissionId.view : PermissionId.view_denied);
             provider.UpdateAclFieldWithPasscode(id, AclFieldId.meeting_passcode, password, !string.IsNullOrEmpty(password));
             
             var recordingUrl = (lmsCompany.AcServer.EndsWith("/")
