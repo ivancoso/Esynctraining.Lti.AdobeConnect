@@ -15,8 +15,6 @@
     using Esynctraining.Core.Extensions;
 
     using Newtonsoft.Json;
-    using EdugameCloud.HttpClient;
-    using System.Net.Http;
 
     /// <summary>
     /// The canvas client.
@@ -67,7 +65,6 @@
         /// </summary>
         private static readonly Dictionary<string, string> userCanvasUrlCache = new Dictionary<string, string>();
 
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
         #endregion
 
         #region Fields
@@ -247,7 +244,7 @@
                 var canvasUrl = urls.FirstOrDefault();
                 var redirectUrl = urls.ElementAtOrDefault(1).Return(x => x, returnUrl.AbsoluteUri);
 
-                var parameters = new Dictionary<string, string>()
+                var parameters = new NameValueCollection
                 {
                     { "grant_type", "authorization_code"}, //marked as required by Canvas but worked without it
                     { "client_id", this.appId },
@@ -256,42 +253,60 @@
                     { "code", authorizationCode },
                 };
 
-                try
+                using (var client = new WebClient())
                 {
-                    var canvasGetTokenUrl = string.Format(TokenEndpoint, canvasUrl);
-                    var httpClientWrapper = new HttpClientWrapper();
-                    var data = httpClientWrapper.PostValuesAsync(canvasGetTokenUrl, parameters).Result;
-
-                    if (string.IsNullOrEmpty(data))
+                    try
                     {
-                        throw new Exception("data is empty");
+                        var canvasGetTokenUrl = string.Format(TokenEndpoint, canvasUrl);
+                        var response = client.UploadValues(canvasGetTokenUrl, "POST", parameters);
+                        var data = Encoding.Default.GetString(response);
+
+                        if (string.IsNullOrEmpty(data))
+                        {
+                            throw new Exception("data is empty");
+                        }
+
+                        var authResponse = JsonConvert.DeserializeObject<CanvasAuthResponse>(data);
+
+                        if (authResponse == null)
+                        {
+                            throw new Exception("auth response == null " + data);
+                        }
+
+                        if (!userCanvasUrlCache.ContainsKey(authResponse.access_token))
+                        {
+                            userCanvasUrlCache.Add(authResponse.access_token, canvasUrl);
+                        }
+
+                        if (authResponse.user != null && !userDataCache.ContainsKey(authResponse.access_token))
+                        {
+                            userDataCache.Add(authResponse.access_token, authResponse.user);
+                        }
+
+                        return authResponse.access_token;
                     }
-
-                    var authResponse = JsonConvert.DeserializeObject<CanvasAuthResponse>(data);
-
-                    if (authResponse == null)
+                    catch (WebException ex)
                     {
-                        throw new Exception("auth response == null " + data);
-                    }
+                        var response = ex.Response.GetResponseStream();
+                        if (response != null)
+                        {
+                            var reader = new StreamReader(response);
+                            string line;
+                            var result = new StringBuilder();
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                result.Append(line);
+                            }
 
-                    if (!userCanvasUrlCache.ContainsKey(authResponse.access_token))
-                    {
-                        userCanvasUrlCache.Add(authResponse.access_token, canvasUrl);
-                    }
+                            var error = result.ToString();
+                            throw new ApplicationException(error);
+                        }
 
-                    if (authResponse.user != null && !userDataCache.ContainsKey(authResponse.access_token))
-                    {
-                        userDataCache.Add(authResponse.access_token, authResponse.user);
+                        throw new ApplicationException(ex.ToString());
                     }
-
-                    return authResponse.access_token;
-                }
-                catch (HttpRequestException ex)
-                {
-                    throw new ApplicationException(ex.ToString());
                 }
             }
-            
+
             if (collection.HasKey("error"))
             {
                 throw new ApplicationException(collection["error"]);
