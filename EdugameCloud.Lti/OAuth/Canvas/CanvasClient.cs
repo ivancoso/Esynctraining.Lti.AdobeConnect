@@ -259,7 +259,8 @@
                 try
                 {
                     var canvasGetTokenUrl = string.Format(TokenEndpoint, canvasUrl);
-                    var data = _httpClientWrapper.PostValuesAsync(canvasGetTokenUrl, parameters).Result;
+                    var httpClientWrapper = new HttpClientWrapper();
+                    var data = httpClientWrapper.PostValuesAsync(canvasGetTokenUrl, parameters).Result;
 
                     if (string.IsNullOrEmpty(data))
                     {
