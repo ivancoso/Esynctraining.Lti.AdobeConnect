@@ -335,6 +335,7 @@ namespace EdugameCloud.Lti.Controllers
         
         [HttpPost]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
+        [ValidateInput(false)]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
         {
             var methodTime = Stopwatch.StartNew();
