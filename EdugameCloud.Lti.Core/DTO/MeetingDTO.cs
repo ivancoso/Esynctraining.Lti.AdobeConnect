@@ -11,11 +11,11 @@
     [DataContract]
     public class MeetingDTOInput : MeetingDTO
     {
-        [Required]
+        //[Required]
         [DataMember]
         public string StartDate { get; set; }
 
-        [Required]
+        //[Required]
         [DataMember]
         public string StartTime { get; set; }
 

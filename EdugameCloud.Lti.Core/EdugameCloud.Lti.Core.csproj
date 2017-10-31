@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.6" />
+    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.10" />
     <PackageReference Include="Esynctraining.Crypto" Version="1.0.2" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
