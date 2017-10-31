@@ -25,7 +25,7 @@ namespace Esynctraining.AdobeConnect.Api.Meeting.Dto
         /// <summary>
         /// Duration in format "h\:mm"
         /// </summary>
-        [Required]
+        //[Required]
         [DataMember]
         public string Duration { get; set; }
 
@@ -44,7 +44,7 @@ namespace Esynctraining.AdobeConnect.Api.Meeting.Dto
         /// <summary>
         /// Unix timestamp value of meeting start date\time.
         /// </summary>
-        [Required]
+        //[Required]
         [DataMember]
         public long StartTimeStamp { get; set; }
 
