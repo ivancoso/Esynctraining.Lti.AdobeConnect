@@ -151,7 +151,18 @@
                     }
 
                     EnsureServicePathConfigExists(physicalPath);
-                    return this.RedirectToAction(EdugameCloudT4.BuildDeliver.Public(publicBuild));
+
+                    var file = new FileInfo(Path.Combine(Server.MapPath(PublicFolderPath), physicalPath));
+                    if (file.Exists)
+                    {
+                        return File(file.FullName,
+                            file.Extension.EndsWith("ZIP", StringComparison.OrdinalIgnoreCase)
+                                ? "application/zip"
+                                : "application/x-shockwave-flash",
+                            file.Name);
+                    }
+
+                    return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                 }
             }
             catch (Exception ex)
@@ -216,7 +227,18 @@
                     }
 
                     EnsureServicePathConfigExists(physicalPath);
-                    return this.RedirectToAction(EdugameCloudT4.BuildDeliver.Public(publicBuild));
+
+                    var file = new FileInfo(Path.Combine(Server.MapPath(PublicFolderPath), publicBuild));
+                    if (file.Exists)
+                    {
+                        return File(file.FullName,
+                            file.Extension.EndsWith("ZIP", StringComparison.OrdinalIgnoreCase)
+                                ? "application/zip"
+                                : "application/x-shockwave-flash",
+                            file.Name);
+                    }
+
+                    return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                 }
             }
             catch (Exception ex)
