@@ -31,6 +31,7 @@ namespace Esynctraining.Ip.WebApi.Host
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddCors()
                 .AddMvcCore(setup =>
                 {
                     while (setup.InputFormatters.Count > 0)
