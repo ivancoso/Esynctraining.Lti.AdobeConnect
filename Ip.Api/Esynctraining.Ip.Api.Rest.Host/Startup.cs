@@ -1,4 +1,5 @@
-﻿using Esynctraining.AspNetCore.Filters;
+﻿using System;
+using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Microsoft.AspNetCore.Builder;
@@ -73,6 +74,13 @@ namespace Esynctraining.Ip.WebApi.Host
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(builder =>
+                builder
+                    .WithOrigins("*")
+                    .WithMethods("GET", "POST")
+                    .WithHeaders("Authorization", "X-Requested-With", "Content-Type", "Accept", "Origin")
+                    .SetPreflightMaxAge(TimeSpan.FromDays(1)));
 
             app.UseMvc();
 
