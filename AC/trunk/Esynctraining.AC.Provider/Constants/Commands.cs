@@ -274,6 +274,11 @@
             public const string SeminarLicensesList = "sco-seminar-licenses-list";
         }
 
+        internal static class VirtualClassroom
+        {
+            public const string VirtualClassroomLicenseModelUpdate = "virtual-classroom-license-model-update";
+        }
+
         internal static class CustomField
         {
             public static readonly string CustomFields = "custom-fields";

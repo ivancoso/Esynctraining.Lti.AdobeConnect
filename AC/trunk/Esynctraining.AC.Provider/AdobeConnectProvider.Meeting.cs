@@ -95,7 +95,17 @@
 
             return this.GetPermissionsInfo(meetingId, filter.ToString()).ConvertForMeeting();
         }
- 
+
+        public StatusInfo UpdateVirtualClassroomLicenseModel(string scoId, bool enableNamedVcLicenseModel)
+        {
+            StatusInfo status;
+
+            this.requestProcessor.Process(Commands.VirtualClassroom.VirtualClassroomLicenseModelUpdate, 
+                string.Format(CommandParams.VirtualClassroom.LicenseModelUpdate, scoId, enableNamedVcLicenseModel.ToString().ToLower()), out status);
+
+            return status;
+        }
+
     }
 
 }

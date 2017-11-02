@@ -303,6 +303,11 @@
             public static readonly string Delete = "field-id={0}&object-type={1}";
 
         }
+
+        internal static class VirtualClassroom
+        {
+            public const string LicenseModelUpdate = "sco-id={0}&named-vc-model={1}";
+        }
     }
 
 }

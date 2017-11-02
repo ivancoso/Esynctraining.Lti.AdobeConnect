@@ -1010,7 +1010,6 @@ namespace Esynctraining.AdobeConnect
             return result;
         }
 
-
         public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
         {
             StatusInfo result;
@@ -1124,7 +1123,23 @@ namespace Esynctraining.AdobeConnect
 
             return result;
         }
-        
+
+        public StatusInfo UpdateVirtualClassroomLicenseModel(string scoId, bool enableNamedVcLicenseModel)
+        {
+            StatusInfo result;
+            try
+            {
+                result = _provider.UpdateVirtualClassroomLicenseModel(scoId, enableNamedVcLicenseModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw new AdobeConnectException("UpdateVirtualClassroomLicenseModel exception", ex);
+            }
+
+            return result;
+        }
+
         public StatusInfo UploadContent(UploadScoInfo uploadScoInfo)
         {
             return Execute(() => { return _provider.UploadContent(uploadScoInfo); }, uploadScoInfo.scoId);
