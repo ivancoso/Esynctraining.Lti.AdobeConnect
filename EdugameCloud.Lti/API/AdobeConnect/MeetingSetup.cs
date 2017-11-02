@@ -632,8 +632,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                     // NOTE: for meeting we need users to add to AC meeting;
                     // For StudyGroup - to be sure we can get them on 2nd tab (and reuse them if retrieveLmsUsers==true)
-                if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
-                    || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom)
+                    if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
+                        || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom)
                         || (meeting.LmsMeetingType == (int) LmsMeetingType.StudyGroup)
                         || (meeting.LmsMeetingType == (int) LmsMeetingType.Seminar))
                     {
@@ -698,10 +698,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         (result.Status.InvalidField == "url-path"))
                         return OperationResult.Error(Resources.Messages.MeetingNotUniqueUrlPath);
 
-                if ((result.Status.SubCode == StatusSubCodes.denied))
-                    return OperationResult.Error(Resources.Messages.AdobeConnectDeniedErrorMessage);
+                    if ((result.Status.SubCode == StatusSubCodes.denied))
+                        return OperationResult.Error(Resources.Messages.AdobeConnectDeniedErrorMessage);
 
                     return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
+                }
+
+                if (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom)
+                {
+                    // NOTE: ACLTI-1071 Cannot login to VC's from LTI (TMF-Group)
+                    // NOTE: ignore result
+                    provider.UpdateVirtualClassroomLicenseModel(result.ScoInfo.ScoId, false);
                 }
 
                 bool audioProfileProccesed = ProcessAudio(lmsCompany, param, isNewMeeting, meetingDTO, updateItem.Name,
