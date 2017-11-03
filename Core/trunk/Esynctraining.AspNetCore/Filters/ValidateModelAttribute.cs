@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using Esynctraining.Core.Domain;
@@ -48,27 +49,34 @@ namespace Esynctraining.AspNetCore.Filters
                 Message = "Validation Failed";
 
                 Errors = modelState.Keys
-                        .SelectMany(key => modelState[key].Errors.Select(x => new ValidationError(key, x.ErrorMessage)))
+                        .SelectMany(key => modelState[key].Errors.Select(x => new ValidationError(ToCamelCase(key), x.ErrorMessage)))
                         .ToArray();
             }
 
+            private static string ToCamelCase(string key)
+            {
+                if (string.IsNullOrWhiteSpace(key))
+                    return key;
+
+                return string.Join(".", key.Split('.').Select(n => Char.ToLowerInvariant(n[0]) + n.Substring(1)));
+            }
         }
 
         private readonly ILogger _logger;
         private readonly IJsonSerializer _errorSerializer;
-        private readonly bool _isDevelopment;
+        private readonly bool _showValidationErrors;
 
 
         public ValidateModelAttribute(ILoggerFactory loggerFactory,
             IJsonSerializer errorSerializer,
-            bool isDevelopment)
+            bool showValidationErrors)
         {
             if (loggerFactory == null)
                 throw new ArgumentNullException(nameof(loggerFactory));
 
             _logger = loggerFactory.CreateLogger("ModelValidation");
             _errorSerializer = errorSerializer ?? throw new ArgumentNullException(nameof(errorSerializer));
-            _isDevelopment = isDevelopment;
+            _showValidationErrors = showValidationErrors;
         }
 
 
@@ -81,7 +89,7 @@ namespace Esynctraining.AspNetCore.Filters
                 // TODO: DI!!!
                 _logger.LogError("ModelValidation. {0}.", _errorSerializer.JsonSerialize(validationErrorModel));
 
-                if (!_isDevelopment)
+                if (!_showValidationErrors)
                     validationErrorModel.Errors = null;
 
                 context.Result = new ObjectResult(validationErrorModel);

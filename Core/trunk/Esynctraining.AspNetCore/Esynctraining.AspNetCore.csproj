@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.0.0.0</Version>
+    <Version>2.0.0.1</Version>
     <Copyright>Copyright © 2017 eSyncTraining.com</Copyright>
     <Description>Contains basic webapi stuff (global exception filter, Jil formatters etc)  and Esync ILogger wrapper (which is basic for all nuget packages)</Description>
     <Authors>Esynctraining</Authors>
     <Company>Esynctraining</Company>
-    <PackageReleaseNotes>core 2.0</PackageReleaseNotes>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
+    <PackageReleaseNotes>camelCase for ValidateModelAttribute</PackageReleaseNotes>
+    <AssemblyVersion>2.0.0.1</AssemblyVersion>
+    <FileVersion>2.0.0.1</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
