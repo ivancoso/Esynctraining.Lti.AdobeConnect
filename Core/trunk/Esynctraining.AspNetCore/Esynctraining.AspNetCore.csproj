@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.0.0.2</Version>
+    <Version>2.0.0.3</Version>
     <Copyright>Copyright © 2017 eSyncTraining.com</Copyright>
     <Description>Contains basic webapi stuff (global exception filter, Jil formatters etc)  and Esync ILogger wrapper (which is basic for all nuget packages)</Description>
     <Authors>Esynctraining</Authors>
     <Company>Esynctraining</Company>
-    <PackageReleaseNotes>GlobalExceptionFilterAttribute added properties for messages resources</PackageReleaseNotes>
-    <AssemblyVersion>2.0.0.2</AssemblyVersion>
-    <FileVersion>2.0.0.2</FileVersion>
+    <PackageReleaseNotes>+ IpAddressRouteConstraint</PackageReleaseNotes>
+    <AssemblyVersion>2.0.0.3</AssemblyVersion>
+    <FileVersion>2.0.0.3</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
