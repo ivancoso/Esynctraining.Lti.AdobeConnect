@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Resources;
 using Esynctraining.Core;
 using Esynctraining.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +15,63 @@ namespace Esynctraining.AspNetCore.Filters
         private readonly ILogger _logger;
         private readonly bool _isDevelopment;
 
+        private readonly string _exceptionOccuredMessageResourceName;
+        private readonly string _exceptionMessageResourceName;
+        public Type _exceptionMessageResourceType;
+
+        private ResourceManager _resourceMan;
+        private ResourceManager ResourceManager
+        {
+            get
+            {
+                if (_resourceMan == null)
+                {
+                    ResourceManager temp = new ResourceManager(_exceptionMessageResourceType.FullName, _exceptionMessageResourceType.Assembly);
+                    _resourceMan = temp;
+                }
+                return _resourceMan;
+            }
+        }
+
+        private string ExceptionMessage
+        {
+            get
+            {
+                return ResourceManager.GetString(_exceptionMessageResourceName);
+            }
+        }
+
+        private string ExceptionOccuredMessage
+        {
+            get
+            {
+                return ResourceManager.GetString(_exceptionOccuredMessageResourceName);
+            }
+        }
 
         public GlobalExceptionFilterAttribute(ILoggerFactory loggerFactory, bool isDevelopment)
+            : this(loggerFactory, isDevelopment, typeof(Resources.Messages), "ExceptionOccured", "ExceptionMessage")
+        {
+            
+        }
+
+        public GlobalExceptionFilterAttribute(
+            ILoggerFactory loggerFactory, 
+            bool isDevelopment, 
+            Type exceptionMessageResourceType, 
+            string exceptionOccuredMessageResourceName,
+            string exceptionMessageResourceName)
         {
             if (loggerFactory == null)
                 throw new ArgumentNullException(nameof(loggerFactory));
 
             _logger = loggerFactory.CreateLogger("GlobalExceptionFilter");
             _isDevelopment = isDevelopment;
-        }
 
+            _exceptionOccuredMessageResourceName = exceptionOccuredMessageResourceName ?? throw new ArgumentNullException(nameof(exceptionOccuredMessageResourceName));
+            _exceptionMessageResourceName = exceptionMessageResourceName ?? throw new ArgumentNullException(nameof(exceptionMessageResourceName));
+            _exceptionMessageResourceType = exceptionMessageResourceType ?? throw new ArgumentNullException(nameof(exceptionMessageResourceType));
+        }
 
         public override void OnException(ExceptionContext context)
         {
@@ -39,8 +87,8 @@ namespace Esynctraining.AspNetCore.Filters
                 _logger.LogError("GlobalExceptionFilter. {0}.", context.Exception);
 
                 message = _isDevelopment
-                    ? Resources.Messages.ExceptionOccured + context.Exception.ToString()
-                    : Resources.Messages.ExceptionMessage;
+                    ? ExceptionOccuredMessage + context.Exception.ToString()
+                    : ExceptionMessage;
             }
 
             context.Result = new ObjectResult(OperationResult.Error(message));
