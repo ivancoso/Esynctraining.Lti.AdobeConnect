@@ -60,11 +60,10 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
                              sessionNumber = index,
                              //sessionName = index.ToString(CultureInfo.CurrentCulture)
                          }).ToList();
+
                 sessions.AddRange(
-                    sessionList.Select(
-                        s => new MeetingSession { AssetId = s.assetId.ToString(CultureInfo.CurrentCulture) }));
-
-
+                    sessionList.Select(s => new MeetingSession { AssetId = s.assetId.ToString(CultureInfo.CurrentCulture) }));
+                
                 foreach (var sco in sessions)
                 {
                     var session = sessionList.FirstOrDefault(s => s.assetId == sco.AssetId);
@@ -74,6 +73,9 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
                         session = new ACSessionDto(sco, timeZone);
                         sessionList.Add(session);
                     }
+
+                    if (!userSessions.ContainsKey(session.assetId))
+                        throw new IndexOutOfRangeException($"User session not found for session = {session.assetId}, meetindId = {meetingId}.");
 
                     foreach (var us in userSessions[session.assetId])
                     {
