@@ -4,13 +4,9 @@ using PDFAnnotation.Core.Domain.Entities;
 
 namespace PDFAnnotation.Core.Business.Models
 {
-    /// <summary>
-    /// The drawing entity.
-    /// </summary>
     [Serializable]
     public class ATAnnotation : Entity
     {
-        #region Public Properties
         /// <summary>
         /// Gets or sets the mark.
         /// </summary>
@@ -65,7 +61,6 @@ namespace PDFAnnotation.Core.Business.Models
         /// </summary>
         public virtual string CreatedBy { get; set; }
 
-        #endregion
-
     }
+
 }

@@ -1,8 +1,5 @@
 ﻿namespace PDFAnnotation.Core.Domain.Entities
 {
-    /// <summary>
-    /// The image status.
-    /// </summary>
     public enum FileStatus
     {
         /// <summary>
@@ -33,6 +30,8 @@
         /// <summary>
         /// The failed.
         /// </summary>
-        Failed = 6
+        Failed = 6,
+
     }
+
 }

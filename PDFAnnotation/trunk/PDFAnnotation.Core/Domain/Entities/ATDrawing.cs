@@ -9,8 +9,6 @@
     [Serializable]
     public class ATDrawing : Entity
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the mark.
         /// </summary>
@@ -26,6 +24,6 @@
         /// </summary>
         public virtual string Points { get; set; }
 
-        #endregion
     }
+
 }

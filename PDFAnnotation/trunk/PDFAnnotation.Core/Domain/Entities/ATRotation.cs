@@ -9,8 +9,6 @@
     [Serializable]
     public class ATRotation : Entity
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the mark.
         /// </summary>
@@ -21,6 +19,6 @@
         /// </summary>
         public virtual int Angle { get; set; }
 
-        #endregion
     }
+
 }

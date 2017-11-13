@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Esynctraining.Core.Domain.Entities;
 using PDFAnnotation.Core.Business.Models;
 
 namespace PDFAnnotation.Core.Domain.Entities
 {
-    using System;
-    using Esynctraining.Core.Domain.Entities;
-    using Iesi.Collections.Generic;
-
     /// <summary>
     /// The mark entity.
     /// </summary>

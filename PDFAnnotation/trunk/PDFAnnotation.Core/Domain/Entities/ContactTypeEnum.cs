@@ -1,15 +1,7 @@
 ﻿namespace PDFAnnotation.Core.Domain.Entities
 {
-    /// <summary>
-    ///     The product type enumeration
-    /// </summary>
     public enum ContactTypeEnum
     {
-//        /// <summary>
-//        /// The super admin.
-//        /// </summary>
-//        SuperAdmin = 1, 
-
         /// <summary>
         /// The company admin.
         /// </summary>
@@ -23,6 +15,8 @@
         /// <summary>
         /// Any role
         /// </summary>
-        Any = 100500
+        Any = 100500,
+
     }
+
 }

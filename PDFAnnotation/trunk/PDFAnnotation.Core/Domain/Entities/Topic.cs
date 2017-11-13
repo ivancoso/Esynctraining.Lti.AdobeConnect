@@ -16,7 +16,6 @@ namespace PDFAnnotation.Core.Domain.Entities
     [Serializable]
     public class Topic : Entity
     {
-
         /// <summary>
         /// The files.
         /// </summary>

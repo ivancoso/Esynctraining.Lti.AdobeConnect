@@ -8,6 +8,8 @@
         /// <summary>
         /// The clear files.
         /// </summary>
-        ClearFiles = 0
+        ClearFiles = 0,
+
     }
+
 }

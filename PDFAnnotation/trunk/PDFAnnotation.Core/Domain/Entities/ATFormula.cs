@@ -3,14 +3,9 @@
     using System;
     using Esynctraining.Core.Domain.Entities;
 
-    /// <summary>
-    /// The drawing entity.
-    /// </summary>
     [Serializable]
     public class ATFormula : Entity
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the mark.
         /// </summary>
@@ -41,7 +36,6 @@
         /// </summary>
         public virtual float Height { get; set; }
 
-
-        #endregion
     }
+
 }

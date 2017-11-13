@@ -1,16 +1,13 @@
 ﻿namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
-
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     The address.
+    /// The address.
     /// </summary>
     public class Address : Entity
     {
-        #region Public Properties
-
         /// <summary>
         ///     Gets or sets the address 1.
         /// </summary>
@@ -56,6 +53,6 @@
         /// </summary>
         public virtual State State { get; set; }
 
-        #endregion
     }
+
 }
