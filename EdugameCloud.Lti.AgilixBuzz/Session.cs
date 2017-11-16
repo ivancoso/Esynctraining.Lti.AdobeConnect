@@ -105,16 +105,23 @@
         /// <returns>
         /// XML results
         /// </returns>
-        public XElement Get(string cmd, params string[] parameters)
+        public XElement Get(string cmd, Dictionary<string, string> parameters = null)
         {
-            string query = "?cmd=" + cmd;
-            for (int index = 0; index + 1 < parameters.Length; index += 2)
+            StringBuilder query = new StringBuilder("?cmd=" + cmd);
+
+            if (parameters != null)
             {
-                query += "&" + parameters[index] + "=" + parameters[index + 1];
+                foreach (var param in parameters)
+                {
+                    query.Append("&");
+                    query.Append(param.Key);
+                    query.Append("=");
+                    query.Append(param.Value);
+                }
             }
 
-            TraceRequest(query, null);
-            return ReadResponse(this.Request(query, null, null, Timeout));
+            TraceRequest(query.ToString(), null);
+            return ReadResponse(this.Request(query.ToString(), null, null, Timeout));
         }
 
         /// <summary>

@@ -123,8 +123,7 @@
                 session,
                 s =>
                 s.Get(
-                    Commands.Courses.GetOne,
-                    string.Format(Parameters.Courses.GetOne, courseid).ToParams()),
+                    Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseid).ToDictionary()),
                     company,
                     out error);
 
@@ -145,9 +144,7 @@
             XElement enrollmentsResult = this.LoginIfNecessary(
                 session, 
                 s =>
-                s.Get(
-                    Commands.Enrollments.List, 
-                    string.Format(Parameters.Enrollments.List, domainId, courseid).ToParams()), 
+                s.Get(Commands.Enrollments.List, string.Format(Parameters.Enrollments.List, domainId, courseid).ToDictionary()), 
                     company,
                     out error);
             if (enrollmentsResult == null)
@@ -594,7 +591,6 @@
         }
 
         #endregion
-
     }
 
 }

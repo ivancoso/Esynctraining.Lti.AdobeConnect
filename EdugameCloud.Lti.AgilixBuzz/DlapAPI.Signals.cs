@@ -474,7 +474,7 @@
             XElement courseResult = this.LoginIfNecessary(
                 session,
                 s =>
-                s.Get(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToParams()),
+                s.Get(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToDictionary()),
                 company,
                 out error);
 
@@ -541,7 +541,7 @@
             XElement enrollmentResult = this.LoginIfNecessary(
                 session,
                 s =>
-                s.Get(Commands.Enrollments.GetOne, string.Format(Parameters.Enrollments.GetOne, enrollmentId).ToParams()),
+                s.Get(Commands.Enrollments.GetOne, string.Format(Parameters.Enrollments.GetOne, enrollmentId).ToDictionary()),
                 company,
                 out error);
             if (enrollmentResult == null)
@@ -596,8 +596,7 @@
                 session,
                 s =>
                 s.Get(
-                    Commands.Signals.List,
-                    string.Format(Parameters.Signals.List, company.LastSignalId, s.DomainId, types).ToParams()),
+                    Commands.Signals.List, string.Format(Parameters.Signals.List, company.LastSignalId, s.DomainId, types).ToDictionary()),
                 company,
                     out error);
             if (signalsResult == null)
