@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.AgilixBuzz
+﻿using System.Collections.Generic;
+
+namespace EdugameCloud.Lti.AgilixBuzz
 {
     using System;
     using System.IO;
