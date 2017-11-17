@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.WCFService
+﻿using System.Web;
+
+namespace EdugameCloud.WCFService
 {
     using System;
     using System.Collections.Generic;
@@ -13,8 +15,6 @@
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
-    using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
@@ -44,7 +44,9 @@
             foreach (var appletResultDTO in results)
             {
                 ValidationResult validationResult;
-                if (IsValid(appletResultDTO, out validationResult))
+                string xmlValidationResult = null;
+                var isValidDto = IsValid(appletResultDTO, out validationResult);
+                if (isValidDto && ValidateAgainstVCFProfileSchema(appletResultDTO.participantProfile, out xmlValidationResult))
                 {
                     var isTransient = appletResultDTO.snMemberId == 0;
                     var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.snMemberId).Value;
@@ -54,7 +56,14 @@
                 }
                 else
                 {
-                    faults.AddRange(UpdateResultToString(validationResult));
+                    if (!isValidDto)
+                    {
+                        faults.AddRange(UpdateResultToString(validationResult));
+                    }
+                    if (!string.IsNullOrEmpty(xmlValidationResult))
+                    {
+                        faults.Add(xmlValidationResult);
+                    }
                 }
             }
 
@@ -96,6 +105,12 @@
             return instance;
         }
 
+        //todo
+        private bool ValidateAgainstVCFProfileSchema(string xml, out string validationError)
+        {
+            var xsdFileName = HttpContext.Current.Server.MapPath(VirtualPathUtility.ToAbsolute("~/Content/xsd/vcfProfile.xsd"));
+            return XsdValidator.ValidateXmlAgainsXsd(xml, xsdFileName, out validationError);
+        }
         #endregion
 
     }
