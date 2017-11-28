@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Castle.Components.DictionaryAdapter;
 using EdugameCloud.Lti.API.Haiku;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
@@ -93,5 +94,54 @@ namespace EdugameCloud.Lti.Haiku
                 return false;
             }
         }
+
+        public List<LmsCourseSectionDTO> GetCourseSections(ILmsLicense lmsCompany, int courseId, out string error)
+        {
+            try
+            {
+                var consumerKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerKey);
+                var consumerSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerSecret);
+                var token = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
+                var tokenSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
+
+                var scheme = lmsCompany.UseSSL.GetValueOrDefault() ? HttpScheme.Https : HttpScheme.Http;
+                var lmsDomain = $"{scheme}{lmsCompany.LmsDomain.TrimEnd('/')}";
+
+                var oAuth = new OAuthBase()
+                {
+                    ConsumerKey = consumerKey,
+                    ConsumerSecret = consumerSecret,
+                    Token = token,
+                    TokenSecret = tokenSecret
+                };
+
+                string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
+
+                var method = OAuthBase.Method.GET;
+                string xml = oAuth.oAuthWebRequest(method, uri, "");
+
+                error = null;
+                List<LmsCourseSectionDTO> result = null;
+
+                try
+                {
+                    result = HaikuLmsUserParser.ParseSections(xml);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("Can't parse HaikuLmsCourseSection", ex);
+
+                    error = "Can't parse Haiku Lms course section.";
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                //_logger.ErrorFormat(ex, "[HaikuRestApiClient.GetCourseSections] API:{0}. UserToken:{1}. CourseId:{2}.", domain, userToken, courseId);
+                throw;
+            }
+        }
+
     }
 }

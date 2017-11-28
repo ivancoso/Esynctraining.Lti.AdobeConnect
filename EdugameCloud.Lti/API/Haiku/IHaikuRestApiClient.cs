@@ -9,5 +9,7 @@ namespace EdugameCloud.Lti.API.Haiku
         bool TestOauth(string lmsDomain, string consumerKey, string consumerSecret, string token, string tokenSecret);
 
         List<LmsUserDTO> GetUsersForCourse(ILmsLicense lmsCompany, int courseId, out string error);
+
+        List<LmsCourseSectionDTO> GetCourseSections(ILmsLicense lmsCompany, int courseId, out string error);
     }
 }
