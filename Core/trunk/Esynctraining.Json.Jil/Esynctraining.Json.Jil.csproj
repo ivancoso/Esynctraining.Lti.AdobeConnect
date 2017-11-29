@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.0.2</Version>
     <Description></Description>
     <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
     <Company>eSyncTraining.com</Company>
     <PackageTags>json</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Jil JsonDeserialize added options</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -24,7 +24,7 @@ namespace Esynctraining.Json.Jil
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("Non-empty value expected", nameof(json));
 
-            return JSON.Deserialize<T>(json);
+            return JSON.Deserialize<T>(json, JilOptions);
         }
 
     }
