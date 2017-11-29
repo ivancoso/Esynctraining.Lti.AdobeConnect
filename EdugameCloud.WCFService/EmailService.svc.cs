@@ -28,6 +28,7 @@ using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Resources;
 using Calendar = Ical.Net.Calendar;
+using EdugameCloud.Lti.Core.Utils;
 
 namespace EdugameCloud.WCFService
 {
@@ -436,8 +437,8 @@ namespace EdugameCloud.WCFService
                     EventName = eventInfo.ScoInfo.Name,
                     EventDesc = eventInfo.ScoInfo.Description,
                     EventScoId = eventInfo.ScoInfo.ScoId,
-                    EventStartDate = eventInfo.ScoInfo.BeginDate,
-                    EventEndDate = eventInfo.ScoInfo.EndDate,
+                    EventStartDate = DateTimeHelper.ConvertToEST(eventInfo.ScoInfo.BeginDate).Value,
+                    EventEndDate = DateTimeHelper.ConvertToEST(eventInfo.ScoInfo.EndDate).Value,
                     MailSubject = Emails.RegistrationSubject,
                     MeetingUrl = acDomain.AcServer.TrimEnd('/') + "/" + eventInfo.ScoInfo.SourceSco.UrlPath.TrimStart('/'),
                     Email = registrationInfo.Email
