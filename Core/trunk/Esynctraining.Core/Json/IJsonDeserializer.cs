@@ -1,4 +1,4 @@
-﻿namespace Esynctraining.AspNetCore
+﻿namespace Esynctraining.Core.Json
 {
     public interface IJsonDeserializer
     {
