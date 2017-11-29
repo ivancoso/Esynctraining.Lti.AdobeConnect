@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using Esynctraining.Core.Domain;
+using Esynctraining.Core.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
