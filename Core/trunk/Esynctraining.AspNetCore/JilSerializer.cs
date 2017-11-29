@@ -1,9 +1,10 @@
 ﻿using System;
+using Esynctraining.Core.Json;
 using Jil;
 
 namespace Esynctraining.AspNetCore
 {
-    public class JilSerializer : IJsonSerializer
+    public class JilSerializer : IJsonSerializer, IJsonDeserializer
     {
         public static readonly Options JilOptions = new Options(false, true, false, Jil.DateTimeFormat.MillisecondsSinceUnixEpoch, true,
                 UnspecifiedDateTimeKindBehavior.IsUTC,
