@@ -2,11 +2,11 @@
 using Esynctraining.Core.Json;
 using Jil;
 
-namespace Esynctraining.AspNetCore
+namespace Esynctraining.Json.Jil
 {
     public class JilSerializer : IJsonSerializer, IJsonDeserializer
     {
-        public static readonly Options JilOptions = new Options(false, true, false, Jil.DateTimeFormat.MillisecondsSinceUnixEpoch, true,
+        public static readonly Options JilOptions = new Options(false, true, false, DateTimeFormat.MillisecondsSinceUnixEpoch, true,
                 UnspecifiedDateTimeKindBehavior.IsUTC,
                 SerializationNameFormat.CamelCase);
 

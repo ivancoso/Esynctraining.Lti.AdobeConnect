@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using Esynctraining.Json.Jil;
 using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Esynctraining.AspNetCore.Formatters

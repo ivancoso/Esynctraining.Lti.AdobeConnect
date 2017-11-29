@@ -13,10 +13,10 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.1.3</Version>
-    <PackageReleaseNotes>added json interfaces</PackageReleaseNotes>
-    <AssemblyVersion>1.0.1.3</AssemblyVersion>
-    <FileVersion>1.0.1.3</FileVersion>
+    <Version>1.0.1.4</Version>
+    <PackageReleaseNotes>fix json interfaces namespace</PackageReleaseNotes>
+    <AssemblyVersion>1.0.1.4</AssemblyVersion>
+    <FileVersion>1.0.1.4</FileVersion>
   </PropertyGroup>
 
 
