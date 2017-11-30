@@ -108,7 +108,7 @@ namespace EdugameCloud.WCFService
         //todo
         private bool ValidateAgainstVCFProfileSchema(string xml, out string validationError)
         {
-            var xsdFileName = HttpContext.Current.Server.MapPath(VirtualPathUtility.ToAbsolute("~/Content/xsd/vcfProfile.xsd"));
+            var xsdFileName = HttpContext.Current.Server.MapPath(VirtualPathUtility.ToAbsolute("/../Content/xsd/vcfProfile.xsd"));
             return XsdValidator.ValidateXmlAgainsXsd(xml, xsdFileName, out validationError);
         }
         #endregion

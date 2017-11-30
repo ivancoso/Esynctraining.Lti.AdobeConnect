@@ -583,12 +583,12 @@
     <Content Include="Content\lti-files\edugamecloud_1.0.7.zip" />
     <Content Include="Content\swf\config\paths.properties" />
     <Content Include="Content\lti-instructions\placeholder.json" />
-    <None Include="Content\xsd\snGroupDiscussion.xsd">
+    <Content Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="Content\xsd\vcfProfile.xsd">
+    </Content>
+    <Content Include="Content\xsd\vcfProfile.xsd">
       <SubType>Designer</SubType>
-    </None>
+    </Content>
     <Content Include="machineKey.config" />
     <Content Include="robots.txt" />
     <Content Include="Views\File\ImportQuestions.cshtml" />
