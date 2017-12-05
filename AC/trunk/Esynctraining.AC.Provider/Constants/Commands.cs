@@ -153,6 +153,17 @@
         }
 
         /// <summary>
+        /// Event commands.
+        /// </summary>
+        internal static class Event
+        {
+            /// <summary>
+            /// The info.
+            /// </summary>
+            public const string Info = "event-info";
+        }
+
+        /// <summary>
         /// The curriculum.
         /// </summary>
         internal static class Curriculum

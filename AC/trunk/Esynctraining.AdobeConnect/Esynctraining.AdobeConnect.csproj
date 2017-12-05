@@ -16,16 +16,14 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <Version>1.0.3.10</Version>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.4.2</Version>
+<<<<<<< .mine    <Version>1.0.4.2</Version>
+=======    <Version>1.0.3.10</Version>
+>>>>>>> .theirs    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Windsor.xml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Esynctraining.AC.Provider\Esynctraining.AC.Provider.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +51,11 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+ 
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.AC.Provider\Esynctraining.AC.Provider.csproj" />
   </ItemGroup>
 
 </Project>

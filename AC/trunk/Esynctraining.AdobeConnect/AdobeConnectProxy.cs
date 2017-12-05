@@ -930,6 +930,25 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.GetEventRegistrationDetails(scoId).Value; }, scoId);
         }
 
+        public EventInfoResult GetEventInfo(string scoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            EventInfoResult result;
+            try
+            {
+                result = _provider.GetEventInfo(scoId);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "scoId:{0}.", scoId);
+                throw new AdobeConnectException("GetEventInfo exception", ex);
+            }
+
+            return result;
+        }
+
         public StatusInfo RegisterToEvent(EventRegistrationFormFields eventDetails)
         {
             return Execute(() => { return _provider.RegisterToEvent(eventDetails); });

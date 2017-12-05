@@ -23,12 +23,6 @@ namespace Esynctraining.AC.Provider.Entities
         public long TreeId { get; set; }
 
         /// <summary>
-        /// Gets or sets the permission id.
-        /// </summary>
-        [XmlAttribute("permission-id")]
-        public PermissionId PermissionId { get; set; }
-
-        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         [XmlElement("name")]
@@ -69,6 +63,18 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("duration")]
         public TimeSpan Duration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the event-info.
+        /// </summary>
+        [XmlElement("event-info")]
+        public string Info { get; set; }
+
+        /// <summary>
+        /// Gets or sets the speaker-name.
+        /// </summary>
+        [XmlElement("speaker-name")]
+        public string SpeakerName { get; set; }
 
     }
 

@@ -163,6 +163,8 @@ namespace Esynctraining.AdobeConnect
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
         EventRegistrationDetails GetEventRegistrationDetails(string scoId);
 
+        EventInfoResult GetEventInfo(string scoId);
+
         MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
 
         MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0);

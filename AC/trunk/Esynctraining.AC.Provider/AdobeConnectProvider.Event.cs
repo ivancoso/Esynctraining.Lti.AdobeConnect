@@ -183,5 +183,33 @@ namespace Esynctraining.AC.Provider
 
             return status;
         }
+
+        /// <summary>
+        /// The get SCO info.
+        /// </summary>
+        /// <param name="scoId">
+        /// The SCO id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoInfoResult"/>.
+        /// </returns>
+        public EventInfoResult GetEventInfo(string scoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            // act: "sco-info"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Event.Info, string.Format(CommandParams.ScoId, scoId), out status);
+
+            if (ResponseIsOk(doc, status))
+            {
+                EventInfo result =  EventInfoParser.Parse(doc.SelectSingleNode("//event-info"));// .SelectSingleNode("//event-info"));
+                return new EventInfoResult(status, result);
+            }
+
+            return new EventInfoResult(status);
+        }
     }
 }

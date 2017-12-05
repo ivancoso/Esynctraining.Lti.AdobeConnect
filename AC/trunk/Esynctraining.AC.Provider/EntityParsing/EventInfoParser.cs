@@ -28,14 +28,15 @@
                 var ei = new EventInfo
                              {
                                  ScoId = xml.SelectAttributeValue("sco-id"),
-                                 PermissionId = EnumReflector.ReflectEnum(xml.SelectAttributeValue("permission-id"), PermissionId.none),
                                  Name = xml.SelectSingleNodeValue("name/text()"),
                                  DomainName = xml.SelectSingleNodeValue("domain-name/text()"),
                                  UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
                                  DateBegin = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
                                  DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
-                                 Expired = xml.ParseNodeBool("expired/text()")
-                             };
+                                 Expired = xml.ParseNodeBool("expired/text()"),
+                                 SpeakerName = xml.SelectSingleNodeValue("speaker-name/text()"),
+                                 Info = xml.SelectSingleNodeValue("event-info/text()")
+                };
 
                 ei.Duration = ei.DateEnd.Subtract(ei.DateBegin);
 
