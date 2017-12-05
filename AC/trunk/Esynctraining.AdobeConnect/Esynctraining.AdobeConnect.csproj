@@ -17,9 +17,7 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <Version>1.0.4.2</Version>
-<<<<<<< .mine    <Version>1.0.4.2</Version>
-=======    <Version>1.0.3.10</Version>
->>>>>>> .theirs    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
