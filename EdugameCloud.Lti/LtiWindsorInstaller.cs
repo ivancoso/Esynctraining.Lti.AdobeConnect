@@ -33,8 +33,7 @@ namespace EdugameCloud.Lti
                 Component.For<IBuildVersionProcessor>().ImplementedBy<BuildVersionProcessor>().LifestyleSingleton(),
 
                 Component.For<LmsFactory>().ImplementedBy<LmsFactory>().LifestyleSingleton(),
-                Component.For<IJsonSerializer>().ImplementedBy<JilSerializer>().LifestyleSingleton(),
-                Component.For<IJsonDeserializer>().ImplementedBy<JilSerializer>().LifestyleSingleton().Named("IJsonDeserializer"),
+                Component.For<IJsonSerializer, IJsonDeserializer>().ImplementedBy<JilSerializer>().LifestyleSingleton(),
                 Component.For<IMeetingNameFormatterFactory>().ImplementedBy<MeetingNameFormatterFactory>().LifestyleSingleton(),
                 
                 Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>().LifestyleSingleton(),
