@@ -1,9 +1,6 @@
 ﻿namespace EdugameCloud.MVC.ViewModels
 {
     using System;
-    using System.Threading;
-    using System.Web.Mvc;
-    using EdugameCloud.MVC.Attributes;
     using Esynctraining.Core.Extensions;
     using BaseController = EdugameCloud.MVC.Controllers.BaseController;
 
@@ -43,8 +40,6 @@
             get { return _controller.With(x => x.ActionName); }
         }
 
-        public string BackUrl { get; set; }
-
         public string ControllerName
         {
             get { return _controller.With(x => x.ControllerName); }
@@ -75,17 +70,6 @@
                 };
                 return uriBuilder.ToString();
             }
-        }
-
-        public virtual ModelStateDictionary ModelState
-        {
-            get { return _controller.With(x => x.ModelState); }
-        }
-
-        [LocalizedDisplayName("Language", ResourceName = "Shared")]
-        public virtual string SelectedLanguage
-        {
-            get { return Thread.CurrentThread.CurrentUICulture.Name; }
         }
 
         #endregion
