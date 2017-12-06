@@ -10,6 +10,8 @@ using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Telephony;
 using Esynctraining.AdobeConnect.Api.MeetingReports;
 using Esynctraining.Core.Caching;
+using Esynctraining.Core.Json;
+using Esynctraining.Json.Jil;
 
 namespace EdugameCloud.Lti
 {
@@ -32,6 +34,7 @@ namespace EdugameCloud.Lti
 
                 Component.For<LmsFactory>().ImplementedBy<LmsFactory>().LifestyleSingleton(),
                 Component.For<IJsonSerializer>().ImplementedBy<JilSerializer>().LifestyleSingleton(),
+                Component.For<IJsonDeserializer>().ImplementedBy<JilSerializer>().LifestyleSingleton(),
                 Component.For<IMeetingNameFormatterFactory>().ImplementedBy<MeetingNameFormatterFactory>().LifestyleSingleton(),
 
                 Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>().LifestyleSingleton(),

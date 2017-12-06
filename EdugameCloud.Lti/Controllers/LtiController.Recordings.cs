@@ -5,6 +5,7 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
@@ -20,8 +21,8 @@ namespace EdugameCloud.Lti.Controllers
             LmsUserSessionModel userSessionModel,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger, ICache cache)
-            : base(userSessionModel, acAccountService, settings, logger, cache)
+            ILogger logger, IJsonSerializer json, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, json, cache)
         {
         }
 

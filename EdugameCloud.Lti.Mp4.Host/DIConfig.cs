@@ -13,7 +13,7 @@ namespace EdugameCloud.Lti.Mp4.Host
 {
     internal static class DIConfig
     {
-        public static WindsorContainer ConfigureWindsor(IConfigurationRoot Configuration)
+        public static WindsorContainer ConfigureWindsor(IConfiguration Configuration)
         {
             var container = new WindsorContainer();
             

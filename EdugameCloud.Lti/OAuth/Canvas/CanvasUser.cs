@@ -2,14 +2,9 @@
 {
     using System.Diagnostics.CodeAnalysis;
 
-    /// <summary>
-    /// The Instagram user.
-    /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     public sealed class CanvasUser
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
@@ -20,6 +15,6 @@
         /// </summary>
         public string name { get; set; }
 
-        #endregion
     }
+
 }

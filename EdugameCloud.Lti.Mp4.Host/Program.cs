@@ -1,6 +1,7 @@
 ﻿using System.IO;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace EdugameCloud.Lti.Mp4.Host
 {
@@ -8,18 +9,29 @@ namespace EdugameCloud.Lti.Mp4.Host
     {
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-                .UseKestrel(opt =>
-                {
-                    opt.AddServerHeader = false;
-                })
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
-
-            host.Run();
+            BuildWebHost(args).Run();
         }
+
+        public static IWebHost BuildWebHost(string[] args) =>
+           new WebHostBuilder()
+           .UseKestrel(opt =>
+           {
+               opt.AddServerHeader = false;
+           })
+           .UseContentRoot(Directory.GetCurrentDirectory())
+           .UseIISIntegration()
+           .ConfigureAppConfiguration((hostingContext, config) =>
+           {
+               var env = hostingContext.HostingEnvironment;
+               config
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.logging.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+               config.AddEnvironmentVariables();
+           })
+           .UseStartup<Startup>()
+           .UseSerilog()
+           .Build();
 
     }
 

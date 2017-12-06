@@ -5,7 +5,6 @@ using Castle.Windsor;
 using EdugameCloud.Persistence;
 using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Providers;
-using Esynctraining.Core.Utils;
 using Esynctraining.Windsor;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +13,7 @@ namespace EdugameCloud.Lti.Api.Host
 {
     internal static class DIConfig
     {
-        public static WindsorContainer ConfigureWindsor(IConfigurationRoot Configuration)
+        public static WindsorContainer ConfigureWindsor(IConfiguration Configuration)
         {
             var container = new WindsorContainer();
 

@@ -3,6 +3,7 @@ using EdugameCloud.Core;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Json;
 
 namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
 {
@@ -10,16 +11,16 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
     internal sealed class CourseIdPrefixMeetingNameFormatter : IMeetingNameFormatter
     {
         private readonly IJsonSerializer _nameInfoSerializer;
+        private readonly IJsonDeserializer _nameInfoDeserializer;
 
 
         public string FormatName { get { return "[ID]: [Meeting Title]"; } }
 
 
-        public CourseIdPrefixMeetingNameFormatter(IJsonSerializer nameInfoSerializer)
+        public CourseIdPrefixMeetingNameFormatter(IJsonSerializer nameInfoSerializer, IJsonDeserializer nameInfoDeserializer)
         {
-            if (nameInfoSerializer == null)
-                throw new ArgumentNullException(nameof(nameInfoSerializer));
-            _nameInfoSerializer = nameInfoSerializer;
+            _nameInfoSerializer = nameInfoSerializer ?? throw new ArgumentNullException(nameof(nameInfoSerializer));
+            _nameInfoDeserializer = nameInfoDeserializer ?? throw new ArgumentNullException(nameof(nameInfoDeserializer));
         }
 
 
@@ -45,7 +46,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             if (string.IsNullOrWhiteSpace(lmsMeetingTitle))
                 throw new ArgumentException("Meeting Title is required", nameof(lmsMeetingTitle));
 
-            MeetingNameInfo nameInfo = _nameInfoSerializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
+            MeetingNameInfo nameInfo = _nameInfoDeserializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
             nameInfo.meetingName = lmsMeetingTitle;
             meeting.MeetingNameJson = _nameInfoSerializer.JsonSerialize(nameInfo);
 

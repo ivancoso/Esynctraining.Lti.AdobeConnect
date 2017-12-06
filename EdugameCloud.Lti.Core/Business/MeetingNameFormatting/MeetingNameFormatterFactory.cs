@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EdugameCloud.Core;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters;
+using Esynctraining.Core.Json;
 
 namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting
 {
@@ -21,18 +21,21 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting
         public static readonly int DefaultFormatterId = 2;
 
 
-        public MeetingNameFormatterFactory(IJsonSerializer nameInfoSerializer)
+        public MeetingNameFormatterFactory(IJsonSerializer nameInfoSerializer, IJsonDeserializer nameInfoDeserializer)
         {
             if (nameInfoSerializer == null)
                 throw new ArgumentNullException(nameof(nameInfoSerializer));
+            if (nameInfoDeserializer == null)
+                throw new ArgumentNullException(nameof(nameInfoDeserializer));
+
 
             _formatters = new Dictionary<int, IMeetingNameFormatter> 
             {
-                { 1, new StraightMeetingNameFormatter(nameInfoSerializer) },
-                { 2, new CourseIdPrefixMeetingNameFormatter(nameInfoSerializer) },
-                { 3, new CourseNumPrefixMeetingNameFormatter(nameInfoSerializer) },
-                { 4, new CourseNumPrefixIdSuffixMeetingNameFormatter(nameInfoSerializer) },
-                { 5, new CourseNumPrefixDateTimeSuffixMeetingNameFormatter(nameInfoSerializer) },
+                { 1, new StraightMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer) },
+                { 2, new CourseIdPrefixMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer) },
+                { 3, new CourseNumPrefixMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer) },
+                { 4, new CourseNumPrefixIdSuffixMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer) },
+                { 5, new CourseNumPrefixDateTimeSuffixMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer) },
             };
         }
 

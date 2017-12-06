@@ -8,6 +8,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core;
 using Esynctraining.Core.Caching;
+using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
@@ -30,6 +31,8 @@ namespace EdugameCloud.Lti.Controllers
         protected ILogger Logger { get; }
 
         protected ICache Cache { get; }
+
+        protected IJsonSerializer JsonSerializer { get; }
 
         protected API.AdobeConnect.IAdobeConnectAccountService acAccountService { get; }
 
@@ -57,6 +60,7 @@ namespace EdugameCloud.Lti.Controllers
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger,
+            IJsonSerializer json,
             ICache cache)
         {
             this.userSessionModel = userSessionModel;
@@ -64,6 +68,7 @@ namespace EdugameCloud.Lti.Controllers
             Settings = settings;
             Logger = logger;
             Cache = cache;
+            JsonSerializer = json;
         }
 
         #endregion
@@ -71,7 +76,7 @@ namespace EdugameCloud.Lti.Controllers
         protected override JsonResult Json(object data, string contentType,
                 System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)
         {
-            return new JsonNetResult
+            return new JsonNetResult(JsonSerializer)
             {
                 Data = data,
                 ContentType = contentType,

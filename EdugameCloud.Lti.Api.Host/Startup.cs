@@ -7,37 +7,37 @@ using EdugameCloud.Lti.Telephony;
 using Esynctraining.AspNetCore;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
+using Esynctraining.Json.Jil;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace EdugameCloud.Lti.Api.Host
 {
     public class Startup
     {
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
-        public ILoggerFactory LoggerFactory { get; }
+        public Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory { get; }
 
         public IHostingEnvironment HostingEnvironment { get; }
 
 
-        public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public Startup(IHostingEnvironment env, IConfiguration configuration, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory)
         {
             HostingEnvironment = env;
             LoggerFactory = loggerFactory;
+            Configuration = configuration;
 
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Log.Logger = new LoggerConfiguration()
+              .ReadFrom.Configuration(configuration)
+              .CreateLogger();
         }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -58,7 +58,7 @@ namespace EdugameCloud.Lti.Api.Host
                     setup.OutputFormatters.Insert(0, new JilOutputFormatter());
 
                     setup.Filters.Add(new CheckModelForNullAttribute(HostingEnvironment.IsDevelopment()));
-                    setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, new Esynctraining.AspNetCore.JilSerializer(), HostingEnvironment.IsDevelopment()));
+                    setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, new JilSerializer(), HostingEnvironment.IsDevelopment()));
                     setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                 })
                 .AddApplicationPart(typeof(Controllers.BaseApiController).Assembly)
@@ -86,12 +86,6 @@ namespace EdugameCloud.Lti.Api.Host
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory
-                .AddConsole(Configuration.GetSection("Logging"))
-                .AddDebug()
-                .AddFile(Configuration.GetSection("Logging"))
-                .AddFile(Configuration.GetSection("Logging_Serilog_Errors"));
-
             ServicePointManager.DefaultConnectionLimit = int.Parse(Configuration["AppSettings:ConnectionBatchSize"]);
 
             if (env.IsDevelopment())

@@ -27,6 +27,7 @@ using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.Api.Meeting;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 
@@ -68,6 +69,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #region Properties
 
         private IJsonSerializer JsonSerializer => IoC.Resolve<IJsonSerializer>();
+
+        private IJsonDeserializer JsonDeserializer => IoC.Resolve<IJsonDeserializer>();
 
         private IMeetingNameFormatterFactory MeetingNameFormatterFactory => IoC.Resolve<IMeetingNameFormatterFactory>();
 
@@ -929,7 +932,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(originalMeeting.MeetingNameJson)
                     ? new MeetingNameInfo()
-                    : JsonSerializer.JsonDeserialize<MeetingNameInfo>(originalMeeting.MeetingNameJson);
+                    : JsonDeserializer.JsonDeserialize<MeetingNameInfo>(originalMeeting.MeetingNameJson);
 
                 nameInfo.reusedMeetingName = meetingSco.ScoInfo.Name;
                 originalMeeting.MeetingNameJson = JsonSerializer.JsonSerialize(nameInfo);
@@ -1303,12 +1306,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     //var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId());
                     foreach (LmsCourseMeeting m in thisScoMeetings)
                     {
-                        MeetingNameInfo name = JsonSerializer.JsonDeserialize<MeetingNameInfo>(m.MeetingNameJson);
+                        MeetingNameInfo name = JsonDeserializer.JsonDeserialize<MeetingNameInfo>(m.MeetingNameJson);
                         name.reusedMeetingName = meetingDTO.Name;
                         m.MeetingNameJson = JsonSerializer.JsonSerialize(name);
                         LmsCourseMeetingModel.RegisterSave(m);
                     }
-                    MeetingNameInfo currentMeetingName = JsonSerializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
+                    MeetingNameInfo currentMeetingName = JsonDeserializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
                     currentMeetingName.reusedMeetingName = meetingDTO.Name;
                     meeting.MeetingNameJson = JsonSerializer.JsonSerialize(currentMeetingName);
                     LmsCourseMeetingModel.RegisterSave(meeting);  // not required for current ?
@@ -1317,7 +1320,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     if (meeting.Reused.GetValueOrDefault())
                     {
-                        MeetingNameInfo currentMeetingName = JsonSerializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
+                        MeetingNameInfo currentMeetingName = JsonDeserializer.JsonDeserialize<MeetingNameInfo>(meeting.MeetingNameJson);
                         currentMeetingName.reusedMeetingName = meetingDTO.Name;
                         meeting.MeetingNameJson = JsonSerializer.JsonSerialize(currentMeetingName);
                     }
@@ -1333,7 +1336,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 foreach (LmsCourseMeeting officeHoursMeeting in coursesWithThisOfficeHours.
                     Where(x => !string.IsNullOrWhiteSpace(x.MeetingNameJson)))
                 {
-                    MeetingNameInfo nameInfo = JsonSerializer.JsonDeserialize<MeetingNameInfo>(officeHoursMeeting.MeetingNameJson);
+                    MeetingNameInfo nameInfo = JsonDeserializer.JsonDeserialize<MeetingNameInfo>(officeHoursMeeting.MeetingNameJson);
                     nameInfo.meetingName = meetingDTO.Name;
                     officeHoursMeeting.MeetingNameJson = JsonSerializer.JsonSerialize(nameInfo);
                     LmsCourseMeetingModel.RegisterSave(officeHoursMeeting);
@@ -1662,7 +1665,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             else
             {
                 MeetingNameInfo nameInfo =
-                    JsonSerializer.JsonDeserialize<MeetingNameInfo>(meeting.DbRecord.MeetingNameJson);
+                    JsonDeserializer.JsonDeserialize<MeetingNameInfo>(meeting.DbRecord.MeetingNameJson);
                 // NOTE: it is reused meeting or source of reusing
                 meetingName = string.IsNullOrWhiteSpace(nameInfo.reusedMeetingName) ? nameInfo.meetingName : nameInfo.reusedMeetingName;
             }

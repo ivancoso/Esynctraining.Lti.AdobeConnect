@@ -34,6 +34,7 @@ namespace EdugameCloud.Lti.Controllers
     using Esynctraining.Core.Caching;
     using Esynctraining.Core.Domain;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Json;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
@@ -63,8 +64,6 @@ namespace EdugameCloud.Lti.Controllers
 
         private CompanyModel CompanyModel => IoC.Resolve<CompanyModel>();
 
-        private IJsonSerializer JsonSerializer => IoC.Resolve<IJsonSerializer>();
-
         private LmsProviderModel LmsProviderModel => IoC.Resolve<LmsProviderModel>();
 
         private LmsCourseMeetingModel LmsCourseMeetingModel => IoC.Resolve<LmsCourseMeetingModel>();
@@ -83,7 +82,8 @@ namespace EdugameCloud.Lti.Controllers
             IAdobeConnectUserService acUserService,
             IAdobeConnectAccountService acAccountService,
             ILogger logger,
-            ICache cache) :base(userSessionModel, acAccountService, settings, logger, cache)
+            IJsonSerializer json,
+            ICache cache) :base(userSessionModel, acAccountService, settings, logger, json, cache)
         {
             this.lmsCompanyModel = lmsCompanyModel;
             this.userSessionModel = userSessionModel;
