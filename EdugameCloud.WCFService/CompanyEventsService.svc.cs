@@ -83,7 +83,6 @@ namespace EdugameCloud.WCFService
                     isSeminar = content.IsSeminar,
                     isMappedToQuizzes = CompanyEventQuizMappingModel.GetAllByCompanyId(defaultAcDomain.Company.Id).Any(x => x.AcEventScoId == content.ScoId),
                     meetingUrl = acProxy.GetScoInfo(content.ScoId).ScoInfo?.SourceSco?.UrlPath,
-                    //meetingUrl = content.ScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).Success ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).Success && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).ScoInfo.UrlPath : String.Empty : string.Empty,
                 });
 
             }
@@ -127,7 +126,6 @@ namespace EdugameCloud.WCFService
                     isSeminar = content.IsSeminar,
                     isMappedToQuizzes = CompanyEventQuizMappingModel.GetAllByCompanyId(defaultAcDomain.Company.Id).Any(x => x.AcEventScoId == content.ScoId),
                     meetingUrl = acProxy.GetScoInfo(content.ScoId).ScoInfo?.SourceSco?.UrlPath,
-                    //meetingUrl = content.ScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).Success ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).Success && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).ScoInfo.UrlPath : String.Empty : string.Empty,
                 });
 
             }
