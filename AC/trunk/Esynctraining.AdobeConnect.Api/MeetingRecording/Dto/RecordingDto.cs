@@ -24,19 +24,19 @@ namespace Esynctraining.AdobeConnect.Api.MeetingRecording.Dto
             downloadUrl = this.IsAdobeMp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
         }
 
-        public RecordingDto(ScoContent recording, string accountUrl, bool isPublic, TimeZoneInfo timezone)
-        {
-            Id = recording.ScoId;
-            Name = recording.Name;
-            // TRICK: cleanup not to output empty strings in json
-            Summary = string.IsNullOrWhiteSpace(recording.Description) ? null : recording.Description;
-            BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
-            Duration = ConvertSecondsToTimeFormat(recording.Duration) + (long)GetTimezoneShift(timezone, recording.BeginDate);
-            Url = GenerateJoinLink(recording.UrlPath);
-            IsAdobeMp4 = recording.Icon == "mp4-archive";
-            downloadUrl = this.IsAdobeMp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
-            IsPublic = isPublic;
-        }
+        //public RecordingDto(ScoContent recording, string accountUrl, bool isPublic, TimeZoneInfo timezone)
+        //{
+        //    Id = recording.ScoId;
+        //    Name = recording.Name;
+        //    // TRICK: cleanup not to output empty strings in json
+        //    Summary = string.IsNullOrWhiteSpace(recording.Description) ? null : recording.Description;
+        //    BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
+        //    Duration = ConvertSecondsToTimeFormat(recording.Duration) + (long)GetTimezoneShift(timezone, recording.BeginDate);
+        //    Url = GenerateJoinLink(recording.UrlPath);
+        //    IsAdobeMp4 = recording.Icon == "mp4-archive";
+        //    downloadUrl = this.IsAdobeMp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
+        //    IsPublic = isPublic;
+        //}
 
         public RecordingDto() { }
 

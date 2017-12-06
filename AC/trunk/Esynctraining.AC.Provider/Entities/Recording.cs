@@ -80,6 +80,22 @@ namespace Esynctraining.AC.Provider.Entities
         public bool RecordingEdited { get; set; }
         public string RecordingEditedDuration { get; set; }
         public string AfRecordingDuration { get; set; }
+
+
+        /// <summary>
+        /// Returns RecordingEditedDuration if exists; 
+        /// else AfRecordingDuration if exists;
+        /// else Duration
+        /// </summary>
+        public TimeSpan GetActualDuration()
+        {
+            return
+                TimeSpan.Parse(
+                    string.IsNullOrEmpty(RecordingEditedDuration) 
+                    ? (string.IsNullOrEmpty(AfRecordingDuration) ? Duration : AfRecordingDuration) 
+                    : RecordingEditedDuration);
+        }
+
     }
 
 }
