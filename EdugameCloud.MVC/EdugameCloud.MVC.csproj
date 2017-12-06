@@ -62,7 +62,7 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="4.1.0" />
-    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.2" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
     <PackageReference Include="Esynctraining.Core.SystemWeb" Version="1.0.0.1" />
     <PackageReference Include="FluentValidation" Version="7.1.1" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
