@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using Esynctraining.Core.Domain.Entities;
 
 namespace EdugameCloud.WCFService
 {
@@ -44,9 +45,11 @@ namespace EdugameCloud.WCFService
             foreach (var appletResultDTO in results)
             {
                 ValidationResult validationResult;
-                string xmlValidationResult = null;
                 var isValidDto = IsValid(appletResultDTO, out validationResult);
-                if (isValidDto && ValidateAgainstVCFProfileSchema(appletResultDTO.participantProfile, out xmlValidationResult))
+                var profileModel = new VCFProfileDTO { xmlProfile = appletResultDTO.participantProfile };
+                ValidationResult profileValidationResult;
+                var isValidProfile = IsValid(profileModel, out profileValidationResult);
+                if (isValidDto && isValidProfile)
                 {
                     var isTransient = appletResultDTO.snMemberId == 0;
                     var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.snMemberId).Value;
@@ -60,9 +63,9 @@ namespace EdugameCloud.WCFService
                     {
                         faults.AddRange(UpdateResultToString(validationResult));
                     }
-                    if (!string.IsNullOrEmpty(xmlValidationResult))
+                    if (!isValidProfile)
                     {
-                        faults.Add(xmlValidationResult);
+                        faults.AddRange(UpdateResultToString(profileValidationResult));
                     }
                 }
             }
@@ -105,12 +108,6 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        //todo
-        private bool ValidateAgainstVCFProfileSchema(string xml, out string validationError)
-        {
-            var xsdFileName = HttpContext.Current.Server.MapPath(VirtualPathUtility.ToAbsolute("/../Content/xsd/vcfProfile.xsd"));
-            return XsdValidator.ValidateXmlAgainsXsd(xml, xsdFileName, out validationError);
-        }
         #endregion
 
     }
