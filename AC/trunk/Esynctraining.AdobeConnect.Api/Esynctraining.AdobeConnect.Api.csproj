@@ -4,13 +4,12 @@
     <Description>Provides Adobe Connect high-level DTO and services</Description>
     <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.Provider.Api</AssemblyTitle>
-    <VersionPrefix>1.0.0.11</VersionPrefix>
     <Authors>eSyncTraining.com</Authors>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
     <AssemblyName>Esynctraining.AdobeConnect.Api</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect.Api</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>Recording:GetActualDuration; return Initial\ActualRecordingDuration</PackageReleaseNotes>
+    <PackageReleaseNotes>removed AssemblyInfo</PackageReleaseNotes>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
@@ -18,18 +17,14 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.3.12</Version>
+    <Version>1.0.3.13</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
     <DocumentationFile>bin\Release\net45\Esynctraining.AdobeConnect.Api.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="MeetingRecording\Dto\RecordingDto.cs.bak" />
-    <None Remove="MeetingRecording\RecordingDtoBuilder.cs.bak" />
-  </ItemGroup>
-
+ 
   <ItemGroup>
     <ProjectReference Include="..\Esynctraining.AC.Provider\Esynctraining.AC.Provider.csproj" />
     <ProjectReference Include="..\Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj" />
