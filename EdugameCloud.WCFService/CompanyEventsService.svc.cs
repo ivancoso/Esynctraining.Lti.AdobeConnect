@@ -12,6 +12,8 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Utils;
+using System.Text;
+using System.Xml.Linq;
 
 namespace EdugameCloud.WCFService
 {
@@ -36,12 +38,58 @@ namespace EdugameCloud.WCFService
             var defaultAcDomain = CompanyAcServerModel.GetAllByCompany(companyId).FirstOrDefault(x => x.IsDefault);
             if (defaultAcDomain == null)
             {
-                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
                 return null;
             }
 
             return GetAllEventsFromAcServer(defaultAcDomain);
         }
+
+        private CompanyEventDTO[] GetAllEventsFromAcServer(CompanyAcServer defaultAcDomain, List<string> scoIds, bool isShowPastEvents = false)
+        {
+            var acUri = new Uri(defaultAcDomain.AcServer);
+            var acProvider = new AdobeConnectProvider(new ConnectionDetails(acUri));
+            var acProxy = new AdobeConnectProxy(acProvider, Logger, acUri);
+            var loginResult = acProxy.Login(new UserCredentials(defaultAcDomain.Username, defaultAcDomain.Password));
+            if (!loginResult.Success)
+                return null;
+            var eventType = acProxy.GetShortcutByType("events");
+            var eventContent = acProxy.GetScoExpandedContent(eventType.ScoId);
+            if (!eventContent.Success)
+                return null;
+            var result = new List<CompanyEventDTO>();
+            var eventsOnly = eventContent.Values.Where(x => x.Type == "event");
+
+            if (!isShowPastEvents)
+            {
+                eventsOnly = eventsOnly.Where(x => x.EndDateLocal >= DateTime.Now);
+            }
+
+            foreach (var content in eventsOnly)
+            {
+                if (!scoIds.Any(s => s == content.ScoId))
+                    continue;
+
+                result.Add(new CompanyEventDTO
+                {
+                    companyId = defaultAcDomain.Company.Id,
+                    dateBegin = DateTime.SpecifyKind(content.BeginDate, DateTimeKind.Utc),
+                    dateEnd = DateTime.SpecifyKind(content.EndDate, DateTimeKind.Utc),
+                    name = content.Name,
+                    desc = content.Description,
+                    scoId = content.ScoId,
+                    urlPath = content.UrlPath,
+                    dateCreated = DateTime.SpecifyKind(content.DateCreated, DateTimeKind.Utc),
+                    dateModified = DateTime.SpecifyKind(content.DateModified, DateTimeKind.Utc),
+                    isSeminar = content.IsSeminar,
+                    isMappedToQuizzes = CompanyEventQuizMappingModel.GetAllByCompanyId(defaultAcDomain.Company.Id).Any(x => x.AcEventScoId == content.ScoId),
+                    meetingUrl = acProxy.GetScoInfo(content.ScoId).ScoInfo?.SourceSco?.UrlPath,
+                    //meetingUrl = content.ScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty && acProxy.GetScoInfo(content.ScoId).Success ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).Success && acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId != String.Empty ? acProxy.GetScoInfo(acProxy.GetScoInfo(content.ScoId).ScoInfo.SourceScoId).ScoInfo.UrlPath : String.Empty : string.Empty,
+                });
+
+            }
+            return result.ToArray();
+        }
+
 
         private CompanyEventDTO[] GetAllEventsFromAcServer(CompanyAcServer defaultAcDomain, bool isShowPastEvents = false)
         {
@@ -114,12 +162,56 @@ namespace EdugameCloud.WCFService
             return eventQuizMapping;
         }
 
+        public OperationResultDto IsEventValid(CompanyQuizEventMappingSaveDTO eventQuizMapping)
+        {
+            var defaultAcDomain = CompanyAcServerModel.GetOneById(eventQuizMapping.companyAcDomainId).Value;
+            if (defaultAcDomain == null)
+            {
+                return OperationResultDto.Error("Company was not found");
+            }
+
+            var acUri = new Uri(defaultAcDomain.AcServer);
+            var acProvider = new AdobeConnectProvider(new ConnectionDetails(acUri));
+            var acProxy = new AdobeConnectProxy(acProvider, Logger, acUri);
+            var loginResult = acProxy.Login(new UserCredentials(defaultAcDomain.Username, defaultAcDomain.Password));
+            if (!loginResult.Success)
+                return null;
+
+            var eventRegistrationDetails = acProxy.GetEventRegistrationDetails(eventQuizMapping.acEventScoId);
+
+            string[] requiredFieldNames = new string[3] { "School", "State", "Trainee number or ID"};
+            StringBuilder errorMessage = new StringBuilder();
+
+            foreach(var fieldName in requiredFieldNames)
+            {
+                if (!eventRegistrationDetails.EventFields.Any(ef => string.Equals(ef.Description, fieldName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    errorMessage.Append($"There are not {fieldName} field.{Environment.NewLine}");
+                }
+            }
+
+            var eventInfo = acProxy.GetEventInfo(eventQuizMapping.acEventScoId);
+
+            if (string.IsNullOrEmpty(eventInfo.ScoInfo.Info))
+            {
+                errorMessage.Append($"Event info should be set for the event with sco-id {eventQuizMapping.acEventScoId}");
+            }
+
+            if (string.IsNullOrEmpty(eventInfo.ScoInfo.SpeakerName))
+            {
+                errorMessage.Append($"Speaker name should be set for the event with sco-id {eventQuizMapping.acEventScoId}");
+            }
+
+            return string.IsNullOrEmpty(errorMessage.ToString()) 
+                ? OperationResultDto.Success()
+                : OperationResultDto.Error(errorMessage.ToString());
+        }
+
         public CompanyEventDTO[] GetEventsByCompanyAcServer(int companyAcServerId)
         {
             var defaultAcDomain = CompanyAcServerModel.GetOneById(companyAcServerId).Value;
             if (defaultAcDomain == null)
             {
-                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
                 return null;
             }
 
@@ -139,10 +231,10 @@ namespace EdugameCloud.WCFService
             var defaultAcDomain = CompanyAcServerModel.GetAllByCompany(companyId).FirstOrDefault(x => x.IsDefault);
             if (defaultAcDomain == null)
             {
-                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
                 return null;
             }
-            var acEvents = GetAllEventsFromAcServer(defaultAcDomain, true);
+
+            var acEvents = GetAllEventsFromAcServer(defaultAcDomain, events.Select(e => e.AcEventScoId).ToList(), true);
             if (acEvents == null)
             {
                 return null;
@@ -158,10 +250,9 @@ namespace EdugameCloud.WCFService
             var defaultAcDomain = CompanyAcServerModel.GetOneById(acServerId).Value;
             if (defaultAcDomain == null)
             {
-                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
                 return null;
             }
-            var acEvents = GetAllEventsFromAcServer(defaultAcDomain, true);
+            var acEvents = GetAllEventsFromAcServer(defaultAcDomain, events.Select(e => e.AcEventScoId).ToList(), true);
             var result = events.Select(x => new CompanyQuizEventMappingDTO(x, Settings, acEvents.FirstOrDefault(ev => ev.scoId == x.AcEventScoId))).ToArray();
             return result;
         }
@@ -177,7 +268,6 @@ namespace EdugameCloud.WCFService
             var defaultAcDomain = CompanyAcServerModel.GetOneById(companyAcServerId).Value;
             if (defaultAcDomain == null)
             {
-                //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
                 return null;
             }
 

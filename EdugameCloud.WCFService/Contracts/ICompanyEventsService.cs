@@ -54,5 +54,9 @@ namespace EdugameCloud.WCFService.Contracts
         [OperationContract]
         [FaultContract(typeof(Error))]
         CompanyQuizEventMappingSaveDTO Save(CompanyQuizEventMappingSaveDTO eventQuizMapping);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        OperationResultDto IsEventValid(CompanyQuizEventMappingSaveDTO eventQuizMapping);
     }
 }
