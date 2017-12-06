@@ -74,8 +74,8 @@
     <Reference Include="DotNetOpenAuth.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetOpenAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.3.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.3.7\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.3.8, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.3.8\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.AdobeConnect, Version=1.0.4.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.4.3\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
@@ -104,7 +104,7 @@
       <HintPath>..\packages\Esynctraining.Windsor.1.0.0.3\lib\net45\Esynctraining.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.7.1.1\lib\net45\FluentValidation.dll</HintPath>
+      <HintPath>..\packages\FluentValidation.7.2.1\lib\net45\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Ical.Net, Version=2.1.0.13690, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Ical.Net.2.3.2\lib\net46\Ical.Net.dll</HintPath>
