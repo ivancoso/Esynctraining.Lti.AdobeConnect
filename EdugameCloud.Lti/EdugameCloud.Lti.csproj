@@ -16,7 +16,7 @@
     <PackageReference Include="DotNetOpenAuth.AspNet" Version="4.3.4.13329" />
     <PackageReference Include="DotNetOpenAuth.OpenId.RelyingParty" Version="4.3.4.13329" />
     <PackageReference Include="Esynctraining.AdobeConnect" Version="1.0.4.3" />
-    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.12" />
+    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.14" />
     <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.1" />
     <PackageReference Include="Esynctraining.Crypto" Version="1.0.2" />
     <PackageReference Include="Esynctraining.FluentValidation" Version="1.0.1" />

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Haiku;
 using EdugameCloud.Lti.Domain.Entities;
@@ -14,14 +11,18 @@ namespace EdugameCloud.Lti.Haiku
     {
         private readonly IHaikuRestApiClient _haikuApi;
 
+
         public HaikuLmsCourseSectionsService(IHaikuRestApiClient canvasApi)
         {
             _haikuApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
         }
 
+
         public override IEnumerable<LmsCourseSectionDTO> GetCourseSections(ILmsLicense lmsLicense, string courseId)
         {
             return _haikuApi.GetCourseSections(lmsLicense, int.Parse(courseId), out string error);
         }
+
     }
+
 }
