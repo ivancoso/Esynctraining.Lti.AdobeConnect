@@ -51,15 +51,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemSaveAllDTO"/>.
-        /// </returns>
         public SubModuleItemSaveAllDTO SaveAll(SubModuleItemDTO[] results)
         {
             results = results ?? new SubModuleItemDTO[] { };
@@ -147,11 +138,11 @@ namespace EdugameCloud.WCFService
         {
             int totalCount;
             return new PagedSubModuleItemsDTO
-                       {
-                           objects =
-                               this.SubModuleItemModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new SubModuleItemDTO(x)).ToArray(),
-                            totalCount = totalCount
-                       };
+            {
+                objects =
+                    this.SubModuleItemModel.GetAllPaged(pageIndex, pageSize, out totalCount).Select(x => new SubModuleItemDTO(x)).ToArray(),
+                totalCount = totalCount
+            };
         }
 
         public SubModuleItemDTO[] GetAppletSubModuleItemsByUserId(int userId)
@@ -174,20 +165,13 @@ namespace EdugameCloud.WCFService
             return this.SubModuleItemModel.GetTestSubModuleItemsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get survey sub module items by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO[] GetSurveySubModuleItemsByUserId(int userId)
         {
             return this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(userId).ToArray();
         }
 
         #endregion
+
     }
+
 }

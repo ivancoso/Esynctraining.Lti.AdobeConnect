@@ -84,6 +84,7 @@
         [CustomAuthorize]
         public virtual ActionResult Public(string fileName)
         {
+            _logger.Error("[BuildDeliverController.Public]");
             var file = new FileInfo(Path.Combine(Server.MapPath(PublicFolderPath), fileName));
             if (file.Exists)
             {

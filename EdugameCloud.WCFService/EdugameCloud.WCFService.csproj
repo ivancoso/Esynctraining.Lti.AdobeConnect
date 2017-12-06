@@ -65,11 +65,11 @@
     <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="DotAmf, Version=1.0.0.15, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotAmf.Wcf.1.0.0.15\lib\net45\DotAmf.dll</HintPath>
+    <Reference Include="DotAmf, Version=1.0.1.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.1.2\lib\net461\DotAmf.dll</HintPath>
     </Reference>
-    <Reference Include="DotAmf.Wcf, Version=1.0.0.15, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotAmf.Wcf.1.0.0.15\lib\net45\DotAmf.Wcf.dll</HintPath>
+    <Reference Include="DotAmf.Wcf, Version=1.0.1.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.1.2\lib\net461\DotAmf.Wcf.dll</HintPath>
     </Reference>
     <Reference Include="DotNetOpenAuth.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetOpenAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
@@ -84,8 +84,8 @@
       <HintPath>..\packages\Esynctraining.CastleLog4Net.1.0.0.2\lib\net45\Esynctraining.CastleLog4Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.1.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.2\lib\net461\Esynctraining.Core.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.1.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.4\lib\net461\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.FluentValidation, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.FluentValidation.1.0.1\lib\net461\Esynctraining.FluentValidation.dll</HintPath>

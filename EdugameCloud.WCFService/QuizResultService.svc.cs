@@ -1,5 +1,4 @@
-﻿using DotAmf.ServiceModel.Messaging;
-using DotNetOpenAuth.Messaging;
+﻿using DotNetOpenAuth.Messaging;
 
 namespace EdugameCloud.WCFService
 {
@@ -17,14 +16,13 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.Converters;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Utils;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Resources;
-
+    using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Utils;
     using FluentValidation.Results;
     using Newtonsoft.Json;
+    using Resources;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]

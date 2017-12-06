@@ -8,7 +8,6 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
@@ -36,168 +35,84 @@
 
         #region Public Methods and Operators
         
-        /// <summary>
-        /// The creation of quiz.
-        /// </summary>
-        /// <param name="dto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestWithSmiDTO"/>.
-        /// </returns>
         public TestWithSmiDTO Create(TestSMIWrapperDTO dto)
         {
-            ValidationResult validationResult;
-            if (this.IsValid(dto, out validationResult))
+            if (this.IsValid(dto, out ValidationResult validationResult))
             {
-                var quizModel = this.TestModel;
-                var smiResult = this.Convert(dto.SmiDTO, (SubModuleItem)null, true);
+                var smiResult = Convert(dto.SmiDTO, (SubModuleItem)null, true);
                 dto.TestDTO.subModuleItemId = smiResult.Id;
-                return this.ConvertTestAndGetServiceResponse(dto.TestDTO, null, smiResult, quizModel);
+                return ConvertTestAndGetServiceResponse(dto.TestDTO, null, smiResult, TestModel);
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Test.Create", error);
+            var error = GenerateValidationError(validationResult);
+            LogError("Test.Create", error);
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="appletResultDTO">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestWithSmiDTO"/>.
-        /// </returns>
         public TestWithSmiDTO Save(TestDTO appletResultDTO)
         {
-            ValidationResult validationResult;
-            if (this.IsValid(appletResultDTO, out validationResult))
+            if (IsValid(appletResultDTO, out ValidationResult validationResult))
             {
-                var quizModel = this.TestModel;
+                var model = TestModel;
                 var isTransient = appletResultDTO.testId == 0;
-                var quiz = isTransient ? null : quizModel.GetOneById(appletResultDTO.testId).Value;
-                return this.ConvertTestAndGetServiceResponse(appletResultDTO, quiz, null, quizModel);
+                var quiz = isTransient ? null : model.GetOneById(appletResultDTO.testId).Value;
+                return ConvertTestAndGetServiceResponse(appletResultDTO, quiz, null, model);
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Test.Save", error);
+            var error = GenerateValidationError(validationResult);
+            LogError("Test.Save", error);
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestWithSmiDTO"/>.
-        /// </returns>
         public TestWithSmiDTO GetById(int id)
         {
             Test test;
-            if ((test = this.TestModel.GetOneById(id).Value) == null)
+            if ((test = TestModel.GetOneById(id).Value) == null)
             {
                 var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("Test.GetById", error);
+                LogError("Test.GetById", error);
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
             return new TestWithSmiDTO(test);
         }
 
-        /// <summary>
-        /// The get by SMI id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestWithSmiDTO"/>.
-        /// </returns>
         public TestWithSmiDTO GetBySMIId(int id)
         {
             Test test;
-            if ((test = this.TestModel.GetOneBySMIId(id).Value) == null)
+            if ((test = TestModel.GetOneBySMIId(id).Value) == null)
             {
                 var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("Test.GetBySMIId", error);
+                LogError("Test.GetBySMIId", error);
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
             return new TestWithSmiDTO(test);
         }
 
-        /// <summary>
-        /// The get by SMI id.
-        /// </summary>
-        /// <param name="userId">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestFromStoredProcedureDTO"/>.
-        /// </returns>
         public TestFromStoredProcedureDTO[] GetTestsByUserId(int userId)
         {
-            return this.TestModel.GetTestsByUserId(userId).ToArray();
+            return TestModel.GetTestsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestFromStoredProcedureDTO"/>.
-        /// </returns>
         public TestFromStoredProcedureDTO[] GetSharedTestsByUserId(int userId)
         {
-            return this.TestModel.GetSharedForUserTestsByUserId(userId).ToArray();
+            return TestModel.GetSharedForUserTestsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get test categories by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SMICategoriesFromStoredProcedureDTO"/>.
-        /// </returns>
         public SMICategoriesFromStoredProcedureDTO[] GetTestCategoriesbyUserId(int userId)
         {
-            return this.TestModel.GetTestCategoriesbyUserId(userId).ToArray();
+            return TestModel.GetTestCategoriesbyUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get test sub module items by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItemDTO"/>.
-        /// </returns>
         public SubModuleItemDTO[] GetTestSMItemsByUserId(int userId)
         {
-            return this.SubModuleItemModel.GetTestSubModuleItemsByUserId(userId).ToArray();
+            return SubModuleItemModel.GetTestSubModuleItemsByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get test data by test id.
-        /// </summary>
-        /// <param name="testId">
-        /// The quiz id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestDataDTO"/>.
-        /// </returns>
         public TestDataDTO GetTestDataByTestId(int testId)
         {
-            return this.TestModel.GetTestDataByTestId(testId);
+            return TestModel.GetTestDataByTestId(testId);
         }
 
         #endregion
@@ -227,41 +142,21 @@
             instance.ScoreFormat = itemDTO.scoreFormat;
             instance.TimeLimit = itemDTO.timeLimit;
 
-            instance.SubModuleItem = itemDTO.subModuleItemId.HasValue ? this.SubModuleItemModel.GetOneById(itemDTO.subModuleItemId.Value).Value : null;
-            instance.ScoreType = itemDTO.scoreTypeId.HasValue ? this.ScoreTypeModel.GetOneById(itemDTO.scoreTypeId.Value).Value ?? this.ScoreTypeModel.GetOneById(1).Value : this.ScoreTypeModel.GetOneById(1).Value;
+            instance.SubModuleItem = itemDTO.subModuleItemId.HasValue ? SubModuleItemModel.GetOneById(itemDTO.subModuleItemId.Value).Value : null;
+            instance.ScoreType = itemDTO.scoreTypeId.HasValue ? ScoreTypeModel.GetOneById(itemDTO.scoreTypeId.Value).Value ?? ScoreTypeModel.GetOneById(1).Value : this.ScoreTypeModel.GetOneById(1).Value;
             if (instance.SubModuleItem != null)
             {
                 instance.SubModuleItem.DateModified = DateTime.Now;
-                this.SubModuleItemModel.RegisterSave(instance.SubModuleItem);
+                SubModuleItemModel.RegisterSave(instance.SubModuleItem);
             }
 
             return instance;
         }
 
-        /// <summary>
-        /// The convert test and get service response.
-        /// </summary>
-        /// <param name="appletResultDTO">
-        /// The test result DTO.
-        /// </param>
-        /// <param name="test">
-        /// The test.
-        /// </param>
-        /// <param name="smi">
-        /// The SMI.
-        /// </param>
-        /// <param name="testModel">
-        /// The test model.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TestWithSmiDTO"/>.
-        /// </returns>
         private TestWithSmiDTO ConvertTestAndGetServiceResponse(TestDTO appletResultDTO, Test test, SubModuleItem smi, TestModel testModel)
         {
-            test = this.ConvertDto(appletResultDTO, test);
+            test = ConvertDto(appletResultDTO, test);
             testModel.RegisterSave(test, true);
-            int companyId = smi.With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
-            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Test>(NotificationType.Update, companyId, test.Id);
             return new TestWithSmiDTO(test, smi);
         }
 

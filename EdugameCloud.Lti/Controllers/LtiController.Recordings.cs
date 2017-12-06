@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO.Recordings;
-using Esynctraining.AC.Provider.Entities;
-using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
-using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;

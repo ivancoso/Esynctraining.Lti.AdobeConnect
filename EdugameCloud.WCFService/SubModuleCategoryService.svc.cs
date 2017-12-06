@@ -53,15 +53,6 @@ namespace EdugameCloud.WCFService
             return this.SubModuleCategoryModel.GetByUser(userId).Select(x => new SubModuleCategoryDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="resultDto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategoryDTO"/>.
-        /// </returns>
         public SubModuleCategoryDTO Save(SubModuleCategoryDTO resultDto)
         {
             ValidationResult validationResult;
@@ -80,15 +71,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategorySaveAllDTO"/>.
-        /// </returns>
         public SubModuleCategorySaveAllDTO SaveAll(SubModuleCategoryDTO[] results)
         {
             results = results ?? new SubModuleCategoryDTO[] { };
@@ -126,15 +108,6 @@ namespace EdugameCloud.WCFService
             return result;
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategoryDTO"/>.
-        /// </returns>
         public SubModuleCategoryDTO GetById(int id)
         {
             SubModuleCategory subModuleCategory;
@@ -148,15 +121,6 @@ namespace EdugameCloud.WCFService
             return new SubModuleCategoryDTO(subModuleCategory);
         }
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             SubModuleCategory subModuleCategory;
@@ -175,71 +139,26 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        /// <summary>
-        /// The get applet categories by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategoryDTO"/>.
-        /// </returns>
         public SubModuleCategoryDTO[] GetAppletCategoriesByUserId(int userId)
         {
             return this.SubModuleCategoryModel.GetAppletCategoriesByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get SN profile categories by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategoryDTO"/>.
-        /// </returns>
         public SubModuleCategoryDTO[] GetSNProfileCategoriesByUserId(int userId)
         {
             return this.SubModuleCategoryModel.GetSNProfileCategoriesByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get quiz categories by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategoryDTO"/>.
-        /// </returns>
         public SubModuleCategoryDTO[] GetQuizCategoriesByUserId(int userId)
         {
             return this.SubModuleCategoryModel.GetQuizCategoriesByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get test categories by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategoryDTO"/>.
-        /// </returns>
         public SubModuleCategoryDTO[] GetTestCategoriesByUserId(int userId)
         {
             return this.SubModuleCategoryModel.GetTestCategoriesByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// The get survey categories by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategoryDTO"/>.
-        /// </returns>
         public SubModuleCategoryDTO[] GetSurveyCategoriesByUserId(int userId)
         {
             return this.SubModuleCategoryModel.GetSurveyCategoriesByUserId(userId).ToArray();
@@ -249,18 +168,6 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="smc">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategory"/>.
-        /// </returns>
         private SubModuleCategory ConvertDto(SubModuleCategoryDTO smc, SubModuleCategory instance)
         {
             instance = instance ?? new SubModuleCategory();
@@ -274,5 +181,7 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
     }
+
 }

@@ -11,13 +11,11 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
 
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
@@ -53,15 +51,6 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNProfileDTO"/>.
-        /// </returns>
         public SNProfileDTO GetById(int id)
         {
             SNProfile profile;
@@ -75,57 +64,21 @@ namespace EdugameCloud.WCFService
             return new SNProfileDTO(profile);
         }
 
-        /// <summary>
-        /// Get profile by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNProfileExtraDTO"/>.
-        /// </returns>
         public SNProfileExtraDTO[] GetAllByUserId(int userId)
         {
             return this.SNProfileModel.GetAllByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// Get profile by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNProfileExtraDTO"/>.
-        /// </returns>
         public SNProfileExtraDTO[] GetAllSharedByUserId(int userId)
         {
             return this.SNProfileModel.GetAllSharedByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// Get profile by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNProfileExtraDTO"/>.
-        /// </returns>
         public SNProfileExtraDTO[] GetSharedProfilesByUserId(int userId)
         {
             return this.SNProfileModel.GetAllSharedByUserId(userId).ToArray();
         }
 
-        /// <summary>
-        /// Gets one by SMI.
-        /// </summary>
-        /// <param name="smiId">
-        /// The SMI Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNProfileDTO"/>.
-        /// </returns>
         public SNProfileDTO GetBySMIId(int smiId)
         {
             SNProfile profile;
@@ -139,15 +92,6 @@ namespace EdugameCloud.WCFService
             return new SNProfileDTO(profile);
         }
 
-        /// <summary>
-        /// The registration.
-        /// </summary>
-        /// <param name="profile">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNProfileDTO"/>.
-        /// </returns>
         public SNProfileDTO Save(SNProfileDTO profile)
         {
             ValidationResult validationResult;
@@ -173,15 +117,7 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The save services.
-        /// </summary>
-        /// <param name="services">
-        /// The services.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
+
         private void SaveServices(List<SNProfileSNService> services, SNProfile instance)
         {
             if (services.Any())
@@ -197,15 +133,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The save links.
-        /// </summary>
-        /// <param name="links">
-        /// The links.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
         private void SaveLinks(List<SNLink> links, SNProfile instance)
         {
             if (links.Any())
@@ -225,32 +152,12 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The update cache.
-        /// </summary>
         private void UpdateCache()
         {
         }
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="profileDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="links">
-        /// The links.
-        /// </param>
-        /// <param name="services">
-        /// The services.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNProfile"/>.
-        /// </returns>
-        private SNProfile ConvertDto(SNProfileDTO profileDTO, SNProfile instance, out List<SNLink> links, out List<SNProfileSNService> services)
+        private SNProfile ConvertDto(SNProfileDTO profileDTO, SNProfile instance, 
+            out List<SNLink> links, out List<SNProfileSNService> services)
         {
             instance = instance ?? new SNProfile();
             instance.ProfileName = profileDTO.profileName;
@@ -301,18 +208,6 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        /// <summary>
-        /// The update services.
-        /// </summary>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="profileDTO">
-        /// The profile DTO.
-        /// </param>
-        /// <param name="outServices">
-        /// The out Services.
-        /// </param>
         private void UpdateServices(SNProfile instance, SNProfileDTO profileDTO, out List<SNProfileSNService> outServices)
         {
             outServices = new List<SNProfileSNService>();
@@ -345,18 +240,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The update links.
-        /// </summary>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="profileDTO">
-        /// The profile DTO.
-        /// </param>
-        /// <param name="outLinks">
-        /// The out Links.
-        /// </param>
         private void UpdateLinks(SNProfile instance, SNProfileDTO profileDTO, out List<SNLink> outLinks)
         {
             outLinks = new List<SNLink>();
@@ -382,18 +265,6 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The update map settings.
-        /// </summary>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="sessionDTO">
-        /// The session DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNMapSettings"/>.
-        /// </returns>
         private SNMapSettings UpdateMapSettings(SNProfile instance, SNProfileDTO sessionDTO)
         {
             if (sessionDTO.mapSettingsVO != null)
@@ -412,5 +283,7 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
     }
+
 }

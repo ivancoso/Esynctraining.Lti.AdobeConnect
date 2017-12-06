@@ -11,12 +11,12 @@ namespace EdugameCloud.Lti.AgilixBuzz
 {
     public class AgilixBuzzLmsUserService : LmsUserServiceBase
     {
-        private readonly IAgilixBuzzApi dlapApi;
+        private readonly IAgilixBuzzApi _dlapApi;
 
 
         public AgilixBuzzLmsUserService(ILogger logger, IAgilixBuzzApi dlapApi) : base(logger)
         {
-            this.dlapApi = dlapApi ?? throw new ArgumentNullException(nameof(dlapApi));
+            _dlapApi = dlapApi ?? throw new ArgumentNullException(nameof(dlapApi));
         }
 
 
@@ -37,7 +37,7 @@ namespace EdugameCloud.Lti.AgilixBuzz
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            List<LmsUserDTO> users = dlapApi.GetUsersForCourse(
+            List<LmsUserDTO> users = _dlapApi.GetUsersForCourse(
                 lmsCompany,
                 courseId,
                 out error,

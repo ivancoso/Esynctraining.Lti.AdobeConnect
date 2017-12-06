@@ -14,7 +14,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
     using Resources;
@@ -38,43 +37,40 @@ namespace EdugameCloud.WCFService
         
         public SurveyDTO Create(SurveySMIWrapperDTO dto)
         {
-            ValidationResult validationResult;
-            if (this.IsValid(dto, out validationResult))
+            if (IsValid(dto, out ValidationResult validationResult))
             {
-                var quizModel = this.SurveyModel;
-                var smiResult = this.Convert(dto.SmiDTO, (SubModuleItem)null, true);
+                var smiResult = Convert(dto.SmiDTO, (SubModuleItem)null, true);
                 dto.SurveyDTO.subModuleItemId = smiResult.Id;
-                return this.ConvertQuizAndGetServiceResponse(dto.SurveyDTO, null, quizModel);
+                return ConvertQuizAndGetServiceResponse(dto.SurveyDTO, null, SurveyModel);
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Survey.Create", error);
+            var error = GenerateValidationError(validationResult);
+            LogError("Survey.Create", error);
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
         public SurveyDTO Save(SurveyDTO surveyDTO)
         {
-            ValidationResult validationResult;
-            if (this.IsValid(surveyDTO, out validationResult))
+            if (IsValid(surveyDTO, out ValidationResult validationResult))
             {
-                var quizModel = this.SurveyModel;
+                var model = SurveyModel;
                 var isTransient = surveyDTO.surveyId == 0;
-                var survey = isTransient ? null : quizModel.GetOneById(surveyDTO.surveyId).Value;
-                return this.ConvertQuizAndGetServiceResponse(surveyDTO, survey, quizModel);
+                var survey = isTransient ? null : model.GetOneById(surveyDTO.surveyId).Value;
+                return ConvertQuizAndGetServiceResponse(surveyDTO, survey, model);
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Survey.Create", error);
+            var error = GenerateValidationError(validationResult);
+            LogError("Survey.Create", error);
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
         public SurveyDTO GetById(int id)
         {
             Survey appletResult;
-            if ((appletResult = this.SurveyModel.GetOneById(id).Value) == null)
+            if ((appletResult = SurveyModel.GetOneById(id).Value) == null)
             {
                 var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("Survey.GetById", error);
+                LogError("Survey.GetById", error);
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
@@ -93,10 +89,10 @@ namespace EdugameCloud.WCFService
         public SurveyDTO GetBySMIId(int id)
         {
             Survey appletResult;
-            if ((appletResult = this.SurveyModel.GetOneBySMIId(id).Value) == null)
+            if ((appletResult = SurveyModel.GetOneBySMIId(id).Value) == null)
             {
                 var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("Survey.GetBySMIId", error);
+                LogError("Survey.GetBySMIId", error);
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
@@ -105,33 +101,33 @@ namespace EdugameCloud.WCFService
 
         public SurveyFromStoredProcedureDTO[] GetSurveysByUserId(int userId, bool? showLms)
         {
-            return this.SurveyModel.GetSurveysByUserId(userId, showLms ?? false).ToArray();
+            return SurveyModel.GetSurveysByUserId(userId, showLms ?? false).ToArray();
         }
 
         public SurveyFromStoredProcedureDTO[] GetLmsSurveys(int userId, int lmsUserParametersId)
         {
             var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
-            return this.SurveyModel.GetLmsSurveys(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.Id).ToArray();
+            return SurveyModel.GetLmsSurveys(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.Id).ToArray();
         }
 
         public SurveyFromStoredProcedureDTO[] GetSharedSurveysByUserId(int userId)
         {
-            return this.SurveyModel.GetSharedForUserSurveysByUserId(userId).ToArray();
+            return SurveyModel.GetSharedForUserSurveysByUserId(userId).ToArray();
         }
 
         public SMICategoriesFromStoredProcedureDTO[] GetSurveyCategoriesbyUserId(int userId)
         {
-            return this.SurveyModel.GetSurveyCategoriesbyUserId(userId).ToArray();
+            return SurveyModel.GetSurveyCategoriesbyUserId(userId).ToArray();
         }
 
         public SubModuleItemDTO[] GetSurveySMItemsByUserId(int userId)
         {
-            return this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(userId).ToArray();
+            return SubModuleItemModel.GetSurveySubModuleItemsByUserId(userId).ToArray();
         }
 
         public SurveyDataDTO GetSurveyDataBySurveyId(int surveyId)
         {
-            return this.SurveyModel.GetSurveyDataBySurveyId(surveyId);
+            return SurveyModel.GetSurveyDataBySurveyId(surveyId);
         }
 
         #endregion
@@ -159,11 +155,8 @@ namespace EdugameCloud.WCFService
             Survey survey,
             SurveyModel model)
         {
-            survey = this.ConvertDto(surveyDTO, survey);
+            survey = ConvertDto(surveyDTO, survey);
             model.RegisterSave(survey, true);
-            //int companyId =
-            //    survey.With(x => x.SubModuleItem).With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
-            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Survey>(NotificationType.Update, companyId, survey.Id);
             return new SurveyDTO(survey);
         }
 

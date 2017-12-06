@@ -56,18 +56,6 @@
         {
         }
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="groupDiscussion">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SNGroupDiscussion"/>.
-        /// </returns>
         private SNGroupDiscussion ConvertDto(SNGroupDiscussionDTO groupDiscussion, SNGroupDiscussion instance)
         {
             instance = instance ?? new SNGroupDiscussion();

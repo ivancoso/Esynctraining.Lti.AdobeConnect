@@ -76,15 +76,6 @@
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionTypeDTO"/>.
-        /// </returns>
         public QuestionTypeDTO GetById(int id)
         {
             QuestionType questionType;
@@ -98,15 +89,6 @@
             return new QuestionTypeDTO(questionType);
         }
 
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             QuestionType entity;
@@ -129,18 +111,6 @@
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="q">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionType"/>.
-        /// </returns>
         private QuestionType ConvertDto(QuestionTypeDTO q, QuestionType instance)
         {
             instance = instance ?? new QuestionType();

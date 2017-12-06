@@ -1,12 +1,10 @@
 ﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     /// <summary>
-    ///     The AgilixBuzz course.
+    /// The AgilixBuzz course.
     /// </summary>
     internal sealed class Course
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the course id.
         /// </summary>
@@ -27,6 +25,6 @@
         /// </summary>
         public string EndDate { get; set; }
 
-        #endregion
     }
+
 }

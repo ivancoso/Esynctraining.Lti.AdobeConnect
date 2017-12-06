@@ -86,61 +86,31 @@
                 return HttpContext.Current.With(x => x.User).If(x => x.Identity is EdugameCloudIdentity, x => ((EdugameCloudIdentity)x.Identity).With(y => y.InternalEntity));
             }
         }
-        
-        protected FileModel FileModel
-        {
-            get { return IoC.Resolve<FileModel>(); }
-        }
-        
-        protected ISmtpClientEngine MailModel
-        {
-            get { return IoC.Resolve<ISmtpClientEngine>(); }
-        }
-        
-        protected ILogger Logger
-        {
-            get { return IoC.Resolve<ILogger>(); }
-        }
-        
-        protected dynamic Settings
-        {
-            get { return IoC.Resolve<ApplicationSettingsProvider>(); }
-        }
-        
-        protected UserModel UserModel
-        {
-            get { return IoC.Resolve<UserModel>(); }
-        }
-        
-        protected UserActivationModel UserActivationModel
-        {
-            get { return IoC.Resolve<UserActivationModel>(); }
-        }
-        
-        protected SubModuleItemModel SubModuleItemModel
-        {
-            get { return IoC.Resolve<SubModuleItemModel>(); }
-        }
-        
-        protected ACSessionModel ACSessionModel
-        {
-            get { return IoC.Resolve<ACSessionModel>(); }
-        }
-        
-        protected ITemplateProvider TemplateProvider
-        {
-            get { return IoC.Resolve<ITemplateProvider>(); }
-        }
-        
-        protected EmailHistoryModel EmailHistoryModel
-        {
-            get { return IoC.Resolve<EmailHistoryModel>(); }
-        }
+
+        protected FileModel FileModel => IoC.Resolve<FileModel>();
+
+        protected ISmtpClientEngine MailModel => IoC.Resolve<ISmtpClientEngine>();
+
+        protected ILogger Logger => IoC.Resolve<ILogger>();
+
+        protected dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
+
+        protected UserModel UserModel => IoC.Resolve<UserModel>();
+
+        protected UserActivationModel UserActivationModel => IoC.Resolve<UserActivationModel>();
+
+        protected SubModuleItemModel SubModuleItemModel => IoC.Resolve<SubModuleItemModel>();
+
+        protected ACSessionModel ACSessionModel => IoC.Resolve<ACSessionModel>();
+
+        protected ITemplateProvider TemplateProvider => IoC.Resolve<ITemplateProvider>();
+
+        protected EmailHistoryModel EmailHistoryModel => IoC.Resolve<EmailHistoryModel>();
 
         #endregion
 
         #region Public Methods and Operators
-        
+
         /// <summary>
         /// The is valid.
         /// </summary>
@@ -227,7 +197,7 @@
                 bcced = GetBCCed(this.Settings.BCCNewEmail as string);
             }
 
-            this.SendActivationEmail(user.FirstName, user.Email, user.Company,  userActivation.ActivationCode, bcced);
+            SendActivationEmail(user.FirstName, user.Email, user.Company,  userActivation.ActivationCode, bcced);
         }
         
         protected CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)

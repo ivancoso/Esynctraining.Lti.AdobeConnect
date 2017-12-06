@@ -157,33 +157,6 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="q">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="updateQuestionDate">
-        /// The update Question Date.
-        /// </param>
-        /// <param name="fileModel">
-        /// The file Model.
-        /// </param>
-        /// <param name="questionModel">
-        /// The question Model.
-        /// </param>
-        /// <param name="userModel">
-        /// The user Model.
-        /// </param>
-        /// <param name="subModuleItemModel">
-        /// The sub Module Item Model.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Distractor"/>.
-        /// </returns>
         internal static Distractor ConvertDto(DistractorDTO q, Distractor instance, bool updateQuestionDate, 
             FileModel fileModel, QuestionModel questionModel, UserModel userModel, SubModuleItemModel subModuleItemModel)
         {

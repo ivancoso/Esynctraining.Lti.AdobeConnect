@@ -646,6 +646,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                         if (error != null)
                         {
+                            this.Logger.Error(error);
                             return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
                         }
 

@@ -63,10 +63,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IEnumerable<IRecordingDto> result;
             var meetingSco = meeting.GetMeetingScoId();
             var commonInfo = provider.GetCommonInfo().CommonInfo;
-            if (commonInfo.MajorVersion <= 9 && commonInfo.MinorVersion < 1)
-            {
-                result = GetRecordingsLegacy(meetingSco, commonInfo.AccountUrl, timeZone, provider);
-            }
+            //if (commonInfo.MajorVersion <= 9 && commonInfo.MinorVersion < 1)
+            //{
+            //    result = GetRecordingsLegacy(meetingSco, commonInfo.AccountUrl, timeZone, provider);
+            //}
 
             var factory = getRoomTypeFactory();
             var recordingsExtractor = factory.GetRecordingExtractor();
@@ -98,35 +98,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return pagedResult;
         }
-
-        //private static List<RecordingDTO> GetRecordings(string meetingSco, 
-        //    string accountUrl,
-        //    TimeZoneInfo timeZone,
-        //    Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
-        //{
-        //    var result = new List<RecordingDTO>();
-        //    var apiRecordings = provider.GetRecordingsList(meetingSco);
-        //    foreach (var v in apiRecordings.Values)
-        //    {
-        //        var moreDetails = provider.GetScoPublicAccessPermissions(v.ScoId);
-        //        var isPublic = false;
-        //        if (moreDetails.Success && moreDetails.Values.Any())
-        //        {
-        //            isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
-        //        }
-
-        //        // NOTE: not in use on client-site
-        //        //string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
-
-        //        result.Add(new RecordingDTO(v, accountUrl, timeZone)
-        //        {
-        //            IsPublic = isPublic,
-
-        //        });
-        //    }
-
-        //    return result;
-        //}
 
         private bool IsPublicRecording(string recordingScoId, IAdobeConnectProxy acProxy)
         {
@@ -198,28 +169,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return resultDto;
         }
 
-        private static IEnumerable<IRecordingDto> GetRecordingsLegacy(string meetingSco, 
-            string accountUrl,
-            TimeZoneInfo timeZone,
-            Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
-        {
-            var result = new List<RecordingDto>();
-            ScoContentCollectionResult apiRecordings = provider.GetMeetingRecordings(new [] {meetingSco});
+        //private static IEnumerable<IRecordingDto> GetRecordingsLegacy(string meetingSco, 
+        //    string accountUrl,
+        //    TimeZoneInfo timeZone,
+        //    Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
+        //{
+        //    var result = new List<RecordingDto>();
+        //    ScoContentCollectionResult apiRecordings = provider.GetMeetingRecordings(new [] {meetingSco});
 
-            foreach (var v in apiRecordings.Values)
-            {
-                var moreDetails = provider.GetScoPublicAccessPermissions(v.ScoId);
-                var isPublic = false;
-                if (moreDetails.Success && moreDetails.Values.Any())
-                {
-                    isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
-                }
+        //    foreach (var v in apiRecordings.Values)
+        //    {
+        //        var moreDetails = provider.GetScoPublicAccessPermissions(v.ScoId);
+        //        var isPublic = false;
+        //        if (moreDetails.Success && moreDetails.Values.Any())
+        //        {
+        //            isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
+        //        }
 
-                result.Add(new RecordingDto(v, accountUrl, isPublic, timeZone));
-            }
+        //        result.Add(new RecordingDto(v, accountUrl, isPublic, timeZone));
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         private static void ProcessPublishedFlag(ILmsLicense lmsCompany, LmsCourseMeeting meeting, IEnumerable<IRecordingDto> records)
         {

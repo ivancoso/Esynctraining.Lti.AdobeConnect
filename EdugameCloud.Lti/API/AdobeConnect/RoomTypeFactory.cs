@@ -39,9 +39,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             switch (roomType)
             {
                 case LmsMeetingType.Seminar:
-                    return new SeminarRecordingDtoBuilder();
+                    return new SeminarRecordingDtoBuilder(false);
                 default:
-                    return new RecordingDtoBuilder();
+                    return new RecordingDtoBuilder(false);
             }
         }
 

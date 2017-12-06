@@ -7,13 +7,11 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    //using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
     using Resources;
@@ -39,46 +37,43 @@
         
         public QuizDTO Create(QuizSMIWrapperDTO dto)
         {
-            ValidationResult validationResult;
-            if (this.IsValid(dto, out validationResult))
+            if (IsValid(dto, out ValidationResult validationResult))
             {
-                var quizModel = this.QuizModel;
-                var smiResult = this.Convert(dto.SmiDTO, (SubModuleItem)null, true);
+                var smiResult = Convert(dto.SmiDTO, (SubModuleItem)null, true);
                 dto.QuizDTO.subModuleItemId = smiResult.Id;
-                return this.ConvertQuizAndGetServiceResponse(dto.QuizDTO, null, quizModel);
+                return ConvertQuizAndGetServiceResponse(dto.QuizDTO, null, QuizModel);
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Quiz.Create", error);
+            var error = GenerateValidationError(validationResult);
+            LogError("Quiz.Create", error);
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
         public QuizDTO Save(QuizDTO appletResultDTO)
         {
-            ValidationResult validationResult;
-            if (this.IsValid(appletResultDTO, out validationResult))
+            if (this.IsValid(appletResultDTO, out ValidationResult validationResult))
             {
-                var quizModel = this.QuizModel;
+                var quizModel = QuizModel;
                 var isTransient = appletResultDTO.quizId == 0;
                 var quiz = isTransient ? null : quizModel.GetOneById(appletResultDTO.quizId).Value;
-                return this.ConvertQuizAndGetServiceResponse(appletResultDTO, quiz, quizModel);
+                return ConvertQuizAndGetServiceResponse(appletResultDTO, quiz, quizModel);
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Quiz.Save", error);
+            var error = GenerateValidationError(validationResult);
+            LogError("Quiz.Save", error);
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
         public QuizDTO GetById(int id)
         {
             Quiz appletResult;
-            if ((appletResult = this.QuizModel.GetOneById(id).Value) == null)
+            if ((appletResult = QuizModel.GetOneById(id).Value) == null)
             {
                 var error = new Error(
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
                     ErrorsTexts.GetResultError_Subject,
                     ErrorsTexts.GetResultError_NotFound);
-                this.LogError("Quiz.GetById", error);
+                LogError("Quiz.GetById", error);
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
@@ -97,7 +92,7 @@
         public QuizDTO GetBySMIId(int id)
         {
             Quiz appletResult;
-            if ((appletResult = this.QuizModel.GetOneBySMIId(id).Value) == null)
+            if ((appletResult = QuizModel.GetOneBySMIId(id).Value) == null)
             {
                 var error = new Error(
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
@@ -113,41 +108,41 @@
         public QuizFromStoredProcedureDTO[] GetQuizzesByUserId(int userId, bool? showLms)
         {
             return
-                this.QuizModel.GetQuizzesByUserId(userId, showLms ?? false)
-                    .Select(x => new QuizFromStoredProcedureDTO(x))
-                    .ToArray();
+                QuizModel.GetQuizzesByUserId(userId, showLms ?? false)
+                .Select(x => new QuizFromStoredProcedureDTO(x))
+                .ToArray();
         }
 
         public QuizFromStoredProcedureDTO[] GetLmsQuizzes(int userId, int lmsUserParametersId)
         {
             var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
             return
-                this.QuizModel.GetLMSQuizzes(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.Id)
-                    .Select(x => new QuizFromStoredProcedureDTO(x))
-                    .ToArray();
+                QuizModel.GetLMSQuizzes(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.Id)
+                .Select(x => new QuizFromStoredProcedureDTO(x))
+                .ToArray();
         }
 
         public QuizFromStoredProcedureDTO[] GetSharedQuizzesByUserId(int userId)
         {
             return
-                this.QuizModel.GetSharedForUserQuizzesByUserId(userId)
-                    .Select(x => new QuizFromStoredProcedureDTO(x))
-                    .ToArray();
+                QuizModel.GetSharedForUserQuizzesByUserId(userId)
+                .Select(x => new QuizFromStoredProcedureDTO(x))
+                .ToArray();
         }
 
         public SMICategoriesFromStoredProcedureDTO[] GetQuizCategoriesbyUserId(int userId)
         {
-            return this.QuizModel.GetQuizCategoriesbyUserId(userId).ToArray();
+            return QuizModel.GetQuizCategoriesbyUserId(userId).ToArray();
         }
 
         public SubModuleItemDTO[] GetQuizSMItemsByUserId(int userId)
         {
-            return this.SubModuleItemModel.GetQuizSMItemsByUserId(userId).ToArray();
+            return SubModuleItemModel.GetQuizSMItemsByUserId(userId).ToArray();
         }
 
         public QuizDataDTO GetQuizDataByQuizId(int quizId)
         {
-            return this.QuizModel.getQuizDataByQuizID(quizId);
+            return QuizModel.getQuizDataByQuizID(quizId);
         }
 
         #endregion
@@ -157,8 +152,8 @@
         private Quiz ConvertDto(QuizDTO itemDTO, Quiz instance)
         {
             instance = instance ?? new Quiz();
-            instance.QuizName = itemDTO.quizName.With(x => x.Trim());
-            instance.Description = itemDTO.description.With(x => x.Trim());
+            instance.QuizName = itemDTO.quizName?.Trim();
+            instance.Description = itemDTO.description?.Trim();
             instance.IsPostQuiz = itemDTO.isPostQuiz;
             instance.SubModuleItem = itemDTO.subModuleItemId.HasValue ? this.SubModuleItemModel.GetOneById(itemDTO.subModuleItemId.Value).Value : null;
             instance.QuizFormat = itemDTO.quizFormatId.HasValue ? this.QuizFormatModel.GetOneById(itemDTO.quizFormatId.Value).Value ?? this.QuizFormatModel.GetOneById(1).Value : this.QuizFormatModel.GetOneById(1).Value;
@@ -179,11 +174,8 @@
             Quiz quiz,
             QuizModel quizModel)
         {
-            quiz = this.ConvertDto(appletResultDTO, quiz);
+            quiz = ConvertDto(appletResultDTO, quiz);
             quizModel.RegisterSave(quiz, true);
-            int companyId =
-                quiz.With(x => x.SubModuleItem).With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
-            //IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Quiz>(NotificationType.Update, companyId, quiz.Id);
             return new QuizDTO(quiz);
         }
 
