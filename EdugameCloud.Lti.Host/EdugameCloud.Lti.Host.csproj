@@ -100,6 +100,9 @@
     <Reference Include="Esynctraining.FluentValidation, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.FluentValidation.1.0.1\lib\net461\Esynctraining.FluentValidation.dll</HintPath>
     </Reference>
+    <Reference Include="Esynctraining.Json.Jil, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Json.Jil.1.0.0.2\lib\net461\Esynctraining.Json.Jil.dll</HintPath>
+    </Reference>
     <Reference Include="Esynctraining.Mvc, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Mvc.1.0.0.1\lib\net45\Esynctraining.Mvc.dll</HintPath>
       <Private>True</Private>
