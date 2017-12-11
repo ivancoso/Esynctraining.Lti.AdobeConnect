@@ -192,12 +192,12 @@ namespace EdugameCloud.WCFService
 
             if (string.IsNullOrEmpty(eventInfo.ScoInfo.Info))
             {
-                errorMessage.Append($"Event info should be set for the event with sco-id {eventQuizMapping.acEventScoId}");
+                errorMessage.Append($"Event info should be set for the event with sco-id {eventQuizMapping.acEventScoId}.{Environment.NewLine}");
             }
 
             if (string.IsNullOrEmpty(eventInfo.ScoInfo.SpeakerName))
             {
-                errorMessage.Append($"Speaker name should be set for the event with sco-id {eventQuizMapping.acEventScoId}");
+                errorMessage.Append($"Speaker name should be set for the event with sco-id {eventQuizMapping.acEventScoId}.{Environment.NewLine}");
             }
 
             return string.IsNullOrEmpty(errorMessage.ToString()) 
