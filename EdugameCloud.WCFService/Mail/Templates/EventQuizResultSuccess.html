@@ -29,8 +29,8 @@
 								<tr>
 									<td valign="top" width="65%" style="padding: 0 36px 0 0; text-align: left; font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif; color:#464646; font-size: 14px; line-height: 18px;">
 										<p style="margin: 0 0 18px 0;">Hi @Model.Name,</p>
-										<p style="margin: 0 0 18px 0;">You successfully passed a Quiz for @Model.EventName.</p>
-										<p style="margin: 0 0 18px 0;">To get your Certificate please complete another Quiz <a href="@Model.PostQuizUrl">here</a>.</p>
+									    <p style="margin: 0 0 18px 0;">You successfully completed @Model.EventName @Model.Date.ToShortDateString().</p>
+									    <p style="margin: 0 0 18px 0;">To earn your Certificate, you must also complete the <a href="@Model.PostQuizUrl">Post Quiz @Model.EventName Assessment</a>.</p>
 										<p style="margin: 0 0 18px 0;">Thank you.</p>
 									</td>
 									<td valign="top" width="35%" style="padding: 0 18px 0 18px; background-color:#E6E6E6; font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif; color:#464646; font-size: 14px; line-height: 18px;" align="center">

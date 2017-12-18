@@ -1,4 +1,5 @@
-﻿using Esynctraining.Core.Providers;
+﻿using System;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Providers.Mailer.Models;
 
 namespace EdugameCloud.WCFService.Mail.Models
@@ -14,5 +15,7 @@ namespace EdugameCloud.WCFService.Mail.Models
         public string EventName { get; set; }
 
         public string PostQuizUrl { get; set; }
+
+        public DateTime  Date { get; set; }
     }
 }

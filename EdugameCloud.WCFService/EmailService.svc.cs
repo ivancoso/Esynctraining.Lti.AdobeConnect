@@ -29,6 +29,7 @@ using Ical.Net.Serialization.iCalendar.Serializers;
 using Resources;
 using Calendar = Ical.Net.Calendar;
 using EdugameCloud.Lti.Core.Utils;
+using NHibernate.Criterion;
 
 namespace EdugameCloud.WCFService
 {
@@ -390,7 +391,8 @@ namespace EdugameCloud.WCFService
                         Name = quizResult.ParticipantName,
                         EventName = eventInfo.ScoInfo?.Name ?? scoId,
                         MailSubject = "AC Event Post quiz result",
-                        PostQuizUrl = Settings.CertificatesUrl + "/UI/#/?quizResultGuid=" + quizResult.Guid
+                        PostQuizUrl = Settings.CertificatesUrl + "/UI/#/?quizResultGuid=" + quizResult.Guid,
+                        Date = quizResult.EndTime
                         //PostQuizUrl = "https://app.edugamecloud.com"
                     };
 
