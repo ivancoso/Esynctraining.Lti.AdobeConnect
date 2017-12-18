@@ -221,7 +221,20 @@ namespace EdugameCloud.WCFService
                 this.LogError("EmailService.SendCertificate", error);
                 throw new FaultException<Error>(error, error.errorMessage);
             }
+
             var postQuizResult = QuizResultModel.GetOneByGuid(guid).Value;
+
+            var acDomain = CompanyAcServerModel.GetOneById(postQuizResult.EventQuizMapping.CompanyAcDomain.Id).Value;
+            var acUrl = acDomain.AcServer;
+            var apiUrl = new Uri(acUrl);
+
+            var scoId = postQuizResult.EventQuizMapping.AcEventScoId;
+            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), Logger, apiUrl);
+            var eventInfo = proxy.GetScoInfo(scoId);
+            if (!eventInfo.Success)
+                throw new InvalidOperationException();
+
+
             var emailsNotSend = new List<string>();
             if (string.IsNullOrEmpty(postQuizResult.ACEmail))
             {
@@ -233,6 +246,7 @@ namespace EdugameCloud.WCFService
             {
                 CertificateLink = postQuizResult.BuildDownloadUrl(Settings.CertificatesUrl),
                 ParticipantName = postQuizResult.ParticipantName,
+                EventName = eventInfo.ScoInfo.Name
             };
             bool sentSuccessfully = MailModel.SendEmailSync(postQuizResult.ParticipantName, postQuizResult.ACEmail,
                         Emails.CertificateSubject,

@@ -11,5 +11,6 @@ namespace EdugameCloud.WCFService.Mail.Models
 
         public string ParticipantName { get; set; }
         public string CertificateLink { get; set; }
+        public string EventName { get; set; }
     }
 }
