@@ -462,17 +462,12 @@ namespace EdugameCloud.WCFService
 
                 var attachments = new List<System.Net.Mail.Attachment>();
 
-                //var duration = model.EventEndDate - model.EventStartDate;
-
-                string description = model.EventDesc;
-                //string description = this.TemplateProvider.GetTemplate<EventQuizRegistrationModel>().TransformTemplate(model);
-
                 var e = new Event
                 {
                     DtStart = new CalDateTime(model.EventStartDate),
                     DtEnd = new CalDateTime(model.EventEndDate),
                     Summary = $"{model.EventName}",
-                    Description = description,
+                    Description = model.MeetingUrl,
                     Url = new Uri(model.MeetingUrl)
                 };
 
