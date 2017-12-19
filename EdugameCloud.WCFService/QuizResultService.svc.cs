@@ -1,4 +1,5 @@
 ﻿using DotNetOpenAuth.Messaging;
+using NHibernate;
 
 namespace EdugameCloud.WCFService
 {
@@ -193,6 +194,35 @@ namespace EdugameCloud.WCFService
 
             return new EventQuizResultDTO(quizResult);
         }
+
+        public async Task<EventQuizResultDTO> GetLiveQuizResultByPostQuizGuid(Guid guid)
+        {
+            QuizResult quizResult;
+            if ((quizResult = this.QuizResultModel.GetOneByGuid(guid).Value) == null)
+            {
+                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
+                this.LogError("QuizResult.GetLiveQuizResultByPostQuizGuid", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+
+            IEnumerable<QuizResult> quizResults;
+            if ((quizResults = this.QuizResultModel.GetByACSessionIdAndAcEmail(quizResult.ACSessionId, quizResult.ACEmail)  ) == null)
+            {
+                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
+                this.LogError("QuizResult.GetLiveQuizResultByPostQuizGuid", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+
+            if ((quizResult = quizResults.ToList().FirstOrDefault(q => q.Guid != guid)) == null)
+            {
+                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
+                this.LogError("QuizResult.GetLiveQuizResultByPostQuizGuid", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+
+            return new EventQuizResultDTO(quizResult);
+        }
+
 
         public async Task<EventQuizResultDTO> GetById(int id)
         {

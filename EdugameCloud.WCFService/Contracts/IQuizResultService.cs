@@ -34,6 +34,10 @@ namespace EdugameCloud.WCFService.Contracts
         [OperationContract]
         [FaultContract(typeof(Error))]
         Task<EventQuizResultDTO> GetById(int id);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        Task<EventQuizResultDTO> GetLiveQuizResultByPostQuizGuid(Guid guid);
     }
 
 }
