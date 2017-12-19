@@ -194,6 +194,19 @@ namespace EdugameCloud.WCFService
             return new EventQuizResultDTO(quizResult);
         }
 
+        public async Task<EventQuizResultDTO> GetById(int id)
+        {
+            QuizResult quizResult;
+            if ((quizResult = this.QuizResultModel.GetOneById(id).Value) == null)
+            {
+                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
+                this.LogError("QuizResult.GetById", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+
+            return new EventQuizResultDTO(quizResult);
+        }
+
         #endregion
 
         #region Methods
