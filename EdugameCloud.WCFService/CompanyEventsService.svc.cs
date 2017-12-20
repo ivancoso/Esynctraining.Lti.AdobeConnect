@@ -177,14 +177,15 @@ namespace EdugameCloud.WCFService
 
             var eventRegistrationDetails = acProxy.GetEventRegistrationDetails(eventQuizMapping.acEventScoId);
 
-            string[] requiredFieldNames = new string[3] { "School", "State", "Trainee number or ID"};
+            string[] requiredFieldNames = new string[3] {"School", "State", "Trainee number or ID"};
             StringBuilder errorMessage = new StringBuilder();
 
-            foreach(var fieldName in requiredFieldNames)
+            foreach (var fieldName in requiredFieldNames)
             {
-                if (!eventRegistrationDetails.EventFields.Any(ef => string.Equals(ef.Description, fieldName, StringComparison.OrdinalIgnoreCase)))
+                if (!eventRegistrationDetails.EventFields.Any(ef =>
+                    string.Equals(ef.Description, fieldName, StringComparison.OrdinalIgnoreCase)))
                 {
-                    errorMessage.Append($"There are not {fieldName} field.{Environment.NewLine}");
+                    errorMessage.Append($"{fieldName} field is missed.{Environment.NewLine}");
                 }
             }
 
@@ -192,15 +193,23 @@ namespace EdugameCloud.WCFService
 
             if (string.IsNullOrEmpty(eventInfo.ScoInfo.Info))
             {
-                errorMessage.Append($"Event info should be set for the event with sco-id {eventQuizMapping.acEventScoId}.{Environment.NewLine}");
+                errorMessage.Append(
+                    $"Event info should be set for the event with sco-id {eventQuizMapping.acEventScoId}.{Environment.NewLine}");
             }
 
             if (string.IsNullOrEmpty(eventInfo.ScoInfo.SpeakerName))
             {
-                errorMessage.Append($"Speaker name should be set for the event with sco-id {eventQuizMapping.acEventScoId}.{Environment.NewLine}");
+                errorMessage.Append(
+                    $"Speaker name should be set for the event with sco-id {eventQuizMapping.acEventScoId}.{Environment.NewLine}");
             }
 
-            return string.IsNullOrEmpty(errorMessage.ToString()) 
+            if (!string.IsNullOrEmpty(errorMessage.ToString()))
+            {
+                errorMessage.Append(
+                    $"Please fix the event details in Adobe Connect and try again.{Environment.NewLine}");
+            }
+
+            return string.IsNullOrEmpty(errorMessage.ToString())
                 ? OperationResultDto.Success()
                 : OperationResultDto.Error(errorMessage.ToString());
         }
