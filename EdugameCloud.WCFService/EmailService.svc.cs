@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
+using EdugameCloud.Lti.Core.Utils;
 using EdugameCloud.WCFService.Base;
 using EdugameCloud.WCFService.Contracts;
 using EdugameCloud.WCFService.Mail.Models;
@@ -28,8 +29,6 @@ using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Resources;
 using Calendar = Ical.Net.Calendar;
-using EdugameCloud.Lti.Core.Utils;
-using NHibernate.Criterion;
 
 namespace EdugameCloud.WCFService
 {
@@ -144,11 +143,12 @@ namespace EdugameCloud.WCFService
                     cc,
                     bcc);
 
-                var newHistoryItem = new EmailHistoryDTO(item);
-                newHistoryItem.body = item.Body;
-                newHistoryItem.date = DateTime.Now.ConvertToUnixTimestamp();
-                newHistoryItem.emailHistoryId = 0;
-
+                var newHistoryItem = new EmailHistoryDTO(item)
+                {
+                    body = item.Body,
+                    date = DateTime.Now.ConvertToUnixTimestamp(),
+                    emailHistoryId = 0
+                };
                 return this.SaveHistory(newHistoryItem);
             }
 
@@ -189,15 +189,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The subscribe.
-        /// </summary>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserDTO"/>.
-        /// </returns>
         public UserDTO[] SetUserUnsubscribed(string email)
         {
             var users = UserModel.GetAllByEmails(new List<string> { email }).ToList();
@@ -538,7 +529,7 @@ namespace EdugameCloud.WCFService
                 SentTo = history.sentTo,
                 Subject = history.subject,
                 User = this.UserModel.GetOneByEmail(history.sentTo).Value,
-                Status = history.status
+                Status = history.status,
             };
         }
         
@@ -549,7 +540,7 @@ namespace EdugameCloud.WCFService
                 Email = h.email,
                 IsActive = h.isActive,
                 DateSubscribed = h.dateSubscribed.ConvertFromUnixTimeStamp(),
-                DateUnsubscribed = h.dateUnsubscribed.ConvertFromUnixTimeStamp()
+                DateUnsubscribed = h.dateUnsubscribed.ConvertFromUnixTimeStamp(),
             };
         }
 

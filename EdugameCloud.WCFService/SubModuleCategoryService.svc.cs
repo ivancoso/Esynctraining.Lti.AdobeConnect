@@ -37,12 +37,6 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     All test.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="SubModuleCategoryDTO" />.
-        /// </returns>
         public SubModuleCategoryDTO[] GetAll()
         {
             return this.SubModuleCategoryModel.GetAll().Select(x => new SubModuleCategoryDTO(x)).ToArray();

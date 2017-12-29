@@ -144,7 +144,7 @@
             SendActivationEmail(user.FirstName, user.Email, user.Company,  userActivation.ActivationCode, bcced);
         }
         
-        protected CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
+        protected static CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
         {
             if (licenseVo.isTrial)
             {

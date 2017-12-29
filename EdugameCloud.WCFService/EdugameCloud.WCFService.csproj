@@ -250,7 +250,6 @@
     <Content Include="QuizResultService.svc" />
     <Content Include="RestService.svc" />
     <Content Include="FileService.svc" />
-    <Content Include="ErrorService.svc" />
     <Content Include="Uploads\dummy.js" />
     <Content Include="UserService.svc" />
     <Content Include="Global.asax" />
@@ -303,7 +302,6 @@
     <Compile Include="Contracts\ICompanyService.cs" />
     <Compile Include="Contracts\IDistractorService.cs" />
     <Compile Include="Contracts\IEmailService.cs" />
-    <Compile Include="Contracts\IErrorService.cs" />
     <Compile Include="Contracts\IExportService.cs" />
     <Compile Include="Contracts\IFileService.cs" />
     <Compile Include="Contracts\IImportService.cs" />
@@ -440,9 +438,6 @@
     </Compile>
     <Compile Include="FileService.svc.cs">
       <DependentUpon>FileService.svc</DependentUpon>
-    </Compile>
-    <Compile Include="ErrorService.svc.cs">
-      <DependentUpon>ErrorService.svc</DependentUpon>
     </Compile>
     <Compile Include="UserService.svc.cs">
       <DependentUpon>UserService.svc</DependentUpon>

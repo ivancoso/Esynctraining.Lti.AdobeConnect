@@ -39,13 +39,7 @@
         /// <summary>
         /// Gets the behavior type.
         /// </summary>
-        public override Type BehaviorType
-        {
-            get
-            {
-                return typeof(ExtendedWebHttpBehavior);
-            }
-        }
+        public override Type BehaviorType => typeof(ExtendedWebHttpBehavior);
 
         #endregion
 

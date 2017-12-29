@@ -21,8 +21,6 @@ namespace EdugameCloud.WCFService
 
     using FluentValidation.Results;
 
-    using Resources;
-
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class SNMemberService : BaseService, ISNMemberService
@@ -93,11 +91,7 @@ namespace EdugameCloud.WCFService
 
         #region Methods
 
-        private void UpdateCache()
-        {
-        }
-
-        private SNMember ConvertDto(SNMemberDTO sessionMember, SNMember instance, ACSessionModel acSessionModel)
+        private static SNMember ConvertDto(SNMemberDTO sessionMember, SNMember instance, ACSessionModel acSessionModel)
         {
             instance = instance ?? new SNMember();
             instance.ParticipantProfile = sessionMember.participantProfile;

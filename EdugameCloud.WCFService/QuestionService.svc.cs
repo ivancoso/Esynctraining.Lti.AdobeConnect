@@ -28,18 +28,6 @@
     {
         #region Public Methods and Operators
 
-        /// <summary>
-        /// Get by user subModuleId and sub module item subModuleId.
-        /// </summary>
-        /// <param name="userId">
-        /// The user Id.
-        /// </param>
-        /// <param name="smiId">
-        /// The sub module item Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionDTO"/>.
-        /// </returns>
         public QuestionDTO[] GetByUserIdAndSubModuleItemId(int userId, int smiId)
         {
             var questions = this.QuestionModel.GetAllByUserIdAndSubModuleItemId(userId, smiId).ToList();
@@ -47,15 +35,6 @@
             return questions.Select(x => new QuestionDTO(x, this.SelectCustomTypeFromList(x, customQuestions))).ToArray();
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="dto">
-        /// The DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionDTO"/>.
-        /// </returns>
         public QuestionDTO Save(QuestionDTO dto)
         {
             ValidationResult validationResult;
@@ -104,15 +83,6 @@
             }
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="results">
-        /// The applet Result DTOs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionSaveAllDTO"/>.
-        /// </returns>
         public QuestionSaveAllDTO SaveAll(QuestionDTO[] results)
         {
             results = results ?? new QuestionDTO[] { };
@@ -157,15 +127,6 @@
             return result;
         }
 
-        /// <summary>
-        /// The get by subModuleId.
-        /// </summary>
-        /// <param name="id">
-        /// The subModuleId.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionDTO"/>.
-        /// </returns>
         public QuestionDTO GetById(int id)
         {
             Question question;
@@ -177,18 +138,9 @@
             }
 
             var customQuestions = this.QuestionModel.GetCustomQuestionsByQuestionIdsWithTypes(new[] { new KeyValuePair<int, int>(id, question.QuestionType.Id) });
-            return new QuestionDTO(question, this.SelectCustomTypeFromList(question, customQuestions));
+            return new QuestionDTO(question, SelectCustomTypeFromList(question, customQuestions));
         }
 
-        /// <summary>
-        /// The delete by subModuleId.
-        /// </summary>
-        /// <param name="id">
-        /// The subModuleId.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         public int DeleteById(int id)
         {
             Question question;
@@ -208,79 +160,31 @@
             return id;
         }
 
-        /// <summary>
-        /// Export questions by SubModule item id.
-        /// </summary>
-        /// <param name="smiId">SubModule item id.</param>
-        /// <param name="questionIds">Question ids.</param>
-        /// <returns>The <see cref="string"/>.</returns>
         public string ExportQuestionsBySubModuleItemId(int smiId, int[] questionIds)
         {
             questionIds = questionIds ?? new int[] { };
-            return this.Export(smiId, questionIds.Return(x => x.ToList(), new List<int>()));
+            return Export(smiId, questionIds.Return(x => x.ToList(), new List<int>()));
         }
 
-        /// <summary>
-        /// Import questions by SubModule item id.
-        /// </summary>
-        /// <param name="id">Import id.</param>
-        /// <param name="smiId">SubModule item id.</param>
-        /// <param name="format">Import format.</param>
-        /// <returns>The <see cref="QuestionDTO"/>.</returns>
         public QuestionDTO[] ImportQuestionsBySubModuleItemId(string id, int smiId, string format)
         {
-            return this.Import(id, smiId, null, (FormatsEnum)Enum.Parse(typeof(FormatsEnum), format));
+            return Import(id, smiId, null, (FormatsEnum)Enum.Parse(typeof(FormatsEnum), format));
         }
 
-        /// <summary>
-        /// Import questions by SubModule item id.
-        /// </summary>
-        /// <param name="id">
-        /// Import id.
-        /// </param>
-        /// <param name="userId">
-        /// The user Id.
-        /// </param>
-        /// <param name="format">
-        /// Import format.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionDTO"/>.
-        /// </returns>
         public QuestionDTO[] GetParsedQuestionsById(string id, int userId, string format)
         {
-            return this.Import(id, null, userId, (FormatsEnum)Enum.Parse(typeof(FormatsEnum), format));
+            return Import(id, null, userId, (FormatsEnum)Enum.Parse(typeof(FormatsEnum), format));
         }
 
-        /// <summary>
-        /// Export by SubModule id.
-        /// </summary>
-        /// <param name="smiId">SubModule id.</param>
-        /// <returns>The <see cref="QuestionDTO"/>.</returns>
         public string ExportBySubModuleId(int smiId)
         {
-            return this.Export(smiId);
+            return Export(smiId);
         }
 
         #endregion
 
         #region Methods
 
-        /// <summary>
-        /// The process custom questions.
-        /// </summary>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="dto">
-        /// The DTO.
-        /// </param>
-        /// <param name="wasTransient">
-        /// The was transient.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionFor"/>.
-        /// </returns>
         private QuestionFor ProcessCustomQuestions(Question question, QuestionDTO dto, bool wasTransient)
         {
             switch (question.QuestionType.Id)
@@ -347,21 +251,6 @@
             return null;
         }
 
-        /// <summary>
-        /// The create distractors.
-        /// </summary>
-        /// <param name="dto">
-        /// The DTO.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="distractorModel">
-        /// The distractor model.
-        /// </param>
-        /// <param name="result">
-        /// The result.
-        /// </param>
         private void CreateDistractors(
             QuestionDTO dto,
             Question question,
@@ -410,18 +299,6 @@
             }
         }
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="q">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategory"/>.
-        /// </returns>
         private Question ConvertDto(QuestionDTO q, Question instance)
         {
             instance = instance ?? new Question();
@@ -458,5 +335,7 @@
         }
 
         #endregion
+
     }
+
 }

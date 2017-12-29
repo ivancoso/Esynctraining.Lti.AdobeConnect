@@ -122,22 +122,6 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        public int UpdateSeatsCount(int licenseId, int seatsCount)
-        {
-            var model = this.CompanyLicenseModel;
-            CompanyLicense companyLicense;
-            if ((companyLicense = model.GetOneById(licenseId).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("CompanyLicense.UpdateSeatsCount", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
-
-            companyLicense.TotalLicensesCount = seatsCount;
-            model.RegisterSave(companyLicense, true);
-            return seatsCount;
-        }
-
         #endregion
 
         #region Methods
@@ -174,7 +158,7 @@ namespace EdugameCloud.WCFService
             instance.TotalParticipantsCount = licenseDto.totalParticipantsCount == 0 ? 100 : licenseDto.totalParticipantsCount;
             instance.DateModified = DateTime.Now;
             instance.ModifiedBy = this.UserModel.GetOneById(licenseDto.modifiedBy).Value;
-            instance.LicenseStatus = this.GetLicenseStatus(licenseDto);
+            instance.LicenseStatus = GetLicenseStatus(licenseDto);
             instance.HasApi = licenseDto.hasApi;
 
             return instance;

@@ -313,7 +313,7 @@ namespace EdugameCloud.WCFService
                 license.ExpiryDate = expiryDate < DateTime.Now || expiryDate == DateTime.MinValue ? dto.licenseVO.isTrial ? DateTime.Now.AddDays(30) : DateTime.Now.AddYears(1) : expiryDate;
                 var start = dto.licenseVO.startDate.ConvertFromUnixTimeStamp();
                 license.DateStart = start < DateTime.Now || start == SqlDateTime.MinValue.Value ? DateTime.Now : dto.licenseVO.startDate.ConvertFromUnixTimeStamp();
-                license.LicenseStatus = this.GetLicenseStatus(dto.licenseVO);
+                license.LicenseStatus = GetLicenseStatus(dto.licenseVO);
                 license.TotalLicensesCount = dto.licenseVO.totalLicensesCount;
 
                 license.TotalParticipantsCount = dto.licenseVO.totalParticipantsCount == 0 ? 100 : dto.licenseVO.totalParticipantsCount;

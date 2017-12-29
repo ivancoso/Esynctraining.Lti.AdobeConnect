@@ -12,82 +12,30 @@
     [ServiceContract]
     public interface IEmailService
     {
-        /// <summary>
-        /// Gets the history.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="EmailHistoryDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         EmailHistoryDTO[] GetHistory();
 
-        /// <summary>
-        /// Saves the history item.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="EmailHistoryDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         EmailHistoryDTO SaveHistory(EmailHistoryDTO dto);
 
-        /// <summary>
-        /// Gets history by company id.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="EmailHistoryDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         EmailHistoryDTO[] GetHistoryByCompanyId(int companyId);
 
-        /// <summary>
-        /// The resend.
-        /// </summary>
-        /// <param name="emailHistoryId">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="EmailHistoryDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         EmailHistoryDTO ResendEmail(int emailHistoryId);
 
-        /// <summary>
-        /// The subscribe.
-        /// </summary>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <returns>
-        /// The <see cref="NewsletterSubscriptionDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         NewsletterSubscriptionDTO SubscribeToNewsletter(string email);
 
-
-        /// <summary>
-        /// Logs error to server log.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="NewsletterSubscriptionDTO"/>.
-        /// </returns>      
         [OperationContract]
         [FaultContract(typeof(Error))]
         NewsletterSubscriptionDTO[] GetNewsletterSubscription();
 
-        /// <summary>
-        /// The subscribe.
-        /// </summary>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <returns>
-        /// The <see cref="UserDTO"/>.
-        /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
         UserDTO[] SetUserUnsubscribed(string email);

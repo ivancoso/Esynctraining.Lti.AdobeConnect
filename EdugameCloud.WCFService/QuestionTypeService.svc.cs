@@ -27,37 +27,16 @@
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The get all.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="QuestionTypeDTO"/>.
-        /// </returns>
         public QuestionTypeDTO[] GetAll()
         {
             return this.QuestionTypeModel.GetAll().ToList().Select(x => new QuestionTypeDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The get active types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="QuestionTypeDTO"/>.
-        /// </returns>
         public QuestionTypeDTO[] GetActiveTypes()
         {
             return this.QuestionTypeModel.GetAllActive().ToList().Select(x => new QuestionTypeDTO(x)).ToArray();
         }
 
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="resultDto">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionTypeDTO"/>.
-        /// </returns>
         public QuestionTypeDTO Save(QuestionTypeDTO resultDto)
         {
             ValidationResult validationResult;
@@ -66,7 +45,7 @@
                 var typeModel = this.QuestionTypeModel;
                 var isTransient = resultDto.questionTypeId == 0;
                 var convertDto = isTransient ? null : typeModel.GetOneById(resultDto.questionTypeId).Value;
-                convertDto = this.ConvertDto(resultDto, convertDto);
+                convertDto = ConvertDto(resultDto, convertDto);
                 typeModel.RegisterSave(convertDto);
                 return new QuestionTypeDTO(convertDto);
             }
@@ -99,7 +78,7 @@
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
                     ErrorsTexts.GetResultError_Subject,
                     ErrorsTexts.GetResultError_NotFound);
-                this.LogError("QuestionType.DeleteById", error);
+                LogError("QuestionType.DeleteById", error);
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
@@ -111,7 +90,7 @@
 
         #region Methods
 
-        private QuestionType ConvertDto(QuestionTypeDTO q, QuestionType instance)
+        private static QuestionType ConvertDto(QuestionTypeDTO q, QuestionType instance)
         {
             instance = instance ?? new QuestionType();
             instance.IsActive = q.isActive;

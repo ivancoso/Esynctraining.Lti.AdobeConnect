@@ -17,7 +17,7 @@
         /// <summary>
         /// The cache.
         /// </summary>
-        private readonly Hashtable cache = new Hashtable();
+        private readonly Hashtable _cache = new Hashtable();
 
         #endregion
 
@@ -28,9 +28,9 @@
         /// </summary>
         public void ClearCache()
         {
-            lock (this.cache)
+            lock (_cache)
             {
-                this.cache.Clear();
+                _cache.Clear();
             }
         }
 
@@ -49,15 +49,15 @@
         public string GetResourceString(string key, string resourceName)
         {
             string cacheKey = string.Format("{0}.{1}", resourceName, key);
-            lock (this.cache)
+            lock (_cache)
             {
-                if (!this.cache.ContainsKey(cacheKey))
+                if (!_cache.ContainsKey(cacheKey))
                 {
-                    this.cache.Add(cacheKey, this.GetFromType(resourceName, key));
+                    _cache.Add(cacheKey, GetFromType(resourceName, key));
                 }
             }
 
-            return this.cache[cacheKey].ToString();
+            return _cache[cacheKey].ToString();
         }
 
         #endregion
@@ -92,5 +92,7 @@
         }
 
         #endregion
+
     }
+
 }
