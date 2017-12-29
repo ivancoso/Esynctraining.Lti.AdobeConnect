@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using Castle.Components.DictionaryAdapter;
 using EdugameCloud.Lti.API.Haiku;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
@@ -17,10 +13,12 @@ namespace EdugameCloud.Lti.Haiku
     {
         private readonly ILogger _logger;
 
+
         public HaikuRestApiClient(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
 
         public List<LmsUserDTO> GetUsersForCourse(ILmsLicense lmsCompany, int courseId, out string error)
         {
@@ -144,4 +142,5 @@ namespace EdugameCloud.Lti.Haiku
         }
 
     }
+
 }

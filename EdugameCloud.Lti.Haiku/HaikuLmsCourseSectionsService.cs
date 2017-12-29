@@ -12,9 +12,9 @@ namespace EdugameCloud.Lti.Haiku
         private readonly IHaikuRestApiClient _haikuApi;
 
 
-        public HaikuLmsCourseSectionsService(IHaikuRestApiClient canvasApi)
+        public HaikuLmsCourseSectionsService(IHaikuRestApiClient apiClient)
         {
-            _haikuApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
+            _haikuApi = apiClient ?? throw new ArgumentNullException(nameof(apiClient));
         }
 
 

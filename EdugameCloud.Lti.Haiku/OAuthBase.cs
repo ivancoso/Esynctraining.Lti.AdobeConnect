@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Security.Cryptography;
 using System.Collections.Generic;
-using System.Text;
-using System.Net;
-using System.Web;
-using System.IO;
 using System.Collections.Specialized;
+using System.IO;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web;
 
 namespace EdugameCloud.Lti.Haiku
 {
@@ -18,7 +18,7 @@ namespace EdugameCloud.Lti.Haiku
         {
             HMACSHA1,
             PLAINTEXT,
-            RSASHA1
+            RSASHA1,
         }
 
         /// <summary>
@@ -26,24 +26,17 @@ namespace EdugameCloud.Lti.Haiku
         /// </summary>
         protected class QueryParameter
         {
-            private string name = null;
-            private string value = null;
+            public string Name { get; }
+
+            public string Value { get; }
+
 
             public QueryParameter(string name, string value)
             {
-                this.name = name;
-                this.value = value;
+                Name = name;
+                Value = value;
             }
 
-            public string Name
-            {
-                get { return name; }
-            }
-
-            public string Value
-            {
-                get { return value; }
-            }
         }
 
         /// <summary>
@@ -103,16 +96,11 @@ namespace EdugameCloud.Lti.Haiku
         private string ComputeHash(HashAlgorithm hashAlgorithm, string data)
         {
             if (hashAlgorithm == null)
-            {
-                throw new ArgumentNullException("hashAlgorithm");
-            }
-
+                throw new ArgumentNullException(nameof(hashAlgorithm));
             if (string.IsNullOrEmpty(data))
-            {
-                throw new ArgumentNullException("data");
-            }
+                throw new ArgumentNullException(nameof(data));
 
-            byte[] dataBuffer = System.Text.Encoding.ASCII.GetBytes(data);
+            byte[] dataBuffer = Encoding.ASCII.GetBytes(data);
             byte[] hashBytes = hashAlgorithm.ComputeHash(dataBuffer);
 
             return Convert.ToBase64String(hashBytes);
@@ -130,7 +118,7 @@ namespace EdugameCloud.Lti.Haiku
                 parameters = parameters.Remove(0, 1);
             }
 
-            List<QueryParameter> result = new List<QueryParameter>();
+            var result = new List<QueryParameter>();
 
             if (!string.IsNullOrEmpty(parameters))
             {
@@ -163,7 +151,7 @@ namespace EdugameCloud.Lti.Haiku
         /// <returns>Returns a Url encoded string</returns>
         public string UrlEncode(string value)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder(value.Length);
 
             foreach (char symbol in value)
             {
@@ -173,7 +161,7 @@ namespace EdugameCloud.Lti.Haiku
                 }
                 else
                 {
-                    result.Append('%' + String.Format("{0:X2}", (int)symbol));
+                    result.Append('%' + string.Format("{0:X2}", (int)symbol));
                 }
             }
 
@@ -187,7 +175,7 @@ namespace EdugameCloud.Lti.Haiku
         /// <returns>a string representing the normalized parameters</returns>
         protected string NormalizeRequestParameters(IList<QueryParameter> parameters)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             QueryParameter p = null;
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -214,29 +202,19 @@ namespace EdugameCloud.Lti.Haiku
         /// <returns>The signature base</returns>
         public string GenerateSignatureBase(Uri url, string callBackUrl, string oauthVerifier, string httpMethod, string timeStamp, string nonce, string signatureType, out string normalizedUrl, out string normalizedRequestParameters)
         {
-            if (this.Token == null)
-            {
-                this.Token = string.Empty;
-            }
-
-            if (this.TokenSecret == null)
-            {
-                this.TokenSecret = string.Empty;
-            }
-
-            if (string.IsNullOrEmpty(this.ConsumerKey))
-            {
-                throw new ArgumentNullException("consumerKey");
-            }
+            if (Token == null)
+                Token = string.Empty;
+            if (TokenSecret == null)
+                TokenSecret = string.Empty;
 
             if (string.IsNullOrEmpty(httpMethod))
-            {
-                throw new ArgumentNullException("httpMethod");
-            }
-
+                throw new ArgumentNullException(nameof(httpMethod));
             if (string.IsNullOrEmpty(signatureType))
+                throw new ArgumentNullException(nameof(signatureType));
+
+            if (string.IsNullOrEmpty(ConsumerKey))
             {
-                throw new ArgumentNullException("signatureType");
+                throw new ArgumentNullException("consumerKey");
             }
 
             normalizedUrl = null;
@@ -262,7 +240,7 @@ namespace EdugameCloud.Lti.Haiku
 
             if (!string.IsNullOrEmpty(this.Token))
             {
-                parameters.Add(new QueryParameter(OAuthTokenKey, this.Token));
+                parameters.Add(new QueryParameter(OAuthTokenKey, Token));
             }
 
             parameters.Sort(new QueryParameterComparer());
@@ -275,7 +253,7 @@ namespace EdugameCloud.Lti.Haiku
             normalizedUrl += url.AbsolutePath;
             normalizedRequestParameters = NormalizeRequestParameters(parameters);
 
-            StringBuilder signatureBase = new StringBuilder();
+            var signatureBase = new StringBuilder();
             signatureBase.AppendFormat("{0}&", httpMethod.ToUpper());
             signatureBase.AppendFormat("{0}&", UrlEncode(normalizedUrl));
             signatureBase.AppendFormat("{0}", UrlEncode(normalizedRequestParameters));
@@ -328,14 +306,16 @@ namespace EdugameCloud.Lti.Haiku
                 case SignatureTypes.HMACSHA1:
                     string signatureBase = GenerateSignatureBase(url, callBackUrl, oauthVerifier, httpMethod, timeStamp, nonce, HMACSHA1SignatureType, out normalizedUrl, out normalizedRequestParameters);
 
-                    HMACSHA1 hmacsha1 = new HMACSHA1();
-                    hmacsha1.Key = Encoding.ASCII.GetBytes(string.Format("{0}&{1}", UrlEncode(this.ConsumerSecret), string.IsNullOrEmpty(this.TokenSecret) ? "" : UrlEncode(this.TokenSecret)));
+                    var hmacsha1 = new HMACSHA1
+                    {
+                        Key = Encoding.ASCII.GetBytes(string.Format("{0}&{1}", UrlEncode(ConsumerSecret), string.IsNullOrEmpty(TokenSecret) ? string.Empty : UrlEncode(TokenSecret)))
+                    };
 
                     return GenerateSignatureUsingHash(signatureBase, hmacsha1);
                 case SignatureTypes.RSASHA1:
                     throw new NotImplementedException();
                 default:
-                    throw new ArgumentException("Unknown signature type", "signatureType");
+                    throw new ArgumentException("Unknown signature type", nameof(signatureType));
             }
         }
 
@@ -361,19 +341,13 @@ namespace EdugameCloud.Lti.Haiku
         }
 
         public enum Method { GET, POST, PUT, DELETE };
-        private string _consumerKey = "asdf";
-        private string _consumerSecret = "ghjk";
-        private string _token = "";
-        private string _tokenSecret = "";
-        private string _callBackUrl = "oob";
-        private string _oauthVerifier = "";
 
-        public string ConsumerKey { get { return _consumerKey; } set { _consumerKey = value; } }
-        public string ConsumerSecret { get { return _consumerSecret; } set { _consumerSecret = value; } }
-        public string Token { get { return _token; } set { _token = value; } }
-        public string TokenSecret { get { return _tokenSecret; } set { _tokenSecret = value; } }
-        public string CallBackUrl { get { return _callBackUrl; } set { _callBackUrl = value; } }
-        public string OAuthVerifier { get { return _oauthVerifier; } set { _oauthVerifier = value; } }
+        public string ConsumerKey { get; set; } = "asdf";
+        public string ConsumerSecret { get; set; } = "ghjk";
+        public string Token { get; set; } = "";
+        public string TokenSecret { get; set; } = "";
+        public string CallBackUrl { get; set; } = "oob";
+        public string OAuthVerifier { get; set; } = "";
 
 
         /// <summary>
@@ -388,8 +362,7 @@ namespace EdugameCloud.Lti.Haiku
             string outUrl = "";
             string querystring = "";
             string ret = "";
-
-
+            
             //Setup postData for signing.
             //Add the postData to the querystring.
             if (method == Method.POST || method == Method.DELETE)
@@ -422,22 +395,22 @@ namespace EdugameCloud.Lti.Haiku
                 }
             }
 
-            Uri uri = new Uri(url);
+            var uri = new Uri(url);
 
-            string nonce = this.GenerateNonce();
-            string timeStamp = this.GenerateTimeStamp();
+            string nonce = GenerateNonce();
+            string timeStamp = GenerateTimeStamp();
 
             //Generate Signature
-            string sig = this.GenerateSignature(uri,
-                this.CallBackUrl,
-                this.OAuthVerifier,
+            string sig = GenerateSignature(uri,
+                CallBackUrl,
+                OAuthVerifier,
                 method.ToString(),
                 timeStamp,
                 nonce,
                 out outUrl,
                 out querystring);
 
-            querystring += "&oauth_signature=" + this.UrlEncode(sig);
+            querystring += "&oauth_signature=" + UrlEncode(sig);
 
             //Convert the querystring to postData
             if (method == Method.POST || method == Method.DELETE)
@@ -452,7 +425,6 @@ namespace EdugameCloud.Lti.Haiku
             }
 
             ret = WebRequest(method, outUrl + querystring, postData);
-
             return ret;
         }
 
@@ -538,5 +510,7 @@ namespace EdugameCloud.Lti.Haiku
 
             return responseData;
         }
+
     }
+
 }
