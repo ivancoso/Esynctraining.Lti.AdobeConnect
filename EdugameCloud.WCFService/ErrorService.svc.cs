@@ -10,7 +10,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.Mail.Models;
-    using Esynctraining.Core.Extensions;
 
     using Resources;
 
@@ -43,23 +42,9 @@ namespace EdugameCloud.WCFService
                 Common.AppEmail);
         }
 
-        /// <summary>
-        /// Logs error to server log.
-        /// </summary>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        /// <param name="details">
-        /// The details.
-        /// </param>
         public void LogError(string message, string details)
         {
-            this.Logger.Error(
-                    string.Format(
-                        "LogError from Client: Error Message: {0}, Error Details: {1}, Client: {2}",
-                        message,
-                        details,
-                        CurrentUser.With(x => x.Email)));
+            Logger.ErrorFormat("LogError from Client: Error Message: {0}, Error Details: {1}", message, details);
         }
 
     }

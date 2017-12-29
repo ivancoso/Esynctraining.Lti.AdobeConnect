@@ -9,16 +9,13 @@
     using System.Text.RegularExpressions;
     using System.Web;
     using Castle.MicroKernel;
-    using EdugameCloud.Core.Authentication;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Providers.Mailer.Models;
     using EdugameCloud.WCFService.Mail.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
@@ -33,60 +30,7 @@
     public abstract class BaseService
     {
         #region Properties
-
-        ///// <summary>
-        ///// Gets the current user.
-        ///// </summary>
-        //protected Guid CurrentUserToken
-        //{
-        //    get
-        //    {
-        //        Guid token;
-        //        foreach (
-        //            object value in
-        //                OperationContext.Current.With(x => x.IncomingMessageProperties)
-        //                    .Return(x => x.Values, new List<object>()))
-        //        {
-        //            if (value is AmfMessage)
-        //            {
-        //                var message = (AmfMessage)value;
-        //                object data = message.With(x => x.Data);
-        //                if (data is AbstractMessage)
-        //                {
-        //                    var abstractMessage = (AbstractMessage)data;
-        //                    IDictionary<string, object> headers = abstractMessage.With(x => x.Headers);
-
-        //                    if (headers != null && headers.ContainsKey("DSEndpoint") && headers["DSEndpoint"] != null
-        //                        && Guid.TryParse(headers["DSEndpoint"].ToString(), out token))
-        //                    {
-        //                        return token;
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        //        var authHeader = this.AuthHeaderName;
-        //        if (this.CurrentRequest != null
-        //            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        //            && this.CurrentRequest.Headers != null
-        //            && this.CurrentRequest.Headers.HasKey(authHeader)
-        //            && Guid.TryParse(this.CurrentRequest.Headers[authHeader], out token))
-        //        {
-        //            return token;
-        //        }
-
-        //        return Guid.Empty;
-        //    }
-        //}
         
-        protected User CurrentUser
-        {
-            get
-            {
-                return HttpContext.Current.With(x => x.User).If(x => x.Identity is EdugameCloudIdentity, x => ((EdugameCloudIdentity)x.Identity).With(y => y.InternalEntity));
-            }
-        }
-
         protected FileModel FileModel => IoC.Resolve<FileModel>();
 
         protected ISmtpClientEngine MailModel => IoC.Resolve<ISmtpClientEngine>();
