@@ -58,7 +58,7 @@ namespace EdugameCloud.Lti.Host
             //}
 
             DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
-            ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(new WindsorServiceLocator(container), IoC.Resolve<ILogger>())));
+            //ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(new WindsorServiceLocator(container), IoC.Resolve<ILogger>())));
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             DefaultModelBinder.ResourceClassKey = "Errors";
@@ -130,7 +130,7 @@ namespace EdugameCloud.Lti.Host
             container.Install(new LtiMvcWindsorInstaller());
             container.Install(new TelephonyWindsorInstaller());
 
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
+            //container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
         }
 
         private static void SetControllerFactory(IWindsorContainer container)
