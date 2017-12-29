@@ -15,12 +15,9 @@ using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
-using Esynctraining.FluentValidation;
 using Esynctraining.Mvc;
 using Esynctraining.WebApi;
 using Esynctraining.Windsor;
-using FluentValidation;
-using FluentValidation.Mvc;
 
 namespace EdugameCloud.Lti.Host
 {

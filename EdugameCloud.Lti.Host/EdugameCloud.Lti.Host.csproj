@@ -97,9 +97,6 @@
     <Reference Include="Esynctraining.Core, Version=1.0.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.4\lib\net461\Esynctraining.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.FluentValidation, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.FluentValidation.1.0.1\lib\net461\Esynctraining.FluentValidation.dll</HintPath>
-    </Reference>
     <Reference Include="Esynctraining.Json.Jil, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Json.Jil.1.0.0.2\lib\net461\Esynctraining.Json.Jil.dll</HintPath>
     </Reference>
@@ -115,12 +112,6 @@
     </Reference>
     <Reference Include="Esynctraining.Windsor, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Windsor.1.0.0.3\lib\net45\Esynctraining.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.7.2.1\lib\net45\FluentValidation.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentValidation.Mvc, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.Mvc5.7.2.1\lib\net45\FluentValidation.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\Iesi.Collections.4.0.2\lib\net461\Iesi.Collections.dll</HintPath>
