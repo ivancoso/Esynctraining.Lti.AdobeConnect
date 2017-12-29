@@ -13,13 +13,7 @@
         /// <summary>
         /// Gets the behavior type.
         /// </summary>
-        public override Type BehaviorType
-        {
-            get
-            {
-                return typeof(ErrorServiceBehavior);
-            }
-        }
+        public override Type BehaviorType => typeof(ErrorServiceBehavior);
 
         #endregion
 
