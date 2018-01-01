@@ -84,15 +84,17 @@ namespace EdugameCloud.Lti.Api.Host
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime applicationLifetime)
         {
+            applicationLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
+
             ServicePointManager.DefaultConnectionLimit = int.Parse(Configuration["AppSettings:ConnectionBatchSize"]);
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             //app.UseExceptionHandler(
             //    builder =>
             //    {
@@ -102,7 +104,7 @@ namespace EdugameCloud.Lti.Api.Host
             //            context.Response.StatusCode = (int)HttpStatusCode.OK;
             //            var ex = context.Features.Get<IExceptionHandlerFeature>();
             //            if (ex != null)
-            //            { 
+            //            {
             //            }
             //        });
             //    });
