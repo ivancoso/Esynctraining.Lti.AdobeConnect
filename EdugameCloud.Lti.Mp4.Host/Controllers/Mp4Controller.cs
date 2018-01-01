@@ -65,6 +65,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     license,
                     MP4Service.Contract.Client.LicenseType.MP4,
                     input.RecordingId,
+                    null,
                     Logger).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -93,6 +94,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     license,
                     MP4Service.Contract.Client.LicenseType.MP4WithSubtitles,
                     input.RecordingId,
+                    null,
                     Logger).ConfigureAwait(false);
             }
             catch (Exception ex)
