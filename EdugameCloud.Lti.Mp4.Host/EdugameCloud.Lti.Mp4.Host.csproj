@@ -27,11 +27,11 @@
   <ItemGroup>
   <PackageReference Include="AutoMapper" Version="6.2.2" />
   <PackageReference Include="Castle.Windsor" Version="4.1.0" />
-    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.2.0" />
+    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.3.0" />
     <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.5" />
     <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
-    <PackageReference Include="Esynctraining.Mp4Service.Tasks.Client" Version="1.0.2.3" />
+    <PackageReference Include="Esynctraining.Mp4Service.Tasks.Client" Version="1.0.2.5" />
     <PackageReference Include="Esynctraining.Windsor" Version="1.0.0.3" />
     <PackageReference Include="FluentValidation" Version="7.2.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
