@@ -116,8 +116,8 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         private string LoginCurrentUser(out IAdobeConnectProxy adminProvider)
         {
-            try
-            {
+            //try
+            //{
                 var param = Session.LtiSession.LtiParam;
                 var lmsUser = Session.LmsUser;
                 if (lmsUser.PrincipalId == null)
@@ -127,14 +127,18 @@ namespace EdugameCloud.Lti.Api.Controllers
 
                 adminProvider = GetAdminProvider();
                 string breezeToken = MeetingSetup.ACLogin(LmsCompany, param, lmsUser, adminProvider).BreezeSession;
+                if (breezeToken == null)
+                {
+                    throw new WarningMessageException("There is an issue with login to Adobe Connect.");
+                }
 
                 return breezeToken;
-            }
-            catch (Exception ex)
-            {
-                //string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
-                throw;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    //string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", ex);
+            //    throw;
+            //}
         }
 
         protected IAdobeConnectProxy GetAdminProvider()
