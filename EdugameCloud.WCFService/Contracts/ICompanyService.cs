@@ -44,6 +44,7 @@
 
         [OperationContract]
         [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetThemeByCompanyId?id={id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         CompanyThemeDTO GetThemeByCompanyId(int id);
 
         [OperationContract]
