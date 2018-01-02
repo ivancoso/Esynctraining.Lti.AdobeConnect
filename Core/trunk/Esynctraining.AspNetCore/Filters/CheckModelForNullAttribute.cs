@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Esynctraining.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Esynctraining.AspNetCore.Filters
 {
     //[AttributeUsage(AttributeTargets.Method, Inherited = true)]
     public class CheckModelForNullAttribute : ActionFilterAttribute
     {
-        private static readonly Func<IDictionary<string, object>, bool> _validate = arguments => arguments.Any(arg => arg.Value == null);
-
         private readonly bool _isDevelopment;
         
 
@@ -28,13 +22,13 @@ namespace Esynctraining.AspNetCore.Filters
         {
             if (!Validate(context, out string requiredParameterName))
             {
-                if (context.ModelState.IsValid || _isDevelopment)
+                if (context.ModelState.IsValid && _isDevelopment)
                 {
                     // TRICK: returns name of action method parameter, not from query string
                     // So [FromQuery(Name = "queryStringParameterName")] is not supported.
                     context.Result = new ObjectResult(OperationResult.Error($"Argument parsing error. Parameter '{ requiredParameterName }' is required."));
                 }
-                else if (context.ModelState.IsValid || !_isDevelopment)
+                else if (context.ModelState.IsValid && !_isDevelopment)
                 {
                     context.Result = new ObjectResult(OperationResult.Error("Argument parsing error."));
                 }

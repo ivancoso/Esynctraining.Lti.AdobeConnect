@@ -26,12 +26,12 @@ namespace Esynctraining.AspNetCore
 
         private sealed class RequestScopingStartupFilter : IStartupFilter
         {
-            private readonly Func<IDisposable> requestScopeProvider;
+            private readonly Func<IDisposable> _requestScopeProvider;
 
 
             public RequestScopingStartupFilter(Func<IDisposable> requestScopeProvider)
             {
-                this.requestScopeProvider = requestScopeProvider ?? throw new ArgumentNullException(nameof(requestScopeProvider));
+                _requestScopeProvider = requestScopeProvider ?? throw new ArgumentNullException(nameof(requestScopeProvider));
             }
 
 
@@ -49,7 +49,7 @@ namespace Esynctraining.AspNetCore
             {
                 builder.Use(async (context, next) =>
                 {
-                    using (var scope = this.requestScopeProvider())
+                    using (var scope = _requestScopeProvider())
                     {
                         await next();
                     }
