@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Esynctraining.Core.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -10,11 +11,13 @@ namespace Esynctraining.AspNetCore.Filters
     public class CheckModelForNullAttribute : ActionFilterAttribute
     {
         private readonly bool _isDevelopment;
-        
+        private readonly int _statusCode;
 
-        public CheckModelForNullAttribute(bool isDevelopment)
+
+        public CheckModelForNullAttribute(bool isDevelopment, int statusCode = StatusCodes.Status200OK)
         {
             _isDevelopment = isDevelopment;
+            _statusCode = statusCode;
         }
 
 
@@ -26,16 +29,25 @@ namespace Esynctraining.AspNetCore.Filters
                 {
                     // TRICK: returns name of action method parameter, not from query string
                     // So [FromQuery(Name = "queryStringParameterName")] is not supported.
-                    context.Result = new ObjectResult(OperationResult.Error($"Argument parsing error. Parameter '{ requiredParameterName }' is required."));
+                    context.Result = new ObjectResult(OperationResult.Error($"Argument parsing error. Parameter '{ requiredParameterName }' is required."))
+                    {
+                        StatusCode = _statusCode
+                    };
                 }
                 else if (context.ModelState.IsValid && !_isDevelopment)
                 {
-                    context.Result = new ObjectResult(OperationResult.Error("Argument parsing error."));
+                    context.Result = new ObjectResult(OperationResult.Error("Argument parsing error."))
+                    {
+                        StatusCode = _statusCode
+                    };
                 }
                 else
                 {
                     context.Result = new ObjectResult(OperationResult.Error("Argument parsing error. "
-                        + string.Join(".", context.ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage))));
+                        + string.Join(".", context.ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage))))
+                    {
+                        StatusCode = _statusCode
+                    };
                 }
             }
 

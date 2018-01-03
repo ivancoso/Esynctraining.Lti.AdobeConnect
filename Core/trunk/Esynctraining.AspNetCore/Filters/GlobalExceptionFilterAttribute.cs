@@ -2,6 +2,7 @@
 using System.Resources;
 using Esynctraining.Core;
 using Esynctraining.Core.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ namespace Esynctraining.AspNetCore.Filters
     {
         private readonly ILogger _logger;
         private readonly bool _isDevelopment;
+        private readonly int _statusCode;
 
         private readonly string _exceptionOccuredMessageResourceName;
         private readonly string _exceptionMessageResourceName;
@@ -49,8 +51,8 @@ namespace Esynctraining.AspNetCore.Filters
             }
         }
 
-        public GlobalExceptionFilterAttribute(ILoggerFactory loggerFactory, bool isDevelopment)
-            : this(loggerFactory, isDevelopment, typeof(Resources.Messages), "ExceptionOccured", "ExceptionMessage")
+        public GlobalExceptionFilterAttribute(ILoggerFactory loggerFactory, bool isDevelopment, int statusCode = StatusCodes.Status200OK)
+            : this(loggerFactory, isDevelopment, typeof(Resources.Messages), "ExceptionOccured", "ExceptionMessage", statusCode)
         {
             
         }
@@ -60,13 +62,15 @@ namespace Esynctraining.AspNetCore.Filters
             bool isDevelopment, 
             Type exceptionMessageResourceType, 
             string exceptionOccuredMessageResourceName,
-            string exceptionMessageResourceName)
+            string exceptionMessageResourceName,
+            int statusCode = StatusCodes.Status200OK)
         {
             if (loggerFactory == null)
                 throw new ArgumentNullException(nameof(loggerFactory));
 
             _logger = loggerFactory.CreateLogger("GlobalExceptionFilter");
             _isDevelopment = isDevelopment;
+            _statusCode = statusCode;
 
             _exceptionOccuredMessageResourceName = exceptionOccuredMessageResourceName ?? throw new ArgumentNullException(nameof(exceptionOccuredMessageResourceName));
             _exceptionMessageResourceName = exceptionMessageResourceName ?? throw new ArgumentNullException(nameof(exceptionMessageResourceName));
@@ -91,7 +95,10 @@ namespace Esynctraining.AspNetCore.Filters
                     : ExceptionMessage;
             }
 
-            context.Result = new ObjectResult(OperationResult.Error(message));
+            context.Result = new ObjectResult(OperationResult.Error(message))
+            {
+                StatusCode = _statusCode
+            };
             //context.ExceptionHandled = true;
         }
 

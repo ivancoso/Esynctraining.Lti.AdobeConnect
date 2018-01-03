@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -66,11 +67,13 @@ namespace Esynctraining.AspNetCore.Filters
         private readonly ILogger _logger;
         private readonly IJsonSerializer _errorSerializer;
         private readonly bool _showValidationErrors;
+        private readonly int _statusCode;
 
 
         public ValidateModelAttribute(ILoggerFactory loggerFactory,
             IJsonSerializer errorSerializer,
-            bool showValidationErrors)
+            bool showValidationErrors,
+            int statusCode = StatusCodes.Status200OK)
         {
             if (loggerFactory == null)
                 throw new ArgumentNullException(nameof(loggerFactory));
@@ -78,6 +81,7 @@ namespace Esynctraining.AspNetCore.Filters
             _logger = loggerFactory.CreateLogger("ModelValidation");
             _errorSerializer = errorSerializer ?? throw new ArgumentNullException(nameof(errorSerializer));
             _showValidationErrors = showValidationErrors;
+            _statusCode = statusCode;
         }
 
 
@@ -93,7 +97,10 @@ namespace Esynctraining.AspNetCore.Filters
                 if (!_showValidationErrors)
                     validationErrorModel.Errors = null;
 
-                context.Result = new ObjectResult(validationErrorModel);
+                context.Result = new ObjectResult(validationErrorModel)
+                {
+                    StatusCode = _statusCode
+                };
             }
         }
 
