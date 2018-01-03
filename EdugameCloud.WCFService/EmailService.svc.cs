@@ -455,8 +455,10 @@ namespace EdugameCloud.WCFService
 
                 var e = new Event
                 {
-                    DtStart = new CalDateTime(DateTimeHelper.ConvertToEST(model.EventStartDate).Value),
-                    DtEnd = new CalDateTime(DateTimeHelper.ConvertToEST(model.EventEndDate).Value),
+                    //DtStart = new CalDateTime(DateTimeHelper.ConvertToEST(model.EventStartDate).Value),
+                    //DtEnd = new CalDateTime(DateTimeHelper.ConvertToEST(model.EventEndDate).Value),
+                    DtStart = new CalDateTime((model.EventStartDate)),
+                    DtEnd = new CalDateTime((model.EventEndDate)),
                     Summary = $"{model.EventName}",
                     Description = model.MeetingUrl,
                     Url = new Uri(model.MeetingUrl)
