@@ -168,14 +168,14 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpGet]
         [Route("subtitle/{fileScoId:long:min(1)}")]
-        public ActionResult GetVttFile(string fileScoId, Guid session)
+        [QueryStringLmsAuthorize]
+        public ActionResult GetVttFile(string fileScoId)
         {
             try
             {
-                var s = GetReadOnlySession(session);
                 string breezeToken;
-                var ac = this.GetAdminProvider();
-                Principal principal = GetPrincipal(LmsCompany, s.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
+                var ac = GetAdminProvider();
+                Principal principal = GetPrincipal(LmsCompany, Session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 //return new SubtitleUtility(ac, Logger).GetVttFile(principal.PrincipalId, fileScoId);
                 ScoInfo sco = DoGetSco(fileScoId, ac, principal.PrincipalId);

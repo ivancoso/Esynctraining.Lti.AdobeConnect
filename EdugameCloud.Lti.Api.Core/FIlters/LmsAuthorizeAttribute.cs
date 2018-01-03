@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Api.Controllers;
 using EdugameCloud.Lti.API;
@@ -9,11 +8,11 @@ using EdugameCloud.Lti.GetHashCodeTrick;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Primitives;
 
 namespace EdugameCloud.Lti.Api.Filters
 {
@@ -221,6 +220,19 @@ namespace EdugameCloud.Lti.Api.Filters
             //}
         }
 
+    }
+
+    public class QueryStringLmsAuthorizeAttribute : LmsAuthorizeBaseAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            if (filterContext.HttpContext.Request.Query.TryGetValue("session", out StringValues token))
+            {
+                filterContext.HttpContext.Request.Headers.Add("Authorization", $"lti {token}");
+            }
+
+            base.OnActionExecuting(filterContext);
+        }
     }
 
     public sealed class TeacherOnlyAttribute : LmsAuthorizeBaseAttribute
