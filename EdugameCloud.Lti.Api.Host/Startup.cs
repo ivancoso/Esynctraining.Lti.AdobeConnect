@@ -63,7 +63,7 @@ namespace EdugameCloud.Lti.Api.Host
                 })
                 .AddApplicationPart(typeof(Controllers.BaseApiController).Assembly)
                 .AddControllersAsServices()
-                .AddJsonFormatters()
+                //.AddJsonFormatters()
                 .AddApiExplorer()
                 .AddDataAnnotations();
 
