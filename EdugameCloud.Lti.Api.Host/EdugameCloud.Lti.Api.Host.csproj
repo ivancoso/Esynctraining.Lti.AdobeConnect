@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Windsor" Version="4.1.0" />
-    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.2.0" />
+    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.3.0" />
     <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.5" />
     <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
@@ -34,6 +34,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.0" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="2.4.0" />

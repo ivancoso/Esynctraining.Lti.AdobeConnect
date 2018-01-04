@@ -14,9 +14,32 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EdugameCloud.Lti.Mp4.Host
 {
+    public class FileUploadOperation : IOperationFilter
+    {
+        public void Apply(Operation operation, OperationFilterContext context)
+        {
+            if (operation.OperationId.ToLower() == "mp4subtitlebyfilescoidcontentsavepost")
+            {
+                while (operation.Parameters.Count > 1)
+                    operation.Parameters.RemoveAt(1);
+                operation.Parameters.Add(new NonBodyParameter
+                {
+                    Name = "file",
+                    In = "formData",
+                    Description = "Upload File",
+                    Required = true,
+                    Type = "file"
+                });
+                operation.Consumes.Add("multipart/form-data");
+            }
+        }
+    }
+
+
     public class Startup
     {
         public IConfiguration Configuration { get; }
@@ -110,6 +133,8 @@ namespace EdugameCloud.Lti.Mp4.Host
                     In = "header",
                     Type = "apiKey"
                 });
+
+                c.OperationFilter<FileUploadOperation>(); //Register File Upload Operation Filter
 
             });
 

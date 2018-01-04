@@ -229,11 +229,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
         [LmsAuthorizeBase]
-        public FileUploadResultDto PostVttFile(string fileScoId, IFormFile file)
+        public FileUploadResultDto PostVttFile(string fileScoId, [FromForm]IFormFile file)
         {
             if (file == null)
                 return new FileUploadResultDto
