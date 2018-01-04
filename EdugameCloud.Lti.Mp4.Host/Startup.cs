@@ -58,7 +58,7 @@ namespace EdugameCloud.Lti.Mp4.Host
                 })
                 .AddApplicationPart(typeof(Controllers.Mp4Controller).Assembly)
                 .AddControllersAsServices()
-                .AddJsonFormatters()
+                //.AddJsonFormatters()
                 .AddApiExplorer()
                 .AddDataAnnotations();
 
