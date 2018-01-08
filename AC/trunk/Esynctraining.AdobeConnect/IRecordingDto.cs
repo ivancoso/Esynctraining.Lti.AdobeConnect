@@ -18,7 +18,11 @@ namespace Esynctraining.AdobeConnect
 
         string Duration { get; set; }
 
+        /// <summary>
+        /// NOTE: can have null value, if recording is still online.
+        /// </summary>
         string Name { get; set; }
+
     }
 
 }

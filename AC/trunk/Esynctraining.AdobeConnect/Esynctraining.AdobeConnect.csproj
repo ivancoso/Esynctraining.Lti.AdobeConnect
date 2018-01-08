@@ -9,8 +9,8 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>+ GetEventInfo  method</PackageReleaseNotes>
-    <Version>1.0.4.3</Version>
+    <PackageReleaseNotes>Recording - fixed Duration logic for still actual recordings</PackageReleaseNotes>
+    <Version>1.0.4.4</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 

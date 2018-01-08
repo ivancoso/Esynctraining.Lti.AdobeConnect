@@ -87,13 +87,24 @@ namespace Esynctraining.AC.Provider.Entities
         /// else AfRecordingDuration if exists;
         /// else Duration
         /// </summary>
-        public TimeSpan GetActualDuration()
+        public TimeSpan? GetActualDuration()
         {
-            return
-                TimeSpan.Parse(
-                    string.IsNullOrEmpty(RecordingEditedDuration) 
-                    ? (string.IsNullOrEmpty(AfRecordingDuration) ? Duration : AfRecordingDuration) 
-                    : RecordingEditedDuration);
+            //TimeSpan.Parse("01:55:56")
+            //TimeSpan.Parse("02:12:29.353")
+            string value = string.IsNullOrEmpty(RecordingEditedDuration)
+                    ? (string.IsNullOrEmpty(AfRecordingDuration) ? Duration : AfRecordingDuration)
+                    : RecordingEditedDuration;
+
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+            try
+            {
+                return TimeSpan.Parse(value);
+            }
+            catch (FormatException ex)
+            {
+                throw new FormatException($"String '{value}' was not recognized as a valid TimeSpan.", ex);
+            }
         }
 
     }
