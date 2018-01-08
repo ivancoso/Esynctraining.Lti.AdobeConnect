@@ -27,21 +27,20 @@ namespace EdugameCloud.Lti.Sakai
             return error == null ? users.ToSuccessResult() : OperationResultWithData<List<LmsUserDTO>>.Error(error);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,  int courseId, out string error, LtiParamDTO param = null)
+        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, out string error, LtiParamDTO param = null)
         {
-            var paramDto = param as LtiParamDTO;
-            if (paramDto != null)
+            if (param == null)
             {
-                List<LmsUserDTO> users = _lti2Api.GetUsersForCourse(
-                    lmsCompany,
-                    paramDto.ext_ims_lis_memberships_url ?? paramDto.ext_ims_lti_tool_setting_url,
-                    paramDto.ext_ims_lis_memberships_id,
-                    out error);
-                return GroupUsers(users);
+                error = "Extra data is not set.";
+                return new List<LmsUserDTO>();
             }
 
-            error = "extra data is not set";
-            return new List<LmsUserDTO>();
+            List<LmsUserDTO> users = _lti2Api.GetUsersForCourse(
+                lmsCompany,
+                param.ext_ims_lis_memberships_url ?? param.ext_ims_lti_tool_setting_url,
+                param.ext_ims_lis_memberships_id,
+                out error);
+            return GroupUsers(users);
         }
 
     }

@@ -89,6 +89,9 @@ namespace EdugameCloud.Lti.Api.Host
             applicationLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
             ServicePointManager.DefaultConnectionLimit = int.Parse(Configuration["AppSettings:ConnectionBatchSize"]);
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.SecurityProtocol =
+                SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
 
             if (env.IsDevelopment())
             {

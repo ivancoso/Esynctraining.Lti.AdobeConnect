@@ -27,12 +27,12 @@ namespace EdugameCloud.Lti.API
         };
 
 
-        protected ILogger logger { get; }
+        protected ILogger Logger { get; }
 
 
         protected LmsUserServiceBase(ILogger logger)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -54,29 +54,30 @@ namespace EdugameCloud.Lti.API
         // TODO: ROLEMAPPING
         protected List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)
         {
-            if (users != null && users.Any())
-            {
-                users = users.GroupBy(u => u.Id).Select(
-                    ug =>
+            if (users == null)
+                return new List<LmsUserDTO>();
+            if (users.Count == 0)
+                return new List<LmsUserDTO>();
+
+            users = users
+                .GroupBy(u => u.Id)
+                .Select(
+                ug =>
+                {
+                    foreach (string orderRole in order)
                     {
-                        foreach (string orderRole in order)
+                        LmsUserDTO userDTO =
+                            ug.FirstOrDefault(u => orderRole.Equals(u.LmsRole, StringComparison.OrdinalIgnoreCase));
+                        if (userDTO != null)
                         {
-                            string role = orderRole;
-                            LmsUserDTO userDTO =
-                                ug.FirstOrDefault(u => role.Equals(u.LmsRole, StringComparison.OrdinalIgnoreCase));
-                            if (userDTO != null)
-                            {
-                                return userDTO;
-                            }
+                            return userDTO;
                         }
+                    }
 
-                        return ug.First();
-                    }).ToList();
+                    return ug.First();
+                }).ToList();
 
-                return users;
-            }
-
-            return new List<LmsUserDTO>();
+            return users;
         }
 
     }

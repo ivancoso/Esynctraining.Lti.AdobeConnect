@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Web.Configuration;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
@@ -71,6 +72,11 @@ namespace EdugameCloud.Lti.Host
 
             // TRICK: remove all files on start
             CachePolicies.InvalidateCache();
+            
+            ServicePointManager.DefaultConnectionLimit = int.Parse(ConfigurationManager.AppSettings["DefaultConnectionLimit"]);
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.SecurityProtocol =
+                SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
         }
 
         // source : http://stackoverflow.com/questions/1178831/remove-server-response-header-iis7

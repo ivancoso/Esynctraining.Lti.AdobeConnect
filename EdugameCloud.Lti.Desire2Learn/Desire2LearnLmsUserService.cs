@@ -75,13 +75,13 @@ namespace EdugameCloud.Lti.Desire2Learn
             LmsUser lmsUser = lmsCompany.AdminUser;
             if (lmsUser == null)
             {
-                this.logger.ErrorFormat("[GetD2LUsers] AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
+                Logger.ErrorFormat("[GetD2LUsers] AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
                 throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
             if (string.IsNullOrEmpty(lmsUser.Token))
             {
-                this.logger.WarnFormat("[GetD2LUsers]: Token does not exist for LmsUser with id={0}. LmsCompany ID: {1}.", lmsUser.Id, lmsCompany.Id);
+                Logger.WarnFormat("[GetD2LUsers]: Token does not exist for LmsUser with id={0}. LmsCompany ID: {1}.", lmsUser.Id, lmsCompany.Id);
                 throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                     if (enrollments == null || enrollments.Items == null)
                     {
                         error = "Incorrect API call or returned data. Please contact site administrator";
-                        this.logger.Error("[D2L Enrollments]: Object returned from API has null value");
+                        Logger.Error("[D2L Enrollments]: Object returned from API has null value");
                         return new List<LmsUserDTO>();
                     }
 

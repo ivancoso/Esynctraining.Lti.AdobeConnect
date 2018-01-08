@@ -30,14 +30,14 @@ namespace EdugameCloud.Lti.Canvas
 
             if (lmsCompany.AdminUser == null)
             {
-                logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}.", lmsCompany.Id);
+                Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}.", lmsCompany.Id);
                 throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
             var token = lmsCompany.AdminUser.Token;
             if (string.IsNullOrWhiteSpace(token))
             {
-                logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
+                Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
                 throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
@@ -60,13 +60,13 @@ namespace EdugameCloud.Lti.Canvas
             if (lmsCompany.AdminUser == null)
             {
                 var message = string.Format("There is no admin user set for LmsCompanyId={0}.CourseId={1}", lmsCompany.Id, courseId);
-                logger.Error(message);
+                Logger.Error(message);
                 return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
             }
 
             if (string.IsNullOrWhiteSpace(lmsCompany.AdminUser.Token))
             {
-                logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
+                Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
                 return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
             }
 
@@ -98,7 +98,7 @@ namespace EdugameCloud.Lti.Canvas
             if (users.Any(x => string.IsNullOrEmpty(x.PrimaryEmail)))
             {
                 // TODO: details about ampty email users
-                logger.ErrorFormat("[Canvas GetUsers] API did not return emails. CourseID={0}. LMSCompanyID:{1}.", courseId, lmsCompany.Id);
+                Logger.ErrorFormat("[Canvas GetUsers] API did not return emails. CourseID={0}. LMSCompanyID:{1}.", courseId, lmsCompany.Id);
             }
 
             return users;

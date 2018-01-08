@@ -63,7 +63,7 @@ namespace EdugameCloud.Lti.BlackBoard
                     x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0,
                     false))
             {
-                logger.Warn("GetBlackBoardUsers.AccessDenied. " + error);
+                Logger.Warn("GetBlackBoardUsers.AccessDenied. " + error);
 
                 if (client != null)
                     client.logout();

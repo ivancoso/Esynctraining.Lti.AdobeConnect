@@ -44,7 +44,7 @@ namespace EdugameCloud.Lti.AgilixBuzz
                 param);
 
             if (!string.IsNullOrWhiteSpace(error))
-                logger.Error("[AgilixBuzz.dlapApi.GetUsersForCourse] error:" + error);
+                Logger.Error("[AgilixBuzz.dlapApi.GetUsersForCourse] error:" + error);
             
             return GroupUsers(users);
         }

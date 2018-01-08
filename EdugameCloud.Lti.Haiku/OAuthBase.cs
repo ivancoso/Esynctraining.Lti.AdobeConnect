@@ -447,12 +447,6 @@ namespace EdugameCloud.Lti.Haiku
             //webRequest.UserAgent	= "Identify your application please.";
             //webRequest.Timeout = 20000;
 
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
-
-            ServicePointManager.ServerCertificateValidationCallback = delegate {
-                return true;
-            };
-
             if (method == Method.POST || method == Method.DELETE)
             {
                 webRequest.ContentType = "application/x-www-form-urlencoded";

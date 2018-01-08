@@ -85,7 +85,6 @@ namespace EdugameCloud.Lti.Controllers
             try
             {
                 var uriBuilder = new UriBuilder(lmsDomain + "/webapps/ws/wsadmin/tcprofile");
-                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                 var xmlResponse = await _httpClientWrapper.DownloadStringAsync(uriBuilder.Uri);
                 var response = XElement.Parse(xmlResponse);
                 var name = response.XPathEvaluate("string(/tool-consumer-info/name)").ToString();

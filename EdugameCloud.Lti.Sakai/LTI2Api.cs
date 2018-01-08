@@ -1,12 +1,11 @@
-﻿using System.Linq;
-
-namespace EdugameCloud.Lti.Sakai
+﻿namespace EdugameCloud.Lti.Sakai
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Security.Cryptography;
     using System.Text;
@@ -38,27 +37,6 @@ namespace EdugameCloud.Lti.Sakai
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The get users for course.
-        /// </summary>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        /// <param name="servicePattern">
-        /// The service pattern.
-        /// </param>
-        /// <param name="lis_result_sourcedid">
-        /// The LIS result sourced id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="ltiVersion">
-        /// The LTI version.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
             ILmsLicense company, 
             string servicePattern, 
@@ -76,7 +54,7 @@ namespace EdugameCloud.Lti.Sakai
                     lis_result_sourcedid, 
                     ltiVersion);
                 
-                bool isSuccess = response.XPathSelectElement("/statusinfo/codemajor").With(x => x.Value) == "Success";
+                bool isSuccess = response.XPathSelectElement("/statusinfo/codemajor")?.Value == "Success";
                 if (!isSuccess)
                 {
                     /*
@@ -85,9 +63,9 @@ namespace EdugameCloud.Lti.Sakai
                         <severity>Error</severity>
                     */
                     error = string.Format("Error from Sakai. codemajor: {0}. description : {1}. severity : {2}.",
-                        response.XPathSelectElement("/statusinfo/codemajor").With(x => x.Value),
-                        response.XPathSelectElement("/statusinfo/description").With(x => x.Value),
-                        response.XPathSelectElement("/statusinfo/severity").With(x => x.Value)
+                        response.XPathSelectElement("/statusinfo/codemajor")?.Value,
+                        response.XPathSelectElement("/statusinfo/description")?.Value,
+                        response.XPathSelectElement("/statusinfo/severity")?.Value
                         );
 
                     _logger.ErrorFormat("{0}. Service: {1}. LmsCompanyId: {2}.", error, servicePattern, company.Id);
@@ -98,14 +76,14 @@ namespace EdugameCloud.Lti.Sakai
                 IEnumerable<XElement> members = response.XPathSelectElements("/members/member");
                 foreach (XElement member in members)
                 {
-                    string email = member.XPathSelectElement("person_contact_email_primary").With(x => x.Value);
-                    string role = member.XPathSelectElement("role").With(x => x.Value);
-                    string userName = member.XPathSelectElement("person_sourcedid").With(x => x.Value);
-                    string firstName = member.XPathSelectElement("person_name_given").With(x => x.Value);
-                    string lastName = member.XPathSelectElement("person_name_family").With(x => x.Value);
+                    string email = member.XPathSelectElement("person_contact_email_primary")?.Value;
+                    string role = member.XPathSelectElement("role")?.Value;
+                    string userName = member.XPathSelectElement("person_sourcedid")?.Value;
+                    string firstName = member.XPathSelectElement("person_name_given")?.Value;
+                    string lastName = member.XPathSelectElement("person_name_family")?.Value;
                     string fullName = member.XPathSelectElement("person_name_full")
                         .Return(x => x.Value, firstName + " " + lastName);
-                    string userId = member.XPathSelectElement("user_id").With(x => x.Value);
+                    string userId = member.XPathSelectElement("user_id")?.Value;
 
                     List<string> groupNames = new List<string>();
                     // disabled "groups as custom roles" functionality as we don't have customers who use it. License option is needed
