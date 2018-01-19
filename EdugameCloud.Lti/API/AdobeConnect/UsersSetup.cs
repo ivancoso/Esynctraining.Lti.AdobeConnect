@@ -176,7 +176,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             ILmsLicense lmsCompany, 
             LmsCourseMeeting meeting, 
             int courseId, 
-            //out string error,
             LtiParamDTO extraData = null)
         {
             if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null

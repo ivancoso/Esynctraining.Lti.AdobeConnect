@@ -88,8 +88,6 @@ namespace EdugameCloud.Sakai.TestClient.Models
 
             ServicePointManager.Expect100Continue = false;
 
-            //var request = (HttpWebRequest)WebRequest.Create(url);
-
             var pairs = new Dictionary<string, string>
             {
                 { "id", lis_result_sourcedid },

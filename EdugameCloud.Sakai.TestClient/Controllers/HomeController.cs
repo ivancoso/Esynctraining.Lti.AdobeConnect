@@ -15,6 +15,7 @@ namespace EdugameCloud.Sakai.TestClient.Controllers
             return View(new SakaiParameters());
         }
 
+
         [HttpPost]
         public async Task<ActionResult> Index(SakaiParameters parameters)
         {
@@ -28,6 +29,7 @@ namespace EdugameCloud.Sakai.TestClient.Controllers
 
             return View(parameters);
         }
+
     }
 
 }
