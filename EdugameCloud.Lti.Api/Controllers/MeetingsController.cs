@@ -57,7 +57,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("meeting/update")]
         [HttpPost]
         [Filters.LmsAuthorizeBase]
-        public virtual OperationResult UpdateMeeting([FromBody]MeetingDTOInput meeting)
+        public virtual async Task<OperationResult> UpdateMeeting([FromBody]MeetingDTOInput meeting)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
                 var fb = new MeetingFolderBuilder(Session.LmsCompany, ac, useLmsUserEmailForSearch, meeting.GetMeetingType());
 
-                OperationResult ret = this._meetingSetup.SaveMeeting(
+                OperationResult ret = await _meetingSetup.SaveMeeting(
                     LmsCompany,
                     ac,
                     param,
@@ -88,7 +88,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("meeting/UpdateAndReturnLmsUsers")]
         [HttpPost]
         [Filters.LmsAuthorizeBase]
-        public virtual OperationResult UpdateMeetingAndReturnLmsUsers([FromBody]MeetingDTOInput meeting)
+        public virtual async Task<OperationResult> UpdateMeetingAndReturnLmsUsers([FromBody]MeetingDTOInput meeting)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
                 var fb = new MeetingFolderBuilder(Session.LmsCompany, ac, useLmsUserEmailForSearch, meeting.GetMeetingType());
 
-                var ret = _meetingSetup.SaveMeeting(
+                var ret = await _meetingSetup.SaveMeeting(
                     LmsCompany,
                     ac,
                     param,
@@ -145,7 +145,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("useExistingMeeting")]
         [HttpPost]
         [Filters.LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.EnableMeetingReuse)]
-        public virtual OperationResult ReuseExistedAdobeConnectMeeting([FromBody]ReuseExistedAdobeConnectMeetingDto model)
+        public virtual async Task<OperationResult> ReuseExistedAdobeConnectMeeting([FromBody]ReuseExistedAdobeConnectMeetingDto model)
         {
             if (string.IsNullOrWhiteSpace(model.ScoId))
                 return OperationResult.Error("Source AdobeConnect meeting is not selected.");
@@ -155,7 +155,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var param = Session.LtiSession.LtiParam;
                 var provider = this.GetAdminProvider();
 
-                OperationResult result = _meetingSetup.ReuseExistedAdobeConnectMeeting(LmsCompany, Session.LmsUser,
+                OperationResult result = await _meetingSetup.ReuseExistedAdobeConnectMeeting(LmsCompany, Session.LmsUser,
                     provider,
                     param,
                     model,

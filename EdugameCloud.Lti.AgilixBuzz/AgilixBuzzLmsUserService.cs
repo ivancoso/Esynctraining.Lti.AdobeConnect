@@ -6,6 +6,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.API;
 using Esynctraining.Core.Domain;
+using System.Threading.Tasks;
 
 namespace EdugameCloud.Lti.AgilixBuzz
 {
@@ -20,23 +21,23 @@ namespace EdugameCloud.Lti.AgilixBuzz
         }
 
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
+        {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+            
+            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            return users.users.ToSuccessResult();
+        }
+
+        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
             string error;
-            var users = GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
-            return users.ToSuccessResult();
-        }
-
-        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,
-            int courseId, out string error, LtiParamDTO param = null)
-        {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
-
             List<LmsUserDTO> users = _dlapApi.GetUsersForCourse(
                 lmsCompany,
                 courseId,
@@ -46,7 +47,7 @@ namespace EdugameCloud.Lti.AgilixBuzz
             if (!string.IsNullOrWhiteSpace(error))
                 Logger.Error("[AgilixBuzz.dlapApi.GetUsersForCourse] error:" + error);
             
-            return GroupUsers(users);
+            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), error));
         }
 
     }

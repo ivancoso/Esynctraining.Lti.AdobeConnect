@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Desire2Learn;
 using EdugameCloud.Lti.Core;
@@ -30,7 +31,7 @@ namespace EdugameCloud.Lti.Desire2Learn
             this.settings = settings;
         }
 
-        public override LmsUserDTO GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, out string error, LtiParamDTO extraData = null)
+        public override async Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -46,32 +47,33 @@ namespace EdugameCloud.Lti.Desire2Learn
             //if current user is admin but not allowed to call api - process 'error' parameter in call stack
             if (isCurrentUserAndAdmin)
             {
-                error = $"[GetD2LUsers] AdminUser is not set for LmsCompany with id={lmsCompany.Id}";
-                return null;
+                var error = $"[GetD2LUsers] AdminUser is not set for LmsCompany with id={lmsCompany.Id}";
+                return (null, error);
             }
 
-            return GetUsersOldStyle(lmsCompany, courseId, out error, extraData)
-                .FirstOrDefault(u => u.Id == lmsUserId);
+            var result = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            if (string.IsNullOrWhiteSpace(result.error))
+                return (result.users.FirstOrDefault(u => u.Id == lmsUserId), result.error);
+
+            return (null, result.error);
         }
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            string error;
-            var users = GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
-            return users.ToSuccessResult();
+            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            return users.users.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,
-            int courseId, out string error, LtiParamDTO param = null)
+        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            error = null; // todo: set when something is wrong
             LmsUser lmsUser = lmsCompany.AdminUser;
             if (lmsUser == null)
             {
@@ -119,9 +121,9 @@ namespace EdugameCloud.Lti.Desire2Learn
                         lmsCompany);
                     if (enrollments == null || enrollments.Items == null)
                     {
-                        error = "Incorrect API call or returned data. Please contact site administrator";
+                        var error = "Incorrect API call or returned data. Please contact site administrator";
                         Logger.Error("[D2L Enrollments]: Object returned from API has null value");
-                        return new List<LmsUserDTO>();
+                        return (new List<LmsUserDTO>(), error);
                     }
 
                     enrollmentsList.AddRange(enrollments.Items);
@@ -184,7 +186,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                 }
             }
 
-            return result;
+            return (result, null);
         }
 
         protected virtual bool AllowAdminAdditionToCourse

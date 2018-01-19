@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -30,18 +31,18 @@ namespace EdugameCloud.Lti.Controllers
                 
         [HttpGet]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
-        public virtual ActionResult JoinRecording(string session, string recordingUrl)
+        public virtual async Task<ActionResult> JoinRecording(string session, string recordingUrl)
         {
-            LmsCompany lmsCompany = null;
             try
             {
                 var s = GetReadOnlySession(session);
-                lmsCompany = s.LmsCompany;
-                var param = s.LtiSession.With(x => x.LtiParam);
-                var breezeSession = string.Empty;
-                var provider = GetAdminProvider(lmsCompany);
-                string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, provider);
-                return this.LoginToAC(url, breezeSession, lmsCompany);
+                var param = s.LtiSession?.LtiParam;
+
+                var joinRes = await RecordingsService.JoinRecording(s.LmsCompany, param, recordingUrl, GetAdminProvider(s.LmsCompany));
+                var url = joinRes.Item1;
+                var breezeSession = joinRes.Item2;
+
+                return this.LoginToAC(url, breezeSession, s.LmsCompany);
             }
             catch (Exception ex)
             {
@@ -51,19 +52,18 @@ namespace EdugameCloud.Lti.Controllers
         
         [HttpGet]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
-        public virtual ActionResult EditRecording(string session, string recordingUrl)
+        public virtual async Task<ActionResult> EditRecording(string session, string recordingUrl)
         {
-            LmsCompany lmsCompany = null;
             try
             {
                 var s = GetReadOnlySession(session);
-                lmsCompany = s.LmsCompany;
-                var param = s.LtiSession.With(x => x.LtiParam);
-                var breezeSession = string.Empty;
-                var provider = GetAdminProvider(lmsCompany);
+                var param = s.LtiSession?.LtiParam;
 
-                string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, provider, "edit");
-                return this.LoginToAC(url, breezeSession, lmsCompany);
+                var joinRes = await RecordingsService.JoinRecording(s.LmsCompany, param, recordingUrl, GetAdminProvider(s.LmsCompany), "edit");
+                var url = joinRes.url;
+                var breezeSession = joinRes.breezeSession;
+
+                return LoginToAC(url, breezeSession, s.LmsCompany);
             }
             catch (Exception ex)
             {
@@ -73,19 +73,15 @@ namespace EdugameCloud.Lti.Controllers
         
         [HttpGet]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
-        public virtual ActionResult GetRecordingFlv(string session, string recordingUrl)
+        public virtual async Task<ActionResult> GetRecordingFlv(string session, string recordingUrl)
         {
-            LmsCompany lmsCompany = null;
             try
             {
                 var s = GetReadOnlySession(session);
-                lmsCompany = s.LmsCompany;
-                var param = s.LtiSession.With(x => x.LtiParam);
-                var breezeSession = string.Empty;
-                var provider = GetAdminProvider(lmsCompany);
+                var param = s.LtiSession?.LtiParam;
 
-                string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, provider, "offline");
-                return this.LoginToAC(url, breezeSession, lmsCompany);
+                var joinRes = await RecordingsService.JoinRecording(s.LmsCompany, param, recordingUrl, GetAdminProvider(s.LmsCompany), "offline");
+                return LoginToAC(joinRes.url, joinRes.breezeSession, s.LmsCompany);
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using EdugameCloud.Sakai.TestClient.Models;
@@ -15,12 +16,12 @@ namespace EdugameCloud.Sakai.TestClient.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(SakaiParameters parameters)
+        public async Task<ActionResult> Index(SakaiParameters parameters)
         {
             if (!ModelState.IsValid)
                 return View(parameters);
 
-            var result = LTI2Api.CreateSignedRequestAndGetResponse(parameters);
+            var result = await LTI2Api.CreateSignedRequestAndGetResponse(parameters);
 
             parameters.RequestParams = result.Item1;
             parameters.ResponseString = result.Item2;

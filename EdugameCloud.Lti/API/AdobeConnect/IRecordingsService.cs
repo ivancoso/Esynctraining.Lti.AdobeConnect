@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AdobeConnect;
@@ -26,8 +27,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         string UpdateRecording(ILmsLicense lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic,
             string password);
 
-        string JoinRecording(ILmsLicense lmsCompany, LtiParamDTO param, string recordingUrl,
-            ref string breezeSession, IAdobeConnectProxy adobeConnectProvider, string mode = null);
+        Task<(string url, string breezeSession)> JoinRecording(ILmsLicense lmsCompany, LtiParamDTO param, string recordingUrl,
+            IAdobeConnectProxy adobeConnectProvider, string mode = null);
 
         OperationResult EditRecording(
             ILmsLicense lmsCompany,

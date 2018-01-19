@@ -5,6 +5,7 @@ using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
+using System.Threading.Tasks;
 
 namespace EdugameCloud.Lti.API
 {
@@ -38,17 +39,23 @@ namespace EdugameCloud.Lti.API
 
         // <param name="currentUser">When we get all users for course, we use admin's token (currentUser.token)</param>
         // <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
-        public virtual LmsUserDTO GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, out string error, LtiParamDTO extraData = null)
+        public virtual async Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, LtiParamDTO extraData = null)
         {
             // meeting parameter(second) is used for Blackboard calls of the below method.
             // BB has its own implementation of GetUser, so null can be passed here until we use meeting for retrieving user
-            return GetUsersOldStyle(lmsCompany, courseId, out error, extraData)
-                .FirstOrDefault(u => u.Id == lmsUserId);
+
+            var result = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            if (string.IsNullOrWhiteSpace(result.Item2))
+                return (result.Item1.FirstOrDefault(u => u.Id == lmsUserId), result.Item2);
+
+            return (null, result.Item2);
+            //return GetUsersOldStyle(lmsCompany, courseId, out error, extraData)
+            //    .FirstOrDefault(u => u.Id == lmsUserId);
         }
 
-        public abstract OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany, int courseId, LtiParamDTO extraData = null);
+        public abstract Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany, int courseId, LtiParamDTO extraData = null);
 
-        public abstract List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, out string error, LtiParamDTO param = null);
+        public abstract Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null);
 
 
         // TODO: ROLEMAPPING

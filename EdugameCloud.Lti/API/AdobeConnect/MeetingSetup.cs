@@ -321,8 +321,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return ret;
         }
 
-        public string JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, int meetingId,
-            ref string breezeSession, IAdobeConnectProxy provider)
+        public async Task<(string meetingJoinUrl, string breezeSession)> JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, int meetingId, IAdobeConnectProxy provider)
         {
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, param.course_id, meetingId);
@@ -357,8 +356,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if ((LmsMeetingType)currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup
                 && currentMeeting.EnableDynamicProvisioning && lmsCompany.UseSynchronizedUsers)
             {
-                string userCreationError = null;
-                lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
+                //string userCreationError = null;
+                //lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
+                
+                var rr = await UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, param.lms_user_id);
+                string userCreationError = rr.error;
+                lmsUserDto = rr.user;
+                //lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
+
                 if (userCreationError != null)
                 {
                     throw new Core.WarningMessageException(
@@ -396,14 +401,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Blackboard)
             {
-                string error;
-
                 var lmsUserService = LmsFactory.GetUserService(LmsProviderEnum.Blackboard);
-                var currentUser = lmsUserService.GetUser(lmsCompany,
+                var currentUserRes = await lmsUserService.GetUser(lmsCompany,
                     param.lms_user_id,
                     param.course_id,
-                    out error,
                     param);
+                var currentUser = currentUserRes.user;
+                //string error = currentUserRes.error;
 
                 if (currentUser != null)
                 {
@@ -411,24 +415,27 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            this.SaveLMSUserParameters(param, lmsCompany, loginResult.User.PrincipalId, wstoken);
+            SaveLMSUserParameters(param, lmsCompany, loginResult.User.PrincipalId, wstoken);
 
-            breezeSession = breezeToken ?? string.Empty;
+            var breezeSession = breezeToken ?? string.Empty;
             bool isTeacher = this.UsersSetup.IsTeacher(param, lmsCompany);
             bool forcedAddInInstallation = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
+
+            string meetingJoinUrl;
             if (lmsCompany.LoginUsingCookie.GetValueOrDefault())
             {
-                return string.Concat(
+                meetingJoinUrl = string.Concat(
                     meetingUrl,
                     isTeacher && forcedAddInInstallation ? "?lightning=true" : string.Empty);
             }
             else
             {
-                return string.Concat(
+                meetingJoinUrl = string.Concat(
                     meetingUrl,
                     isTeacher && forcedAddInInstallation ? "?lightning=true&" : "?",
                     "session=" + breezeToken);
             }
+            return (meetingJoinUrl, breezeSession);
         }
 
         public LoginResult ACLogin(ILmsLicense lmsCompany, LtiParamDTO param, LmsUser lmsUser, IAdobeConnectProxy adminProvider)
@@ -532,7 +539,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Error(string.Format(Resources.Messages.MeetingCantFindPrincipal, email, login));
         }
         
-        public OperationResult SaveMeeting(
+        public async Task<OperationResult> SaveMeeting(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param,
@@ -640,16 +647,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         || (meeting.LmsMeetingType == (int) LmsMeetingType.StudyGroup)
                         || (meeting.LmsMeetingType == (int) LmsMeetingType.Seminar))
                     {
-                        string error;
-                        lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
+                        var lmsUsersRes = await UsersSetup.GetLMSUsers(lmsCompany,
                             meeting,
                             meeting.CourseId,
-                            out error,
                             param);
-
+                        lmsUsers = lmsUsersRes.Item1;
+                        var error = lmsUsersRes.Item2;
                         if (error != null)
                         {
-                            this.Logger.Error(error);
+                            Logger.Error(error);
                             return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
                         }
 
@@ -852,22 +858,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (retrieveLmsUsers)
             {
-                string error;
-                var users = this.UsersSetup.GetUsers(lmsCompany,
+                var users = await UsersSetup.GetUsers(lmsCompany,
                     provider,
                     param.course_id,
                     param,
                     updatedMeeting.Id ?? 0,
-                    //param.course_id,
-                    out error,
-                    //param,
                     lmsUsers);
 
                 sw.Stop();
                 trace.AppendFormat("SaveMeeting: GetMeetingDTOByScoInfo+GetUsers: time: {0}.", sw.Elapsed.ToString());
                 //sw = Stopwatch.StartNew();
 
-                if (error != null)
+                if (users.Item2 != null)
                 {
                     return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
                 }
@@ -876,7 +878,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     new MeetingAndLmsUsersDTO
                     {
                         Meeting = updatedMeeting,
-                        LmsUsers = users,
+                        LmsUsers = users.Item1,
                     });
 	        }
 
@@ -884,7 +886,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
         
         // TODO: move MeetingReuseDTO
-        public OperationResult ReuseExistedAdobeConnectMeeting(ILmsLicense lmsLicense,
+        public async Task<OperationResult> ReuseExistedAdobeConnectMeeting(ILmsLicense lmsLicense,
             LmsUser lmsUser,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
@@ -917,12 +919,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 MeetingNameJson = json,
             };
 
-            // TRICK: always read users from LMS - we need to sync participant list
-            List<LmsUserDTO>  lmsUsers = UsersSetup.GetLMSUsers(lmsLicense,
+            var lmsUsersRes = await UsersSetup.GetLMSUsers(lmsLicense,
                     meeting,
                     meeting.CourseId,
-                    out string error,
                     param);
+            // TRICK: always read users from LMS - we need to sync participant list
+            List<LmsUserDTO>  lmsUsers = lmsUsersRes.Item1;
+            var error = lmsUsersRes.Item2;
             if (error != null)
             {
                 return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
@@ -1049,14 +1052,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (retrieveLmsUsers)
             {
-                var users = this.UsersSetup.GetUsers(lmsLicense,
+                var usersRes = await UsersSetup.GetUsers(lmsLicense,
                     provider,
                     param.course_id,
                     param,
                     updatedMeeting.Id ?? 0,
-                    out error,
                     lmsUsers);
-                if (error != null)
+
+                if (usersRes.Item2 != null)
                 {
                     return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
                 }
@@ -1064,7 +1067,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return new MeetingAndLmsUsersDTO
                     {
                         Meeting = updatedMeeting,
-                        LmsUsers = users,
+                        LmsUsers = usersRes.Item1,
                     }.ToSuccessResult();
             }
 

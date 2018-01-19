@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using AutoMapper;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
@@ -47,7 +48,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("create")]
         [HttpPost]
         [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
-        public virtual OperationResult Create([FromBody]CreateSeminarDto model)
+        public virtual async Task<OperationResult> Create([FromBody]CreateSeminarDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
                 throw new ArgumentException("seminarLicenseId can't be empty", nameof(model.SeminarLicenseId));
@@ -61,7 +62,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var trace = new StringBuilder();
                 var fb = new SeminarFolderBuilder(model.SeminarLicenseId);
 
-                OperationResult ret = MeetingSetup.SaveMeeting(
+                OperationResult ret = await MeetingSetup.SaveMeeting(
                     LmsCompany,
                     GetUserProvider(),
                     param,
@@ -81,7 +82,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("edit")]
         [HttpPost]
         [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
-        public virtual OperationResult Edit([FromBody]EditSeminarDto model)
+        public virtual async Task<OperationResult> Edit([FromBody]EditSeminarDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
                 throw new ArgumentException("seminarLicenseId can't be empty", nameof(model.SeminarLicenseId));
@@ -91,7 +92,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 LtiParamDTO param = Session.LtiSession.LtiParam;
                 var trace = new StringBuilder();
                 var fb = new SeminarFolderBuilder(model.SeminarLicenseId);
-                OperationResult ret = MeetingSetup.SaveMeeting(
+                OperationResult ret = await MeetingSetup.SaveMeeting(
                     LmsCompany,
                     GetUserProvider(),
                     param,

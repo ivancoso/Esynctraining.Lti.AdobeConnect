@@ -35,13 +35,12 @@ namespace EdugameCloud.Sakai.TestClient.Models
 
         public SakaiParameters()
         {
-            ServiceUrl = "https://edgesandbox.apus.edu/imsblis/service/";
+            ServiceUrl = "https://future.update.eitdigital.eu/imsblis/service/";
 
-            ConsumerKey = "2b4d6ae7-a4db-47ea-9933-27fb8c430440";
-            SharedSecret = "54637ae3-2a12-41dc-b1e6-dd49e8cb5f9e";
+            ConsumerKey = "15f6d048-d8f4-4c6a-96df-02ddf1ac4588";
+            SharedSecret = "1e174153-725e-49f4-819b-95613d11c30d";
 
-            lis_result_sourcedid = "0521a34a3d5a6fc7b037af0b97557a8c18d95d1f42f02189382b1bd13c8c4ee5:::2ac9cbd7-cf18-4110-b8bc-c1c35b57145d:::content:28";
-
+            lis_result_sourcedid = "38f3c894f23887b5118944a6217efa380588b5cb147336ab2998934360a17c18:::69197f6e-94ce-4621-99cb-4893006d198b:::bae523a5-7cf3-4c71-b558-5bafe8aa03a3";
             OAuthSignatureMethod = "HMAC-SHA1";
             OAuthVersion = "1.0";
             LtiVersion = "LTI-1p0";

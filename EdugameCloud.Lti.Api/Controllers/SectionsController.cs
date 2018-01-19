@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
@@ -48,7 +49,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("meeting/UpdateMeetingCourseSections")]
         [HttpPost]
         [Filters.LmsAuthorizeBase]
-        public virtual OperationResult UpdateMeetingCourseSections([FromBody]UpdateCourseSectionsDto updateCourseSectionsDto)
+        public virtual async Task<OperationResult> UpdateMeetingCourseSections([FromBody]UpdateCourseSectionsDto updateCourseSectionsDto)
         {
             if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
             {
@@ -59,16 +60,17 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 meetingSetup.UpdateMeetingCourseSections(LmsCompany, updateCourseSectionsDto);
-                string error;
-                var users = usersSetup.GetUsers(LmsCompany,
+
+                var users = await usersSetup.GetUsers(LmsCompany,
                     ac,
                     param.course_id,
                     param,
-                    updateCourseSectionsDto.MeetingId,
-                    out error);
-                return error != null 
-                    ? OperationResult.Error(error)
-                    : users.ToSuccessResult();
+                    updateCourseSectionsDto.MeetingId);
+                return users.Item2 != null
+                    ? OperationResult.Error(users.Item2)
+                    : users.Item1.ToSuccessResult();
+
+
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Moodle;
 using EdugameCloud.Lti.Domain.Entities;
@@ -20,28 +21,24 @@ namespace EdugameCloud.Lti.Moodle
         }
 
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
-//            if (lmsUser == null)
-//                throw new ArgumentNullException(nameof(lmsUser));
 
-            string error;
-            var users = GetUsersOldStyle(lmsCompany, courseId, out error);
-            return error != null
-                ? OperationResultWithData<List<LmsUserDTO>>.Error(error)
-                : users.ToSuccessResult();
+            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            return users.Item1.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, out string error, LtiParamDTO param = null)
+        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
+            string error;
             List<LmsUserDTO> users = _moodleApi.GetUsersForCourse(lmsCompany, courseId, out error);
-            return GroupUsers(users);
+            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), error));
         }
 
     }

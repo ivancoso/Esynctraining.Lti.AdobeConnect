@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using EdugameCloud.Lti.Core.OAuth;
 using EdugameCloud.Lti.Domain.Entities;
@@ -17,7 +18,7 @@ namespace EdugameCloud.Lti.Controllers
         [ActionName("ims")]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         [ValidateInput(false)]
-        public virtual ActionResult ImsLogin(LtiParamDTO param)
+        public virtual async Task<ActionResult> ImsLogin(LtiParamDTO param)
         {
             try
             {
@@ -63,7 +64,7 @@ namespace EdugameCloud.Lti.Controllers
                 var adobeConnectProvider = this.GetAdminProvider(lmsCompany);
 
                 // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
-                param.ext_user_username = usersSetup.GetParamLogin(param, lmsCompany); // NOTE: is saved in session!
+                param.ext_user_username = await usersSetup.GetParamLogin(param, lmsCompany); // NOTE: is saved in session!
 
                 var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
@@ -114,7 +115,7 @@ namespace EdugameCloud.Lti.Controllers
                     throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
                 }
 
-                return this.RedirectToExtJs(session, lmsUser);
+                return await RedirectToExtJs(session, lmsUser);
             }
             catch (LtiException ex)
             {

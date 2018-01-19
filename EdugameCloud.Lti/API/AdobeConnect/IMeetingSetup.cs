@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IMeetingSetup
     {
-        OperationResult SaveMeeting(
+        Task<OperationResult> SaveMeeting(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,

@@ -9,6 +9,7 @@ using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Domain;
 using Esynctraining.BlackBoardClient;
+using System.Threading.Tasks;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
@@ -23,31 +24,36 @@ namespace EdugameCloud.Lti.BlackBoard
         }
 
 
-        public override LmsUserDTO GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, out string error, LtiParamDTO extraData = null)
+        public override async Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, LtiParamDTO extraData = null)
         {
             Guid guid;
-            return GetUsersOldStyle(lmsCompany, courseId, out error)
-                .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.LtiId : u.Id));
+            //return GetUsersOldStyle(lmsCompany, courseId, out error)
+            //    .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.LtiId : u.Id));
+
+            var result = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            if (string.IsNullOrWhiteSpace(result.error))
+                return (result.users.FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.LtiId : u.Id)), result.error);
+
+            return (null, result.error);
         }
         
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            string error;
-            var users = GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
-            return users.ToSuccessResult();
+            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            return users.Item1.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,
-            int courseId, out string error, LtiParamDTO param = null)
+        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            error = null;
+            string error = null;
             string[] userIds = null;
 
             WebserviceWrapper client = null;
@@ -80,8 +86,8 @@ namespace EdugameCloud.Lti.BlackBoard
             // NOTE: always call logout
             if (client != null)
                 client.logout();
-
-            return GroupUsers(users);
+            
+            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), error));
         }
         
     }

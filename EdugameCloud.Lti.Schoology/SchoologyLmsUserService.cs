@@ -23,21 +23,19 @@ namespace EdugameCloud.Lti.Schoology
         }
 
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            string error;
-            var users = GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
-            return users.ToSuccessResult();
+            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            return users.users.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,
-            int courseId, out string error, LtiParamDTO param = null)
+        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO param = null)
         {
-            error = null;
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
@@ -100,7 +98,7 @@ namespace EdugameCloud.Lti.Schoology
                   }
             );
 
-            return enrolledUsers
+            var users = enrolledUsers
                 .GroupBy(u => u.uid)
                 .Select(g => g.First())
                 .Select(x => new LmsUserDTO
@@ -114,7 +112,7 @@ namespace EdugameCloud.Lti.Schoology
                     PrimaryEmail = x.primary_email,
                 })
                 .ToList();
-            
+            return Task.FromResult<(List<LmsUserDTO> users, string error)>((users, null));
         }
     }
 

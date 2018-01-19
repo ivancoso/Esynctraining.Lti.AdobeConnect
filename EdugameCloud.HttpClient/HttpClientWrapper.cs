@@ -17,11 +17,11 @@ namespace EdugameCloud.HttpClient
             _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(new HttpClientHandler()));
         }
 
-        public HttpClientWrapper(TimeSpan timeSpan)
+        public HttpClientWrapper(TimeSpan timeout)
         {
             _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(new HttpClientHandler()))
             {
-                Timeout = timeSpan
+                Timeout = timeout,
             };
         }
 
@@ -56,6 +56,20 @@ namespace EdugameCloud.HttpClient
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<string> PostValuesAsync(string url, IEnumerable<KeyValuePair<string, string>> pairs, Encoding encoding)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                throw new ArgumentException("Non-empty value expected", nameof(url));
+            if (pairs == null)
+                throw new ArgumentNullException(nameof(pairs));
+
+            var response = await _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+
+            response.EnsureSuccessStatusCode();
+            var buffer = await response.Content.ReadAsByteArrayAsync();
+            return encoding.GetString(buffer, 0, buffer.Length);
+        }
+        
         public async Task<string> DownloadStringAsync(string url)
         {
             var response = await _httpClient.GetAsync(url);
@@ -77,4 +91,5 @@ namespace EdugameCloud.HttpClient
 
         #endregion Public Methods
     }
+
 }

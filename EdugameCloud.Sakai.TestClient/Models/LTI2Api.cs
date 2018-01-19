@@ -9,30 +9,49 @@ using System.Net.Mail;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using EdugameCloud.HttpClient;
 
 namespace EdugameCloud.Sakai.TestClient.Models
 {
-    public class LTI2Api
+    public sealed class LTI2Api 
     {
-        #region Public Methods and Operators
-        
-        public static Tuple<string, string> CreateSignedRequestAndGetResponse(
-            SakaiParameters parameters)
-        {
-            TimeSpan timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            string ltiMessageType = parameters.LtiMessageType,
-                   oauthNonce =
-                       Convert.ToBase64String(
-                           new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture))),
-                   oauthTimestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture),
-                   oauthCallback = "about:blank",
-                   key = parameters.ConsumerKey,
-                   secret = parameters.SharedSecret,
-                   url = parameters.ServiceUrl;
+        private const string OAuthSignatureMethod = "HMAC-SHA1";
+        private const string OAuthVersion = "1.0";
 
+        //private readonly ILogger _logger;
+
+
+        //public LTI2Api(ILogger logger)
+        //{
+        //    //_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        //}
+
+        #region Methods
+
+        public static async Task<Tuple<string, string>> CreateSignedRequestAndGetResponse(
+            SakaiParameters parameters
+            )
+        {
+            //ILmsLicense company,
+            string serviceUrl = parameters.ServiceUrl;
+            string lis_result_sourcedid = parameters.lis_result_sourcedid;
             string ltiVersion = parameters.LtiVersion;
+
+            TimeSpan timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            string ltiMessageType = MessageTypes.ReadMemberships;
+            string oauthNonce =
+                       Convert.ToBase64String(
+                           new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture)));
+            string oauthTimestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture);
+            string oauthCallback = "about:blank";
+            string key = parameters.ConsumerKey;
+            string secret = parameters.SharedSecret;
+            string url = serviceUrl;
+
+            ltiVersion = ltiVersion ?? LtiVersions.LTI1p0;
 
             const string BaseFormat =
                 "id={0}&"
@@ -47,15 +66,15 @@ namespace EdugameCloud.Sakai.TestClient.Models
 
             string baseString = string.Format(
                 BaseFormat,
-                Uri.EscapeDataString(parameters.lis_result_sourcedid),
+                Uri.EscapeDataString(lis_result_sourcedid),
                 ltiMessageType,
                 ltiVersion,
                 Uri.EscapeDataString(oauthCallback),
                 key,
                 oauthNonce,
-                parameters.OAuthSignatureMethod,
+                OAuthSignatureMethod,
                 oauthTimestamp,
-                parameters.OAuthVersion);
+                OAuthVersion);
 
             baseString = string.Concat("POST&", Uri.EscapeDataString(url), "&", Uri.EscapeDataString(baseString));
 
@@ -69,119 +88,88 @@ namespace EdugameCloud.Sakai.TestClient.Models
 
             ServicePointManager.Expect100Continue = false;
 
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            
-            var pairs = new NameValueCollection
+            //var request = (HttpWebRequest)WebRequest.Create(url);
+
+            var pairs = new Dictionary<string, string>
             {
-                { "id", parameters.lis_result_sourcedid },
+                { "id", lis_result_sourcedid },
                 { "lti_message_type", ltiMessageType },
                 { "lti_version", ltiVersion },
                 { "oauth_callback", oauthCallback },
                 { "oauth_consumer_key", key },
                 { "oauth_nonce", oauthNonce },
                 { "oauth_signature", oauthSignature },
-                { "oauth_signature_method", parameters.OAuthSignatureMethod },
+                { "oauth_signature_method", OAuthSignatureMethod },
                 { "oauth_timestamp", oauthTimestamp },
-                { "oauth_version", parameters.OAuthVersion }
+                { "oauth_version", OAuthVersion }
             };
 
-            var builder = new UriBuilder(url);
+            //var builder = new UriBuilder(url);
 
-            foreach (string pkey in pairs.Keys)
-            {
-                builder.AppendQueryArgument(pkey, pairs[pkey]);
-            }
+            //foreach (string pkey in pairs.Keys)
+            //{
+            //    builder.AppendQueryArgument(pkey, pairs[pkey]);
+            //}
 
-            byte[] bytes = Encoding.UTF8.GetBytes(builder.Uri.Query.TrimStart("?".ToCharArray()));
+            //byte[] bytes = Encoding.UTF8.GetBytes(builder.Uri.Query.TrimStart("?".ToCharArray()));
 
-            string resp;
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.Method = "POST";
-            request.Timeout = 15 * 1000;  // TODO: add timeout
-            request.Referer = url;
-            request.Host = new Uri(url).Host;
-            request.ContentLength = bytes.Length;
-            using (Stream requeststream = request.GetRequestStream())
-            {
-                requeststream.Write(bytes, 0, bytes.Length);
-                requeststream.Close();
-            }
 
-            using (var webResponse = (HttpWebResponse)request.GetResponse())
-            {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                using (var sr = new StreamReader(webResponse.GetResponseStream()))
-                {
-                    resp = sr.ReadToEnd().Trim();
-                    sr.Close();
-                }
+            var http = new HttpClientWrapper(TimeSpan.FromMilliseconds(5000));
+            //var request = new HttpRequestMessage(HttpMethod.Post, "relativeAddress");
+            // !! request.Headers.Referrer = new Uri(url);
+            // !! request.Headers.Host = request.Headers.Referrer.Host;
+            //request.Content = new FormUrlEncodedContent(pairs);
 
-                webResponse.Close();
-            }
-            
-            return Tuple.Create(builder.Uri.Query.TrimStart("?".ToCharArray()), resp);
-        }
+            //string resp;
+            //request.ContentType = "application/x-www-form-urlencoded";
+            //request.Method = "POST";
+            //request.Timeout = 5000;  // TODO: add timeout
+            //request.Referer = url;
+            //request.Host = new Uri(url).Host;
+            //request.ContentLength = bytes.Length;
+            //using (Stream requeststream = request.GetRequestStream())
+            //{
+            //    requeststream.Write(bytes, 0, bytes.Length);
+            //    requeststream.Close();
+            //}
+            Encoding encoding =  Encoding.UTF8;
+            string resp = await http.PostValuesAsync(url, pairs, encoding);
 
-        public static List<LmsUserDTO> GetUsersForCourse(
-            SakaiParameters parameters, out string error)
-        {
-            var result = new List<LmsUserDTO>();
-            error = null;
-            try
-            {
-                var resp = CreateSignedRequestAndGetResponse(
-                    parameters).Item2;
-
-                XElement response = XElement.Parse(resp);
-
-                bool isSuccess = response.XPathSelectElement("/statusinfo/codemajor").Value == "Success";
-                if (!isSuccess)
-                {
-                    /*
-                        <codemajor>Fail</codemajor>
-                        <description>Unable to validate message: 95D8A271-C3B0-44E5-99D1-051849737B12</description>
-                        <severity>Error</severity>
-                    */
-                    error = string.Format("Error from Moodle. codemajor: {0}. description : {1}. severity : {2}.",
-                        response.XPathSelectElement("/statusinfo/codemajor").Value,
-                        response.XPathSelectElement("/statusinfo/description").Value,
-                        response.XPathSelectElement("/statusinfo/severity").Value
-                        );
-
-                    throw new InvalidOperationException(error);
-                }
-
-                IEnumerable<XElement> members = response.XPathSelectElements("/members/member");
-                foreach (XElement member in members)
-                {
-                    string email = member.XPathSelectElement("person_contact_email_primary").Value;
-                    string role = member.XPathSelectElement("role").Value;
-                    string userName = member.XPathSelectElement("person_sourcedid").Value;
-                    string firstName = member.XPathSelectElement("person_name_given").Value;
-                    string lastName = member.XPathSelectElement("person_name_family").Value;
-                    string fullName = member.XPathSelectElement("person_name_full").Value;
-                    string userId = member.XPathSelectElement("user_id").Value;
-                    result.Add(
-                        new LmsUserDTO
-                        {
-                            lms_role = role,
-                            primary_email = email,
-                            login_id = userName,
-                            id = userId,
-                            name = fullName,
-                        });
-                }
-            }
-            catch (Exception ex)
-            {
-                //Esynctraining.Core.Utils.IoC.Resolve<Castle.Core.Logging.ILogger>().Error("LTI2Api.GetUsersForCourse", ex);
-                error = ex.Message;
-            }
-
-            return result;
+            return Tuple.Create(url, resp);
         }
 
         #endregion
+
+        /// <summary>
+        /// The LTI versions.
+        /// </summary>
+        private static class LtiVersions
+        {
+            #region Constants
+
+            /// <summary>
+            /// The LTI 1 P 0.
+            /// </summary>
+            // ReSharper disable once InconsistentNaming
+            public const string LTI1p0 = "LTI-1p0";
+
+            #endregion
+        }
+
+        /// <summary>
+        /// The message types.
+        /// </summary>
+        private static class MessageTypes
+        {
+            #region Constants
+
+            /// <summary>
+            /// The read memberships.
+            /// </summary>
+            public const string ReadMemberships = "basic-lis-readmembershipsforcontext";
+
+            #endregion
+        }
 
     }
 
@@ -336,34 +324,38 @@ namespace EdugameCloud.Sakai.TestClient.Models
         private string _name;
 
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LmsUserDTO"/> class.
-        /// </summary>
         public LmsUserDTO()
         {
-            this.is_editable = true;
+            this.IsEditable = true;
         }
 
         #region Public Properties
 
         [DataMember]
-        public string ac_id { get; set; }
+        public string AcId { get; set; }
 
         [DataMember]
-        public string ac_role { get; set; }
+        public int? AcRole { get; set; }
 
         [DataMember]
-        public string lms_role { get; set; }
+        public string LmsRole { get; set; }
 
         [DataMember]
-        public string id { get; set; }
+        public string Id { get; set; }
 
         [DataMember]
-        //[ScriptIgnore]
-        public string login_id { get; set; }
+        public List<string> SectionIds { get; set; }
+
+        /// <summary>
+        /// User's login in LMS system.
+        /// If AC uses Email-as-Login, this value represents user's login in AC.
+        /// NOTE: login used by External API calls only.
+        /// </summary>
+        [DataMember]
+        public string Login { get; set; }
 
         [DataMember]
-        public string name
+        public string Name
         {
             get
             {
@@ -378,21 +370,20 @@ namespace EdugameCloud.Sakai.TestClient.Models
             }
         }
 
-        [DataMember]
-        //[ScriptIgnore]
-        public string primary_email { get; set; }
+        [IgnoreDataMember]
+        public string PrimaryEmail { get; set; }
 
         [DataMember]
-        public bool is_editable { get; set; }
+        public bool IsEditable { get; set; }
+
+        [IgnoreDataMember]
+        public string LtiId { get; set; }
 
         [DataMember]
-        //[ScriptIgnore]
-        public string lti_id { get; set; }
-
-        public string email { get; set; }
+        public string Email { get; set; }
 
         [DataMember]
-        public int? guest_id { get; set; }
+        public int? GuestId { get; set; }
 
         #endregion
 
@@ -400,14 +391,14 @@ namespace EdugameCloud.Sakai.TestClient.Models
 
         public string GetLogin()
         {
-            return this.login_id ?? this.name;
+            return this.Login ?? this.Name;
         }
 
         public string GetEmail()
         {
-            if (this.primary_email != null)
+            if (this.PrimaryEmail != null)
             {
-                return this.primary_email;
+                return this.PrimaryEmail;
             }
 
             try
@@ -424,34 +415,34 @@ namespace EdugameCloud.Sakai.TestClient.Models
 
         public string GetFirstName()
         {
-            if (this.name == null)
+            if (this.Name == null)
             {
                 return "no";
             }
 
-            int index = this.name.IndexOf(" ", StringComparison.Ordinal);
+            int index = this.Name.IndexOf(" ", StringComparison.Ordinal);
             if (index < 0)
             {
-                return this.name;
+                return this.Name;
             }
 
-            return this.name.Substring(0, index);
+            return this.Name.Substring(0, index);
         }
 
         public string GetLastName()
         {
-            if (this.name == null)
+            if (this.Name == null)
             {
                 return "name";
             }
 
-            int index = this.name.IndexOf(" ", StringComparison.Ordinal);
+            int index = this.Name.IndexOf(" ", StringComparison.Ordinal);
             if (index < 0)
             {
-                return this.lms_role;
+                return this.LmsRole;
             }
 
-            return this.name.Substring(index + 1);
+            return this.Name.Substring(index + 1);
         }
 
         #endregion

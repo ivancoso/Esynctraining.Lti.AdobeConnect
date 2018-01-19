@@ -289,7 +289,7 @@ namespace EdugameCloud.Lti.OAuth.Canvas
 
                     return authResponse.access_token;
                 }
-                catch (HttpRequestException ex)
+                catch (Exception ex)
                 {
                     throw new ApplicationException(ex.ToString());
                 }

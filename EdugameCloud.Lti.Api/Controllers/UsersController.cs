@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API;
@@ -56,7 +57,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("")]
         [HttpPost]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual OperationResultWithData<IList<LmsUserDTO>> GetUsers([FromBody]MeetingRequestDtoEx request)
+        public virtual async Task<OperationResultWithData<IList<LmsUserDTO>>> GetUsers([FromBody]MeetingRequestDtoEx request)
         {
             try
             {
@@ -79,25 +80,24 @@ namespace EdugameCloud.Lti.Api.Controllers
                     }
                 }
 
-                string error;
-                IList<LmsUserDTO> users = this.UsersSetup.GetUsers(
+                var usersRes = await UsersSetup.GetUsers(
                     LmsCompany,
                     GetAdminProvider(),
                     CourseId,
                     // TRICK: used for D2L only! to add admin to meeting. It's OK to pass null for API here.
                     SessionSave?.LtiSession?.LtiParam,
                     request.MeetingId,
-                    out error,
                     null);
+                var users = usersRes.Item1;
 
                 CleanUpDto(users);
 
-                if (string.IsNullOrWhiteSpace(error))
+                if (string.IsNullOrWhiteSpace(usersRes.Item2))
                 {
                     return users.ToSuccessResult();
                 }
 
-                return OperationResultWithData<IList<LmsUserDTO>>.Error(error);
+                return OperationResultWithData<IList<LmsUserDTO>>.Error(usersRes.Item2);
             }
             catch (Exception ex)
             {
@@ -109,7 +109,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("update")]
         [HttpPost]
         [LmsAuthorizeBase]
-        public OperationResultWithData<IEnumerable<LmsUserDTO>> UpdateUser([FromBody]CourseUsersDto request)
+        public async Task<OperationResultWithData<IEnumerable<LmsUserDTO>>> UpdateUser([FromBody]CourseUsersDto request)
         {
             var credentials = LmsCompany;
             string lastError = null;
@@ -128,7 +128,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     {
                         updatedUser = this.UsersSetup.UpdateGuest(
                             credentials,
-                            this.GetAdminProvider(),
+                            GetAdminProvider(),
                             Session.LtiSession.LtiParam,
                             user,
                             request.MeetingId,
@@ -136,13 +136,14 @@ namespace EdugameCloud.Lti.Api.Controllers
                     }
                     else
                     {
-                        updatedUser = this.UsersSetup.UpdateUser(
+                        var updatedUserRes = await UsersSetup.UpdateUser(
                             credentials,
-                            this.GetAdminProvider(),
+                            GetAdminProvider(),
                             Session.LtiSession.LtiParam,
                             user,
-                            request.MeetingId,
-                            out error);
+                            request.MeetingId);
+                        updatedUser = updatedUserRes.user;
+                        error = updatedUserRes.error;
                     }
 
                     if (!string.IsNullOrEmpty(error))

@@ -8,6 +8,7 @@ using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
+using System.Threading.Tasks;
 
 namespace EdugameCloud.Lti.Canvas
 {
@@ -22,8 +23,8 @@ namespace EdugameCloud.Lti.Canvas
         }
 
 
-        public override LmsUserDTO GetUser(ILmsLicense lmsCompany,
-            string lmsUserId, int courseId, out string error, LtiParamDTO extraData = null)
+        public override Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany,
+            string lmsUserId, int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -46,12 +47,11 @@ namespace EdugameCloud.Lti.Canvas
                 lmsCompany,
                 token,
                 courseId);
-            
-            error = null;
-            return user;
+
+            return Task.FromResult<(LmsUserDTO user, string error)>((user, null));
         }
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+        public override Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
@@ -61,28 +61,27 @@ namespace EdugameCloud.Lti.Canvas
             {
                 var message = string.Format("There is no admin user set for LmsCompanyId={0}.CourseId={1}", lmsCompany.Id, courseId);
                 Logger.Error(message);
-                return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
+                return Task.FromResult(OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin));
             }
 
             if (string.IsNullOrWhiteSpace(lmsCompany.AdminUser.Token))
             {
                 Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
-                return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
+                return Task.FromResult(OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin));
             }
 
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
 
-            return users.ToSuccessResult();
+            return Task.FromResult(users.ToSuccessResult());
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, out string error, LtiParamDTO param = null)
+        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
-            error = null;
-            return GroupUsers(users);
+            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), null));
         }
 
 

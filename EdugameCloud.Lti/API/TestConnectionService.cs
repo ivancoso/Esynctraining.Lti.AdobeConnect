@@ -131,10 +131,10 @@ namespace EdugameCloud.Lti.API
             catch (AggregateException ex)
             {
                 logger.Error("[TestSchoologyConnection]", ex);
-                if (ex.InnerExceptions.First() is HttpRequestException reqEx)
-                {
-                    info = reqEx.Message;
-                }
+                //if (ex.InnerExceptions.First() is HttpRequestException reqEx)
+                //{
+                //    info = reqEx.Message;
+                //}
                 return false;
             }
         }

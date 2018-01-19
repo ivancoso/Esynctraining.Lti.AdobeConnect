@@ -1,21 +1,19 @@
-﻿using EdugameCloud.Lti.Domain.Entities;
+﻿using System;
+using System.Threading.Tasks;
+using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
-    /// <summary>
-    /// The UsersSetup interface.
-    /// </summary>
     public interface IUsersSetup
     {
-        LmsUserDTO UpdateUser(
+        Task<(LmsUserDTO user, string error)> UpdateUser(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             LmsUserDTO user,
             int meetingId,
-            out string error,
             bool skipReturningUsers = false);
         
     }

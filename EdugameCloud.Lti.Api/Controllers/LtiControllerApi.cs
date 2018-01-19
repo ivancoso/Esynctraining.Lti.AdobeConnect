@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using EdugameCloud.Lti.Api.Filters;
     using EdugameCloud.Lti.Api.Models;
     using EdugameCloud.Lti.API.AdobeConnect;
@@ -189,23 +190,18 @@
         [Route("meeting/SetDefaultACRoles")]
         [HttpPost]
         [LmsAuthorizeBase]
-        public virtual OperationResultWithData<List<LmsUserDTO>> SetDefaultRolesForNonParticipants([FromBody]MeetingRequestDto request)
+        public virtual async Task<OperationResultWithData<List<LmsUserDTO>>> SetDefaultRolesForNonParticipants([FromBody]MeetingRequestDto request)
         {
             try
             {
                 var param = Session.LtiSession.LtiParam;
-                string error = null;
-                List<LmsUserDTO> updatedUsers = this.usersSetup.SetDefaultRolesForNonParticipants(
+                var updatedUsers = await usersSetup.SetDefaultRolesForNonParticipants(
                     LmsCompany,
-                    this.GetAdminProvider(),
+                    GetAdminProvider(),
                     param,
-                    request.MeetingId,
-                    out error);
+                    request.MeetingId);
 
-                //if (string.IsNullOrEmpty(error))
-                    return OperationResultWithData<List<LmsUserDTO>>.Success(error, updatedUsers);
-
-                //return Json(OperationResult.Error(error));
+                return OperationResultWithData<List<LmsUserDTO>>.Success(updatedUsers.Item2, updatedUsers.Item1);
             }
             catch (Exception ex)
             {

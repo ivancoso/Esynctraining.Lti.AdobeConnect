@@ -2,19 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Globalization;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Security.Cryptography;
     using System.Text;
+    using System.Threading.Tasks;
     using System.Xml.Linq;
     using System.Xml.XPath;
     using API;
+    using EdugameCloud.HttpClient;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
 
@@ -37,18 +36,16 @@
 
         #region Public Methods and Operators
 
-        public List<LmsUserDTO> GetUsersForCourse(
+        public async Task<Tuple<List<LmsUserDTO>, string>> GetUsersForCourse(
             ILmsLicense company, 
             string servicePattern, 
             string lis_result_sourcedid, 
-            out string error, 
             string ltiVersion = null)
         {
             var result = new List<LmsUserDTO>();
-            error = null;
             try
             {
-                XElement response = CreateSignedRequestAndGetResponse(
+                XElement response = await CreateSignedRequestAndGetResponse(
                     company, 
                     servicePattern, 
                     lis_result_sourcedid, 
@@ -62,7 +59,7 @@
                         <description>Unable to validate message: 95D8A271-C3B0-44E5-99D1-051849737B12</description>
                         <severity>Error</severity>
                     */
-                    error = string.Format("Error from Sakai. codemajor: {0}. description : {1}. severity : {2}.",
+                    string error = string.Format("Error from Sakai. codemajor: {0}. description : {1}. severity : {2}.",
                         response.XPathSelectElement("/statusinfo/codemajor")?.Value,
                         response.XPathSelectElement("/statusinfo/description")?.Value,
                         response.XPathSelectElement("/statusinfo/severity")?.Value
@@ -70,7 +67,7 @@
 
                     _logger.ErrorFormat("{0}. Service: {1}. LmsCompanyId: {2}.", error, servicePattern, company.Id);
 
-                    return new List<LmsUserDTO>();
+                    return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), error);
                 }
 
                 IEnumerable<XElement> members = response.XPathSelectElements("/members/member");
@@ -119,17 +116,16 @@
             catch (Exception ex)
             {
                 _logger.Error("LTI2Api.GetUsersForCourse", ex);
-                error = ex.Message;
+                return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), ex.Message);
             }
-
-            return result;
+            return new Tuple<List<LmsUserDTO>, string>(result, null);
         }
 
         #endregion
 
         #region Methods
         
-        private static XElement CreateSignedRequestAndGetResponse(
+        private static async Task<XElement> CreateSignedRequestAndGetResponse(
             ILmsLicense company, 
             string serviceUrl, 
             string lis_result_sourcedid, 
@@ -182,10 +178,8 @@
             }
 
             ServicePointManager.Expect100Continue = false;
-
-            var request = (HttpWebRequest)WebRequest.Create(url);
-
-            var pairs = new NameValueCollection
+            
+            var pairs = new Dictionary<string, string>
             {
                 { "id", lis_result_sourcedid }, 
                 { "lti_message_type", ltiMessageType }, 
@@ -198,44 +192,13 @@
                 { "oauth_timestamp", oauthTimestamp }, 
                 { "oauth_version", OAuthVersion }
             };
-
-            var builder = new UriBuilder(url);
-
-            foreach (string pkey in pairs.Keys)
-            {
-                builder.AppendQueryArgument(pkey, pairs[pkey]);
-            }
-
-            byte[] bytes = Encoding.UTF8.GetBytes(builder.Uri.Query.TrimStart("?".ToCharArray()));
-
-            string resp;
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.Method = "POST";
-            request.Timeout = 5000;  // TODO: add timeout
-            request.Referer = url;
-            request.Host = new Uri(url).Host;
-            request.ContentLength = bytes.Length;
-            using (Stream requeststream = request.GetRequestStream())
-            {
-                requeststream.Write(bytes, 0, bytes.Length);
-                requeststream.Close();
-            }
-
-            using (var webResponse = (HttpWebResponse)request.GetResponse())
-            {
-                // TRICK: ACLTI-478 (UNIR: Accents aren't shown correctly in Participants List)
-                Encoding encoding = (company.LanguageId == LmsCompany.SpanishLanguageId)
+            
+            var http = new HttpClientWrapper(TimeSpan.FromMilliseconds(5000));
+            Encoding encoding = (company.LanguageId == LmsCompany.SpanishLanguageId)
                     ? Encoding.GetEncoding("ISO-8859-1")
                     : Encoding.UTF8;
-                using (var sr = new StreamReader(webResponse.GetResponseStream(), encoding, true))
-                {
-                    resp = sr.ReadToEnd().Trim();
-                    sr.Close();
-                }
-
-                webResponse.Close();
-            }
-
+            string resp = await http.PostValuesAsync(url, pairs, encoding);
+            
             XElement response = XElement.Parse(resp);
             return response;
         }

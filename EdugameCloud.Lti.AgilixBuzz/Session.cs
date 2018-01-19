@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace EdugameCloud.Lti.AgilixBuzz
+﻿namespace EdugameCloud.Lti.AgilixBuzz
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Net;
     using System.Text;

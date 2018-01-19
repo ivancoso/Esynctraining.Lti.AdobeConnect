@@ -245,8 +245,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return recordingUrl;
         }
 
-        public string JoinRecording(ILmsLicense lmsCompany, LtiParamDTO param, string recordingUrl,
-            ref string breezeSession, IAdobeConnectProxy provider, string mode = null)
+        public async Task<(string url, string breezeSession)> JoinRecording(ILmsLicense lmsCompany, LtiParamDTO param, string recordingUrl,
+            IAdobeConnectProxy provider, string mode = null)
         {
             LmsUserDTO lmsUserDto = null;
 
@@ -272,8 +272,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 && (LmsMeetingType)courseMeeting.LmsMeetingType != LmsMeetingType.StudyGroup 
                 && lmsCompany.UseSynchronizedUsers)
             {
-                string userCreationError = null;
-                lmsUserDto = usersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, courseMeeting, out userCreationError, param.lms_user_id);
+                var lmsUserDtoRes = await usersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, courseMeeting, param.lms_user_id);
+                string userCreationError = lmsUserDtoRes.Item2;
+                lmsUserDto = lmsUserDtoRes.Item1;
                 if (userCreationError != null)
                 {
                     throw new Core.WarningMessageException(
@@ -292,9 +293,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 loginResult.User.PrincipalId, param, () => courseMeetings);
             
             var baseUrl = lmsCompany.AcServer + "/" + recordingUrl;
-            breezeSession = breezeToken ?? string.Empty;
+            var breezeSession = breezeToken ?? string.Empty;
 
-            return string.Format(
+            var url = string.Format(
                 "{0}?{1}{2}{3}",
                 baseUrl,
                 mode != null ? string.Format("pbMode={0}", mode) : string.Empty,
@@ -302,6 +303,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 !lmsCompany.LoginUsingCookie.GetValueOrDefault() && breezeToken != null
                     ? "session=" + breezeToken
                     : string.Empty);
+            return (url, breezeSession);
         }
 
         public OperationResult EditRecording(

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Haiku;
 using EdugameCloud.Lti.Domain.Entities;
@@ -20,30 +21,25 @@ namespace EdugameCloud.Lti.Haiku
         }
 
 
-        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(ILmsLicense lmsCompany,
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            string error;
-            var users = GetUsersOldStyle(lmsCompany, courseId, out error, extraData);
-            return error != null
-                ? OperationResultWithData<List<LmsUserDTO>>.Error(error)
-                : users.ToSuccessResult();
+            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
+            return users.users.ToSuccessResult();
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(ILmsLicense lmsCompany,
-            int courseId, out string error, LtiParamDTO param = null)
+        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
+            int courseId, LtiParamDTO param = null)
         {
-            error = null;
-
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            var result = _restApiClient.GetUsersForCourse(lmsCompany, courseId, out error);
+            var result = _restApiClient.GetUsersForCourse(lmsCompany, courseId, out string error);
 
-            return result;
+            return Task.FromResult<(List<LmsUserDTO> users, string error)>((result, error));
         }
     }
 

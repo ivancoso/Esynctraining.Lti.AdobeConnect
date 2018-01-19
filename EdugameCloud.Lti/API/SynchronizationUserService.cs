@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
@@ -43,7 +44,7 @@ namespace EdugameCloud.Lti.API
         }
 
 
-        public void SynchronizeUsers(ILmsLicense lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null)
+        public async Task SynchronizeUsers(ILmsLicense lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null)
         {
             LmsUserServiceBase service = null;
             if ((LmsProviderEnum)lmsCompany.LmsProviderId == LmsProviderEnum.Brightspace)
@@ -78,7 +79,7 @@ namespace EdugameCloud.Lti.API
                 foreach (var groupedMeeting in groupedMeetings)
                 {
                     var courseId = groupedMeeting.Key;
-                    var opResult = service.GetUsers(lmsCompany, courseId);
+                    var opResult = await service.GetUsers(lmsCompany, courseId);
                     if (opResult.IsSuccess)
                     {
                         licenseUsers.Add(courseId, opResult.Data);

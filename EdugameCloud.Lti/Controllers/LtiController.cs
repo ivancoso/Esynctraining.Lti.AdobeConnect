@@ -8,6 +8,7 @@ namespace EdugameCloud.Lti.Controllers
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
     using System.Web;
     using System.Web.Helpers;
     using System.Web.Mvc;
@@ -99,7 +100,7 @@ namespace EdugameCloud.Lti.Controllers
 
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here.")]
         [AllowAnonymous]
-        public virtual ActionResult AuthenticationCallback(
+        public virtual async Task<ActionResult> AuthenticationCallback(
             // ReSharper disable once InconsistentNaming
             string __provider__,
             // ReSharper disable once InconsistentNaming
@@ -113,8 +114,8 @@ namespace EdugameCloud.Lti.Controllers
                 if (string.IsNullOrEmpty(__provider__))
                 {
                     Logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
-                    this.ViewBag.Error = Resources.Messages.NoLmsInformation;
-                    return this.View("Error");
+                    ViewBag.Error = Resources.Messages.NoLmsInformation;
+                    return View("Error");
                 }
                 __provider__ = FixExtraDataIssue(__provider__);
                 if (string.IsNullOrEmpty(session))
@@ -173,7 +174,7 @@ namespace EdugameCloud.Lti.Controllers
                         return View("Error");
                     }
 
-                    return AuthCallbackSave(session, provider, token, user.Identifier, username, "Error");
+                    return await AuthCallbackSave(session, provider, token, user.Identifier, username, "Error");
                 }
                 else
                 {
@@ -198,7 +199,7 @@ namespace EdugameCloud.Lti.Controllers
                                     throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
                             }
 
-                            return AuthCallbackSave(session, provider,
+                            return await AuthCallbackSave(session, provider,
                                 result.ExtraData.ContainsKey("accesstoken")
                                     ? result.ExtraData["accesstoken"]
                                     : null,
@@ -269,7 +270,7 @@ namespace EdugameCloud.Lti.Controllers
         
         [HttpGet]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
-        public virtual ActionResult JoinMeeting(string session, int meetingId)
+        public virtual async Task<ActionResult> JoinMeeting(string session, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -277,11 +278,9 @@ namespace EdugameCloud.Lti.Controllers
                 var s = GetReadOnlySession(session);
                 credentials = s.LmsCompany;
                 var param = s.LtiSession.LtiParam;
-                string breezeSession = null;
 
-                string url = this.meetingSetup.JoinMeeting(credentials, param, meetingId,
-                    ref breezeSession, this.GetAdminProvider(credentials));
-                return this.LoginToAC(url, breezeSession, credentials);
+                var res = await meetingSetup.JoinMeeting(credentials, param, meetingId, GetAdminProvider(credentials));
+                return LoginToAC(res.meetingJoinUrl, res.breezeSession, credentials);
             }
             catch (Core.WarningMessageException ex)
             {
@@ -336,7 +335,7 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         [ValidateInput(false)]
-        public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
+        public virtual async Task<ActionResult> LoginWithProvider(string provider, LtiParamDTO param)
         {
             var methodTime = Stopwatch.StartNew();
             var trace = new StringBuilder();
@@ -426,7 +425,7 @@ namespace EdugameCloud.Lti.Controllers
                 sw = Stopwatch.StartNew();
 
                 // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
-                param.ext_user_username = usersSetup.GetParamLogin(param, lmsCompany); // NOTE: is saved in session!
+                param.ext_user_username = await usersSetup.GetParamLogin(param, lmsCompany); // NOTE: is saved in session!
 
                 sw.Stop();
                 trace.AppendFormat("GetParamLogin: time: {0}.\r\n", sw.Elapsed.ToString());
@@ -570,7 +569,7 @@ namespace EdugameCloud.Lti.Controllers
                     throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
                 }
 
-                return this.RedirectToExtJs(session, lmsUser, trace);
+                return await RedirectToExtJs(session, lmsUser, trace);
             }
             catch (LtiException ex)
             {
@@ -766,7 +765,7 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
-        private ActionResult AuthCallbackSave(string providerKey, string provider, string token, string userId, string username, string viewName)
+        private async Task<ActionResult> AuthCallbackSave(string providerKey, string provider, string token, string userId, string username, string viewName)
         {
             LmsUser lmsUser = null;
             LmsUserSession session = GetSession(providerKey);
@@ -870,14 +869,14 @@ namespace EdugameCloud.Lti.Controllers
                     }
                 }
                 
-                return this.RedirectToExtJs(session, lmsUser);
+                return await RedirectToExtJs(session, lmsUser);
             }
 
             this.ViewBag.Error = string.Format("Credentials not found");
             return View(viewName);
         }
 
-        private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, StringBuilder trace = null)
+        private async Task<ActionResult> RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, StringBuilder trace = null)
         {
             var request = Request;
             var form = new FormCollection(request.Unvalidated().Form);
@@ -894,7 +893,7 @@ namespace EdugameCloud.Lti.Controllers
                 {
                     if (int.TryParse(ltiId, out meetingId))
                     {
-                        return JoinMeeting(session.Id.ToString("n"), meetingId);
+                        return await JoinMeeting(session.Id.ToString("n"), meetingId);
                     }
                 }
                 else if (action == "edit" || action == "delete")
