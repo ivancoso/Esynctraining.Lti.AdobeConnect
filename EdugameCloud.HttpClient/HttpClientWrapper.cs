@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,22 +15,40 @@ namespace EdugameCloud.HttpClient
 
         public HttpClientWrapper()
         {
-            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(new HttpClientHandler()));
+            var handler = new HttpClientHandler()
+            {
+                //https://stackoverflow.com/questions/46400797/httpclienthandler-throwing-platformnotsupportedexception
+                //SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Ssl3,
+                //ServerCertificateCustomValidationCallback = delegate { return true; },
+            };
+            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(handler));
         }
 
         public HttpClientWrapper(TimeSpan timeout)
         {
-            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(new HttpClientHandler()))
+            var handler = new HttpClientHandler()
+            {
+                //https://stackoverflow.com/questions/46400797/httpclienthandler-throwing-platformnotsupportedexception
+                //SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Ssl3,
+                //ServerCertificateCustomValidationCallback = delegate { return true; },
+            };
+            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(handler))
             {
                 Timeout = timeout,
             };
         }
 
-        public HttpClientWrapper(Uri uri)
+        public HttpClientWrapper(Uri baseAddress)
         {
-            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(new HttpClientHandler()))
+            var handler = new HttpClientHandler()
             {
-                BaseAddress = uri
+                //https://stackoverflow.com/questions/46400797/httpclienthandler-throwing-platformnotsupportedexception
+                //SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Ssl3,
+                //ServerCertificateCustomValidationCallback = delegate { return true; },
+            };
+            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(handler))
+            {
+                BaseAddress = baseAddress,
             };
         }
 
@@ -39,8 +58,17 @@ namespace EdugameCloud.HttpClient
 
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage)
         {
-            HttpResponseMessage response = await _httpClient.SendAsync(httpRequestMessage);
-            return response;
+            try
+            {
+                PreCall();
+
+                HttpResponseMessage response = await _httpClient.SendAsync(httpRequestMessage);
+                return response;
+            }
+            finally
+            {
+                PostCall();
+            }
         }
 
         public async Task<string> PostValuesAsync(string url, IEnumerable<KeyValuePair<string, string>> pairs)
@@ -50,10 +78,19 @@ namespace EdugameCloud.HttpClient
             if (pairs == null)
                 throw new ArgumentNullException(nameof(pairs));
 
-            var response = await _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+            try
+            {
+                PreCall();
 
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+                var response = await _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
+            }
+            finally
+            {
+                PostCall();
+            }
         }
 
         public async Task<string> PostValuesAsync(string url, IEnumerable<KeyValuePair<string, string>> pairs, Encoding encoding)
@@ -63,33 +100,83 @@ namespace EdugameCloud.HttpClient
             if (pairs == null)
                 throw new ArgumentNullException(nameof(pairs));
 
-            var response = await _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+            try
+            {
+                PreCall();
 
-            response.EnsureSuccessStatusCode();
-            var buffer = await response.Content.ReadAsByteArrayAsync();
-            return encoding.GetString(buffer, 0, buffer.Length);
+                var response = await _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+
+                response.EnsureSuccessStatusCode();
+                var buffer = await response.Content.ReadAsByteArrayAsync();
+                return encoding.GetString(buffer, 0, buffer.Length);
+            }
+            finally
+            {
+                PostCall();
+            }
         }
         
         public async Task<string> DownloadStringAsync(string url)
         {
-            var response = await _httpClient.GetAsync(url);
-            return await response.Content.ReadAsStringAsync();
+            try
+            {
+                PreCall();
+
+                var response = await _httpClient.GetAsync(url);
+                return await response.Content.ReadAsStringAsync();
+            }
+            finally
+            {
+                PostCall();
+            }
         }
 
         public async Task<string> DownloadStringAsync(Uri url)
         {
-            var response = await _httpClient.GetAsync(url);
-            return await response.Content.ReadAsStringAsync();
+            try
+            {
+                PreCall();
+
+                var response = await _httpClient.GetAsync(url);
+                return await response.Content.ReadAsStringAsync();
+            }
+            finally
+            {
+                PostCall();
+            }
         }
 
         public async Task<string> UploadJsonStringAsync(string address, string data)
         {
-            var content = new StringContent(data, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(address, content);
-            return await response.Content.ReadAsStringAsync();
+            try
+            {
+                PreCall();
+
+                var content = new StringContent(data, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(address, content);
+                return await response.Content.ReadAsStringAsync();
+            }
+            finally
+            {
+                PostCall();
+            }
         }
 
         #endregion Public Methods
+
+        private static void PreCall()
+        {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.SecurityProtocol =
+                SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+        }
+
+        private static void PostCall()
+        {
+            // NOTE: do nothing for now
+            // Can restore ServicePointManager.SecurityProtocol here
+        }
+
     }
 
 }
