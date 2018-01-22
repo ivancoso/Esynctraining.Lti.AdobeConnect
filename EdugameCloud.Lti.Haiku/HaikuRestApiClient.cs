@@ -39,8 +39,7 @@ namespace EdugameCloud.Lti.Haiku
             };
 
             string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
-            var method = OAuthBase.Method.GET;
-            string xml = oAuth.oAuthWebRequest(method, uri, "");
+            string xml = oAuth.oAuthWebRequest(OAuthBase.Method.GET, uri, "");
 
             error = null;
             List<LmsUserDTO> result = null;
@@ -72,8 +71,7 @@ namespace EdugameCloud.Lti.Haiku
                 };
 
                 string uri = $"{lmsDomain}/do/services/test/oauth";
-                var method = OAuthBase.Method.GET;
-                string xml = oAuth.oAuthWebRequest(method, uri, "");
+                string xml = oAuth.oAuthWebRequest(OAuthBase.Method.GET, uri, "");
 
                 var xmlDoc = XDocument.Parse(xml);
                 var response = xmlDoc.Root;
@@ -115,8 +113,7 @@ namespace EdugameCloud.Lti.Haiku
 
                 string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
 
-                var method = OAuthBase.Method.GET;
-                string xml = oAuth.oAuthWebRequest(method, uri, "");
+                string xml = oAuth.oAuthWebRequest(OAuthBase.Method.GET, uri, "");
 
                 error = null;
                 List<LmsCourseSectionDTO> result = null;

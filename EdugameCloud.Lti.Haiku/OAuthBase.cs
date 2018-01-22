@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
-using System.Net;
+//using System.IO;
+//using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using EdugameCloud.HttpClient;
 
 namespace EdugameCloud.Lti.Haiku
 {
@@ -86,6 +87,8 @@ namespace EdugameCloud.Lti.Haiku
         protected Random random = new Random();
 
         protected string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+
+        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 
         /// <summary>
         /// Helper function to compute a hash value
@@ -359,6 +362,11 @@ namespace EdugameCloud.Lti.Haiku
         /// <returns>The web server response.</returns>
         public string oAuthWebRequest(Method method, string url, string postData)
         {
+            if (method != Method.GET)
+            {
+                throw new NotImplementedException();
+            }
+
             string outUrl = "";
             string querystring = "";
             string ret = "";
@@ -424,86 +432,85 @@ namespace EdugameCloud.Lti.Haiku
                 outUrl += "?";
             }
 
-            ret = WebRequest(method, outUrl + querystring, postData);
+            ret = _httpClientWrapper.DownloadStringAsync(outUrl + querystring).Result;
+            //ret = WebRequest(method, outUrl + querystring, postData);
             return ret;
         }
 
-        /// <summary>
-        /// Web Request Wrapper
-        /// </summary>
-        /// <param name="method">Http Method</param>
-        /// <param name="url">Full url to the web resource</param>
-        /// <param name="postData">Data to post in querystring format</param>
-        /// <returns>The web server response.</returns>
-        public string WebRequest(Method method, string url, string postData)
-        {
-            HttpWebRequest webRequest = null;
-            StreamWriter requestWriter = null;
-            string responseData = "";
+        ///// <summary>
+        ///// Web Request Wrapper
+        ///// </summary>
+        ///// <param name="method">Http Method</param>
+        ///// <param name="url">Full url to the web resource</param>
+        ///// <param name="postData">Data to post in querystring format</param>
+        ///// <returns>The web server response.</returns>
+        //private string WebRequest(Method method, string url, string postData)
+        //{
+        //    HttpWebRequest webRequest = System.Net.WebRequest.Create(url) as HttpWebRequest;
+        //    webRequest.Method = method.ToString();
+        //    webRequest.ServicePoint.Expect100Continue = false;
+        //    //webRequest.UserAgent	= "Identify your application please.";
+        //    //webRequest.Timeout = 20000;
 
-            webRequest = System.Net.WebRequest.Create(url) as HttpWebRequest;
-            webRequest.Method = method.ToString();
-            webRequest.ServicePoint.Expect100Continue = false;
-            //webRequest.UserAgent	= "Identify your application please.";
-            //webRequest.Timeout = 20000;
+        //    if (method == Method.POST || method == Method.DELETE)
+        //    {
+        //        webRequest.ContentType = "application/x-www-form-urlencoded";
 
-            if (method == Method.POST || method == Method.DELETE)
-            {
-                webRequest.ContentType = "application/x-www-form-urlencoded";
+        //        //POST the data.
+        //        StreamWriter requestWriter = new StreamWriter(webRequest.GetRequestStream());
+        //        try
+        //        {
+        //            requestWriter.Write(postData);
+        //        }
+        //        catch
+        //        {
+        //            throw;
+        //        }
+        //        finally
+        //        {
+        //            requestWriter.Close();
+        //            requestWriter = null;
+        //        }
+        //    }
 
-                //POST the data.
-                requestWriter = new StreamWriter(webRequest.GetRequestStream());
-                try
-                {
-                    requestWriter.Write(postData);
-                }
-                catch
-                {
-                    throw;
-                }
-                finally
-                {
-                    requestWriter.Close();
-                    requestWriter = null;
-                }
-            }
+        //    string responseData = "";
 
-            responseData = WebResponseGet(webRequest);
+        //    responseData = WebResponseGet(webRequest);
 
-            webRequest = null;
+        //    webRequest = null;
 
-            return responseData;
+        //    return responseData;
 
-        }
+        //}
 
-        /// <summary>
-        /// Process the web response.
-        /// </summary>
-        /// <param name="webRequest">The request object.</param>
-        /// <returns>The response data.</returns>
-        public string WebResponseGet(HttpWebRequest webRequest)
-        {
-            StreamReader responseReader = null;
-            string responseData = "";
+        ///// <summary>
+        ///// Process the web response.
+        ///// </summary>
+        ///// <param name="webRequest">The request object.</param>
+        ///// <returns>The response data.</returns>
+        //private string WebResponseGet(HttpWebRequest webRequest)
+        //{
+        //    StreamReader responseReader = null;
+        //    string responseData = "";
 
-            try
-            {
-                responseReader = new StreamReader(webRequest.GetResponse().GetResponseStream());
-                responseData = responseReader.ReadToEnd();
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                webRequest.GetResponse().GetResponseStream().Close();
-                responseReader.Close();
-                responseReader = null;
-            }
+        //    try
+        //    {
+        //        responseReader = new StreamReader(webRequest.GetResponse().GetResponseStream());
+        //        responseData = responseReader.ReadToEnd();
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        webRequest.GetResponse().GetResponseStream().Close();
+        //        responseReader.Close();
+        //        responseReader = null;
+        //    }
 
-            return responseData;
-        }
+        //    return responseData;
+        //}
 
     }
 
