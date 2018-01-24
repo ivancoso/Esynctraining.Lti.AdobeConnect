@@ -24,14 +24,22 @@ namespace EdugameCloud.HttpClient
             _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(handler));
         }
 
-        public HttpClientWrapper(TimeSpan timeout)
+        public HttpClientWrapper(TimeSpan timeout, CookieContainer cookies = null, bool allowAutoRedirect = true)
         {
             var handler = new HttpClientHandler()
             {
+                AllowAutoRedirect = allowAutoRedirect
+
                 //https://stackoverflow.com/questions/46400797/httpclienthandler-throwing-platformnotsupportedexception
                 //SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Ssl3,
                 //ServerCertificateCustomValidationCallback = delegate { return true; },
             };
+
+            if (cookies != null)
+            {
+                handler.CookieContainer = cookies;
+            }
+
             _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(handler))
             {
                 Timeout = timeout,

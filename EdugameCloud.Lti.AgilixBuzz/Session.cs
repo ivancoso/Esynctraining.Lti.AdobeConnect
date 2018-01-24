@@ -4,15 +4,18 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Text;
     using System.Xml;
     using System.Xml.Linq;
+    using EdugameCloud.HttpClient;
     using Esynctraining.Core.Logging;
 
     internal sealed class Session
     {
         private readonly ILogger _logger;
-        private CookieContainer _cookies;
+        private HttpClientWrapper _httpClientWrapper;
 
         #region Constructors and Destructors
 
@@ -21,7 +24,7 @@
             _logger = logger;
             Agent = agent;
             Server = server;
-            Timeout = timeout;
+            Timeout = TimeSpan.FromMilliseconds(timeout);
             Verbose = verbose;
         }
 
@@ -49,7 +52,7 @@
         /// Gets or sets request timeout in milliseconds
         ///     Defaults to 30000 (30 seconds)
         /// </summary>
-        public int Timeout { get; set; }
+        public TimeSpan Timeout { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether session is verbose or not
@@ -122,7 +125,7 @@
             }
 
             TraceRequest(query.ToString(), null);
-            return ReadResponse(this.Request(query.ToString(), null, null, Timeout));
+            return ReadResponse(this.Request(query.ToString(), null, null));
         }
 
         /// <summary>
@@ -142,7 +145,8 @@
         /// </returns>
         public XElement Login(string prefix, string username, string password)
         {
-            _cookies = new CookieContainer();
+            _httpClientWrapper = new HttpClientWrapper(Timeout, new CookieContainer(), false);
+
             return this.Post(
                 null, 
                 new XElement(
@@ -187,7 +191,7 @@
                     writer.Flush();
                     data.Flush();
                     data.Position = 0;
-                    return ReadResponse(Request(query, data, "text/xml", this.Timeout));
+                    return ReadResponse(Request(query, data, "text/xml"));
                 }
             }
         }
@@ -227,9 +231,9 @@
         /// <returns>
         /// XML results
         /// </returns>
-        private XElement ReadResponse(HttpWebResponse response)
+        private XElement ReadResponse(HttpResponseMessage response)
         {
-            using (Stream stream = response.GetResponseStream())
+            using (Stream stream = response.Content.ReadAsStreamAsync().Result)
             {
                 try
                 {
@@ -259,53 +263,37 @@
         /// <param name="contentType">
         /// Content type of the post data
         /// </param>
-        /// <param name="timeout">
-        /// Request timeout in milliseconds
-        /// </param>
         /// <returns>
         /// Http Web Response
         /// </returns>
-        private HttpWebResponse Request(string query, Stream postData, string contentType, int timeout)
+        private HttpResponseMessage Request(string query, Stream postData, string contentType)
         {
-            var request = (HttpWebRequest)WebRequest.Create(Server + query);
-            request.UserAgent = Agent;
-            request.AllowAutoRedirect = false;
-            request.CookieContainer = _cookies;
-            request.Timeout = timeout;
-            if (timeout > request.ReadWriteTimeout)
+            var requestMessage = new System.Net.Http.HttpRequestMessage
             {
-                request.ReadWriteTimeout = timeout;
-            }
+                RequestUri = new Uri(Server + query)
+            };
+
+            requestMessage.Headers.UserAgent.ParseAdd(Agent);
 
             if (postData != null)
             {
-                request.Method = "POST";
+                requestMessage.Method = HttpMethod.Post;
+                requestMessage.Content = new StreamContent(postData);
+                
                 if (!string.IsNullOrEmpty(contentType))
                 {
-                    request.ContentType = contentType;
-                }
-
-                request.ContentLength = postData.Length;
-                using (Stream stream = request.GetRequestStream())
-                {
-                    var buffer = new byte[16 * 1024];
-                    int bytes;
-
-                    // post the data
-                    while ((bytes = postData.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        stream.Write(buffer, 0, bytes);
-                    }
-
-                    stream.Close();
+                    requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
                 }
             }
             else
             {
-                request.Method = "GET";
+                requestMessage.Method = HttpMethod.Get;
             }
 
-            var response = (HttpWebResponse)request.GetResponse();
+            var response = _httpClientWrapper.SendAsync(requestMessage).Result;
+
+            response.EnsureSuccessStatusCode();
+
             return response;
         }
 
