@@ -461,7 +461,9 @@ namespace EdugameCloud.Lti.Domain.Entities
         public virtual bool HasLmsDomain(string domainToCheck)
         {
             var domains = new List<string>();
-            domains.Add(CleanDomain(LmsDomain));
+
+            if (!string.IsNullOrEmpty(LmsDomain))
+                domains.Add(CleanDomain(LmsDomain));
 
             if ((LmsProviderId == (int)LmsProviderEnum.Blackboard) && EnableProxyToolMode.GetValueOrDefault())
             {

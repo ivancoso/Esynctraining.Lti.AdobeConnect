@@ -406,6 +406,9 @@ namespace EdugameCloud.Lti.DTO
             if (this.tool_consumer_info_product_family_code == "Buzz")
                 return this.tool_consumer_instance_guid;
 
+            if (this.tool_consumer_info_product_family_code == "schoology")
+                return this.LmsDomainFromUrls();
+
             if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid)
                 || !string.IsNullOrWhiteSpace(this.lis_outcome_service_url)
                 || !string.IsNullOrWhiteSpace(this.ext_ims_lis_memberships_url))
@@ -418,6 +421,8 @@ namespace EdugameCloud.Lti.DTO
             {
                 return this.LmsDomainFromUrls();
             }
+
+
 
             return this.tool_consumer_instance_guid;
         }

@@ -617,7 +617,7 @@ namespace EdugameCloud.Lti.Controllers
         {
 //            if (lmsLicense != null)
 //            {
-                if (!string.IsNullOrWhiteSpace(lmsLicense.LmsDomain) && !lmsLicense.HasLmsDomain(param.lms_domain))
+                if (!lmsLicense.HasLmsDomain(param.lms_domain))
                 {
                     Logger.ErrorFormat("LTI integration is already set for different domain. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
                     return Resources.Messages.LtiValidationDifferentDomain;
