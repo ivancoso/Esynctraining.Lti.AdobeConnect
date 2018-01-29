@@ -26,7 +26,7 @@
 
         public CanvasAPI(ILogger logger)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #region Public Methods and Operators
@@ -167,10 +167,10 @@
             return client;
         }
 
-        protected static RestRequest CreateRequest(string api, string resource, Method method, string usertoken)
+        protected static RestRequest CreateRequest(string api, string resource, Method method, string userToken)
         {
             var request = new RestRequest(resource, method);
-            request.AddHeader("Authorization", "Bearer " + usertoken);
+            request.AddHeader("Authorization", "Bearer " + userToken);
             return request;
         }
 

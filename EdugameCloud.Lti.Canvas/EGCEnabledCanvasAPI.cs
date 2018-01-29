@@ -168,6 +168,8 @@ namespace EdugameCloud.Lti.Canvas
                 var user = response.Data;
                 if (user == null)
                     return null;
+                if (!user.enrollments.Any(x => x.course_id == courseId && x.enrollment_state == CanvasEnrollment.EnrollmentState.Active))
+                    return null;
 
                 var result = new LmsUserDTO
                 {
@@ -230,7 +232,9 @@ namespace EdugameCloud.Lti.Canvas
 
                     link = ExtractNextPageLink(response);
 
-                    List<CanvasLmsUserDTO> users = response.Data;
+                    List<CanvasLmsUserDTO> users = response.Data
+                        .Where(x => x.enrollments.Any(enr => enr.course_id == courseId && enr.enrollment_state == CanvasEnrollment.EnrollmentState.Active))
+                        .ToList();
                     if (users == null)
                     {
                         continue;
