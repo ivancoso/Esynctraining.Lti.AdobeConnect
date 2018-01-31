@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Haiku;
 using EdugameCloud.Lti.Domain.Entities;
@@ -20,7 +21,8 @@ namespace EdugameCloud.Lti.Haiku
 
         public override IEnumerable<LmsCourseSectionDTO> GetCourseSections(ILmsLicense lmsLicense, string courseId)
         {
-            return _haikuApi.GetCourseSections(lmsLicense, int.Parse(courseId), out string error);
+            var (courses, error) = Task.Run(() => _haikuApi.GetCourseSectionsAsync(lmsLicense, int.Parse(courseId))).Result;
+            return courses;
         }
 
     }

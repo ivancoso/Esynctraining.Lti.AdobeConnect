@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 //using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using EdugameCloud.HttpClient;
 
@@ -360,7 +361,7 @@ namespace EdugameCloud.Lti.Haiku
         /// <param name="url">The full url, including the querystring.</param>
         /// <param name="postData">Data to post (querystring format)</param>
         /// <returns>The web server response.</returns>
-        public string oAuthWebRequest(Method method, string url, string postData)
+        public async Task<string> oAuthWebRequestAsync(Method method, string url, string postData)
         {
             if (method != Method.GET)
             {
@@ -432,7 +433,7 @@ namespace EdugameCloud.Lti.Haiku
                 outUrl += "?";
             }
 
-            ret = _httpClientWrapper.DownloadStringAsync(outUrl + querystring).Result;
+            ret = await _httpClientWrapper.DownloadStringAsync(outUrl + querystring);
             //ret = WebRequest(method, outUrl + querystring, postData);
             return ret;
         }

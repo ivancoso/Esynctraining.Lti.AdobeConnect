@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using EdugameCloud.Lti.API.Haiku;
 using EdugameCloud.Lti.Core.Constants;
@@ -20,7 +21,7 @@ namespace EdugameCloud.Lti.Haiku
         }
 
 
-        public List<LmsUserDTO> GetUsersForCourse(ILmsLicense lmsCompany, int courseId, out string error)
+        public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(ILmsLicense lmsCompany, int courseId)
         {
             var consumerKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerKey);
             var consumerSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerSecret);
@@ -39,9 +40,9 @@ namespace EdugameCloud.Lti.Haiku
             };
 
             string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
-            string xml = oAuth.oAuthWebRequest(OAuthBase.Method.GET, uri, "");
+            string xml = await oAuth.oAuthWebRequestAsync(OAuthBase.Method.GET, uri, "");
 
-            error = null;
+            string error = null;
             List<LmsUserDTO> result = null;
             
             try
@@ -55,10 +56,10 @@ namespace EdugameCloud.Lti.Haiku
                 error = "Can't parse Haiku Lms User.";
             }
 
-            return result;
+            return (result, error);
         }
 
-        public bool TestOauth(string lmsDomain, string consumerKey, string consumerSecret, string token, string tokenSecret)
+        public async Task<bool> TestOauthAsync(string lmsDomain, string consumerKey, string consumerSecret, string token, string tokenSecret)
         {
             try
             {
@@ -71,7 +72,7 @@ namespace EdugameCloud.Lti.Haiku
                 };
 
                 string uri = $"{lmsDomain}/do/services/test/oauth";
-                string xml = oAuth.oAuthWebRequest(OAuthBase.Method.GET, uri, "");
+                string xml = await oAuth.oAuthWebRequestAsync(OAuthBase.Method.GET, uri, "");
 
                 var xmlDoc = XDocument.Parse(xml);
                 var response = xmlDoc.Root;
@@ -91,7 +92,7 @@ namespace EdugameCloud.Lti.Haiku
             }
         }
 
-        public List<LmsCourseSectionDTO> GetCourseSections(ILmsLicense lmsCompany, int courseId, out string error)
+        public async Task<(List<LmsCourseSectionDTO> courses, string error)> GetCourseSectionsAsync(ILmsLicense lmsCompany, int courseId)
         {
             try
             {
@@ -113,9 +114,9 @@ namespace EdugameCloud.Lti.Haiku
 
                 string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
 
-                string xml = oAuth.oAuthWebRequest(OAuthBase.Method.GET, uri, "");
+                string xml = await oAuth.oAuthWebRequestAsync(OAuthBase.Method.GET, uri, "");
 
-                error = null;
+                string error = null;
                 List<LmsCourseSectionDTO> result = null;
 
                 try
@@ -129,7 +130,7 @@ namespace EdugameCloud.Lti.Haiku
                     error = "Can't parse Haiku Lms course section.";
                 }
 
-                return result;
+                return (result, error);
             }
             catch (Exception ex)
             {

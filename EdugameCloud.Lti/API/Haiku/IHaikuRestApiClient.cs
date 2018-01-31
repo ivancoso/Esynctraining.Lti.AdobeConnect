@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 
@@ -6,10 +7,10 @@ namespace EdugameCloud.Lti.API.Haiku
 {
     public interface IHaikuRestApiClient
     {
-        bool TestOauth(string lmsDomain, string consumerKey, string consumerSecret, string token, string tokenSecret);
+        Task<bool> TestOauthAsync(string lmsDomain, string consumerKey, string consumerSecret, string token, string tokenSecret);
 
-        List<LmsUserDTO> GetUsersForCourse(ILmsLicense lmsCompany, int courseId, out string error);
+        Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(ILmsLicense lmsCompany, int courseId);
 
-        List<LmsCourseSectionDTO> GetCourseSections(ILmsLicense lmsCompany, int courseId, out string error);
+        Task<(List<LmsCourseSectionDTO> courses, string error)> GetCourseSectionsAsync(ILmsLicense lmsCompany, int courseId);
     }
 }

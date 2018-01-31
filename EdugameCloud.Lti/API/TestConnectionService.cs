@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.API.AgilixBuzz;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Haiku;
@@ -144,7 +145,7 @@ namespace EdugameCloud.Lti.API
             if (!TestDomainFormat(test, out info))
                 return false;
 
-            if (!HaikuRestApiClient.TestOauth(test.domain, test.consumerKey, test.consumerSecret, test.token, test.tokenSecret))
+            if (!Task.Run(() => HaikuRestApiClient.TestOauthAsync(test.domain, test.consumerKey, test.consumerSecret, test.token, test.tokenSecret)).Result)
             {
                 info = "Can't connect.";
 

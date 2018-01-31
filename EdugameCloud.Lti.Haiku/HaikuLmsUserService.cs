@@ -31,15 +31,15 @@ namespace EdugameCloud.Lti.Haiku
             return users.users.ToSuccessResult();
         }
 
-        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
+        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            var result = _restApiClient.GetUsersForCourse(lmsCompany, courseId, out string error);
+            var result = await _restApiClient.GetUsersForCourseAsync(lmsCompany, courseId);
 
-            return Task.FromResult<(List<LmsUserDTO> users, string error)>((result, error));
+            return result;
         }
     }
 
