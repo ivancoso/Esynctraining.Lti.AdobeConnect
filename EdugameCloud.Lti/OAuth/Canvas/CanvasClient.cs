@@ -19,6 +19,7 @@ namespace EdugameCloud.Lti.OAuth.Canvas
 
     using Newtonsoft.Json;
     using System.Threading.Tasks;
+    using System.Net.Http.Headers;
 
     /// <summary>
     /// The canvas client.
@@ -194,22 +195,30 @@ namespace EdugameCloud.Lti.OAuth.Canvas
             {
                 var canvasUrl = userCanvasUrlCache[accessToken];
                 CanvasUser graphData = null;
-                var request = WebRequest.Create(string.Format(AuthorizationEndpoint, canvasUrl));
-                request.Headers.Add("Authorization", "Bearer " + accessToken);
-                using (var response = request.GetResponse())
-                {
-                    using (var responseStream = response.GetResponseStream())
-                    {
-                        if (responseStream != null)
-                        {
-                            using (var sr = new StreamReader(responseStream))
-                            {
-                                var data = sr.ReadToEnd();
-                                graphData = JsonConvert.DeserializeObject<CanvasUser>(data);
-                            }
-                        }
-                    }
-                }
+                //var request = WebRequest.Create(string.Format(AuthorizationEndpoint, canvasUrl));
+                //request.Headers.Add("Authorization", "Bearer " + accessToken);
+                //using (var response = request.GetResponse())
+                //{
+                //    using (var responseStream = response.GetResponseStream())
+                //    {
+                //        if (responseStream != null)
+                //        {
+                //            using (var sr = new StreamReader(responseStream))
+                //            {
+                //                var data = sr.ReadToEnd();
+                //                graphData = JsonConvert.DeserializeObject<CanvasUser>(data);
+                //            }
+                //        }
+                //    }
+                //}
+                //--------------
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, string.Format(AuthorizationEndpoint, canvasUrl));
+                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Authorization", "Bearer " + accessToken);
+                HttpResponseMessage response = Task.Run(() => _httpClientWrapper.SendAsync(requestMessage)).Result;
+                response.EnsureSuccessStatusCode();
+                string canvasUserStringFormat = Task.Run(() => (response.Content.ReadAsStringAsync())).Result;
+                graphData = JsonConvert.DeserializeObject<CanvasUser>(canvasUserStringFormat);
+                //-----------------
 
                 userDataCache.Add(accessToken, graphData);
             }
