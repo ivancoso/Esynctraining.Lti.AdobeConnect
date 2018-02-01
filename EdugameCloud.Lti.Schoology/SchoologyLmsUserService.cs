@@ -33,7 +33,7 @@ namespace EdugameCloud.Lti.Schoology
             return users.users.ToSuccessResult();
         }
 
-        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
+        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
@@ -46,58 +46,31 @@ namespace EdugameCloud.Lti.Schoology
             string clientId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerKey);
             string clientSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerSecret);
 
-            var section = _restApiClient.GetRestCall<Section>(clientId,
+            var section = await _restApiClient.GetRestCall<Section>(clientId,
                 clientSecret,
-                $"sections/{courseId}").Result;
+                $"sections/{courseId}");
 
-            var enrollments = new List<Enrollment>();
-            object localLockObject = new object();
-
-            //Parallel.ForEach<Section, List<Enrollment>>(
-            //      course.section,
-            //      () => new List<Enrollment>(),
-            //      (section, state, localList) =>
-            //      {
-            //          var enrollmentCallResult = new SchoologyRestApiClient().GetRestCall<RootObject2>(clientId,
-            //              clientSecret,
-            //              $"sections/{section.id}/enrollments").Result;
-            //          foreach (var enrollment in enrollmentCallResult.enrollment)
-            //              localList.Add(enrollment);
-            //          return localList;
-            //      },
-            //      (finalResult) =>
-            //      {
-            //          lock (localLockObject)
-            //              enrollments.AddRange(finalResult);
-            //      }
-            //);
-
-            var enrollmentCallResult = new SchoologyRestApiClient().GetRestCall<RootObject2>(clientId,
+            var enrollmentCallResult = await _restApiClient.GetRestCall<RootObject2>(clientId,
                 clientSecret,
-                $"sections/{section.id}/enrollments").Result;
-            enrollments = enrollmentCallResult.enrollment;
+                $"sections/{section.id}/enrollments");
+            List<Enrollment> enrollments = enrollmentCallResult.enrollment;
             enrollments = enrollments.Distinct().ToList();
 
-            var enrolledUsers = new List<User>();
-            Parallel.ForEach<Enrollment, List<User>>(
-                  enrollments.GroupBy(u => u.uid).Select(g => g.First()),
-                  () => new List<User>(),
-                  (enrollment, state, localList) =>
-                  {
-                      var usr = new SchoologyRestApiClient().GetRestCall<User>(clientId,
+            var enrolledUserTasks = enrollments.GroupBy(u => u.uid).Select(g => g.First()).Select(enrollment =>
+            {
+                var usr = new SchoologyRestApiClient().GetRestCall<User>(clientId,
                           clientSecret,
-                          $"users/{enrollment.uid}").Result;
-                      usr.admin = enrollment.admin;
-                      localList.Add(usr);
-                      return localList;
-                  },
-                  (finalResult) =>
-                  {
-                      lock (localLockObject)
-                          enrolledUsers.AddRange(finalResult);
-                  }
-            );
+                          $"users/{enrollment.uid}");
+                return usr.ContinueWith(x => 
+                {
+                    var u = x.Result;
+                    u.admin = enrollment.admin;
+                    return u;
+                });
+            });
 
+            var enrolledUsers = await Task.WhenAll(enrolledUserTasks);
+            
             var users = enrolledUsers
                 .GroupBy(u => u.uid)
                 .Select(g => g.First())
@@ -112,7 +85,7 @@ namespace EdugameCloud.Lti.Schoology
                     PrimaryEmail = x.primary_email,
                 })
                 .ToList();
-            return Task.FromResult<(List<LmsUserDTO> users, string error)>((users, null));
+            return (users, null);
         }
     }
 
