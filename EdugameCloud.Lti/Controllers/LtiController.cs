@@ -136,7 +136,7 @@ namespace EdugameCloud.Lti.Controllers
                 LmsUserSession s = GetSession(session);
                 var param = s.With(x => x.LtiSession).With(x => x.LtiParam);
 
-                if (param.GetLtiProviderName(provider) == LmsProviderNames.Brightspace)
+                if (provider == LmsProviderNames.Brightspace)
                 {
                     var d2lService = IoC.Resolve<IDesire2LearnApiService>();
 
@@ -181,7 +181,7 @@ namespace EdugameCloud.Lti.Controllers
                     try
                     {
                         AuthenticationResult result;
-                        if (param.GetLtiProviderName(provider) == LmsProviderNames.Canvas)
+                        if (provider == LmsProviderNames.Canvas)
                         {
                             var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(s.LmsCompany, (string)Settings.CanvasClientId, (string)Settings.CanvasClientSecret);
                             result = OAuthWebSecurityWrapper.VerifyLtiAuthentication(HttpContext, oAuthSettings);
@@ -346,39 +346,10 @@ namespace EdugameCloud.Lti.Controllers
 
                 // Parse and validate the request
                 Request.CheckForRequiredLtiParameters();
-
-                string lmsProvider = param.GetLtiProviderName(provider);
-
-                LmsProvider providerInstance = LmsProviderModel.GetByShortName(lmsProvider);
-                if (providerInstance == null)
-                {
-                    Logger.ErrorFormat("Invalid LMS provider name. LMS Provider Name:{0}. oauth_consumer_key:{1}.",
-                        lmsProvider, param.oauth_consumer_key);
-                    this.ViewBag.Error = Resources.Messages.LtiExternalToolUrl;
-                    return this.View("Error");
-                }
-
-                if (lmsProvider.ToLower() == LmsProviderNames.Brightspace && !string.IsNullOrEmpty(param.user_id))
-                {
-                    Logger.InfoFormat("[D2L login attempt]. Original user_id: {0}. oauth_consumer_key:{1}.",
-                        param.user_id, param.oauth_consumer_key);
-                    var parsedIdArray = param.user_id.Split('_');
-                    // temporary fix
-                    if (parsedIdArray.Length > 1)
-                    {
-                        param.user_id = parsedIdArray.Last();
-                    }
-                }
-
-                if (lmsProvider.ToLower() == LmsProviderNames.Haiku)
-                {
-                    param.user_id = param.user_id.TrimEnd('_');
-                }
-
                 var sw = Stopwatch.StartNew();
 
                 LmsCompany lmsCompany =
-                    this.lmsCompanyModel.GetOneByProviderAndConsumerKey(providerInstance.Id, param.oauth_consumer_key)
+                    this.lmsCompanyModel.GetOneByConsumerKey(param.oauth_consumer_key, includeSettings:true)
                         .Value;
 
                 if (lmsCompany != null)
@@ -400,9 +371,30 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 sw.Stop();
-                trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n", sw.Elapsed.ToString());
+                trace.AppendFormat("GetOneByConsumerKey and ValidateLmsLicense: time: {0}.\r\n", sw.Elapsed.ToString());
+
+                LmsProvider providerInstance = LmsProviderModel.GetOneById(lmsCompany.LmsProviderId).Value;
+                string lmsProvider = providerInstance.ShortName;
+
+                if (lmsProvider.ToLower() == LmsProviderNames.Brightspace && !string.IsNullOrEmpty(param.user_id))
+                {
+                    Logger.InfoFormat("[D2L login attempt]. Original user_id: {0}. oauth_consumer_key:{1}.",
+                        param.user_id, param.oauth_consumer_key);
+                    var parsedIdArray = param.user_id.Split('_');
+                    // temporary fix
+                    if (parsedIdArray.Length > 1)
+                    {
+                        param.user_id = parsedIdArray.Last();
+                    }
+                }
+
+                if (lmsProvider.ToLower() == LmsProviderNames.Haiku)
+                {
+                    param.user_id = param.user_id.TrimEnd('_');
+                }
+
                 sw = Stopwatch.StartNew();
-                
+
                 if (!BltiProviderHelper.VerifyBltiRequest(lmsCompany, Request,
                         () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)))
                 {
@@ -460,7 +452,7 @@ namespace EdugameCloud.Lti.Controllers
                         if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
                             CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
                         {
-                            this.StartOAuth2Authentication(lmsCompany, provider, sessionKey, param);
+                            this.StartOAuth2Authentication(lmsCompany, lmsProvider, sessionKey, param);
                             return null;
                         }
 
@@ -499,7 +491,7 @@ namespace EdugameCloud.Lti.Controllers
                             string schema = Request.GetScheme();
 
                             var d2lService = IoC.Resolve<IDesire2LearnApiService>();
-                            string returnUrl = Url.AbsoluteCallbackAction(schema, new { __provider__ = provider });
+                            string returnUrl = Url.AbsoluteCallbackAction(schema, new { __provider__ = lmsProvider });
 
                             Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, sessionKey));
                             return Redirect(

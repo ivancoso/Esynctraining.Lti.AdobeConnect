@@ -79,30 +79,20 @@ namespace EdugameCloud.Lti.Core.Business.Models
         //    return this.Repository.FindOne(defaultQuery);
         //}
 
-        /// <summary>
-        /// The get one by provider and domain or consumer key.
-        /// </summary>
-        /// <param name="lmsProviderId">
-        /// The provider ID.
-        /// </param>
-        /// <param name="consumerKey">
-        /// The consumer key
-        /// </param>
-        /// <returns>
-        /// The canvas AC meeting
-        /// </returns>
-        public IFutureValue<LmsCompany> GetOneByProviderAndConsumerKey(int lmsProviderId, string consumerKey)
-        {
-            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
-                .Fetch(x => x.Settings).Eager
-                .Where(x => (x.ConsumerKey == consumerKey && x.LmsProviderId == lmsProviderId));
-            return this.Repository.FindOne(defaultQuery);
-        }
+        //public IFutureValue<LmsCompany> GetOneByProviderAndConsumerKey(int lmsProviderId, string consumerKey)
+        //{
+        //    var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
+        //        .Fetch(x => x.Settings).Eager
+        //        .Where(x => (x.ConsumerKey == consumerKey && x.LmsProviderId == lmsProviderId));
+        //    return this.Repository.FindOne(defaultQuery);
+        //}
 
-        public IFutureValue<LmsCompany> GetOneByConsumerKey(string consumerKey)
+        public IFutureValue<LmsCompany> GetOneByConsumerKey(string consumerKey, bool includeSettings = false)
         {
-            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
-                .Where(x => (x.ConsumerKey == consumerKey));
+            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver();
+            if(includeSettings)
+                defaultQuery = defaultQuery.Fetch(x => x.Settings).Eager;
+            defaultQuery = defaultQuery.Where(x => (x.ConsumerKey == consumerKey));
             return this.Repository.FindOne(defaultQuery);
         }
 

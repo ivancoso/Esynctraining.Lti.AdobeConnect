@@ -323,39 +323,39 @@ namespace EdugameCloud.Lti.DTO
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string GetLtiProviderName(string externalProvider = null)
-        {
-            string providerName = string.IsNullOrWhiteSpace(this.tool_consumer_info_product_family_code)
-                ? externalProvider
-                : this.tool_consumer_info_product_family_code.ToLower();
-            if (externalProvider != null
-                && externalProvider.Equals(LmsProviderNames.Blackboard, StringComparison.OrdinalIgnoreCase))
-            {
-                const string PatternToRemove = " learn";
-                if (providerName.EndsWith(PatternToRemove, StringComparison.OrdinalIgnoreCase))
-                {
-                    providerName = providerName.Replace(PatternToRemove, string.Empty);
-                }
-            }
+        //public string GetLtiProviderName(string externalProvider = null)
+        //{
+        //    string providerName = string.IsNullOrWhiteSpace(this.tool_consumer_info_product_family_code)
+        //        ? externalProvider
+        //        : this.tool_consumer_info_product_family_code.ToLower();
+        //    if (externalProvider != null
+        //        && externalProvider.Equals(LmsProviderNames.Blackboard, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        const string PatternToRemove = " learn";
+        //        if (providerName.EndsWith(PatternToRemove, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            providerName = providerName.Replace(PatternToRemove, string.Empty);
+        //        }
+        //    }
 
-            //if (externalProvider != null
-            //    && externalProvider.Equals(LmsProviderNames.DialogEdu, StringComparison.OrdinalIgnoreCase))
-            //{
-            //    providerName = LmsProviderNames.DialogEdu;
-            //}
+        //    //if (externalProvider != null
+        //    //    && externalProvider.Equals(LmsProviderNames.DialogEdu, StringComparison.OrdinalIgnoreCase))
+        //    //{
+        //    //    providerName = LmsProviderNames.DialogEdu;
+        //    //}
 
-            if (externalProvider != null
-                && externalProvider.Equals(LmsProviderNames.Haiku, StringComparison.OrdinalIgnoreCase))
-            {
-                providerName = LmsProviderNames.Haiku;
-            }
+        //    if (externalProvider != null
+        //        && externalProvider.Equals(LmsProviderNames.Haiku, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        providerName = LmsProviderNames.Haiku;
+        //    }
 
-            // TRICK: for supporting old licenses
-            if (providerName == "desire2learn")
-                providerName = LmsProviderNames.Brightspace;
+        //    // TRICK: for supporting old licenses
+        //    if (providerName == "desire2learn")
+        //        providerName = LmsProviderNames.Brightspace;
 
-            return providerName;
-        }
+        //    return providerName;
+        //}
 
         public string GetUserNameOrEmail()
         {
