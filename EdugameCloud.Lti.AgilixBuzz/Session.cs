@@ -111,21 +111,21 @@
         /// </returns>
         public XElement Get(string cmd, Dictionary<string, string> parameters = null)
         {
-            StringBuilder query = new StringBuilder("?cmd=" + cmd);
+            var query = new StringBuilder("?cmd=" + cmd);
 
             if (parameters != null)
             {
                 foreach (var param in parameters)
                 {
-                    query.Append("&");
+                    query.Append('&');
                     query.Append(param.Key);
-                    query.Append("=");
+                    query.Append('=');
                     query.Append(param.Value);
                 }
             }
 
             TraceRequest(query.ToString(), null);
-            return ReadResponse(this.Request(query.ToString(), null, null));
+            return ReadResponse(MakeRequest(query.ToString(), null, null));
         }
 
         /// <summary>
@@ -147,7 +147,7 @@
         {
             _httpClientWrapper = new HttpClientWrapper(Timeout, new CookieContainer(), false);
 
-            return this.Post(
+            return Post(
                 null, 
                 new XElement(
                     "request", 
@@ -179,7 +179,7 @@
         /// <returns>
         /// XML results
         /// </returns>
-        public XElement Post(string cmd, XElement xml)
+        private XElement Post(string cmd, XElement xml)
         {
             string query = string.IsNullOrEmpty(cmd) ? string.Empty : ("?cmd=" + cmd);
             TraceRequest(query, xml);
@@ -191,7 +191,7 @@
                     writer.Flush();
                     data.Flush();
                     data.Position = 0;
-                    return ReadResponse(Request(query, data, "text/xml"));
+                    return ReadResponse(MakeRequest(query, data, "text/xml"));
                 }
             }
         }
@@ -238,7 +238,7 @@
                 try
                 {
                     XElement result = XElement.Load(stream);
-                    this.TraceResponse(result);
+                    TraceResponse(result);
                     return result;
                 }
                 catch (Exception e)
@@ -266,11 +266,11 @@
         /// <returns>
         /// Http Web Response
         /// </returns>
-        private HttpResponseMessage Request(string query, Stream postData, string contentType)
+        private HttpResponseMessage MakeRequest(string query, Stream postData, string contentType)
         {
-            var requestMessage = new System.Net.Http.HttpRequestMessage
+            var requestMessage = new HttpRequestMessage
             {
-                RequestUri = new Uri(Server + query)
+                RequestUri = new Uri(Server + query),
             };
 
             requestMessage.Headers.UserAgent.ParseAdd(Agent);
