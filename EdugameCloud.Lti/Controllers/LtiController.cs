@@ -245,7 +245,7 @@ namespace EdugameCloud.Lti.Controllers
 
         [HttpGet]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
-        public virtual ActionResult GetExtJsPage(string primaryColor, string session, int acConnectionMode, bool disableCacheBuster = true)
+        public virtual async Task<ActionResult> GetExtJsPage(string primaryColor, string session, int acConnectionMode, bool disableCacheBuster = true)
         {
             try
             {
@@ -256,7 +256,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (model == null)
                 {
-                    model = BuildModel(s);
+                    model = await BuildModelAsync(s);
                 }
 
                 return View("Index", model);
@@ -902,7 +902,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
             }
 
-            LtiViewModelDto model = BuildModel(session, trace);
+            LtiViewModelDto model = await BuildModelAsync(session, trace);
             TempData["lti-index-model"] = model;
 
             var primaryColor = session.LmsUser.PrimaryColor;
@@ -931,7 +931,7 @@ namespace EdugameCloud.Lti.Controllers
             });
         }
 
-        private LtiViewModelDto BuildModel(LmsUserSession session, StringBuilder trace = null)
+        private async Task<LtiViewModelDto> BuildModelAsync(LmsUserSession session, StringBuilder trace = null)
         {
             var sw = Stopwatch.StartNew();
             
@@ -943,7 +943,7 @@ namespace EdugameCloud.Lti.Controllers
             trace?.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
             sw = Stopwatch.StartNew();
 
-            var meetings = meetingSetup.GetMeetings(
+            var meetings = await meetingSetup.GetMeetingsAsync(
                 credentials,
                 param.course_id,
                 acProvider,

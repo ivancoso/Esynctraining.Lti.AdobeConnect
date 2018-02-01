@@ -44,7 +44,7 @@ namespace EdugameCloud.Lti.Haiku
 
             string error = null;
             List<LmsUserDTO> result = null;
-            
+
             try
             {
                 result = HaikuLmsUserParser.Parse(xml);
@@ -92,51 +92,53 @@ namespace EdugameCloud.Lti.Haiku
             }
         }
 
-        public async Task<(List<LmsCourseSectionDTO> courses, string error)> GetCourseSectionsAsync(ILmsLicense lmsCompany, int courseId)
+        public async Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(ILmsLicense lmsCompany, int courseId)
         {
+            var consumerKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerKey);
+            var consumerSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerSecret);
+            var token = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
+            var tokenSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
+
+            var scheme = lmsCompany.UseSSL.GetValueOrDefault() ? HttpScheme.Https : HttpScheme.Http;
+            var lmsDomain = $"{scheme}{lmsCompany.LmsDomain.TrimEnd('/')}";
+
+            var oAuth = new OAuthBase()
+            {
+                ConsumerKey = consumerKey,
+                ConsumerSecret = consumerSecret,
+                Token = token,
+                TokenSecret = tokenSecret
+            };
+
+            string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
+
+            string xml;
+
             try
             {
-                var consumerKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerKey);
-                var consumerSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerSecret);
-                var token = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
-                var tokenSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
-
-                var scheme = lmsCompany.UseSSL.GetValueOrDefault() ? HttpScheme.Https : HttpScheme.Http;
-                var lmsDomain = $"{scheme}{lmsCompany.LmsDomain.TrimEnd('/')}";
-
-                var oAuth = new OAuthBase()
-                {
-                    ConsumerKey = consumerKey,
-                    ConsumerSecret = consumerSecret,
-                    Token = token,
-                    TokenSecret = tokenSecret
-                };
-
-                string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
-
-                string xml = await oAuth.oAuthWebRequestAsync(OAuthBase.Method.GET, uri, "");
-
-                string error = null;
-                List<LmsCourseSectionDTO> result = null;
-
-                try
-                {
-                    result = HaikuLmsUserParser.ParseSections(xml);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("Can't parse HaikuLmsCourseSection", ex);
-
-                    error = "Can't parse Haiku Lms course section.";
-                }
-
-                return (result, error);
+                xml = await oAuth.oAuthWebRequestAsync(OAuthBase.Method.GET, uri, "");
             }
             catch (Exception ex)
             {
-                //_logger.ErrorFormat(ex, "[HaikuRestApiClient.GetCourseSections] API:{0}. UserToken:{1}. CourseId:{2}.", domain, userToken, courseId);
+                _logger.Error($"oAuth.oAuthWebRequestAsync uri: {uri}", ex);
+
                 throw;
             }
+
+            List<LmsCourseSectionDTO> result = null;
+
+            try
+            {
+                result = HaikuLmsUserParser.ParseSections(xml);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Can't parse HaikuLmsCourseSection xml: {xml}", ex);
+
+                throw;
+            }
+
+            return result;
         }
 
     }

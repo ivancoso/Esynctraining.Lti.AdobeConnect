@@ -19,10 +19,9 @@ namespace EdugameCloud.Lti.Haiku
         }
 
 
-        public override IEnumerable<LmsCourseSectionDTO> GetCourseSections(ILmsLicense lmsLicense, string courseId)
+        public override Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(ILmsLicense lmsLicense, string courseId)
         {
-            var (courses, error) = Task.Run(() => _haikuApi.GetCourseSectionsAsync(lmsLicense, int.Parse(courseId))).Result;
-            return courses;
+            return _haikuApi.GetCourseSectionsAsync(lmsLicense, int.Parse(courseId));
         }
 
     }

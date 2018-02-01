@@ -36,13 +36,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("meetings")]
         [HttpPost]
         [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual OperationResultWithData<IEnumerable<MeetingDTO>> GetCourseMeetings()
+        public virtual async Task<OperationResultWithData<IEnumerable<MeetingDTO>>> GetCourseMeetings()
         {
             StringBuilder trace = null;
             var acProvider = this.GetAdminProvider();
 
             // TODO: implement. will be use be External API only
-            IEnumerable<MeetingDTO> meetings = _meetingSetup.GetMeetings(
+            IEnumerable<MeetingDTO> meetings = await _meetingSetup.GetMeetingsAsync(
                    LmsCompany,
                    CourseId,
                    acProvider,
@@ -51,6 +51,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                    //session.LmsUser,
                    //param,
                    trace);
+
             return meetings.ToSuccessResult();
         }
 

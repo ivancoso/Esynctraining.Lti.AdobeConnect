@@ -20,10 +20,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         private readonly LmsFactory lmsFactory;
 
         public SectionsController(
-            MeetingSetup meetingSetup, UsersSetup usersSetup, LmsFactory lmsFactory,
+            MeetingSetup meetingSetup, 
+            UsersSetup usersSetup, 
+            LmsFactory lmsFactory,
             IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger, ICache cache)
+            ILogger logger, 
+            ICache cache)
             : base(acAccountService, settings, logger, cache)
         {
             this.meetingSetup = meetingSetup;
@@ -35,7 +38,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [HttpGet]
         [HttpPost]
         [Filters.LmsAuthorizeBase]
-        public virtual OperationResult GetMeetingCourseSections()
+        public virtual async Task<OperationResult> GetMeetingCourseSections()
         {
             if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
             {
@@ -43,7 +46,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
 
             var sectionsService = lmsFactory.GetCourseSectionsService((LmsProviderEnum)LmsCompany.LmsProviderId);
-            return sectionsService.GetCourseSections(LmsCompany, CourseId.ToString()).ToSuccessResult();
+            return (await sectionsService.GetCourseSectionsAsync(LmsCompany, CourseId.ToString())).ToSuccessResult();
         }
 
         [Route("meeting/UpdateMeetingCourseSections")]
@@ -55,22 +58,23 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 return OperationResult.Error("License doesn't support 'Sections' feature");
             }
+
             var param = Session.LtiSession.LtiParam;
             var ac = GetAdminProvider();
+
             try
             {
-                meetingSetup.UpdateMeetingCourseSections(LmsCompany, updateCourseSectionsDto);
+                await meetingSetup.UpdateMeetingCourseSectionsAsync(LmsCompany, updateCourseSectionsDto);
 
                 var users = await usersSetup.GetUsers(LmsCompany,
                     ac,
                     param.course_id,
                     param,
                     updateCourseSectionsDto.MeetingId);
+
                 return users.Item2 != null
                     ? OperationResult.Error(users.Item2)
                     : users.Item1.ToSuccessResult();
-
-
             }
             catch (Exception ex)
             {
