@@ -10,9 +10,9 @@
     using EdugameCloud.Lti.Extensions;
 
     /// <summary>
-    ///     The moodle quiz parser.
+    /// The moodle quiz parser.
     /// </summary>
-    internal sealed class MoodleQuizParser
+    internal static class MoodleQuizParser
     {
         #region Constants
 
