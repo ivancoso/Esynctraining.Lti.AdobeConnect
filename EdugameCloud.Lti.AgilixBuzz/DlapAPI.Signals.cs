@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using System.Xml.Linq;
     using System.Xml.XPath;
     using API;
@@ -436,14 +437,14 @@
         /// <returns>
         /// The <see cref="Nullable{Int64}"/>.
         /// </returns>
-        internal long? GetLastSignalId(LmsCompany company, out string error, Session session = null)
+        internal async Task<(long? result, string error)> GetLastSignalIdAsync(LmsCompany company, Session session = null)
         {
             long? result = null;
-            XElement signalsResult = this.LoginIfNecessary(session, s => s.Get(Commands.Signals.GetLastSignalId), company, out error);
+            var (signalsResult, error) = await this.LoginIfNecessaryAsync(session, s => s.GetAsync(Commands.Signals.GetLastSignalId), company);
             if (signalsResult == null)
             {
                 error = error ?? "DLAP. Unable to retrive result from API";
-                return null;
+                return (null, error);
             }
 
             if (!Session.IsSuccess(signalsResult))
@@ -462,26 +463,23 @@
                 error = ex.ToString();
             }
 
-            return result;
+            return (result, error);
         }
 
-        internal Course GetCourse(
+        internal async Task<(Course course, string error)> GetCourseAsync(
             LmsCompany company,
             int courseId,
-            out string error,
             Session session = null)
         {
-            XElement courseResult = this.LoginIfNecessary(
+            var (courseResult, error) = await this.LoginIfNecessaryAsync(
                 session,
-                s =>
-                s.Get(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToDictionary()),
-                company,
-                out error);
+                s => s.GetAsync(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToDictionary()),
+                company);
 
             if (courseResult == null)
             {
                 error = error ?? "DLAP. Unable to retrive course from API";
-                return null;
+                return (null, error);
             }
 
             if (!Session.IsSuccess(courseResult))
@@ -499,19 +497,19 @@
                     var courseStartDate = course.XPathEvaluate("string(@startdate)").ToString();
                     var courseEndDate = course.XPathEvaluate("string(@enddate)").ToString();
 
-                    return new Course
+                    return (new Course
                     {
                         CourseId = courseId,
                         Title = courseName,
                         StartDate = courseStartDate,
                         EndDate = courseEndDate,
-                    };
+                    }, error);
                 }
 
                 error = "Course not found";
             }
 
-            return null;
+            return (null, error);
         }
 
         /// <summary>
@@ -532,22 +530,20 @@
         /// <returns>
         /// The <see cref="Enrollment"/>.
         /// </returns>
-        internal Enrollment GetEnrollment(
+        internal async Task<(Enrollment result, string error)> GetEnrollmentAsync(
             LmsCompany company,
             long enrollmentId,
-            out string error,
             Session session = null)
         {
-            XElement enrollmentResult = this.LoginIfNecessary(
+            var (enrollmentResult, error) = await this.LoginIfNecessaryAsync(
                 session,
-                s =>
-                s.Get(Commands.Enrollments.GetOne, string.Format(Parameters.Enrollments.GetOne, enrollmentId).ToDictionary()),
-                company,
-                out error);
+                s => s.GetAsync(Commands.Enrollments.GetOne, string.Format(Parameters.Enrollments.GetOne, enrollmentId).ToDictionary()),
+                company);
+
             if (enrollmentResult == null)
             {
                 error = error ?? "DLAP. Unable to retrive enrollment from API";
-                return null;
+                return (null, error);
             }
 
             if (!Session.IsSuccess(enrollmentResult))
@@ -568,7 +564,8 @@
                     var user = enrollment.XPathSelectElement("user");
                     var email = user.XPathEvaluate("string(@email)").ToString();
                     var userName = user.XPathEvaluate("string(@username)").ToString();
-                    return new Enrollment
+
+                    return (new Enrollment
                     {
                         CourseId = courseId,
                         UserId = userId,
@@ -576,33 +573,30 @@
                         Email = email,
                         UserName = userName,
                         Status = status,
-                    };
+                    }, error);
                 }
 
                 error = "Enrollment not found";
             }
 
-            return null;
+            return (null, error);
         }
 
-        internal List<Signal> GetSignalsList(
+        internal async Task<(List<Signal> result, string error)> GetSignalsListAsync(
             LmsCompany company,
-            out string error,
             Session session = null,
             string types = "1.2|4.3|4.8")
         {
             var result = new List<Signal>();
-            XElement signalsResult = this.LoginIfNecessary(
+            var (signalsResult, error) = await this.LoginIfNecessaryAsync(
                 session,
-                s =>
-                s.Get(
-                    Commands.Signals.List, string.Format(Parameters.Signals.List, company.LastSignalId, s.DomainId, types).ToDictionary()),
-                company,
-                    out error);
+                s => s.GetAsync(Commands.Signals.List, string.Format(Parameters.Signals.List, company.LastSignalId, s.DomainId, types).ToDictionary()),
+                company);
+
             if (signalsResult == null)
             {
                 error = error ?? "DLAP. Unable to retrive result from API";
-                return result;
+                return (result, error);
             }
 
             if (!Session.IsSuccess(signalsResult))
@@ -637,7 +631,7 @@
                 }
             }
 
-            return result;
+            return (result, error);
         }
 
         /// <summary>

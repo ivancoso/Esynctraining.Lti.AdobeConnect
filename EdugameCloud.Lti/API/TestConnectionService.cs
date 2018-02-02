@@ -160,7 +160,11 @@ namespace EdugameCloud.Lti.API
             if (!TestDomainFormat(test, out info))
                 return false;
 
-            return this.DlapAPI.LoginAndCheckSession(out info, test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
+            bool result;
+
+            (result, info) = Task.Run(() => this.DlapAPI.LoginAndCheckSessionAsync(test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password)).Result;
+
+            return result;
         }
 
         private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)

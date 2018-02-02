@@ -7,6 +7,7 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Threading.Tasks;
     using System.Xml;
     using System.Xml.Linq;
     using EdugameCloud.HttpClient;
@@ -109,7 +110,7 @@
         /// <returns>
         /// XML results
         /// </returns>
-        public XElement Get(string cmd, Dictionary<string, string> parameters = null)
+        public async Task<XElement> GetAsync(string cmd, Dictionary<string, string> parameters = null)
         {
             var query = new StringBuilder("?cmd=" + cmd);
 
@@ -125,7 +126,7 @@
             }
 
             TraceRequest(query.ToString(), null);
-            return ReadResponse(MakeRequest(query.ToString(), null, null));
+            return await ReadResponseAsync(await MakeRequestAsync(query.ToString(), null, null));
         }
 
         /// <summary>
@@ -143,11 +144,11 @@
         /// <returns>
         /// XML results
         /// </returns>
-        public XElement Login(string prefix, string username, string password)
+        public Task<XElement> LoginAsync(string prefix, string username, string password)
         {
             _httpClientWrapper = new HttpClientWrapper(Timeout, new CookieContainer(), false);
 
-            return Post(
+            return PostAsync(
                 null, 
                 new XElement(
                     "request", 
@@ -179,7 +180,7 @@
         /// <returns>
         /// XML results
         /// </returns>
-        private XElement Post(string cmd, XElement xml)
+        private async Task<XElement> PostAsync(string cmd, XElement xml)
         {
             string query = string.IsNullOrEmpty(cmd) ? string.Empty : ("?cmd=" + cmd);
             TraceRequest(query, xml);
@@ -191,7 +192,8 @@
                     writer.Flush();
                     data.Flush();
                     data.Position = 0;
-                    return ReadResponse(MakeRequest(query, data, "text/xml"));
+
+                    return await ReadResponseAsync(await MakeRequestAsync(query, data, "text/xml"));
                 }
             }
         }
@@ -231,9 +233,9 @@
         /// <returns>
         /// XML results
         /// </returns>
-        private XElement ReadResponse(HttpResponseMessage response)
+        private async Task<XElement> ReadResponseAsync(HttpResponseMessage response)
         {
-            using (Stream stream = response.Content.ReadAsStreamAsync().Result)
+            using (Stream stream = await response.Content.ReadAsStreamAsync())
             {
                 try
                 {
@@ -266,7 +268,7 @@
         /// <returns>
         /// Http Web Response
         /// </returns>
-        private HttpResponseMessage MakeRequest(string query, Stream postData, string contentType)
+        private async Task<HttpResponseMessage> MakeRequestAsync(string query, Stream postData, string contentType)
         {
             var requestMessage = new HttpRequestMessage
             {
@@ -290,7 +292,7 @@
                 requestMessage.Method = HttpMethod.Get;
             }
 
-            var response = _httpClientWrapper.SendAsync(requestMessage).Result;
+            var response = await _httpClientWrapper.SendAsync(requestMessage);
 
             response.EnsureSuccessStatusCode();
 

@@ -11,6 +11,7 @@
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+    using System.Threading.Tasks;
 
     // ReSharper disable once InconsistentNaming
     public sealed partial class DlapAPI : ILmsAPI, IAgilixBuzzApi
@@ -43,18 +44,17 @@
 
         #region Public Methods and Operators
 
-        internal Session BeginBatch(out string error, ILmsLicense lmsCompany)
+        internal Task<(Session session, string error)> BeginBatchAsync(ILmsLicense lmsCompany)
         {
             var lmsUser = lmsCompany.AdminUser;
 
             if (lmsUser != null)
             {
                 string lmsDomain = lmsUser.LmsCompany.LmsDomain;
-                return LoginAndCreateASession(out error, lmsDomain, lmsUser.Username, lmsUser.Password);
+                return LoginAndCreateASessionAsync(lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
-            error = "ASP.NET Session is expired";
-            return null;
+            return Task.FromResult(((Session)null, "ASP.NET Session is expired"));
         }
         
         /// <summary>
@@ -75,7 +75,7 @@
         /// <returns>
         /// The <see cref="Session"/>.
         /// </returns>
-        internal Session LoginAndCreateASession(out string error, string lmsDomain, string userName, string password)
+        internal async Task<(Session session, string error)> LoginAndCreateASessionAsync(string lmsDomain, string userName, string password)
         {
             try
             {
@@ -84,53 +84,52 @@
                     .Replace(".agilixbuzz.com", string.Empty)
                     .Replace("www.", string.Empty);
 
-                XElement result = session.Login(userPrefix, userName, password);
+                XElement result = await session.LoginAsync(userPrefix, userName, password);
                 if (!Session.IsSuccess(result))
                 {
-                    error = "DLAP. Unable to login: " + Session.GetMessage(result);
+                    var error = "DLAP. Unable to login: " + Session.GetMessage(result);
+
                     _logger.Error(error);
-                    return null;
+
+                    return (null, error);
                 }
 
-                error = null;
                 session.DomainId = result.XPathEvaluate("string(user/@domainid)").ToString();
-                return session;
+
+                return (session, null);
             }
             catch (Exception ex)
             {
                 _logger.Error("EdugameCloud.Lti.AgilixBuzz.DlapAPI.LoginAndCreateASession", ex);
-                error = ex.Message;
-                return null;
+
+                return (null, ex.Message);
             }
         }
 
-        public bool LoginAndCheckSession(out string error, string lmsDomain, string userName, string password)
+        public async Task<(bool result, string error)> LoginAndCheckSessionAsync(string lmsDomain, string userName, string password)
         {
-            Session session = LoginAndCreateASession(out error, lmsDomain, userName, password);
-            return session != null;
+            var (session, error) = await LoginAndCreateASessionAsync(lmsDomain, userName, password);
+            return (session != null, error);
         }
         
-        public List<LmsUserDTO> GetUsersForCourse(
+        public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(
             ILmsLicense company, 
             int courseid, 
-            out string error, 
             object extraData)
         {
             Session session = extraData as Session;
             var result = new List<LmsUserDTO>();
 
-            XElement courseResult = this.LoginIfNecessary(
+            var (courseResult, error) = await this.LoginIfNecessaryAsync(
                 session,
-                s =>
-                s.Get(
-                    Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseid).ToDictionary()),
-                    company,
-                    out error);
+                s => s.GetAsync(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseid).ToDictionary()),
+                company);
 
             if (courseResult == null)
             {
                 error = error ?? "DLAP. Unable to retrive result from API";
-                return result;
+
+                return (result, error);
             }
 
             if (!Session.IsSuccess(courseResult))
@@ -141,16 +140,16 @@
 
             string domainId = courseResult.XPathSelectElement("course").XPathEvaluate("string(@domainid)").ToString();
 
-            XElement enrollmentsResult = this.LoginIfNecessary(
+            XElement enrollmentsResult;
+            (enrollmentsResult, error) = await this.LoginIfNecessaryAsync(
                 session, 
-                s =>
-                s.Get(Commands.Enrollments.List, string.Format(Parameters.Enrollments.List, domainId, courseid).ToDictionary()), 
-                    company,
-                    out error);
+                s => s.GetAsync(Commands.Enrollments.List, string.Format(Parameters.Enrollments.List, domainId, courseid).ToDictionary()), 
+                company);
+
             if (enrollmentsResult == null)
             {
                 error = error ?? "DLAP. Unable to retrive result from API";
-                return result;
+                return (result, error);
             }
 
             if (!Session.IsSuccess(enrollmentsResult))
@@ -185,7 +184,7 @@
                 }
             }
 
-            return result;
+            return (result, error);
         }
 
         #endregion
@@ -578,16 +577,21 @@
             client.Execute(request);
         } */
         
-        private T LoginIfNecessary<T>(Session session, Func<Session, T> action, ILmsLicense lmsCompany, out string error)
+        private async Task<(T, string error)> LoginIfNecessaryAsync<T>(Session session, Func<Session, Task<T>> action, ILmsLicense lmsCompany)
         {
-            error = null;
-            session = session ?? BeginBatch(out error, lmsCompany);
-            if (session != null)
+            string error = null;
+
+            if (session == null)
             {
-                return action(session);
+                (session, error) = await BeginBatchAsync(lmsCompany);
             }
 
-            return default(T);
+            if (session != null)
+            {
+                return (await action(session), error);
+            }
+
+            return (default(T), error);
         }
 
         #endregion

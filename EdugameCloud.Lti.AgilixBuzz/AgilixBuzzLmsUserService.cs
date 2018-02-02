@@ -31,23 +31,18 @@ namespace EdugameCloud.Lti.AgilixBuzz
             return users.users.ToSuccessResult();
         }
 
-        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
+        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            string error;
-            List<LmsUserDTO> users = _dlapApi.GetUsersForCourse(
-                lmsCompany,
-                courseId,
-                out error,
-                param);
+            var (users, error) = await _dlapApi.GetUsersForCourseAsync(lmsCompany, courseId, param);
 
             if (!string.IsNullOrWhiteSpace(error))
                 Logger.Error("[AgilixBuzz.dlapApi.GetUsersForCourse] error:" + error);
             
-            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), error));
+            return (GroupUsers(users), error);
         }
 
     }
