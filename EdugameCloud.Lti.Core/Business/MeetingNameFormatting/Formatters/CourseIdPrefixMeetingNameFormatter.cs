@@ -14,7 +14,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
         private readonly IJsonDeserializer _nameInfoDeserializer;
 
 
-        public string FormatName { get { return "[ID]: [Meeting Title]"; } }
+        public string FormatName => "[ID]: [Meeting Title]";
 
 
         public CourseIdPrefixMeetingNameFormatter(IJsonSerializer nameInfoSerializer, IJsonDeserializer nameInfoDeserializer)

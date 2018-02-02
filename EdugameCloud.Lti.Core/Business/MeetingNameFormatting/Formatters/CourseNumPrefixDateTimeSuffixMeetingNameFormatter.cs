@@ -13,7 +13,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
         private readonly IJsonDeserializer _nameInfoDeserializer;
 
 
-        public string FormatName { get { return "[Course Label]: [Meeting Title] - (MM/DD/YY)"; } }
+        public string FormatName => "[Course Label]: [Meeting Title] - (MM/DD/YY)";
 
 
         public CourseNumPrefixDateTimeSuffixMeetingNameFormatter(IJsonSerializer nameInfoSerializer, IJsonDeserializer nameInfoDeserializer)
