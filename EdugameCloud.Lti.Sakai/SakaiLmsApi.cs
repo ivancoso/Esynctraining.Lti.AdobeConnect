@@ -69,10 +69,9 @@ namespace EdugameCloud.Lti.Sakai
 
                 SakaiSession token = null;
 
-                var result = new List<LmsUserDTO>();
-                var enrollmentsResult = await LoginIfNecessaryAsync(
+                var (data, error) = await LoginIfNecessaryAsync(
                     token,
-                    c =>
+                    async c =>
                     {
                         var pairs = new Dictionary<string, string>
                         {
@@ -81,31 +80,30 @@ namespace EdugameCloud.Lti.Sakai
                             { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
                         };
 
-                        // TODO: await?
-                        string resp = _httpClientWrapper.PostValuesAsync(c.Url, pairs).Result;
+                        string resp = await _httpClientWrapper.PostValuesAsync(c.Url, pairs);
 
                         try
                         {
                             var xmlDoc = new XmlDocument();
                             xmlDoc.LoadXml(resp);
-                            return new Tuple<List<LmsUserDTO>, string>(SakaiLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE")), null);
+                            return (Data: SakaiLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE")), Error: (string)null);
                         }
                         catch (Exception ex)
                         {
                             _logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
 
-                            return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
+                            return (Data: new List<LmsUserDTO>(), Error: string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
                         }
                     },
                     company);
 
-                if (enrollmentsResult.Data == null)
+                if (data.Data == null)
                 {
-                    var error = enrollmentsResult.Error ?? "Sakai XML. Unable to retrive result from API";
-                    return (Data: result, Error: error);
+                    error = error ?? "Sakai XML. Unable to retrive result from API";
+                    return (new List<LmsUserDTO>(), error);
                 }
 
-                return enrollmentsResult;
+                return (Data: data.Data, Error: data.Error);
             }
             catch (Exception ex)
             {
@@ -254,7 +252,7 @@ namespace EdugameCloud.Lti.Sakai
 
         internal async Task<(T Data, string Error)> LoginIfNecessaryAsync<T>(
             SakaiSession session,
-            Func<SakaiSession, T> action,
+            Func<SakaiSession, Task<T>> action,
             LmsUser lmsUser = null)
         {
             string error = null;
@@ -268,7 +266,7 @@ namespace EdugameCloud.Lti.Sakai
             
             if (session != null)
             {
-                var data = action(session);
+                var data = await action(session);
 
                 return (Data: data, Error: error);
             }
@@ -279,26 +277,22 @@ namespace EdugameCloud.Lti.Sakai
         // TRICK: marked as 'internal'
         internal async Task<(T Data, string Error)> LoginIfNecessaryAsync<T>(
             SakaiSession session,
-            Func<SakaiSession, T> action,
+            Func<SakaiSession, Task<T>> action,
             ILmsLicense lmsCompany)
         {
             string error = null;
+
             if (session == null)
             {
-                var beginBatchResult = await BeginBatchAsync(lmsCompany);
-
-                session = session ?? beginBatchResult.session;
-                error = beginBatchResult.error;
+                (session, error) = await BeginBatchAsync(lmsCompany);
             }
 
             if (session != null)
             {
-                var data = action(session);
-
-                return (Data: data, Error: error);
+                return (await action(session), error);
             }
 
-            return (Data: default(T), Error: error);
+            return (default(T), error);
         }
 
         internal async Task<(T Data, string Error)> LoginIfNecessaryAsync<T>(

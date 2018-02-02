@@ -29,7 +29,7 @@ namespace EdugameCloud.Lti.Sakai
             {
                 var quizResult = await LoginIfNecessaryAsync(
                     null,
-                    c =>
+                    async c =>
                     {
                         var functionName = isSurvey
                             ? "local_edugamecloud_get_total_survey_list"
@@ -42,8 +42,7 @@ namespace EdugameCloud.Lti.Sakai
                             { "course", lmsUserParameters.Course.ToString( CultureInfo.InvariantCulture) }
                         };
 
-                        // TODO: await?
-                        var xmlDoc = UploadValuesAsyn(c.Url, pairs).Result;
+                        var xmlDoc = await UploadValuesAsyn(c.Url, pairs);
 
                         return SakaiQuizInfoParser.Parse(xmlDoc, isSurvey);
                     },
@@ -96,7 +95,7 @@ namespace EdugameCloud.Lti.Sakai
                     int id = quizId;
                     var quizResult = await LoginIfNecessaryAsync(
                         null,
-                        c =>
+                        async c =>
                         {
                             var pairs = new Dictionary<string, string>
                             {
@@ -105,8 +104,7 @@ namespace EdugameCloud.Lti.Sakai
                                 {  isSurvey ? "surveyId" : "quizId",  id.ToString(CultureInfo.InvariantCulture) }
                             };
 
-                            // TODO: await?
-                            var xmlDoc = UploadValuesAsyn(c.Url, pairs).Result;
+                            var xmlDoc = await UploadValuesAsyn(c.Url, pairs);
                             string errorMessage = string.Empty;
                             string err = string.Empty;
                             return SakaiQuizParser2.Parse(xmlDoc, ref errorMessage, ref err);
@@ -155,7 +153,7 @@ namespace EdugameCloud.Lti.Sakai
                 // ReSharper disable once UnusedVariable
                 var quizResult = await LoginIfNecessaryAsync(
                     null,
-                    c =>
+                    async c =>
                     {
                         json = json.Replace("\"", "\"");
                         var pairs = new Dictionary<string, string>
@@ -165,8 +163,7 @@ namespace EdugameCloud.Lti.Sakai
                             { "reportObject", json }
                         };
 
-                        // TODO: await?
-                        var xmlDoc = UploadValuesAsyn(c.Url, pairs).Result;
+                        var xmlDoc = await UploadValuesAsyn(c.Url, pairs);
 
                         string errorMessage = string.Empty;
                         string err = string.Empty;
