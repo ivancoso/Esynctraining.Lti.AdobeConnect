@@ -24,80 +24,35 @@ namespace EdugameCloud.Core.Business
 
         public static class Keys
         {
-            public static string Countries()
-            {
-                return "Countries";
-            }
+            public static string Countries() => "Countries";
 
-            public static string States()
-            {
-                return "States";
-            }
+            public static string States() => "States";
 
-            public static string Schools()
-            {
-                return "Schools";
-            }
+            public static string Schools() => "Schools";
 
-            public static string CompanyAcServers()
-            {
-                return "CompanyAcServers";
-            }
+            public static string CompanyAcServers() => "CompanyAcServers";
 
-            public static string Languages()
-            {
-                return "Languages";
-            }
+            public static string Languages() => "Languages";
 
-            public static string TimeZones()
-            {
-                return "TimeZones";
-            }
+            public static string TimeZones() => "TimeZones";
 
-            public static string ScoreTypes()
-            {
-                return "ScoreTypes";
-            }
+            public static string ScoreTypes() => "ScoreTypes";
 
-            public static string UserRoles()
-            {
-                return "UserRoles";
-            }
+            public static string UserRoles() => "UserRoles";
 
-            public static string QuizFormats()
-            {
-                return "QuizFormats";
-            }
+            public static string QuizFormats() => "QuizFormats";
 
-            public static string QuestionTypes()
-            {
-                return "QuestionTypes";
-            }
+            public static string QuestionTypes() => "QuestionTypes";
 
-            public static string LmsQuestionTypes()
-            {
-                return "LmsQuestionTypes";
-            }
+            public static string LmsQuestionTypes() => "LmsQuestionTypes";
 
-            public static string SurveyGroupingTypes()
-            {
-                return "SurveyGroupingTypes";
-            }
+            public static string SurveyGroupingTypes() => "SurveyGroupingTypes";
 
-            public static string SNServices()
-            {
-                return "SNServices";
-            }
+            public static string SNServices() => "SNServices";
 
-            public static string SNMapProviders()
-            {
-                return "SNMapProviders";
-            }
+            public static string SNMapProviders() => "SNMapProviders";
 
-            public static string VersionInfo()
-            {
-                return "VersionInfo";
-            }
+            public static string VersionInfo() => "VersionInfo";
 
 
             public static string AcDetails(string apiUrl)
