@@ -65,7 +65,9 @@ namespace EdugameCloud.Lti.API
                     success = this.TestBlackBoardConnection(test, out info);
                     break;
                 case LmsProviderNames.Moodle:
-                    success = this.TestMoodleConnection(test, out info);
+                    var tupleResult = this.TestMoodleConnection(test).Result;
+                    success = tupleResult.result;
+                    info = tupleResult.info;
                     break;
                 case LmsProviderNames.Sakai:
                     success = this.TestSakaiConnection(test, out info);
@@ -89,16 +91,19 @@ namespace EdugameCloud.Lti.API
 
         #region Methods
 
-        private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
+        private async Task<(bool result, string info)> TestMoodleConnection(ConnectionTestDTO test)
         {
+            string info;
             if (!TestDomainFormat(test, out info))
-                return false;
-        
-            return this.MoodleAPI.LoginAndCheckSession(out info,
+                return (false, info);
+
+            var tuple = await this.MoodleAPI.LoginAndCheckSession(
                 test.domain.IsSSL(),
                 test.domain.RemoveHttpProtocolAndTrailingSlash(),
                 test.login,
                 test.password);
+
+            return (tuple.result, info);
         }
 
         private bool TestSakaiConnection(ConnectionTestDTO test, out string info)
