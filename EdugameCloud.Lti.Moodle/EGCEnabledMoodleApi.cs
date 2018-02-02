@@ -35,16 +35,37 @@ namespace EdugameCloud.Lti.Moodle
             try
             {
                 var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
-                var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
-                    ? GetQuizzes(moodleServiceToken, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms)
-                    : LoginIfNecessary(
+                //var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
+                //    ? GetQuizzes(moodleServiceToken, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms)
+                //    : LoginIfNecessary(
+                //    null,
+                //    c =>
+                //    {
+                //        return GetQuizzes(c.Token, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms);
+                //    },
+                //    out error,
+                //    lmsUserParameters.LmsUser);
+                //-----------------
+                IEnumerable<LmsQuizInfoDTO> quizResult;
+                if (!string.IsNullOrEmpty(moodleServiceToken))
+                {
+                    quizResult = await GetQuizzes(moodleServiceToken, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms);
+                }
+                else
+                {
+                    var quizResultTuple = await LoginIfNecessary(
                     null,
-                    c =>
+                    async c =>
                     {
-                        return GetQuizzes(c.Token, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms);
+                        return await GetQuizzes(c.Token, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms);
                     },
-                    out error,
                     lmsUserParameters.LmsUser);
+
+                    //popov
+                    quizResult = await quizResultTuple.result;
+                    error = quizResultTuple.error;
+                }
+                //-----------------
 
                 if (quizResult == null)
                 {
@@ -92,16 +113,37 @@ namespace EdugameCloud.Lti.Moodle
                 {
                     int id = quizId;
                     var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
-                    var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
-                        ? GetQuiz(moodleServiceToken, isSurvey, quizId, lmsUserParameters.CompanyLms)
-                        : LoginIfNecessary(
+                    //var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
+                    //    ? GetQuiz(moodleServiceToken, isSurvey, quizId, lmsUserParameters.CompanyLms)
+                    //    : LoginIfNecessary(
+                    //    null,
+                    //    c =>
+                    //    {
+                    //        return GetQuiz(c.Token, isSurvey, quizId, lmsUserParameters.CompanyLms);
+                    //    },
+                    //    out error,
+                    //    lmsUserParameters.LmsUser);
+
+                    //-------------------------------------------------
+                    LmsQuizDTO quizResult;
+                    if (!string.IsNullOrEmpty(moodleServiceToken))
+                    {
+                        quizResult = await GetQuiz(moodleServiceToken, isSurvey, quizId, lmsUserParameters.CompanyLms);
+                    }
+                    else
+                    {
+                        var quizResultTuple = await LoginIfNecessary(
                         null,
-                        c =>
+                        async c =>
                         {
-                            return GetQuiz(c.Token, isSurvey, quizId, lmsUserParameters.CompanyLms);
+                            return await GetQuiz(c.Token, isSurvey, quizId, lmsUserParameters.CompanyLms);
                         },
-                        out error,
                         lmsUserParameters.LmsUser);
+                        //popov
+                        quizResult = await quizResultTuple.result;
+                        error = quizResultTuple.error;
+                    }
+                    //-------------------------------------------------
 
                     if (quizResult == null)
                     {
@@ -143,16 +185,38 @@ namespace EdugameCloud.Lti.Moodle
             try
             {
                 var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
-                var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
-                    ? SendQuiz(moodleServiceToken, isSurvey, json, lmsUserParameters)
-                    : LoginIfNecessary(
-                    null,
-                    c =>
-                    {
-                        return SendQuiz(c.Token, isSurvey, json, lmsUserParameters);
-                    },
-                    out error,
-                    lmsUserParameters.LmsUser);
+                //var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
+                //    ? SendQuiz(moodleServiceToken, isSurvey, json, lmsUserParameters)
+                //    : LoginIfNecessary(
+                //    null,
+                //    c =>
+                //    {
+                //        return SendQuiz(c.Token, isSurvey, json, lmsUserParameters);
+                //    },
+                //    out error,
+                //    lmsUserParameters.LmsUser);
+                //-----------------------------------------------
+                LmsQuizDTO quizResult;
+                if (!string.IsNullOrEmpty(moodleServiceToken))
+                {
+                    quizResult = await SendQuiz(moodleServiceToken, isSurvey, json, lmsUserParameters);
+                }
+                else
+                {
+                    var quizResultTuple = await LoginIfNecessary(
+                        null,
+                        c =>
+                        {
+                            return SendQuiz(c.Token, isSurvey, json, lmsUserParameters);
+                        },
+                        lmsUserParameters.LmsUser);
+
+                    //popov
+                    quizResult = await quizResultTuple.result;
+                    error = quizResultTuple.error;
+
+                }
+                //-----------------------------------------------
             }
             catch (Exception ex)
             {
@@ -167,7 +231,7 @@ namespace EdugameCloud.Lti.Moodle
         }
 
 
-        private LmsQuizDTO SendQuiz(string token, bool isSurvey, string json, LmsUserParameters lmsUserParameters)
+        private async Task<LmsQuizDTO> SendQuiz(string token, bool isSurvey, string json, LmsUserParameters lmsUserParameters)
         {
             json = json.Replace("\"", "\"");
             var pairs = new Dictionary<string, string>
@@ -177,7 +241,7 @@ namespace EdugameCloud.Lti.Moodle
                 { "reportObject", json }
             };
             var url = GetServicesUrl(lmsUserParameters.CompanyLms);
-            var xmlDoc = UploadValues(url, pairs);
+            var xmlDoc = await UploadValues(url, pairs);
 
             string errorMessage = string.Empty;
             string err = string.Empty;
@@ -196,7 +260,7 @@ namespace EdugameCloud.Lti.Moodle
             return result;
         }
 
-        private IEnumerable<LmsQuizInfoDTO> GetQuizzes(string token, bool isSurvey, int courseId, ILmsLicense lmsCompany)
+        private async Task<IEnumerable<LmsQuizInfoDTO>> GetQuizzes(string token, bool isSurvey, int courseId, ILmsLicense lmsCompany)
         {
             var functionName = isSurvey
                 ? "local_edugamecloud_get_total_survey_list"
@@ -209,12 +273,12 @@ namespace EdugameCloud.Lti.Moodle
                 { "course", courseId.ToString( CultureInfo.InvariantCulture) }
             };
             var url = GetServicesUrl(lmsCompany);
-            var xmlDoc = UploadValues(url, pairs);
+            var xmlDoc = await UploadValues(url, pairs);
 
             return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
         }
 
-        private LmsQuizDTO GetQuiz(string token, bool isSurvey, int courseId, ILmsLicense lmsCompany)
+        private async Task<LmsQuizDTO> GetQuiz(string token, bool isSurvey, int courseId, ILmsLicense lmsCompany)
         {
             var pairs = new Dictionary<string, string>
             {
@@ -224,7 +288,7 @@ namespace EdugameCloud.Lti.Moodle
             };
 
             var url = GetServicesUrl(lmsCompany);
-            var xmlDoc = UploadValues(url, pairs);
+            var xmlDoc = await UploadValues(url, pairs);
             string errorMessage = string.Empty;
             string err = string.Empty;
             return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);

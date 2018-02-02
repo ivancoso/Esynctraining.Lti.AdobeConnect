@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using System.Threading.Tasks;
 
 namespace EdugameCloud.Lti.API.Moodle
 {
     public interface IMoodleApi
     {
-        List<LmsUserDTO> GetUsersForCourse(
-            ILmsLicense company,
-            int courseId,
-            out string error);
+        Task<(List<LmsUserDTO> users, string error)> GetUsersForCourse(ILmsLicense company, int courseId);
 
-        bool LoginAndCheckSession(
-            out string error,
+        Task<(bool result, string error)> LoginAndCheckSession(
             bool useSsl,
             string lmsDomain,
             string userName,

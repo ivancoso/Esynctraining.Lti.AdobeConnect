@@ -31,14 +31,17 @@ namespace EdugameCloud.Lti.Moodle
             return users.Item1.ToSuccessResult();
         }
 
-        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null)
+        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
             string error;
-            List<LmsUserDTO> users = _moodleApi.GetUsersForCourse(lmsCompany, courseId, out error);
-            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), error));
+            //List<LmsUserDTO> users = _moodleApi.GetUsersForCourse(lmsCompany, courseId, out error);
+            var usersTuple = await _moodleApi.GetUsersForCourse(lmsCompany, courseId);
+            List<LmsUserDTO> users = usersTuple.users;
+            error = usersTuple.error;
+            return (GroupUsers(users), error);
         }
 
     }

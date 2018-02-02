@@ -191,7 +191,7 @@ namespace EdugameCloud.WCFService
 
         public ConnectionInfoDTO TestConnection(ConnectionTestDTO test)
         {
-            return TestConnectionService.TestConnection(test);
+            return TestConnectionService.TestConnection(test).Result;
         }
         
         public int DeleteById(int id)
