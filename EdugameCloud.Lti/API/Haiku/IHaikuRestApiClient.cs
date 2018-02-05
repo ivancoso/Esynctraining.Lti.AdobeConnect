@@ -12,5 +12,7 @@ namespace EdugameCloud.Lti.API.Haiku
         Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(ILmsLicense lmsCompany, int courseId);
 
         Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(ILmsLicense lmsCompany, int courseId);
+
     }
+
 }

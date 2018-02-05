@@ -194,7 +194,6 @@ namespace EdugameCloud.Lti.OAuth.Canvas
             if (userCanvasUrlCache.ContainsKey(accessToken) && !userDataCache.ContainsKey(accessToken))
             {
                 var canvasUrl = userCanvasUrlCache[accessToken];
-                CanvasUser graphData = null;
 
                 Func<Task<CanvasUser>> action = async () =>
                 {
@@ -206,7 +205,7 @@ namespace EdugameCloud.Lti.OAuth.Canvas
                     return JsonConvert.DeserializeObject<CanvasUser>(canvasUserStringFormat);
                 };
 
-                graphData = Task.Run(action).Result;
+                CanvasUser graphData = Task.Run(action).Result;
 
                 userDataCache.Add(accessToken, graphData);
             }

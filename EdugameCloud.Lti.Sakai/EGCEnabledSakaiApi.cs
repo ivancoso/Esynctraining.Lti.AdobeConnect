@@ -18,10 +18,7 @@ namespace EdugameCloud.Lti.Sakai
         { }
 
 
-        protected override string SakaiServiceShortName
-        {
-            get { return "edugamecloud"; }
-        }
+        protected override string SakaiServiceShortName => "edugamecloud";
 
         public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
         {

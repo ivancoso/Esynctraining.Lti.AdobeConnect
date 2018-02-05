@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using Esynctraining.Core.Logging;
 using D2L.Extensibility.AuthSdk;
-using EdugameCloud.Lti.OAuth;
 using EdugameCloud.Lti.API.Desire2Learn;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.OAuth;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using RestSharp;
 
@@ -14,20 +14,21 @@ namespace EdugameCloud.Lti.Desire2Learn
 {
     public class Desire2LearnApiService : IDesire2LearnApiService
     {
-        private readonly ILogger logger;
-        private readonly dynamic settings;
+        private readonly ILogger _logger;
+        private readonly dynamic _settings;
 
-        public string WhoAmIUrlFormat { get { return "/d2l/api/lp/{0}/users/whoami"; } }
-        public string GetUserUrlFormat { get { return "/d2l/api/lp/{0}/users/{1}"; } }
-        public string EnrollmentsUrlFormat { get { return "/d2l/api/lp/{0}/enrollments/orgUnits/{1}/users/"; } }
-        public string EnrollmentsClasslistUrlFormat { get { return "/d2l/api/le/{0}/{1}/classlist/"; } }
+        public string WhoAmIUrlFormat => "/d2l/api/lp/{0}/users/whoami";
+        public string GetUserUrlFormat => "/d2l/api/lp/{0}/users/{1}";
+        public string EnrollmentsUrlFormat => "/d2l/api/lp/{0}/enrollments/orgUnits/{1}/users/";
+        public string EnrollmentsClasslistUrlFormat => "/d2l/api/le/{0}/{1}/classlist/";
 
 
         public Desire2LearnApiService(ILogger logger, ApplicationSettingsProvider settings)
         {
-            this.logger = logger;
-            this.settings = settings;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
+
 
         public Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl, ILmsLicense company)
         {
@@ -65,7 +66,7 @@ namespace EdugameCloud.Lti.Desire2Learn
             var response = client.Execute<T>(request);
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                logger.InfoFormat("[D2L API call] Url: {0}, Status: {1}-{2}, ErrorMessage:{3}, Content:{4}",
+                _logger.InfoFormat("[D2L API call] Url: {0}, Status: {1}-{2}, ErrorMessage:{3}, Content:{4}",
                     apiUrl, (int)response.StatusCode, response.StatusDescription, response.ErrorMessage,
                     response.Content);
             }
@@ -99,7 +100,7 @@ namespace EdugameCloud.Lti.Desire2Learn
 
         private KeyValuePair<string, string> GetOAuthSettings(ILmsLicense company)
         {
-            return OAuthWebSecurityWrapper.GetOAuthSettings(company, (string)settings.BrightspaceAppId, (string)settings.BrightspaceAppKey);
+            return OAuthWebSecurityWrapper.GetOAuthSettings(company, (string)_settings.BrightspaceAppId, (string)_settings.BrightspaceAppKey);
         }
 
     }
