@@ -75,6 +75,9 @@ namespace EdugameCloud.Lti.API
                 case LmsProviderNames.Canvas:
                     success = TestCanvasConnection(test, out info);
                     break;
+                case LmsProviderNames.Bridge:
+                    success = TestCanvasConnection(test, out info);
+                    break;
                 case LmsProviderNames.Brightspace:
                     success = TestBrightspaceConnection(test, out info);
                     break;
@@ -113,6 +116,12 @@ namespace EdugameCloud.Lti.API
         }
 
         private bool TestCanvasConnection(ConnectionTestDTO test, out string info)
+        {
+            info = "Not supported";
+            return true;
+        }
+
+        private bool TestBridgeConnection(ConnectionTestDTO test, out string info)
         {
             info = "Not supported";
             return true;

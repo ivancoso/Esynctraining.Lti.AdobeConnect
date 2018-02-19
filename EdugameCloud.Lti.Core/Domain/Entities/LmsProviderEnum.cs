@@ -9,7 +9,7 @@
         Sakai = 5,
         Brightspace = 6,
         //DialogEdu = 7,
-        //Bridge = 8,
+        Bridge = 8,
         Schoology = 9,
         Haiku = 10
     }

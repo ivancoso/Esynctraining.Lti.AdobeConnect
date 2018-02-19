@@ -19,7 +19,7 @@
 
         //public const string DialogEdu = "dialogedu";
 
-        //public const string Bridge = "bridge";
+        public const string Bridge = "bridge";
 
         public const string Schoology = "schoology";
 
