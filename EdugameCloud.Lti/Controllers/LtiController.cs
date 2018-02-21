@@ -644,7 +644,7 @@ namespace EdugameCloud.Lti.Controllers
                 Logger.Warn($"[LtiVersion - 2.0] ConsumerKey={param.oauth_consumer_key}");
             }
             //version should match "LTI-1p0" for v1.0, v1.1, v1.2
-            else if (param.lti_version != LtiConstants.LtiVersion)
+            else if (param.lti_version != LtiConstants.LtiVersion && param.lti_version != "LTI-1p2") //bridge uses 1p2, todo: search for correct validation
             {
                 Logger.ErrorFormat("Invalid LTI request. Invalid LTI version. oauth_consumer_key:{0}, lti_version:{1}", param.oauth_consumer_key, param.lti_version);
                 throw new LtiException(Resources.Messages.LtiValidationWrongVersion);

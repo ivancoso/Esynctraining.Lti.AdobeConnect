@@ -18,7 +18,7 @@
     <lticm:property name="url">https://bridge-ses.herokuapp.com/training_calendar</lticm:property>
   </blti:custom> -->
   <blti:extensions platform="bridgeapp.com">
-    <lticm:options name="learner_nav">
+    <lticm:options name="live_course_tabs">
       <lticm:property name="url">https://dev.edugamecloud.com/lti/bridge-login</lticm:property>
       <lticm:property name="text">Adobe Connect integration</lticm:property>
       <lticm:property name="icon_url">
