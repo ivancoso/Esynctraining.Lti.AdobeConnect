@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
+using Esynctraining.Core.Json;
 
 namespace Esynctraining.WebApi.Client
 {
     public static class HttpResponseMessageExtentions
     {
-        public static ApiException CreateApiException(this HttpResponseMessage response)
+        public static async Task<ApiException> CreateApiException(this HttpResponseMessage response, IJsonDeserializer jsonDeserializer)
         {
             if (response == null)
                 throw new ArgumentNullException(nameof(response));
+            if (jsonDeserializer == null)
+                throw new ArgumentNullException(nameof(jsonDeserializer));
 
-            var httpErrorObject = response.Content.ReadAsStringAsync().Result;
+            var httpErrorObject = await response.Content.ReadAsStringAsync();
             try
             {
-                ApiError deserializedErrorObject =
-                    JsonConvert.DeserializeObject<ApiError>(httpErrorObject);
+                ApiError deserializedErrorObject = jsonDeserializer.JsonDeserialize<ApiError>(httpErrorObject);
 
                 // Now wrap into an exception which best fullfills the needs of your application:
                 //ApiException ex = (deserializedErrorObject != null)
