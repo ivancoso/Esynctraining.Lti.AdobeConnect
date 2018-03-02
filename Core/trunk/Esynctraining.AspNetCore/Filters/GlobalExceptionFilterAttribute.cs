@@ -88,7 +88,7 @@ namespace Esynctraining.AspNetCore.Filters
             }
             else
             {
-                _logger.LogError("GlobalExceptionFilter. {0}.", context.Exception);
+                _logger.LogError(context.Exception, "GlobalExceptionFilter. {0}.", context.Exception.Message);
 
                 message = _isDevelopment
                     ? ExceptionOccuredMessage + context.Exception.ToString()

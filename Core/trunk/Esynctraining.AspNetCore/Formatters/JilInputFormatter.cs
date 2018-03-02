@@ -5,40 +5,52 @@ using System.Text;
 using System.Threading.Tasks;
 using Esynctraining.Json.Jil;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Net.Http.Headers;
 
 namespace Esynctraining.AspNetCore.Formatters
 {
     // https://www.codefluff.com/write-your-own-asp-net-core-mvc-formatters/
     // TODO: see https://github.com/aspnet/Mvc/blob/dev/src/Microsoft.AspNetCore.Mvc.Formatters.Json/JsonInputFormatter.cs#L133
-    public class JilInputFormatter : IInputFormatter
+    public class JilInputFormatter : TextInputFormatter
     {
-        private static readonly string ContentType = "application/json";
-
-
-        public bool CanRead(InputFormatterContext context)
+        internal class MediaTypeHeaderValues
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
+            public static readonly MediaTypeHeaderValue ApplicationJson
+                = MediaTypeHeaderValue.Parse("application/json").CopyAsReadOnly();
 
-            var contentType = context.HttpContext.Request.ContentType;
-            return contentType == null || contentType == ContentType;
+            public static readonly MediaTypeHeaderValue TextJson
+                = MediaTypeHeaderValue.Parse("text/json").CopyAsReadOnly();
+
+            public static readonly MediaTypeHeaderValue ApplicationJsonPatch
+                = MediaTypeHeaderValue.Parse("application/json-patch+json").CopyAsReadOnly();
+
+            public static readonly MediaTypeHeaderValue ApplicationAnyJsonSyntax
+                = MediaTypeHeaderValue.Parse("application/*+json").CopyAsReadOnly();
         }
 
-        public Task<InputFormatterResult> ReadAsync(InputFormatterContext context)
+        public JilInputFormatter()
+        {
+            SupportedEncodings.Add(UTF8EncodingWithoutBOM);
+            SupportedEncodings.Add(UTF16EncodingLittleEndian);
+
+            SupportedMediaTypes.Add(MediaTypeHeaderValues.ApplicationJson);
+            SupportedMediaTypes.Add(MediaTypeHeaderValues.TextJson);
+            SupportedMediaTypes.Add(MediaTypeHeaderValues.ApplicationAnyJsonSyntax);
+        }
+
+        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
         {
             if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            var request = context.HttpContext.Request;
-            if (request.ContentLength == 0)
             {
-                if (context.ModelType.GetTypeInfo().IsValueType)
-                    return InputFormatterResult.SuccessAsync(Activator.CreateInstance(context.ModelType));
-                else return InputFormatterResult.SuccessAsync(null);
+                throw new ArgumentNullException(nameof(context));
             }
 
-            //var encoding = Encoding.UTF8;//do we need to get this from the request im not sure yet 
-            using (var reader = new StreamReader(context.HttpContext.Request.Body))
+            if (encoding == null)
+            {
+                throw new ArgumentNullException(nameof(encoding));
+            }
+
+            using (var reader = new StreamReader(context.HttpContext.Request.Body, encoding))
             {
                 try
                 {
@@ -54,7 +66,6 @@ namespace Esynctraining.AspNetCore.Formatters
                 }
             }
         }
-
     }
 
 }
