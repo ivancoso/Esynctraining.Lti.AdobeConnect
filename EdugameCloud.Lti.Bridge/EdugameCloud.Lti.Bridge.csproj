@@ -21,9 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Esynctraining.Core">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.4\lib\net461\Esynctraining.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
