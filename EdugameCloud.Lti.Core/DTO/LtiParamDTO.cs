@@ -63,6 +63,7 @@ namespace EdugameCloud.Lti.DTO
         /// Gets or sets the custom canvas course id.
         /// </summary>
         public int custom_canvas_course_id { get; set; }
+        public int custom_live_course_id { get; set; }
 
         /// <summary>
         /// Gets or sets the custom canvas user id.
@@ -505,6 +506,11 @@ namespace EdugameCloud.Lti.DTO
             if (this.custom_canvas_course_id != 0)
             {
                 return this.custom_canvas_course_id;
+            }
+
+            if (custom_live_course_id != 0)
+            {
+                return custom_live_course_id;
             }
 
             int courseId;

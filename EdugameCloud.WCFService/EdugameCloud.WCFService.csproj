@@ -570,6 +570,10 @@
       <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
       <Name>EdugameCloud.Lti.BlackBoard</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Bridge\EdugameCloud.Lti.Bridge.csproj">
+      <Project>{5bd06fb7-1f43-400e-a71c-627b94a0afe5}</Project>
+      <Name>EdugameCloud.Lti.Bridge</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj">
       <Project>{1b19293e-b5ca-463a-93a8-ef09cc255275}</Project>
       <Name>EdugameCloud.Lti.Canvas</Name>

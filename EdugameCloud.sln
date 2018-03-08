@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.WCFService", "EdugameCloud.WCFService\EdugameCloud.WCFService.csproj", "{1758C513-FDF1-47FA-842F-9C332DA85C17}"
 EndProject
@@ -75,6 +75,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Api.Core", "EdugameCloud.Lti.Api.Core\EdugameCloud.Lti.Api.Core.csproj", "{7791F921-CC88-4704-B95E-D8C614DFE9D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.HttpClient", "EdugameCloud.HttpClient\EdugameCloud.HttpClient.csproj", "{7CB63896-15D1-47B1-87A0-A1D073CA9E4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Bridge", "EdugameCloud.Lti.Bridge\EdugameCloud.Lti.Bridge.csproj", "{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -289,6 +291,14 @@ Global
 		{7CB63896-15D1-47B1-87A0-A1D073CA9E4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CB63896-15D1-47B1-87A0-A1D073CA9E4E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7CB63896-15D1-47B1-87A0-A1D073CA9E4E}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      id="IBridgeApi"
+      service="EdugameCloud.Lti.Bridge.IBridgeApi, EdugameCloud.Lti.Bridge"
+      type="EdugameCloud.Lti.Bridge.BridgeApi, EdugameCloud.Lti.Bridge"
+      lifestyle="singleton"></component>
+    <component
+      id="Bridge"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Bridge.BridgeLmsUserService, EdugameCloud.Lti.Bridge"></component>
+  </components>
+</configuration>

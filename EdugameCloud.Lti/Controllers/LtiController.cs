@@ -521,6 +521,7 @@ namespace EdugameCloud.Lti.Controllers
                     case LmsProviderNames.Sakai:
                     case LmsProviderNames.Schoology:
                     case LmsProviderNames.Haiku:
+                    case LmsProviderNames.Bridge:
                         //                    case LmsProviderNames.IMS:
                         acPrincipal = acUserService.GetOrCreatePrincipal(
                             adobeConnectProvider,
