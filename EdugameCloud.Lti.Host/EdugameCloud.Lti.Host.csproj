@@ -269,6 +269,7 @@
     <Content Include="Views\Lti\Error.cshtml" />
     <Content Include="Views\Lti\Redirect.cshtml" />
     <Content Include="Views\Lti\Outcomes.cshtml" />
+    <Content Include="Views\Lti\Bridge.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -259,7 +259,10 @@ namespace EdugameCloud.Lti.Controllers
                     model = await BuildModelAsync(s);
                 }
 
-                return View("Index", model);
+                return View(s.LmsCompany.LmsProviderId == (int) LmsProviderEnum.Bridge 
+                    ? "Bridge" 
+                    : "Index",
+                    model);
             }
             catch (Core.WarningMessageException ex)
             {
@@ -267,7 +270,7 @@ namespace EdugameCloud.Lti.Controllers
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }
-        
+
         [HttpGet]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual async Task<ActionResult> JoinMeeting(string session, int meetingId)
