@@ -2034,7 +2034,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseSynchronizedUsers))
             {
-                SynchronizationUserService.SynchronizeUsers(lmsLicense, true, meetingIds: new[] {meeting.Id});
+                await SynchronizationUserService.SynchronizeUsers(lmsLicense, true, meetingIds: new[] {meeting.Id});
             }
         }
     }

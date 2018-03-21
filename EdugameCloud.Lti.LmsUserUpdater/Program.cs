@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -16,7 +17,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
 {
     class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             const string ConsumerKeyParameterName = "consumerkey";
             const string ConsumerKeyOutParameterName = "consumerkeyout";
@@ -86,7 +87,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                             try
                             {
                                 var timer = Stopwatch.StartNew();
-                                syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
+                                await syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
                                 timer.Stop();
                                 logger.Warn($"[Sync time] LicenseId={lmsCompany.Id}, Time={timer.Elapsed.ToString()}");
                             }

@@ -75,7 +75,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
                     if (!meeting.EnableDynamicProvisioning)
                     {
-                        SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false,
+                        await SynchronizationUserService.SynchronizeUsers(LmsCompany, syncACUsers: false,
                             meetingIds: new[] {request.MeetingId});
                     }
                 }
