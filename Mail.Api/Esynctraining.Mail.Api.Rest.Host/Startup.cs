@@ -98,10 +98,15 @@ namespace AnonymousChat.WebApi.Host
                 {
                 });
 
+                bool isDebug = false;
+#if DEBUG
+                isDebug = true;
+#endif
                 app.UseSwaggerUI(c =>
                 {
                     //(env.IsDevelopment() ? string.Empty : "/api")
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+                    var swaggerEndpointUrl = isDebug ? "/swagger/v1/swagger.json" : "/v1/swagger/v1/swagger.json";
+                    c.SwaggerEndpoint(swaggerEndpointUrl, "API V1");
                 });
             }
 
