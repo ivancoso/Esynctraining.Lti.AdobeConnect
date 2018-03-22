@@ -25,7 +25,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                 collection.Add(appSetting.Key, appSetting.Value);
             }
 
-            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.Transient);
+            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.Singleton);
 
             container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
                     .DynamicParameters((k, d) => d.Add("collection", collection))
