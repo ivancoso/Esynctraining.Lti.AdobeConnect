@@ -22,9 +22,9 @@ namespace Serilog
             string mailSubject = EmailConnectionInfo.DefaultSubject,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
-            if (fromEmail == null) throw new ArgumentNullException("fromEmail");
-            if (toEmail == null) throw new ArgumentNullException("toEmail");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            if (fromEmail == null) throw new ArgumentNullException(nameof(fromEmail));
+            if (toEmail == null) throw new ArgumentNullException(nameof(toEmail));
 
             var connectionInfo = new EmailConnectionInfo
             {
@@ -43,5 +43,7 @@ namespace Serilog
 
             return loggerConfiguration.Email(connectionInfo, restrictedToMinimumLevel: restrictedToMinimumLevel);
         }
+
     }
+
 }
