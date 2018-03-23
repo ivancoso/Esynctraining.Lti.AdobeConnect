@@ -146,7 +146,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool skipRemovingFromAC = softDelete; 
 
             var meetingSessionService =
-                LmsFactory.GetMeetingSessionService((LmsProviderEnum) lmsCompany.LmsProviderId);
+                LmsFactory.GetMeetingSessionService(lmsCompany);
 
             await meetingSessionService.DeleteMeetingSessionsAsync(meeting, param);
 
@@ -1099,7 +1099,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             List<MeetingPermissionInfo> enrollments = this.UsersSetup.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
 
             var meetingSessionService =
-                LmsFactory.GetMeetingSessionService((LmsProviderEnum)lmsCompany.LmsProviderId);
+                LmsFactory.GetMeetingSessionService(lmsCompany);
 
             await meetingSessionService.DeleteMeetingSessionsAsync(meeting, param);
 

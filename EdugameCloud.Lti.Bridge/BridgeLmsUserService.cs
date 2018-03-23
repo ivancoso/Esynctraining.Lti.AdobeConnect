@@ -23,10 +23,10 @@ namespace EdugameCloud.Lti.Bridge
             return (new LmsUserDTO
             {
                 Email = result?.Email,
-                Id = result?.Id,
+                Id = result?.Id.ToString(),
                 LmsRole = result?.Roles?.FirstOrDefault(),
                 Name = result?.Name,
-                LtiId = result?.Id,
+                LtiId = result?.Id.ToString(),
                 Login = result?.Uid,
                 PrimaryEmail = result?.Email
             }, null);
@@ -45,10 +45,10 @@ namespace EdugameCloud.Lti.Bridge
             var users = res.Select(result => new LmsUserDTO()
             {
                 Email = result?.Email,
-                Id = result?.Id,
+                Id = result?.Id.ToString(),
                 LmsRole = result?.Roles?.FirstOrDefault(),
                 Name = result?.Name,
-                LtiId = result?.Id,
+                LtiId = result?.Id.ToString(),
                 Login = result?.Uid,
                 PrimaryEmail = result?.Email
             });

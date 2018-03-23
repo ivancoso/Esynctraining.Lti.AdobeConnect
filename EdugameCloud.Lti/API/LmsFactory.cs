@@ -95,18 +95,21 @@ namespace EdugameCloud.Lti.API
             return new LmsCourseSectionsServiceBase();
         }
 
-        public IMeetingSessionService GetMeetingSessionService(LmsProviderEnum lmsId)
+        public IMeetingSessionService GetMeetingSessionService(ILmsLicense lmsLicense)
         {
             var lmsCourseMeetingModel = IoC.Resolve<LmsCourseMeetingModel>();
             var logger = IoC.Resolve<ILogger>();
-            //switch (lmsId)
-            //{
-            //    case LmsProviderEnum.Sakai:
-            //        var calendarExportService = IoC.Resolve<ICalendarExportService>("SakaiCalendarExportService");
-            //        return new MeetingSessionService(lmsCourseMeetingModel, logger, calendarExportService);
-            //}
+            ICalendarExportService exportService = null;
+            var lmsId = (LmsProviderEnum)lmsLicense.LmsProviderId;
+            switch (lmsId)
+            {
+                //    case LmsProviderEnum.Sakai:
+                case LmsProviderEnum.Bridge:
+                    exportService = IoC.Resolve<ICalendarExportService>(lmsId + "CalendarExportService");
+                    break;
+            }
 
-            return new MeetingSessionService(lmsCourseMeetingModel, logger, null);
+            return new MeetingSessionService(lmsCourseMeetingModel, logger, exportService, lmsLicense);
         }
         #endregion
 

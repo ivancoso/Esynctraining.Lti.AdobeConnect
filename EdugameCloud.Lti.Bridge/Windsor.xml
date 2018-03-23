@@ -10,5 +10,11 @@
       id="Bridge"
       service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
       type="EdugameCloud.Lti.Bridge.BridgeLmsUserService, EdugameCloud.Lti.Bridge"></component>
+    <component
+      id="BridgeCalendarExportService"
+      service="EdugameCloud.Lti.API.AdobeConnect.ICalendarExportService, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Bridge.BridgeCalendarExportService, EdugameCloud.Lti.Bridge"
+      lifestyle="singleton"></component>
+
   </components>
 </configuration>

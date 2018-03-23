@@ -1,52 +1,30 @@
 ﻿@model EdugameCloud.Lti.DTO.LtiViewModelDto
 @using Jil;
 @{
-	Layout = null;
-	var options = Esynctraining.Json.Jil.JilSerializer.JilOptions;
+    Layout = null;
+    var options = Esynctraining.Json.Jil.JilSerializer.JilOptions;
 }
 <!DOCTYPE html>
-<html>
+<html style="overflow: auto;">
 <head>
-	<meta charset="UTF-8">
-	<title>eSyncTraining</title>
-	<style type="text/css">#loading{position:absolute;margin:auto;top:0;left:0;right:0;bottom:0;border-radius:10px;box-shadow:0 5px 10px #ccc;z-index:2;width:400px;height:200px;font-family:Verdana;background-color:#f0f0f0}#loading #loading-bbar{width:380px;background-color:#5c6c78;padding:10px;color:#fff;font-size:12px;bottom:0;position:absolute;border-bottom-left-radius:10px;border-bottom-right-radius:10px}#loading #loading-tbar{width:100%;text-align:center}#loading #loading-title{color:#5c6c78;font-size:24px;line-height:24px}#loading #loading-preloader{margin:15px;width:70px;height:70px}#loading #loading-version{float:left}#loading #loading-copyright{float:right}#loading #loading-link{color:#FFF;text-decoration:underline;cursor:pointer}</style>
-	@if (Model.LicenseSettings.HasMp4ServiceLicenseKey || Model.LicenseSettings.HasMp4ServiceWithSubtitlesLicenseKey) {
-	<link rel="stylesheet" href="extjs/resources/libs/videojs/style.css" />
-	<link rel="stylesheet" href="extjs/resources/libs/videojs/video-js.min.css" />
-}
-	<script type="text/javascript">
-		var EsyncLti = @Html.Raw(JSON.Serialize(Model, options));
-
-		var Ext = Ext || {};
-		Ext.manifest = {
-			"js": [{ "path": "extjs/app_@(Model.FullVersion.ToString()).js" }],
-			"css": [{ "path": "extjs/resources/MeetingSetup-all_@(Model.FullVersion.ToString()).css" }]
-		};
-	</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>eSyncTraining Bridge Lti</title>
+    <link rel="stylesheet" href="/lti/bridge/static/styleguide.css?v=@(Model.FullVersion.ToString())">
+    <link rel="stylesheet" href="/lti/bridge/static/vuetify.css?v=@(Model.FullVersion.ToString())">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet" href="/lti/bridge/static/css/app.css?v=@(Model.FullVersion.ToString())">	
 	
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script>window.jQuery || document.write('<script src="extjs/resources/libs/jquery-3.1.1.min.js">\x3C/script>')</script>
-	<script type="text/javascript" src="extjs/resources/localization/localization.js"></script>
-	<script type="text/javascript" src="extjs/resources/libs/jstimezonedetect/jstz.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data.min.js"></script>
-@if (Model.LicenseSettings.HasMp4ServiceLicenseKey || Model.LicenseSettings.HasMp4ServiceWithSubtitlesLicenseKey)
-{
-	<script type="text/javascript" src="extjs/resources/libs/videojs/video.min.js"></script>
-	<script type="text/javascript" src="extjs/resources/libs/vtt.js"></script>
-}
-	<script id="microloader" data-app="1ae6d2ff-075c-46b8-b3c0-05ccc4e72e8f" src="extjs/microloader.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script type="text/javascript">
+        var EsyncLti = @Html.Raw(JSON.Serialize(Model, options));
+    </script>
+
 </head>
 <body>
-	<div id="loading">
-		<div id="loading-tbar">
-			<img id="loading-preloader" src="extjs/resources/preloader.GIF" /> <br />
-			<span id="loading-title" style="">Loading LTI application</span>
-		</div>
-		<div id="loading-bbar">
-			<span id="loading-version"></span>
-			<span id="loading-copyright">Developed by eSyncTraining</span>
-		</div>
-	</div>
+<div id="app"></div>
+<script type="text/javascript" src="/lti/bridge/static/js/manifest.js?v=@(Model.FullVersion.ToString())"></script>
+<script type="text/javascript" src="/lti/bridge/static/js/vendor.js?v=@(Model.FullVersion.ToString())"></script>
+<script type="text/javascript" src="/lti/bridge/static/js/app.js?v=@(Model.FullVersion.ToString())"></script>
 </body>
 </html>

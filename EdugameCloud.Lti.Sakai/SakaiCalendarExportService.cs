@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Sakai.Dto;
 using Newtonsoft.Json;
@@ -15,7 +16,7 @@ namespace EdugameCloud.Lti.Sakai
     {
         private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 
-        public async Task<IEnumerable<MeetingSessionDTO>> SaveEventsAsync(int meetingId, IEnumerable<MeetingSessionDTO> eventDtos, LtiParamDTO param)
+        public async Task<IEnumerable<MeetingSessionDTO>> SaveEventsAsync(int meetingId, IEnumerable<MeetingSessionDTO> eventDtos, LtiParamDTO param, ILmsLicense license)
         {
             var apiParam = new SakaiApiObject
             {
@@ -50,7 +51,7 @@ namespace EdugameCloud.Lti.Sakai
             return sessions;
         }
 
-        public async Task<IEnumerable<string>> DeleteEventsAsync(IEnumerable<string> eventIds, LtiParamDTO param)
+        public async Task<IEnumerable<string>> DeleteEventsAsync(IEnumerable<string> eventIds, LtiParamDTO param, ILmsLicense license)
         {
             var events = eventIds.Select(x => new SakaiEventDelete()
             {

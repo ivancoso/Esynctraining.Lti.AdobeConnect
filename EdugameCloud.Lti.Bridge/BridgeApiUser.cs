@@ -4,7 +4,7 @@ namespace EdugameCloud.Lti.Bridge
 {
     public class BridgeApiUser
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Uid { get; set; }
         public string First_name { get; set; }
         public string Last_name { get; set; }

@@ -18,13 +18,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     {
         private readonly LmsCourseMeetingModel _lmsCourseMeetingModel;
         private readonly ICalendarExportService _calendarExportService;
+        private readonly ILmsLicense _license;
         private readonly ILogger _logger;
 
-        public MeetingSessionService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ICalendarExportService calendarExportService)
+        public MeetingSessionService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ICalendarExportService calendarExportService, ILmsLicense license)
         {
             _lmsCourseMeetingModel = lmsCourseMeetingModel ?? throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _calendarExportService = calendarExportService;
+            _license = license;
         }
 
         public async Task<IEnumerable<MeetingSessionDTO>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LtiParamDTO param)
@@ -76,7 +78,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (_calendarExportService != null)
             {
-                listOfEvents = (await _calendarExportService.SaveEventsAsync(meeting.Id, listOfEvents, param))
+                listOfEvents = (await _calendarExportService.SaveEventsAsync(meeting.Id, listOfEvents, param, _license))
                     .ToList();
             }
 
@@ -105,7 +107,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ? new MeetingNameInfo()
                 : JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
             var lastEvent = meeting.MeetingSessions.OrderByDescending(x => x.StartDate).FirstOrDefault();
-            DateTime startDate = DateTime.UtcNow;
+            DateTime startDate = DateTime.UtcNow.AddHours(1);
             DateTime endDate = startDate.AddHours(1);
             if (lastEvent != null)
             {
@@ -122,7 +124,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (_calendarExportService != null)
             {
-                var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] {ev}, param);
+                var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] {ev}, param, _license);
                 ev = sakaiEventResult.Single();
             }
             var dbEvent = new LmsMeetingSession
@@ -152,7 +154,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (_calendarExportService != null)
             {
                 dto.EventId = dbEvent.EventId;
-                var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] {dto}, param);
+                var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] {dto}, param, _license);
                 dto = sakaiEventResult.Single();
             }
             dbEvent.Name = dto.Name;
@@ -183,7 +185,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (_calendarExportService != null)
             {
-                var deleteResult = (await _calendarExportService.DeleteEventsAsync(new[] { dbEvent.EventId }, param))
+                var deleteResult = (await _calendarExportService.DeleteEventsAsync(new[] { dbEvent.EventId }, param, _license))
                     .Single();
 
                 if (!string.IsNullOrWhiteSpace(deleteResult)
@@ -209,7 +211,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (_calendarExportService != null)
                 {
-                    var deleteResultIds = await _calendarExportService.DeleteEventsAsync(events, param);
+                    var deleteResultIds = await _calendarExportService.DeleteEventsAsync(events, param, _license);
 
                     if (!events.SetEquals(deleteResultIds))
                     {
