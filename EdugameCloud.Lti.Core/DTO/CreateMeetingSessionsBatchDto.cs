@@ -6,27 +6,28 @@ namespace EdugameCloud.Lti.Core.DTO
     [DataContract]
     public class CreateMeetingSessionsBatchDto
     {
-        [DataMember(Name = "meetingId")]
+        [DataMember]
         public int MeetingId { get; set; }
 
-        [DataMember(Name = "startDate")]
+        [Obsolete]
+        [DataMember]
         public string StartDate { get; set; }
 
-        [DataMember(Name = "startTime")]
+        [Obsolete]
+        [DataMember]
         public string StartTime { get; set; }
 
-        [DataMember(Name = "duration")]
+        [DataMember]
         public string Duration { get; set; }
 
         // TRICK: to support JIL instead of DayOfWeek
-        [DataMember(Name = "daysOfWeek")]
+        [DataMember]
         public int[] DaysOfWeek { get; set; }
 
-        [DataMember(Name = "weeks")]
+        [DataMember]
         public int Weeks { get; set; }
 
-        //not used when sending from client side
-        [DataMember(Name = "startTimestamp")]
-        public long StartTimestamp { get; set; }
+        [DataMember]
+        public DateTime StartTimestamp { get; set; }
     }
 }

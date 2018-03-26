@@ -32,22 +32,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public async Task<IEnumerable<MeetingSessionDTO>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(dto.MeetingId).Value;
-            FixDateTimeFields(dto);
-            DateTime startDate = DateTime.UtcNow;
-            DateTime dateBegin;
-
-            if (DateTime.TryParse(dto.StartDate + " " + dto.StartTime, out dateBegin))
+            DateTime startDate = dto.StartTimestamp;
+            if (dto.StartTimestamp < DateTime.UtcNow) //todo: remove these crazy conditions and parsing
             {
-                startDate = dateBegin;
+                FixDateTimeFields(dto);
+                startDate = DateTime.UtcNow;
+                if (DateTime.TryParse(dto.StartDate + " " + dto.StartTime, out var dateBegin))
+                {
+                    startDate = dateBegin;
+                }
             }
 
-            DateTime endDate = startDate.AddHours(1);
-            TimeSpan duration;
-            if (TimeSpan.TryParse(dto.Duration, out duration))
-            {
-                endDate =
-                    startDate.AddMinutes((int)duration.TotalMinutes);
-            }
+            var endDate = TimeSpan.TryParse(dto.Duration, out var duration)
+                ? startDate.AddMinutes((int) duration.TotalMinutes)
+                : startDate.AddHours(1);
 
             MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(meeting.MeetingNameJson)
                 ? new MeetingNameInfo()
