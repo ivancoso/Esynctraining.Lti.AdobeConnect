@@ -8,8 +8,16 @@ namespace EdugameCloud.Lti.API
 {
     public class LmsCourseSectionsServiceBase
     {
-        public virtual Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(ILmsLicense lmsLicense, string courseId)
+        protected ILmsLicense License { get; }
+        protected LtiParamDTO Param { get; }
+
+        public LmsCourseSectionsServiceBase(ILmsLicense license, LtiParamDTO param)
         {
+            License = license;
+            Param = param;
+        }
+
+        public virtual Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSections()        {
             throw new NotImplementedException("LMS Sections are not supported for provider.");
         }
     }

@@ -20,11 +20,6 @@
       id="CanvasSectionsService"
       service="EdugameCloud.Lti.API.LmsCourseSectionsServiceBase, EdugameCloud.Lti"
       type="EdugameCloud.Lti.Canvas.CanvasLmsCourseSectionsService, EdugameCloud.Lti.Canvas"
-      lifestyle="singleton"></component>
-    <component
-      id="HaikuSectionsService"
-      service="EdugameCloud.Lti.API.LmsCourseSectionsServiceBase, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Haiku.HaikuLmsCourseSectionsService, EdugameCloud.Lti.Haiku"
-      lifestyle="singleton"></component>
+      lifestyle="transient"></component>
   </components>
 </configuration>

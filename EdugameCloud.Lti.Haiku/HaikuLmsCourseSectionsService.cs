@@ -12,18 +12,15 @@ namespace EdugameCloud.Lti.Haiku
     {
         private readonly IHaikuRestApiClient _haikuApi;
 
-
-        public HaikuLmsCourseSectionsService(IHaikuRestApiClient apiClient)
+        public HaikuLmsCourseSectionsService(ILmsLicense license, LtiParamDTO param, IHaikuRestApiClient apiClient) :
+            base(license, param)
         {
             _haikuApi = apiClient ?? throw new ArgumentNullException(nameof(apiClient));
         }
 
-
-        public override Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(ILmsLicense lmsLicense, string courseId)
+        public override async Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSections()
         {
-            return _haikuApi.GetCourseSectionsAsync(lmsLicense, int.Parse(courseId));
+            return await _haikuApi.GetCourseSectionsAsync(License, Param.course_id);
         }
-
     }
-
 }

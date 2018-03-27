@@ -9,5 +9,10 @@
       id="Haiku"
       service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
       type="EdugameCloud.Lti.Haiku.HaikuLmsUserService, EdugameCloud.Lti.Haiku"></component>
+    <component
+      id="HaikuSectionsService"
+      service="EdugameCloud.Lti.API.LmsCourseSectionsServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Haiku.HaikuLmsCourseSectionsService, EdugameCloud.Lti.Haiku"
+      lifestyle="transient"></component>
   </components>
 </configuration>

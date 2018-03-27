@@ -206,8 +206,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool isTeacher = this.UsersSetup.IsTeacher(param, lmsCompany);
             if (!isTeacher && lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
             {
-                var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsCompany.LmsProviderId);
-                var sections = await sectionsService.GetCourseSectionsAsync(lmsCompany, courseId.ToString());
+                var sectionsService = LmsFactory.GetCourseSectionsService(lmsCompany, param);
+                var sections = await sectionsService.GetCourseSections();
                 meetings =
                     meetings.Where(
                         x =>
@@ -772,8 +772,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
                     {
-                        var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsCompany.LmsProviderId);
-                        var sections = await sectionsService.GetCourseSectionsAsync(lmsCompany, meeting.CourseId.ToString());
+                        var sectionsService = LmsFactory.GetCourseSectionsService(lmsCompany, param);
+                        var sections = await sectionsService.GetCourseSections();
                         var firstSection = sections.OrderBy(x => x.Id).FirstOrDefault(); //
                         if (firstSection != null)
                         {
@@ -975,8 +975,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
                 {
-                    var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsLicense.LmsProviderId);
-                    var sections = await sectionsService.GetCourseSectionsAsync(lmsLicense, meeting.CourseId.ToString());
+                    var sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense, param);
+                    var sections = await sectionsService.GetCourseSections();
                     if (originalMeeting != null)
                     {
                         foreach (var cs in originalMeeting.CourseSections.Where(x => sections.Any(s => s.Id == x.LmsId)))
@@ -2009,12 +2009,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #endregion
 
-        public async Task UpdateMeetingCourseSectionsAsync(ILmsLicense lmsLicense, UpdateCourseSectionsDto updateCourseSectionsDto)
+        public async Task UpdateMeetingCourseSectionsAsync(ILmsLicense lmsLicense, UpdateCourseSectionsDto updateCourseSectionsDto, LtiParamDTO param)
         {
             var meeting = LmsCourseMeetingModel.GetOneById(updateCourseSectionsDto.MeetingId).Value;
 
-            var sectionsService = LmsFactory.GetCourseSectionsService((LmsProviderEnum)lmsLicense.LmsProviderId);
-            var sections = await sectionsService.GetCourseSectionsAsync(lmsLicense, meeting.CourseId.ToString());
+            var sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense, param);
+            var sections = await sectionsService.GetCourseSections();
             var sectionsToRemove = meeting.CourseSections.Where(x => updateCourseSectionsDto.SectionIds.All(s => s != x.LmsId)).ToList();
             foreach (var lmsCourseSection in sectionsToRemove)
             {

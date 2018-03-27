@@ -12,22 +12,19 @@ namespace EdugameCloud.Lti.Canvas
     {
         private readonly IEGCEnabledCanvasAPI _canvasApi;
 
-
-        public CanvasLmsCourseSectionsService(IEGCEnabledCanvasAPI canvasApi)
+        public CanvasLmsCourseSectionsService(ILmsLicense license, LtiParamDTO param, IEGCEnabledCanvasAPI canvasApi) :
+            base(license, param)
         {
             _canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
         }
 
-
-        public override Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(ILmsLicense lmsLicense, string courseId)
+        public override async Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSections()
         {
-            IEnumerable<LmsCourseSectionDTO> result = _canvasApi.GetCourseSections(lmsLicense.LmsDomain,
-                lmsLicense.AdminUser.Token,
-                int.Parse(courseId));
+            IEnumerable<LmsCourseSectionDTO> result = await _canvasApi.GetCourseSections(License.LmsDomain,
+                License.AdminUser.Token,
+                Param.course_id);
 
-            return Task.FromResult(result);
+            return result;
         }
-
     }
-
 }

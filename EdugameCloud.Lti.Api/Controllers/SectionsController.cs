@@ -45,8 +45,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResult.Error("License doesn't support 'Sections' feature");
             }
 
-            var sectionsService = lmsFactory.GetCourseSectionsService((LmsProviderEnum)LmsCompany.LmsProviderId);
-            return (await sectionsService.GetCourseSectionsAsync(LmsCompany, CourseId.ToString())).ToSuccessResult();
+            var sectionsService = lmsFactory.GetCourseSectionsService(LmsCompany, Session.LtiSession.LtiParam);
+            return (await sectionsService.GetCourseSections()).ToSuccessResult();
         }
 
         [Route("meeting/UpdateMeetingCourseSections")]
@@ -64,7 +64,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
             try
             {
-                await meetingSetup.UpdateMeetingCourseSectionsAsync(LmsCompany, updateCourseSectionsDto);
+                await meetingSetup.UpdateMeetingCourseSectionsAsync(LmsCompany, updateCourseSectionsDto, param);
 
                 var users = await usersSetup.GetUsers(LmsCompany,
                     ac,

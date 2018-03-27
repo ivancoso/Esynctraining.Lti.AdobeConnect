@@ -26,5 +26,10 @@
       service="EdugameCloud.Lti.API.Sakai.IEGCEnabledSakaiApi, EdugameCloud.Lti"
       type="EdugameCloud.Lti.Sakai.SakaiApi, EdugameCloud.Lti.Sakai"
       lifestyle="singleton"></component>
+    <component
+      id="SakaiSectionsService"
+      service="EdugameCloud.Lti.API.LmsCourseSectionsServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Sakai.SakaiLmsCourseSectionsService, EdugameCloud.Lti.Sakai"
+      lifestyle="transient"></component>
   </components>
 </configuration>

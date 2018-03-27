@@ -23,7 +23,7 @@ namespace EdugameCloud.Lti.Canvas
         }
 
 
-        public override Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany,
+        public override async Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany,
             string lmsUserId, int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
@@ -42,16 +42,16 @@ namespace EdugameCloud.Lti.Canvas
                 throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
-            var user = _canvasApi.GetCourseUser(
+            var user = await _canvasApi.GetCourseUser(
                 lmsUserId,
                 lmsCompany,
                 token,
                 courseId);
 
-            return Task.FromResult<(LmsUserDTO user, string error)>((user, null));
+            return (user, null);
         }
 
-        public override Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
             int courseId, LtiParamDTO extraData = null)
         {
             if (lmsCompany == null)
@@ -61,34 +61,34 @@ namespace EdugameCloud.Lti.Canvas
             {
                 var message = string.Format("There is no admin user set for LmsCompanyId={0}.CourseId={1}", lmsCompany.Id, courseId);
                 Logger.Error(message);
-                return Task.FromResult(OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin));
+                return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
             }
 
             if (string.IsNullOrWhiteSpace(lmsCompany.AdminUser.Token))
             {
                 Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
-                return Task.FromResult(OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin));
+                return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
             }
 
-            List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
+            List<LmsUserDTO> users = await FetchUsers(lmsCompany, courseId);
 
-            return Task.FromResult(users.ToSuccessResult());
+            return users.ToSuccessResult();
         }
 
-        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null)
+        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
-            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), null));
+            List<LmsUserDTO> users = await FetchUsers(lmsCompany, courseId);
+            return (GroupUsers(users), null);
         }
 
 
-        private List<LmsUserDTO> FetchUsers(ILmsLicense lmsCompany, int courseId)
+        private async Task<List<LmsUserDTO>> FetchUsers(ILmsLicense lmsCompany, int courseId)
         {
             string token = lmsCompany.AdminUser.Token;
-            List<LmsUserDTO> users = _canvasApi.GetUsersForCourse(
+            List<LmsUserDTO> users = await _canvasApi.GetUsersForCourse(
                 lmsCompany.LmsDomain,
                 token,
                 courseId);

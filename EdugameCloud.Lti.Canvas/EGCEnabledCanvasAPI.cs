@@ -108,7 +108,7 @@ namespace EdugameCloud.Lti.Canvas
             return response.Data.quiz_submissions.Single();
         }
 
-        public LmsUserDTO GetCourseUser(string userId, ILmsLicense lmsCompany, string userToken, int courseId)
+        public async Task<LmsUserDTO> GetCourseUser(string userId, ILmsLicense lmsCompany, string userToken, int courseId)
         {
             try
             {
@@ -127,7 +127,7 @@ namespace EdugameCloud.Lti.Canvas
                     throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
                 }
 
-                LmsUserDTO user = FetchCourseUser(userId, lmsCompany.LmsDomain, token, courseId);
+                LmsUserDTO user = await FetchCourseUser(userId, lmsCompany.LmsDomain, token, courseId);
                 return user;
             }
             catch (Exception ex)
@@ -137,7 +137,7 @@ namespace EdugameCloud.Lti.Canvas
             }
         }
 
-        private LmsUserDTO FetchCourseUser(string userId, string domain, string userToken, int courseId)
+        private async Task<LmsUserDTO> FetchCourseUser(string userId, string domain, string userToken, int courseId)
         {
             try
             {
@@ -150,7 +150,7 @@ namespace EdugameCloud.Lti.Canvas
 
                 RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
 
-                IRestResponse<CanvasLmsUserDTO> response = client.Execute<CanvasLmsUserDTO>(request);
+                IRestResponse<CanvasLmsUserDTO> response = await client.ExecuteTaskAsync<CanvasLmsUserDTO>(request);
 
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -190,14 +190,11 @@ namespace EdugameCloud.Lti.Canvas
             }
         }
 
-        public List<LmsUserDTO> GetUsersForCourse(string domain, string userToken, int courseId)
+        public async Task<List<LmsUserDTO>> GetUsersForCourse(string domain, string userToken, int courseId)
         {
             try
             {
                 Validate(domain, userToken);
-
-                var result = new List<LmsUserDTO>();
-                var client = CreateRestClient(domain);
 
                 //foreach (string role in CanvasAPI.CanvasRoles)
                 //{
@@ -208,39 +205,10 @@ namespace EdugameCloud.Lti.Canvas
 
                 var link = string.Format("/api/v1/courses/{0}/users?per_page={1}&include[]=email&include[]=enrollments",
                     courseId, 100); // default is 10 records per page, max - 100
-
-                while (!string.IsNullOrEmpty(link))
-                {
-                    RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
-
-                    IRestResponse<List<CanvasLmsUserDTO>> response = client.Execute<List<CanvasLmsUserDTO>>(request);
-
-                    if (response.StatusCode != HttpStatusCode.OK)
-                    {
-                        var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
-                        if (errorData != null && errorData.errors != null && errorData.errors.Any())
-                        {
-                            _logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}, domain:{3}.", 
-                                response.StatusCode, response.StatusDescription, link, domain);
-                            foreach (var error in errorData.errors)
-                            {
-                                _logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);
-                            }
-                        }
-                        return result;
-                    }
-
-                    link = ExtractNextPageLink(response);
-
-                    List<CanvasLmsUserDTO> users = response.Data
-                        .Where(x => x.enrollments.Any(enr => enr.course_id == courseId && enr.enrollment_state == CanvasEnrollment.EnrollmentState.Active))
-                        .ToList();
-                    if (users == null)
-                    {
-                        continue;
-                    }
-
-                    result.AddRange(users.Select(user => new LmsUserDTO
+                var users = await GetAllPages<CanvasLmsUserDTO>(domain, link, userToken,
+                    x => x.enrollments.Any(enr =>
+                        enr.course_id == courseId && enr.enrollment_state == CanvasEnrollment.EnrollmentState.Active));
+                return users.Select(user => new LmsUserDTO
                     {
                         Id = user.Id,
                         Email = user.Email,
@@ -249,11 +217,7 @@ namespace EdugameCloud.Lti.Canvas
                         PrimaryEmail = user.Email,
                         LmsRole = SetRole(user, courseId),
                         SectionIds = user.enrollments.Select(x => x.course_section_id.ToString()).ToList()
-                    }));
-                }
-                //}
-
-                return result;
+                    }).ToList();
 
             }
             catch (Exception ex)
@@ -263,38 +227,14 @@ namespace EdugameCloud.Lti.Canvas
             }
         }
 
-        public List<LmsCourseSectionDTO> GetCourseSections(string domain, string userToken, int courseId)
+        public async Task<List<LmsCourseSectionDTO>> GetCourseSections(string domain, string userToken, int courseId)
         {
             try
             {
                 Validate(domain, userToken);
 
-                var result = new List<LmsCourseSectionDTO>();
-                var client = CreateRestClient(domain);
-
-                var link = $"/api/v1/courses/{courseId}/sections?include[]=students&include[]=enrollments";
-
-                RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
-
-                IRestResponse<List<CanvasCourseSectionDTO>> response = client.Execute<List<CanvasCourseSectionDTO>>(request);
-
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
-                    if (errorData != null && errorData.errors != null && errorData.errors.Any())
-                    {
-                        _logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}, domain:{3}.",
-                            response.StatusCode, response.StatusDescription, link, domain);
-                        foreach (var error in errorData.errors)
-                        {
-                            _logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);
-                        }
-                    }
-                    return result;
-                }
-
-
-                List<CanvasCourseSectionDTO> sections = response.Data;
+                var link = $"/api/v1/courses/{courseId}/sections?per_page=100&include[]=students&include[]=enrollments";
+                var sections = await GetAllPages<CanvasCourseSectionDTO>(domain, link, userToken);
 
                 return sections.Select(x => new LmsCourseSectionDTO
                 {
@@ -560,7 +500,46 @@ namespace EdugameCloud.Lti.Canvas
             }
         }
 
-        private static string ExtractNextPageLink(IRestResponse<List<CanvasLmsUserDTO>> response)
+        private async Task<List<T>> GetAllPages<T>(string domain, string link, string userToken, Func<T, bool> filter = null)
+        {
+            var result = new List<T>();
+            var client = CreateRestClient(domain);
+
+            while (!string.IsNullOrEmpty(link))
+            {
+                RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
+
+                IRestResponse<List<T>> response = await client.ExecuteTaskAsync<List<T>>(request);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
+                    if (errorData?.errors != null && errorData.errors.Any())
+                    {
+                        _logger.Error(
+                            $"[Canvas API error] StatusCode:{response.StatusCode}, StatusDescription:{response.StatusDescription}, link: {link}, domain:{domain}.");
+                        foreach (var error in errorData.errors)
+                        {
+                            _logger.Error($"[Canvas API error] Response error: {error.message}");
+                        }
+                    }
+                    return result;
+                }
+
+                link = ExtractNextPageLink(response);
+                IEnumerable<T> records = response.Data;
+                if (filter != null)
+                {
+                    records = records.Where(filter);
+                }
+
+                result.AddRange(records);
+            }
+
+            return result;
+        }
+
+        private static string ExtractNextPageLink<T>(IRestResponse<List<T>> response)
         {
             var link = string.Empty;
 

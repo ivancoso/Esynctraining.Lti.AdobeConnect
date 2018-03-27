@@ -1,4 +1,5 @@
-﻿using EdugameCloud.Lti.API.AdobeConnect;
+﻿using Castle.Windsor;
+using EdugameCloud.Lti.API.AdobeConnect;
 using Esynctraining.Core.Utils;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
@@ -6,6 +7,7 @@ using EdugameCloud.Lti.API.Moodle;
 using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.API
@@ -83,16 +85,21 @@ namespace EdugameCloud.Lti.API
             return IoC.Resolve<LmsUserServiceBase>(lmsId.ToString());
         }
 
-        public LmsCourseSectionsServiceBase GetCourseSectionsService(LmsProviderEnum lmsId)
+        public LmsCourseSectionsServiceBase GetCourseSectionsService(ILmsLicense lmsLicense, LtiParamDTO param)
         {
+            var lmsId = (LmsProviderEnum)lmsLicense.LmsProviderId;
+
             switch (lmsId)
             {
                 case LmsProviderEnum.Canvas:
                 case LmsProviderEnum.Haiku:
-                    return IoC.Resolve<LmsCourseSectionsServiceBase>(lmsId + "SectionsService");
+                //case LmsProviderEnum.Sakai:
+                    var container = IoC.Resolve<IWindsorContainer>(); //bad hack - until parameterized methods are added to IoC and IServiceLocator
+                    return container.Resolve<LmsCourseSectionsServiceBase>(lmsId + "SectionsService",
+                        new {license = lmsLicense, param});
             }
 
-            return new LmsCourseSectionsServiceBase();
+            return new LmsCourseSectionsServiceBase(lmsLicense, param);
         }
 
         public IMeetingSessionService GetMeetingSessionService(ILmsLicense lmsLicense)

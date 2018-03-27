@@ -77,6 +77,10 @@ namespace EdugameCloud.Lti.Host
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             ServicePointManager.SecurityProtocol =
                 SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+
+            //hack - to use parameterized Resolve in LmsFactory. Must be removed when corresponding methods are added to IoC and IServiceLocator
+            if (!container.Kernel.HasComponent(typeof(IWindsorContainer)))
+                container.Register((IRegistration)Component.For<IWindsorContainer>().Instance(container).LifestyleSingleton());
         }
 
         // source : http://stackoverflow.com/questions/1178831/remove-server-response-header-iis7

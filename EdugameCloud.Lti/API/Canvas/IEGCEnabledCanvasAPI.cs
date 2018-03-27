@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 
@@ -6,9 +7,12 @@ namespace EdugameCloud.Lti.API.Canvas
 {
     public interface IEGCEnabledCanvasAPI : IEGCEnabledLmsAPI, ICanvasAPI
     {
-        LmsUserDTO GetCourseUser(string userId, ILmsLicense lmsCompany, string userToken, int courseid);
 
-        List<LmsUserDTO> GetUsersForCourse(string domain, string userToken, int courseid);
+        Task<LmsUserDTO> GetCourseUser(string userId, ILmsLicense lmsCompany, string userToken, int courseid);
+        Task<List<LmsUserDTO>> GetUsersForCourse(string domain, string userToken, int courseid);
+        Task<List<LmsCourseSectionDTO>> GetCourseSections(string domain, string userToken, int courseId);
+
+        //todo: async
 
         CanvasQuizSubmissionDTO CreateQuizSubmission(
             string api,
@@ -24,7 +28,6 @@ namespace EdugameCloud.Lti.API.Canvas
             int courseid,
             CanvasQuizSubmissionDTO submission);
 
-        List<LmsCourseSectionDTO> GetCourseSections(string domain, string userToken, int courseId);
     }
 
 }
