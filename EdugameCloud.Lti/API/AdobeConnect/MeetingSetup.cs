@@ -296,7 +296,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             sw = Stopwatch.StartNew();
             foreach (MeetingInfo meeting in resultCollection)
             {
-                MeetingDTO dto = this.BuildDto(
+                MeetingDTO dto = await BuildDto(
                         lmsUser,
                         param,
                         lmsCompany,
@@ -848,7 +848,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                            meeting.GetMeetingScoId(),
                            meeting,
                            null);
-            MeetingDTO updatedMeeting = this.BuildDto(
+            MeetingDTO updatedMeeting = await BuildDto(
                  lmsUser,
                  param,
                  lmsCompany,
@@ -1035,7 +1035,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                            meeting.GetMeetingScoId(),
                            meeting,
                            null);
-            MeetingDTO updatedMeeting = this.BuildDto(
+            MeetingDTO updatedMeeting = await BuildDto(
                  lmsUser,
                  param,
                  lmsLicense,
@@ -1623,7 +1623,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return info;
         }
 
-        private MeetingDTO BuildDto(
+        private async Task<MeetingDTO> BuildDto(
             LmsUser lmsUser,
             LtiParamDTO param,
             ILmsLicense lmsCompany,
@@ -1688,14 +1688,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingSessionDTO[] sessions = null;
             if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingSessions))
             {
-                sessions = meeting.DbRecord.MeetingSessions.Select(x => new MeetingSessionDTO
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    StartDate = x.StartDate, //ToString("MM/dd/yyyy hh:mm tt"),
-                    EndDate = x.EndDate, //.ToString("MM/dd/yyyy hh:mm tt"),
-                    Summary = x.Summary,
-                }).ToArray();
+                var sessionsService = LmsFactory.GetMeetingSessionService(lmsCompany, param);
+                sessions = (await sessionsService.GetSessions(meeting.DbRecord.Id)).ToArray();
+                //sessions = meeting.DbRecord.MeetingSessions.Select(x => new MeetingSessionDTO
+                //{
+                //    Id = x.Id,
+                //    Name = x.Name,
+                //    StartDate = x.StartDate, //ToString("MM/dd/yyyy hh:mm tt"),
+                //    EndDate = x.EndDate, //.ToString("MM/dd/yyyy hh:mm tt"),
+                //    Summary = x.Summary,
+                //}).ToArray();
             }
 
             if (usedByAnotherMeeting == 0 && type == LmsMeetingType.OfficeHours)

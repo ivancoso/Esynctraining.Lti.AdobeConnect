@@ -20,14 +20,14 @@ namespace EdugameCloud.Lti.Bridge
         public DateTime? start_at { get; set; }
         public DateTime? end_at { get; set; }
         public string location { get; set; }
-        public int seats { get; set; }
+        public int? seats { get; set; }
         public int registered_count { get; set; }
         public int present_count { get; set; }
         public int parts_count { get; set; }
         public int parent_id { get; set; }
         public string notes { get; set; }
         public int live_course_id { get; set; }
-        public DateTime? concluded_at;
+        public DateTime? concluded_at { get; set; }
         public string enroll_url { get; set; }
         public bool has_web_conference { get; set; }
 
