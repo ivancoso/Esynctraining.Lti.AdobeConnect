@@ -54,7 +54,10 @@ namespace EdugameCloud.Lti.Schoology
                 clientSecret,
                 $"sections/{section.id}/enrollments");
             List<Enrollment> enrollments = enrollmentCallResult.enrollment;
-            enrollments = enrollments.Distinct().ToList();
+
+            //https://developers.schoology.com/api-documentation/rest-api-v1/enrollment
+            //status 5: Archived (Course specific status members can be placed in before being fully unenrolled)
+            enrollments = enrollments.Distinct().Where(e => e.status != "5").ToList();
 
             var enrolledUserTasks = enrollments.GroupBy(u => u.uid).Select(g => g.First()).Select(enrollment =>
             {
