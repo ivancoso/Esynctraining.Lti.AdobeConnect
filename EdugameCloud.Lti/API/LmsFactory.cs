@@ -102,21 +102,23 @@ namespace EdugameCloud.Lti.API
             return new LmsCourseSectionsServiceBase(lmsLicense, param);
         }
 
-        public IMeetingSessionService GetMeetingSessionService(ILmsLicense lmsLicense)
+        public IMeetingSessionService GetMeetingSessionService(ILmsLicense lmsLicense, LtiParamDTO param)
         {
             var lmsCourseMeetingModel = IoC.Resolve<LmsCourseMeetingModel>();
             var logger = IoC.Resolve<ILogger>();
-            ICalendarExportService exportService = null;
+            ICalendarExportService calendarExportService = null;
             var lmsId = (LmsProviderEnum)lmsLicense.LmsProviderId;
             switch (lmsId)
             {
                 //    case LmsProviderEnum.Sakai:
                 case LmsProviderEnum.Bridge:
-                    exportService = IoC.Resolve<ICalendarExportService>(lmsId + "CalendarExportService");
-                    break;
+                    var container = IoC.Resolve<IWindsorContainer>(); //bad hack - until parameterized methods are added to IoC and IServiceLocator
+                    calendarExportService = IoC.Resolve<ICalendarExportService>(lmsId + "CalendarExportService");
+                    return container.Resolve<IMeetingSessionService>(lmsId + "SessionsService",
+                        new { license = lmsLicense, param, calendarExportService });
             }
 
-            return new MeetingSessionService(lmsCourseMeetingModel, logger, exportService, lmsLicense);
+            return new MeetingSessionService(lmsCourseMeetingModel, logger, calendarExportService, lmsLicense);
         }
         #endregion
 

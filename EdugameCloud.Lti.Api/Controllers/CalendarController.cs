@@ -43,7 +43,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
-                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany);
+                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany, param);
                 var result = await meetingSessionService.CreateBatchAsync(dto, param);
                 return result.ToSuccessResult();
             }
@@ -58,12 +58,13 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("getevents")]
         [HttpPost]
         [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
-        public OperationResultWithData<IEnumerable<MeetingSessionDTO>> GetEvents([FromBody]MeetingRequestDto request)
+        public async Task<OperationResultWithData<IEnumerable<MeetingSessionDTO>>> GetEvents([FromBody]MeetingRequestDto request)
         {
             try
             {
-                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany);
-                var result = meetingSessionService.GetSessions(request.MeetingId);
+                LtiParamDTO param = Session.LtiSession.LtiParam;
+                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany, param);
+                var result = await meetingSessionService.GetSessions(request.MeetingId);
                 return result.ToSuccessResult();
             }
             catch (Exception ex)
@@ -81,7 +82,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
-                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany);
+                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany, param);
                 var eve = await meetingSessionService.CreateSessionAsync(model.MeetingId, param);
                 return eve.ToSuccessResult();
             }
@@ -100,7 +101,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
-                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany);
+                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany, param);
                 var eve = await meetingSessionService.SaveSessionAsync(model.MeetingId, model, param);
                 return eve.ToSuccessResult();
             }
@@ -119,7 +120,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
-                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany);
+                var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany, param);
                 await meetingSessionService.DeleteSessionAsync(model.MeetingId, model.Id.GetValueOrDefault(), param);
                 return OperationResult.Success();
             }

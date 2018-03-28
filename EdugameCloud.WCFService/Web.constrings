@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <connectionStrings>
   <remove name="Database" />
-  <add name="Database" connectionString="Server=192.168.10.113;Database=EduGameCloud.Dev;User ID=edugame;Password=$Pr!DHEgsEGC;Connection Timeout=180;" />
+ <add name="Database" connectionString="Server=192.168.10.113;Database=EduGameCloud.Dev;User ID=edugame;Password=$Pr!DHEgsEGC;Connection Timeout=180;" />
+<!--     <add name="Database" connectionString="Server=192.168.10.103;Database=EduGameCloud;User ID=edugame;password=$Pr!DHEgsEGC;Connection Timeout=180;" />-->
+<!--<add name="Database" connectionString="Server=sy2.veeps.net.au;Database=LTI_DB_PROD;User ID=LTI_PROD_user;password=`123456yhN;Connection Timeout=120;" />-->
 </connectionStrings>

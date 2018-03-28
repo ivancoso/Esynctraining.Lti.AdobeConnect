@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Bridge
 {
@@ -41,24 +37,42 @@ namespace EdugameCloud.Lti.Bridge
                     var userRegistered = await _api.RegisterUserToSession(session.id, user.Id, license);
                 }
 
-                var evt = result.FirstOrDefault(x => session.start_at.Value == x.StartDate);
-                if (evt != null)
-                {
-                    evt.EventId = session.id.ToString();
-                }
+                //var evt = result.FirstOrDefault(x => session.start_at.Value == x.StartDate);
+                //if (evt != null)
+                //{
+                //    evt.EventId = session.id.ToString();
+                //}
             }
 
-            return result;
+            //return result;
+
+            return sessions.Select(ConvertToDto);
+        }
+
+        private MeetingSessionDTO ConvertToDto(LiveSessionResponse resp)
+        {
+            return new MeetingSessionDTO
+            {
+                 Id = resp.id,
+                 StartDate = resp.start_at.Value,
+                 EndDate = resp.end_at.Value,
+                 EventId = resp.id.ToString(),
+                 Summary = resp.notes,
+                 Name = resp.start_at.Value.ToString()
+            };
         }
 
         public async Task<IEnumerable<string>> DeleteEventsAsync(IEnumerable<string> eventIds, LtiParamDTO param, ILmsLicense license)
         {
+            List<string> ids = new List<string>();
             foreach (var id in eventIds)
             {
                 var result = await _api.DeleteSession(param.course_id.ToString(), id, license);
+                if(result)
+                    ids.Add(id);
             }
 
-            return null;
+            return ids;
             //var events = eventIds.Select(x => new SakaiEventDelete()
             //{
             //    SakaiId = x
@@ -83,16 +97,5 @@ namespace EdugameCloud.Lti.Bridge
 
             //return resp.Replace("\n", String.Empty).Replace("\r", String.Empty).Split(',');
         }
-
-        private string GetApiUrl(LtiParamDTO param)
-        {
-            var scheme = param.lis_outcome_service_url != null
-                         && param.lis_outcome_service_url.IndexOf(HttpScheme.Https, StringComparison.InvariantCultureIgnoreCase) >= 0
-                ? HttpScheme.Https
-                : HttpScheme.Http;
-
-            return $"{scheme}{param.lms_domain}/egcint/service/";
-        }
-
     }
 }

@@ -134,6 +134,20 @@ namespace EdugameCloud.Lti.Bridge
             return response.StatusCode == HttpStatusCode.NoContent;
         }
 
+        public async Task<LiveSessionResponse> UpdateSession(string courseId, int sessionId, LiveSessionRequest session, ILmsLicense lmsCompany)
+        {
+            if (courseId == null)
+                throw new ArgumentNullException(nameof(courseId));
+
+            var basicHeader = GetBasicHeader(lmsCompany);
+            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var relativeUrl = $"/api/author/live_courses/{courseId}/sessions/{sessionId}";
+            var jsonData = JsonConvert.SerializeObject(new { session = new {session.start_at, session.end_at} });
+
+            var response = await GetRestCall<ListSessionsResponse>(basicHeader, apiUrl, relativeUrl, HttpMethod.Put, jsonData);
+            return response?.Sessions?.Single();
+        }
+
         public async Task<LiveSessionResponse> GetSession(string courseId, string sessionId, ILmsLicense lmsCompany)
         {
             if (courseId == null)
@@ -147,7 +161,7 @@ namespace EdugameCloud.Lti.Bridge
             var response = await GetRestCall<ListSessionsResponse>(basicHeader, apiUrl, relativeUrl);
             return response?.Sessions?.FirstOrDefault();
         }
-        
+
         public async Task<T> GetRestCall<T>(string basicHeader, string apiUrl, string relativeUrl, HttpMethod httpMethod = null, string jsonData = null)
         {
             var requestMessage = new HttpRequestMessage(httpMethod ?? HttpMethod.Get, relativeUrl);

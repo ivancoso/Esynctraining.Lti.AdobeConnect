@@ -92,7 +92,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return meeting.MeetingSessions.Select(ConvertFromEntity).ToArray();
         }
 
-        public IEnumerable<MeetingSessionDTO> GetSessions(int meetingId)
+        public async Task<IEnumerable<MeetingSessionDTO>> GetSessions(int meetingId)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
             return meeting.MeetingSessions.Select(ConvertFromEntity).ToArray();
@@ -254,5 +254,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
     }
+
 
 }
