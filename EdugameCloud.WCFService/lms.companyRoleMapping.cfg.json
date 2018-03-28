@@ -130,6 +130,41 @@
       "lmsRoleName": "Advisor",
       "acRole": 2
     }
+  ],
+
+  "9": [
+    {
+      "lmsRoleName": "Administrator",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Admin",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "System Admin",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Instructor",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Teacher",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Advisor",
+      "acRole": 2
+    },
+    {
+      "lmsRoleName": "Student",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Parent",
+      "acRole": 3
+    }
   ]
 
 }
