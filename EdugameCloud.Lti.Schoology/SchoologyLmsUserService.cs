@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Castle.Components.DictionaryAdapter;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Schoology;
 using EdugameCloud.Lti.Core.Constants;
@@ -50,10 +51,21 @@ namespace EdugameCloud.Lti.Schoology
                 clientSecret,
                 $"sections/{courseId}");
 
-            var enrollmentCallResult = await _restApiClient.GetRestCall<RootObject2>(clientId,
-                clientSecret,
-                $"sections/{section.id}/enrollments");
-            List<Enrollment> enrollments = enrollmentCallResult.enrollment;
+            List<Enrollment> enrollments = new List<Enrollment>();
+            RootObject2 enrollmentCallResult;
+            int startPage = 0;
+            int pageSize = 20;
+            do
+            {
+                enrollmentCallResult = await _restApiClient.GetRestCall<RootObject2>(clientId,
+                    clientSecret,
+                    $"sections/{section.id}/enrollments?start={startPage}&limit={pageSize}");
+
+                enrollments.AddRange(enrollmentCallResult.enrollment);
+
+                startPage += pageSize;
+
+            } while (enrollments.Count < Int32.Parse(enrollmentCallResult.total));
 
             //https://developers.schoology.com/api-documentation/rest-api-v1/enrollment
             //status 5: Archived (Course specific status members can be placed in before being fully unenrolled)
