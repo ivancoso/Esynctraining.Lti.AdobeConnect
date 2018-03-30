@@ -41,12 +41,12 @@ namespace EdugameCloud.Core.Business.Models
             return GetAll(x => x.Guid == guid).FirstOrDefault();
         }
 
-        public bool AnyByQuizId(int quizId)
+        public IEnumerable<CompanyEventQuizMapping> GetAllMappedByQuizId(int quizId)
         {
             var query = from map in this.Repository.Session.Query<CompanyEventQuizMapping>()
                         where map.PreQuiz.Id == quizId || map.PostQuiz.Id == quizId
                         select map;
-            return query.Any();
+            return query;
         }
 
     }

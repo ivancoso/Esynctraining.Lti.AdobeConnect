@@ -1,4 +1,10 @@
 ﻿// ReSharper disable CheckNamespace
+
+using System;
+using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AdobeConnect;
+
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
@@ -114,11 +120,30 @@ namespace EdugameCloud.WCFService
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
-            var eventQuizMappingModel = CompanyEventQuizMappingModel;
             foreach (var quiz in moduleItem.Quizes)
             {
-                bool usedWithinEventMapping = eventQuizMappingModel.AnyByQuizId(quiz.Id);
-                if (usedWithinEventMapping)
+                var mappings = CompanyEventQuizMappingModel.GetAllMappedByQuizId(quiz.Id);
+                bool informAboutMapping = false;
+                foreach (var mapping in mappings)
+                {
+                    var acUri = new Uri(mapping.CompanyAcDomain.AcServer);
+                    var acProvider = new AdobeConnectProvider(new ConnectionDetails(acUri));
+                    var acProxy = new AdobeConnectProxy(acProvider, Logger, acUri);
+                    var scoInfoResult = acProxy.GetScoInfo(mapping.AcEventScoId);
+                    if (scoInfoResult.Success)
+                    {
+                        if (scoInfoResult.ScoInfo == null)
+                        {
+                            CompanyEventQuizMappingModel.RegisterDelete(mapping, true);
+                        }
+                        else
+                        {
+                            informAboutMapping = true;
+                        }
+                    }
+                }
+
+                if (informAboutMapping)
                 {
                     var msg = "This item cannot be removed as it's mapped with an Event. Please delete the Mapping first.";
                     var error = new Error(
