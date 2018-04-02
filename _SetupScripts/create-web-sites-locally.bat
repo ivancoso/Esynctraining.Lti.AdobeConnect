@@ -3,6 +3,8 @@ set userName="ESYNCTRAINING\Bamboo_LTI_stage"
 
 powershell -ExecutionPolicy Unrestricted -NoLogo -File create-web-sites.ps1 -environmentAlias %environmentAlias%
 
+powershell -ExecutionPolicy Unrestricted -NoLogo -File create-web-sites-locally.ps1 -environmentAlias %environmentAlias%
+
 if %userName% NEQ "" net share EdugameCloud.%environmentAlias%$=c:\inetpub\EdugameCloud.%environmentAlias% /grant:%userName%,FULL
 
 

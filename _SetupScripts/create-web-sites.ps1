@@ -16,9 +16,9 @@ Import-Module WebAdministration
 InstallAspNetCoreWindowsHosting
 InstallWCF
 
+# CREATE EdugameCloud.$environmentAlias SITE   
 Write-Host "EdugameCloud.$environmentAlias"
 
-# CREATE EdugameCloud.$environmentAlias SITE    
 CreateAppPool `
     -iisAppPoolName "EdugameCloud.$environmentAlias" `
     -iisAppPoolDotNetVersion "v4.0"
@@ -35,6 +35,8 @@ SetFolderReadPermissionsForUser `
       
 
 # CREATE lti APPLICATION    
+Write-Host "EdugameCloud.Lti.$environmentAlias"
+
 CreateAppPool `
     -iisAppPoolName "EdugameCloud.Lti.$environmentAlias" `
     -iisAppPoolDotNetVersion "v4.0"
@@ -54,6 +56,8 @@ SetFolderReadPermissionsForUser `
 
 
 # CREATE lti-api APPLICATION
+Write-Host "EdugameCloud.LtiApi.$environmentAlias"
+
 CreateAppPool `
     -iisAppPoolName "EdugameCloud.LtiApi.$environmentAlias" `
    
@@ -68,6 +72,8 @@ SetFolderReadPermissionsForUser `
 
 
 # CREATE SERVICES APPLICATION
+Write-Host "EdugameCloud.$environmentAlias.Wcf"
+
 CreateAppPool `
     -iisAppPoolName  "EdugameCloud.$environmentAlias.Wcf" `
     -iisAppPoolDotNetVersion "v4.0"
