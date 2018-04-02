@@ -1,7 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using PDFAnnotation.Core.Wrappers;
-
-
 namespace PDFAnnotation.Core.Business.Models.Annotation
 {
     using System;
@@ -25,30 +23,12 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
 
     using WebException = WcfRestContrib.ServiceModel.Web.Exceptions.WebException;
 
-    /// <summary>
-    /// The PDF model.
-    /// </summary>
     public class PdfModel
     {
-        /// <summary>
-        /// The converter.
-        /// </summary>
         private readonly Pdf2SwfConverter converter;
-
-        /// <summary>
-        /// The settings.
-        /// </summary>
         private readonly dynamic settings;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PdfModel"/> class.
-        /// </summary>
-        /// <param name="converter">
-        /// The converter.
-        /// </param>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
+
         public PdfModel(Pdf2SwfConverter converter, ApplicationSettingsProvider settings)
         {
             PdfReader.unethicalreading = true;
@@ -56,18 +36,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
             this.settings = settings;
         }
 
-        /// <summary>
-        /// The convert if not exist.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <param name="ms">
-        /// The memory stream.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+
         public bool ConvertIfNotExist(Domain.Entities.File file, byte[] ms = null)
         {
             var failedFolder = (string)System.IO.Path.Combine(FileModel.FileStoragePhysicalPath(this.settings), (string)this.settings.FailedPDFsFolder);

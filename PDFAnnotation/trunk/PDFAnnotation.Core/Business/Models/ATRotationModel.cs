@@ -9,31 +9,13 @@ namespace PDFAnnotation.Core.Business.Models
 
     using PDFAnnotation.Core.Domain.Entities;
 
-    /// <summary>
-    /// The drawing model.
-    /// </summary>
     public class RotationModel : BaseModel<ATRotation, int>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RotationModel"/> class.
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
         public RotationModel(IRepository<ATRotation, int> repository)
             : base(repository)
         {
         }
 
-        /// <summary>
-        /// The get all for file.
-        /// </summary>
-        /// <param name="fileId">
-        /// The file id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
         public IEnumerable<ATRotation> GetAllForFile(Guid fileId)
         {
             var query =
@@ -42,5 +24,7 @@ namespace PDFAnnotation.Core.Business.Models
                                                     .Where(x => x.File.Id == fileId).Fetch(x => x.Mark).Eager;
             return this.Repository.FindAll(query);
         }
+
     }
+
 }

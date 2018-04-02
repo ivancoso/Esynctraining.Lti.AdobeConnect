@@ -28,9 +28,6 @@
     using PDFAnnotation.Core.Utils;
     using File = PDFAnnotation.Core.Domain.Entities.File;
 
-    /// <summary>
-    ///     The file model.
-    /// </summary>
     public class FileModel : BaseModel<File, Guid>
     {
         #region Fields

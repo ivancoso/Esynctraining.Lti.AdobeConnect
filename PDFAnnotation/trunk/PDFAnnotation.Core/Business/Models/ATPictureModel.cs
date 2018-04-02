@@ -7,26 +7,11 @@
     using PDFAnnotation.Core.Domain.Entities;
     public class PictureModel : BaseModel<ATPicture, int>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PictureModel"/> class.
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
         public PictureModel(IRepository<ATPicture, int> repository)
             : base(repository)
         {
         }
 
-        /// <summary>
-        /// The get all for file.
-        /// </summary>
-        /// <param name="fileId">
-        /// The file id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
         public IEnumerable<ATPicture> GetAllForFile(Guid fileId)
         {
             var query =
@@ -38,4 +23,5 @@
         }
 
     }
+
 }

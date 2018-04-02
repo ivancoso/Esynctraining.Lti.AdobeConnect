@@ -11,61 +11,24 @@ namespace PDFAnnotation.Core.Business.Models
     using NHibernate.Criterion;
     using PDFAnnotation.Core.Domain.Entities;
 
-    /// <summary>
-    ///     The Topic model class.
-    /// </summary>
     public class TopicModel : BaseModel<Topic, int>
     {
-        /// <summary>
-        /// The full text model.
-        /// </summary>
         private readonly FullTextModel fullTextModel;
 
-        #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TopicModel"/> class.
-        /// </summary>
-        /// <param name="fullTextModel">
-        /// The full Text Model.
-        /// </param>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
         public TopicModel(FullTextModel fullTextModel, IRepository<Topic, int> repository)
             : base(repository)
         {
             this.fullTextModel = fullTextModel;
         }
 
-        #endregion
 
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The get all by case id.
-        /// </summary>
-        /// <param name="caseId">
-        /// The case id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Topic}"/>.
-        /// </returns>
         public IEnumerable<Topic> GetAllByCategoryId(int caseId)
         {
             var defaultQuery = new DefaultQueryOver<Topic, int>().GetQueryOver().Where(x => x.Category.Id == caseId);
             return this.Repository.FindAll(defaultQuery);
         }
 
-        /// <summary>
-        /// The get all by categories ids.
-        /// </summary>
-        /// <param name="casesIds">
-        /// The categories ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Topic}"/>.
-        /// </returns>
         public IEnumerable<Topic> GetAllByCasesIds(List<int> casesIds)
         {
             var query =
@@ -75,30 +38,6 @@ namespace PDFAnnotation.Core.Business.Models
             return this.Repository.FindAll(query);
         }
 
-        /// <summary>
-        /// The search.
-        /// </summary>
-        /// <param name="searchPattern">
-        /// The search Pattern.
-        /// </param>
-        /// <param name="categoryId">
-        /// The category Id.
-        /// </param>
-        /// <param name="companyId">
-        /// The company Id.
-        /// </param>
-        /// <param name="pageIndex">
-        /// The page Index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page Size.
-        /// </param>
-        /// <param name="totalCount">
-        /// The total Count.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Contact}"/>.
-        /// </returns>
         public IEnumerable<Topic> GetAllByCategoryAndNamePaged(string searchPattern, int categoryId, int companyId, int pageIndex, int pageSize, out int totalCount)
         {
             var searchIds = new List<int>();
@@ -137,18 +76,6 @@ namespace PDFAnnotation.Core.Business.Models
             return searchIds.Any() ? this.Repository.FindAll(queryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(queryOver);
         }
 
-        /// <summary>
-        /// The register save.
-        /// </summary>
-        /// <param name="entity">
-        /// The entity.
-        /// </param>
-        /// <param name="flush">
-        /// The flush.
-        /// </param>
-        /// <param name="updateDateModified">
-        /// The update date modified.
-        /// </param>
         public override void RegisterSave(Topic entity, bool flush, bool updateDateModified = true)
         {
             var fileModel = IoC.Resolve<FileModel>();
@@ -156,6 +83,6 @@ namespace PDFAnnotation.Core.Business.Models
             base.RegisterSave(entity, flush, updateDateModified);
         }
 
-        #endregion
     }
+
 }

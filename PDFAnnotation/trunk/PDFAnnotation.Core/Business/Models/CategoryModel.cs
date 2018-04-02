@@ -1,6 +1,6 @@
-
 namespace PDFAnnotation.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Esynctraining.Core.FullText;
@@ -10,47 +10,22 @@ namespace PDFAnnotation.Core.Business.Models
     using NHibernate.Criterion;
     using PDFAnnotation.Core.Domain.Entities;
 
-    /// <summary>
-    ///     The Category model class.
-    /// </summary>
     public class CategoryModel : BaseModel<Category, int>
     {
-        #region Fields
-
-        /// <summary>
-        /// The full text model.
-        /// </summary>
-        private readonly FullTextModel fullTextModel;
-
-        #endregion
+        private readonly FullTextModel _fullTextModel;
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CategoryModel"/> class.
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        /// <param name="fullTextModel">
-        /// The full Text Model.
-        /// </param>
         public CategoryModel(IRepository<Category, int> repository, FullTextModel fullTextModel)
             : base(repository)
         {
-            this.fullTextModel = fullTextModel;
+            _fullTextModel = fullTextModel ?? throw new ArgumentNullException(nameof(fullTextModel));
         }
 
         #endregion
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     The get all.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="IEnumerable{Category}" />.
-        /// </returns>
         public override IEnumerable<Category> GetAll()
         {
             QueryOver<Category, Category> defaultQuery =
@@ -58,15 +33,6 @@ namespace PDFAnnotation.Core.Business.Models
             return this.Repository.FindAll(defaultQuery);
         }
 
-        /// <summary>
-        /// The get all by company id.
-        /// </summary>
-        /// <param name="companyId">
-        /// The company id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Category}"/>.
-        /// </returns>
         public IEnumerable<int> GetAllIdsByCompanyId(int companyId)
         {
             var query = new DefaultQueryOver<Category, int>().GetQueryOver().Where(x => x.CompanyId == companyId).Select(x => x.Id);
@@ -74,15 +40,6 @@ namespace PDFAnnotation.Core.Business.Models
             return this.Repository.FindAll<int>(query).ToList();
         }
 
-        /// <summary>
-        /// The get all by company id.
-        /// </summary>
-        /// <param name="firmId">
-        /// The company id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Category}"/>.
-        /// </returns>
         public IEnumerable<Category> GetAllByCompanyId(int firmId)
         {
             QueryOver<Category, Category> query =
@@ -122,45 +79,12 @@ namespace PDFAnnotation.Core.Business.Models
 
 #endif
 
-        /// <summary>
-        /// The get all by company id. and contact
-        /// </summary>
-        /// <param name="companyIds">
-        /// The company Ids.
-        /// </param>
-        /// <param name="contactId">
-        /// The contact.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Category}"/>.
-        /// </returns>
         public IEnumerable<Category> GetAllByCompanyIds(List<int> companyIds)
         {
             var query = new DefaultQueryOver<Category, int>().GetQueryOver().WhereRestrictionOn(x => x.CompanyId).IsIn(companyIds);
             return this.Repository.FindAll(query).ToList();
         }
 
-        /// <summary>
-        /// The get all paged.
-        /// </summary>
-        /// <param name="searchPattern">
-        /// The name.
-        /// </param>
-        /// <param name="companyId">
-        /// The company Id.
-        /// </param>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <param name="totalCount">
-        /// The total count.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{T}"/>.
-        /// </returns>
         public IEnumerable<Category> GetAllByCompanyAndNamePaged(string searchPattern, int companyId, int pageIndex, int pageSize, out int totalCount)
         {
             var searchIds = new List<int>();
@@ -177,7 +101,7 @@ namespace PDFAnnotation.Core.Business.Models
 
             if (!string.IsNullOrWhiteSpace(searchPattern))
             {
-                searchIds = this.fullTextModel.Search(searchPattern, typeof(Category), int.MaxValue).ToList();
+                searchIds = this._fullTextModel.Search(searchPattern, typeof(Category), int.MaxValue).ToList();
                 queryOver = queryOver.AndRestrictionOn(x => x.Id).IsIn(searchIds);
             }
 
@@ -193,15 +117,6 @@ namespace PDFAnnotation.Core.Business.Models
             return searchIds.Any() ? this.Repository.FindAll(pagedQuery).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(pagedQuery);
         }
 
-        /// <summary>
-        /// The get all by ids.
-        /// </summary>
-        /// <param name="ids">
-        /// The ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Category}"/>.
-        /// </returns>
         public override IEnumerable<Category> GetAllByIds(List<int> ids)
         {
             QueryOver<Category, Category> defaultQuery =
@@ -211,15 +126,6 @@ namespace PDFAnnotation.Core.Business.Models
             return this.Repository.FindAll(defaultQuery);
         }
 
-        /// <summary>
-        /// The get one by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{Category}"/>.
-        /// </returns>
         public override IFutureValue<Category> GetOneById(int id)
         {
             QueryOver<Category, Category> defaultQuery =
@@ -227,15 +133,6 @@ namespace PDFAnnotation.Core.Business.Models
             return this.Repository.FindOne(defaultQuery);
         }
 
-        /// <summary>
-        /// The search.
-        /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Category}"/>.
-        /// </returns>
         public IEnumerable<Category> Search(string name)
         {
             QueryOver<Category, Category> defaultQuery =
@@ -246,5 +143,7 @@ namespace PDFAnnotation.Core.Business.Models
         }
 
 #endregion
+
     }
+
 }

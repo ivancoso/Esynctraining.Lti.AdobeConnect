@@ -179,5 +179,7 @@
         /// type including the constants from all the base types
         /// </summary>
         public static ReadOnlyCollection<string> SupportedTypes { get; private set; }
+
     }
+
 }

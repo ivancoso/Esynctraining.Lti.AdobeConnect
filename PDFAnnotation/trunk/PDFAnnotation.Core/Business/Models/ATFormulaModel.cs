@@ -7,26 +7,11 @@
     using PDFAnnotation.Core.Domain.Entities;
    public class FormulaModel : BaseModel<ATFormula, int>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FormulaModel"/> class.
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
         public FormulaModel(IRepository<ATFormula, int> repository)
             : base(repository)
         {
         }
 
-        /// <summary>
-        /// The get all for file.
-        /// </summary>
-        /// <param name="fileId">
-        /// The file id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
         public IEnumerable<ATFormula> GetAllForFile(Guid fileId)
         {
             var query =
@@ -36,5 +21,7 @@
                                                     .Fetch(x => x.Mark).Eager;
             return this.Repository.FindAll(query);
         }
+
     }
+
 }

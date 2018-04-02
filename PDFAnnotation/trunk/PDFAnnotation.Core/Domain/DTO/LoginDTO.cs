@@ -8,8 +8,6 @@
     [DataContract]
     public class LoginDTO
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the password.
         /// </summary>
@@ -28,6 +26,6 @@
         [DataMember]
         public bool rememberMe { get; set; }
 
-        #endregion
     }
+
 }
