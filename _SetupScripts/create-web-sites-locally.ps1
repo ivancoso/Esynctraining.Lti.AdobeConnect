@@ -29,10 +29,33 @@ CreateWebSite `
     -iisAppPoolName "EdugameCloud.$environmentAlias" `
     -port 80
 
+# SetFolderPermissionsForUser `
+#     -directoryPath "c:\inetpub\EdugameCloud.$environmentAlias" `
+#     -userName "ESYNCTRAINING\Bamboo_LTI_stage" `
+#     -permissions "FullControl"
+
 SetFolderReadPermissionsForUser `
     -directoryPath "c:\inetpub\EdugameCloud.$environmentAlias" `
     -appPoolName "EdugameCloud.$environmentAlias"
-      
+   
+# CREATE api APPLICATION    
+CreateAppPool `
+    -iisAppPoolName "EdugameCloud.$environmentAlias.Api" `
+    -iisAppPoolDotNetVersion "v4.0"
+   
+CreateWebApplication `
+    -appName "EdugameCloud.$environmentAlias\api" `
+    -folderPath "C:\inetpub\EdugameCloud.$environmentAlias\api" `
+    -iisAppPoolName "EdugameCloud.$environmentAlias.Api" `
+
+SetFolderReadPermissionsForUser `
+    -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias\api" `
+    -appPoolName "EdugameCloud.$environmentAlias.Api"
+
+SetFolderReadPermissionsForUser `
+    -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias" `
+    -appPoolName "EdugameCloud.$environmentAlias.Api"
+    
 
 # CREATE lti APPLICATION    
 CreateAppPool `
@@ -66,6 +89,19 @@ SetFolderReadPermissionsForUser `
     -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias\lti-api" `
     -appPoolName "EdugameCloud.LtiApi.$environmentAlias"
 
+
+# CREATE lti-mp4 APPLICATION
+CreateAppPool `
+    -iisAppPoolName  "EdugameCloud.Mp4.$environmentAlias" `
+   
+CreateWebApplication `
+    -appName "EdugameCloud.$environmentAlias\lti-mp4" `
+    -folderPath  "C:\inetpub\EdugameCloud.$environmentAlias\lti-mp4" `
+    -iisAppPoolName  "EdugameCloud.Mp4.$environmentAlias" `
+
+SetFolderReadPermissionsForUser `
+    -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias\lti-mp4" `
+    -appPoolName "EdugameCloud.Mp4.$environmentAlias"
 
 # CREATE SERVICES APPLICATION
 CreateAppPool `
