@@ -45,6 +45,7 @@ CreateWebApplication `
     -appName "EdugameCloud.$environmentAlias\lti" `
     -folderPath "C:\inetpub\EdugameCloud.$environmentAlias\lti" `
     -iisAppPoolName "EdugameCloud.Lti.$environmentAlias" `
+    -siteName "EdugameCloud.$environmentAlias" `
 
 SetFolderReadPermissionsForUser `
     -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias\lti" `
@@ -65,6 +66,7 @@ CreateWebApplication `
     -appName "EdugameCloud.$environmentAlias\lti-api" `
     -folderPath "C:\inetpub\EdugameCloud.$environmentAlias\lti-api" `
     -iisAppPoolName "EdugameCloud.LtiApi.$environmentAlias" `
+    -siteName "EdugameCloud.$environmentAlias" `
 
 SetFolderReadPermissionsForUser `
     -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias\lti-api" `
@@ -82,6 +84,7 @@ CreateWebApplication `
     -appName "EdugameCloud.$environmentAlias\services" `
     -folderPath  "C:\inetpub\EdugameCloud.$environmentAlias\services" `
     -iisAppPoolName  "EdugameCloud.$environmentAlias.Wcf" `
+    -siteName "EdugameCloud.$environmentAlias" `
 
 SetFolderReadPermissionsForUser `
     -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias\services" `

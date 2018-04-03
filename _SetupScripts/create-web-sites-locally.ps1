@@ -1,16 +1,14 @@
 param([string]$environmentAlias = "Stage")
 
-. includes\iis-install-iis.ps1
-. includes\iis-install-asp-net-core-bundles.ps1
-. includes\iis-create-web-site.ps1
 . includes\iis-create-app-pool.ps1
 . includes\iis-create-web-application.ps1
-. includes\site-configure-environment.ps1
-. includes\iis-create-virtual-directory.ps1
 . includes\file-system.ps1
-. includes\wcf-install-wcf.ps1
+. includes\set-folder-read-permissions.ps1
+. includes\set-folder-write-permissions.ps1
 
-   
+
+Import-Module WebAdministration
+
 # CREATE api APPLICATION    
 Write-Host "EdugameCloud.$environmentAlias.Api"
 
@@ -22,14 +20,15 @@ CreateWebApplication `
     -appName "EdugameCloud.$environmentAlias\api" `
     -folderPath "C:\inetpub\EdugameCloud.$environmentAlias\api" `
     -iisAppPoolName "EdugameCloud.$environmentAlias.Api" `
+    -siteName "EdugameCloud.$environmentAlias" `
 
 SetFolderReadPermissionsForUser `
     -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias\api" `
-    -appPoolName "EdugameCloud.$environmentAlias.Api"
+    -appPoolName "EdugameCloud.$environmentAlias.Api" `
 
 SetFolderReadPermissionsForUser `
     -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias" `
-    -appPoolName "EdugameCloud.$environmentAlias.Api"
+    -appPoolName "EdugameCloud.$environmentAlias.Api" `
     
 
 # CREATE lti-mp4 APPLICATION
@@ -42,6 +41,7 @@ CreateWebApplication `
     -appName "EdugameCloud.$environmentAlias\lti-mp4" `
     -folderPath  "C:\inetpub\EdugameCloud.$environmentAlias\lti-mp4" `
     -iisAppPoolName  "EdugameCloud.Mp4.$environmentAlias" `
+    -siteName "EdugameCloud.$environmentAlias" `
 
 SetFolderReadPermissionsForUser `
     -directoryPath "C:\inetpub\EdugameCloud.$environmentAlias\lti-mp4" `
