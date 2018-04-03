@@ -431,6 +431,16 @@ namespace EdugameCloud.WCFService
                 result = result?.Intersect(comapniesByName).ToList() ?? comapniesByName;
             }
 
+            if (!string.IsNullOrEmpty(filter.consumerKey))
+            {
+                var lmsCompany = LmsCompanyModel.GetOneByConsumerKey(filter.consumerKey).Value;
+                var companiesByConsumerKey = lmsCompany == null 
+                                                ? new List<int>() 
+                                                : new List<int> { lmsCompany.CompanyId};
+
+                result = result?.Intersect(companiesByConsumerKey).ToList() ?? companiesByConsumerKey;
+            }
+
             return this.CompanyModel.GetCompaniesFlatByIds(result).ToArray();
         }
 

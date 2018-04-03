@@ -24,5 +24,8 @@ namespace EdugameCloud.Core.Domain.DTO
 
         [DataMember(IsRequired = false)]
         public string acServer { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public string consumerKey { get; set; }
     }
 }
