@@ -56,6 +56,9 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string HaikuToken = nameof(HaikuToken);
         public const string HaikuTokenSecret = nameof(HaikuTokenSecret);
 
+        public const string BridgeApiTokenKey = nameof(BridgeApiTokenKey);
+        public const string BridgeApiTokenSecret = nameof(BridgeApiTokenSecret);
+
         public static class Telephony
         {
             public const string ActiveProfile = "Telephony.ActiveProfile";  // None / MeetingOne / Arkadin

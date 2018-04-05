@@ -84,6 +84,16 @@
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
                     "Invalid LMS Setup. Please provide ConsumerKey, ConsumerSecret, Token and TokenSecret");
 
+            this.RuleFor(x => x.lmsProvider)
+                .Must((model, x) =>
+                    !string.IsNullOrWhiteSpace(model.bridgeApiTokenKey)
+                    && !string.IsNullOrWhiteSpace(model.bridgeApiTokenSecret)
+                )
+                .When(model => model.lmsProvider == LmsProviderNames.Bridge)
+                .WithError(
+                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                    "Invalid LMS Setup. Please provide Api Token Key, Api Token Secret");
+
             this.RuleFor(model => model.additionalLmsDomains)
                .Must((model, x) => UniqueLmsDomains(model.lmsDomain, x))
                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "LMS domains should be unique.");

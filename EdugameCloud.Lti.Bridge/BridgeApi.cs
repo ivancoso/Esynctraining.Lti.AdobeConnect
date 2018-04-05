@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using EdugameCloud.HttpClient;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Newtonsoft.Json;
 
@@ -14,10 +15,12 @@ namespace EdugameCloud.Lti.Bridge
 {
     public class BridgeApi : IBridgeApi
     {
-
-        private string GetBasicHeader(ILmsLicense lmsCompany)
+        // https://api.bridgeapp.com/doc/api/html/file.API_Overview.html
+        private string GetBasicHeader(ILmsLicense license)
         {
-            return "NTJjODlhMGItMDhlYy00NWVhLTlkM2ItOGJlZDRhNTU5YjNlOmYwM2ZkYTk4LTMwYTAtNGRmYy04YzZiLWJmYTc4MTBhYTI3MQ==";
+            var key = license.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
+            var secret = license.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{key}:{secret}"));
         }
 
         public async Task<List<BridgeApiUser>> GetCourseUsers(string courseId, ILmsLicense lmsCompany)

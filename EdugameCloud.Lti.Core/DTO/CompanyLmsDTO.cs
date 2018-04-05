@@ -137,6 +137,8 @@ namespace EdugameCloud.Lti.DTO
             haikuToken = instance.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
             haikuTokenSecret = instance.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
             isPdfMeetingUrl = instance.GetSetting<bool>(LmsCompanySettingNames.IsPdfMeetingUrl);
+            bridgeApiTokenKey = instance.GetSetting<string>(LmsCompanySettingNames.BridgeApiTokenKey);
+            bridgeApiTokenSecret = instance.GetSetting<string>(LmsCompanySettingNames.BridgeApiTokenSecret);
             UseCourseSections = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections);
             UseCourseMeetingsCustomLayout = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout);
             Telephony = new TelephonyDTO(instance);
@@ -500,6 +502,11 @@ namespace EdugameCloud.Lti.DTO
         public string haikuToken { get; set; }
         [DataMember]
         public string haikuTokenSecret { get; set; }
+
+        [DataMember]
+        public string bridgeApiTokenKey { get; set; }
+        [DataMember]
+        public string bridgeApiTokenSecret { get; set; }
 
         [DataMember]
         public bool isPdfMeetingUrl { get; set; }

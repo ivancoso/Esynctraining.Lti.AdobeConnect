@@ -300,6 +300,9 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuToken, dto.haikuToken);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuTokenSecret, dto.haikuTokenSecret);
 
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.BridgeApiTokenKey, dto.bridgeApiTokenKey);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.BridgeApiTokenSecret, dto.bridgeApiTokenSecret);
+
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsPdfMeetingUrl, dto.isPdfMeetingUrl);
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
