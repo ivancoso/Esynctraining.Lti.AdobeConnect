@@ -48,6 +48,7 @@ namespace AnonymousChat.WebApi.Host
             //})
             .UseStartup<Startup>()
             .UseSerilog()
+            .UseHealthChecks("/health", TimeSpan.FromSeconds(10))
             .Build();
     }
 
