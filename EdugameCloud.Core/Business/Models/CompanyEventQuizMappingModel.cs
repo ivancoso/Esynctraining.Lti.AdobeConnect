@@ -43,10 +43,7 @@ namespace EdugameCloud.Core.Business.Models
 
         public IEnumerable<CompanyEventQuizMapping> GetAllMappedByQuizId(int quizId)
         {
-            var query = from map in this.Repository.Session.Query<CompanyEventQuizMapping>()
-                        where map.PreQuiz.Id == quizId || map.PostQuiz.Id == quizId
-                        select map;
-            return query;
+            return GetAll(map => map.PreQuiz.Id == quizId || map.PostQuiz.Id == quizId);
         }
 
     }
