@@ -366,6 +366,7 @@ namespace EdugameCloud.Lti.Controllers
                     throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationNoSetup}");
                 }
 
+                SaveLMSDomainIfEmpty(param, lmsCompany); //setting domain before validation
                 string validationError = ValidateLmsLicense(lmsCompany, param);
                 if (!string.IsNullOrWhiteSpace(validationError))
                 {
@@ -399,7 +400,7 @@ namespace EdugameCloud.Lti.Controllers
                 sw = Stopwatch.StartNew();
 
                 if (!BltiProviderHelper.VerifyBltiRequest(lmsCompany, Request,
-                        () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)))
+                        () => true)) //todo: remove if not needed
                 {
                     Logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                     throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationWrongSignature}");
@@ -713,21 +714,14 @@ namespace EdugameCloud.Lti.Controllers
             return keyToFix;
         }
         
-        private bool ValidateLMSDomainAndSaveIfNeeded(LtiParamDTO param, LmsCompany credentials)
+        private void SaveLMSDomainIfEmpty(LtiParamDTO param, LmsCompany lmsLicense)
         {
-            if (string.IsNullOrWhiteSpace(credentials.LmsDomain))
+            if (string.IsNullOrWhiteSpace(lmsLicense.LmsDomain))
             {
                 // NOTE: e.g. we do not setup domain for Canvas license
-                credentials.LmsDomain = param.lms_domain;
-                this.lmsCompanyModel.RegisterSave(credentials, true);
-                return true;
+                lmsLicense.LmsDomain = param.lms_domain;
+                lmsCompanyModel.RegisterSave(lmsLicense, true);
             }
-
-            // TODO: !!! WWW section!!!
-            return credentials.HasLmsDomain(param.lms_domain);
-
-            // TODO: !!! WWW section!!!
-            //return param.lms_domain.ToLower().Replace("www.", string.Empty).Equals(credentials.LmsDomain.Replace("www.", string.Empty), StringComparison.OrdinalIgnoreCase);
         }
 
         private void StartOAuth2Authentication(LmsCompany lmsCompany, string provider, string session, LtiParamDTO model)
