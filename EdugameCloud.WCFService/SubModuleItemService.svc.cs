@@ -133,14 +133,11 @@ namespace EdugameCloud.WCFService
                     var scoInfoResult = acProxy.GetScoInfo(mapping.AcEventScoId);
                     if (scoInfoResult.Status.Code == StatusCodes.no_data)
                     {
-                        if (scoInfoResult.ScoInfo == null)
-                        {
-                            CompanyEventQuizMappingModel.RegisterDelete(mapping, true);
-                        }
-                        else
-                        {
-                            informAboutMapping = true;
-                        }
+                        CompanyEventQuizMappingModel.RegisterDelete(mapping);
+                    }
+                    else
+                    {
+                        informAboutMapping = true;
                     }
                 }
 
