@@ -3,6 +3,7 @@
 using System;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.WCFService
@@ -130,7 +131,7 @@ namespace EdugameCloud.WCFService
                     var acProvider = new AdobeConnectProvider(new ConnectionDetails(acUri));
                     var acProxy = new AdobeConnectProxy(acProvider, Logger, acUri);
                     var scoInfoResult = acProxy.GetScoInfo(mapping.AcEventScoId);
-                    if (scoInfoResult.Success)
+                    if (scoInfoResult.Status.Code == StatusCodes.no_data)
                     {
                         if (scoInfoResult.ScoInfo == null)
                         {
