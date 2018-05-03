@@ -87,7 +87,7 @@
                 XElement result = await session.LoginAsync(userPrefix, userName, password);
                 if (!Session.IsSuccess(result))
                 {
-                    var error = "DLAP. Unable to login: " + Session.GetMessage(result);
+                    var error = "Unable to login: " + Session.GetMessage(result);
 
                     _logger.Error(error);
 
