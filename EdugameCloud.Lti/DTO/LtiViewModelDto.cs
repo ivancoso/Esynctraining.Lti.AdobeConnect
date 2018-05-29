@@ -22,7 +22,7 @@ namespace EdugameCloud.Lti.DTO
         public string DownloadMeetingReportBySessions => BaseUrl + "/lti-zoom-api/reports/meetings/{meetingId}/by-sessions/download"; //get
         public string DownloadMeetingDetailsReport => BaseUrl + "/lti-zoom-api/reports/meetings/{meetingId}/details/{meetingSessionId}/download"; //get
 
-        public string GetRecording => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings"; //get
+        public string GetRecordings => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings"; //get
         public string GetTrashRecordings => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/trash"; //get
         public string DeleteRecordingFile => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}"; //delete
         public string DeleteRecording => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}"; //delete
