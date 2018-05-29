@@ -8,23 +8,26 @@ namespace EdugameCloud.Lti.DTO
 {
     public class ZoomUrls
     {
-        public string JoinMeeting { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/join"; //get
-        public string GetMeetings { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings"; //get
-        public string CreateMeeting { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings"; //post
-        public string UpdateMeeting { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}"; //put
-        public string GetMeetingDetails { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}"; //get
-        public string DeleteMeeting { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}"; //delete
+        public static string BaseUrl { get; set; }
 
-        public string GetMeetingReportBySessions { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/reports/meetings/{meetingId}/by-sessions"; //get
-        public string DownloadMeetingReportBySessions { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/reports/meetings/{meetingId}/by-sessions/download"; //get
-        public string DownloadMeetingDetailsReport { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/reports/meetings/{meetingId}/details/{meetingSessionId}/download"; //get
+        public string JoinMeeting => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/join";//get
 
-        public string GetRecordings { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings"; //get
-        public string GetTrashRecordings { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/trash"; //get
-        public string DeleteRecordingFile { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}"; //delete
-        public string DeleteRecording { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}"; //delete
-        public string RecoverRecordingFile { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}/status/recover"; //put
-        public string RecoverRecording { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}/status/recover"; //put
+        public string GetMeetings => BaseUrl + "/lti-zoom-api/meetings"; //get
+        public string CreateMeeting => BaseUrl + "/lti-zoom-api/meetings"; //post
+        public string UpdateMeeting => BaseUrl + "/lti-zoom-api/meetings/{meetingId}"; //put
+        public string GetMeetingDetails => BaseUrl + "/lti-zoom-api/meetings/{meetingId}"; //get
+        public string DeleteMeeting => BaseUrl + "/lti-zoom-api/meetings/{meetingId}"; //delete
+
+        public string GetMeetingReportBySessions => BaseUrl + "/lti-zoom-api/reports/meetings/{meetingId}/by-sessions"; //get
+        public string DownloadMeetingReportBySessions => BaseUrl + "/lti-zoom-api/reports/meetings/{meetingId}/by-sessions/download"; //get
+        public string DownloadMeetingDetailsReport => BaseUrl + "/lti-zoom-api/reports/meetings/{meetingId}/details/{meetingSessionId}/download"; //get
+
+        public string GetRecording => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings"; //get
+        public string GetTrashRecordings => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/trash"; //get
+        public string DeleteRecordingFile => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}"; //delete
+        public string DeleteRecording => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}"; //delete
+        public string RecoverRecordingFile => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}/status/recover"; //put
+        public string RecoverRecording => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}/status/recover"; //put
 
     }
 
