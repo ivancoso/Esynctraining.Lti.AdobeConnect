@@ -6,6 +6,28 @@ using Esynctraining.AdobeConnect.Api.Meeting;
 
 namespace EdugameCloud.Lti.DTO
 {
+    public class ZoomUrls
+    {
+        public string JoinMeeting { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/join"; //get
+        public string GetMeetings { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings"; //get
+        public string CreateMeeting { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings"; //post
+        public string UpdateMeeting { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}"; //put
+        public string GetMeetingDetails { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}"; //get
+        public string DeleteMeeting { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}"; //delete
+
+        public string GetMeetingReportBySessions { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/reports/meetings/{meetingId}/by-sessions"; //get
+        public string DownloadMeetingReportBySessions { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/reports/meetings/{meetingId}/by-sessions/download"; //get
+        public string DownloadMeetingDetailsReport { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/reports/meetings/{meetingId}/details/{meetingSessionId}/download"; //get
+
+        public string GetRecordings { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings"; //get
+        public string GetTrashRecordings { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/trash"; //get
+        public string DeleteRecordingFile { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}"; //delete
+        public string DeleteRecording { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}"; //delete
+        public string RecoverRecordingFile { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}/status/recover"; //put
+        public string RecoverRecording { get; set; } = "https://dev.edugamecloud.com/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}/status/recover"; //put
+
+    }
+
     [DataContract]
     public class LtiViewModelDto
     {
@@ -94,7 +116,8 @@ namespace EdugameCloud.Lti.DTO
                 public string ReportByRecordingsFile { get; set; } = FileReportBase + "meeting-recordings-report"; // lti.host
                 public string ReportBySessionsFile { get; set; } = FileReportBase + "meeting-sessions-report"; // lti.host
                 public string ReportByAttendanceFile { get; set; } = FileReportBase + "meeting-attendance-report"; // lti.host
-
+                [DataMember]
+                public ZoomUrls Zoom { get; set; } = new ZoomUrls();
             }
         }
 

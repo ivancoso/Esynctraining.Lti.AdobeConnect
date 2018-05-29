@@ -76,7 +76,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Api.Core",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.HttpClient", "EdugameCloud.HttpClient\EdugameCloud.HttpClient.csproj", "{7CB63896-15D1-47B1-87A0-A1D073CA9E4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Bridge", "EdugameCloud.Lti.Bridge\EdugameCloud.Lti.Bridge.csproj", "{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Bridge", "EdugameCloud.Lti.Bridge\EdugameCloud.Lti.Bridge.csproj", "{5BD06FB7-1F43-400E-A71C-627B94A0AFE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

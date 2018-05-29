@@ -59,6 +59,8 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string BridgeApiTokenKey = nameof(BridgeApiTokenKey);
         public const string BridgeApiTokenSecret = nameof(BridgeApiTokenSecret);
 
+        public const string ZoomLicense = nameof(ZoomLicense);
+
         public static class Telephony
         {
             public const string ActiveProfile = "Telephony.ActiveProfile";  // None / MeetingOne / Arkadin

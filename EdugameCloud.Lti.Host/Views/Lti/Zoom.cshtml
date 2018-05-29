@@ -1,0 +1,30 @@
+﻿@model EdugameCloud.Lti.DTO.LtiViewModelDto
+@using Jil;
+@{
+    Layout = null;
+    var options = Esynctraining.Json.Jil.JilSerializer.JilOptions;
+}
+<!DOCTYPE html>
+<html style="overflow: auto;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>eSyncTraining Bridge Lti</title>
+    <link rel="stylesheet" href="/lti/zoom/static/styleguide.css?v=@(Model.FullVersion.ToString())">
+    <link rel="stylesheet" href="/lti/bridge/static/vuetify.css?v=@(Model.FullVersion.ToString())">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet" href="/lti/bridge/static/css/app.css?v=@(Model.FullVersion.ToString())">	
+	
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script type="text/javascript">
+        var EsyncLti = @Html.Raw(JSON.Serialize(Model, options));
+    </script>
+
+</head>
+<body>
+<div id="app"></div>
+<script type="text/javascript" src="/lti/bridge/static/js/manifest.js?v=@(Model.FullVersion.ToString())"></script>
+<script type="text/javascript" src="/lti/bridge/static/js/vendor.js?v=@(Model.FullVersion.ToString())"></script>
+<script type="text/javascript" src="/lti/bridge/static/js/app.js?v=@(Model.FullVersion.ToString())"></script>
+</body>
+</html>

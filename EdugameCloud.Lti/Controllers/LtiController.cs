@@ -1,5 +1,4 @@
-﻿
-namespace EdugameCloud.Lti.Controllers
+﻿namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -258,10 +257,12 @@ namespace EdugameCloud.Lti.Controllers
                 {
                     model = await BuildModelAsync(s);
                 }
-
-                return View(s.LmsCompany.LmsProviderId == (int) LmsProviderEnum.Bridge 
+                var isZoom = s.LmsCompany.GetSetting<bool>(LmsCompanySettingNames.ZoomLicense);
+                return View(isZoom ?
+                    "Zoom" :
+                    (s.LmsCompany.LmsProviderId == (int) LmsProviderEnum.Bridge 
                     ? "Bridge" 
-                    : "Index",
+                    : "Index"),
                     model);
             }
             catch (Core.WarningMessageException ex)
@@ -281,7 +282,6 @@ namespace EdugameCloud.Lti.Controllers
                 var s = GetReadOnlySession(session);
                 credentials = s.LmsCompany;
                 var param = s.LtiSession.LtiParam;
-
                 var res = await meetingSetup.JoinMeeting(credentials, param, meetingId, GetAdminProvider(credentials));
                 return LoginToAC(res.meetingJoinUrl, res.breezeSession, credentials);
             }
