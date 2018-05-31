@@ -834,7 +834,7 @@
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("quiz-report")]
         [CustomAuthorize]
-        public virtual ActionResult GetQuizReport(int userId, int? sessionId, string format = "pdf", string type = "full", bool detailed = false)
+        public virtual ActionResult GetQuizReport(int userId, int? sessionId, string format = "pdf", string type = "full", bool detailed = false, string quizType = "live")
         {
             var cu = this.CurrentUser;
             if (cu != null)
@@ -856,13 +856,25 @@
 
                 if (detailed)
                 {
-                    var data = quizResultModel.GetExtendedReportQuizReportData(sessionId.Value);
+                    IList<ExtendedReportDto> extendedReportDtos = new List<ExtendedReportDto>();
+
+                    /// If QuizResult is related to Goodard There is session reletaed to Post Quiz.
+                    /// We need to detect this case and get postData for Post quiz result.
+                    var liveQuizData = quizResultModel.GetExtendedReportQuizReportData(sessionId.Value, true);
+                    extendedReportDtos.Add(liveQuizData);
+                    var postQuizData = quizResultModel.GetExtendedReportQuizReportData(sessionId.Value, false);
+                    if (postQuizData != null)
+                    {
+                        extendedReportDtos.Add(postQuizData);
+                    }
+
+
                     int intType;
                     if (!int.TryParse(type, out intType))
                         throw new InvalidOperationException($"Invalid detailed report type: {type}");
                     var reportService = ReportServiceFactory.GetReportService(SubModuleItemType.Quiz, intType);
 
-                    var bytes = reportService.GetExcelExtendedReportBytes(new ExtendedReportDto[] { data });
+                    var bytes = reportService.GetExcelExtendedReportBytes(extendedReportDtos);
                     return this.File(
                         bytes,
                         "application/vnd.ms-excel",
@@ -872,6 +884,16 @@
                 var sessionResults = userSessions.ToDictionary(
                     s => s,
                     s => quizResultModel.GetQuizResultByACSessionId(s.acSessionId, s.subModuleItemId));
+
+                /////////////////////////////////////.
+                /// We need to remove all session related to POST quiz.
+                /// In Basic Mode we show only information about Live Quiz
+                var postSessions = sessionResults.Where(d => d.Value.players.Any(p => p.isPostQuiz)).ToList();
+                foreach (var s in postSessions)
+                {
+                    sessionResults.Remove(s.Key);
+                }
+                /// /////////////////////////////////
 
                 Func<QuizSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
                     (s, userModes) =>

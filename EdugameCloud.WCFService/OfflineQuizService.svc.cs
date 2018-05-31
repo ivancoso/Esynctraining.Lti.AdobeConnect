@@ -170,7 +170,7 @@ namespace EdugameCloud.WCFService
             return resultDto;
         }
 
-        private int CalcScoreAndSaveQuestionResult(OfflineQuizAnswerDTO[] answers, QuizDataDTO quizData, QuizResult quizResult)
+        private int CalcScoreAndSaveQuestionResult(OfflineQuizAnswerDTO[] answers, QuizDataDTO quizData, QuizResult postQuizResult)
         {
             var score = 0;
             foreach (var answer in answers)
@@ -183,7 +183,7 @@ namespace EdugameCloud.WCFService
                 var questionObj = QuestionModel.GetOneById(question.questionId).Value;
                 questionResult.QuestionRef = questionObj;
                 questionResult.QuestionType = questionObj.QuestionType;
-                questionResult.QuizResult = quizResult;
+                questionResult.QuizResult = postQuizResult;
 
                 if (answer.trueFalseAnswer != null)
                 {

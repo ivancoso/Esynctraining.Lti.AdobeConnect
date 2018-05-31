@@ -226,13 +226,13 @@ namespace EdugameCloud.Core.Business.Models
             return this.Repository.FindAll(query);
         }
 
-        public ExtendedReportDto GetExtendedReportQuizReportData(int acSessionId)
+        public ExtendedReportDto GetExtendedReportQuizReportData(int acSessionId, bool isLiveQuiz)
         {
             var dto = new ExtendedReportDto
             {
                 SubModuleItemType = SubModuleItemType.Quiz
             };
-            var qr = GetQuizResultsByAcSessionId(acSessionId);
+            var qr = GetQuizResultsByAcSessionId(acSessionId).Where(q => q.Quiz.IsPostQuiz == !isLiveQuiz);
             dto.ReportResults = qr.Select(x => new ExtendedReportResultDto
             {
                 Id = x.Id,

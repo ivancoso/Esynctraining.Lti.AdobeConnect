@@ -18,12 +18,13 @@ namespace EdugameCloud.MVC.Services
         {
             var result = new byte[0];
 
-            var questions = dtos.SelectMany(x => x.Questions).GroupBy(x => x.Id).Select(x => x.First()).OrderBy(x => x.QuestionOrder);
+            //var questions = dtos.SelectMany(x => x.Questions).GroupBy(x => x.Id).Select(x => x.First()).OrderBy(x => x.QuestionOrder);
             using (ExcelPackage pck = new ExcelPackage())
             {
                 //int sessionNumber = 1;
                 foreach (var sessionResult in dtos)
                 {
+                    var questions = sessionResult.Questions.GroupBy(x => x.Id).Select(x => x.First()).OrderBy(x => x.QuestionOrder);
                     //Create the worksheet
                     ExcelWorksheet ws = pck.Workbook.Worksheets.Add($"{sessionResult.Name}");
                     ws.Cells[1, 1].Value = "Name";
