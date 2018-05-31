@@ -146,10 +146,12 @@ namespace EdugameCloud.WCFService
 
             var quizPassingScoreInPercents = (float)postQuizResult.Quiz.PassingScore / 100;
             var totalQuestions = postQuizData.questions.Length;
-            postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, postQuizData, postQuizResult);
+            postQuizResult.Score = CalcScore(answerContainer.answers);
+            
             var scoreInPercents = (float)postQuizResult.Score / totalQuestions;
 
             QuizResultModel.RegisterSave(postQuizResult);
+            SaveQuestionResult(answerContainer.answers, postQuizData, postQuizResult);
 
             var isSuccess = scoreInPercents >= quizPassingScoreInPercents;
             var resultDto = new OfflineQuizResultDTO
@@ -170,7 +172,54 @@ namespace EdugameCloud.WCFService
             return resultDto;
         }
 
-        private int CalcScoreAndSaveQuestionResult(OfflineQuizAnswerDTO[] answers, QuizDataDTO quizData, QuizResult postQuizResult)
+        private int CalcScore(OfflineQuizAnswerDTO[] answers)
+        {
+            var score = 0;
+            foreach (var answer in answers)
+            {
+                var distractors = DistractorModel.GetAllByQuestionId(answer.questionId).ToList();
+
+                if (answer.trueFalseAnswer != null)
+                {
+                    var shouldBeOneDistractor = distractors.FirstOrDefault();
+                    if (shouldBeOneDistractor == null)
+                        throw new InvalidOperationException("There should be a distractor for true/false question");
+                    var isCorrect = answer.trueFalseAnswer.answer == (shouldBeOneDistractor.IsCorrect ?? false);
+                    if (isCorrect)
+                    {
+                        score++;
+                    }
+                }
+
+                if (answer.singleChoiceAnswer != null)
+                {
+                    var quizDistractorAnswer = DistractorModel.GetOneById(answer.singleChoiceAnswer.answeredDistractorId).Value;
+                    var distractor = distractors.FirstOrDefault(x => x.Id == quizDistractorAnswer.Id);
+                    if (distractor == null)
+                        throw new InvalidOperationException("How come answered distractor id is not present in question distractors???");
+                    var isCorrect = distractor.IsCorrect ?? false;
+                    if (isCorrect)
+                    {
+                        score++;
+                    }
+                }
+
+                if (answer.multiChoiceAnswer != null)
+                {
+                    var correctDistractors = distractors.Where(x => x.IsCorrect ?? false).Select(x => x.Id);
+                    var isCorrect = correctDistractors.SequenceEqual(answer.multiChoiceAnswer.answeredDistractorIds);
+                    if (isCorrect)
+                    {
+                        score++;
+                    }
+                }
+            }
+
+            return score;
+
+        }
+
+        private int SaveQuestionResult(OfflineQuizAnswerDTO[] answers, QuizDataDTO quizData, QuizResult postQuizResult)
         {
             var score = 0;
             foreach (var answer in answers)
