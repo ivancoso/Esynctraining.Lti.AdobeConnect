@@ -146,7 +146,7 @@ namespace EdugameCloud.WCFService
 
             var quizPassingScoreInPercents = (float)postQuizResult.Quiz.PassingScore / 100;
             var totalQuestions = postQuizData.questions.Length;
-            postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, postQuizData, quizResult);
+            postQuizResult.Score = CalcScoreAndSaveQuestionResult(answerContainer.answers, postQuizData, postQuizResult);
             var scoreInPercents = (float)postQuizResult.Score / totalQuestions;
 
             QuizResultModel.RegisterSave(postQuizResult);
