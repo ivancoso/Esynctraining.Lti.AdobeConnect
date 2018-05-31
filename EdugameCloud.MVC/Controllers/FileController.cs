@@ -863,7 +863,7 @@
                     var liveQuizData = quizResultModel.GetExtendedReportQuizReportData(sessionId.Value, true);
                     extendedReportDtos.Add(liveQuizData);
                     var postQuizData = quizResultModel.GetExtendedReportQuizReportData(sessionId.Value, false);
-                    if (postQuizData != null)
+                    if (postQuizData.ReportResults.Any())
                     {
                         extendedReportDtos.Add(postQuizData);
                     }
