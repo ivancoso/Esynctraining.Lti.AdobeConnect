@@ -58,7 +58,7 @@ namespace Esynctraining.AC.Provider
 
         public RecordingCollectionResult GetRecordingsList(string folderId, string scoId = null)
         {
-            return GetRecordingsList(folderId, 0, 0, null, SortOrder.Unspecified);
+            return GetRecordingsList(folderId, 0, 0, null, SortOrder.Unspecified, false, scoId);
         }
 
         public RecordingCollectionResult GetRecordingsList(string folderId,
