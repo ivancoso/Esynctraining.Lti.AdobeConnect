@@ -23,16 +23,7 @@
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        protected QuestionModel QuestionModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionModel>();
-            }
-        }
+        protected QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
 
         #endregion
 
@@ -75,7 +66,7 @@
         /// </returns>
         protected string[] GetSurveyAnswerLmsIds(Question question, SurveyQuestionResultDTO answer)
         {
-            var answers = answer.answers ?? new SurveyQuestionResultAnswerDTO[] { };
+            var answers = answer.answers ?? new SurveyQuestionResultAnswerDTO[0];
 
             var distractors = question.Distractors.Where(d => answers.Any(a => a.surveyDistractorAnswerId == d.Id) && d.LmsAnswerId != null);
 
@@ -97,13 +88,11 @@
         /// </returns>
         protected virtual string GetTrueFalseLmsIdAnswer(Question question, QuizQuestionResultDTO answer)
         {
-            Distractor distractor = question.Distractors != null
-                ? question.Distractors.FirstOrDefault()
-                : null;
+            Distractor distractor = question.Distractors?.FirstOrDefault();
             if (distractor != null)
             {
                 bool answ = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
-                            || (!answer.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
+                    || (!answer.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
                 return answ ? distractor.LmsAnswer : distractor.LmsAnswerId.ToString();
             }
 
@@ -124,9 +113,7 @@
         /// </returns>
         protected string GetTrueFalseStringAnswer(Question question, QuizQuestionResultDTO answer)
         {
-            Distractor distractor = question.Distractors != null
-                ? question.Distractors.FirstOrDefault()
-                : null;
+            Distractor distractor = question.Distractors?.FirstOrDefault();
             if (distractor != null)
             {
                 bool answ = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
@@ -172,7 +159,7 @@
         /// </returns>
         protected IEnumerable<int> GetMultipleChoiceLmsIds(Question question, QuizQuestionResultDTO answer)
         {
-            var answers = answer.answers ?? new string[] { };
+            var answers = answer.answers ?? new string[0];
             return question.Distractors.Where(
                                 q =>
                                 answers.Contains(q.Id.ToString(CultureInfo.InvariantCulture)))
@@ -193,7 +180,7 @@
         /// </returns>
         protected IEnumerable<string> GetMultipleChoiceLmsAnswers(Question question, QuizQuestionResultDTO answer)
         {
-            var answers = answer.answers ?? new string[] { };
+            var answers = answer.answers ?? new string[0];
             return question.Distractors.Where(
                                 q =>
                                 answers.Contains(q.Id.ToString(CultureInfo.InvariantCulture)))
@@ -214,7 +201,7 @@
         /// </returns>
         protected string GetMultipleChoiceAnswersString(Question question, QuizQuestionResultDTO answer)
         {
-            var answers = answer.answers ?? new string[] { };
+            var answers = answer.answers ?? new string[0];
             var boolValues =
                 question.Distractors.Select(q => answers.Contains(q.Id.ToString(CultureInfo.InvariantCulture)) ? "true" : "false");
             return string.Join(";", boolValues);
@@ -239,8 +226,7 @@
         {
             var ret = new Dictionary<string, string>();
 
-            var distractor = question.Distractors != null ? question.Distractors.FirstOrDefault() : null;
-
+            Distractor distractor = question.Distractors?.FirstOrDefault();
             if (distractor == null || distractor.LmsAnswer == null)
             {
                 return ret;
@@ -286,8 +272,7 @@
         {
             var ret = new Dictionary<string, string>();
 
-            var distractor = question.Distractors != null ? question.Distractors.FirstOrDefault() : null;
-
+            Distractor distractor = question.Distractors?.FirstOrDefault();
             if (distractor == null || distractor.LmsAnswer == null)
             {
                 return ret;
@@ -381,5 +366,7 @@
 
             return ret;
         }
+
     }
+
 }
