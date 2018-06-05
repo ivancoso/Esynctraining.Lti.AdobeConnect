@@ -515,6 +515,49 @@ namespace Esynctraining.AC.Provider.Utils
             }
         }
 
+        public async Task<(XmlDocument, StatusInfo)> ProcessUploadAsync(
+            string action,
+            string parameters,
+            UploadScoInfo uploadData)
+        {
+            var status = new StatusInfo();
+
+            if (parameters == null)
+            {
+                parameters = string.Empty;
+            }
+
+            try
+            {
+                var url = BuildUrl(action, parameters) + $"&session={sessionCookie.Value}";
+                var form = new MultipartFormDataContent
+                {
+                    { new ByteArrayContent(uploadData.fileBytes, 0, uploadData.fileBytes.Length), "file", uploadData.fileName }
+                };
+
+                HttpResponseMessage response = null;
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.Timeout = TimeSpan.FromMilliseconds(connectionDetails.HttpContentRequestTimeout);
+
+                    response = await httpClient.PostAsync(url, form);
+                }
+
+                response.EnsureSuccessStatusCode();
+
+                var result = await response.Content.ReadAsStringAsync();
+
+                return (ProcessXmlResult(status, result), status);
+            }
+            catch (Exception ex)
+            {
+                status.UnderlyingExceptionInfo = ex;
+                TraceTool.TraceException(ex);
+
+                return (null, status);
+            }
+        }
+
         //public XmlDocument ProcessUploadMultipart(
         //    string action, 
         //    string parameters, 

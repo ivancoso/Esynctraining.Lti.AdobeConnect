@@ -1166,6 +1166,11 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.UploadContent(uploadScoInfo); }, uploadScoInfo.scoId);
         }
 
+        public async Task<StatusInfo> UploadContentAsync(UploadScoInfo uploadScoInfo)
+        {
+            return await Execute(() => { return _provider.UploadContentAsync(uploadScoInfo); }, uploadScoInfo.scoId);
+        }
+
         public byte[] GetContent(string scoId, out string error, string format = "zip")
         {
             // TODO:

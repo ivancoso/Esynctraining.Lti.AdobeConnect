@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -36,6 +38,8 @@ namespace Esynctraining.AdobeConnect
         MeetingPermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC);
         PrincipalCollectionResult GetAllPrincipals();
         CommonInfoResult GetCommonInfo();
+
+        Task<(MemoryStream ms, string error)> GetContentAsync(string scoId, string format = "zip");
 
         byte[] GetContent(string scoId, out string error, string format = "zip");
 
@@ -220,6 +224,8 @@ namespace Esynctraining.AdobeConnect
         StatusInfo UpdateScoPermissions(IEnumerable<IPermissionUpdateTrio> values);
 
         StatusInfo UploadContent(UploadScoInfo uploadScoInfo);
+
+        Task<StatusInfo> UploadContentAsync(UploadScoInfo uploadScoInfo);
 
         UserCollectionResult ReportGuestsByEmail(string email);
         UserCollectionResult ReportGuestsByLogin(string login);

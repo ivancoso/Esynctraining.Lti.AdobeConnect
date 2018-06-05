@@ -113,8 +113,16 @@ namespace Esynctraining.AC.Provider
         public StatusInfo UploadContent(UploadScoInfo uploadScoInfo)
         {
             StatusInfo status;
-            this.requestProcessor.ProcessUpload(Commands.Sco.Upload, 
+            this.requestProcessor.ProcessUpload(Commands.Sco.Upload,
                 string.Format(CommandParams.ScoUpload, uploadScoInfo.scoId, UrlEncode(uploadScoInfo.summary), UrlEncode(uploadScoInfo.title)), uploadScoInfo, out status);
+            return status;
+        }
+
+        public async Task<StatusInfo> UploadContentAsync(UploadScoInfo uploadScoInfo)
+        {
+            var (xml, status) = await this.requestProcessor.ProcessUploadAsync(Commands.Sco.Upload,
+                string.Format(CommandParams.ScoUpload, uploadScoInfo.scoId, UrlEncode(uploadScoInfo.summary), UrlEncode(uploadScoInfo.title)), uploadScoInfo);
+
             return status;
         }
 
