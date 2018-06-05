@@ -278,6 +278,17 @@ namespace Esynctraining.AC.Provider.Utils
             }
         }
 
+        public Task<(MemoryStream ms, string error)> DownloadDataAsync(string urlPath, string format)
+        {
+            string url = string.Format(
+                "{0}/{1}/output/{1}.{2}?download={2}",
+                connectionDetails.AdobeConnectRoot.ToString().TrimEnd('/'),
+                urlPath.Trim('/'),
+                format);
+
+            return DownloadDataAsync(url);
+        }
+
         public byte[] DownloadData(string urlPath, string format, out string error)
         {
             error = null;
@@ -324,6 +335,53 @@ namespace Esynctraining.AC.Provider.Utils
                 fileName);
 
             return DownloadData(url, out error);
+        }
+
+        private async Task<(MemoryStream ms, string error)> DownloadDataAsync(string url)
+        {
+            var handler = new HttpClientHandler()
+            {
+                CookieContainer = new CookieContainer(),
+            };
+
+            if (this.IsLoggedIn)
+            {
+                handler.CookieContainer.Add(this.sessionCookie);
+            }
+
+            var client = new System.Net.Http.HttpClient(handler)
+            {
+                Timeout = TimeSpan.FromMilliseconds(connectionDetails.HttpContentRequestTimeout)
+            };
+
+            client.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
+            client.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
+            client.DefaultRequestHeaders.Add("Accept", "*/*");
+            // TRICK: Empty value causes 500 error for 'http://connect.uthsc.edu/' during File Download
+            client.DefaultRequestHeaders.Add("User-Agent", @"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+
+            // FIX: invalid SSL passing behavior
+            // (Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            //ServicePointManager.SecurityProtocol =
+            //    SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+
+            try
+            {
+                Stream receiveStream = await client.GetStreamAsync(url);
+
+                using (var ms = new MemoryStream())
+                {
+                    receiveStream.CopyTo(ms);
+                    return (ms, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceTool.TraceException(ex);
+
+                return (ms: null, error: ex.ToString());
+            }
         }
 
         private byte[] DownloadData(string url, out string error)

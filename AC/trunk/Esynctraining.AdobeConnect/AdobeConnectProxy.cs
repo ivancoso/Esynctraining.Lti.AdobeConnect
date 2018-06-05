@@ -10,6 +10,8 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.Extensions;
 using Esynctraining.AC.Provider.Utils;
 using Esynctraining.Core.Extensions;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace Esynctraining.AdobeConnect
 {
@@ -1168,6 +1170,12 @@ namespace Esynctraining.AdobeConnect
         {
             // TODO:
             return _provider.GetContent(scoId, out error, format);
+        }
+
+        public Task<(MemoryStream ms, string error)> GetContentAsync(string scoId, string format = "zip")
+        {
+            // TODO:
+            return _provider.GetContentAsync(scoId, format);
         }
 
         public byte[] GetSourceContent(string urlPath, out string error, string format = "zip")

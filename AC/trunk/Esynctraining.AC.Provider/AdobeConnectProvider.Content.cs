@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -40,6 +42,23 @@ namespace Esynctraining.AC.Provider
                                ? res.Status.UnderlyingExceptionInfo.ToString()
                                : res.Status.InnerXml);
             return null;
+        }
+
+        public Task<(MemoryStream ms, string error)> GetContentAsync(string scoId, string format = "zip")
+        {
+            var res = this.GetScoInfo(scoId);
+            if (res.Success && res.ScoInfo != null && !string.IsNullOrEmpty(res.ScoInfo.UrlPath))
+            {
+                return this.requestProcessor.DownloadDataAsync(res.ScoInfo.UrlPath, format);
+            }
+
+            var error = res.Status == null
+                        ? "Result is null"
+                        : (string.IsNullOrWhiteSpace(res.Status.InnerXml)
+                               ? res.Status.UnderlyingExceptionInfo.ToString()
+                               : res.Status.InnerXml);
+
+            return Task.FromResult<(MemoryStream ms, string error)>((ms: null, error: error));
         }
 
         public byte[] GetContentByUrlPath(string urlPath, string format, out string error)
