@@ -103,7 +103,7 @@ namespace EdugameCloud.Lti.Canvas
             {
                 _logger.ErrorFormat("[EGCEnabledCanvasAPI.GetSubmissionForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}. {4}",
                     api, userToken, courseId, quizId, BuildInformation(response));
-                throw new InvalidOperationException(string.Format("[CanvasAPI.GetSubmissionForQuiz] Canvas returns '{0}'", response.StatusDescription));
+                throw new InvalidOperationException(string.Format("[CanvasAPI.GetSubmissionForQuiz] Canvas returns '{0}'", response.StatusDescription + ":" + (response.ErrorMessage ?? "")));
             }
             return response.Data.quiz_submissions.Single();
         }
