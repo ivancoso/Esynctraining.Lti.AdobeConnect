@@ -368,8 +368,7 @@ namespace Esynctraining.AC.Provider.Utils
 
             try
             {
-                Stream receiveStream = await client.GetStreamAsync(url);
-
+                using (var receiveStream = await client.GetStreamAsync(url))
                 using (var ms = new MemoryStream())
                 {
                     receiveStream.CopyTo(ms);
