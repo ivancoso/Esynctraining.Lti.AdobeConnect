@@ -355,7 +355,7 @@ namespace Esynctraining.AC.Provider.Utils
             };
 
             client.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
-            client.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
+            //client.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
             client.DefaultRequestHeaders.Add("Accept", "*/*");
             // TRICK: Empty value causes 500 error for 'http://connect.uthsc.edu/' during File Download
             client.DefaultRequestHeaders.Add("User-Agent", @"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
