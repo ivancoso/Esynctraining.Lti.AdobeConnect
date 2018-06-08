@@ -1,6 +1,11 @@
-﻿using Esynctraining.Lti.Zoom.DTO;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using Esynctraining.Lti.Zoom.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Esynctraining.Core.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace Esynctraining.Lti.Zoom.Controllers
 {
@@ -13,10 +18,25 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return this.View("About");
         }
 
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here.")]
+        [AllowAnonymous]
+        public virtual async Task<ActionResult> AuthenticationCallback(
+            // ReSharper disable once InconsistentNaming
+            string __provider__,
+            // ReSharper disable once InconsistentNaming
+            string __sid__ = null,
+            string code = null,
+            string state = null,
+            string session = null)
+        {
+            ViewData["Message"] = __provider__;
+            return this.View("About");
+        }
+
         public virtual async Task<ActionResult> LoginWithProvider(string provider, LtiParamDTO param)
         {
-            ViewData["Message"] = "Your application description page.";
-            return this.View("~/Views/Home/About.chtml");
+            ViewData["Message"] = provider;
+            return this.View("About");
         }
     }
 }
