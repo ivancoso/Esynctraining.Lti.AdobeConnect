@@ -196,7 +196,9 @@ namespace Esynctraining.Lti.Zoom.DTO
         {
             get
             {
-                string lmsDomain = this.GetLmsDomain().Return(x => x.ToLower(), string.Empty);
+                string lmsDom = this.GetLmsDomain();
+                string lmsDomain = lmsDom == null ? string.Empty : lmsDom.ToLower();
+                //string lmsDomain = this.GetLmsDomain().Return(x => x.ToLower(), string.Empty);
                 if (lmsDomain.StartsWith(HttpScheme.Http))
                 {
                     return lmsDomain.Substring(HttpScheme.Http.Length);
@@ -374,7 +376,8 @@ namespace Esynctraining.Lti.Zoom.DTO
             int result = 0;
             try
             {
-                url = HttpUtility.UrlDecode(url).Return(x => x, string.Empty);
+                url = HttpUtility.UrlDecode(url) ?? string.Empty;
+                //url = HttpUtility.UrlDecode(url).Return(x => x, string.Empty);
                 const string CourseIdQuery = "course_id";
                 int index = url.IndexOf("?", StringComparison.Ordinal);
                 if (index > 0)
@@ -463,7 +466,8 @@ namespace Esynctraining.Lti.Zoom.DTO
         private int TryParseBlackBoardCourseId()
         {
             int result = 0;
-            if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("blackboard"), false))
+            if (tool_consumer_info_product_family_code?.ToLowerInvariant().Contains("blackboard") ?? false)
+            //if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("blackboard"), false))
             {
                 result = this.GetCourseFromQueryOfUrl(this.launch_presentation_return_url);
                 if (result == 0)
@@ -479,7 +483,10 @@ namespace Esynctraining.Lti.Zoom.DTO
         {
             int result = 0;
 
-            if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("sakai") || x.ToLowerInvariant().Contains("imsglc"), false))
+            if (this.tool_consumer_info_product_family_code == null 
+                ? false 
+                : (this.tool_consumer_info_product_family_code.ToLowerInvariant().Contains("sakai") || this.tool_consumer_info_product_family_code.ToLowerInvariant().Contains("imsglc")))
+            //if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("sakai") || x.ToLowerInvariant().Contains("imsglc"), false))
             {
                 Guid guid;
                 if (Guid.TryParse(this.context_id, out guid))
@@ -498,7 +505,8 @@ namespace Esynctraining.Lti.Zoom.DTO
 
         public int CalcCourseId()
         {
-            if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("haiku"), false))
+            if (this.tool_consumer_info_product_family_code == null ? false : this.tool_consumer_info_product_family_code.ToLowerInvariant().Contains("haiku"))
+            //if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("haiku"), false))
             {
                 var contextId = Regex.Match(this.context_id, @"\d+").Value;
 

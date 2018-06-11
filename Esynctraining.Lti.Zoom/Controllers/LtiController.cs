@@ -4,13 +4,22 @@ using Esynctraining.Lti.Zoom.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
-using Microsoft.Extensions.Logging;
 
 namespace Esynctraining.Lti.Zoom.Controllers
 {
     public partial class LtiController : BaseController
     {
+
+        #region Constructors and Destructors
+
+        public LtiController(ILogger logger) : base(logger)
+        {
+            
+        }
+
+        #endregion
 
         public virtual async Task<ActionResult> Home()
         {

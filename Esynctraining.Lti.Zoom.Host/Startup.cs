@@ -1,4 +1,5 @@
-﻿using Esynctraining.Lti.Zoom.Routes;
+﻿using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
+using Esynctraining.Lti.Zoom.Routes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -34,6 +35,9 @@ namespace Esynctraining.Lti.Zoom.Host
                 .AddApplicationPart(controllerAssembly)
                 .AddControllersAsServices()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services
+                .AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
