@@ -1,4 +1,5 @@
-﻿using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
+﻿using System.Collections.Specialized;
+using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Lti.Zoom.Routes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Esynctraining.Core.Providers;
 
 namespace Esynctraining.Lti.Zoom.Host
 {
@@ -38,6 +40,16 @@ namespace Esynctraining.Lti.Zoom.Host
 
             services
                 .AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
+
+            var configurationSection = Configuration.GetSection("AppSettings");
+            var settings = new NameValueCollection();
+            foreach (var appSetting in configurationSection.GetChildren())
+            {
+                settings.Add(appSetting.Key, appSetting.Value);
+            }
+            services
+                .AddSingleton(new ApplicationSettingsProvider(settings));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
