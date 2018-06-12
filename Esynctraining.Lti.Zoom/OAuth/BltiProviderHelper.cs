@@ -29,17 +29,15 @@ namespace Esynctraining.Lti.Zoom.OAuth
         // Setting up a domain with a BLTI key/secret and creating BLTI links inside of AgilixBuzz: http://may2011.brainhoney.com/docs/BasicLTI
         #region Static Fields
 
-        private static readonly ILogger logger;
-        private static readonly NonceCache usedNonsenses;
+        private readonly ILogger logger;
+        private readonly NonceCache usedNonsenses;
         private static readonly DateTime Date1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         #endregion
 
-        static BltiProviderHelper()
+        public BltiProviderHelper(ILogger log)
         {
-            logger = IoC.Resolve<ILogger>();
-
-
+            logger = log;
             usedNonsenses = new NonceCache(logger);
         }
 
@@ -57,7 +55,7 @@ namespace Esynctraining.Lti.Zoom.OAuth
         /// <returns>
         /// "true" if the request is valid, otherwise "false"
         /// </returns>
-        public static bool VerifyBltiRequest(LmsCompany credentials, HttpRequest request, Func<bool> validateLmsCaller)
+        public bool VerifyBltiRequest(LmsCompany credentials, HttpRequest request, Func<bool> validateLmsCaller)
         {
             if (credentials == null)
                 throw new ArgumentNullException(nameof(credentials));

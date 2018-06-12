@@ -93,7 +93,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                 sw = Stopwatch.StartNew();
 
-                if (!BltiProviderHelper.VerifyBltiRequest(lmsCompany, Request,
+                if (!(new BltiProviderHelper(_logger)).VerifyBltiRequest(lmsCompany, Request,
                     () => true)) //todo: remove if not needed
                 {
                     _logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.", param.oauth_consumer_key);

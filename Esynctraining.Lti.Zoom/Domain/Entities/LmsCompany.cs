@@ -35,6 +35,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
             lmsCompany.CompanyId = 4;
             lmsCompany.LmsProviderId = 2;
             lmsCompany.IsActive = true;
+            lmsCompany.SharedSecret = "f6f32cd0-70ca-4824-b74d-2abc59eac888";
             return lmsCompany;
         }
 
