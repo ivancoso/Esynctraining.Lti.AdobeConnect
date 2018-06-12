@@ -6,8 +6,8 @@
     if (string.IsNullOrWhiteSpace(ViewBag.Message))
     {
         errorMessage = string.IsNullOrWhiteSpace(ViewBag.DebugError)
-            ? EdugameCloud.Lti.Resources.Messages.ExceptionMessage
-            : EdugameCloud.Lti.Resources.Messages.ErrorOccured + ViewBag.DebugError;
+            ? "ExceptionMessage"
+            : "ErrorOccured" + ViewBag.DebugError;
     }
     else
     {
