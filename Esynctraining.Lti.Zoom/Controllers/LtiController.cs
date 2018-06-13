@@ -111,48 +111,21 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 sw.Stop();
                 trace.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
 
-                //switch (lmsProvider.ToLower())
-                //{
-                //    case LmsProviderNames.Canvas:
+                switch (lmsProvider.ToLower())
+                {
+                    case LmsProviderNames.Canvas:
 
-                //        sw = Stopwatch.StartNew();
+                        sw = Stopwatch.StartNew();
 
-                //        if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
-                //            CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
-                //        {
-                //            this.StartOAuth2Authentication(lmsCompany, lmsProvider, sessionKey, param);
-                //            return null;
-                //        }
+                        //if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
+                        //    CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
+                        //{
+                            this.StartOAuth2Authentication(lmsCompany, lmsProvider, "1251215", param);
+                            return null;
+                        //}
 
-                //        sw.Stop();
-                //        trace.AppendFormat("CanvasApi.IsTokenExpired: time: {0}.\r\n", sw.Elapsed.ToString());
-                //        sw = Stopwatch.StartNew();
-
-                //        if (lmsCompany.AdminUser == null)
-                //        {
-                //            Logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
-                //            this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
-                //            return this.View("~/Views/Lti/LtiError.cshtml");
-                //        }
-
-                //        sw.Stop();
-                //        trace.AppendFormat("lmsCompany.AdminUser == null: time: {0}.\r\n", sw.Elapsed.ToString());
-                //        sw = Stopwatch.StartNew();
-
-                //        acPrincipal = acUserService.GetOrCreatePrincipal(
-                //            adobeConnectProvider,
-                //            param.lms_user_login,
-                //            param.lis_person_contact_email_primary,
-                //            param.PersonNameGiven,
-                //            param.PersonNameFamily,
-                //            lmsCompany);
-
-                //        sw.Stop();
-                //        trace.AppendFormat("acUserService.GetOrCreatePrincipal: time: {0}.\r\n",
-                //            sw.Elapsed.ToString());
-
-                //        break;
-                //}
+                        break;
+                }
 
 
 
@@ -258,6 +231,29 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
 
             return null;
+        }
+
+        private void StartOAuth2Authentication(LmsCompany lmsCompany, string provider, string session, LtiParamDTO model)
+        {
+            string schema = Request.Scheme;
+
+            string returnUrl = Url.AbsoluteCallbackAction(schema, new { __provider__ = provider, session });
+            switch (provider)
+            {
+                case LmsProviderNames.Canvas:
+                    returnUrl = UriBuilderExtensions.AddQueryStringParameter(
+                        returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
+
+                    returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
+                    var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsCompany, (string)_settings.CanvasClientId, (string)_settings.CanvasClientSecret);
+                    if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))
+                    {
+                        var message = "Invalid OAuth parameters. Application Id and Application Key cannot be empty.";
+                        throw new LtiException(message);
+                    }
+                    OAuthWebSecurityWrapper.RequestAuthentication(HttpContext, oAuthSettings, returnUrl);
+                    break;
+            }
         }
 
 
