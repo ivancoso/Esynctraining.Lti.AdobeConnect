@@ -4,13 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Esynctraining.Lti.Zoom.Domain
 {
+    [Table("LmsUserSession")]
     public class LmsUserSession
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public virtual LmsLicense LmsLicense { get; set; }
+        public int LicenseId { get; set; }
         public string Email { get; set; }
         public string LmsUserId { get; set; }
         public string Token { get; set; }

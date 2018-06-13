@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Esynctraining.Lti.Zoom.Domain
 {
+    [Table("OfficeHoursTeacherAvailability")]
     public class OfficeHoursTeacherAvailability : BaseEntity
     {
         public string LmsId { get; set; } // LMS Id of user

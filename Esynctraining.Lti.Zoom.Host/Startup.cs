@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.ComponentModel;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Lti.Zoom.Routes;
 using Microsoft.AspNetCore.Builder;
@@ -8,7 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Esynctraining.Core.Json;
 using Esynctraining.Core.Providers;
+using Esynctraining.Json.Jil;
+using Esynctraining.Lti.Zoom.Api.Services;
+using Microsoft.EntityFrameworkCore;
+using Esynctraining.Lti.Zoom.Domain;
 
 namespace Esynctraining.Lti.Zoom.Host
 {
@@ -49,6 +55,13 @@ namespace Esynctraining.Lti.Zoom.Host
             }
             services
                 .AddSingleton(new ApplicationSettingsProvider(settings));
+
+            services.AddDbContext<ZoomDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
+            services.AddTransient<ILmsLicenseService, LmsLicenseDbService>();
+            services.AddTransient<UserSessionService, UserSessionService>();
+            services.AddSingleton<IJsonSerializer, JilSerializer>();
+            services.AddSingleton<IJsonDeserializer, JilSerializer>();
 
         }
 

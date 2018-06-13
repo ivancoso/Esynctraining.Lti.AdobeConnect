@@ -1,5 +1,8 @@
-﻿namespace Esynctraining.Lti.Zoom.Domain
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Esynctraining.Lti.Zoom.Domain
 {
+    [Table("LmsCourseMeeting")]
     public class LmsCourseMeeting : BaseEntity
     {
 

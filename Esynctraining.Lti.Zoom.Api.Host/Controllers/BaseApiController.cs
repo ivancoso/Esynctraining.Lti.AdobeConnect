@@ -3,6 +3,7 @@ using Esynctraining.Core;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Dto;
+using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore.Mvc;
 
@@ -63,7 +64,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             set { _session = value; }
         }
 
-        public LmsLicense LmsLicense { get; set; }
+        public LmsLicenseDto LmsLicense { get; set; }
 
         public string CourseId { get; set; }
         public LtiParamDTO Param { get; set; }
@@ -162,7 +163,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         {
             var license = LmsLicense;
             string lmsInfo = (license != null)
-                ? $" LmsCompany ID: {license.Id}. Lms Domain: {license.LmsDomain}."
+                ? $" LmsCompany ID: {license.Id}. Lms Domain: {license.Domain}."
                 : string.Empty;
 
             Logger.Error(methodName + lmsInfo, ex);

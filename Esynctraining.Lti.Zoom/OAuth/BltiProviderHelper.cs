@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Domain.Entities;
 using LtiLibrary.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -55,10 +56,10 @@ namespace Esynctraining.Lti.Zoom.OAuth
         /// <returns>
         /// "true" if the request is valid, otherwise "false"
         /// </returns>
-        public bool VerifyBltiRequest(LmsCompany credentials, HttpRequest request, Func<bool> validateLmsCaller)
+        public bool VerifyBltiRequest(LmsLicenseDto license, HttpRequest request, Func<bool> validateLmsCaller)
         {
-            if (credentials == null)
-                throw new ArgumentNullException(nameof(credentials));
+            if (license == null)
+                throw new ArgumentNullException(nameof(license));
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
@@ -166,7 +167,7 @@ namespace Esynctraining.Lti.Zoom.OAuth
             }
 
             // Look up the secret using oauth_consumer_key
-            string secret = RetrieveSecretForKey(consumerKey, credentials);
+            string secret = RetrieveSecretForKey(consumerKey, license);
             if (string.IsNullOrWhiteSpace(secret))
             {
                 logger.ErrorFormat("[BltiProviderHelper] Look up the secret using oauth_consumer_key failed, oauth_consumer_key:{0}.", consumerKey);
@@ -207,15 +208,15 @@ namespace Esynctraining.Lti.Zoom.OAuth
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private static string RetrieveSecretForKey(string key, LmsCompany credentials)
+        private static string RetrieveSecretForKey(string key, LmsLicenseDto license)
         {
             // Use this method to return back the secret associated with this key.
             // In this example I am using the key/secret pair { "MyKey", "Secret12345" }
             // You will need to create your own key/secret pair and replace the code below with the key/secret pair that you create.
             // The domain in AgilixBuzz that contains your blti links will then need to be customized with your key/secret pair.
-            if (credentials.ConsumerKey == key)
+            if (license.ConsumerKey == key)
             {
-                return credentials.SharedSecret;
+                return license.SharedSecret;
             }
 
             return null;

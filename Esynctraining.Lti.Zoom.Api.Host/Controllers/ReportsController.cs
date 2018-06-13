@@ -55,118 +55,118 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return sessions.ToSuccessResult();
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/by-sessions/download")]
-        [Microsoft.AspNetCore.Mvc.HttpGet]
-        //[LmsAuthorizeBase]
-        public virtual async Task<ActionResult> DownloadReport(int meetingId, string session, string type)
-        {
-            var s = GetReadOnlySession(session);
-            LmsLicense license = s.LmsLicense;
-            var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, param.course_id.ToString());
+        //[Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/by-sessions/download")]
+        //[Microsoft.AspNetCore.Mvc.HttpGet]
+        ////[LmsAuthorizeBase]
+        //public virtual async Task<ActionResult> DownloadReport(int meetingId, string session, string type)
+        //{
+        //    var s = GetReadOnlySession(session);
+        //    LmsLicenseDto license = s.LmsLicense;
+        //    var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
+        //    var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, param.course_id.ToString());
 
-            ////if (meeting == null && credentials.ConsumerKey == "b622bf8b-a120-4b40-816e-05f530a750d9" && param.course_id == 557)
-            ////{
-            ////    var mId = meetingId / 100000;
-            ////    viewModel = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, param.course_id, mId);
-            //if (dbMeeting == null)
-            //    //404
-            //    return NotFound(meetingId);
-            var apiMeeting = await _meetingService.GetMeetingDetails(meetingId, LmsLicense.Id, param.course_id.ToString());
-            var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
+        //    ////if (meeting == null && credentials.ConsumerKey == "b622bf8b-a120-4b40-816e-05f530a750d9" && param.course_id == 557)
+        //    ////{
+        //    ////    var mId = meetingId / 100000;
+        //    ////    viewModel = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, param.course_id, mId);
+        //    //if (dbMeeting == null)
+        //    //    //404
+        //    //    return NotFound(meetingId);
+        //    var apiMeeting = await _meetingService.GetMeetingDetails(meetingId, LmsLicense.Id, param.course_id.ToString());
+        //    var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
 
-            byte[] fileBytes = new byte[0];
-            var url = Settings.ReportsUrl.TrimEnd('/') + "/ReportBySession";
-            var model = new
-            {
-                MeetingUrl = apiMeeting.JoinUrl,
-                MeetingTitle = apiMeeting.Topic,
-                CompanyName = license.LmsDomain,
-                CompanyLogo = "",
-                IsExcelFormat = type.ToLower() == "excel",
-                CourseName = param.context_title,
-                LocalDate = DateTime.Now.ToString(),
-                IsShowMeetingTitle = true,
-                Sessions = sessions.Select(x => new
-                {
-                    dateStarted = x.StartedAt.ToString(),
-                    dateEnded = x.EndedAt.ToString(),
-                    meetingId = apiMeeting.Id,
-                    sessionId = x.SessionId,
-                    participantsCount = x.Participants.Count,
-                    Participants = x.Participants.Select(p => new
-                    {
-                        participantName = p.ParticipantName,
-                        dateTimeEntered = p.EnteredAt.ToString(),
-                        dateTimeLeft = p.LeftAt.ToString()
-                    }).ToArray()
-                }).ToArray()
-            };
+        //    byte[] fileBytes = new byte[0];
+        //    var url = Settings.ReportsUrl.TrimEnd('/') + "/ReportBySession";
+        //    var model = new
+        //    {
+        //        MeetingUrl = apiMeeting.JoinUrl,
+        //        MeetingTitle = apiMeeting.Topic,
+        //        CompanyName = license.LmsDomain,
+        //        CompanyLogo = "",
+        //        IsExcelFormat = type.ToLower() == "excel",
+        //        CourseName = param.context_title,
+        //        LocalDate = DateTime.Now.ToString(),
+        //        IsShowMeetingTitle = true,
+        //        Sessions = sessions.Select(x => new
+        //        {
+        //            dateStarted = x.StartedAt.ToString(),
+        //            dateEnded = x.EndedAt.ToString(),
+        //            meetingId = apiMeeting.Id,
+        //            sessionId = x.SessionId,
+        //            participantsCount = x.Participants.Count,
+        //            Participants = x.Participants.Select(p => new
+        //            {
+        //                participantName = p.ParticipantName,
+        //                dateTimeEntered = p.EnteredAt.ToString(),
+        //                dateTimeLeft = p.LeftAt.ToString()
+        //            }).ToArray()
+        //        }).ToArray()
+        //    };
 
-            var stringContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            string mimeType = null;
-            using (var client = new System.Net.Http.HttpClient())
-            {
+        //    var stringContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+        //    string mimeType = null;
+        //    using (var client = new System.Net.Http.HttpClient())
+        //    {
 
-                using (var result = await client.PostAsync(url, stringContent))
-                {
-                    if (result.IsSuccessStatusCode)
-                    {
-                        fileBytes = await result.Content.ReadAsByteArrayAsync();
-                        mimeType = result.Content.Headers.ContentType.MediaType;
-                    }
+        //        using (var result = await client.PostAsync(url, stringContent))
+        //        {
+        //            if (result.IsSuccessStatusCode)
+        //            {
+        //                fileBytes = await result.Content.ReadAsByteArrayAsync();
+        //                mimeType = result.Content.Headers.ContentType.MediaType;
+        //            }
 
-                }
-            }
-            //return Content("Reports implementation is still in progress...");
-            return File(fileBytes,
-                mimeType,
-                $"SessionsReport_{DateTime.Now.ToString("yyyyMMddHHmm")}.{(type.ToLower() == "excel" ? "xls" : "pdf")}");
-        }
+        //        }
+        //    }
+        //    //return Content("Reports implementation is still in progress...");
+        //    return File(fileBytes,
+        //        mimeType,
+        //        $"SessionsReport_{DateTime.Now.ToString("yyyyMMddHHmm")}.{(type.ToLower() == "excel" ? "xls" : "pdf")}");
+        //}
 
-        [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/details/{meetingSessionId}/download")]
-        [Microsoft.AspNetCore.Mvc.HttpGet]
-        //[LmsAuthorizeBase]
-        public virtual async Task<ActionResult> DownloadReportSessionDetails(int meetingId, string session, string meetingSessionId)
-        {
-            var s = GetReadOnlySession(session);
-            LmsLicense license = s.LmsLicense;
-            var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, param.course_id.ToString());
+        //[Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/details/{meetingSessionId}/download")]
+        //[Microsoft.AspNetCore.Mvc.HttpGet]
+        ////[LmsAuthorizeBase]
+        //public virtual async Task<ActionResult> DownloadReportSessionDetails(int meetingId, string session, string meetingSessionId)
+        //{
+        //    var s = GetReadOnlySession(session);
+        //    LmsLicense license = s.LmsLicense;
+        //    var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
+        //    var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, param.course_id.ToString());
 
-            //if (meeting == null && credentials.ConsumerKey == "b622bf8b-a120-4b40-816e-05f530a750d9" && param.course_id == 557)
-            //{
-            //    var mId = meetingId / 100000;
-            //    viewModel = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, param.course_id, mId);
-            if (dbMeeting == null)
-                //404
-                return NotFound(meetingId);
-            var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId, WebUtility.UrlDecode(meetingSessionId).Replace(" ", "+"));
-            var records = sessions.First().Participants.Select(x => new
-            {
-                x.Details.Name,
-                x.Details.EnteredAt,
-                x.Details.LeftAt,
-                x.Details.Device,
-                x.Details.IpAddress,
-                x.Details.Location,
-                x.Details.NetworkType,
-                ToolVersion = x.Details.Version
-            });
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(mem))
-            using (var csvWriter = new CsvWriter(writer))
-            {
+        //    //if (meeting == null && credentials.ConsumerKey == "b622bf8b-a120-4b40-816e-05f530a750d9" && param.course_id == 557)
+        //    //{
+        //    //    var mId = meetingId / 100000;
+        //    //    viewModel = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, param.course_id, mId);
+        //    if (dbMeeting == null)
+        //        //404
+        //        return NotFound(meetingId);
+        //    var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId, WebUtility.UrlDecode(meetingSessionId).Replace(" ", "+"));
+        //    var records = sessions.First().Participants.Select(x => new
+        //    {
+        //        x.Details.Name,
+        //        x.Details.EnteredAt,
+        //        x.Details.LeftAt,
+        //        x.Details.Device,
+        //        x.Details.IpAddress,
+        //        x.Details.Location,
+        //        x.Details.NetworkType,
+        //        ToolVersion = x.Details.Version
+        //    });
+        //    using (var mem = new MemoryStream())
+        //    using (var writer = new StreamWriter(mem))
+        //    using (var csvWriter = new CsvWriter(writer))
+        //    {
                 
-                csvWriter.WriteRecords(records);
-                writer.Flush();
-                var result = mem.ToArray();
-                //mem.
-                return File(result, "text/csv", $"CsvReport_{DateTime.Now.ToString("yyyyMMddHHmm")}.csv");
-            }
+        //        csvWriter.WriteRecords(records);
+        //        writer.Flush();
+        //        var result = mem.ToArray();
+        //        //mem.
+        //        return File(result, "text/csv", $"CsvReport_{DateTime.Now.ToString("yyyyMMddHHmm")}.csv");
+        //    }
 
-            //return Content("Reports implementation is still in progress...");
-        }
+        //    //return Content("Reports implementation is still in progress...");
+        //}
 
         protected LmsUserSession GetReadOnlySession(string s)
         {

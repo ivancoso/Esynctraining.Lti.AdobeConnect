@@ -10,8 +10,8 @@ namespace Esynctraining.Lti.Zoom.Routes
     {
         public static void AppendTo(IRouteBuilder routes)
         {
-            routes.MapRoute("LtiOAuthLogin", "{provider}-login", new { controller = RouteConstants.LtiControllerName, action = "LoginWithProvider" });
-            routes.MapRoute("LtiOAuthCallback", "oauth-callback", new { controller = RouteConstants.LtiControllerName, action = RouteConstants.AuthCallbackActionName });
+            routes.MapRoute("LtiOAuthLogin", "lti/{provider}-login", new { controller = RouteConstants.LtiControllerName, action = "LoginWithProvider" });
+            routes.MapRoute("LtiOAuthCallback", "lti/oauth-callback", new { controller = RouteConstants.LtiControllerName, action = RouteConstants.AuthCallbackActionName });
             routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
         }
     }

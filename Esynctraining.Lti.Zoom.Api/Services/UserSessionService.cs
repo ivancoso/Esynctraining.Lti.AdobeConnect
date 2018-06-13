@@ -20,15 +20,16 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _dbContext = dbContext;
         }
 
-        public async Task<LmsUserSession> SaveSession(LmsLicense license, string courseId, LtiParamDTO param, string email, string lmsUserId)
+        public async Task<LmsUserSession> SaveSession(int licenseId, string courseId, LtiParamDTO param, string email,
+            string lmsUserId)
         {
             var session = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x =>
-                x.LmsLicense.Id == license.Id && x.CourseId == param.course_id.ToString() && x.LmsUserId == lmsUserId);
+                x.LicenseId == licenseId && x.CourseId == param.course_id.ToString() && x.LmsUserId == lmsUserId);
             if (session == null)
             {
                 session = new LmsUserSession
                 {
-                    LmsLicense = license,
+                    LicenseId = licenseId,
                     CourseId = param.course_id.ToString(),
                     Email = param.lis_person_contact_email_primary,
                     LmsUserId = param.lms_user_id
@@ -41,7 +42,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             if (string.IsNullOrEmpty(session.Token))
             {
                 var sessionWithToken = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x =>
-                    x.LmsLicense.Id == license.Id && x.LmsUserId == lmsUserId && x.Token != null);
+                    x.LicenseId == licenseId && x.LmsUserId == lmsUserId && x.Token != null);
                 if (sessionWithToken != null)
                     session.Token = sessionWithToken.Token;
             }
@@ -56,7 +57,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<LmsUserSession> GetSession(int licenseId, string courseId, string lmsUserId)
         {
             var session = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x =>
-                x.LmsLicense.Id == licenseId && x.CourseId == courseId && x.LmsUserId == lmsUserId);
+                x.LicenseId == licenseId && x.CourseId == courseId && x.LmsUserId == lmsUserId);
             return session;
         }
 
@@ -65,6 +66,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var session = _dbContext.LmsUserSessions.FirstOrDefault(x =>
                 x.Id == id);
             return session;
+        }
+
+        public async Task<LmsUserSession> UpdateSessionToken(LmsUserSession session, string token)
+        {
+            throw new NotImplementedException();
         }
     }
 }
