@@ -26,4 +26,10 @@
     <ProjectReference Include="..\Esynctraining.Lti.Zoom\Esynctraining.Lti.Zoom.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Lti\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>

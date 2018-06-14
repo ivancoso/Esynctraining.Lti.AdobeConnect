@@ -41,7 +41,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
                 {
                     // TODO: try\catch?
                     var service = (UserSessionService)filterContext.HttpContext.RequestServices.GetService(typeof(UserSessionService));
-                    LmsUserSession session = GetReadOnlySession(service, token);
+                    LmsUserSession session = Task.Run(async () => await GetReadOnlySession(service, token)).Result;
 
                     if (session == null)
                     {
@@ -126,9 +126,9 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
             return true;
         }
 
-        protected LmsUserSession GetReadOnlySession(UserSessionService service, Guid key)
+        protected async Task<LmsUserSession> GetReadOnlySession(UserSessionService service, Guid key)
         {
-            var session = service.GetSession(key);
+            var session = await service.GetSession(key);
             if (session == null)
             {
                 //Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);

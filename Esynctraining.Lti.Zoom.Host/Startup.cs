@@ -1,20 +1,19 @@
-﻿using System.Collections.Specialized;
-using System.ComponentModel;
-using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
-using Esynctraining.Lti.Zoom.Routes;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Specialized;
 using System.Reflection;
+using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Providers;
 using Esynctraining.Json.Jil;
 using Esynctraining.Lti.Zoom.Api.Services;
-using Microsoft.EntityFrameworkCore;
 using Esynctraining.Lti.Zoom.Domain;
+using Esynctraining.Lti.Zoom.Routes;
 
 namespace Esynctraining.Lti.Zoom.Host
 {

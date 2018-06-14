@@ -17,6 +17,17 @@ namespace Esynctraining.Zoom.ApiWrapper
 
         private RestClient WebClient { get; set; }
 
+        public ZoomApiWrapper()
+        {
+            Options = new ZoomApiOptions
+            {
+                ZoomApiBaseUrl = "https://api.zoom.us/v2/",
+                ZoomApiKey = "zc69A0RpTBKIpQbxknTs1Q",
+                ZoomApiSecret = "kTWs9t1G0pPcS2CSZ31SysWu2VxFgzs2uATL"
+            };
+            this.WebClient = new RestClient(Options.ZoomApiBaseUrl);
+        }
+
         public ZoomApiWrapper(ZoomApiOptions options)
         {
             if (string.IsNullOrWhiteSpace(options.ZoomApiBaseUrl))

@@ -168,11 +168,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         //    //return Content("Reports implementation is still in progress...");
         //}
 
-        protected LmsUserSession GetReadOnlySession(string s)
+        protected async Task<LmsUserSession> GetReadOnlySession(string s)
         {
             Guid uid;
             Guid.TryParse(s, out uid);
-            var session = _sessionService.GetSession(uid);
+            var session = await _sessionService.GetSession(uid);
             if (session == null)
             {
                 //Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);

@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Esynctraining.Core.Logging;
-using Esynctraining.Core.Domain;
 using System.Threading.Tasks;
+using Esynctraining.Core.Domain;
+using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Common.Dto;
 
-namespace EdugameCloud.Lti.Canvas
+namespace Esynctraining.Lti.Lms.Canvas
 {
     public class CanvasLmsUserService : LmsUserServiceBase
     {
@@ -32,7 +32,7 @@ namespace EdugameCloud.Lti.Canvas
             if (!licenseSettings.ContainsKey("AdminUser.Token"))
             {
                 Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}.", licenseSettings["lmsCompany.Id"]);
-                throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
+                throw new WarningMessageException(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
             }
 
             var token = (string)licenseSettings["AdminUser.Token"];
@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.Canvas
             if (string.IsNullOrWhiteSpace(token))
             {
                 Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", licenseSettings["lmsCompany.Id"]);
-                throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
+                throw new WarningMessageException(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
             }
 
             var user = await _canvasApi.GetCourseUser(
@@ -65,13 +65,13 @@ namespace EdugameCloud.Lti.Canvas
                 var message =
                     $"There is no admin user set for LmsCompanyId={licenseSettings["lmsCompany.Id"]}.CourseId={courseId}";
                 Logger.Error(message);
-                return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
+                return OperationResultWithData<List<LmsUserDTO>>.Error(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
             }
 
             if (string.IsNullOrWhiteSpace((string)licenseSettings["AdminUser.Token"]))
             {
                 Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", licenseSettings["lmsCompany.Id"]);
-                return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
+                return OperationResultWithData<List<LmsUserDTO>>.Error(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
             }
 
             List<LmsUserDTO> users = await FetchUsers(licenseSettings, courseId);

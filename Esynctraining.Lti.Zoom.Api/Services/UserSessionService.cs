@@ -61,7 +61,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return session;
         }
 
-        public LmsUserSession GetSession(Guid id)
+        public async Task<LmsUserSession> GetSession(Guid id)
         {
             var session = _dbContext.LmsUserSessions.FirstOrDefault(x =>
                 x.Id == id);

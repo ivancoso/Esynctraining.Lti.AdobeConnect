@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using EdugameCloud.Lti.Canvas;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common;
 using Esynctraining.Lti.Lms.Common.API;
@@ -12,7 +13,7 @@ using Esynctraining.Lti.Lms.Common.Dto.Canvas;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace EdugameCloud.Lti.Canvas
+namespace Esynctraining.Lti.Lms.Canvas
 {
     /// <summary>
     /// The Canvas API for EGC.
@@ -124,7 +125,7 @@ namespace EdugameCloud.Lti.Canvas
                 if (string.IsNullOrWhiteSpace(token))
                 {
                     _logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", licenseSettings["LicenseId"]);
-                    throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
+                    throw new WarningMessageException(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
                 }
 
                 LmsUserDTO user = await FetchCourseUser(userId, (string)licenseSettings["LmsDomain"], token, courseId);

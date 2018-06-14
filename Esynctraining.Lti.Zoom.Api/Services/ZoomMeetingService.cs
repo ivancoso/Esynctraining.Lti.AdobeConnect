@@ -53,21 +53,24 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<IEnumerable<MeetingViewModel>>
             GetMeetings(int licenseId, string courseId, string currentUserId = null)
         {
+            List<MeetingViewModel> result = new List<MeetingViewModel>();
             var dbMeetings = _dbContext.LmsCourseMeetings.Where(x =>
                 x.LicenseId == licenseId && courseId == x.CourseId);
-            var zoomMeetingPairs = dbMeetings.GroupBy(x => x.ProviderHostId)
-                .ToDictionary(k => k.Key, v => v.Select(va => va.ProviderMeetingId));
-            List<MeetingViewModel> result = new List<MeetingViewModel>();
-            foreach (var user in zoomMeetingPairs)
+            if (dbMeetings.Any())
             {
-                var userMeetings = _zoomApi.GetMeetings(user.Key);
-                result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
-                    ConvertToViewModel(x, dbMeetings.First(db => db.ProviderHostId == x.Id), currentUserId)));
-            }
+                var zoomMeetingPairs = dbMeetings.GroupBy(x => x.ProviderHostId)
+                    .ToDictionary(k => k.Key, v => v.Select(va => va.ProviderMeetingId));
+                foreach (var user in zoomMeetingPairs)
+                {
+                    var userMeetings = _zoomApi.GetMeetings(user.Key);
+                    result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
+                        ConvertToViewModel(x, dbMeetings.First(db => db.ProviderHostId == x.Id), currentUserId)));
+                }
 
-            if (currentUserId != null)
-            {
-                return await ProcessOfficeHours(licenseId, currentUserId, result);
+                if (currentUserId != null)
+                {
+                    return await ProcessOfficeHours(licenseId, currentUserId, result);
+                }
             }
 
             return result;

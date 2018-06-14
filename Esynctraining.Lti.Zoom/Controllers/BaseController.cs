@@ -8,8 +8,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
     public class BaseController : Controller
     {
-        protected readonly ILogger _logger;
-        protected readonly dynamic _settings;
+        protected readonly ILogger Logger;
+        protected readonly dynamic Settings;
         private static bool? _isDebug;
 
         protected bool IsDebug
@@ -22,7 +22,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 }
 
                 bool val;
-                _isDebug = bool.TryParse(_settings.IsDebug, out val) && val;
+                _isDebug = bool.TryParse(Settings.IsDebug, out val) && val;
                 return _isDebug.Value;
             }
         }
@@ -30,8 +30,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         public BaseController(ILogger logger, ApplicationSettingsProvider settings)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
     }

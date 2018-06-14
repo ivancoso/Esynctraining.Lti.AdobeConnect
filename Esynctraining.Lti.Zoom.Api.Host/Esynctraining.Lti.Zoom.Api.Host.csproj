@@ -22,29 +22,30 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="7.1.0" />
-    <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.5" />
-    <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
-    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
+    <PackageReference Include="CsvHelper" Version="7.1.1" />
+    <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.9" />
+    <PackageReference Include="Esynctraining.Core.Logging.MicrosoftExtensionsLogger" Version="1.0.0.1" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.6" />
     <PackageReference Include="Esynctraining.Json.Jil" Version="1.0.0.2" />
-    <PackageReference Include="Esynctraining.Windsor" Version="1.0.0.3" />
-    <PackageReference Include="FluentValidation" Version="7.2.1" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.1" />
+    <PackageReference Include="FluentValidation" Version="7.6.101" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
-    <PackageReference Include="RestSharp" Version="106.2.2" />
-    <PackageReference Include="Serilog.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.0" />
+    <PackageReference Include="RestSharp" Version="106.3.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="2.4.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="1.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="2.6.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="2.5.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Canvas\Esynctraining.Lti.Lms.Canvas.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Zoom.Api\Esynctraining.Lti.Zoom.Api.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Zoom.Domain\Esynctraining.Lti.Zoom.Domain.csproj" />

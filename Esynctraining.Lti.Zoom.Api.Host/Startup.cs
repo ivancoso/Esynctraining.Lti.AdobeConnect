@@ -1,14 +1,26 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Net;
+using EdugameCloud.Lti.Canvas;
 using Esynctraining.AspNetCore;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
+using Esynctraining.Core.Json;
+using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
+using Esynctraining.Core.Providers;
 using Esynctraining.Json.Jil;
+using Esynctraining.Lti.Lms.Canvas;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Zoom.Api.Host.Controllers;
 using Esynctraining.Lti.Zoom.Api.Host.Swagger;
+using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Domain;
+using Esynctraining.Zoom.ApiWrapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,12 +32,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host
     {
         public IConfiguration Configuration { get; }
 
-        public Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory { get; }
+        public ILoggerFactory LoggerFactory { get; }
 
         public IHostingEnvironment HostingEnvironment { get; }
 
 
-        public Startup(IHostingEnvironment env, IConfiguration configuration, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory)
+        public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             HostingEnvironment = env;
             LoggerFactory = loggerFactory;
@@ -36,22 +48,13 @@ namespace Esynctraining.Lti.Zoom.Api.Host
               .CreateLogger();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(typeof(IConfiguration), Configuration); // ??
 
-            //services.Configure<MeetingOneSettings>(Configuration.GetSection("MeetingOneSettings"))
-            //    .AddSingleton(sp => sp.GetService<IOptionsSnapshot<MeetingOneSettings>>().Value);
-
             services
                 .AddMvcCore(setup =>
                 {
-                    //while (setup.InputFormatters.Count > 0)
-                    //    setup.InputFormatters.RemoveAt(0);
-                    //while (setup.OutputFormatters.Count > 0)
-                    //    setup.OutputFormatters.RemoveAt(0);
-
                     setup.InputFormatters.Insert(0, new JilInputFormatter());
                     setup.OutputFormatters.Insert(0, new JilOutputFormatter());
 
@@ -61,21 +64,37 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                 })
                 .AddApplicationPart(typeof(BaseApiController).Assembly)
                 .AddControllersAsServices()
-                //.AddJsonFormatters()
                 .AddApiExplorer()
                 .AddDataAnnotations();
 
             services
-                .AddCors()
-                .AddMemoryCache();
-
+                .AddCors();
+            //.AddMemoryCache();
+            var configurationSection = Configuration.GetSection("AppSettings");
+            var settings = new NameValueCollection();
+            foreach (var appSetting in configurationSection.GetChildren())
+            {
+                settings.Add(appSetting.Key, appSetting.Value);
+            }
+            services
+                .AddSingleton(new ApplicationSettingsProvider(settings));
             services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
-
-            //var container = DIConfig.ConfigureWindsor(Configuration);
-            //services.AddRequestScopingMiddleware(container.BeginScope);
-
             services.AddLtiSwagger(HostingEnvironment);
 
+            services.AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
+            services.AddDbContext<ZoomDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
+            services.AddTransient<ILmsLicenseService, LmsLicenseDbService>();
+            services.AddTransient<UserSessionService, UserSessionService>();
+            services.AddSingleton<IJsonSerializer, JilSerializer>();
+            services.AddSingleton<IJsonDeserializer, JilSerializer>();
+            services.AddTransient<IEGCEnabledCanvasAPI, EGCEnabledCanvasAPI>();
+            services.AddTransient<LmsUserServiceBase, CanvasLmsUserService>();
+            services.AddTransient<ZoomUserService, ZoomUserService>();
+            services.AddTransient<ZoomRecordingService, ZoomRecordingService>();
+            services.AddTransient<ZoomReportService, ZoomReportService>();
+            services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
+            services.AddTransient<ZoomApiWrapper, ZoomApiWrapper>();
             //services.AddOptions();
 
             //return WindsorRegistrationHelper.CreateServiceProvider(container, services);
@@ -93,7 +112,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
 
             if (env.IsDevelopment())
             {
-                //app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
             }
 
             app.UseExceptionHandler(
@@ -106,6 +125,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                         var ex = context.Features.Get<IExceptionHandlerFeature>();
                         if (ex != null)
                         {
+                            //log
                         }
                     });
                 });
