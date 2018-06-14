@@ -23,6 +23,7 @@ namespace Esynctraining.AdobeConnect
         //FieldResult GetAclField(string aclId, AclFieldId fieldId);
         FieldCollectionResult GetAclFields(long aclId);
         PrincipalCollectionResult GetAllByEmail(string email);
+        PrincipalCollectionResult GetAllByEmailAndType(string email, PrincipalType principalType);
         PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails);
         PrincipalCollectionResult GetAllByFieldLike(string fieldName, string searchTerm);
         PrincipalCollectionResult GetAllByLogin(string login);

@@ -286,6 +286,15 @@ namespace Esynctraining.AdobeConnect
                 email);
         }
 
+        public PrincipalCollectionResult GetAllByEmailAndType(string email, PrincipalType principalType)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("email can't be empty", nameof(email));
+
+            return Execute(() => { return _provider.GetAllByEmailAndType(email, principalType); },
+                email);
+        }
+
         public PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails)
         {
             if (emails == null)

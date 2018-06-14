@@ -211,7 +211,6 @@ namespace Esynctraining.AC.Provider
             return CallPrincipalList(filter);
         }
 
-
         /// <summary>
         /// Creates or updates a user or group. The user or group (that is, the principal) is created or
         /// updated in the same account as the user making the call.
@@ -273,6 +272,15 @@ namespace Esynctraining.AC.Provider
             return new PrincipalResult(status, PrincipalParser.Parse(doc));
         }
 
+        public PrincipalCollectionResult GetAllByEmailAndType(string email, PrincipalType principalType)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Non-empty value expected", nameof(email));
+
+            var filter = string.Format(CommandParams.PrincipalByEmailAndType, UrlEncode(email), principalType.ToXmlString());
+
+            return CallPrincipalList(filter);
+        }
 
         private PrincipalCollectionResult CallPrincipalList(string filter)
         {

@@ -94,6 +94,11 @@
         public const string PrincipalByEmail = "filter-email={0}&filter-is-primary=false";
 
         /// <summary>
+        /// The principal by email and type
+        /// </summary>
+        public const string PrincipalByEmailAndType = "filter-email={0}&filter-type={1}";
+
+        /// <summary>
         /// The principal by email
         /// </summary>
         public const string PrincipalByLogin = "filter-login={0}&filter-is-primary=false";
