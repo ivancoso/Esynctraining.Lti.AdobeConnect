@@ -23,7 +23,9 @@ using Esynctraining.Lti.Zoom.Domain.Entities;
 using Esynctraining.Lti.Zoom.DTO;
 using Esynctraining.Lti.Zoom.Extensions;
 using Esynctraining.Lti.Zoom.OAuth;
+using Esynctraining.Lti.Zoom.OAuth.Canvas;
 using LtiLibrary.NetCore.Common;
+using Microsoft.AspNetCore.Authentication;
 using Newtonsoft.Json;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
@@ -155,8 +157,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         //        if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
                         //            CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
                         //        {
-                        this.StartOAuth2Authentication(license, "Canvas", "1251215", param);
-                        return null;
+                        return this.StartOAuth2Authentication(license, "canvas", sessionKey, param);
+                        //return null;
                         //        }
 
                         break;
@@ -278,7 +280,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return null;
         }
 
-        private void StartOAuth2Authentication(LmsLicenseDto lmsLicense, string provider, string session,
+        private ActionResult StartOAuth2Authentication(LmsLicenseDto lmsLicense, string provider, string session,
             LtiParamDTO model)
         {
             string schema = Request.Scheme;
@@ -297,16 +299,21 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                     var oAuthId = lmsLicense.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
                     var oAuthKey = lmsLicense.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
-                    //returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
-                    //var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsCompany, (string)_settings.CanvasClientId, (string)_settings.CanvasClientSecret);
-                    //if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))
-                    //{
-                    //    var message = "Invalid OAuth parameters. Application Id and Application Key cannot be empty.";
-                    //    throw new LtiException(message);
-                    //}
+                    returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
+                    var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsLicense, (string)Settings.CanvasClientId, (string)Settings.CanvasClientSecret);
+                    if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))
+                    {
+                        var message = "Invalid OAuth parameters. Application Id and Application Key cannot be empty.";
+                        throw new LtiException(message);
+                    }
+
+                    return Challenge(new AuthenticationProperties() {RedirectUri = returnUrl});
+
                     //OAuthWebSecurityWrapper.RequestAuthentication(HttpContext, oAuthSettings, returnUrl);
                     break;
             }
+
+            return null;
         }
 
         private async Task<LmsUserSession> SaveSession(LmsLicenseDto license, LtiParamDTO param)
