@@ -25,7 +25,7 @@
     <PackageReference Include="CsvHelper" Version="7.1.1" />
     <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.9" />
     <PackageReference Include="Esynctraining.Core.Logging.MicrosoftExtensionsLogger" Version="1.0.0.1" />
-    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.6" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
     <PackageReference Include="Esynctraining.Json.Jil" Version="1.0.0.2" />
     <PackageReference Include="FluentValidation" Version="7.6.101" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
