@@ -168,6 +168,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         string tocken = responseTocken.access_token;
                         await _sessionService.UpdateSessionToken(s, tocken);
 
+                        return await RedirectToHome(s);
+
                     }
 
                 }
