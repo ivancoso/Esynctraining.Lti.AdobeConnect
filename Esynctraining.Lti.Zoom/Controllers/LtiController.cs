@@ -321,14 +321,27 @@ namespace Esynctraining.Lti.Zoom.Controllers
             {
                 Validate(api, userToken);
 
-                var builder = new UriBuilder(api + "/api/v1/users/self/profile");
+                var client = CreateRestClient(api);
 
-                HttpClient httpClient = new HttpClient();
-                var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.Uri.AbsoluteUri);
-                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Authorization", "Bearer " + userToken);
-                HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
+                RestRequest request = CreateRequest(
+                    api,
+                    "/api/v1/users/self/profile",
+                    Method.GET,
+                    userToken);
+
+                IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
 
                 return response.StatusCode == HttpStatusCode.Unauthorized;
+
+                //-------------------------
+                //var builder = new UriBuilder("https://esynctraining.instructure.com" + "/api/v1/users/self/profile");
+
+                //HttpClient httpClient = new HttpClient();
+                //var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.Uri.AbsoluteUri);
+                //requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Authorization", "Bearer " + userToken);
+                //HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
+
+                //return response.StatusCode == HttpStatusCode.Unauthorized;
             }
             catch (Exception ex)
             {
@@ -336,6 +349,20 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 throw;
             }
         }
+
+        protected static RestClient CreateRestClient(string api)
+        {
+            var client = new RestClient(string.Format("{0}{1}", HttpScheme.Https, api));
+            return client;
+        }
+
+        protected static RestRequest CreateRequest(string api, string resource, Method method, string userToken)
+        {
+            var request = new RestRequest(resource, method);
+            request.AddHeader("Authorization", "Bearer " + userToken);
+            return request;
+        }
+
 
         protected static void Validate(string api, string userToken)
         {
