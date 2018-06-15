@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
-using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore.Mvc;
 using ActionResult = Microsoft.AspNetCore.Mvc.ActionResult;
 
@@ -20,10 +17,6 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
     [Microsoft.AspNetCore.Mvc.Route("meetings")]
     public class MeetingsController : BaseApiController
     {
-        private readonly IJsonSerializer _jsonSerializer;
-
-        //private readonly LmsCourseMeetingModel _lmsCourseMeetingModel;
-        //private readonly LmsUserSessionModel _userSessionModel;
         private readonly ZoomUserService _userService;
 
         private readonly ZoomMeetingService _meetingService;
@@ -32,16 +25,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         #region Constructors and Destructors
 
         public MeetingsController(
-            //MeetingSetup meetingSetup,
-            //API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, IJsonSerializer jsonSerializer,
             ZoomUserService userService, ZoomRecordingService recordingService, ZoomMeetingService meetingService)
             : base(settings, logger)
         {
-            //_meetingSetup = meetingSetup;
-            _jsonSerializer = jsonSerializer;
-            //_userSessionModel = userSessionModel;
             _userService = userService;
             _meetingService = meetingService;
         }
@@ -129,7 +117,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    var createResult = await _meetingService.CreateMeeting(LmsLicense.Id, CourseId.ToString(),
+                    var createResult = await _meetingService.CreateMeeting(Session.Token, CourseId.ToString(),
                         userId,
                         Param.lis_person_contact_email_primary, requestDto);
 
@@ -155,7 +143,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             string userId = null;
             try
             {
-                var updated = await _meetingService.UpdateMeeting(meetingId, LmsLicense.Id, CourseId.ToString(),
+                var updated = await _meetingService.UpdateMeeting(meetingId, Session.Token, CourseId,
                     Param.lis_person_contact_email_primary, vm);
 
                 return updated ? OperationResult.Success() : OperationResult.Error("Meeting has not been updated");

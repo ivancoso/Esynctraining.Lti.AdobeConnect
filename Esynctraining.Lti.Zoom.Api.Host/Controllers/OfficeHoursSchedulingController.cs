@@ -15,14 +15,15 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
     [Route("office-hours")]
     public class OfficeHoursSchedulingController : BaseApiController
     {
-        private readonly IOfficeHoursService _officeHoursService;
+        private readonly ZoomOfficeHoursService _officeHoursService;
+        private readonly ZoomMeetingService _meetingService;
 
         public OfficeHoursSchedulingController(
             //MeetingSetup meetingSetup,
             //API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, ICache cache, IJsonSerializer jsonSerializer,
-            ZoomUserService userService, ZoomRecordingService recordingService, ZoomMeetingService meetingService)
+            ZoomUserService userService, ZoomRecordingService recordingService, ZoomMeetingService meetingService, ZoomOfficeHoursService officeHoursService)
             : base(settings, logger)
         {
             //_meetingSetup = meetingSetup;
@@ -30,101 +31,66 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             //_lmsCourseMeetingModel = lmsCourseMeetingModel;
             //_userSessionModel = userSessionModel;
             //_userService = userService;
-            //_meetingService = meetingService;
+            _meetingService = meetingService;
             //_lmsFactory = lmsFactory;
+            _officeHoursService = officeHoursService;
         }
-
 
         [Route("{meetingId}/availability")]
         [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResultWithData<OfficeHoursTeacherAvailabilityDto>> GetAvailabitily(int meetingId)
+        public async Task<OperationResultWithData<OfficeHoursTeacherAvailabilityDto>> GetAvailabitily(int meetingId)
         {
-
-            return new OfficeHoursTeacherAvailabilityDto
-            {
-                Duration = 15,
-                PeriodStart = DateTime.Today,
-                PeriodEnd = DateTime.Today.AddMonths(2),
-                DaysOfWeek = new []{2, 4},
-                Intervals = new List<AvailabilityInterval> {new AvailabilityInterval { Start = 8*60, End = (8+2)*60} }
-            }.ToSuccessResult();
+            var availability = await _officeHoursService.GetAvailability(meetingId);
+            return availability.ToSuccessResult();
         }
 
         [Route("{meetingId}/availability")]
         [HttpPost]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResult> AddAvailabitily(int meetingId, [FromBody]OfficeHoursTeacherAvailabilityDto dto)
+        public async Task<OperationResult> AddAvailabitily(int meetingId, [FromBody]OfficeHoursTeacherAvailabilityDto dto)
         {
             // check isTeacher
-            //_officeHoursService.AddAvailability()
-            return OperationResult.Success();
+            var meeting = await _meetingService.GetMeeting(meetingId, Session.LicenseId, CourseId);
+            await _officeHoursService.AddAvailability(meeting, Session.LmsUserId, dto);
+            return dto.ToSuccessResult();
         }
 
         [Route("{meetingId}/slots")]
         [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResultWithData<List<SlotDto>>> GetSlots(int meetingId, [FromQuery]long dateStart)
+        public async Task<IEnumerable<SlotDto>> GetSlots(int meetingId, [FromQuery]long dateStart)
         {
-            var date = new DateTime(1970, 1, 1, 0,0,0, DateTimeKind.Utc).AddMilliseconds(dateStart);
-            return new List<SlotDto>
-            {
-                new SlotDto(){Status = 1, Start = date, End = date.AddMinutes(30)},
-                new SlotDto(){Start = date.AddMinutes(60), End = date.AddMinutes(90)}
-            }.ToSuccessResult();
+            var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(dateStart);
+            var slots = await _officeHoursService.GetSlots(meetingId, date, Session.LmsUserId);
+            return slots;
         }
 
         [Route("{meetingId}/slots")]
         [HttpPost]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResultWithData<SlotDto>> BookSlot(int meetingId, [FromBody]CreateSlotDto dto)
+        public async Task<OperationResultWithData<SlotDto>> BookSlot(int meetingId, [FromBody]CreateSlotDto dto)
         {
-            return new SlotDto{Start = dto.Start, Status = 1, End = dto.End, UserName = "Test", Subject = dto.Subject, Questions = dto.Questions}.ToSuccessResult();
+            var slot = await _officeHoursService.AddSlot(meetingId, Session.LmsUserId, Session.Email, dto, status: 1);
+            return slot.ToSuccessResult();
         }
 
         [Route("slots/{slotId}")]
         [HttpDelete]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResult> CancelSlot(int slotId)
+        public async Task<OperationResult> CancelSlot(int slotId)
         {
-            return OperationResult.Success();
+            var result = await _officeHoursService.CancelSlot(slotId, Session.LmsUserId);
+            return result;
         }
 
         [Route("slots/{slotId}/status/{status}")]
         [HttpPut]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResult> MarkSlotUnavailable(int slotId, int status)
+        public async Task<OperationResult> MarkSlotUnavailable(int slotId, int status)
         {
-            return OperationResult.Success();
+            var result = await _officeHoursService.UpdateSlotStatus(slotId, status:2);
+            return result;
         }
-    }
-
-    public class MarkSlotUnavailableDto
-    {
-        public int Status { get; set; }
-    }
-
-    public class GetSlotsDto
-    {
-        public DateTime DateStart { get; set; }
-    }
-
-    public class SlotDto : CreateSlotDto
-    {
-        public int Id { get; set; }
-        public int Status { get; set; }
-        public string UserName { get; set; }
-    }
-
-    public class CreateSlotDto
-    {
-        /// <summary>
-        /// 0 - Free, 1 - Booked, 2 - NotAvailable
-        /// </summary>
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
-
-        public string Subject { get; set; }
-        public string Questions { get; set; }
     }
 }

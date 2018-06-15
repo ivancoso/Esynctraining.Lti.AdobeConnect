@@ -16,10 +16,12 @@ namespace Esynctraining.Lti.Zoom.Domain
             modelBuilder.AddConfiguration(new LmsUserMap());
             modelBuilder.AddConfiguration(new LmsUserSessionMap());
             modelBuilder.AddConfiguration(new OfficeHoursTeacherAvailabilityMap());
+            modelBuilder.AddConfiguration(new OfficeHoursSlotMap());
         }
 
         public DbSet<LmsCourseMeeting> LmsCourseMeetings { get; set; }
         public DbSet<OfficeHoursTeacherAvailability> OhTeacherAvailabilities { get; set; }
+        public DbSet<OfficeHoursSlot> OhSlots { get; set; }
         public DbSet<LmsUser> LmsUsers { get; set; }
         public DbSet<LmsUserSession> LmsUserSessions { get; set; }
         public DbSet<LmsLicense> LmsLicenses { get; set; }

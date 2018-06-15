@@ -13,6 +13,7 @@ using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Zoom.Api.Host.Controllers;
+using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Host.Swagger;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Domain;
@@ -94,7 +95,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddTransient<ZoomRecordingService, ZoomRecordingService>();
             services.AddTransient<ZoomReportService, ZoomReportService>();
             services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
-            services.AddTransient<ZoomApiWrapper, ZoomApiWrapper>();
+            services.AddSingleton<ILtiTokenAccessor, LtiTokenAccessor>();
+            services.AddScoped<ZoomLicenseAccessor, ZoomLicenseAccessor>();
+            services.AddScoped<IZoomOptionsAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
+            services.AddScoped<ILmsLicenseAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
+            services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
             //services.AddOptions();
 
             //return WindsorRegistrationHelper.CreateServiceProvider(container, services);

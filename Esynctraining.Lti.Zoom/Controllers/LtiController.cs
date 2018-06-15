@@ -125,8 +125,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     //if (provider == LmsProviderNames.Canvas)
                     {
                         var license = _licenseService.GetLicense(param.oauth_consumer_key);
-                        var oAuthId = license.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
-                        var oAuthKey = license.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
+                        var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
+                        var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
 
                         IList<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
                         pairs.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
@@ -387,8 +387,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName,
                         HttpScheme.Https + model.lms_domain);
 
-                    var oAuthId = lmsLicense.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
-                    var oAuthKey = lmsLicense.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
+                    var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
+                    var oAuthKey = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
                     var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsLicense, (string)Settings.CanvasClientId, (string)Settings.CanvasClientSecret);
                     if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))

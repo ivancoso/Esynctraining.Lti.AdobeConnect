@@ -8,6 +8,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Lms.Common.Dto.Canvas;
 using Newtonsoft.Json;
@@ -113,27 +114,28 @@ namespace Esynctraining.Lti.Lms.Canvas
         {
             try
             {
-                Validate((string)licenseSettings["LmsDomain"], userToken);
+                Validate((string)licenseSettings[LmsLicenseSettingNames.LmsDomain], userToken);
 
-                //if (lmsCompany.AdminUser == null)
-                //{
-                //    _logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}.", lmsCompany.Id);
-                //    throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
-                //}
-
-                var token = (string)licenseSettings["AdminUser.Token"];
-                if (string.IsNullOrWhiteSpace(token))
+                if (!licenseSettings.ContainsKey(LmsUserSettingNames.Token))
                 {
-                    _logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", licenseSettings["LicenseId"]);
+                    _logger.Error($"There is no user token provided with license parameters for license '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'.");
                     throw new WarningMessageException(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
                 }
 
-                LmsUserDTO user = await FetchCourseUser(userId, (string)licenseSettings["LmsDomain"], token, courseId);
+                var token = (string)licenseSettings[LmsUserSettingNames.Token];
+
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    _logger.Error($"Empty token provided with license parameters for license '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'.");
+                    throw new WarningMessageException(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
+                }
+
+                LmsUserDTO user = await FetchCourseUser(userId, (string)licenseSettings[LmsLicenseSettingNames.LmsDomain], token, courseId);
                 return user;
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.GetCourseUser] API:{0}. UserToken:{1}. CourseId:{2}. UserId:{3}.", licenseSettings["LmsDomain"], userToken, courseId, userId);
+                _logger.Error($"[EGCEnabledCanvasAPI.GetCourseUser] API:{licenseSettings["LmsDomain"]}. UserToken:{userToken}. CourseId:{courseId}. UserId:{userId}.", ex);
                 throw;
             }
         }

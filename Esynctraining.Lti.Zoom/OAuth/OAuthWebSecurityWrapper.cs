@@ -42,11 +42,11 @@ namespace Esynctraining.Lti.Zoom.OAuth
         {
             string appId = null;
             string appKey = null;
-            var isSandbox = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.IsOAuthSandbox);
+            var isSandbox = lmsCompany.GetSetting<bool>(LmsLicenseSettingNames.IsOAuthSandbox);
             if (isSandbox)
             {
-                appId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
-                appKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
+                appId = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
+                appKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
             }
             else
             {

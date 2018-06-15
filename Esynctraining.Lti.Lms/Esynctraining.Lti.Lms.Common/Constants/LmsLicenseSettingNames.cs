@@ -1,6 +1,11 @@
 namespace Esynctraining.Lti.Lms.Common.Constants
 {
-    public class LmsCompanySettingNames
+    public class LmsUserSettingNames
+    {
+        public const string Token = nameof(Token);
+    }
+
+    public class LmsLicenseSettingNames
     {
         public const string IsOAuthSandbox = nameof(IsOAuthSandbox);
         public const string OAuthAppId = nameof(OAuthAppId);
@@ -59,7 +64,11 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string BridgeApiTokenKey = nameof(BridgeApiTokenKey);
         public const string BridgeApiTokenSecret = nameof(BridgeApiTokenSecret);
 
-        public const string ZoomLicense = nameof(ZoomLicense);
+        public const string ZoomApiKey = nameof(ZoomApiKey);
+        public const string ZoomApiSecret = nameof(ZoomApiSecret);
+        public const string LicenseId = nameof(LicenseId);
+        public const string LicenseKey = nameof(LicenseKey);
+        public const string LmsDomain = nameof(LmsDomain);
 
         public static class Telephony
         {

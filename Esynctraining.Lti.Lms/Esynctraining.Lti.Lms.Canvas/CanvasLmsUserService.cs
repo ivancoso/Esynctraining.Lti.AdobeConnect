@@ -7,6 +7,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace Esynctraining.Lti.Lms.Canvas
@@ -29,17 +30,17 @@ namespace Esynctraining.Lti.Lms.Canvas
             //    throw new ArgumentNullException(nameof(lmsCompany));
 
             //if (lmsCompany.AdminUser == null)
-            if (!licenseSettings.ContainsKey("AdminUser.Token"))
+            if (!licenseSettings.ContainsKey(LmsUserSettingNames.Token))
             {
-                Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}.", licenseSettings["lmsCompany.Id"]);
+                Logger.Error($"There is no user token provided with license parameters for license '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'.");
                 throw new WarningMessageException(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
             }
 
-            var token = (string)licenseSettings["AdminUser.Token"];
+            var token = (string)licenseSettings[LmsUserSettingNames.Token];
 
             if (string.IsNullOrWhiteSpace(token))
             {
-                Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", licenseSettings["lmsCompany.Id"]);
+                Logger.Error($"Empty token provided with license parameters for license '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'.");
                 throw new WarningMessageException(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
             }
 
@@ -58,19 +59,15 @@ namespace Esynctraining.Lti.Lms.Canvas
             //if (lmsCompany == null)
             //    throw new ArgumentNullException(nameof(lmsCompany));
 
-            //if (lmsCompany.AdminUser == null)
-            //if (lmsCompany.AdminUser == null)
-            if (!licenseSettings.ContainsKey("AdminUser.Token"))
+            if (!licenseSettings.ContainsKey(LmsUserSettingNames.Token))
             {
-                var message =
-                    $"There is no admin user set for LmsCompanyId={licenseSettings["lmsCompany.Id"]}.CourseId={courseId}";
-                Logger.Error(message);
+                Logger.Error($"There is no user token provided with license parameters for license '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'. CourseId={courseId}");
                 return OperationResultWithData<List<LmsUserDTO>>.Error(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
             }
 
-            if (string.IsNullOrWhiteSpace((string)licenseSettings["AdminUser.Token"]))
+            if (string.IsNullOrWhiteSpace((string)licenseSettings[LmsUserSettingNames.Token]))
             {
-                Logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", licenseSettings["lmsCompany.Id"]);
+                Logger.Error($"Empty token provided with license parameters for license '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'.");
                 return OperationResultWithData<List<LmsUserDTO>>.Error(EdugameCloud.Lti.Canvas.Resources.Messages.NoLicenseAdmin);
             }
 
@@ -79,22 +76,12 @@ namespace Esynctraining.Lti.Lms.Canvas
             return users.ToSuccessResult();
         }
 
-        //public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null)
-        //{
-        //    if (lmsCompany == null)
-        //        throw new ArgumentNullException(nameof(lmsCompany));
-
-        //    List<LmsUserDTO> users = await FetchUsers(lmsCompany, courseId);
-        //    return (GroupUsers(users), null);
-        //}
-
-
         private async Task<List<LmsUserDTO>> FetchUsers(Dictionary<string, object> licenseSettings,
             string courseId)
         {
-            string token = (string)licenseSettings["AdminUser.Token"];
+            string token = (string)licenseSettings[LmsUserSettingNames.Token];
             List<LmsUserDTO> users = await _canvasApi.GetUsersForCourse(
-                (string)licenseSettings["LmsDomain"],
+                (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
                 token,
                 courseId);
 
@@ -102,12 +89,10 @@ namespace Esynctraining.Lti.Lms.Canvas
             if (users.Any(x => string.IsNullOrEmpty(x.PrimaryEmail)))
             {
                 // TODO: details about ampty email users
-                Logger.ErrorFormat("[Canvas GetUsers] API did not return emails. CourseID={0}. LMSCompanyID:{1}.", courseId, licenseSettings["lmsCompany.Id"]);
+                Logger.Error($"[Canvas GetUsers] API did not return emails. CourseID={courseId}. License: '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'.");
             }
 
             return users;
         }
-
     }
-
 }
