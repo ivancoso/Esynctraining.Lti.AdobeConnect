@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +27,11 @@ using Esynctraining.Lti.Zoom.OAuth;
 using Esynctraining.Lti.Zoom.OAuth.Canvas;
 using LtiLibrary.NetCore.Common;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using RestSharp;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 
@@ -34,15 +39,15 @@ namespace Esynctraining.Lti.Zoom.Controllers
 {
     public class LtiController : BaseController
     {
+        private const string ProviderKeyCookieName = "providerKey";
+
         private readonly ILmsLicenseService _licenseService;
-        private readonly UserSessionService _sessionService;
         private readonly IJsonDeserializer _jsonDeserializer;
 
         public LtiController(ILogger logger, ApplicationSettingsProvider settings, ILmsLicenseService licenseService,
-            UserSessionService sessionService, IJsonDeserializer jsonDeserializer) : base(logger, settings)
+            UserSessionService sessionService, IJsonDeserializer jsonDeserializer) : base(logger, settings, sessionService)
         {
             _licenseService = licenseService;
-            _sessionService = sessionService;
             _jsonDeserializer = jsonDeserializer;
         }
 
@@ -87,6 +92,80 @@ namespace Esynctraining.Lti.Zoom.Controllers
             string state = null,
             string session = null)
         {
+            try
+            {
+                if (string.IsNullOrEmpty(__provider__))
+                {
+                    Logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
+                    ViewBag.Error = "Could not find LMS information. Please, contact system administrator.";
+                    return View("Error");
+                }
+                __provider__ = FixExtraDataIssue(__provider__);
+                if (string.IsNullOrEmpty(session))
+                {
+                    if (Request.Cookies.Keys.Contains(ProviderKeyCookieName))
+                    {
+                        session = Request.Cookies[ProviderKeyCookieName];
+                    }
+                    else
+                    {
+                        Logger.Error("[AuthenticationCallback] providerKey parameter value is null and there is no cookie with such name");
+                        this.ViewBag.Error = "Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.";
+                        return this.View("Error");
+                    }
+                }
+                session = FixExtraDataIssue(session);
+                string provider = __provider__;
+                LmsUserSession s = await GetSession(session);
+
+                var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
+
+                try
+                {
+                    //if (provider == LmsProviderNames.Canvas)
+                    {
+                        var license = _licenseService.GetLicense(param.oauth_consumer_key);
+                        var oAuthId = license.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
+                        var oAuthKey = license.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
+
+                        IList<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
+                        pairs.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
+                        pairs.Add(new KeyValuePair<string, string>("client_id", oAuthId));
+                        pairs.Add(new KeyValuePair<string, string>("redirect_uri", "http://zoom-dev.edugamecloud.com/oauth_complete"));
+                        pairs.Add(new KeyValuePair<string, string>("client_secret", oAuthKey));
+                        pairs.Add(new KeyValuePair<string, string>("code", code));
+
+
+                        HttpClient httpClient = new HttpClient();
+                        var data = Task.Run(() => httpClient.PostAsync("https://esynctraining.instructure.com/login/oauth2/token", new FormUrlEncodedContent(pairs))).Result;
+                        var resp = await data.Content.ReadAsStringAsync();
+
+                    }
+
+                }
+                catch (ApplicationException ex)
+                {
+                    Logger.ErrorFormat(ex, "[AuthenticationCallback] Application exception. SessionKey:{0}, Message:{1}", session, ex.Message);
+                    ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
+                    ViewBag.Message = ex.Message;
+                    return View("~/Views/Lti/LtiError.cshtml");
+                }
+                return this.View("Error");
+
+            }
+            //catch (Core.WarningMessageException ex)
+            //{
+            //    Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", session);
+            //    ViewBag.Message = ex.Message;
+            //    return View("~/Views/Lti/LtiError.cshtml");
+            //}
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", session);
+                ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
+                return View("~/Views/Lti/LtiError.cshtml");
+            }
+
             ViewData["Message"] = __provider__;
             return this.View("About");
         }
@@ -210,6 +289,17 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return this.View("~/Views/Lti/About.cshtml");
         }
 
+        private static string FixExtraDataIssue(string keyToFix)
+        {
+            if (keyToFix != null && keyToFix.Contains(","))
+            {
+                var keys = keyToFix.Split(",".ToCharArray());
+                keyToFix = keys.FirstOrDefault() == null ? keyToFix : keys.FirstOrDefault();
+            }
+
+            return keyToFix;
+        }
+
         private void ValidateLtiVersion(LtiParamDTO param)
         {
             // in case when client supports v2.0 - just warn, for our AC integration all necessary functionality should be supported
@@ -306,10 +396,34 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         var message = "Invalid OAuth parameters. Application Id and Application Key cannot be empty.";
                         throw new LtiException(message);
                     }
+                    ////////
+                    Uri uri = new Uri(returnUrl);
+                    var baseUri = uri.GetComponents(UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path, UriFormat.UriEscaped);
+                    var query = QueryHelpers.ParseQuery(uri.Query);
+                    var items = query.SelectMany(x => x.Value, (col, value) => new KeyValuePair<string, string>(col.Key, value)).ToList();
+                    string parameterValue = Guid.NewGuid().ToString("N");
+                    var qb = new QueryBuilder(items);
+                    qb.Add("__sid__", parameterValue);
+                    qb.Add("__provider__", "cancas");
+                    var fullUri = baseUri + qb.ToQueryString();
 
-                    return Challenge(new AuthenticationProperties() {RedirectUri = returnUrl});
 
-                    //OAuthWebSecurityWrapper.RequestAuthentication(HttpContext, oAuthSettings, returnUrl);
+                    var builder = new UriBuilder("https://esynctraining.instructure.com/login/oauth2/auth");
+
+                    var parameters = new Dictionary<string, string>
+                    {
+                        { "client_id", oAuthId },
+                        { "redirect_uri", fullUri },
+                        { "response_type", "code" },
+                        { "state", Convert.ToBase64String(Encoding.ASCII.GetBytes("esynctraining.instructure.com" + "&&&ru="  + fullUri)) }
+                    };
+
+                    foreach (var key in parameters.Keys)
+                    {
+                        builder.AppendQueryArgument(key, parameters[key]);
+                    }
+
+                    return Redirect(builder.Uri.AbsoluteUri);
                     break;
             }
 

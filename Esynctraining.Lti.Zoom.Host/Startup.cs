@@ -78,13 +78,13 @@ namespace Esynctraining.Lti.Zoom.Host
             .AddCookie()
             .AddOAuth("Canvas", options =>
                 {
-                    options.ClientId = Configuration["AppSettings:CanvasClientId"];
-                    options.ClientSecret = Configuration["AppSettings:CanvasClientSecret"];
-                    options.CallbackPath = new PathString("/oauth-callback");
+                    //options.ClientId = Configuration["AppSettings:CanvasClientId"];
+                    //options.ClientSecret = Configuration["AppSettings:CanvasClientSecret"];
+                    //options.CallbackPath = new PathString("/oauth-callback");
 
-                    options.AuthorizationEndpoint = "https://esynctraining.instructure.com/login/oauth2/auth";
-                    options.TokenEndpoint = "https://esynctraining.instructure.com/login/oauth2/token";
-                    options.UserInformationEndpoint = "https://api.github.com/user";
+                    //options.AuthorizationEndpoint = "https://esynctraining.instructure.com/login/oauth2/auth";
+                    //options.TokenEndpoint = "https://esynctraining.instructure.com/login/oauth2/token";
+                    //options.UserInformationEndpoint = "https://api.github.com/user";
 
                     options.SaveTokens = true;
 
