@@ -1,22 +1,18 @@
 ﻿namespace Esynctraining.Lti.Zoom.Domain.Entities
 {
-    public class LmsUser
+    public class User
     {
-        public virtual LmsCompany LmsCompany { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public string global_id { get; set; }
+    }
 
-        /// <summary>
-        /// Gets or sets the password.
-        /// </summary>
-        public virtual string Password { get; set; }
-
-        /// <summary>
-        /// Gets or sets the token.
-        /// </summary>
-        public virtual string Token { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>
-        public virtual string UserId { get; set; }
+    public class ResponseTocken
+    {
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+        public User user { get; set; }
+        public string refresh_token { get; set; }
+        public int expires_in { get; set; }
     }
 }

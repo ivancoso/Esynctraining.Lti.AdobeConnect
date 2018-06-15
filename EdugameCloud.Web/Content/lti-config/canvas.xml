@@ -9,15 +9,15 @@
     http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd
     http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd">
   <blti:title>Adobe Connect Dev</blti:title>
-  <blti:description>Adobe Connect integration</blti:description>
+  <blti:description>Zoom Dev integration</blti:description>
   <blti:icon></blti:icon>
-  <blti:launch_url>https://dev.edugamecloud.com/lti/canvas-login</blti:launch_url>
+  <blti:launch_url>https://zoom-dev.esynctraining.com/lti/canvas-login</blti:launch_url>
   <blti:extensions platform="canvas.instructure.com">
     <lticm:property name="tool_id">egc_ac_dev</lticm:property>
     <lticm:property name="privacy_level">public</lticm:property>
-    <lticm:property name="domain">https://dev.edugamecloud.com/lti/canvas-login</lticm:property>
+    <lticm:property name="domain">https://zoom-dev.esynctraining.com/lti/canvas-login</lticm:property>
     <lticm:options name="course_navigation">
-      <lticm:property name="url">https://dev.edugamecloud.com/lti/canvas-login</lticm:property>
+      <lticm:property name="url">https://zoom-dev.esynctraining.com/lti/canvas-login</lticm:property>
       <lticm:property name="text">Adobe Connect Dev</lticm:property>
       <lticm:property name="visibility">public</lticm:property>
       <lticm:property name="default">enabled</lticm:property>

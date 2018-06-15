@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
@@ -137,8 +139,34 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
 
                         HttpClient httpClient = new HttpClient();
-                        var data = Task.Run(() => httpClient.PostAsync("https://esynctraining.instructure.com/login/oauth2/token", new FormUrlEncodedContent(pairs))).Result;
-                        var resp = await data.Content.ReadAsStringAsync();
+                        var httpResponseMessage = Task.Run(() => httpClient.PostAsync("https://esynctraining.instructure.com/login/oauth2/token", new FormUrlEncodedContent(pairs))).Result;
+                        if (httpResponseMessage.IsSuccessStatusCode)
+                        {
+                            if (provider.ToLower() == LmsProviderNames.Canvas)
+                            {
+                                if (param.lms_user_login == "$Canvas.user.loginId")
+                                    throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
+                            }
+
+
+                        }
+                        else
+                        {
+                            var sid = Request.Query["__sid__"].ToString();
+                            var cookie = Request.Cookies[sid];
+
+                            this.ViewBag.Error = string.Format(
+                                "Generic OAuth fail: code:[{0}] provider:[{1}] sid:[{2}] cookie:[{3}]",
+                                Request.Query["code"],
+                                Request.Query["__provider__"],
+                                sid);
+                        }
+
+
+                        var resp = await httpResponseMessage.Content.ReadAsStringAsync();
+                        ResponseTocken responseTocken = _jsonDeserializer.JsonDeserialize<ResponseTocken>(resp);
+                        string tocken = responseTocken.access_token;
+                        await _sessionService.UpdateSessionToken(s, tocken);
 
                     }
 
@@ -231,14 +259,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     case LmsProviderEnum.Canvas:
 
-                        //sw = Stopwatch.StartNew();
+                        sw = Stopwatch.StartNew();
 
-                        //        if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
-                        //            CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
-                        //        {
-                        return this.StartOAuth2Authentication(license, "canvas", sessionKey, param);
-                        //return null;
-                        //        }
+                        if (string.IsNullOrWhiteSpace(session?.Token) || await IsTokenExpired(license.Domain, session.Token))
+                        {
+                            return this.StartOAuth2Authentication(license, "canvas", sessionKey, param);
+                        }
 
                         break;
                 }
@@ -287,6 +313,37 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             ViewData["Message"] = provider;
             return this.View("~/Views/Lti/About.cshtml");
+        }
+
+        public async Task<bool> IsTokenExpired(string api, string userToken)
+        {
+            try
+            {
+                Validate(api, userToken);
+
+                var builder = new UriBuilder(api + "/api/v1/users/self/profile");
+
+                HttpClient httpClient = new HttpClient();
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.Uri.AbsoluteUri);
+                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Authorization", "Bearer " + userToken);
+                HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
+
+                return response.StatusCode == HttpStatusCode.Unauthorized;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat(ex, "[CanvasAPI.IsTokenExpired] API:{0}. UserToken:{1}.", api, userToken);
+                throw;
+            }
+        }
+
+        protected static void Validate(string api, string userToken)
+        {
+            if (string.IsNullOrWhiteSpace(api))
+                throw new ArgumentException("Api can not be empty", nameof(api));
+
+            if (string.IsNullOrWhiteSpace(userToken))
+                throw new ArgumentException("UserToken can not be empty", nameof(userToken));
         }
 
         private static string FixExtraDataIssue(string keyToFix)

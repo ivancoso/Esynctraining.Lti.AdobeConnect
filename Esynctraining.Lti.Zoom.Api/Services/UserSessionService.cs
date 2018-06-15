@@ -70,7 +70,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<LmsUserSession> UpdateSessionToken(LmsUserSession session, string token)
         {
-            throw new NotImplementedException();
+            var lmsSession = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x => x.Id == session.Id);
+            lmsSession.Token = token;
+            await _dbContext.SaveChangesAsync();
+            return lmsSession;
         }
     }
 }
