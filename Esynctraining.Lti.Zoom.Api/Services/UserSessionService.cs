@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Esynctraining.Core.Json;
 using Esynctraining.Lti.Lms.Common.Dto;
@@ -10,8 +9,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public class UserSessionService
     {
-        private ZoomDbContext _dbContext;
-        private IJsonSerializer _jsonSerializer;
+        private readonly ZoomDbContext _dbContext;
+        private readonly IJsonSerializer _jsonSerializer;
+
 
         public UserSessionService(ZoomDbContext dbContext,
             IJsonSerializer jsonSerializer)
@@ -19,6 +19,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _jsonSerializer = jsonSerializer;
             _dbContext = dbContext;
         }
+
 
         public async Task<LmsUserSession> SaveSession(int licenseId, string courseId, LtiParamDTO param, string email,
             string lmsUserId)
@@ -47,7 +48,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     session.Token = sessionWithToken.Token;
             }
 
-
             session.SessionData = _jsonSerializer.JsonSerialize(param);
             await _dbContext.SaveChangesAsync();
 
@@ -63,8 +63,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<LmsUserSession> GetSession(Guid id)
         {
-            var session = _dbContext.LmsUserSessions.FirstOrDefault(x =>
-                x.Id == id);
+            var session = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x => x.Id == id);
             return session;
         }
 
@@ -75,5 +74,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             await _dbContext.SaveChangesAsync();
             return lmsSession;
         }
+
     }
+
 }

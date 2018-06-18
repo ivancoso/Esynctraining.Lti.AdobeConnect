@@ -8,11 +8,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public class ZoomRecordingService
     {
-        private ZoomApiWrapper _zoomApi;
+        private readonly ZoomApiWrapper _zoomApi;
+
+
         public ZoomRecordingService(ZoomApiWrapper zoomApi)
         {
-            _zoomApi = zoomApi;
+            _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
         }
+
 
         public IEnumerable<ZoomRecordingFileDto> GetRecordings(string meetingId, bool trash = false)
         {
@@ -29,7 +32,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 DownloadUrl = x.DownloadUrl,
                 ViewUrl = x.PlayUrl,
                 FileType = x.FileType,
-                FileSize = x.FileSize
+                FileSize = x.FileSize,
             });
         }
 
@@ -132,4 +135,5 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         }
 
     }
+
 }

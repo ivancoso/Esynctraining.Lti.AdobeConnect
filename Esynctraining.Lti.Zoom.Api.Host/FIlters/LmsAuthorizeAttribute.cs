@@ -64,7 +64,9 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
                             var api = filterContext.Controller as BaseApiController;
                             api.Session = session;
                             var licenseService = (ILmsLicenseService)filterContext.HttpContext.RequestServices.GetService(typeof(ILmsLicenseService));
-                            api.LmsLicense = licenseService.GetLicense(session.LicenseId);
+                            var t = licenseService.GetLicense(session.LicenseId);
+                            t.Wait();
+                            api.LmsLicense = t.Result;
                             api.CourseId = session.CourseId;
                             if (!string.IsNullOrEmpty(session.SessionData))
                             {

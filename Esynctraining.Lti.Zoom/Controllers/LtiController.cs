@@ -126,7 +126,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     //if (provider == LmsProviderNames.Canvas)
                     {
-                        var license = _licenseService.GetLicense(param.oauth_consumer_key);
+                        var license = await _licenseService.GetLicense(param.oauth_consumer_key);
                         var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
 
@@ -213,7 +213,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 Request.CheckForRequiredLtiParameters();
                 var sw = Stopwatch.StartNew();
 
-                var license = _licenseService.GetLicense(param.oauth_consumer_key);
+                var license = await _licenseService.GetLicense(param.oauth_consumer_key);
 
                 if (license != null)
                 {

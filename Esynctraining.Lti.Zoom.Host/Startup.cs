@@ -1,37 +1,37 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Collections.Specialized;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reflection;
+using Esynctraining.Core.Json;
+using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
+using Esynctraining.Core.Providers;
+using Esynctraining.Json.Jil;
+using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Domain;
+using Esynctraining.Lti.Zoom.Routes;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Specialized;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Security.Claims;
-using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
-using Esynctraining.Core.Json;
-using Esynctraining.Core.Providers;
-using Esynctraining.Json.Jil;
-using Esynctraining.Lti.Zoom.Api.Services;
-using Esynctraining.Lti.Zoom.Domain;
-using Esynctraining.Lti.Zoom.Routes;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Newtonsoft.Json.Linq;
 
 namespace Esynctraining.Lti.Zoom.Host
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)

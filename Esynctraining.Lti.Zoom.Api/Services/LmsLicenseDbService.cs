@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -7,26 +9,35 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public class LmsLicenseDbService : ILmsLicenseService
     {
-        private ZoomDbContext _dbContext;
+        private readonly ZoomDbContext _dbContext;
+
 
         public LmsLicenseDbService(ZoomDbContext dbContext)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public LmsLicenseDto GetLicense(int licenseId)
+
+        public async Task <LmsLicenseDto> GetLicense(int licenseId)
         {
-            var dbLicense =  _dbContext.LmsLicenses.Include(x => x.Settings).FirstOrDefault(x => x.Id == licenseId);
+            var dbLicense = await _dbContext.LmsLicenses
+                .Include(x => x.Settings)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == licenseId);
             return Convert(dbLicense);
         }
 
-        public LmsLicenseDto GetLicense(string cunsumerKey)
+        public async Task<LmsLicenseDto> GetLicense(string consumerKey)
         {
-            var dbLicense = _dbContext.LmsLicenses.Include(x => x.Settings).FirstOrDefault(x => x.ConsumerKey == cunsumerKey);
+            var dbLicense = await _dbContext.LmsLicenses
+                .Include(x => x.Settings)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.ConsumerKey == consumerKey);
             return Convert(dbLicense);
         }
 
-        private LmsLicenseDto Convert(LmsLicense dbLicense)
+
+        private static LmsLicenseDto Convert(LmsLicense dbLicense)
         {
             return new LmsLicenseDto
             {
@@ -38,5 +49,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 Settings = dbLicense.Settings.ToDictionary(x => x.Name, x => (object)x.Value)
             };
         }
+
     }
+
 }

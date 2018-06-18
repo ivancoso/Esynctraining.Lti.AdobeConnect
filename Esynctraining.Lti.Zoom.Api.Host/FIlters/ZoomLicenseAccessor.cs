@@ -31,11 +31,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
         {
             get
             {
-                _license= _license ?? Task.Run(RetrieveLicense).Result;
+                _license = _license ?? Task.Run(RetrieveLicense).Result;
                 return new ZoomApiOptions
                 {
                     ZoomApiKey = _license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
-                    ZoomApiSecret = _license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                    ZoomApiSecret = _license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret),
                 };
             }
         }
@@ -55,12 +55,14 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
                 throw new InvalidOperationException("Could not retrieve user session information");
             }
 
-            var lmsLicense = _lmsLicenseService.GetLicense(session.LicenseId);
+            var lmsLicense = await _lmsLicenseService.GetLicense(session.LicenseId);
             if (lmsLicense == null)
             {
                 throw new InvalidOperationException("Could not retrieve user license information");
             }
             return lmsLicense;
         }
+
     }
+
 }

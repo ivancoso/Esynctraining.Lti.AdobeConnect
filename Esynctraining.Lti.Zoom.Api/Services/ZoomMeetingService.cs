@@ -17,13 +17,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public class ZoomMeetingService
     {
-        private ZoomApiWrapper _zoomApi;
-        private ZoomUserService _userService;
-        private ZoomDbContext _dbContext;
-        private LmsUserServiceBase _lmsUserService;
-        private IJsonSerializer _jsonSerializer;
-        private ILmsLicenseAccessor _licenseAccessor;
-        private ZoomOfficeHoursService _ohService;
+        private readonly ZoomApiWrapper _zoomApi;
+        private readonly ZoomUserService _userService;
+        private readonly ZoomDbContext _dbContext;
+        private readonly LmsUserServiceBase _lmsUserService;
+        private readonly IJsonSerializer _jsonSerializer;
+        private readonly ILmsLicenseAccessor _licenseAccessor;
+        private readonly ZoomOfficeHoursService _ohService;
+
 
         public ZoomMeetingService(ZoomApiWrapper zoomApi, ZoomUserService userService, ZoomDbContext dbContext,
             LmsUserServiceBase lmsUserService, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor, ZoomOfficeHoursService ohService)
@@ -60,7 +61,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             GetMeetings(int licenseId, string courseId, string currentUserId = null)
         {
             List<MeetingViewModel> result = new List<MeetingViewModel>();
-            var dbMeetings = _dbContext.LmsCourseMeetings.Where(x =>
+            var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => 
                 x.LicenseId == licenseId && courseId == x.CourseId);
             if (dbMeetings.Any())
             {

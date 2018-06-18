@@ -9,12 +9,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public class ZoomReportService
     {
-        private ZoomApiWrapper _zoomApi;
+        private readonly ZoomApiWrapper _zoomApi;
+
 
         public ZoomReportService(ZoomApiWrapper zoomApi)
         {
-            _zoomApi = zoomApi;
+            _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
         }
+
 
         public IEnumerable<ZoomSessionDto> GetSessionsReport(string meetingId, string userId, string sessionId = null)
         {
@@ -32,7 +34,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     Duration = s.Duration,
                     SessionId = s.Uuid,
                     StartedAt = s.StartTime.DateTime,
-                    EndedAt = s.EndTime.DateTime
+                    EndedAt = s.EndTime.DateTime,
                 };
                 var participants = _zoomApi.GetMeetingParticipantsReport(s.Uuid);
                 var details = _zoomApi.GetMeetingParticipantsDetails(s.Uuid);
@@ -44,7 +46,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     LeftAt = x.LeaveTime.DateTime,
                     Duration = x.Duration,
                     Score = x.AttentivenessScore,
-                    Details = ConvertToDto(details.Participants.FirstOrDefault(d => d.UserId == x.UserId))
+                    Details = ConvertToDto(details.Participants.FirstOrDefault(d => d.UserId == x.UserId)),
                 }).ToList();
 
                 result.Add(sessionDto);
@@ -53,7 +55,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return result;
         }
 
-        private ZoomSessionParticipantDetailsDto ConvertToDto(ZoomMeetingParticipantDetails apiDetails)
+        private static ZoomSessionParticipantDetailsDto ConvertToDto(ZoomMeetingParticipantDetails apiDetails)
         {
             if(apiDetails == null)
                 return new ZoomSessionParticipantDetailsDto();
@@ -75,8 +77,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 Domain = apiDetails.Domain,
                 MacAddr = apiDetails.MacAddr,
                 HarddiskId = apiDetails.HarddiskId,
-                Version = apiDetails.Version
+                Version = apiDetails.Version,
             };
         }
+
     }
+
 }

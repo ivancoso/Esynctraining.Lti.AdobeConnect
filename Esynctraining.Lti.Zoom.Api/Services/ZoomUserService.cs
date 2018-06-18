@@ -10,11 +10,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public class ZoomUserService
     {
-        private ZoomApiWrapper _zoomApi;
+        private readonly ZoomApiWrapper _zoomApi;
+
+
         public ZoomUserService(ZoomApiWrapper zoomApi)
         {
-            _zoomApi = zoomApi;
+            _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
         }
+
 
         public ListUsers GetUsers()
         {
@@ -30,7 +33,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 : new UserInfoDto
                 {
                     Id = user.Id,
-                    Type = (int)user.Type,
+                    Type = user.Type,
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
@@ -47,14 +50,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Password = dto.Password,
-                Type = UserTypes.Basic
+                Type = UserTypes.Basic,
             }, "create");
 
             return new UserDto
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
-                LastName = user.LastName
+                LastName = user.LastName,
             };
         }
 
@@ -112,7 +115,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                             {
                                 Email = registrant.Email,
                                 FirstName = registrant.FirstName,
-                                LastName = registrant.LastName
+                                LastName = registrant.LastName,
                             });
                         registrantsToApprove.Add(new ZoomMeetingRegistrantDto{Id = addResult.RegistrantId, Email = registrant.Email });
 
@@ -127,7 +130,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                         {
                             Email = registrant.Email,
                             FirstName = registrant.FirstName,
-                            LastName = registrant.LastName
+                            LastName = registrant.LastName,
                         });
                     }
                     catch (Exception e)
@@ -145,7 +148,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     Registrants = registrantsToApprove.Select(x => new ZoomRegistrantForStatusRequest
                     {
                         Email = x.Email,
-                        Id = x.Id
+                        Id = x.Id,
                     }).ToList()
                 }, null);
             }
@@ -164,8 +167,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 JoinUrl = apiObject.JoinUrl,
                 Status = (ZoomMeetingRegistrantStatus) Enum.Parse(typeof(ZoomMeetingRegistrantStatus), apiObject.Status,
                     true),
-                CreateTime = apiObject.CreateTime.DateTime
+                CreateTime = apiObject.CreateTime.DateTime,
             };
         }
+
     }
+
 }

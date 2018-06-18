@@ -1,10 +1,14 @@
-﻿using Esynctraining.Lti.Zoom.Api.Dto;
+﻿using System.Threading.Tasks;
+using Esynctraining.Lti.Zoom.Api.Dto;
 
 namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public interface ILmsLicenseService
     {
-        LmsLicenseDto GetLicense(int licenseId);
-        LmsLicenseDto GetLicense(string cunsumerKey);
+        Task<LmsLicenseDto> GetLicense(int licenseId);
+
+        Task<LmsLicenseDto> GetLicense(string consumerKey);
+
     }
+
 }

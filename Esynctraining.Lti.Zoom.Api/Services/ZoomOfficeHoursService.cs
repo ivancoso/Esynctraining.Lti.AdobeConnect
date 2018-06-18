@@ -12,10 +12,13 @@ namespace Esynctraining.Lti.Zoom.Api.Services
     public class ZoomOfficeHoursService : IOfficeHoursService
     {
         private readonly ZoomDbContext _context;
+
+
         public ZoomOfficeHoursService(ZoomDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
+
 
         public async Task<OfficeHoursTeacherAvailabilityDto> GetAvailability(int meetingId)
         {
@@ -25,7 +28,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return availability == null ? null : ConvertToDto(availability);
         }
 
-        private OfficeHoursTeacherAvailabilityDto ConvertToDto(OfficeHoursTeacherAvailability availability)
+        private static OfficeHoursTeacherAvailabilityDto ConvertToDto(OfficeHoursTeacherAvailability availability)
         {
             return new OfficeHoursTeacherAvailabilityDto
             {
@@ -154,7 +157,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return OperationResult.Success();
         }
 
-        private OfficeHoursTeacherAvailability ConvertFromDto(LmsCourseMeeting meeting, string lmsUserId, OfficeHoursTeacherAvailabilityDto availabilityDto)
+        private static OfficeHoursTeacherAvailability ConvertFromDto(LmsCourseMeeting meeting, string lmsUserId, OfficeHoursTeacherAvailabilityDto availabilityDto)
         {
             var entity = new OfficeHoursTeacherAvailability
             {
