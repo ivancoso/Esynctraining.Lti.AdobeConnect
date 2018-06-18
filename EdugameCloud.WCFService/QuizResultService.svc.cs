@@ -1,5 +1,4 @@
 ﻿using DotNetOpenAuth.Messaging;
-using NHibernate;
 
 namespace EdugameCloud.WCFService
 {

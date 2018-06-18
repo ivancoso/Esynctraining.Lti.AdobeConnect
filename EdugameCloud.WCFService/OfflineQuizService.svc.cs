@@ -48,9 +48,9 @@ namespace EdugameCloud.WCFService
             var postQuizResults = QuizResultModel.GetQuizResultsByQuizIds(new[] {postQuizId}.ToList());
             if (postQuizResults.Any(x => (x.ACEmail == usedEmail || x.Email == usedEmail) && x.Quiz.IsPostQuiz && x.EventQuizMapping.Id == mapping.Id))
             {
-                return new OfflineQuizDTO()
+                return new OfflineQuizDTO
                 {
-                    errorMessage = "You have already passed this Quiz!"
+                    errorMessage = "You have already passed this Quiz!",
                 };
             }
 
@@ -122,7 +122,7 @@ namespace EdugameCloud.WCFService
 
             var existingPostQuizResult = QuizResultModel.GetQuizResultsByQuizIds(new List<int> { postQuizId });
             var existing = existingPostQuizResult.FirstOrDefault(x => x.ACEmail == quizResult.ACEmail && x.Quiz.IsPostQuiz && x.EventQuizMapping.Id == mapping.Id);
-            if (existing!=null)
+            if (existing != null)
                 return new OfflineQuizResultDTO { errorMessage = "You have already passed this Quiz!" };
 
             //var acSession = ACSessionModel.GetOneById(quizResult.ACSessionId);

@@ -63,7 +63,7 @@ namespace EdugameCloud.WCFService.Converters
                     continue;
                 }
 
-                QuizQuestionResultDTO quizAnswer = new QuizQuestionResultDTO();
+                var quizAnswer = new QuizQuestionResultDTO();
                 quizAnswer.isCorrect = answer.isCorrect;
 
                 quizAnswer.answers = this.ConvertSurveyAnswersToQuizAnswers(
