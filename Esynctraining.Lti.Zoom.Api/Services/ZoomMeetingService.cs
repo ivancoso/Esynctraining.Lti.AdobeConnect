@@ -23,9 +23,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         private LmsUserServiceBase _lmsUserService;
         private IJsonSerializer _jsonSerializer;
         private ILmsLicenseAccessor _licenseAccessor;
+        private ZoomOfficeHoursService _ohService;
 
         public ZoomMeetingService(ZoomApiWrapper zoomApi, ZoomUserService userService, ZoomDbContext dbContext,
-            LmsUserServiceBase lmsUserService, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor)
+            LmsUserServiceBase lmsUserService, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor, ZoomOfficeHoursService ohService)
         {
             _zoomApi = zoomApi;
             _userService = userService;
@@ -33,6 +34,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _lmsUserService = lmsUserService;
             _jsonSerializer = jsonSerializer;
             _licenseAccessor = licenseAccessor;
+            _ohService = ohService;
         }
 
         //public IEnumerable<MeetingDto> GetMeetings(string userId)
@@ -68,7 +70,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 {
                     var userMeetings = _zoomApi.GetMeetings(user.Key);
                     result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
-                        ConvertToViewModel(x, dbMeetings.First(db => db.ProviderHostId == x.Id), currentUserId)));
+                        ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));
                 }
 
                 if (currentUserId != null)
@@ -96,6 +98,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var vm = ConvertFromDtoToOHViewModel(ohDetails, userId, ohMeeting.Type);
                     vm.Id = ohMeeting.Id;
                     vm.Details = detailsVm;
+                    vm.Availability = await _ohService.GetAvailability(ohMeeting.Id);
                     result.Add(vm);
                 }
             }

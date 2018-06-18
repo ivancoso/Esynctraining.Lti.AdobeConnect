@@ -18,7 +18,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
 
         private LmsLicenseDto _license;
 
-        public ZoomLicenseAccessor(IHttpContextAccessor httpAccessor, LtiTokenAccessor tokenAccessor,
+        public ZoomLicenseAccessor(IHttpContextAccessor httpAccessor, ILtiTokenAccessor tokenAccessor,
             ILmsLicenseService lmsLicenseService, UserSessionService userService)
         {
             _httpAccessor = httpAccessor;
@@ -27,11 +27,18 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
             _userService = userService;
         }
 
-        public ZoomApiOptions Options => new ZoomApiOptions
+        public ZoomApiOptions Options
         {
-            ZoomApiKey = _license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
-            ZoomApiSecret = _license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
-        };
+            get
+            {
+                _license= _license ?? Task.Run(RetrieveLicense).Result;
+                return new ZoomApiOptions
+                {
+                    ZoomApiKey = _license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
+                    ZoomApiSecret = _license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                };
+            }
+        }
 
         public async Task<LmsLicenseDto> GetLicense()
         {

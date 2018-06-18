@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Lti.Zoom.Domain;
@@ -21,7 +22,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var availability =
                 await _context.OhTeacherAvailabilities.FirstOrDefaultAsync(x =>
                     x.Meeting.Id == meetingId); // &&x.lmsUserId == lmsUserId
-            return ConvertToDto(availability);
+            return availability == null ? null : ConvertToDto(availability);
         }
 
         private OfficeHoursTeacherAvailabilityDto ConvertToDto(OfficeHoursTeacherAvailability availability)
@@ -66,7 +67,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     foreach(var interval in availabilityDto.Intervals)
                     {
                         var intervalCheckStart = checkStart.AddMinutes(interval.Start);
-                        var intervalCheckEnd = checkStart.AddMinutes(interval.Start);
+                        var intervalCheckEnd = checkStart.AddMinutes(interval.End);
                         while (intervalCheckStart < intervalCheckEnd)
                         {
                             var dbSlot = await dbSlots.FirstOrDefaultAsync(x => x.Start == intervalCheckStart); // && end
@@ -187,6 +188,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public string FullName { get; set; }
     }
 
+    [DataContract]
     public class OfficeHoursTeacherAvailabilityDto
     {
         //public int MeetingId { get; set; }
@@ -197,7 +199,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         // TRICK: to support JIL instead of DayOfWeek
         public int[] DaysOfWeek { get; set; }
 
+        //[DataMember(Name="startDate")]
         public DateTime PeriodStart { get; set; }
+        //[DataMember(Name="endDate")]
         public DateTime PeriodEnd { get; set; }
     }
 

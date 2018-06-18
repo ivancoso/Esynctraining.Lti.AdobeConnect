@@ -1,4 +1,5 @@
 ﻿using System;
+using Esynctraining.Lti.Zoom.Api.Services;
 
 namespace Esynctraining.Lti.Zoom.Api.Dto
 {
@@ -24,6 +25,7 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
     public class OfficeHoursViewModel : MeetingViewModel
     {
         public MeetingDetailsViewModel Details { get; set; }
+        public OfficeHoursTeacherAvailabilityDto Availability { get; set; }
     }
 
     public class CreateMeetingViewModel

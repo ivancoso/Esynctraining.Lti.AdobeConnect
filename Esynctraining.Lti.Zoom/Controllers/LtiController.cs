@@ -133,13 +133,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         IList<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
                         pairs.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
                         pairs.Add(new KeyValuePair<string, string>("client_id", oAuthId));
-                        pairs.Add(new KeyValuePair<string, string>("redirect_uri", "http://zoom-dev.edugamecloud.com/oauth_complete"));
+                        pairs.Add(new KeyValuePair<string, string>("redirect_uri", $"{Settings.BasePath}/oauth_complete"));
                         pairs.Add(new KeyValuePair<string, string>("client_secret", oAuthKey));
                         pairs.Add(new KeyValuePair<string, string>("code", code));
 
 
                         HttpClient httpClient = new HttpClient();
-                        var httpResponseMessage = Task.Run(() => httpClient.PostAsync("https://esynctraining.instructure.com/login/oauth2/token", new FormUrlEncodedContent(pairs))).Result;
+                        var httpResponseMessage = await httpClient.PostAsync($"https://{license.Domain}/login/oauth2/token", new FormUrlEncodedContent(pairs));
                         if (httpResponseMessage.IsSuccessStatusCode)
                         {
                             if (provider.ToLower() == LmsProviderNames.Canvas)

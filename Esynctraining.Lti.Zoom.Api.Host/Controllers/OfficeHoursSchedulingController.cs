@@ -19,20 +19,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         private readonly ZoomMeetingService _meetingService;
 
         public OfficeHoursSchedulingController(
-            //MeetingSetup meetingSetup,
-            //API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger, ICache cache, IJsonSerializer jsonSerializer,
-            ZoomUserService userService, ZoomRecordingService recordingService, ZoomMeetingService meetingService, ZoomOfficeHoursService officeHoursService)
+            ILogger logger, ZoomMeetingService meetingService, ZoomOfficeHoursService officeHoursService)
             : base(settings, logger)
         {
-            //_meetingSetup = meetingSetup;
-            //_jsonSerializer = jsonSerializer;
-            //_lmsCourseMeetingModel = lmsCourseMeetingModel;
-            //_userSessionModel = userSessionModel;
-            //_userService = userService;
+            
             _meetingService = meetingService;
-            //_lmsFactory = lmsFactory;
             _officeHoursService = officeHoursService;
         }
 

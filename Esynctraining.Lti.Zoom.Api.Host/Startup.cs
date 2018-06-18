@@ -95,6 +95,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddTransient<ZoomRecordingService, ZoomRecordingService>();
             services.AddTransient<ZoomReportService, ZoomReportService>();
             services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
+            services.AddTransient<ZoomOfficeHoursService, ZoomOfficeHoursService>();
             services.AddSingleton<ILtiTokenAccessor, LtiTokenAccessor>();
             services.AddScoped<ZoomLicenseAccessor, ZoomLicenseAccessor>();
             services.AddScoped<IZoomOptionsAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
