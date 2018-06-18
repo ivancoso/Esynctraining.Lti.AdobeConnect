@@ -383,8 +383,8 @@ namespace EdugameCloud.Lti.BlackBoard
                 string lmsDomain = lmsCompany.LmsDomain;
                 bool useSsl = lmsCompany.UseSSL ?? false;
                 return lmsCompany.EnableProxyToolMode == true
-                           ? this.LoginToolAndCreateAClient(out error, useSsl, lmsDomain, toolPassword)
-                           : this.LoginUserAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
+                           ? LoginToolAndCreateAClient(out error, useSsl, lmsDomain, toolPassword)
+                           : LoginUserAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
             error = "ASP.NET Session is expired";
@@ -451,18 +451,6 @@ namespace EdugameCloud.Lti.BlackBoard
             return role;
         }
 
-        /// <summary>
-        /// The get host.
-        /// </summary>
-        /// <param name="lmsDomain">
-        /// The LMS domain.
-        /// </param>
-        /// <param name="useSsl">
-        /// The use SSL.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private static string GetHost(string lmsDomain, bool useSsl)
         {
             Match match = portRegex.Match(lmsDomain);
@@ -474,15 +462,6 @@ namespace EdugameCloud.Lti.BlackBoard
             return lmsDomain;
         }
 
-        /// <summary>
-        /// The fix host from string.
-        /// </summary>
-        /// <param name="lmsDomain">
-        /// The LMS domain.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private static string FixHostFromString(string lmsDomain)
         {
             Match match = portRegex.Match(lmsDomain);
@@ -517,7 +496,7 @@ namespace EdugameCloud.Lti.BlackBoard
         public T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, ILmsLicense lmsCompany, out string error)
         {
             error = null;
-            client = client ?? this.BeginBatch(out error, lmsCompany);
+            client = client ?? BeginBatch(out error, lmsCompany);
             if (client != null)
             {
                 return action(client);
@@ -526,31 +505,10 @@ namespace EdugameCloud.Lti.BlackBoard
             return default(T);
         }
 
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="client">
-        /// The client.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, Tuple<T, string>> action, ILmsLicense lmsCompany, out string error)
         {
             error = null;
-            client = client ?? this.BeginBatch(out error, lmsCompany);
+            client = client ?? BeginBatch(out error, lmsCompany);
             if (client != null)
             {
                 var result = action(client);
@@ -564,19 +522,7 @@ namespace EdugameCloud.Lti.BlackBoard
 
             return default(T);
         }
-
-        /// <summary>
-        /// The had error.
-        /// </summary>
-        /// <param name="ws">
-        /// The WS.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+        
         private static bool HadError(WebserviceWrapper ws, out string error)
         {
             error = null;
