@@ -1,7 +1,11 @@
-﻿namespace Esynctraining.Zoom.ApiWrapper
+﻿using System.Threading.Tasks;
+
+namespace Esynctraining.Zoom.ApiWrapper
 {
     public interface IZoomOptionsAccessor
     {
-        ZoomApiOptions Options { get; }
+        Task<ZoomApiOptions> GetOptions();
+
     }
+
 }

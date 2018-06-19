@@ -34,10 +34,12 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
 
         public static LmsProvider Generate()
         {
-            LmsProvider lmsProvider = new LmsProvider();
-            lmsProvider.LmsProviderName = "Canvas";
-            lmsProvider.ShortName = "canvas";
-            lmsProvider.lmsProviderId = 2;
+            var lmsProvider = new LmsProvider
+            {
+                LmsProviderName = "Canvas",
+                ShortName = "canvas",
+                lmsProviderId = 2,
+            };
             return lmsProvider;
         }
     }
