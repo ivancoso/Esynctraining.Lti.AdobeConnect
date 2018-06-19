@@ -17,13 +17,14 @@ namespace Esynctraining.Zoom.ApiWrapper
 
         private RestClient WebClient { get; set; }
 
-        public ZoomApiWrapper(IZoomOptionsAccessor accessor)
-        {
-            Options = accessor.Options;
-            if (string.IsNullOrWhiteSpace(Options.ZoomApiBaseUrl))
-                Options.ZoomApiBaseUrl = "https://api.zoom.us/v2/";
-            this.WebClient = new RestClient(Options.ZoomApiBaseUrl);
-        }
+
+        //public ZoomApiWrapper(IZoomOptionsAccessor accessor)
+        //{
+        //    Options = await accessor.GetOptions();
+        //    if (string.IsNullOrWhiteSpace(Options.ZoomApiBaseUrl))
+        //        Options.ZoomApiBaseUrl = "https://api.zoom.us/v2/";
+        //    this.WebClient = new RestClient(Options.ZoomApiBaseUrl);
+        //}
 
         public ZoomApiWrapper(ZoomApiOptions options)
         {
@@ -32,6 +33,7 @@ namespace Esynctraining.Zoom.ApiWrapper
             this.WebClient = new RestClient(options.ZoomApiBaseUrl);
             this.Options = options;
         }
+
 
         public UserInfo GetUser(string idOrEmail)
         {
