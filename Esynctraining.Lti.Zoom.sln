@@ -68,7 +68,6 @@ Global
 		{E89DCEE1-7C5B-407E-8C24-19872B6794A5}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{E89DCEE1-7C5B-407E-8C24-19872B6794A5}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 		{3D134A92-3F31-4727-87E7-2BF400F40D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D134A92-3F31-4727-87E7-2BF400F40D39}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{3D134A92-3F31-4727-87E7-2BF400F40D39}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
 		{3D134A92-3F31-4727-87E7-2BF400F40D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
