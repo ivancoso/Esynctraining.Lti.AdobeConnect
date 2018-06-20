@@ -20,12 +20,12 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
 
         public int Type { get; set; } //1 - meeting, 2 - office hours
         public string CourseId { get; set; }
+        public OfficeHoursTeacherAvailabilityDto Availability { get; set; }
     }
 
     public class OfficeHoursViewModel : MeetingViewModel
     {
         public MeetingDetailsViewModel Details { get; set; }
-        public OfficeHoursTeacherAvailabilityDto Availability { get; set; }
     }
 
     public class CreateMeetingViewModel

@@ -19,9 +19,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-
-        public async Task<OfficeHoursTeacherAvailabilityDto> GetAvailability(int meetingId)
+        public async Task<OfficeHoursTeacherAvailabilityDto> GetAvailability(int meetingId, int licenseId, string userId)
         {
+            //todo: return slots accross the courses
+            var ohMeeting = await _context.LmsCourseMeetings.FirstOrDefaultAsync(x =>
+                x.LicenseId == licenseId && x.ProviderHostId == userId && x.Type == 2);
             var availability =
                 await _context.OhTeacherAvailabilities.FirstOrDefaultAsync(x =>
                     x.Meeting.Id == meetingId); // &&x.lmsUserId == lmsUserId
@@ -45,11 +47,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             };
         }
 
-        public async Task AddAvailability(LmsCourseMeeting meeting, string lmsUserId, OfficeHoursTeacherAvailabilityDto availabilityDto)
+        public async Task<OfficeHoursTeacherAvailabilityDto> AddAvailability(LmsCourseMeeting meeting, string lmsUserId, OfficeHoursTeacherAvailabilityDto availabilityDto)
         {
             var entity = ConvertFromDto(meeting, lmsUserId, availabilityDto);
             _context.Add(entity);
             var result = await _context.SaveChangesAsync();
+            return ConvertToDto(entity);
         }
 
         public async Task<IEnumerable<SlotDto>> GetSlots(int meetingId, DateTime dateStart, string lmsUserId)
@@ -57,20 +60,24 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var dateEnd = dateStart.AddDays(1);
             var availability = await _context.OhTeacherAvailabilities.FirstOrDefaultAsync(x => x.Meeting.Id == meetingId); // &&x.lmsUserId == lmsUserId
             var availabilityDto = ConvertToDto(availability);
-            var checkStart = availabilityDto.PeriodStart > dateStart ? availabilityDto.PeriodStart : dateStart;
-            var periodEnd = availabilityDto.PeriodEnd.AddDays(1);
+            var availabilityStart = availabilityDto.PeriodStart.Date;
+            var checkStart = availabilityStart > dateStart ? availabilityStart : dateStart;
+            var periodEnd = availabilityDto.PeriodEnd.Date.AddDays(1);
             var checkEnd = periodEnd < dateEnd ? periodEnd : dateEnd;
             var dbSlots = _context.OhSlots.Where(x => x.Meeting.Id == meetingId);
             var slots = new List<SlotDto>();
-            while (checkStart < checkEnd)
+
+            var dayCheckStart = checkStart.Date;
+            var dayCheckEnd = checkEnd.Date.AddDays(1);
+            while (dayCheckStart < dayCheckEnd)
             {
-                if (availabilityDto.DaysOfWeek.Contains((int)checkStart.DayOfWeek))
+                if (availabilityDto.DaysOfWeek.Contains((int)dayCheckStart.DayOfWeek))
                 {
                     //dayly cycles for intervals
                     foreach(var interval in availabilityDto.Intervals)
                     {
-                        var intervalCheckStart = checkStart.AddMinutes(interval.Start);
-                        var intervalCheckEnd = checkStart.AddMinutes(interval.End);
+                        var intervalCheckStart = dayCheckStart.AddMinutes(interval.Start) > checkStart ? dayCheckStart.AddMinutes(interval.Start) : checkStart;
+                        var intervalCheckEnd = interval.End > interval.Start ? dayCheckStart.AddMinutes(interval.End) : dayCheckStart.AddDays(1).AddMinutes(interval.End);
                         while (intervalCheckStart < intervalCheckEnd)
                         {
                             var dbSlot = await dbSlots.FirstOrDefaultAsync(x => x.Start == intervalCheckStart); // && end
@@ -84,7 +91,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     }
                 }
 
-                checkStart = checkStart.AddDays(1);
+                dayCheckStart = dayCheckStart.AddDays(1);
             }
 
             return slots;
@@ -92,7 +99,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<SlotDto> AddSlot(int meetingId, string lmsUserId, string requesterName, CreateSlotDto dto, int status = 1)
         {
-            var availability = await _context.OhTeacherAvailabilities.FirstOrDefaultAsync(x => x.Meeting.Id == meetingId); // &&x.lmsUserId == lmsUserId
+            var availability = await _context.OhTeacherAvailabilities.Include(x => x.Meeting).FirstOrDefaultAsync(x => x.Meeting.Id == meetingId); // &&x.lmsUserId == lmsUserId
             //validate interval and non-busy
             var entity = new OfficeHoursSlot
             {
@@ -191,20 +198,15 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public string FullName { get; set; }
     }
 
-    [DataContract]
     public class OfficeHoursTeacherAvailabilityDto
     {
-        //public int MeetingId { get; set; }
 
         public List<AvailabilityInterval> Intervals { get; set; }
         public int Duration { get; set; }
 
-        // TRICK: to support JIL instead of DayOfWeek
-        public int[] DaysOfWeek { get; set; }
+        // TRICK: to support JIL instead of DayOfWeek        public int[] DaysOfWeek { get; set; }
 
-        //[DataMember(Name="startDate")]
         public DateTime PeriodStart { get; set; }
-        //[DataMember(Name="endDate")]
         public DateTime PeriodEnd { get; set; }
     }
 

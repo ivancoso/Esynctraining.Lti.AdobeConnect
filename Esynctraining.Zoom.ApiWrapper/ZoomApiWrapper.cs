@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using Microsoft.IdentityModel.Tokens;
 using RestSharp;
@@ -13,27 +14,38 @@ namespace Esynctraining.Zoom.ApiWrapper
 {
     public class ZoomApiWrapper
     {
-        private ZoomApiOptions Options { get; set; }
+        private ZoomApiOptions _options;
+        private readonly IZoomOptionsAccessor _accessor;
+
+        //todo: async, when other methods are async
+        private ZoomApiOptions GetOptions()
+        {
+            return _options ?? (_options = Task.Run(Init).Result);
+        }
 
         private RestClient WebClient { get; set; }
 
+        private async Task<ZoomApiOptions> Init()
+        {
+            _options = await _accessor.GetOptions();
+            if (string.IsNullOrWhiteSpace(GetOptions().ZoomApiBaseUrl))
+                _options.ZoomApiBaseUrl = "https://api.zoom.us/v2/";
+            WebClient = new RestClient(GetOptions().ZoomApiBaseUrl);
+            return _options;
+        }
 
-        //public ZoomApiWrapper(IZoomOptionsAccessor accessor)
-        //{
-        //    Options = await accessor.GetOptions();
-        //    if (string.IsNullOrWhiteSpace(Options.ZoomApiBaseUrl))
-        //        Options.ZoomApiBaseUrl = "https://api.zoom.us/v2/";
-        //    this.WebClient = new RestClient(Options.ZoomApiBaseUrl);
-        //}
+        public ZoomApiWrapper(IZoomOptionsAccessor accessor)
+        {
+            _accessor = accessor;
+        }
 
         public ZoomApiWrapper(ZoomApiOptions options)
         {
             if (string.IsNullOrWhiteSpace(options.ZoomApiBaseUrl))
                 options.ZoomApiBaseUrl = "https://api.zoom.us/v2/";
-            this.WebClient = new RestClient(options.ZoomApiBaseUrl);
-            this.Options = options;
+            WebClient = new RestClient(options.ZoomApiBaseUrl);
+            _options = options;
         }
-
 
         public UserInfo GetUser(string idOrEmail)
         {
@@ -400,7 +412,7 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
 
             RestRequest restRequest = new RestRequest(resource, method);
 
-            var token = JwtEncode(Options.ZoomApiKey, Options.ZoomApiSecret);
+            var token = JwtEncode(GetOptions().ZoomApiKey, GetOptions().ZoomApiSecret);
             WebClient.Authenticator = (IAuthenticator)new JwtAuthenticator(token);
             NewtonsoftJsonSerializer newtonsoftJsonSerializer = new NewtonsoftJsonSerializer();
             restRequest.JsonSerializer = (ISerializer)newtonsoftJsonSerializer;

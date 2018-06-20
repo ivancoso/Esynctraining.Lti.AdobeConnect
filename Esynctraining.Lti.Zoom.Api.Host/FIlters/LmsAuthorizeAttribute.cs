@@ -27,8 +27,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
 
         public LmsAuthorizeBaseAttribute() { }
 
-
-        public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             string mode;
             Guid token = FetchToken(context.HttpContext.Request, out mode);
@@ -71,63 +70,14 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
                         }
                     }
                 }
-                //else
-                //{
-                //    if (!ApiCallEnabled)
-                //    {
-                //        filterContext.Result = new JsonResult(OperationResult.Error("External calls are not permitted"));
-                //    }
-                //    else
-                //    {
-                //        var service = filterContext.HttpContext.RequestServices.GetService(typeof(UserSessionService));
-                //        LmsLicense license = GetLicense(token);
-                //        if (license == null)
-                //        {
-                //            // TODO: better msg
-                //            filterContext.Result = new JsonResult(OperationResult.Error("SessionTimeOut"));
-                //        }
-                //        else if (!string.IsNullOrWhiteSpace(FeatureName) && !license.GetSetting<bool>(FeatureName))
-                //        {
-                //            filterContext.Result = new ObjectResult(OperationResult.Error("Operation is not enabled."));
-                //        }
-                //        else
-                //        {
-                //            //ActionResult notAllowedResult;
-                //            //var allowed = IsAllowed(session, out notAllowedResult);
-
-                //            //if (!allowed)
-                //            //{
-                //            //    filterContext.Result = notAllowedResult;
-                //            //}
-                //            //else
-                //            {
-                //                var api = filterContext.Controller as BaseApiController;
-                //                api.LmsCompany = license;
-                //                api.CourseId = FetchApiCourseId(filterContext.HttpContext.Request);
-                //            }
-                //        }
-                //    }
-                //}
             }
             else
             {
                 context.Result = new JsonResult(OperationResult.Error("Necessary Authorization arguments were not provided."));
             }
 
-            await base.OnResultExecutionAsync(context, next);
+            await base.OnActionExecutionAsync(context, next);
         }
-
-        //public override void OnActionExecuting(ActionExecutingContext filterContext)
-        //{
-        //    string mode;
-        //    Guid token = FetchToken(filterContext.HttpContext.Request, out mode);
-        //    if (token != Guid.Empty)
-        //    {
-        //        if (mode == ltiAuthScheme)
-        //        {
-        //            // TODO: try\catch?
-        //            var service = (UserSessionService)filterContext.HttpContext.RequestServices.GetService(typeof(UserSessionService));
-        //            LmsUserSession session = Task.Run(async () => await GetReadOnlySession(service, token)).Result;
 
         //            if (session == null)
         //            {

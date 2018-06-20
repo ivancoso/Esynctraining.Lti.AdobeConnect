@@ -70,14 +70,26 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 foreach (var user in zoomMeetingPairs)
                 {
                     var userMeetings = _zoomApi.GetMeetings(user.Key);
+
                     result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
                         ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));
+                    //zoom does not return meeting with current start time within user's meeting request, so handle such meetings one-by-one
+                    var notHandledMeetings = user.Value.Where(x => userMeetings.Meetings.All(m => m.Id != x));
+                    foreach (var notHandledId in notHandledMeetings)
+                    {
+                        var details = _zoomApi.GetMeeting(notHandledId);
+                        if (details != null)
+                        {
+                            var vm = ConvertToViewModel(details,
+                                dbMeetings.First(db => db.ProviderMeetingId == details.Id), currentUserId);
+                            result.Add(vm);
+                        }
+                    }
                 }
-
-                if (currentUserId != null)
-                {
-                    return await ProcessOfficeHours(licenseId, currentUserId, result);
-                }
+            }
+            if (currentUserId != null)
+            {
+                return await ProcessOfficeHours(licenseId, currentUserId, result);
             }
 
             return result;
@@ -99,7 +111,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var vm = ConvertFromDtoToOHViewModel(ohDetails, userId, ohMeeting.Type);
                     vm.Id = ohMeeting.Id;
                     vm.Details = detailsVm;
-                    vm.Availability = await _ohService.GetAvailability(ohMeeting.Id);
+                    vm.Availability = await _ohService.GetAvailability(ohMeeting.Id, licenseId, userId);
                     result.Add(vm);
                 }
             }
@@ -107,6 +119,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             {
                 var ohDetails = _zoomApi.GetMeeting(oh.ConferenceId);
                 oh.Description = ohDetails.Agenda;
+                oh.Availability = await _ohService.GetAvailability(oh.Id, licenseId, userId);
             }
 
             return result;
@@ -274,8 +287,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         //todo: factory. now for Canvas only
         private Dictionary<string, object> GetSettings(string userToken, LmsLicenseDto license)
         {
-            var optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.LicenseKey, LmsLicenseSettingNames.LmsDomain};
+            var optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.OAuthAppId, LmsLicenseSettingNames.OAuthAppKey };
             var result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => v.Value);
+            result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
+            result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
             result.Add(LmsUserSettingNames.Token, userToken);
             return result;
         }
@@ -423,6 +438,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 StartTime = dto.StartTime.DateTime,
                 Agenda = dto.Agenda,
                 Password = dto.Password,
+                JoinUrl = dto.JoinUrl,
                 //Type = type,
                 //HasSessions = dto.HasSessions
                 Settings = new CreateMeetingSettingsViewModel

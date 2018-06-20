@@ -7,7 +7,7 @@ using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
 using Microsoft.AspNetCore.Http;
 
-namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
+namespace Esynctraining.Lti.Zoom.Api
 {
     public class ZoomLicenseAccessor : IZoomOptionsAccessor, ILmsLicenseAccessor
     {
@@ -18,7 +18,6 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
 
         private LmsLicenseDto _license;
 
-
         public ZoomLicenseAccessor(IHttpContextAccessor httpAccessor, ILtiTokenAccessor tokenAccessor,
             ILmsLicenseService lmsLicenseService, UserSessionService userService)
         {
@@ -27,7 +26,6 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
             _lmsLicenseService = lmsLicenseService;
             _userService = userService;
         }
-
 
         public async Task<ZoomApiOptions> GetOptions()
         {
@@ -61,9 +59,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
             {
                 throw new InvalidOperationException("Could not retrieve user license information");
             }
+
             return lmsLicense;
         }
-
     }
-
 }

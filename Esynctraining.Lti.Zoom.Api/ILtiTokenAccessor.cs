@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
+namespace Esynctraining.Lti.Zoom.Api
 {
     public interface ILtiTokenAccessor
     {

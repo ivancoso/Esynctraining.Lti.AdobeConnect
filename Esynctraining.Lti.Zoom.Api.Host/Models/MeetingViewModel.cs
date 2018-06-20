@@ -105,14 +105,15 @@ namespace EdugameCloud.Lti.Zoom.Api.Host.Models
 
     }
 
-    [DataContract]
-    public class MeetingDetailsViewModel : CreateMeetingViewModel
-    {
-        [DataMember]
-        public int Id { get; set; }
-        [DataMember]
-        public string ConferenceId { get; set; }
-    }
+    //[DataContract]
+    //public class MeetingDetailsViewModel : CreateMeetingViewModel
+    //{
+    //    [DataMember]
+    //    public int Id { get; set; }
+    //    [DataMember]
+    //    public string ConferenceId { get; set; }
+    //}
+
     [DataContract]
     public class CreateMeetingRecurrenceViewModel
     {

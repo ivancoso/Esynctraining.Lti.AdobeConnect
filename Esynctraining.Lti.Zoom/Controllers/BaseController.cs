@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Esynctraining.Lti.Zoom.Controllers
 {
-
     public class BaseController : Controller
     {
         protected readonly ILogger Logger;

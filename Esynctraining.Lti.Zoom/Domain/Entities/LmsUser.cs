@@ -7,7 +7,7 @@
         public string global_id { get; set; }
     }
 
-    public class ResponseTocken
+    public class ResponseToken
     {
         public string access_token { get; set; }
         public string token_type { get; set; }
