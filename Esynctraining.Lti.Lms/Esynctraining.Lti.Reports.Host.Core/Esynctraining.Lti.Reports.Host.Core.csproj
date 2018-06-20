@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Reports\Zoom\Subreports\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNet.Security.OAuth.Validation" Version="2.0.0-rc2-final" />
+    <PackageReference Include="AspNet.Security.OpenIdConnect.Server" Version="2.0.0-rc2-final" />
+    <PackageReference Include="Esynctraining.AdobeConnect.Security.Abstractions" Version="1.0.3" />
+    <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.9" />
+    <PackageReference Include="Esynctraining.Core.Logging.MicrosoftExtensionsLogger" Version="1.0.0.1" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.HealthChecks" Version="2.0.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.HealthChecks.SqlServer" Version="1.0.0" />
+    <PackageReference Include="Microsoft.ReportViewer.Runtime.WebForms" Version="12.0.2402.15" />
+    <PackageReference Include="Microsoft.SqlServer.Types.Unofficial" Version="12.0.2000.8" />
+    <PackageReference Include="Serilog.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="2.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
+    <PackageReference Include="ConnectExtensions.Services.Client.Core" Version="1.0.0.5" />
+    <PackageReference Include="Esynctraining.AdobeConnect" Version="1.0.4.4" />
+    <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.16" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Cors" Version="5.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.2" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\Zoom\MeetingSessionsReport.rdlc" />
+    <EmbeddedResource Include="Reports\Zoom\Subreports\ParticipantsSubReport.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+</Project>
