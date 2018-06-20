@@ -284,7 +284,7 @@ namespace Esynctraining.Lti.Reports.Host.Core.Controllers
         {
             var localReport = new LocalReport { EnableHyperlinks = true, EnableExternalImages = true };
 
-            var reportPath = string.Format("EdugameCloud.Lti.Reports.Host.Reports.Zoom.{0}.rdlc", reportName);
+            var reportPath = string.Format("Esynctraining.Lti.Reports.Host.Core.Reports.Zoom.{0}.rdlc", reportName);
             var reportSource = Assembly.GetExecutingAssembly().GetManifestResourceStream(reportPath);
             localReport.LoadReportDefinition(reportSource);
 
@@ -293,7 +293,7 @@ namespace Esynctraining.Lti.Reports.Host.Core.Controllers
                 foreach (string placeholder in subReports.Keys)
                 {
                     var subReportName = string.Format(
-                    "EdugameCloud.Lti.Reports.Host.Reports.Zoom.Subreports.{0}.rdlc",
+                    "Esynctraining.Lti.Reports.Host.Core.Reports.Zoom.Subreports.{0}.rdlc",
                     subReports[placeholder].Key);
 
                     var subReportSource = Assembly.GetExecutingAssembly().GetManifestResourceStream(subReportName);
