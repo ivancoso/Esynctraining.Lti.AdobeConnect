@@ -18,8 +18,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Zoom.ApiWrapp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Api", "Esynctraining.Lti.Zoom.Api\Esynctraining.Lti.Zoom.Api.csproj", "{E89DCEE1-7C5B-407E-8C24-19872B6794A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Lti.Reports.Host", "Esynctraining.Lti.Lms\Esynctraining.Lti.Reports.Host\Esynctraining.Lti.Reports.Host.csproj", "{3D134A92-3F31-4727-87E7-2BF400F40D39}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Host", "Esynctraining.Lti.Zoom.Host\Esynctraining.Lti.Zoom.Host.csproj", "{FB5EED86-2703-473D-9300-2EF46A45667B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom", "Esynctraining.Lti.Zoom\Esynctraining.Lti.Zoom.csproj", "{95AC9661-6416-40F8-B3BB-A7C27E4DE679}"
@@ -69,14 +67,6 @@ Global
 		{E89DCEE1-7C5B-407E-8C24-19872B6794A5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E89DCEE1-7C5B-407E-8C24-19872B6794A5}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{E89DCEE1-7C5B-407E-8C24-19872B6794A5}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{3D134A92-3F31-4727-87E7-2BF400F40D39}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 		{FB5EED86-2703-473D-9300-2EF46A45667B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FB5EED86-2703-473D-9300-2EF46A45667B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB5EED86-2703-473D-9300-2EF46A45667B}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
