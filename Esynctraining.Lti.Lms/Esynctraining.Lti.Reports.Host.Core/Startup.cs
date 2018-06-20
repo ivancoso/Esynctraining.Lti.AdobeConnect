@@ -1,11 +1,10 @@
-﻿using System.Collections.Specialized;
-using Esynctraining.Core.Providers;
+﻿using Esynctraining.Core.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System.Collections.Specialized;
 
 namespace Esynctraining.Lti.Reports.Host.Core
 {
