@@ -170,7 +170,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     Logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
                     ViewBag.Error = "Could not find LMS information. Please, contact system administrator.";
-                    return View("Error");
+                    return View("~/Views/Lti/LtiError.cshtml");
                 }
                 __provider__ = FixExtraDataIssue(__provider__);
                 if (string.IsNullOrEmpty(session))
@@ -185,7 +185,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                             "[AuthenticationCallback] providerKey parameter value is null and there is no cookie with such name");
                         this.ViewBag.Error =
                             "Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.";
-                        return this.View("Error");
+                        return this.View("~/Views/Lti/LtiError.cshtml");
                     }
                 }
                 session = FixExtraDataIssue(session);
@@ -253,7 +253,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     ViewBag.Message = ex.Message;
                     return View("~/Views/Lti/LtiError.cshtml");
                 }
-                return this.View("Error");
+                return this.View("~/Views/Lti/LtiError.cshtml");
             }
             //catch (Core.WarningMessageException ex)
             //{
@@ -305,7 +305,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 if (!string.IsNullOrWhiteSpace(validationError))
                 {
                     this.ViewBag.Error = validationError;
-                    return this.View("Error");
+                    return this.View("~/Views/Lti/LtiError.cshtml");
                 }
 
                 LmsProvider providerInstance = LmsProvider.Generate();
