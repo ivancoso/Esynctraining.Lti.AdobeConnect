@@ -1,42 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Esynctraining.Lti.Zoom.OAuth
+﻿namespace Esynctraining.Lti.Zoom.OAuth
 {
     internal sealed class QueryParameter
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QueryParameter"/> class.
-        /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <param name="value">
-        /// The value.
-        /// </param>
         public QueryParameter(string name, string value)
         {
-            this.Name = name.OAuthUrlEncode();
-            this.Value = value.OAuthUrlEncode();
+            Name = name.OAuthUrlEncode();
+            Value = value.OAuthUrlEncode();
         }
 
-        #endregion
+        public string Name { get; }
 
-        #region Public Properties
+        public string Value { get; }
 
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        public string Name { get; private set; }
-
-        /// <summary>
-        /// Gets the value.
-        /// </summary>
-        public string Value { get; private set; }
-
-        #endregion
     }
+
 }
