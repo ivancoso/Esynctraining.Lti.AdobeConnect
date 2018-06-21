@@ -18,7 +18,7 @@ namespace Esynctraining.Lti.Zoom.OAuth
         public NonceData(string nonce, DateTime timestamp)
         {
             if (string.IsNullOrWhiteSpace(nonce))
-                throw new ArgumentException("nonce can't be empty", "nonce");
+                throw new ArgumentException("nonce can't be empty", nameof(nonce));
 
             Nonce = nonce;
             Timestamp = timestamp;

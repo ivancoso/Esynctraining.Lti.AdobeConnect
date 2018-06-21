@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using Esynctraining.Core.Logging;
 
@@ -19,11 +18,8 @@ namespace Esynctraining.Lti.Zoom.OAuth
 
         public NonceCache(ILogger logger)
         {
-            if (logger == null)
-                throw new ArgumentNullException("logger");
-
             nextCleanTime = DateTime.UtcNow.AddMinutes(CleanPeriodMinutes);
-            this.logger = logger;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
