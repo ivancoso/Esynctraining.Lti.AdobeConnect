@@ -9,8 +9,8 @@
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>Recording - fixed Duration logic for still actual recordings</PackageReleaseNotes>
-    <Version>1.0.4.0</Version>
+    <PackageReleaseNotes>added paging  for GetPermissionsInfo</PackageReleaseNotes>
+    <Version>1.0.4.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>

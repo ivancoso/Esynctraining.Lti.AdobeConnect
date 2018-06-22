@@ -746,6 +746,16 @@ namespace Esynctraining.AC.Provider.Utils
                         StatusSubCodes.not_set);
                     status.Type = tNode.SelectAttributeValue("type");
                     break;
+
+                case StatusCodes.operation_size_error:
+
+                    XmlNode statusNode = doc.SelectSingleNode("//status");
+
+                    status.SubCode = EnumReflector.ReflectEnum(
+                        doc.SelectSingleNodeValue("//status/@subcode"),
+                        StatusSubCodes.not_set);
+                    
+                    break;
             }
 
             return doc;

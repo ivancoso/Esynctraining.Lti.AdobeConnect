@@ -9,8 +9,8 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>+ GetAllByEmailAndType method</PackageReleaseNotes>
-    <Version>1.0.4.5</Version>
+    <PackageReleaseNotes>added paging  for GetPermissionsInfo</PackageReleaseNotes>
+    <Version>1.0.4.6</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 

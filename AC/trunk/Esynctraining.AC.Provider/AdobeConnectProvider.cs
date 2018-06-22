@@ -659,15 +659,41 @@ namespace Esynctraining.AC.Provider
                 throw new ArgumentException("Non-empty value expected", nameof(filter));
 
             // action=permissions-info
-            StatusInfo status;
-
             var commandParams = string.Format(CommandParams.Permissions.AclId + "&{1}", aclId, filter);
 
-            var doc = this.requestProcessor.Process(Commands.Permissions.Info, commandParams, out status);
+            return DoCallPermissionsInfo(Commands.Permissions.Info, commandParams, 0, 0);
+        }
 
-            return ResponseIsOk(doc, status)
-                ? new PermissionCollectionResult(status, PermissionInfoCollectionParser.Parse(doc))
-                : new PermissionCollectionResult(status);
+        private PermissionCollectionResult DoCallPermissionsInfo(string action, string parameters, int startIndex, int limit)
+        {
+            StatusInfo status;
+            var doc = this.requestProcessor.Process(action, parameters.AppendPagingIfNeeded(startIndex, limit), out status);
+            bool okResponse = ResponseIsOk(doc, status);
+
+            if (!okResponse)
+            {
+                if (status.Code == StatusCodes.operation_size_error)
+                {
+                    int? actualAcLimit = status.TryGetSubCodeAsInt32();
+                    if (actualAcLimit.HasValue)
+                    {
+                        return DoCallPermissionsInfo(action, parameters, 1, actualAcLimit.Value);
+                    }
+                }
+                return new PermissionCollectionResult(status);
+            }
+            else
+            {
+                var data = PermissionInfoCollectionParser.Parse(doc);
+                if (limit == 0 || data.Count() < limit)
+                    return new PermissionCollectionResult(status, data);
+
+                var nextPage = DoCallPermissionsInfo(action, parameters, startIndex + limit, limit);
+                if (!nextPage.Success)
+                    return nextPage;
+
+                return new PermissionCollectionResult(status, data.Concat(nextPage.Values));
+            }
         }
 
         /// <summary>
