@@ -9,9 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>added paging  for GetPermissionsInfo</PackageReleaseNotes>
-    <Version>1.0.4.6</Version>
+    <PackageReleaseNotes>SeminarRecordingExtractor: +MaxDegreeOfParallelism setting</PackageReleaseNotes>
+    <Version>1.0.4.7</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <FileVersion>1.0.4.7</FileVersion>
+    <AssemblyVersion>1.0.4.7</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
