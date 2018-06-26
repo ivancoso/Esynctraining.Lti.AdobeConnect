@@ -9,8 +9,8 @@
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>added paging  for GetPermissionsInfo</PackageReleaseNotes>
-    <Version>1.0.4.1</Version>
+    <PackageReleaseNotes>GetEventInfo added speaker info fields</PackageReleaseNotes>
+    <Version>1.0.4.2</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>

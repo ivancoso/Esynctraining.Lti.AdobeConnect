@@ -76,6 +76,23 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlElement("speaker-name")]
         public string SpeakerName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the speaker-brief-overview.
+        /// </summary>
+        [XmlElement("speaker-brief-overview")]
+        public string SpeakerBriefOverview { get; set; }
+
+        /// <summary>
+        /// Gets or sets the speaker-detailed-overview.
+        /// </summary>
+        [XmlElement("speaker-detailed-overview")]
+        public string SpeakerDetailedOverview { get; set; }
+
+        /// <summary>
+        /// Gets or sets the speaker-image.
+        /// </summary>
+        [XmlElement("speaker-image")]
+        public string SpeakerImage { get; set; }
     }
 
     public class EventRegistrationDetails 

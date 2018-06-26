@@ -9,11 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>SeminarRecordingExtractor: +MaxDegreeOfParallelism setting</PackageReleaseNotes>
-    <Version>1.0.4.7</Version>
+    <PackageReleaseNotes>GetEventInfo added speaker info fields</PackageReleaseNotes>
+    <Version>1.0.4.8</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.4.7</FileVersion>
-    <AssemblyVersion>1.0.4.7</AssemblyVersion>
+    <FileVersion>1.0.4.8</FileVersion>
+    <AssemblyVersion>1.0.4.8</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
