@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
@@ -51,11 +52,16 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [Route("{meetingId}/slots")]
         [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public async Task<OperationResultWithData<IEnumerable<SlotDto>>> GetSlots(int meetingId, [FromQuery]long dateStart, [FromQuery]long? dateEnd)
+        public async Task<OperationResultWithData<IEnumerable<SlotDto>>> GetSlots(int meetingId, int? status, [FromQuery]long dateStart, [FromQuery]long? dateEnd)
         {
-            var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(dateStart);
-            DateTime? dEnd = dateEnd.HasValue ? new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(dateEnd.Value) : (DateTime?)null;
-            var slots = await _officeHoursService.GetSlots(meetingId, Session.LmsUserId, date, dEnd);
+            var dateStartConverted = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(dateStart);
+            DateTime? dateEndConverted = dateEnd.HasValue ? new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(dateEnd.Value) : (DateTime?)null;
+            var slots = await _officeHoursService.GetSlots(meetingId, Session.LmsUserId, dateStartConverted, dateEndConverted);
+            if (status.HasValue)
+            {
+                slots = slots.Where(x => x.Status == status.Value);
+            }
+
             return slots.ToSuccessResult();
         }
 

@@ -16,7 +16,7 @@ namespace Esynctraining.Lti.Zoom.Domain
         public DateTime PeriodStart { get; set; }
         public DateTime PeriodEnd { get; set; }
 
-        public LmsCourseMeeting Meeting { get; set; }
+        public virtual LmsCourseMeeting Meeting { get; set; }
 
         public virtual List<OfficeHoursSlot> Slots {get;set;}
     }
