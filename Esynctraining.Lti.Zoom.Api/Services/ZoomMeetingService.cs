@@ -111,7 +111,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var vm = ConvertFromDtoToOHViewModel(ohDetails, userId, ohMeeting.Type);
                     vm.Id = ohMeeting.Id;
                     vm.Details = detailsVm;
-                    vm.Availability = await _ohService.GetAvailability(ohMeeting.Id, licenseId, userId);
+                    vm.Availabilities = await _ohService.GetAvailabilities(ohMeeting.Id, licenseId, userId);
                     result.Add(vm);
                 }
             }
@@ -119,7 +119,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             {
                 var ohDetails = _zoomApi.GetMeeting(oh.ConferenceId);
                 oh.Description = ohDetails.Agenda;
-                oh.Availability = await _ohService.GetAvailability(oh.Id, licenseId, userId);
+                oh.Availabilities = await _ohService.GetAvailabilities(oh.Id, licenseId, userId);
             }
 
             return result;

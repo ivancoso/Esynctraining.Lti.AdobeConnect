@@ -84,7 +84,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
 
             services.AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
             services.AddDbContext<ZoomDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
+                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
             services.AddTransient<ILmsLicenseService, LmsLicenseDbService>();
             services.AddTransient<UserSessionService, UserSessionService>();
             services.AddSingleton<IJsonSerializer, JilSerializer>();

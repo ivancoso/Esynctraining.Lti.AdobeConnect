@@ -56,7 +56,7 @@ namespace Esynctraining.Lti.Zoom.Host
 
             services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
             services.AddDbContext<ZoomDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
+                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
             services.AddTransient<ILmsLicenseService, LmsLicenseDbService>();
             services.AddTransient<UserSessionService, UserSessionService>();
             services.AddSingleton<IJsonSerializer, JilSerializer>();

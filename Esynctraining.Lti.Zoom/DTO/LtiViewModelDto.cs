@@ -32,12 +32,13 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string RecoverRecording =>
             BaseApiUrl + "/meetings/{meetingId}/recordings/{recordingId}/status/recover"; //put
 
-        public string GetTeacherAlailability => BaseApiUrl + "/office-hours/{meetingId}/availability"; //get
-        public string AddTeacherAlailability => BaseApiUrl + "/office-hours/{meetingId}/availability"; //post
+        public string GetTeacherAlailability => BaseApiUrl + "/office-hours/{meetingId}/availabilities"; //get
+        public string AddTeacherAlailability => BaseApiUrl + "/office-hours/{meetingId}/availabilities"; //post
         public string GetSlots => BaseApiUrl + "/office-hours/{meetingId}/slots"; //get
         public string BookSlot => BaseApiUrl + "/office-hours/{meetingId}/slots"; //post
         public string CancelSlot => BaseApiUrl + "/office-hours/slots/{slotId}"; //delete
         public string DenySlot => BaseApiUrl + "/office-hours/slots/{slotId}/status/{status}"; //put
+        public string RescheduleSlot => BaseApiUrl + "/office-hours/slots/{slotId}"; //put
 
         // web app
         public string JoinMeeting => BaseUrl + "/lti/meetings/{meetingId}/join"; //get

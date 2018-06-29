@@ -39,7 +39,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, CourseId);
             if (dbMeeting == null)
                 return OperationResultWithData<IEnumerable<ZoomRecordingSessionDto>>.Error("Meeting not found");
-            var recordings = _recordingService.GetRecordings(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
+            var recordings = _recordingService.GetRecordings(dbMeeting.ProviderHostId, dbMeeting.ProviderMeetingId);
             return recordings.ToSuccessResult();
         }
         [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/recordings/trash")]

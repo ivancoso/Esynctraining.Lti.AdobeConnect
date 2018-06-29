@@ -10,13 +10,13 @@
 
   <ItemGroup>
     <PackageReference Include="Esynctraining.Core.Logging.MicrosoftExtensionsLogger" Version="1.0.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
     <PackageReference Include="Microsoft.ReportViewer.Runtime.WebForms" Version="12.0.2402.15" />
     <PackageReference Include="Microsoft.SqlServer.Types.Unofficial" Version="12.0.2000.8" />
-    <PackageReference Include="Serilog.AspNetCore" Version="2.1.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="2.5.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="2.6.1" />
   </ItemGroup>
 
   <ItemGroup>

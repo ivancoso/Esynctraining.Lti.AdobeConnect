@@ -57,8 +57,7 @@ namespace Esynctraining.Lti.Zoom.Domain
         public override void Configure(EntityTypeBuilder<OfficeHoursSlot> entityBuilder)
         {
             entityBuilder.HasKey(x => x.Id);
-            entityBuilder.HasOne(x => x.Meeting).WithMany().HasForeignKey("lmsCourseMeetingId");
-            entityBuilder.HasOne(x => x.Availability).WithMany().HasForeignKey("availabilityId");
+            entityBuilder.HasOne(x => x.Availability).WithMany(x => x.Slots).HasForeignKey("availabilityId");
         }
     }
 }

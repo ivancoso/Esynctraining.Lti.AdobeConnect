@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Esynctraining.Lti.Zoom.Domain
@@ -16,13 +17,14 @@ namespace Esynctraining.Lti.Zoom.Domain
         public DateTime PeriodEnd { get; set; }
 
         public LmsCourseMeeting Meeting { get; set; }
+
+        public virtual List<OfficeHoursSlot> Slots {get;set;}
     }
 
     [Table("OfficeHoursSlot")]
     public class OfficeHoursSlot : BaseEntity
     {
-        public OfficeHoursTeacherAvailability Availability { get; set; }
-        public LmsCourseMeeting Meeting { get; set; }
+        public virtual OfficeHoursTeacherAvailability Availability { get; set; }
         public int Status { get; set; } // 0 - Free, 1 - Booked, 2 - NotAvailable
         public string LmsUserId { get; set; } // LMS Id of user
         public string RequesterName { get; set; } //student's full name

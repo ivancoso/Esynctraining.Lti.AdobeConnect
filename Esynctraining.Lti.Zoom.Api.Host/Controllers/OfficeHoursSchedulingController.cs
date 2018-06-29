@@ -28,16 +28,16 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             _officeHoursService = officeHoursService;
         }
 
-        [Route("{meetingId}/availability")]
+        [Route("{meetingId}/availabilities")]
         [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public async Task<OperationResultWithData<OfficeHoursTeacherAvailabilityDto>> GetAvailabitily(int meetingId)
+        public async Task<OperationResultWithData<IEnumerable<OfficeHoursTeacherAvailabilityDto>>> GetAvailabilities(int meetingId)
         {
-            var availability = await _officeHoursService.GetAvailability(meetingId, 0, ""); //todo: show slots accross the courses
-            return availability.ToSuccessResult();
+            var availabilities = await _officeHoursService.GetAvailabilities(meetingId, 0, ""); //todo: show slots accross the courses
+            return availabilities.ToSuccessResult();
         }
 
-        [Route("{meetingId}/availability")]
+        [Route("{meetingId}/availabilities")]
         [HttpPost]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public async Task<OperationResultWithData<OfficeHoursTeacherAvailabilityDto>> AddAvailabitily(int meetingId, [FromBody]OfficeHoursTeacherAvailabilityDto dto)
@@ -45,16 +45,17 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             // check isTeacher
             var meeting = await _meetingService.GetMeeting(meetingId, Session.LicenseId, CourseId);
             var result = await _officeHoursService.AddAvailability(meeting, Session.LmsUserId, dto);
-            return result.ToSuccessResult();
+            return result;
         }
 
         [Route("{meetingId}/slots")]
         [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public async Task<OperationResultWithData<IEnumerable<SlotDto>>> GetSlots(int meetingId, [FromQuery]long dateStart)
+        public async Task<OperationResultWithData<IEnumerable<SlotDto>>> GetSlots(int meetingId, [FromQuery]long dateStart, [FromQuery]long? dateEnd)
         {
             var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(dateStart);
-            var slots = await _officeHoursService.GetSlots(meetingId, date, Session.LmsUserId);
+            DateTime? dEnd = dateEnd.HasValue ? new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(dateEnd.Value) : (DateTime?)null;
+            var slots = await _officeHoursService.GetSlots(meetingId, Session.LmsUserId, date, dEnd);
             return slots.ToSuccessResult();
         }
 
@@ -63,8 +64,17 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public async Task<OperationResultWithData<SlotDto>> BookSlot(int meetingId, [FromBody]CreateSlotDto dto)
         {
-            var slot = await _officeHoursService.AddSlot(meetingId, Session.LmsUserId, Session.Email, dto, status: 1);
-            return slot.ToSuccessResult();
+            var slotResult = await _officeHoursService.AddSlot(meetingId, Session.LmsUserId, Session.Email, dto, status: 1);
+            return slotResult;
+        }
+
+        [Route("{slots/{slotId}")]
+        [HttpPut]
+        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        public async Task<OperationResultWithData<SlotDto>> RescheduleSlot(int slotId, [FromBody]RescheduleSlotDto dto)
+        {
+            var slot = await _officeHoursService.RescheduleSlot(slotId, Session.LmsUserId, dto);
+            return slot;
         }
 
         [Route("slots/{slotId}")]
@@ -72,7 +82,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public async Task<OperationResult> CancelSlot(int slotId)
         {
-            var result = await _officeHoursService.CancelSlot(slotId, Session.LmsUserId);
+            var result = await _officeHoursService.DeleteSlot(slotId, Session.LmsUserId);
             return result;
         }
 
