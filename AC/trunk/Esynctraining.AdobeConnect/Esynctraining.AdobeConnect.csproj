@@ -9,11 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>GetEventInfo added speaker info fields</PackageReleaseNotes>
-    <Version>1.0.4.8</Version>
+    <PackageReleaseNotes>+ GetEventList</PackageReleaseNotes>
+    <Version>1.0.4.9</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.4.8</FileVersion>
-    <AssemblyVersion>1.0.4.8</AssemblyVersion>
+    <FileVersion>1.0.4.9</FileVersion>
+    <AssemblyVersion>1.0.4.9</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

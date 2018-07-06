@@ -960,6 +960,11 @@ namespace Esynctraining.AdobeConnect
             return result;
         }
 
+        public EventCollectionResult GetEventList()
+        {
+            return Execute(() => { return _provider.GetEventList(); });
+        }
+
         public StatusInfo RegisterToEvent(EventRegistrationFormFields eventDetails)
         {
             return Execute(() => { return _provider.RegisterToEvent(eventDetails); });

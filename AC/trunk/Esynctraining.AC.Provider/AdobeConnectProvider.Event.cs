@@ -211,5 +211,17 @@ namespace Esynctraining.AC.Provider
 
             return new EventInfoResult(status);
         }
+
+        public EventCollectionResult GetEventList()
+        {
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Event.List,
+                string.Empty, out status);
+
+            return ResponseIsOk(doc, status)
+                ? new EventCollectionResult(status, EventCollectionParser.Parse(doc))
+                : new EventCollectionResult(status);
+        }
     }
 }

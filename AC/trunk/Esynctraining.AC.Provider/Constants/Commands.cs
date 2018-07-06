@@ -161,6 +161,8 @@
             /// The info.
             /// </summary>
             public const string Info = "event-info";
+
+            public const string List = "event-list";
         }
 
         /// <summary>

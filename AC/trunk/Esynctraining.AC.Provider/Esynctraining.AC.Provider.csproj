@@ -9,8 +9,8 @@
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>GetEventInfo added speaker info fields</PackageReleaseNotes>
-    <Version>1.0.4.2</Version>
+    <PackageReleaseNotes>+ GetEventList</PackageReleaseNotes>
+    <Version>1.0.4.3</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
