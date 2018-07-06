@@ -14,7 +14,7 @@
         /// </summary>
         public UserRoleMap()
         {
-            this.Map(x => x.UserRoleName).Length(50).Not.Nullable();
+            this.Map(x => x.UserRoleName).Length(128).Not.Nullable();
         }
 
 
