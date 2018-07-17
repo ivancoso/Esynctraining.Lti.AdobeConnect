@@ -42,15 +42,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Swagger
                     }
                 );
 
-                if (!env.IsDevelopment())
-                    c.DocumentFilter<HideNonApiFilter>();
-
-                //c.SchemaFilter<ApplyCustomSchemaFilters>();
-
-                c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Api.xml", env.WebRootPath));
-                c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Core.xml", env.WebRootPath));
+                //c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Api.xml", env.WebRootPath));
+                //c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.Core.xml", env.WebRootPath));
                 //c.IncludeXmlComments(string.Format(@"{0}\Esynctraining.AdobeConnect.Api.xml", env.WebRootPath));
-                c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.xml", env.WebRootPath));
+                //c.IncludeXmlComments(string.Format(@"{0}\EdugameCloud.Lti.xml", env.WebRootPath));
 
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {

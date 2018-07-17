@@ -36,12 +36,14 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string AddTeacherAlailability => BaseApiUrl + "/office-hours/{meetingId}/availabilities"; //post
         public string GetSlots => BaseApiUrl + "/office-hours/{meetingId}/slots"; //get
         public string BookSlot => BaseApiUrl + "/office-hours/{meetingId}/slots"; //post
-        public string CancelSlot => BaseApiUrl + "/office-hours/slots/{slotId}"; //delete
-        public string DenySlot => BaseApiUrl + "/office-hours/slots/{slotId}/status/{status}"; //put
-        public string RescheduleSlot => BaseApiUrl + "/office-hours/slots/{slotId}"; //put
+        public string DenySlot => BaseApiUrl + "/office-hours/slots/{slotId}/deny"; //put
+        public string DenyDate => BaseApiUrl + "/office-hours/{meetingId}/slots/deny-date"; //put
+        public string DenySlotByDate => BaseApiUrl + "/office-hours/{meetingId}/slots/deny"; //put, post
+        public string RescheduleSlot => BaseApiUrl + "/office-hours/slots/{slotId}/reschedule"; //put
+        public string RescheduleDate => BaseApiUrl + "/office-hours/{meetingId}/reschedule-date"; //put
 
         // web app
-        public string JoinMeeting => BaseUrl + "/lti/meetings/{meetingId}/join"; //get
+        public string JoinMeeting => BaseUrl + "/meetings/{meetingId}/join"; //get
         public string DownloadMeetingReportBySessions =>
             BaseUrl + "/reports/meetings/{meetingId}/by-sessions/download"; //get
 

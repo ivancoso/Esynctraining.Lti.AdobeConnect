@@ -62,9 +62,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
         public virtual async Task<ActionResult> JoinMeeting(int meetingId, string session)
         {
             var s = await GetSession(session);
-            var license = await _licenseService.GetLicense(s.LicenseId);
+            var license = await _licenseService.GetLicense(s.LicenseKey);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, license.Id, param.course_id.ToString());
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
 
             if (dbMeeting == null)
                 return NotFound(meetingId);
@@ -198,9 +198,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     //if (provider == LmsProviderNames.Canvas)
                     {
-                        var license = await _licenseService.GetLicense(param.oauth_consumer_key);
-                        var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
-                        var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
+                        var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
+                        var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
+                        var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthSecret);
 
                         IList<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
                         pairs.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
@@ -285,7 +285,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 Request.CheckForRequiredLtiParameters();
                 var sw = Stopwatch.StartNew();
 
-                var license = await _licenseService.GetLicense(param.oauth_consumer_key);
+                var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
 
                 if (license != null)
                 {
@@ -540,8 +540,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName,
                         HttpScheme.Https + model.lms_domain);
 
-                    var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
-                    var oAuthKey = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
+                    var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
+                    var oAuthKey = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthSecret);
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
                     var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsLicense,
                         (string) Settings.CanvasClientId, (string) Settings.CanvasClientSecret);
@@ -562,7 +562,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     string parameterValue = Guid.NewGuid().ToString("N");
                     var qb = new QueryBuilder(items);
                     qb.Add("__sid__", parameterValue);
-                    qb.Add("__provider__", "cancas");
+                    qb.Add("__provider__", "canvas");
                     var fullUri = baseUri + qb.ToQueryString();
 
 
@@ -594,8 +594,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private async Task<LmsUserSession> SaveSession(LmsLicenseDto license, LtiParamDTO param)
         {
-            var session = await _sessionService.GetSession(license.Id, param.course_id.ToString(), param.lms_user_id);
-            session = session ?? await _sessionService.SaveSession(license.Id, param.course_id.ToString(), param,
+            var session = await _sessionService.GetSession(license.ConsumerKey, param.course_id.ToString(), param.lms_user_id);
+            session = session ?? await _sessionService.SaveSession(license.ConsumerKey, param.course_id.ToString(), param,
                           param.lis_person_contact_email_primary, param.lms_user_id);
             return session;
         }

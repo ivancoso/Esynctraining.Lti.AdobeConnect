@@ -36,7 +36,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResultWithData<IEnumerable<ZoomRecordingSessionDto>>> GetRecordings(int meetingId)
         {
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, CourseId);
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResultWithData<IEnumerable<ZoomRecordingSessionDto>>.Error("Meeting not found");
             var recordings = _recordingService.GetRecordings(dbMeeting.ProviderHostId, dbMeeting.ProviderMeetingId);
@@ -47,7 +47,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResultWithData<IEnumerable<ZoomRecordingsTrashItemDto>>> GetTrashRecordings(int meetingId)
         {
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, CourseId);
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResultWithData<IEnumerable<ZoomRecordingsTrashItemDto>>.Error("Meeting not found");
             var recordings = _recordingService.GetTrashRecordings(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
@@ -70,7 +70,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 Logger.Error("User doesn't exist or doesn't belong to this account", e);
             }
 
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, CourseId);
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResult.Error("Meeting not found");
             //if(meeting.AudioProfileId != userId)
@@ -94,7 +94,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         {
             try
             {
-                var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, CourseId);
+                var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
                 if (dbMeeting == null)
                     return OperationResult.Error("Meeting not found");
                 var result = _recordingService.DeleteRecordings(WebUtility.UrlDecode(recordingId).Replace(" ", "+"), null, trash);
@@ -122,7 +122,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 Logger.Error("User doesn't exist or doesn't belong to this account", e);
             }
 
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, CourseId);
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResult.Error("Meeting not found");
             //if (meeting.AudioProfileId != userId)
@@ -144,7 +144,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResult> RecoverAllRecordings(int meetingId, string recordingId)
         {
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, LmsLicense.Id, CourseId);
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResult.Error("Meeting not found");
             var result = _recordingService.RecoverRecordings(WebUtility.UrlDecode(recordingId).Replace(" ", "+"));

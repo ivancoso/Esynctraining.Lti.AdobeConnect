@@ -57,15 +57,17 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
             services.AddDbContext<ZoomDbContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
-            services.AddTransient<ILmsLicenseService, LmsLicenseDbService>();
+            services.AddTransient<ILmsLicenseService, LmsLicenseInternalApiService>();
             services.AddTransient<UserSessionService, UserSessionService>();
-            services.AddSingleton<IJsonSerializer, JilSerializer>();
-            services.AddSingleton<IJsonDeserializer, JilSerializer>();
+            services.AddSingleton<JilSerializer, JilSerializer>();
+            services.AddSingleton<IJsonSerializer, JilSerializer>(s => s.GetService<JilSerializer>());
+            services.AddSingleton<IJsonDeserializer, JilSerializer>(s => s.GetService<JilSerializer>());
             services.AddTransient<IEGCEnabledCanvasAPI, EGCEnabledCanvasAPI>();
             services.AddTransient<LmsUserServiceBase, CanvasLmsUserService>();
             services.AddTransient<ZoomUserService, ZoomUserService>();
             services.AddTransient<ZoomReportService, ZoomReportService>();
             services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
+            services.AddScoped<ZoomMeetingApiService, ZoomMeetingApiService>();
             services.AddTransient<ZoomOfficeHoursService, ZoomOfficeHoursService>();
 
             services.AddSingleton<ILtiTokenAccessor, QueryStringTokenAccessor>();
@@ -73,6 +75,7 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddScoped<IZoomOptionsAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
             services.AddScoped<ILmsLicenseAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
             services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
+            services.AddScoped<INotificationService, EmptyNotificationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

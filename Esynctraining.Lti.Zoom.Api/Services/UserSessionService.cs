@@ -21,16 +21,16 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         }
 
 
-        public async Task<LmsUserSession> SaveSession(int licenseId, string courseId, LtiParamDTO param, string email,
+        public async Task<LmsUserSession> SaveSession(Guid licenseKey, string courseId, LtiParamDTO param, string email,
             string lmsUserId)
         {
             var session = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x =>
-                x.LicenseId == licenseId && x.CourseId == param.course_id.ToString() && x.LmsUserId == lmsUserId);
+                x.LicenseKey == licenseKey && x.CourseId == param.course_id.ToString() && x.LmsUserId == lmsUserId);
             if (session == null)
             {
                 session = new LmsUserSession
                 {
-                    LicenseId = licenseId,
+                    LicenseKey = licenseKey,
                     CourseId = param.course_id.ToString(),
                     Email = param.lis_person_contact_email_primary,
                     LmsUserId = param.lms_user_id
@@ -43,7 +43,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             if (string.IsNullOrEmpty(session.Token))
             {
                 var sessionWithToken = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x =>
-                    x.LicenseId == licenseId && x.LmsUserId == lmsUserId && x.Token != null);
+                    x.LicenseKey == licenseKey && x.LmsUserId == lmsUserId && x.Token != null);
                 if (sessionWithToken != null)
                     session.Token = sessionWithToken.Token;
             }
@@ -54,10 +54,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return session;
         }
 
-        public async Task<LmsUserSession> GetSession(int licenseId, string courseId, string lmsUserId)
+        public async Task<LmsUserSession> GetSession(Guid licenseKey, string courseId, string lmsUserId)
         {
             var session = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x =>
-                x.LicenseId == licenseId && x.CourseId == courseId && x.LmsUserId == lmsUserId);
+                x.LicenseKey == licenseKey && x.CourseId == courseId && x.LmsUserId == lmsUserId);
             return session;
         }
 

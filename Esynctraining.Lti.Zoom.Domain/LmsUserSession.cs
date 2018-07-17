@@ -11,7 +11,7 @@ namespace Esynctraining.Lti.Zoom.Domain
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public int LicenseId { get; set; }
+        public Guid LicenseKey { get; set; }
         public string Email { get; set; }
         public string LmsUserId { get; set; }
         public string Token { get; set; }

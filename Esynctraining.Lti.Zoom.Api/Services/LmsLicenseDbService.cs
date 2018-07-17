@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Esynctraining.Core.Domain;
+using Esynctraining.Core.Json;
+using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -11,12 +15,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
     {
         private readonly ZoomDbContext _dbContext;
 
-
         public LmsLicenseDbService(ZoomDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
-
 
         public async Task <LmsLicenseDto> GetLicense(int licenseId)
         {
@@ -27,12 +29,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return Convert(dbLicense);
         }
 
-        public async Task<LmsLicenseDto> GetLicense(string consumerKey)
+        public async Task<LmsLicenseDto> GetLicense(Guid consumerKey)
         {
             var dbLicense = await _dbContext.LmsLicenses
                 .Include(x => x.Settings)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.ConsumerKey == consumerKey);
+                .FirstOrDefaultAsync(x => x.ConsumerKey == consumerKey.ToString());
             return Convert(dbLicense);
         }
 
@@ -43,13 +45,45 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             {
                 Id = dbLicense.Id,
                 Domain = dbLicense.Domain,
-                ConsumerKey = dbLicense.ConsumerKey,
+                ConsumerKey = Guid.Parse(dbLicense.ConsumerKey),
                 LmsProviderId = dbLicense.LmsProviderId,
-                SharedSecret = dbLicense.SharedSecret,
+                SharedSecret = Guid.Parse(dbLicense.SharedSecret),
                 Settings = dbLicense.Settings.ToDictionary(x => x.Name, x => (object)x.Value)
             };
         }
 
+    }
+
+    public class LmsLicenseInternalApiService : ILmsLicenseService
+    {
+        HttpClient _httpClient = new HttpClient();
+        private readonly IJsonDeserializer _jsonDeserializer;
+        private readonly dynamic _settings;
+
+        public LmsLicenseInternalApiService(IJsonDeserializer jsonDeserializer, ApplicationSettingsProvider settings)
+        {
+            _jsonDeserializer = jsonDeserializer;
+            _settings = settings;
+        }
+
+        public async Task<LmsLicenseDto> GetLicense(int licenseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<LmsLicenseDto> GetLicense(Guid consumerKey)
+        {
+            var httpResponseMessage = await _httpClient.GetAsync(
+                $"{_settings.LicenseServiceUrl}/{consumerKey}");
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var resp = await httpResponseMessage.Content.ReadAsStringAsync();
+                OperationResultWithData<LmsLicenseDto> licenseDto = _jsonDeserializer.JsonDeserialize<OperationResultWithData<LmsLicenseDto>>(resp);
+                return licenseDto.Data;
+            }
+
+            return null;
+        }
     }
 
 }

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
 {
-    public class LmsAuthorizeBaseAttribute : ActionFilterAttribute, Zoom.Api.Host.FIlters.IApiEnableAttribute
+    public class LmsAuthorizeBaseAttribute : ActionFilterAttribute
     {
         private static readonly string HeaderName = "Authorization";
         private static readonly string ltiAuthScheme = "lti ";
@@ -60,7 +60,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
                             var api = context.Controller as BaseApiController;
                             api.Session = session;
                             var licenseService = (ILmsLicenseService)context.HttpContext.RequestServices.GetService(typeof(ILmsLicenseService));
-                            api.LmsLicense = await licenseService.GetLicense(session.LicenseId);
+                            api.LmsLicense = await licenseService.GetLicense(session.LicenseKey);
                             api.CourseId = session.CourseId;
                             if (!string.IsNullOrEmpty(session.SessionData))
                             {

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Esynctraining.Lti.Zoom.Api.Dto;
 
 namespace Esynctraining.Lti.Zoom.Api.Services
@@ -7,7 +8,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
     {
         Task<LmsLicenseDto> GetLicense(int licenseId);
 
-        Task<LmsLicenseDto> GetLicense(string consumerKey);
+        Task<LmsLicenseDto> GetLicense(Guid consumerKey);
 
     }
 

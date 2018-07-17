@@ -28,7 +28,7 @@ namespace Esynctraining.Lti.Reports.Host.Core.Controllers
                 {
                     DateStarted = "2018-05-24",
                     DateEnded = "2018-05-24 05:00",
-                   MeetingId = "123",
+                   MeetingId = 123,
                     SessionId = "1",
                     ParticipantsCount = 2,
                     Participants = new List<SessionParticipantDto>{new SessionParticipantDto
@@ -130,9 +130,10 @@ namespace Esynctraining.Lti.Reports.Host.Core.Controllers
 
             return null;
         }
+
         // GET: Zoom
         [HttpPost]
-        public ActionResult ReportBySession(SessionReportDto dto)
+        public ActionResult ReportBySession([FromBody]SessionReportDto dto)
         {
             try
             {

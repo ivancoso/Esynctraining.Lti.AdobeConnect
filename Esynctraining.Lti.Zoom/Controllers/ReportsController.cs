@@ -21,14 +21,16 @@ namespace Esynctraining.Lti.Zoom.Controllers
     {
         private readonly ILmsLicenseService _lmsLicenseService;
         private readonly IJsonDeserializer _deserializer;
+        private readonly IJsonSerializer _serializer;
         private readonly ZoomReportService _reportService;
         private readonly ZoomMeetingService _meetingService;
 
         public ReportsController(ILogger logger, ApplicationSettingsProvider settings, UserSessionService sessionService,
-            ILmsLicenseService lmsLicenseService, IJsonDeserializer deserializer, ZoomReportService reportService,
+            ILmsLicenseService lmsLicenseService, IJsonSerializer serializer, IJsonDeserializer deserializer, ZoomReportService reportService,
             ZoomMeetingService meetingService) : base(logger, settings, sessionService)
         {
             _lmsLicenseService = lmsLicenseService;
+            _serializer = serializer;
             _deserializer = deserializer;
             _reportService = reportService;
             _meetingService = meetingService;
@@ -38,10 +40,10 @@ namespace Esynctraining.Lti.Zoom.Controllers
         public virtual async Task<ActionResult> DownloadReport(int meetingId, string session, string type)
         {
             var s = await GetSession(session);
-            LmsLicenseDto license = await _lmsLicenseService.GetLicense(s.LicenseId);
+            LmsLicenseDto license = await _lmsLicenseService.GetLicense(s.LicenseKey);
             var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, license.Id, param.course_id.ToString());
-            var apiMeeting = await _meetingService.GetMeetingDetails(meetingId, license.Id, param.course_id.ToString());
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
+            var apiMeeting = await _meetingService.GetMeetingDetails(meetingId, param.course_id.ToString());
             var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
 
             byte[] fileBytes = new byte[0];
@@ -72,7 +74,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 }).ToArray()
             };
 
-            var stringContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+            var stringContent = new StringContent(_serializer.JsonSerialize(model), Encoding.UTF8, "application/json");
             string mimeType = null;
             using (var client = new System.Net.Http.HttpClient())
             {
@@ -97,9 +99,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
         public virtual async Task<ActionResult> DownloadReportSessionDetails(int meetingId, string session, string meetingSessionId)
         {
             var s = await GetSession(session);
-            LmsLicenseDto license = await _lmsLicenseService.GetLicense(s.LicenseId);
             var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-            var dbMeeting = await _meetingService.GetMeeting(meetingId, license.Id, param.course_id.ToString());
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
             if (dbMeeting == null)
                 return NotFound(meetingId);
 

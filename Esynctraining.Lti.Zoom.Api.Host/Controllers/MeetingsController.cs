@@ -56,7 +56,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             //if (!string.IsNullOrEmpty(userId))
             //{
 
-            var zoomMeetings = await _meetingService.GetMeetings(LmsLicense.Id, CourseId, userId);
+            var zoomMeetings = await _meetingService.GetMeetings(CourseId, userId);
             return zoomMeetings.ToSuccessResult();
             //}
 
@@ -72,7 +72,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
             try
             {
-                var viewModel = await _meetingService.GetMeetingDetails(meetingId, LmsLicense.Id, CourseId.ToString());
+                var viewModel = await _meetingService.GetMeetingDetails(meetingId, CourseId.ToString());
                 return viewModel.ToSuccessResult();
             }
             catch (Exception e)
@@ -155,14 +155,13 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return OperationResult.Error("Unexpected error happened");
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("{meetingId}")]
-        [Microsoft.AspNetCore.Mvc.HttpDelete]
+        [Route("{meetingId}")]
+        [HttpDelete]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResult> DeleteMeeting(int meetingId, [FromQuery] bool remove = false)
         {
-            var param = Session;
             //param.lis_person_contact_email_primary
-            var result = await _meetingService.DeleteMeeting(meetingId, Session.LicenseId, CourseId,
+            var result = await _meetingService.DeleteMeeting(meetingId, CourseId,
                 Param.lis_person_contact_email_primary, remove);
 
             return result;

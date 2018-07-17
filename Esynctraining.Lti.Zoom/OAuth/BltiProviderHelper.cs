@@ -214,9 +214,9 @@ namespace Esynctraining.Lti.Zoom.OAuth
             // In this example I am using the key/secret pair { "MyKey", "Secret12345" }
             // You will need to create your own key/secret pair and replace the code below with the key/secret pair that you create.
             // The domain in AgilixBuzz that contains your blti links will then need to be customized with your key/secret pair.
-            if (license.ConsumerKey == key)
+            if (license.ConsumerKey.ToString() == key)
             {
-                return license.SharedSecret;
+                return license.SharedSecret.ToString();
             }
 
             return null;

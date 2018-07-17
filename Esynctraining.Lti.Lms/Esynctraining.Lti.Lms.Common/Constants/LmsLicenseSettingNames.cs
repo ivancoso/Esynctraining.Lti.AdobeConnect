@@ -10,6 +10,8 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string IsOAuthSandbox = nameof(IsOAuthSandbox);
         public const string OAuthAppId = nameof(OAuthAppId);
         public const string OAuthAppKey = nameof(OAuthAppKey);
+        public const string CanvasOAuthKey = nameof(CanvasOAuthKey);
+        public const string CanvasOAuthSecret = nameof(CanvasOAuthSecret);
         public const string UseSynchronizedUsers = nameof(UseSynchronizedUsers);
         public const string SupportPageHtml = nameof(SupportPageHtml);
         public const string LabelMeeting = nameof(LabelMeeting);

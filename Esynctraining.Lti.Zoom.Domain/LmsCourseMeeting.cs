@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Esynctraining.Lti.Zoom.Domain
 {
     [Table("LmsCourseMeeting")]
     public class LmsCourseMeeting : BaseEntity
     {
-
-        public int LicenseId { get; set; }
+        public Guid LicenseKey { get; set; }
         public int Type { get; set; }
         public string CourseId { get; set; }
         public string ProviderMeetingId { get; set; }

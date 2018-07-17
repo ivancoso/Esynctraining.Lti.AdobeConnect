@@ -42,17 +42,17 @@ namespace Esynctraining.Lti.Zoom.OAuth
         {
             string appId = null;
             string appKey = null;
-            var isSandbox = lmsCompany.GetSetting<bool>(LmsLicenseSettingNames.IsOAuthSandbox);
-            if (isSandbox)
-            {
-                appId = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
-                appKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
-            }
-            else
-            {
-                appId = globalAppId;
-                appKey = globalAppKey;
-            }
+            //var isSandbox = lmsCompany.GetSetting<bool>(LmsLicenseSettingNames.IsOAuthSandbox);
+            //if (isSandbox)
+            //{
+                appId = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
+                appKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthSecret);
+            //}
+            //else
+            //{
+            //    appId = globalAppId;
+            //    appKey = globalAppKey;
+            //}
 
             return new KeyValuePair<string, string>(appId, appKey);
         }

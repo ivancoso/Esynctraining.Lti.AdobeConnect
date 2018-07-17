@@ -8,6 +8,7 @@ using Esynctraining.AspNetCore.Formatters;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Core.Providers;
+using Esynctraining.Extensions;
 using Esynctraining.Json.Jil;
 using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API;
@@ -17,6 +18,11 @@ using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Host.Swagger;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Domain;
+using Esynctraining.Mail;
+using Esynctraining.Mail.Configuration;
+using Esynctraining.Mail.Configuration.Json;
+using Esynctraining.Mail.SmtpClient.MailKit;
+using Esynctraining.Mail.TemplateTransform.RazorLight;
 using Esynctraining.Zoom.ApiWrapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -25,6 +31,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace Esynctraining.Lti.Zoom.Api.Host
@@ -80,12 +87,16 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services
                 .AddSingleton(new ApplicationSettingsProvider(settings));
             services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
-            services.AddLtiSwagger(HostingEnvironment);
+
+            if (HostingEnvironment.IsDevelopment())
+            {
+                services.AddLtiSwagger(HostingEnvironment);
+            }
 
             services.AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
             services.AddDbContext<ZoomDbContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
-            services.AddTransient<ILmsLicenseService, LmsLicenseDbService>();
+            services.AddTransient<ILmsLicenseService, LmsLicenseInternalApiService>();
             services.AddTransient<UserSessionService, UserSessionService>();
             services.AddSingleton<IJsonSerializer, JilSerializer>();
             services.AddSingleton<IJsonDeserializer, JilSerializer>();
@@ -95,15 +106,20 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddTransient<ZoomRecordingService, ZoomRecordingService>();
             services.AddTransient<ZoomReportService, ZoomReportService>();
             services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
+            services.AddTransient<ZoomMeetingApiService, ZoomMeetingApiService>();
             services.AddTransient<ZoomOfficeHoursService, ZoomOfficeHoursService>();
             services.AddSingleton<ILtiTokenAccessor, LtiTokenAccessor>();
             services.AddScoped<ZoomLicenseAccessor, ZoomLicenseAccessor>();
             services.AddScoped<IZoomOptionsAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
             services.AddScoped<ILmsLicenseAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
             services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
-            //services.AddOptions();
-
-            //return WindsorRegistrationHelper.CreateServiceProvider(container, services);
+            //services.Configure<TemplateSettings>(Configuration.GetSection("MailTemplateSettings")).AddSingleton<ITemplateSettings>(sp => sp.GetService<IOptions<TemplateSettings>>().Value);
+            //services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings")).AddSingleton<ISmtpSettings>(sp => sp.GetService<IOptions<SmtpSettings>>().Value);
+            services.ConfigureSingleton<ISmtpSettings, SmtpSettings>(Configuration.GetSection("SmtpSettings"), x => x)
+                .ConfigureSingleton<ITemplateSettings, TemplateSettings>(Configuration.GetSection("MailTemplateSettings"), x => x)
+                .AddScoped<ITemplateTransformer, ViewRenderService>()
+                .AddScoped<ISmtpClient, MailKitSmtpClient>()
+                .AddScoped<INotificationService, NotificationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -146,15 +162,17 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             app.UseMvc(cfg => 
             {
             });
-
-            app.UseSwagger(c => 
+            if (env.IsDevelopment())
             {
-            });
+                app.UseSwagger(c =>
+                {
+                });
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/v1/swagger/v1/swagger.json", "eSyncTraining LTI Zoom API V1");
-            });
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/v1/swagger/v1/swagger.json", "eSyncTraining LTI Zoom API V1");
+                });
+            }
         }
 
     }

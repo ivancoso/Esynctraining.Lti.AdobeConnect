@@ -16,7 +16,10 @@
     <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.9" />
     <PackageReference Include="Esynctraining.Core.Logging.MicrosoftExtensionsLogger" Version="1.0.0.1" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
+    <PackageReference Include="Esynctraining.Extensions" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Json.Jil" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Mail.SmtpClient.MailKit" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Mail.TemplateTransform.RazorLight" Version="1.0.0.2" />
     <PackageReference Include="FluentValidation" Version="7.6.101" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.0" />
@@ -38,8 +41,13 @@
     <ProjectReference Include="..\Esynctraining.Lti.Zoom.Domain\Esynctraining.Lti.Zoom.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="wwwroot/EdugameCloud.Lti.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Update="EmailTemplates\OfficeHoursRescheduleEmail.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="EmailTemplates\OfficeHoursCancellationEmail.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>    

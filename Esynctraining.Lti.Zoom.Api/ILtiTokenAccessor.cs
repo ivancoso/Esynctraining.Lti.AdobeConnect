@@ -7,7 +7,4 @@ namespace Esynctraining.Lti.Zoom.Api
     {
         Guid FetchToken(HttpRequest req, out string mode);
     }
-
-    //public interface ILtiHeaderTokenAccessor : ILtiTokenAccessor { }
-
 }

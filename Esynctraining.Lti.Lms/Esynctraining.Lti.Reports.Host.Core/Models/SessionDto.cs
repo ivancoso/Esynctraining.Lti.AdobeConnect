@@ -4,7 +4,7 @@ namespace Esynctraining.Lti.Reports.Host.Core.Models
 {
     public class SessionDto
     {
-        public string MeetingId { get; set; }
+        public int MeetingId { get; set; }
         public string SessionId { get; set; }
         public string DateStarted { get; set; }
         public string DateEnded { get; set; }

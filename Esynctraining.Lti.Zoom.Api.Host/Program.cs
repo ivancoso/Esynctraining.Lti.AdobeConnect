@@ -26,7 +26,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                     config
                         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                         .AddJsonFile("appsettings.logging.json", optional: false, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile("smtpsettings.json", optional: false);
                     config.AddEnvironmentVariables();
                 })
                 .UseStartup<Startup>()

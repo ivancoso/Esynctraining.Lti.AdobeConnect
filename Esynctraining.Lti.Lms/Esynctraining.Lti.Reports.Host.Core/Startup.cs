@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Collections.Specialized;
+using Esynctraining.AspNetCore.Formatters;
 
 namespace Esynctraining.Lti.Reports.Host.Core
 {
@@ -37,7 +38,11 @@ namespace Esynctraining.Lti.Reports.Host.Core
                 .AddSingleton(new ApplicationSettingsProvider(appSettings));
 
 
-            services.AddMvcCore();
+            services.AddMvcCore(setup =>
+            {
+                setup.InputFormatters.Insert(0, new JilInputFormatter());
+                setup.OutputFormatters.Insert(0, new JilOutputFormatter());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

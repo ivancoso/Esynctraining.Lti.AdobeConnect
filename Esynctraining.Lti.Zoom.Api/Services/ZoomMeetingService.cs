@@ -18,6 +18,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
     public class ZoomMeetingService
     {
         private readonly ZoomApiWrapper _zoomApi;
+        private readonly ZoomMeetingApiService _zoomMeetingApiService;
         private readonly ZoomUserService _userService;
         private readonly ZoomDbContext _dbContext;
         private readonly LmsUserServiceBase _lmsUserService;
@@ -27,9 +28,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
 
         public ZoomMeetingService(ZoomApiWrapper zoomApi, ZoomUserService userService, ZoomDbContext dbContext,
-            LmsUserServiceBase lmsUserService, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor, ZoomOfficeHoursService ohService)
+            LmsUserServiceBase lmsUserService, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor,
+            ZoomOfficeHoursService ohService, ZoomMeetingApiService zoomMeetingApiService)
         {
             _zoomApi = zoomApi;
+            _zoomMeetingApiService = zoomMeetingApiService;
             _userService = userService;
             _dbContext = dbContext;
             _lmsUserService = lmsUserService;
@@ -45,24 +48,20 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         //    return meetings.Meetings.Select(x => ConvertZoomObjToDto(x, userId));
         //}
 
-        public async Task<MeetingDetailsViewModel> GetMeetingDetails(int meetingId, int licenseId, string courseId)
+        public async Task<MeetingDetailsViewModel> GetMeetingDetails(int meetingId, string courseId)
         {
-            var dbMeeting = await GetMeeting(meetingId, licenseId, courseId);
+            var dbMeeting = await GetMeeting(meetingId, courseId);
 
-            var meeting = _zoomApi.GetMeeting(dbMeeting.ProviderMeetingId);
-            //var details = ConvertZoomObjToDetailsDto(meeting);
-            var result = ConvertToDetailsViewModel(meeting);
-            result.Id = dbMeeting.Id;
-            result.Type = dbMeeting.Type;
-            return result;
+            return await _zoomMeetingApiService.GetMeetingApiDetails(dbMeeting);
         }
 
         public async Task<IEnumerable<MeetingViewModel>>
-            GetMeetings(int licenseId, string courseId, string currentUserId = null)
+            GetMeetings(string courseId, string currentUserId = null)
         {
+            var licenseDto = await _licenseAccessor.GetLicense();
             List<MeetingViewModel> result = new List<MeetingViewModel>();
             var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => 
-                x.LicenseId == licenseId && courseId == x.CourseId);
+                x.LicenseKey == licenseDto.ConsumerKey && courseId == x.CourseId);
             if (dbMeetings.Any())
             {
                 var zoomMeetingPairs = dbMeetings.GroupBy(x => x.ProviderHostId)
@@ -89,19 +88,19 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
             if (currentUserId != null)
             {
-                return await ProcessOfficeHours(licenseId, currentUserId, result);
+                return await ProcessOfficeHours(licenseDto.ConsumerKey, currentUserId, result);
             }
 
             return result;
         }
 
-        private async Task<IEnumerable<MeetingViewModel>> ProcessOfficeHours(int licenseId, string userId, List<MeetingViewModel> result)
+        private async Task<IEnumerable<MeetingViewModel>> ProcessOfficeHours(Guid licenseKey, string userId, List<MeetingViewModel> result)
         {
             var oh = result.SingleOrDefault(x => x.Type == 2);
             if (oh == null)
             {
                 var ohMeeting =  await _dbContext.LmsCourseMeetings.FirstOrDefaultAsync(x =>
-                    x.LicenseId == licenseId && x.ProviderHostId == userId && x.Type == 2);
+                    x.LicenseKey == licenseKey && x.ProviderHostId == userId && x.Type == 2);
                 if (ohMeeting != null)
                 {
                     var ohDetails = _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
@@ -111,7 +110,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var vm = ConvertFromDtoToOHViewModel(ohDetails, userId, ohMeeting.Type);
                     vm.Id = ohMeeting.Id;
                     vm.Details = detailsVm;
-                    vm.Availabilities = await _ohService.GetAvailabilities(ohMeeting.Id, licenseId, userId);
+                    vm.Availabilities = await _ohService.GetAvailabilities(ohMeeting.Id, userId);
                     result.Add(vm);
                 }
             }
@@ -119,13 +118,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             {
                 var ohDetails = _zoomApi.GetMeeting(oh.ConferenceId);
                 oh.Description = ohDetails.Agenda;
-                oh.Availabilities = await _ohService.GetAvailabilities(oh.Id, licenseId, userId);
+                oh.Availabilities = await _ohService.GetAvailabilities(oh.Id, userId);
             }
 
             return result;
         }
 
-        public async Task<string> GetMeetingUrl(string userId, string meetingId, string email, Func<Task<RegistrantDto>> getRegistrant)
+        public async Task<string> GetMeetingUrl(string userId, string meetingId, string email,
+            Func<Task<RegistrantDto>> getRegistrant)
         {
             var meeting = _zoomApi.GetMeeting(meetingId);
             string baseUrl = meeting.JoinUrl;
@@ -164,9 +164,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             //return null;
         }
 
-        public async Task<OperationResult> DeleteMeeting(int meetingId, int licenseId, string courseId, string email, bool remove, string occurenceId = null)
+        public async Task<OperationResult> DeleteMeeting(int meetingId, string courseId, string email, bool remove, string occurenceId = null)
         {
-            var meeting = await GetMeeting(meetingId, licenseId, courseId);
+            var meeting = await GetMeeting(meetingId, courseId);
             if (meeting == null)
                 return OperationResult.Error("Meeting not found");
             //check permissions
@@ -185,8 +185,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     userId = user.Id;
                     var isDeleted = _zoomApi.DeleteMeeting(meeting.ProviderMeetingId, occurenceId);
                     // find all user's OH and delete
+                    LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
+
                     var meetings = _dbContext.LmsCourseMeetings.Where(x =>
-                        x.LicenseId == licenseId && x.ProviderHostId == userId && x.Type == 2);
+                        x.LicenseKey == licenseDto.ConsumerKey && x.ProviderHostId == userId && x.Type == 2);
                     _dbContext.RemoveRange(meetings);
                 }
             }
@@ -203,13 +205,13 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(string userToken, string courseId, string userId, string email,
             CreateMeetingViewModel requestDto)
         {
-            LmsLicenseDto license = await _licenseAccessor.GetLicense();
+            LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
             MeetingViewModel vm = null;
             LmsCourseMeeting dbOfficeHours = null;
             if (requestDto.Type.GetValueOrDefault(1) == 2) //Office Hours
             {
                 var dbMeetings = _dbContext.LmsCourseMeetings.Where(x =>
-                    x.LicenseId == license.Id && x.Type == 2);
+                    x.LicenseKey == licenseDto.ConsumerKey && x.Type == 2);
                 if (dbMeetings.Any(x => x.CourseId == courseId))
                 {
                     return OperationResultWithData<MeetingViewModel>.Error(
@@ -220,7 +222,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             var dbMeeting = new LmsCourseMeeting
             {
-                LicenseId = license.Id,
+                LicenseKey = licenseDto.ConsumerKey,
                 CourseId = courseId,
                 Type = requestDto.Type.GetValueOrDefault(1),
                 Reused = false,
@@ -262,7 +264,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 var lmsService =
                     _lmsUserService; //_lmsFactory.GetUserService(LmsProviderEnum.Canvas); //add other LMSes later
 
-                var settings = GetSettings(userToken, license);
+                var settings = GetSettings(userToken, licenseDto);
                 var lmsUsers = await lmsService.GetUsers(settings, courseId);
 
                 //take users by email, throwing out current user
@@ -303,22 +305,22 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return meeting;
         }
 
-        public async Task<LmsCourseMeeting> GetMeeting(int meetingId, int licenseId, string courseId)
+        public async Task<LmsCourseMeeting> GetMeeting(int meetingId, string courseId)
         {
+            LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
             return await _dbContext.LmsCourseMeetings.FirstOrDefaultAsync(x =>
-                x.Id == meetingId && x.LicenseId == licenseId && x.CourseId == courseId);
+                x.Id == meetingId && x.LicenseKey == licenseDto.ConsumerKey && x.CourseId == courseId);
         }
 
         public async Task<bool> UpdateMeeting(int meetingId, string userToken, string courseId, string email, CreateMeetingViewModel vm)
         {
-            LmsLicenseDto license = await _licenseAccessor.GetLicense();
-
-            var dbMeeting = await GetMeeting(meetingId, license.Id, courseId);
+            var dbMeeting = await GetMeeting(meetingId, courseId);
             var updated = UpdateApiMeeting(dbMeeting.ProviderMeetingId, vm);
             if (updated)
             {
                 if (vm.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
                 {
+                    LmsLicenseDto license = await _licenseAccessor.GetLicense();
                     var settings = GetSettings(userToken, license);
                     var lmsService = _lmsUserService;//_lmsFactory.GetUserService(LmsProviderEnum.Canvas); //add other LMSes later
                     var lmsUsers = await lmsService.GetUsers(settings, courseId);
@@ -347,9 +349,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 Type = MeetingTypes.Scheduled, //(MeetingTypes)(int)dto.Type,
                 Password = dto.Password,
                 Agenda = dto.Agenda,
-                Duration = dto.Duration,
+                Duration = dto.Duration.GetValueOrDefault(60), //default duration=60 if OH
                 Timezone = dto.Timezone,
-                StartTime = new DateTimeOffset(dto.StartTime)
+                StartTime = new DateTimeOffset(dto.StartTime.GetValueOrDefault(DateTime.UtcNow)) // default is now if OH
             };
 
             if (dto.Settings != null)
@@ -523,7 +525,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var dto = new CreateZoomMeetingDto
             {
                 Agenda = vm.Agenda,
-                Duration = vm.Duration,
+                Duration = vm.Duration.GetValueOrDefault(60),
                 Password = vm.Password,
                 StartTime = vm.StartTime,
                 Timezone = vm.Timezone,

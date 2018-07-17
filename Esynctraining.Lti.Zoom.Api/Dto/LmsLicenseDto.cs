@@ -6,8 +6,8 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
     public class LmsLicenseDto
     {
         public int Id { get; set; }
-        public string ConsumerKey { get; set; }
-        public string SharedSecret { get; set; }
+        public Guid ConsumerKey { get; set; }
+        public Guid SharedSecret { get; set; }
         public int LmsProviderId { get; set; } //todo: enum
         public string Domain { get; set; }
         public Dictionary<string, object> Settings { get; set; }
