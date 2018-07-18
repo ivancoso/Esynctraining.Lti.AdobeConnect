@@ -290,7 +290,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         private Dictionary<string, object> GetSettings(string userToken, LmsLicenseDto license)
         {
             var optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.OAuthAppId, LmsLicenseSettingNames.OAuthAppKey };
-            var result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => v.Value);
+            var result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
             result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
             result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
             result.Add(LmsUserSettingNames.Token, userToken);

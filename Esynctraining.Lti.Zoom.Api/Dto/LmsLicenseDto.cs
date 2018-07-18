@@ -10,7 +10,7 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
         public Guid SharedSecret { get; set; }
         public int LmsProviderId { get; set; } //todo: enum
         public string Domain { get; set; }
-        public Dictionary<string, object> Settings { get; set; }
+        public Dictionary<string, string> Settings { get; set; }
 
         public T GetSetting<T>(string settingName)
         {

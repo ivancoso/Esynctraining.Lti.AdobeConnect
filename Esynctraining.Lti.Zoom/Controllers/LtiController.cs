@@ -295,10 +295,10 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 }
                 else
                 {
-                    Logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.",
+                    Logger.ErrorFormat("Zoom integration is not set up. param:{0}.",
                         JsonConvert.SerializeObject(param));
                     throw new LtiException(
-                        $"Invalid LTI request. Your Adobe Connect integration is not set up for provided consumer key.");
+                        $"Invalid LTI request. Your Zoom integration is not set up for provided consumer key.");
                 }
 
                 string validationError = ValidateLmsLicense(license, param);
@@ -540,8 +540,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName,
                         HttpScheme.Https + model.lms_domain);
 
-                    var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
-                    var oAuthKey = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthSecret);
+                    //var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
+                    //var oAuthKey = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthSecret);
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
                     var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsLicense,
                         (string) Settings.CanvasClientId, (string) Settings.CanvasClientSecret);
@@ -570,7 +570,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                     var parameters = new Dictionary<string, string>
                     {
-                        {"client_id", oAuthId},
+                        {"client_id", oAuthSettings.Key},
                         {"redirect_uri", fullUri},
                         {"response_type", "code"},
                         {
@@ -688,7 +688,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             var optionNamesForCanvas =
                 new List<string> {LmsLicenseSettingNames.OAuthAppId, LmsLicenseSettingNames.OAuthAppKey};
             var result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key))
-                .ToDictionary(k => k.Key, v => v.Value);
+                .ToDictionary(k => k.Key, v => (object)v.Value);
             result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
             result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
             result.Add(LmsUserSettingNames.Token, userToken);

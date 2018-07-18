@@ -48,7 +48,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 ConsumerKey = Guid.Parse(dbLicense.ConsumerKey),
                 LmsProviderId = dbLicense.LmsProviderId,
                 SharedSecret = Guid.Parse(dbLicense.SharedSecret),
-                Settings = dbLicense.Settings.ToDictionary(x => x.Name, x => (object)x.Value)
+                Settings = dbLicense.Settings.ToDictionary(x => x.Name, x => x.Value)
             };
         }
 
