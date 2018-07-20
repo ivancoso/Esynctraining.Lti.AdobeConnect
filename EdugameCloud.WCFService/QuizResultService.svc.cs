@@ -113,10 +113,17 @@ namespace EdugameCloud.WCFService
 
         public async Task<OperationResultDto> SaveAll(QuizSummaryResultDTO quizResult)
         {
+
             if (quizResult == null)
+            {
+                Logger.Fatal("QuizResultService.SaveAll: ArgumentNullException for quizResult");
                 throw new ArgumentNullException(nameof(quizResult));
+            }
+                
             if (quizResult.quizResults == null)
                 quizResult.quizResults = new QuizResultDTO[0];
+
+            Logger.Info($"QuizResultService.SaveAll: {quizResult.acSessionId}, quizId : {quizResult.quizId}, companyId : {quizResult.companyId}, Count : {quizResult.quizResults.Length}");
 
             IList<string> errorMessages = new List<string>();
 
