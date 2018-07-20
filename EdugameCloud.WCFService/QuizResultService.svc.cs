@@ -123,7 +123,7 @@ namespace EdugameCloud.WCFService
             if (quizResult.quizResults == null)
                 quizResult.quizResults = new QuizResultDTO[0];
 
-            Logger.Info($"QuizResultService.SaveAll Start: {quizResult.acSessionId}, quizId : {quizResult.quizId}, companyId : {quizResult.companyId}, Count : {quizResult.quizResults.Length}");
+            Logger.Info($"QuizResultService.SaveAll Start: AcSessionId {quizResult.acSessionId}, quizId : {quizResult.quizId}, companyId : {quizResult.companyId}, Count : {quizResult.quizResults.Length}");
 
             IList<string> errorMessages = new List<string>();
 
