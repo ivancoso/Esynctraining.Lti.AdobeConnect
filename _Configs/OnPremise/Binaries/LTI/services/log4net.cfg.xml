@@ -2,12 +2,12 @@
 <log4net debug="false">
   <!-- ALL, DEBUG, INFO, WARN, ERROR, FATAL, OFF-->
   <root>
-    <level value="WARN"/>
+    <level value="INFO"/>
     <appender-ref ref="GeneralLog" />
   </root>
 
   <logger name="Default">
-    <level value="WARN" />
+    <level value="INFO" />
     <appender-ref ref="Application" />
   </logger>
 
