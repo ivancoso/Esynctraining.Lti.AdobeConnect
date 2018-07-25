@@ -620,7 +620,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private async Task<LtiViewModelDto> BuildModelAsync(LmsUserSession session, StringBuilder trace = null)
         {
-            var sw = Stopwatch.StartNew();
+            var license = await _licenseService.GetLicense(session.LicenseKey);
 
             //var credentials = session.LmsCompany;
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(session.SessionData);
@@ -657,7 +657,11 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     true, //credentials.EnableCourseMeetings.GetValueOrDefault() || param.is_course_meeting_enabled,
 
                 LmsProviderName = "Canvas", //lmsProvider.LmsProviderName,
-                UserGuideLink = "https://stage.edugamecloud.com/content/lti-instructions/ZoomIntegration.pdf"
+                UserGuideLink = $"{ZoomUrls.BaseUrl}/ZoomIntegration.pdf",
+                EnableClassRosterSecurity = license.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity),
+                EnableOfficeHours = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
+                PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),
+                SupportSectionText = license.GetSetting<string>(LmsLicenseSettingNames.SupportSectionText)
                 /*!string.IsNullOrEmpty(lmsProvider.UserGuideFileUrl)
                     ? lmsProvider.UserGuideFileUrl
                     : new Uri(new Uri((string)Settings.BasePath, UriKind.Absolute), $"content/lti-instructions/{lmsProvider.LmsProviderName}.pdf").ToString(),*/

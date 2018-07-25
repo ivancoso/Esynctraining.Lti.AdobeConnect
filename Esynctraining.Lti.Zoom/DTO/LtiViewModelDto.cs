@@ -90,6 +90,11 @@ namespace Esynctraining.Lti.Zoom.DTO
 
         [DataMember(Name = "courseMeetingsEnabled")]
         public bool CourseMeetingsEnabled { get; set; }
+
+        public bool EnableOfficeHours { get; set; }
+        public bool EnableClassRosterSecurity { get; set; }
+        public string PrimaryColor { get; set; }
+        public string SupportSectionText { get; set; }
     }
 
 }
