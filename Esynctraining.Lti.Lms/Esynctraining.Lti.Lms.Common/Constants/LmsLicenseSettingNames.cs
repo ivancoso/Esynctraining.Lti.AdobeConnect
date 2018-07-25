@@ -72,6 +72,11 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string LicenseKey = nameof(LicenseKey);
         public const string LmsDomain = nameof(LmsDomain);
 
+        public const string PrimaryColor = nameof(PrimaryColor);
+        public const string EnableClassRosterSecurity = nameof(EnableClassRosterSecurity);
+        public const string EnableOfficeHours = nameof(EnableOfficeHours);
+        public const string SupportSectionText = nameof(SupportSectionText);
+
         public static class Telephony
         {
             public const string ActiveProfile = "Telephony.ActiveProfile";  // None / MeetingOne / Arkadin
