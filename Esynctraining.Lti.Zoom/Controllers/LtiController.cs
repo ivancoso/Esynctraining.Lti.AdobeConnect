@@ -329,9 +329,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 LmsUserSession session = await SaveSession(license, param);
                 var sessionKey = session.Id.ToString();
 
-                switch ((LmsProviderEnum) license.LmsProviderId)
+                switch ( license.ProductId)
                 {
-                    case LmsProviderEnum.Canvas:
+                    case 1010:
 
                         sw = Stopwatch.StartNew();
 
@@ -343,7 +343,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                         break;
 
-                    case LmsProviderEnum.AgilixBuzz:
+                    case 1020:
                         break;
                 }
 

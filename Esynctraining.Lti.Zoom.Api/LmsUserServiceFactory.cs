@@ -20,9 +20,9 @@ namespace Esynctraining.Lti.Zoom.Api
         {
             switch (productId)
             {
-                case 2:
+                case 1010:
                     return _canvasLmsUserService;
-                case 3:
+                case 1020:
                     return _agilixBuzzLmsUserService;
             }
 

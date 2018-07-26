@@ -204,7 +204,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         }
 
         public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> licenseSettings, string courseId, string userId, string email,
-            CreateMeetingViewModel requestDto, int lmsProviderId)
+            CreateMeetingViewModel requestDto)
         {
             LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
             MeetingViewModel vm = null;
@@ -262,7 +262,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             if (requestDto.Type.GetValueOrDefault(1) != 2 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1
             ) //manual approval(secure connection)
             {
-                var lmsService = _lmsUserServiceFactory.GetUserService(lmsProviderId);
+                var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
 
                 var lmsUsers = await lmsService.GetUsers(licenseSettings, courseId);
 
@@ -313,7 +313,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 x.Id == meetingId && x.LicenseKey == licenseDto.ConsumerKey && x.CourseId == courseId);
         }
 
-        public async Task<bool> UpdateMeeting(int meetingId, string userToken, string courseId, string email, CreateMeetingViewModel vm, int lmsProviderId)
+        public async Task<bool> UpdateMeeting(int meetingId, string userToken, string courseId, string email, CreateMeetingViewModel vm)
         {
             var dbMeeting = await GetMeeting(meetingId, courseId);
             var updated = UpdateApiMeeting(dbMeeting.ProviderMeetingId, vm);
@@ -323,7 +323,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 {
                     LmsLicenseDto license = await _licenseAccessor.GetLicense();
                     var settings = GetSettings(userToken, license);
-                    var lmsService = _lmsUserServiceFactory.GetUserService(lmsProviderId);//_lmsFactory.GetUserService(LmsProviderEnum.Canvas); //add other LMSes later
+                    var lmsService = _lmsUserServiceFactory.GetUserService(license.ProductId);//_lmsFactory.GetUserService(LmsProviderEnum.Canvas); //add other LMSes later
                     var lmsUsers = await lmsService.GetUsers(settings, courseId);
                     var registrants = lmsUsers.Data.Where(x => !String.IsNullOrEmpty(x.Email) && !x.Email.Equals(email)).Select(x =>
                         new RegistrantDto
