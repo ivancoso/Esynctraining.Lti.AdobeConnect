@@ -45,8 +45,8 @@ namespace Esynctraining.Lti.Zoom.OAuth
             //var isSandbox = lmsCompany.GetSetting<bool>(LmsLicenseSettingNames.IsOAuthSandbox);
             //if (isSandbox)
             //{
-                appId = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
-                appKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthSecret);
+                appId = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
+                appKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
             //}
             //else
             //{

@@ -199,8 +199,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     //if (provider == LmsProviderNames.Canvas)
                     {
                         var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
-                        var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
-                        var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthSecret);
+                        var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
+                        var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
 
                         IList<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
                         pairs.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
