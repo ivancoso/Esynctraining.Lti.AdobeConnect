@@ -56,7 +56,9 @@ namespace Esynctraining.Lti.Zoom.Host
             services
                 .AddSingleton(new ApplicationSettingsProvider(settings));
 
-            services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
+            services
+                .AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor,
+                    Microsoft.AspNetCore.Http.HttpContextAccessor>();
             services.AddDbContext<ZoomDbContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
             services.AddTransient<ILmsLicenseService, LmsLicenseInternalApiService>();
@@ -94,7 +96,6 @@ namespace Esynctraining.Lti.Zoom.Host
             }
             else
             {
-
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
@@ -103,8 +104,6 @@ namespace Esynctraining.Lti.Zoom.Host
             app.UseStaticFiles();
 
             app.UseMvc(LtiRoutes.AppendTo);
-
-
         }
     }
 }
