@@ -17,6 +17,7 @@ using Esynctraining.Lti.Lms.Common;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
+using Esynctraining.Lti.Zoom.Api;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Constants;
@@ -45,17 +46,17 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private readonly IJsonDeserializer _jsonDeserializer;
         private readonly ZoomMeetingService _meetingService;
         private readonly ZoomUserService _userService;
-        private readonly LmsUserServiceBase _lmsUserService;
+        private readonly LmsUserServiceFactory _lmsUserServiceFactory;
 
         public LtiController(ILogger logger, ApplicationSettingsProvider settings, ILmsLicenseService licenseService,
             UserSessionService sessionService, IJsonDeserializer jsonDeserializer, ZoomMeetingService meetingService,
-            ZoomUserService userService, LmsUserServiceBase lmsUserService) : base(logger, settings, sessionService)
+            ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory) : base(logger, settings, sessionService)
         {
             _licenseService = licenseService;
             _jsonDeserializer = jsonDeserializer;
             _meetingService = meetingService;
             _userService = userService;
-            _lmsUserService = lmsUserService;
+            _lmsUserServiceFactory = lmsUserServiceFactory;
         }
 
         [HttpGet]
@@ -103,9 +104,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     param.lis_person_contact_email_primary,
                     async () =>
                     {
-                        var settings = GetSettings(s.Token, license);
-                        var lmsService =
-                            _lmsUserService; //_lmsFactory.GetUserService(LmsProviderEnum.Canvas); //add other LMSes later
+                        var settings = GetSettings(s, license);
+                        var lmsService = _lmsUserServiceFactory.GetUserService(license.ProductId);
                         var lmsUsers = await lmsService.GetUsers(settings, s.CourseId);
                         var registrant = lmsUsers.Data.FirstOrDefault(x =>
                             !String.IsNullOrEmpty(x.Email) && !x.Email.Equals(param.lis_person_contact_email_primary));
@@ -308,7 +308,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     return this.View("~/Views/Lti/LtiError.cshtml");
                 }
 
-                LmsProvider providerInstance = LmsProvider.Generate();
+                //LmsProvider providerInstance = LmsProvider.Generate();
 
                 sw = Stopwatch.StartNew();
 
@@ -690,15 +690,26 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return param.roles.Contains("Administrator");
         }
 
-        private Dictionary<string, object> GetSettings(string userToken, LmsLicenseDto license)
+        private Dictionary<string, object> GetSettings(LmsUserSession session, LmsLicenseDto license)
         {
-            var optionNamesForCanvas =
-                new List<string> {LmsLicenseSettingNames.OAuthAppId, LmsLicenseSettingNames.OAuthAppKey};
-            var result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key))
-                .ToDictionary(k => k.Key, v => (object)v.Value);
-            result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
-            result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
-            result.Add(LmsUserSettingNames.Token, userToken);
+            Dictionary<string, object> result = null;
+            List<string> optionNamesForCanvas;
+            if (license.ProductId == 1010)
+            {
+                optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.CanvasOAuthId, LmsLicenseSettingNames.CanvasOAuthKey };
+                result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
+                result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
+                result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
+                result.Add(LmsUserSettingNames.Token, session.Token);
+            }
+            if (license.ProductId == 1020)
+            {
+                optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.BuzzAdminUsername, LmsLicenseSettingNames.BuzzAdminPassword };
+                result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
+                result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
+                result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
+            }
+
             return result;
         }
     }

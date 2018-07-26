@@ -4,8 +4,10 @@ using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Core.Providers;
 using Esynctraining.Json.Jil;
+using Esynctraining.Lti.Lms.AgilixBuzz;
 using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Zoom.Api;
 using Esynctraining.Lti.Zoom.Api.Services;
@@ -64,6 +66,11 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddSingleton<IJsonDeserializer, JilSerializer>(s => s.GetService<JilSerializer>());
             services.AddTransient<IEGCEnabledCanvasAPI, EGCEnabledCanvasAPI>();
             services.AddTransient<LmsUserServiceBase, CanvasLmsUserService>();
+            services.AddTransient<IAgilixBuzzApi, DlapAPI>();
+            services.AddTransient<CanvasLmsUserService, CanvasLmsUserService>();
+            services.AddTransient<AgilixBuzzLmsUserService, AgilixBuzzLmsUserService>();
+            services.AddSingleton<LmsUserServiceFactory, LmsUserServiceFactory>();
+
             services.AddTransient<ZoomUserService, ZoomUserService>();
             services.AddTransient<ZoomReportService, ZoomReportService>();
             services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
