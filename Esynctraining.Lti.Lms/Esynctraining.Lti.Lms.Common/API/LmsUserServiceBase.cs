@@ -56,7 +56,7 @@ namespace Esynctraining.Lti.Lms.Common.API
         public abstract Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(
             Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO extraData = null);
 
-        //public abstract Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, string courseId, LtiParamDTO param = null);
+        public abstract Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO param = null);
 
 
         // TODO: ROLEMAPPING

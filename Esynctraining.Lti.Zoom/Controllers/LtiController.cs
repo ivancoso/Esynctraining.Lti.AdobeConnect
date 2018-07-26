@@ -211,7 +211,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         pairs.Add(new KeyValuePair<string, string>("code", code));
 
 
-                        HttpClient httpClient = new HttpClient();
+                        System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
                         var httpResponseMessage = await httpClient.PostAsync(
                             $"https://{license.Domain}/login/oauth2/token", new FormUrlEncodedContent(pairs));
                         if (httpResponseMessage.IsSuccessStatusCode)
@@ -341,6 +341,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                             return this.StartOAuth2Authentication(license, "canvas", sessionKey, param);
                         }
 
+                        break;
+
+                    case LmsProviderEnum.AgilixBuzz:
                         break;
                 }
 

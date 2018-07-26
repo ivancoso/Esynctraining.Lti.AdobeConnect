@@ -8,7 +8,7 @@ namespace Esynctraining.Lti.Lms.Common.API.AgilixBuzz
     {
         Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(
             Dictionary<string, object> licenseSettings,
-            int courseid,
+            string courseid,
             object session = null);
 
         Task<(bool result, string error)> LoginAndCheckSessionAsync(string lmsDomain, string userName, string password);

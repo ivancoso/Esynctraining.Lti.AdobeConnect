@@ -56,7 +56,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
     public class LmsLicenseInternalApiService : ILmsLicenseService
     {
-        HttpClient _httpClient = new HttpClient();
+        System.Net.Http.HttpClient _httpClient = new System.Net.Http.HttpClient();
         private readonly IJsonDeserializer _jsonDeserializer;
         private readonly dynamic _settings;
 

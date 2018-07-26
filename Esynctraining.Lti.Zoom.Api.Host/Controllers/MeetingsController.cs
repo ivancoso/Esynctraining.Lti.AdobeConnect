@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore.Mvc;
 using ActionResult = Microsoft.AspNetCore.Mvc.ActionResult;
 
@@ -117,9 +120,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    var createResult = await _meetingService.CreateMeeting(Session.Token, CourseId.ToString(),
+                    var licenseSettings = GetSettings(Session);
+                    var createResult = await _meetingService.CreateMeeting(licenseSettings, CourseId.ToString(),
                         userId,
-                        Param.lis_person_contact_email_primary, requestDto);
+                        Param.lis_person_contact_email_primary, requestDto, LmsLicense.LmsProviderId);
 
                     return createResult;
                 }
@@ -144,7 +148,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             try
             {
                 var updated = await _meetingService.UpdateMeeting(meetingId, Session.Token, CourseId,
-                    Param.lis_person_contact_email_primary, vm);
+                    Param.lis_person_contact_email_primary, vm, LmsLicense.LmsProviderId);
 
                 return updated ? OperationResult.Success() : OperationResult.Error("Meeting has not been updated");
             }
@@ -167,6 +171,29 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return result;
 
             //return OperationResult.Error("Error during delete. Please try again or contact support.");
+        }
+
+        private Dictionary<string, object> GetSettings(LmsUserSession session)
+        {
+            Dictionary<string, object> result = null;
+            List<string> optionNamesForCanvas;
+            if (LmsLicense.LmsProviderId == 2)
+            {
+                optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.CanvasOAuthId, LmsLicenseSettingNames.CanvasOAuthKey };
+                result = LmsLicense.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
+                result.Add(LmsLicenseSettingNames.LicenseKey, LmsLicense.ConsumerKey);
+                result.Add(LmsLicenseSettingNames.LmsDomain, LmsLicense.Domain);
+                result.Add(LmsUserSettingNames.Token, Session.Token);
+            }
+            if (LmsLicense.LmsProviderId == 3)
+            {
+                optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.BuzzAdminUsername, LmsLicenseSettingNames.BuzzAdminPassword };
+                result = LmsLicense.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
+                result.Add(LmsLicenseSettingNames.LicenseKey, LmsLicense.ConsumerKey);
+                result.Add(LmsLicenseSettingNames.LmsDomain, LmsLicense.Domain);
+            }
+
+            return result;
         }
     }
 }

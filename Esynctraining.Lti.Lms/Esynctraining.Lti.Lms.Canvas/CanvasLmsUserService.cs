@@ -76,6 +76,11 @@ namespace Esynctraining.Lti.Lms.Canvas
             return users.ToSuccessResult();
         }
 
+        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO param = null)
+        {
+            throw new NotImplementedException();
+        }
+
         private async Task<List<LmsUserDTO>> FetchUsers(Dictionary<string, object> licenseSettings,
             string courseId)
         {

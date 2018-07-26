@@ -72,6 +72,12 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string LicenseKey = nameof(LicenseKey);
         public const string LmsDomain = nameof(LmsDomain);
 
+
+        public const string BuzzAdminUsername = nameof(BuzzAdminUsername);
+        public const string BuzzAdminPassword = nameof(BuzzAdminPassword);
+        public const string AgilixBuzzLastSignalId = nameof(AgilixBuzzLastSignalId);
+
+
         public const string PrimaryColor = nameof(PrimaryColor);
         public const string EnableClassRosterSecurity = nameof(EnableClassRosterSecurity);
         public const string EnableOfficeHours = nameof(EnableOfficeHours);

@@ -26,7 +26,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Domain", "Esynctraining.Lti.Zoom.Domain\Esynctraining.Lti.Zoom.Domain.csproj", "{D76E2224-D12C-480C-B045-355B84153178}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Lti.Reports.Host.Core", "Esynctraining.Lti.Lms\Esynctraining.Lti.Reports.Host.Core\Esynctraining.Lti.Reports.Host.Core.csproj", "{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Reports.Host.Core", "Esynctraining.Lti.Lms\Esynctraining.Lti.Reports.Host.Core\Esynctraining.Lti.Reports.Host.Core.csproj", "{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Lti.Lms.AgilixBuzz", "Esynctraining.Lti.Lms.AgilixBuzz\Esynctraining.Lti.Lms.AgilixBuzz.csproj", "{4276F688-135D-4097-AE0C-E4B8722F5244}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.HttpClient", "Esynctraining.HttpClient\Esynctraining.HttpClient.csproj", "{B715F065-BE5E-4890-9FF4-26372FE06B4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,6 +111,22 @@ Global
 		{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
+		{4276F688-135D-4097-AE0C-E4B8722F5244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4276F688-135D-4097-AE0C-E4B8722F5244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4276F688-135D-4097-AE0C-E4B8722F5244}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{4276F688-135D-4097-AE0C-E4B8722F5244}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{4276F688-135D-4097-AE0C-E4B8722F5244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4276F688-135D-4097-AE0C-E4B8722F5244}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4276F688-135D-4097-AE0C-E4B8722F5244}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{4276F688-135D-4097-AE0C-E4B8722F5244}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
+		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
+using Esynctraining.Lti.Lms.Common;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
@@ -21,21 +22,21 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         private readonly ZoomMeetingApiService _zoomMeetingApiService;
         private readonly ZoomUserService _userService;
         private readonly ZoomDbContext _dbContext;
-        private readonly LmsUserServiceBase _lmsUserService;
+        private readonly LmsUserServiceFactory _lmsUserServiceFactory;
         private readonly IJsonSerializer _jsonSerializer;
         private readonly ILmsLicenseAccessor _licenseAccessor;
         private readonly ZoomOfficeHoursService _ohService;
 
 
         public ZoomMeetingService(ZoomApiWrapper zoomApi, ZoomUserService userService, ZoomDbContext dbContext,
-            LmsUserServiceBase lmsUserService, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor,
+            LmsUserServiceFactory lmsUserServiceFactory, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor,
             ZoomOfficeHoursService ohService, ZoomMeetingApiService zoomMeetingApiService)
         {
             _zoomApi = zoomApi;
             _zoomMeetingApiService = zoomMeetingApiService;
             _userService = userService;
             _dbContext = dbContext;
-            _lmsUserService = lmsUserService;
+            _lmsUserServiceFactory = lmsUserServiceFactory;
             _jsonSerializer = jsonSerializer;
             _licenseAccessor = licenseAccessor;
             _ohService = ohService;
@@ -202,8 +203,8 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         }
 
-        public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(string userToken, string courseId, string userId, string email,
-            CreateMeetingViewModel requestDto)
+        public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> licenseSettings, string courseId, string userId, string email,
+            CreateMeetingViewModel requestDto, int lmsProviderId)
         {
             LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
             MeetingViewModel vm = null;
@@ -261,11 +262,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             if (requestDto.Type.GetValueOrDefault(1) != 2 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1
             ) //manual approval(secure connection)
             {
-                var lmsService =
-                    _lmsUserService; //_lmsFactory.GetUserService(LmsProviderEnum.Canvas); //add other LMSes later
+                var lmsService = _lmsUserServiceFactory.GetUserService(lmsProviderId);
 
-                var settings = GetSettings(userToken, licenseDto);
-                var lmsUsers = await lmsService.GetUsers(settings, courseId);
+                var lmsUsers = await lmsService.GetUsers(licenseSettings, courseId);
 
                 //take users by email, throwing out current user
                 var registrants = lmsUsers.Data.Where(x =>
@@ -293,6 +292,8 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
             result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
             result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
+
+
             result.Add(LmsUserSettingNames.Token, userToken);
             return result;
         }
@@ -312,7 +313,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 x.Id == meetingId && x.LicenseKey == licenseDto.ConsumerKey && x.CourseId == courseId);
         }
 
-        public async Task<bool> UpdateMeeting(int meetingId, string userToken, string courseId, string email, CreateMeetingViewModel vm)
+        public async Task<bool> UpdateMeeting(int meetingId, string userToken, string courseId, string email, CreateMeetingViewModel vm, int lmsProviderId)
         {
             var dbMeeting = await GetMeeting(meetingId, courseId);
             var updated = UpdateApiMeeting(dbMeeting.ProviderMeetingId, vm);
@@ -322,7 +323,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 {
                     LmsLicenseDto license = await _licenseAccessor.GetLicense();
                     var settings = GetSettings(userToken, license);
-                    var lmsService = _lmsUserService;//_lmsFactory.GetUserService(LmsProviderEnum.Canvas); //add other LMSes later
+                    var lmsService = _lmsUserServiceFactory.GetUserService(lmsProviderId);//_lmsFactory.GetUserService(LmsProviderEnum.Canvas); //add other LMSes later
                     var lmsUsers = await lmsService.GetUsers(settings, courseId);
                     var registrants = lmsUsers.Data.Where(x => !String.IsNullOrEmpty(x.Email) && !x.Email.Equals(email)).Select(x =>
                         new RegistrantDto

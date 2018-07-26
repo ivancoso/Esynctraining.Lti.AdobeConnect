@@ -21,13 +21,13 @@ namespace Esynctraining.Lti.Lms.Common.API
             return Task.FromResult(new List<LmsUserDTO>().ToSuccessResult());
         }
 
-        //public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings, int courseId, LtiParamDTO param = null)
-        //{
-        //    //if (lmsCompany == null)
-        //    //    throw new ArgumentNullException(nameof(lmsCompany));
+        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO param = null)
+        {
+            //if (lmsCompany == null)
+            //    throw new ArgumentNullException(nameof(lmsCompany));
 
-        //    return Task.FromResult<(List<LmsUserDTO> users, string error)>((new List<LmsUserDTO>(), null));
-        //}
+            return Task.FromResult<(List<LmsUserDTO> users, string error)>((new List<LmsUserDTO>(), null));
+        }
 
     }
 
