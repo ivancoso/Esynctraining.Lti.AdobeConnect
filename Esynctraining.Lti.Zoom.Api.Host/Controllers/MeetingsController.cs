@@ -146,7 +146,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             string userId = null;
             try
             {
-                var updated = await _meetingService.UpdateMeeting(meetingId, Session.Token, CourseId,
+                var licenseSettings = GetSettings(Session);
+                var updated = await _meetingService.UpdateMeeting(meetingId, licenseSettings, CourseId,
                     Param.lis_person_contact_email_primary, vm);
 
                 return updated ? OperationResult.Success() : OperationResult.Error("Meeting has not been updated");
