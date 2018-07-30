@@ -148,7 +148,7 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
                         new LmsUserDTO
                         {
                             LmsRole = role,
-                            PrimaryEmail = email,
+                            Email = email,
                             Login = userName,
                             Id = userId,
                             Name = firstName + " " + lastName,
