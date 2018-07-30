@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using RestSharp.Deserializers;
 
 namespace Esynctraining.Zoom.ApiWrapper.Model
@@ -6,10 +7,14 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
     [DataContract]
     public class MeetingSettings
     {
+        [DataMember]
         [DeserializeAs(Name = "host_video")]
+        [JsonProperty(PropertyName = "host_video")]
         public bool EnableHostVideo { get; set; }
 
+        [DataMember]
         [DeserializeAs(Name = "participant_video")]
+        [JsonProperty(PropertyName = "participant_video")]
         public bool EnableParticipantVideo { get; set; }
 
         [DeserializeAs(Name = "cn_meeting")]
