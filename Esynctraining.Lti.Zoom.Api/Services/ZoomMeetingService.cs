@@ -56,8 +56,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return await _zoomMeetingApiService.GetMeetingApiDetails(dbMeeting);
         }
 
-        public async Task<IEnumerable<MeetingViewModel>>
-            GetMeetings(string courseId, string currentUserId = null)
+        public async Task<IEnumerable<MeetingViewModel>> GetMeetings(string courseId, string currentUserId = null)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
             List<MeetingViewModel> result = new List<MeetingViewModel>();
@@ -69,7 +68,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     .ToDictionary(k => k.Key, v => v.Select(va => va.ProviderMeetingId));
                 foreach (var user in zoomMeetingPairs)
                 {
-                    var userMeetings = _zoomApi.GetMeetings(user.Key);
+                    var zoomApiResult = _zoomApi.GetMeetings(user.Key);
+                    if (!zoomApiResult.IsSuccess)
+                        throw new Exception(zoomApiResult.Message);
+
+                    var userMeetings = zoomApiResult.Data;
+
+                    if (userMeetings == null)
+                        continue;
 
                     result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
                         ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));

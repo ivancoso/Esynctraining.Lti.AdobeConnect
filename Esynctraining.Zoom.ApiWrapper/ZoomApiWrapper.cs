@@ -124,7 +124,7 @@ namespace Esynctraining.Zoom.ApiWrapper
             return (Meeting)null;
         }
 
-        public ListMeetings GetMeetings(string userId, MeetingListTypes type = MeetingListTypes.Scheduled, int pageSize = 30, int pageNumber = 1)
+        public ZoomApiResultWithData<ListMeetings> GetMeetings(string userId, MeetingListTypes type = MeetingListTypes.Scheduled, int pageSize = 30, int pageNumber = 1)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetings page size max 300");
@@ -133,14 +133,21 @@ namespace Esynctraining.Zoom.ApiWrapper
             restRequest.AddParameter(nameof(type), (object)type.ToString().ToLowerInvariant(), ParameterType.QueryString);
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
+
             IRestResponse<ListMeetings> restResponse = this.WebClient.Execute<ListMeetings>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
-                return restResponse.Data;
+                return restResponse.Data.ToSuccessZoomApiResult();
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
+                return ZoomApiResultWithData<ListMeetings>.Success("Not found", null);
+
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
-                throw new Exception(restResponse.ErrorMessage);
+                return ZoomApiResultWithData<ListMeetings>.Error(restResponse.ErrorMessage);
+
             if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
-                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
-            return (ListMeetings)null;
+                return ZoomApiResultWithData<ListMeetings>.Error(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
+
+            return ZoomApiResultWithData<ListMeetings>.Error($"Not found meetings for user {userId}");
         }
 
         public ZoomListRegistrants GetMeetingRegistrants(string meetingId, string occurrenceId = null, string status="approved", int pageSize = 100, int pageNumber = 1)
