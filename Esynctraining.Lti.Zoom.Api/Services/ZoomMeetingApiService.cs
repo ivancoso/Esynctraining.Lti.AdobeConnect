@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Dto.Enums;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
+using NodaTime;
 
 namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public class ZoomMeetingApiService
     {
         private readonly ZoomApiWrapper _zoomApi;
+        private readonly ILogger _logger;
 
-        public ZoomMeetingApiService(ZoomApiWrapper zoomApi)
+        public ZoomMeetingApiService(ZoomApiWrapper zoomApi, ILogger logger)
         {
             _zoomApi = zoomApi;
+            _logger = logger;
         }
 
         public async Task<MeetingDetailsViewModel> GetMeetingApiDetails(LmsCourseMeeting dbMeeting)
@@ -41,7 +45,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 //Id = id,
                 Timezone = dto.Timezone,
                 Topic = dto.Topic,
-                StartTime = dto.StartTime.DateTime,
+                StartTime = GetUtcTime(dto),
                 Agenda = dto.Agenda,
                 Password = dto.Password,
                 JoinUrl = dto.JoinUrl,
@@ -73,5 +77,28 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 return MeetingAudioType.Computer;
             return MeetingAudioType.Both;
         }
+
+        private long GetUtcTime(Meeting meeting)
+        {
+            if (meeting == null)
+                throw new ArgumentNullException(nameof(meeting));
+
+            if (string.IsNullOrEmpty(meeting.Timezone))
+            {
+                _logger.Warn($"Timezone property is empty or null for. Url={meeting.JoinUrl}.");
+                return meeting.StartTime.ToUnixTimeMilliseconds();
+            }
+            var timezone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(meeting.Timezone);
+            if (timezone == null)
+            {
+                _logger.Warn($"Timezone not found. Url={meeting.JoinUrl}, timezone={meeting.Timezone}");
+                return meeting.StartTime.ToUnixTimeMilliseconds();
+            }
+
+            var instant = Instant.FromDateTimeOffset(meeting.StartTime);
+            var offset = timezone.GetUtcOffset(instant);
+            return meeting.StartTime.AddSeconds(offset.Seconds).ToUnixTimeMilliseconds();
+        }
+
     }
 }

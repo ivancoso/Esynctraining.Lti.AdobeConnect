@@ -11,7 +11,7 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
         //public string HostId { get; set; }
         public string Topic { get; set; }
         public string Description { get; set; }
-        public DateTime? StartTime { get; set; }
+        public long StartTime { get; set; }
         public int Duration { get; set; } //minutes
         public string Timezone { get; set; }
 

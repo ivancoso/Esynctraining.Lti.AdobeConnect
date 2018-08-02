@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
+using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
@@ -13,6 +14,7 @@ using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 
 namespace Esynctraining.Lti.Zoom.Api.Services
 {
@@ -26,11 +28,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         private readonly IJsonSerializer _jsonSerializer;
         private readonly ILmsLicenseAccessor _licenseAccessor;
         private readonly ZoomOfficeHoursService _ohService;
-
+        private readonly ILogger _logger;
 
         public ZoomMeetingService(ZoomApiWrapper zoomApi, ZoomUserService userService, ZoomDbContext dbContext,
             LmsUserServiceFactory lmsUserServiceFactory, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor,
-            ZoomOfficeHoursService ohService, ZoomMeetingApiService zoomMeetingApiService)
+            ZoomOfficeHoursService ohService, ZoomMeetingApiService zoomMeetingApiService, ILogger logger)
         {
             _zoomApi = zoomApi;
             _zoomMeetingApiService = zoomMeetingApiService;
@@ -40,6 +42,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _jsonSerializer = jsonSerializer;
             _licenseAccessor = licenseAccessor;
             _ohService = ohService;
+            _logger = logger;
         }
 
         //public IEnumerable<MeetingDto> GetMeetings(string userId)
@@ -358,7 +361,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 Agenda = dto.Agenda,
                 Duration = dto.Duration.GetValueOrDefault(60), //default duration=60 if OH
                 Timezone = dto.Timezone,
-                StartTime = new DateTimeOffset(dto.StartTime.GetValueOrDefault(DateTime.UtcNow)) // default is now if OH
+                StartTime = dto.StartTime.HasValue
+                    ? DateTimeOffset.FromUnixTimeMilliseconds(dto.StartTime.Value)
+                    : DateTimeOffset.UtcNow // default is now if OH
             };
 
             if (dto.Settings != null)
@@ -409,6 +414,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         private MeetingViewModel ConvertToViewModel(Meeting meeting, LmsCourseMeeting dbMeeting, string userId)
         {
+            
             var vm = new MeetingViewModel
             {
                 ConferenceId = meeting.Id,
@@ -417,7 +423,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 Duration = meeting.Duration,
                 Timezone = meeting.Timezone,
                 Topic = meeting.Topic,
-                StartTime = meeting.StartTime.DateTime,
+                StartTime = GetUtcTime(meeting),
                 HasSessions = meeting.Type == MeetingTypes.RecurringWithTime,
             };
 
@@ -444,7 +450,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 //Id = id,
                 Timezone = dto.Timezone,
                 Topic = dto.Topic,
-                StartTime = dto.StartTime.DateTime,
+                StartTime = GetUtcTime(dto),
                 Agenda = dto.Agenda,
                 Password = dto.Password,
                 JoinUrl = dto.JoinUrl,
@@ -468,23 +474,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return vm;
         }
 
-        private MeetingViewModel ConvertToViewModel(MeetingDetailsDto dto, string userId, int type)
-        {
-            return new MeetingViewModel
-            {
-                ConferenceId = dto.Id,
-                CanJoin = userId != null,
-                CanEdit = dto.HostId == userId,
-                Duration = dto.Duration,
-                //Id = dbMeeting.Id,
-                Timezone = dto.Timezone,
-                Topic = dto.Topic,
-                StartTime = dto.StartTime,
-                HasSessions = dto.Type == ZoomMeetingType.RecurringWithTime,
-                Type = type
-            };
-        }
-
         private OfficeHoursViewModel ConvertFromDtoToOHViewModel(Meeting dto, string userId, int type = 1)
         {
             return new OfficeHoursViewModel
@@ -496,11 +485,33 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 // Id = id,
                 Timezone = dto.Timezone,
                 Topic = dto.Topic,
-                StartTime = dto.StartTime.DateTime,
+                StartTime = GetUtcTime(dto),
                 HasSessions = (dto.Type == MeetingTypes.RecurringWithTime),
                 Type = type
             };
 
+        }
+
+        private long GetUtcTime(Meeting meeting)
+        {
+            if (meeting == null)
+                throw new ArgumentNullException(nameof(meeting));
+
+            if (string.IsNullOrEmpty(meeting.Timezone))
+            {
+                _logger.Warn($"Timezone property is empty or null for. Url={meeting.JoinUrl}.");
+                return meeting.StartTime.ToUnixTimeMilliseconds();
+            }
+            var timezone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(meeting.Timezone);
+            if (timezone == null)
+            {
+                _logger.Warn($"Timezone not found. Url={meeting.JoinUrl}, timezone={meeting.Timezone}");
+                return meeting.StartTime.ToUnixTimeMilliseconds();
+            }
+
+            var instant = Instant.FromDateTimeOffset(meeting.StartTime);
+            var offset = timezone.GetUtcOffset(instant);
+            return meeting.StartTime.AddSeconds(offset.Seconds).ToUnixTimeMilliseconds();
         }
 
         private string ConvertAudioFromEnum(MeetingAudioType options)
@@ -525,53 +536,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             if (options == MeetingAudioOptions.Telephone)
                 return MeetingAudioType.Computer;
             return MeetingAudioType.Both;
-        }
-
-        private CreateZoomMeetingDto ConvertModelToDto(CreateMeetingViewModel vm)
-        {
-            var dto = new CreateZoomMeetingDto
-            {
-                Agenda = vm.Agenda,
-                Duration = vm.Duration.GetValueOrDefault(60),
-                Password = vm.Password,
-                StartTime = vm.StartTime,
-                Timezone = vm.Timezone,
-                Topic = vm.Topic,
-                Type = Esynctraining.Lti.Zoom.Api.Dto.Enums.ZoomMeetingType.Scheduled
-                //(EdugameCloud.Lti.Zoom.Api.Host.Services.Dto.Enums.ZoomMeetingType)vm.Type.GetValueOrDefault(2)
-            };
-            if (vm.Settings != null)
-            {
-                Esynctraining.Lti.Zoom.Api.Dto.Enums.MeetingRegistrationTypes? regType = null;
-                if (vm.Settings.RecurrenceRegistrationType.HasValue)
-                {
-                    regType = (Esynctraining.Lti.Zoom.Api.Dto.Enums.MeetingRegistrationTypes)(int)vm.Settings.RecurrenceRegistrationType.Value;
-                }
-                dto.Settings = new CreateMeetingSettingsDto
-                {
-                    EnableJoinBeforeHost = vm.Settings.EnableJoinBeforeHost,
-
-                    EnableWaitingRoom = vm.Settings.EnableWaitingRoom,
-                    AlternativeHosts = vm.Settings.AlternativeHosts,
-                    AudioType = (MeetingAudioType)(int)vm.Settings.AudioType,
-                    RecordingType = (AutomaticRecordingType)(int)vm.Settings.RecordingType.GetValueOrDefault(0),
-                    EnableHostVideo = vm.Settings.EnableHostVideo,
-                    EnableMuteOnEntry = vm.Settings.EnableMuteOnEntry,
-                    EnableParticipantVideo = vm.Settings.EnableParticipantVideo,
-                    RegistrationType = regType,
-                    ApprovalType = (ApprovalTypes)vm.Settings.ApprovalType.GetValueOrDefault(2)
-                };
-            }
-            if (vm.Recurrence != null)
-            {
-                dto.Recurrence = new CreateMeetingRecurrenceDto
-                {
-                    DaysOfWeek = vm.Recurrence.DaysOfWeek,
-                    Weeks = vm.Recurrence.Weeks
-                };
-            }
-
-            return dto;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
 
         public int? Type { get; set; }
 
-        public DateTime? StartTime { get; set; }
+        public long? StartTime { get; set; }
 
         public int? Duration { get; set; }
 

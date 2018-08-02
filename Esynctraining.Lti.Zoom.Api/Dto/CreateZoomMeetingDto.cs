@@ -13,7 +13,7 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
         public ZoomMeetingType Type { get; set; }
 
         [DataMember]
-        public DateTime? StartTime { get; set; }
+        public long? StartTime { get; set; }
 
         [DataMember]
         public int Duration { get; set; }
