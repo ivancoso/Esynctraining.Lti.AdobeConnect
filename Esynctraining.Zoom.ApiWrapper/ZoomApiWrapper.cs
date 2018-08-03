@@ -283,18 +283,24 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
 
         public bool DeleteRecording(string meetingId, string recordingId = null, bool trash = true)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}/recordings/{recordingId}", Method.DELETE);
-            restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
-            if (!string.IsNullOrWhiteSpace(recordingId))
-                restRequest.AddParameter(nameof(recordingId), (object)recordingId, ParameterType.UrlSegment);
+            RestRequest restRequest = this.BuildRequestAuthorization($"meetings/{meetingId}/recordings/{recordingId}", Method.DELETE);
+
+            //restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+
+            //if (!string.IsNullOrWhiteSpace(recordingId))
+            //    restRequest.AddParameter(nameof(recordingId), (object)recordingId, ParameterType.UrlSegment);
+
             restRequest.AddParameter("action", (object)(trash?"trash":"delete"), ParameterType.QueryString);
             IRestResponse restResponse = this.WebClient.Execute((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NoContent)
                 return true;
+
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
                 throw new Exception(restResponse.ErrorMessage);
+
             if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
+
             return false;
         }
         public bool RecoverRecording(string meetingId, string recordingId = null)

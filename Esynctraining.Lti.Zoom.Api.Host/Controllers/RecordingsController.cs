@@ -24,11 +24,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             //MeetingSetup meetingSetup,
             //API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger, ZoomRecordingService recordingService, ZoomMeetingService meetingService)
+            ILogger logger, ZoomRecordingService recordingService, ZoomMeetingService meetingService, ZoomUserService userService)
             : base(settings, logger)
         {
             _meetingService = meetingService;
             _recordingService = recordingService;
+            _userService = userService;
         }
 
         [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/recordings")]
@@ -54,8 +55,15 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return recordings.ToSuccessResult();
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/recordings/files/{recordingFileId}")]
-        [Microsoft.AspNetCore.Mvc.HttpDelete]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="meetingId"></param>
+        /// <param name="recordingFileId"></param>
+        /// <param name="trash">Flag whicj means how to remove recording. TRUE : Remove to TRASH, FALSE : Remove without restoring.</param>
+        /// <returns></returns>
+        [Route("meetings/{meetingId}/recordings/files/{recordingFileId}")]
+        [HttpDelete]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResult> DeleteRecording(int meetingId, string recordingFileId, [FromQuery]bool trash = true ) 
         {
@@ -73,11 +81,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResult.Error("Meeting not found");
-            //if(meeting.AudioProfileId != userId)
-            //    return OperationResult.Error("You are trying to delete other user's recording file.");
 
             var meetingSessionId =
-                _recordingService.GetRecordingFileSessionId(userId, dbMeeting.ProviderMeetingId, recordingFileId, trash);
+                _recordingService.GetMeetingUuId(userId, dbMeeting.ProviderMeetingId, recordingFileId, !trash);
+
             if (meetingSessionId == null)
             {
                 return OperationResult.Error("Recording file not found."); //either removed or in trash(i.e. if request was made with trash=false)
@@ -129,7 +136,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             //    return OperationResult.Error("You are trying to delete other user's recording file.");
 
             var meetingSessionId =
-                _recordingService.GetRecordingFileSessionId(userId, dbMeeting.ProviderMeetingId, recordingFileId, true);
+                _recordingService.GetMeetingUuId(userId, dbMeeting.ProviderMeetingId, recordingFileId, true);
             if (meetingSessionId == null)
             {
                 return OperationResult.Error("Recording file not found."); //either removed or not in trash

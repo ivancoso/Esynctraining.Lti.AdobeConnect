@@ -76,7 +76,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return result;
         }
 
-        public IEnumerable<ZoomRecordingsTrashItemDto> GetTrashRecordings(string userId, string meetingId)
+        public IEnumerable<ZoomRecordingsTrashItemDto> GetTrashRecordings(string meetingId, string userId)
         {
             var result = new List<ZoomRecordingsTrashItemDto>();
             var apiRecordings = _zoomApi.GetUserRecordings(userId, trash: true);
@@ -122,16 +122,18 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         /// <summary>
         /// In zoom API this field is called "MeetingId" for recording file or "Uuid" for meeting object(recording). There is no "session" term in zoom API
         /// </summary>
-        public string GetRecordingFileSessionId(string userId, string meetingId, string recordingFileId,
-            bool trash = true)
+        public string GetMeetingUuId(string userId, string meetingId, string recordingFileId, bool trash = true)
         {
+            // Zoom Api returns only date for last Month. Need too implement cycle for all period from Creating meeting.
             var apiRecordings = trash
-                ? _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1))
-                : _zoomApi.GetUserRecordings(userId, trash: true);
-            var recording = apiRecordings.Meetings.FirstOrDefault(x =>
+                ? _zoomApi.GetUserRecordings(userId, trash: true)
+                : _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
+
+            var meetingSession = apiRecordings.Meetings.FirstOrDefault(x =>
                 x.Id == meetingId && x.RecordingFiles.Any(rf =>
                     rf.Id.Equals(recordingFileId, StringComparison.InvariantCultureIgnoreCase)));
-            return recording?.Uuid;
+
+            return meetingSession?.Uuid;
         }
 
     }
