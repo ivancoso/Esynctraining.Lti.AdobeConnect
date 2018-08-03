@@ -550,9 +550,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         private MeetingAudioType ConvertAudioToEnum(string options)
         {
             if (options == MeetingAudioOptions.Voip)
-                return MeetingAudioType.Telephone;
-            if (options == MeetingAudioOptions.Telephone)
                 return MeetingAudioType.Computer;
+            if (options == MeetingAudioOptions.Telephone)
+                return MeetingAudioType.Telephone;
             return MeetingAudioType.Both;
         }
     }
