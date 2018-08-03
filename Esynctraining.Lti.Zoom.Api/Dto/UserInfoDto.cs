@@ -3,6 +3,7 @@
     public class UserInfoDto : UserDto
     {
         public bool Verified { get; set; }
+        public string Timezone { get; set; }
         /*"pmi": "string",
     "timezone": "string",
     "dept": "string",

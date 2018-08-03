@@ -212,7 +212,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         }
 
-        public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> licenseSettings, string courseId, string userId, string email,
+        public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> licenseSettings, string courseId, UserInfoDto user, string email,
             CreateMeetingViewModel requestDto)
         {
             LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
@@ -249,7 +249,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     vm.Details = detailsVm;
                  */
                 var ohDetails = _zoomApi.GetMeeting(dbOfficeHours.ProviderMeetingId);
-                vm = ConvertToViewModel(ohDetails, dbOfficeHours, userId);
+                vm = ConvertToViewModel(ohDetails, dbOfficeHours, user.Id);
                 var ohJson = _jsonSerializer.JsonSerialize(ohDetails);
                 dbMeeting.ProviderMeetingId = ohDetails.Id;
                 dbMeeting.Details = ohJson;
@@ -257,8 +257,8 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
             else
             {
-                var m = await CreateApiMeeting(userId, requestDto);
-                vm = ConvertToViewModel(m, null, userId);
+                var m = await CreateApiMeeting(user, requestDto);
+                vm = ConvertToViewModel(m, null, user.Id);
                 var json = _jsonSerializer.JsonSerialize(m);
                 dbMeeting.ProviderMeetingId = m.Id;
                 dbMeeting.Details = json;
@@ -307,11 +307,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         //    return result;
         //}
 
-        private async Task<Meeting> CreateApiMeeting(string userId, CreateMeetingViewModel dto)
+        private async Task<Meeting> CreateApiMeeting(UserInfoDto user, CreateMeetingViewModel dto)
         {
             var meetingDto = ConvertFromDto(dto);
+            var offset = GetTimezoneOffset(user, meetingDto.StartTime);
+            meetingDto.StartTime = meetingDto.StartTime.AddSeconds(offset);
+            meetingDto.Timezone = user.Timezone;
 
-            var meeting = _zoomApi.CreateMeeting(userId, meetingDto);
+            var meeting = _zoomApi.CreateMeeting(user.Id, meetingDto);
             return meeting;
         }
 
@@ -322,10 +325,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 x.Id == meetingId && x.LicenseKey == licenseDto.ConsumerKey && x.CourseId == courseId);
         }
 
-        public async Task<bool> UpdateMeeting(int meetingId, Dictionary<string, object> licenseSettings, string courseId, string email, CreateMeetingViewModel vm)
+        public async Task<bool> UpdateMeeting(int meetingId, Dictionary<string, object> licenseSettings, string courseId, string email, CreateMeetingViewModel vm, UserInfoDto user)
         {
             var dbMeeting = await GetMeeting(meetingId, courseId);
-            var updated = UpdateApiMeeting(dbMeeting.ProviderMeetingId, vm);
+            var updated = UpdateApiMeeting(dbMeeting.ProviderMeetingId, user, vm);
             if (updated)
             {
                 if (vm.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
@@ -405,9 +408,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return meetingDto;
         }
 
-        public bool UpdateApiMeeting(string meetingId, CreateMeetingViewModel dto)
+        public bool UpdateApiMeeting(string meetingId, UserInfoDto user, CreateMeetingViewModel dto)
         {
             var meeting = ConvertFromDto(dto);
+
+            var offset = GetTimezoneOffset(user, meeting.StartTime);
+            meeting.StartTime = meeting.StartTime.AddSeconds(offset);
+            meeting.Timezone = user.Timezone;
+
             bool updated = _zoomApi.UpdateMeeting(meetingId, meeting);
             return updated;
         }
@@ -492,26 +500,36 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         }
 
+        private long GetTimezoneOffset(UserInfoDto user, DateTimeOffset meetingTime)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            if (string.IsNullOrEmpty(user.Timezone))
+            {
+                _logger.Warn($"Timezone property is empty or null for UserId={user.Id}, Email={user.Email}");
+                return 0;
+            }
+            var timezone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(user.Timezone);
+            if (timezone == null)
+            {
+                _logger.Warn($"Timezone not found. UserId={user.Id}, Email={user.Email}");
+                return 0;
+            }
+
+            var instant = Instant.FromDateTimeOffset(meetingTime);
+            var offset = timezone.GetUtcOffset(instant);
+            return offset.Seconds;
+        }
+
         private long GetUtcTime(Meeting meeting)
         {
             if (meeting == null)
                 throw new ArgumentNullException(nameof(meeting));
 
-            if (string.IsNullOrEmpty(meeting.Timezone))
-            {
-                _logger.Warn($"Timezone property is empty or null for. Url={meeting.JoinUrl}.");
-                return meeting.StartTime.ToUnixTimeMilliseconds();
-            }
-            var timezone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(meeting.Timezone);
-            if (timezone == null)
-            {
-                _logger.Warn($"Timezone not found. Url={meeting.JoinUrl}, timezone={meeting.Timezone}");
-                return meeting.StartTime.ToUnixTimeMilliseconds();
-            }
+            return meeting.StartTime.ToUnixTimeMilliseconds();
 
-            var instant = Instant.FromDateTimeOffset(meeting.StartTime);
-            var offset = timezone.GetUtcOffset(instant);
-            return meeting.StartTime.AddSeconds(offset.Seconds).ToUnixTimeMilliseconds();
+            //todo: remove method. It looks like time is coming in UTC from API
         }
 
         private string ConvertAudioFromEnum(MeetingAudioType options)

@@ -94,9 +94,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             try
             {
                 string userId = null;
+                UserInfoDto user = null;
                 try
                 {
-                    var user = _userService.GetUser(Param.lis_person_contact_email_primary);
+                    user = _userService.GetUser(Param.lis_person_contact_email_primary);
                     userId = user.Id;
                 }
                 catch (Exception e)
@@ -121,7 +122,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 {
                     var licenseSettings = GetSettings(Session);
                     var createResult = await _meetingService.CreateMeeting(licenseSettings, CourseId.ToString(),
-                        userId,
+                        user,
                         Param.lis_person_contact_email_primary, requestDto);
 
                     return createResult;
@@ -143,12 +144,33 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         public virtual async Task<OperationResult> Update([FromBody] CreateMeetingViewModel vm,
             [FromRoute] int meetingId)
         {
-            string userId = null;
+            UserInfoDto user = null;
+            try
+            {
+                user = _userService.GetUser(Param.lis_person_contact_email_primary);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("User doesn't exist or doesn't belong to this account", e);
+                /*{
+"code": 1005,
+"message": "User already in the account: ivanr+zoomapitest@esynctraining.com"
+}*/
+                var userInfo = _userService.CreateUser(new CreateUserDto
+                {
+                    Email = Param.lis_person_contact_email_primary,
+                    FirstName = Param.PersonNameGiven,
+                    LastName = Param.PersonNameFamily
+                });
+
+                return OperationResult.Error(
+                    "User either in 'pending' or 'inactive' status. Please check your email or contact Administrator and try again.");
+            }
             try
             {
                 var licenseSettings = GetSettings(Session);
                 var updated = await _meetingService.UpdateMeeting(meetingId, licenseSettings, CourseId,
-                    Param.lis_person_contact_email_primary, vm);
+                    Param.lis_person_contact_email_primary, vm, user);
 
                 return updated ? OperationResult.Success() : OperationResult.Error("Meeting has not been updated");
             }

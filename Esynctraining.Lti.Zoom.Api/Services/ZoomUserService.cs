@@ -38,6 +38,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Verified = user.Verified == 1,
+                    Timezone = user.Timezone
                 };
 
         }
