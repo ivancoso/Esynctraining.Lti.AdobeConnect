@@ -400,7 +400,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             var inactiveUsers = _userService.GetUsers(UserStatuses.Inactive);
             if (inactiveUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
-                throw new LtiException("User has an account, but it is inactivate.");
+                throw new LtiException("User has an account, but it is inactiv.");
 
             var pendingUsers = _userService.GetUsers(UserStatuses.Pending);
             if (pendingUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
