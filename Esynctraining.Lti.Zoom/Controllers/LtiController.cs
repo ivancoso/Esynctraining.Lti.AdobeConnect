@@ -28,6 +28,7 @@ using Esynctraining.Lti.Zoom.DTO;
 using Esynctraining.Lti.Zoom.Extensions;
 using Esynctraining.Lti.Zoom.OAuth;
 using Esynctraining.Lti.Zoom.OAuth.Canvas;
+using Esynctraining.Zoom.ApiWrapper.Model;
 using LtiLibrary.NetCore.Common;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
@@ -124,7 +125,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return Content("Error when joining.");
         }
 
-        public async Task<ActionResult> Home(string session)
+        public async Task<ActionResult> Home(string session, string email)
         {
             try
             {
@@ -135,6 +136,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                 //if (model == null)
                 //{
+                ValidateLoggedUser(email);
                 var model = await BuildModelAsync(s);
                 //}
                 return View("Index", model);
@@ -390,6 +392,24 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return this.View("~/Views/Lti/About.cshtml");
         }
 
+        private void ValidateLoggedUser(string paramLisPersonContactEmailPrimary)
+        {
+            var activeUsers = _userService.GetUsers(UserStatuses.Active);
+            if (activeUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
+                return;
+
+            var inactiveUsers = _userService.GetUsers(UserStatuses.Inactive);
+            if (inactiveUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
+                throw new LtiException("User has an account, but it is inactivate.");
+
+            var pendingUsers = _userService.GetUsers(UserStatuses.Pending);
+            if (pendingUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
+                throw new LtiException("User has an account, but it is not activated yet.");
+
+
+            throw new LtiException("User doesn't have zoom account.");
+        }
+
         public async Task<bool> IsTokenExpired(string api, string userToken)
         {
             try
@@ -616,6 +636,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 //primaryColor = primaryColor,
                 session = session.Id.ToString(),
                 disableCacheBuster = true,
+                email = session.Email,
                 //tab = tab,
                 //meetingId = ltiId
             });
