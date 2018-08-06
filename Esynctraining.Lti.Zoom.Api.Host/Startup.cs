@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Net;
-using EdugameCloud.Lti.Canvas;
-using Esynctraining.AspNetCore;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
 using Esynctraining.Core.Json;
@@ -12,11 +10,9 @@ using Esynctraining.Extensions;
 using Esynctraining.Json.Jil;
 using Esynctraining.Lti.Lms.AgilixBuzz;
 using Esynctraining.Lti.Lms.Canvas;
-using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Zoom.Api.Host.Controllers;
-using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Host.Swagger;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Domain;
@@ -27,13 +23,11 @@ using Esynctraining.Mail.SmtpClient.MailKit;
 using Esynctraining.Mail.TemplateTransform.RazorLight;
 using Esynctraining.Zoom.ApiWrapper;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace Esynctraining.Lti.Zoom.Api.Host
@@ -137,25 +131,15 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             ServicePointManager.SecurityProtocol =
                 SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/error");
+            //}
 
-            app.UseExceptionHandler(
-                builder =>
-                {
-                    builder.Run(
-                    async context =>
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.OK;
-                        var ex = context.Features.Get<IExceptionHandlerFeature>();
-                        if (ex != null)
-                        {
-                            //log
-                        }
-                    });
-                });
             var origins = Configuration["AppSettings:CorsOrigin"].Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
             app.UseCors(builder =>
                 builder

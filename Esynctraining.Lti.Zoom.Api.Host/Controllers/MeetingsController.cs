@@ -130,6 +130,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
                 return OperationResultWithData<MeetingViewModel>.Error("User does not exist in Zoom.");
             }
+            catch (ZoomLicenseException ex)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("CreateMeeting", ex);
@@ -173,6 +177,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                     Param.lis_person_contact_email_primary, vm, user);
 
                 return updated ? OperationResult.Success() : OperationResult.Error("Meeting has not been updated");
+            }
+            catch (ZoomLicenseException e)
+            {
+                throw;
             }
             catch (Exception e)
             {

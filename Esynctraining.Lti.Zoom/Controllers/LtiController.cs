@@ -368,13 +368,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
             //    this.ViewBag.Message = ex.Message;
             //    return this.View("~/Views/Lti/LtiError.cshtml");
             //}
-            catch (Exception ex)
-            {
-                Logger.ErrorFormat(ex, "LoginWithProvider exception. oauth_consumer_key:{0}.",
-                    param.oauth_consumer_key);
-                this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
-                return this.View("~/Views/Lti/LtiError.cshtml");
-            }
+            //catch (Exception ex)
+            //{
+            //    Logger.ErrorFormat(ex, "LoginWithProvider exception. oauth_consumer_key:{0}.",
+            //        param.oauth_consumer_key);
+            //    this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
+            //    return this.View("~/Views/Lti/LtiError.cshtml");
+            //}
             {
                 methodTime.Stop();
                 var time = methodTime.Elapsed;

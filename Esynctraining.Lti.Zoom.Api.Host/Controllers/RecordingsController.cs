@@ -104,12 +104,18 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
                 if (dbMeeting == null)
                     return OperationResult.Error("Meeting not found");
-                var result = _recordingService.DeleteRecordings(WebUtility.UrlDecode(recordingId).Replace(" ", "+"), null, trash);
+                var result = _recordingService.DeleteRecordings(WebUtility.UrlDecode(recordingId).Replace(" ", "+"),
+                    null, trash);
+            }
+            catch (ZoomLicenseException e)
+            {
+                throw;
             }
             catch (Exception e)
             {
                 //when delete recordings from trash, Zoom API sends 404 -> exception.
             }
+
             return OperationResult.Success();
         }
 

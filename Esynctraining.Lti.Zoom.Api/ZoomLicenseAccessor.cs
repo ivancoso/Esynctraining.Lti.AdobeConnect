@@ -55,11 +55,7 @@ namespace Esynctraining.Lti.Zoom.Api
             }
 
             var lmsLicense = await _lmsLicenseService.GetLicense(session.LicenseKey);
-            if (lmsLicense == null)
-            {
-                throw new InvalidOperationException("Could not retrieve user license information");
-            }
-
+            
             return lmsLicense;
         }
     }
