@@ -27,7 +27,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public ListUsers GetUsers(UserStatuses status)
         {
-            var allUsers = _zoomApi.GetUsers(UserStatuses.Active, 100, 1);
+            var allUsers = _zoomApi.GetUsers(status, 100, 1);
             return allUsers;
         }
 
