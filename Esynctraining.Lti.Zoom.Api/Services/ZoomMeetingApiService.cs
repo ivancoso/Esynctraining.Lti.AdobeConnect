@@ -6,7 +6,6 @@ using Esynctraining.Lti.Zoom.Api.Dto.Enums;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
-using NodaTime;
 
 namespace Esynctraining.Lti.Zoom.Api.Services
 {
@@ -45,7 +44,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 //Id = id,
                 Timezone = dto.Timezone,
                 Topic = dto.Topic,
-                StartTime = GetUtcTime(dto),
+                StartTime = dto.StartTime.ToUnixTimeMilliseconds(),
                 Agenda = dto.Agenda,
                 Password = dto.Password,
                 JoinUrl = dto.JoinUrl,
@@ -77,28 +76,5 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 return MeetingAudioType.Telephone;
             return MeetingAudioType.Both;
         }
-
-        private long GetUtcTime(Meeting meeting)
-        {
-            if (meeting == null)
-                throw new ArgumentNullException(nameof(meeting));
-
-            if (string.IsNullOrEmpty(meeting.Timezone))
-            {
-                _logger.Warn($"Timezone property is empty or null for. Url={meeting.JoinUrl}.");
-                return meeting.StartTime.ToUnixTimeMilliseconds();
-            }
-            var timezone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(meeting.Timezone);
-            if (timezone == null)
-            {
-                _logger.Warn($"Timezone not found. Url={meeting.JoinUrl}, timezone={meeting.Timezone}");
-                return meeting.StartTime.ToUnixTimeMilliseconds();
-            }
-
-            var instant = Instant.FromDateTimeOffset(meeting.StartTime);
-            var offset = timezone.GetUtcOffset(instant);
-            return meeting.StartTime.AddSeconds(offset.Seconds).ToUnixTimeMilliseconds();
-        }
-
     }
 }
