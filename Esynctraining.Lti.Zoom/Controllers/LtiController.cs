@@ -70,7 +70,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             if (dbMeeting == null)
                 return NotFound(meetingId);
-
+            UserInfoDto zoomUser = null;
             string userId;
             try
             {
@@ -79,8 +79,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 "code": 1010,
 "message": "User not belong to this account"
 }*/
-                var user = _userService.GetUser(param.lis_person_contact_email_primary);
-                userId = user.Id;
+                zoomUser = _userService.GetUser(param.lis_person_contact_email_primary);
             }
             catch (Exception e)
             {
@@ -99,25 +98,29 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 return Content(
                     "User either in 'pending' or 'inactive' status. Please check your email or contact Administrator and try again.");
             }
-            if (!string.IsNullOrEmpty(userId))
+            if (zoomUser != null)
             {
-                var url = await _meetingService.GetMeetingUrl(userId, dbMeeting.ProviderMeetingId,
+                var url = await _meetingService.GetMeetingUrl(zoomUser.Id, dbMeeting.ProviderMeetingId,
                     param.lis_person_contact_email_primary,
                     async () =>
                     {
                         var settings = GetSettings(s, license);
                         var lmsService = _lmsUserServiceFactory.GetUserService(license.ProductId);
-                        var lmsUsers = await lmsService.GetUsers(settings, s.CourseId);
-                        var registrant = lmsUsers.Data.FirstOrDefault(x =>
-                            !String.IsNullOrEmpty(x.Email) && !x.Email.Equals(param.lis_person_contact_email_primary));
-                        var registrantDto =
+                        var lmsUserExistsInCourse = await lmsService.GetUser(settings, s.LmsUserId, s.CourseId);
+                        if (!lmsUserExistsInCourse.IsSuccess)
+                        {
+                            Logger.Warn(
+                                $"[JoinMeeting:{meetingId}] LmsUserId:{s.LmsUserId}, Message:{lmsUserExistsInCourse.Message}");
+                            return null;
+                        }
+
+                        return
                             new RegistrantDto
                             {
-                                Email = registrant?.Email,
-                                FirstName = registrant?.GetFirstName(),
-                                LastName = registrant?.GetLastName()
+                                Email = param.lis_person_contact_email_primary,
+                                FirstName = param.PersonNameGiven,
+                                LastName = param.PersonNameFamily
                             };
-                        return registrantDto;
                     });
                 return Redirect(url);
             }
@@ -514,7 +517,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             if (missingIntegrationRequiredFields.Any())
             {
                 throw new LtiException(
-                    $"The following parameters are required for AC integration: {string.Join(", ", missingIntegrationRequiredFields.ToArray())}");
+                    $"The following parameters are required for Zoom integration: {string.Join(", ", missingIntegrationRequiredFields.ToArray())}");
             }
         }
 
@@ -563,17 +566,16 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName,
                         HttpScheme.Https + model.lms_domain);
 
-                    //var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
-                    //var oAuthKey = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthSecret);
+                    var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
+                    var oAuthKey = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
-                    var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsLicense,
-                        (string) Settings.CanvasClientId, (string) Settings.CanvasClientSecret);
-                    if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))
+                   
+                    if (string.IsNullOrEmpty(oAuthId) || string.IsNullOrEmpty(oAuthKey))
                     {
                         var message = "Invalid OAuth parameters. Application Id and Application Key cannot be empty.";
                         throw new LtiException(message);
                     }
-                    ////////
+                    
                     Uri uri = new Uri(returnUrl);
                     var baseUri =
                         uri.GetComponents(
@@ -589,17 +591,17 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     var fullUri = baseUri + qb.ToQueryString();
 
 
-                    var builder = new UriBuilder("https://esynctraining.instructure.com/login/oauth2/auth");
+                    var builder = new UriBuilder($"https://{lmsLicense.Domain}/login/oauth2/auth");
 
                     var parameters = new Dictionary<string, string>
                     {
-                        {"client_id", oAuthSettings.Key},
+                        {"client_id", oAuthId},
                         {"redirect_uri", fullUri},
                         {"response_type", "code"},
                         {
                             "state",
                             Convert.ToBase64String(
-                                Encoding.ASCII.GetBytes("esynctraining.instructure.com" + "&&&ru=" + fullUri))
+                                Encoding.ASCII.GetBytes($"{lmsLicense.Domain}&&&ru={fullUri}"))
                         }
                     };
 

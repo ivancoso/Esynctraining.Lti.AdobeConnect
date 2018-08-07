@@ -21,13 +21,13 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public ListUsers GetUsers()
         {
-            var allUsers = _zoomApi.GetUsers(UserStatuses.Active, 100, 1);
+            var allUsers = _zoomApi.GetUsers(UserStatuses.Active);
             return allUsers;
         }
 
         public ListUsers GetUsers(UserStatuses status)
         {
-            var allUsers = _zoomApi.GetUsers(status, 100, 1);
+            var allUsers = _zoomApi.GetUsers(status);
             return allUsers;
         }
 

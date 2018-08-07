@@ -52,6 +52,7 @@ namespace Esynctraining.Zoom.ApiWrapper
             RestRequest restRequest = this.BuildRequestAuthorization("users/{idOrEmail}", Method.GET);
             restRequest.AddParameter(nameof(idOrEmail), (object)idOrEmail, ParameterType.UrlSegment);
             IRestResponse<UserInfo> restResponse = this.WebClient.Execute<UserInfo>((IRestRequest)restRequest);
+
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -96,23 +97,21 @@ namespace Esynctraining.Zoom.ApiWrapper
         {
             if (pageSize > 300)
                 throw new Exception("GetUsers page size max 300");
-
             RestRequest restRequest = this.BuildRequestAuthorization("users", Method.GET);
             restRequest.AddParameter(nameof(status), (object)status.ToString().ToLowerInvariant(), ParameterType.QueryString);
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
-
             IRestResponse<ListUsers> restResponse = this.WebClient.Execute<ListUsers>((IRestRequest)restRequest);
+
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
 
-            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
-                throw new Exception(restResponse.ErrorMessage);
-
-            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
-                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
-
-            return (ListUsers)null;
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
         }
 
         public Meeting GetMeeting(string meetingId)

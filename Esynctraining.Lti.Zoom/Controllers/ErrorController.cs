@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Esynctraining.Core;
 using Esynctraining.Core.Logging;
+using Esynctraining.Zoom.ApiWrapper;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +30,15 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 Exception exception = exceptionFeature.Error;
                 if (exception is IUserMessageException)
                 {
-                    return Content(exception.Message);
+                    ViewBag.Message = exception.Message;
+                    return View("~/Views/Lti/LtiError.cshtml");
+                }
+                else if (exception is ZoomApiException)
+                {
+                    var ex = exception as ZoomApiException;
+                    _logger.Error($"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}", exception);
+                    ViewBag.Message = $"Error received from Zoom Api: {ex.Content}";
+                    return View("~/Views/Lti/LtiError.cshtml");
                 }
                 else
                 {
@@ -42,7 +51,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 // Whatever you do, be careful to catch any exceptions, otherwise you'll end up with a blank page and throwing a 500
             }
 
-            return Content("Unexpected error occurred. Please contact support");
+            ViewBag.Message = $"Unexpected error occurred. Please contact support";
+            return View("~/Views/Lti/LtiError.cshtml");
 
         }
     }

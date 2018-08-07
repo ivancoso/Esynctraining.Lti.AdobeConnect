@@ -12,6 +12,7 @@ using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Domain;
+using Esynctraining.Zoom.ApiWrapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
@@ -134,6 +135,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             {
                 throw;
             }
+            catch (ZoomApiException ex)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("CreateMeeting", ex);
@@ -179,6 +184,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 return updated ? OperationResult.Success() : OperationResult.Error("Meeting has not been updated");
             }
             catch (ZoomLicenseException e)
+            {
+                throw;
+            }
+            catch (ZoomApiException e)
             {
                 throw;
             }

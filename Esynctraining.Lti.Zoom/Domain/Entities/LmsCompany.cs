@@ -48,7 +48,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
             {
                 var domainUrl = this.lmsDomain == null ? string.Empty : lmsDomain.ToLower();
 
-                return "esynctraining.instructure.com";
+                return domainUrl;
             }
 
             set
