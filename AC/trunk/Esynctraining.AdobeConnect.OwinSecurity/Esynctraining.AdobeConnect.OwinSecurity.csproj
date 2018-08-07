@@ -13,6 +13,8 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <Version>1.0.0.16</Version>
+    <PackageReleaseNotes>unsealed AdobeConnectUserManager</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

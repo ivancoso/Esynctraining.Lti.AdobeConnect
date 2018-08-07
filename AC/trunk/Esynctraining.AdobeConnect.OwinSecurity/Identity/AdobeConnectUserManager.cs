@@ -12,12 +12,12 @@ using Microsoft.AspNet.Identity;
 
 namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 {
-    public sealed class AdobeConnectUserManager : UserManager<AdobeConnectUser>
+    public class AdobeConnectUserManager : UserManager<AdobeConnectUser>
     {
-        private readonly IAcDomainValidator _acDomainValidator;
-        private readonly IUserGroupPermissionProvider _userGroupPermissionProvider;
-        private readonly IUserAuthorizationProvider _userAuthorizationProvider;
-        private readonly ILogger _logger;
+        protected readonly IAcDomainValidator _acDomainValidator;
+        protected readonly IUserGroupPermissionProvider _userGroupPermissionProvider;
+        protected readonly IUserAuthorizationProvider _userAuthorizationProvider;
+        protected readonly ILogger _logger;
 
 
         //public AdobeConnectUserManager() 
@@ -34,18 +34,14 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
             )
             : base(userStore)
         {
-            if (acDomainValidator == null)
-                throw new ArgumentNullException(nameof(acDomainValidator));
-            if (userGroupPermissionProvider == null)
-                throw new ArgumentNullException(nameof(userGroupPermissionProvider));
             if (userStore == null)
                 throw new ArgumentNullException(nameof(userStore));
 
             //We can retrieve Old System Hash Password and can encypt or decrypt old password using custom approach. 
             //When we want to reuse old system password as it would be difficult for all users to initiate pwd change as per Idnetity Core hashing. 
             //this.PasswordHasher = new EdugameCloudPasswordHasher();
-            _acDomainValidator = acDomainValidator;
-            _userGroupPermissionProvider = userGroupPermissionProvider;
+            _acDomainValidator = acDomainValidator ?? throw new ArgumentNullException(nameof(acDomainValidator));
+            _userGroupPermissionProvider = userGroupPermissionProvider ?? throw new ArgumentNullException(nameof(userGroupPermissionProvider));
             _userAuthorizationProvider = userAuthorizationProvider;
             _logger = logger;
         }
@@ -117,24 +113,6 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
             return taskInvoke;
         }
 
-        private UserInfo TryLogin(AdobeConnectProvider provider, IAdobeConnectAccess credentials, out string sessionToken)
-        {
-            provider.Logout();
-            LoginResult result = provider.Login(new UserCredentials(credentials.Login, credentials.Password));
-            if (!result.Success)
-            {
-                _logger?.Error(
-                    $"[UserManager.TryLogin] Login failed. Login={credentials.Login}, Status={result.Status.GetErrorInfo()}");
-                sessionToken = null;
-                return null;
-            }
-
-            sessionToken = result.Status.SessionInfo;
-            _logger?.Info($"[UserManager.TryLogin] Success. Login={credentials.Login}, sessionToken={sessionToken}");
-
-            return _userGroupPermissionProvider.UserHasGroupPermission(provider, result.User) ? result.User : null;
-        }
-
         public async Task<AdobeConnectUser> RefreshSession(string userId, string companyToken, string domain,
             string userName)
         {
@@ -161,6 +139,24 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
             }
 
             return null;
+        }
+
+        protected UserInfo TryLogin(AdobeConnectProvider provider, IAdobeConnectAccess credentials, out string sessionToken)
+        {
+            provider.Logout();
+            LoginResult result = provider.Login(new UserCredentials(credentials.Login, credentials.Password));
+            if (!result.Success)
+            {
+                _logger?.Error(
+                    $"[UserManager.TryLogin] Login failed. Login={credentials.Login}, Status={result.Status.GetErrorInfo()}");
+                sessionToken = null;
+                return null;
+            }
+
+            sessionToken = result.Status.SessionInfo;
+            _logger?.Info($"[UserManager.TryLogin] Success. Login={credentials.Login}, sessionToken={sessionToken}");
+
+            return _userGroupPermissionProvider.UserHasGroupPermission(provider, result.User) ? result.User : null;
         }
     }
 }
