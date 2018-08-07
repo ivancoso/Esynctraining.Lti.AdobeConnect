@@ -55,11 +55,13 @@ namespace Esynctraining.Zoom.ApiWrapper
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
-            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
-                throw new Exception(restResponse.ErrorMessage);
-            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
-                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
-            return (UserInfo)null;
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
         }
 
         public User CreateUser(CreateUser createUser, string action)

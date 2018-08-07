@@ -139,7 +139,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         {
             var meeting = _zoomApi.GetMeeting(meetingId);
             string baseUrl = meeting.JoinUrl;
-            if (meeting.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration)
+            if (meeting.HostId != userId && meeting.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration)
             {
                 var registrants = _zoomApi.GetMeetingRegistrants(meetingId);
                 var userReg = registrants.Registrants.FirstOrDefault(x =>

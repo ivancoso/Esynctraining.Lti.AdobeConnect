@@ -13,8 +13,6 @@ using System.Threading.Tasks;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
-using Esynctraining.Lti.Lms.Common;
-using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Zoom.Api;
@@ -28,6 +26,7 @@ using Esynctraining.Lti.Zoom.DTO;
 using Esynctraining.Lti.Zoom.Extensions;
 using Esynctraining.Lti.Zoom.OAuth;
 using Esynctraining.Lti.Zoom.OAuth.Canvas;
+using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using LtiLibrary.NetCore.Common;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -128,27 +127,40 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return Content("Error when joining.");
         }
 
-        public async Task<ActionResult> Home(string session, string email)
+        public async Task<ActionResult> Home(string session)
         {
-            try
+            LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
+            var license = await _licenseService.GetLicense(s.LicenseKey);
+            var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
+            var activeUsers = _userService.GetUsers(UserStatuses.Active);
+            if (!activeUsers.Users.Any(u =>
+                u.Email.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
             {
-                //var model = TempData["lti-index-model"] as LtiViewModelDto;
+                try
+                {
+                    var userInfo = _userService.CreateUser(new CreateUserDto
+                    {
+                        Email = param.lis_person_contact_email_primary,
+                        FirstName = param.PersonNameGiven,
+                        LastName = param.PersonNameFamily
+                    });
+                }
 
-                // TRICK: to change lang inside
-                LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
+                catch (ZoomApiException ex)
+                {
+                    /*{
+    "code": 1005,
+    "message": "User already in the account: ivanr+zoomapitest@esynctraining.com"
+    }*/
+                    Logger.Error($"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}", ex);
+                }
 
-                //if (model == null)
-                //{
-                ValidateLoggedUser(email);
-                var model = await BuildModelAsync(s);
-                //}
-                return View("Index", model);
-            }
-            catch (Exception ex) //Core.WarningMessageException
-            {
-                this.ViewBag.Message = ex.Message;
+                ViewBag.Message = "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
+
+            var model = await BuildModelAsync(s);
+            return View("Index", model);
         }
 
         public virtual async Task<ActionResult> About()
