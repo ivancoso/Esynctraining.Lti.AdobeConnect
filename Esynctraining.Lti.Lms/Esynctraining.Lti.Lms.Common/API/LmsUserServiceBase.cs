@@ -38,19 +38,32 @@ namespace Esynctraining.Lti.Lms.Common.API
 
         // <param name="currentUser">When we get all users for course, we use admin's token (currentUser.token)</param>
         // <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
-        public virtual async Task<(LmsUserDTO user, string error)> GetUser(
+        public virtual async Task<OperationResultWithData<LmsUserDTO>> GetUser(
             Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
         {
             // meeting parameter(second) is used for Blackboard calls of the below method.
             // BB has its own implementation of GetUser, so null can be passed here until we use meeting for retrieving user
 
-            var result = await GetUsers(licenseSettings, courseId, extraData);
-            if (result.IsSuccess)
-                return (result.Data.FirstOrDefault(u => u.Id == lmsUserId), result.Message);
+            var usersResult = await GetUsers(licenseSettings, courseId, extraData);
+            if (usersResult.IsSuccess)
+            {
+                var user = usersResult.Data.FirstOrDefault(u => u.Id == lmsUserId);
+                if (user != null)
+                {
+                    return new OperationResultWithData<LmsUserDTO>
+                    {
+                        Data = user,
+                        Message = usersResult.Message,
+                        IsSuccess = true
+                    };
+                }
+                else
+                {
+                    return OperationResultWithData<LmsUserDTO>.Error("User not found in course");
+                }
+            }
 
-            return (null, result.Message);
-            //return GetUsersOldStyle(lmsCompany, courseId, out error, extraData)
-            //    .FirstOrDefault(u => u.Id == lmsUserId);
+            return OperationResultWithData<LmsUserDTO>.Error(usersResult.Message);
         }
 
         public abstract Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(

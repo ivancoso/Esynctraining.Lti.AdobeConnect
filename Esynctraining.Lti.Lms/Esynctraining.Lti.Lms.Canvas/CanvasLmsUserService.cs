@@ -23,13 +23,9 @@ namespace Esynctraining.Lti.Lms.Canvas
         }
 
 
-        public override async Task<(LmsUserDTO user, string error)> GetUser(Dictionary<string, object> licenseSettings,
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings,
             string lmsUserId, string courseId, LtiParamDTO extraData = null)
         {
-            //if (lmsCompany == null)
-            //    throw new ArgumentNullException(nameof(lmsCompany));
-
-            //if (lmsCompany.AdminUser == null)
             if (!licenseSettings.ContainsKey(LmsUserSettingNames.Token))
             {
                 Logger.Error($"There is no user token provided with license parameters for license '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'.");
@@ -50,7 +46,7 @@ namespace Esynctraining.Lti.Lms.Canvas
                 token,
                 courseId);
 
-            return (user, null);
+            return user != null ? user.ToSuccessResult() : OperationResultWithData<LmsUserDTO>.Error("User not found in course");
         }
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
