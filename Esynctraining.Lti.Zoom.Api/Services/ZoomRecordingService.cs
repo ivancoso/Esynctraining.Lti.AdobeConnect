@@ -137,7 +137,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 : _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
 
             var meetingSession = apiRecordings.Meetings.FirstOrDefault(x =>
-                x.Id == meetingId && x.RecordingFiles.Any(rf =>
+                x.Id == meetingId && x.RecordingFiles.Any(rf => rf.Id != null && 
                     rf.Id != null &&  rf.Id.Equals(recordingFileId, StringComparison.InvariantCultureIgnoreCase)));
 
             return meetingSession?.Uuid;
