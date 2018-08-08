@@ -83,7 +83,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var recordings = apiRecordings.Meetings.Where(x => x.Id == meetingId);
             foreach (var rec in recordings)
             {
-                foreach (var file in rec.RecordingFiles)
+                ///We have two files VIDEO and AUDIO
+                /// We delete video file to trash and after that delete permamently this video file
+                /// We delete audio file to trash
+                /// Go to trash and we will see permamently deleted VIDEO file. 
+                /// ZOOM Api returns this file fith ID = null
+                /// So we filter this null file records.
+                var recordingFiles = rec.RecordingFiles.Where(f => f.Id != null);
+                foreach (var file in recordingFiles)
                 {
                     var dto = new ZoomRecordingsTrashItemDto
                     {
@@ -131,7 +138,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             var meetingSession = apiRecordings.Meetings.FirstOrDefault(x =>
                 x.Id == meetingId && x.RecordingFiles.Any(rf =>
-                    rf.Id.Equals(recordingFileId, StringComparison.InvariantCultureIgnoreCase)));
+                    rf.Id != null &&  rf.Id.Equals(recordingFileId, StringComparison.InvariantCultureIgnoreCase)));
 
             return meetingSession?.Uuid;
         }
