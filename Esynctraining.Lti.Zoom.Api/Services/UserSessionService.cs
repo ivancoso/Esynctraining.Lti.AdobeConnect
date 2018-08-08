@@ -32,7 +32,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 {
                     LicenseKey = licenseKey,
                     CourseId = param.course_id.ToString(),
-                    Email = param.lis_person_contact_email_primary,
                     LmsUserId = param.lms_user_id
                 };
 
@@ -40,6 +39,8 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
 
             session.Email = param.lis_person_contact_email_primary;
+
+            //canvas only, need to resolve
             if (string.IsNullOrEmpty(session.Token))
             {
                 var sessionWithToken = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x =>

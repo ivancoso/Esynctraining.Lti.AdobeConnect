@@ -631,8 +631,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private async Task<LmsUserSession> SaveSession(LmsLicenseDto license, LtiParamDTO param)
         {
-            var session = await _sessionService.GetSession(license.ConsumerKey, param.course_id.ToString(), param.lms_user_id);
-            session = session ?? await _sessionService.SaveSession(license.ConsumerKey, param.course_id.ToString(), param,
+            //var session = await _sessionService.GetSession(license.ConsumerKey, param.course_id.ToString(), param.lms_user_id);
+            var session = await _sessionService.SaveSession(license.ConsumerKey, param.course_id.ToString(), param,
                           param.lis_person_contact_email_primary, param.lms_user_id);
             return session;
         }
