@@ -62,9 +62,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
         [HttpGet]
         public virtual async Task<ActionResult> JoinMeeting(int meetingId, string session)
         {
-            var s = await GetSession(session);
-            var license = await _licenseService.GetLicense(s.LicenseKey);
-            var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
+            var userSession = await GetSession(session);
+            var license = await _licenseService.GetLicense(userSession.LicenseKey);
+            var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(userSession.SessionData);
             var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
 
             if (dbMeeting == null)
@@ -103,13 +103,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     param.lis_person_contact_email_primary,
                     async () =>
                     {
-                        var settings = GetSettings(s, license);
+                        var lmsSettings = license.GetLMSSettings(userSession);
                         var lmsService = _lmsUserServiceFactory.GetUserService(license.ProductId);
-                        var lmsUserExistsInCourse = await lmsService.GetUser(settings, s.LmsUserId, s.CourseId);
+                        var lmsUserExistsInCourse = await lmsService.GetUser(lmsSettings, userSession.LmsUserId, userSession.CourseId);
                         if (!lmsUserExistsInCourse.IsSuccess)
                         {
                             Logger.Warn(
-                                $"[JoinMeeting:{meetingId}] LmsUserId:{s.LmsUserId}, Message:{lmsUserExistsInCourse.Message}");
+                                $"[JoinMeeting:{meetingId}] LmsUserId:{userSession.LmsUserId}, Message:{lmsUserExistsInCourse.Message}");
                             return null;
                         }
 
@@ -723,29 +723,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
 
             return param.roles.Contains("Administrator");
-        }
-
-        private Dictionary<string, object> GetSettings(LmsUserSession session, LmsLicenseDto license)
-        {
-            Dictionary<string, object> result = null;
-            List<string> optionNamesForCanvas;
-            if (license.ProductId == 1010)
-            {
-                optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.CanvasOAuthId, LmsLicenseSettingNames.CanvasOAuthKey };
-                result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
-                result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
-                result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
-                result.Add(LmsUserSettingNames.Token, session.Token);
-            }
-            if (license.ProductId == 1020)
-            {
-                optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.BuzzAdminUsername, LmsLicenseSettingNames.BuzzAdminPassword };
-                result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
-                result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
-                result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
-            }
-
-            return result;
         }
     }
 }

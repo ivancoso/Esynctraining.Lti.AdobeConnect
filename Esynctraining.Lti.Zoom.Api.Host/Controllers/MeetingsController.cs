@@ -121,7 +121,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    var licenseSettings = GetSettings(Session);
+                    var licenseSettings = LmsLicense.GetLMSSettings(Session);
                     var createResult = await _meetingService.CreateMeeting(licenseSettings, CourseId.ToString(),
                         user,
                         Param.lis_person_contact_email_primary, requestDto);
@@ -177,7 +177,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             }
             try
             {
-                var licenseSettings = GetSettings(Session);
+                var licenseSettings = LmsLicense.GetLMSSettings(Session);
                 var updated = await _meetingService.UpdateMeeting(meetingId, licenseSettings, CourseId,
                     Param.lis_person_contact_email_primary, vm, user);
 
@@ -210,29 +210,6 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return result;
 
             //return OperationResult.Error("Error during delete. Please try again or contact support.");
-        }
-
-        private Dictionary<string, object> GetSettings(LmsUserSession session)
-        {
-            Dictionary<string, object> result = null;
-            List<string> optionNamesForCanvas;
-            if (LmsLicense.ProductId == 1010)
-            {
-                optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.CanvasOAuthId, LmsLicenseSettingNames.CanvasOAuthKey };
-                result = LmsLicense.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
-                result.Add(LmsLicenseSettingNames.LicenseKey, LmsLicense.ConsumerKey);
-                result.Add(LmsLicenseSettingNames.LmsDomain, LmsLicense.Domain);
-                result.Add(LmsUserSettingNames.Token, Session.Token);
-            }
-            if (LmsLicense.ProductId == 1020)
-            {
-                optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.BuzzAdminUsername, LmsLicenseSettingNames.BuzzAdminPassword };
-                result = LmsLicense.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
-                result.Add(LmsLicenseSettingNames.LicenseKey, LmsLicense.ConsumerKey);
-                result.Add(LmsLicenseSettingNames.LmsDomain, LmsLicense.Domain);
-            }
-
-            return result;
         }
     }
 }

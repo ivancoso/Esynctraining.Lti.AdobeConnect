@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
     <PackageReference Include="Esynctraining.Mail.SmtpClient.MailKit" Version="1.0.0.2" />
+    <PackageReference Include="KalturaClient" Version="3.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="1.1.0" />
     <PackageReference Include="NodaTime" Version="2.3.0" />
   </ItemGroup>

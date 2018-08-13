@@ -77,6 +77,11 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string BuzzAdminPassword = nameof(BuzzAdminPassword);
         public const string AgilixBuzzLastSignalId = nameof(AgilixBuzzLastSignalId);
 
+        //Kaltura
+        public const string EnableKaltura = nameof(EnableKaltura);
+        public const string KalturaAdminSecret = nameof(KalturaAdminSecret);
+        public const string KalturaAdminPartnerId = nameof(KalturaAdminPartnerId);
+        public const string KalturaLMSVideoPath = nameof(KalturaLMSVideoPath);
 
         public const string PrimaryColor = nameof(PrimaryColor);
         public const string EnableClassRosterSecurity = nameof(EnableClassRosterSecurity);
