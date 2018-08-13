@@ -145,7 +145,7 @@ namespace Esynctraining.Zoom.ApiWrapper
                 return restResponse.Data.ToSuccessZoomApiResult();
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
-                return ZoomApiResultWithData<ListMeetings>.Success(restResponse.Content, null);
+                return ZoomApiResultWithData<ListMeetings>.Error(restResponse.Content);
 
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
                 return ZoomApiResultWithData<ListMeetings>.Error(restResponse.ErrorMessage);
