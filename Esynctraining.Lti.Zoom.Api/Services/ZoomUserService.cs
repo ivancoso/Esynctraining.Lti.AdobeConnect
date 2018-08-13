@@ -12,23 +12,27 @@ namespace Esynctraining.Lti.Zoom.Api.Services
     {
         private readonly ZoomApiWrapper _zoomApi;
 
-
         public ZoomUserService(ZoomApiWrapper zoomApi)
         {
             _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
         }
 
-
-        public ListUsers GetUsers()
+        public List<User> GetUsers(UserStatuses status = UserStatuses.Active)
         {
-            var allUsers = _zoomApi.GetUsers(UserStatuses.Active);
-            return allUsers;
-        }
+            var users = new List<User>();
+            var pageNumber = 1;
+            var pageSize = 300;
+            var totalRecords = 0;
+            do
+            {
+                var page = _zoomApi.GetUsers(status, pageSize: pageSize, pageNumber: pageNumber);
+                users.AddRange(page.Users);
+                totalRecords = page.TotalRecords;
+                pageNumber++;
 
-        public ListUsers GetUsers(UserStatuses status)
-        {
-            var allUsers = _zoomApi.GetUsers(status);
-            return allUsers;
+            } while (pageSize * (pageNumber - 1) < totalRecords);
+
+            return users;
         }
 
         public UserInfoDto GetUser(string idOrEmail)
@@ -91,7 +95,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public bool RegisterUsersToMeetingAndApprove(string meetingId, IEnumerable<RegistrantDto> registrants, bool checkRegistrants)
         {
             var registrantsToApprove = new List<ZoomMeetingRegistrantDto>();
-            var zoomUsers = GetUsers().Users;
+            var zoomUsers = GetUsers();
             foreach (var registrant in registrants)
             {
                 if (zoomUsers.Any(x => x.Email.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase)))

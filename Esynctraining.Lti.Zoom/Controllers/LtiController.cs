@@ -133,7 +133,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             var license = await _licenseService.GetLicense(s.LicenseKey);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
             var activeUsers = _userService.GetUsers(UserStatuses.Active);
-            if (!activeUsers.Users.Any(u =>
+            if (!activeUsers.Any(u =>
                 u.Email.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
             {
                 try
@@ -406,7 +406,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             ViewData["Message"] = provider;
             return this.View("~/Views/Lti/About.cshtml");
         }
-
+/*
         private void ValidateLoggedUser(string paramLisPersonContactEmailPrimary)
         {
             var activeUsers = _userService.GetUsers(UserStatuses.Active);
@@ -424,7 +424,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             throw new LtiException("User doesn't have zoom account.");
         }
-
+        */
         public async Task<bool> IsTokenExpired(string api, string userToken)
         {
             try

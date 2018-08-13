@@ -73,7 +73,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
                 foreach (var user in zoomMeetingPairs)
                 {
-                    var zoomApiResult = _zoomApi.GetMeetings(user.Key);
+                    var zoomApiResult = _zoomApi.GetMeetings(user.Key, pageSize: 300);
                     if (!zoomApiResult.IsSuccess)
                         throw new Exception(zoomApiResult.Message);
 
