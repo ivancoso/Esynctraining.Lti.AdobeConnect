@@ -75,16 +75,17 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 {
                     var zoomApiResult = _zoomApi.GetMeetings(user.Key, pageSize: 300);
                     if (!zoomApiResult.IsSuccess)
-                        throw new Exception(zoomApiResult.Message);
+                    {
+                        if (zoomApiResult.Message.Contains("User not exist"))
+                        {
+                            await DeleteMeetingsForDeletedUser(dbMeetings.Where(m => m.ProviderHostId == user.Key));
+                            continue;
+                        }
+
+                        throw new Exception(zoomApiResult.Message + "Test RP");
+                    }
 
                     var userMeetings = zoomApiResult.Data;
-
-                    if (userMeetings == null)
-                    {
-                        await DeleteMeetingsForDeletedUser(zoomApiResult.Message, dbMeetings.Where(m => m.ProviderHostId == user.Key));
-                        continue;
-                    }
-                        
 
                     result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
                         ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));
@@ -110,15 +111,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return result;
         }
 
-        private async Task DeleteMeetingsForDeletedUser(string message, IEnumerable<LmsCourseMeeting> meetings)
+        private async Task DeleteMeetingsForDeletedUser(IEnumerable<LmsCourseMeeting> meetings)
         {
             ///User can be deleted from the Zoom.
             /// If we have user who was deleted from zoom We will delete all meetings related to this user.
-            if (message.Contains("User not exist"))
-            {
-                _dbContext.RemoveRange(meetings);
-                await _dbContext.SaveChangesAsync();
-            }
+            _dbContext.RemoveRange(meetings);
+            await _dbContext.SaveChangesAsync();
         }
 
         private async Task<IEnumerable<MeetingViewModel>> ProcessOfficeHours(Guid licenseKey, string userId, List<MeetingViewModel> result)
