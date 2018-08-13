@@ -65,10 +65,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             List<MeetingViewModel> result = new List<MeetingViewModel>();
             var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => 
                 x.LicenseKey == licenseDto.ConsumerKey && courseId == x.CourseId);
+
             if (dbMeetings.Any())
             {
                 var zoomMeetingPairs = dbMeetings.GroupBy(x => x.ProviderHostId)
                     .ToDictionary(k => k.Key, v => v.Select(va => va.ProviderMeetingId));
+
                 foreach (var user in zoomMeetingPairs)
                 {
                     var zoomApiResult = _zoomApi.GetMeetings(user.Key);
@@ -78,7 +80,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var userMeetings = zoomApiResult.Data;
 
                     if (userMeetings == null)
+                    {
+                        await DeleteMeetingsForDeletedUser(zoomApiResult.Message, dbMeetings.Where(m => m.ProviderHostId == user.Key));
                         continue;
+                    }
+                        
 
                     result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
                         ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));
@@ -102,6 +108,17 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
 
             return result;
+        }
+
+        private async Task DeleteMeetingsForDeletedUser(string message, IEnumerable<LmsCourseMeeting> meetings)
+        {
+            ///User can be deleted from the Zoom.
+            /// If we have user who was deleted from zoom We will delete all meetings related to this user.
+            if (message.Contains("User not exist"))
+            {
+                _dbContext.RemoveRange(meetings);
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
         private async Task<IEnumerable<MeetingViewModel>> ProcessOfficeHours(Guid licenseKey, string userId, List<MeetingViewModel> result)

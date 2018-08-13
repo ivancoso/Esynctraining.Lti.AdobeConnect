@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Esynctraining.Zoom.ApiWrapper.Model
+﻿namespace Esynctraining.Zoom.ApiWrapper.Model
 {
     public class ZoomApiResult
     {
