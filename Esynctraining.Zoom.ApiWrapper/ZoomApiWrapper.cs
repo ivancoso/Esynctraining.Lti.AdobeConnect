@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
 using RestSharp.Serializers;
@@ -116,18 +117,22 @@ namespace Esynctraining.Zoom.ApiWrapper
             };
         }
 
-        public Meeting GetMeeting(string meetingId)
+        public ZoomApiResultWithData<Meeting> GetMeeting(string meetingId)
         {
             RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}", Method.GET);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             IRestResponse<Meeting> restResponse = this.WebClient.Execute<Meeting>((IRestRequest)restRequest);
+
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
-                return restResponse.Data;
-            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
-                throw new Exception(restResponse.ErrorMessage);
+                return restResponse.Data.ToSuccessZoomApiResult();
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
+                return ZoomApiResultWithData<Meeting>.ApiError(restResponse.Content);
+                
             if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
-            return (Meeting)null;
+
+            return ZoomApiResultWithData<Meeting>.Error($"Not meeting by meetingId {meetingId}");
         }
 
         public ZoomApiResultWithData<ListMeetings> GetMeetings(string userId, MeetingListTypes type = MeetingListTypes.Scheduled, int pageSize = 30, int pageNumber = 1)
@@ -145,7 +150,10 @@ namespace Esynctraining.Zoom.ApiWrapper
                 return restResponse.Data.ToSuccessZoomApiResult();
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
-                return ZoomApiResultWithData<ListMeetings>.Error(restResponse.Content);
+            {
+                return ZoomApiResultWithData<ListMeetings>.ApiError(restResponse.Content);
+            }
+                
 
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
                 return ZoomApiResultWithData<ListMeetings>.Error(restResponse.ErrorMessage);

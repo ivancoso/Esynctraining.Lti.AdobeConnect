@@ -23,8 +23,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<MeetingDetailsViewModel> GetMeetingApiDetails(LmsCourseMeeting dbMeeting)
         {
             var meeting = _zoomApi.GetMeeting(dbMeeting.ProviderMeetingId);
+            if (!meeting.IsSuccess)
+            {
+                throw new Exception(meeting.Message);
+            }
             //var details = ConvertZoomObjToDetailsDto(meeting);
-            var result = ConvertToDetailsViewModel(meeting);
+            var result = ConvertToDetailsViewModel(meeting.Data);
             result.Id = dbMeeting.Id;
             result.Type = dbMeeting.Type;
             return result;

@@ -6,6 +6,8 @@
 
         public string Message { get; set; }
 
+        public int Code { get; set; }
+
         public static ZoomApiResult Error(string errorMessage)
         {
             return new ZoomApiResult()

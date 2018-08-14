@@ -76,7 +76,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var zoomApiResult = _zoomApi.GetMeetings(user.Key, pageSize: 300);
                     if (!zoomApiResult.IsSuccess)
                     {
-                        if (zoomApiResult.Message.Contains("User not exist"))
+                        if (zoomApiResult.Code == 1001)
                         {
                             await DeleteMeetingsForDeletedUser(dbMeetings.Where(m => m.ProviderHostId == user.Key));
                             continue;
@@ -93,11 +93,17 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var notHandledMeetings = user.Value.Where(x => userMeetings.Meetings.All(m => m.Id != x));
                     foreach (var notHandledId in notHandledMeetings)
                     {
-                        var details = _zoomApi.GetMeeting(notHandledId);
-                        if (details != null)
+                        var meetingDetailResult = _zoomApi.GetMeeting(notHandledId);
+                        if (!meetingDetailResult.IsSuccess)
                         {
-                            var vm = ConvertToViewModel(details,
-                                dbMeetings.First(db => db.ProviderMeetingId == details.Id), currentUserId);
+                            await DeleteMeeting(dbMeetings.First(db => db.ProviderMeetingId == notHandledId));
+                            continue;
+                        }
+
+                        if (meetingDetailResult.Data != null)
+                        {
+                            var vm = ConvertToViewModel(meetingDetailResult.Data,
+                                dbMeetings.First(db => db.ProviderMeetingId == meetingDetailResult.Data.Id), currentUserId);
                             result.Add(vm);
                         }
                     }
@@ -119,6 +125,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        private async Task DeleteMeeting(LmsCourseMeeting meeting)
+        {
+            _dbContext.Remove(meeting);
+            await _dbContext.SaveChangesAsync();
+        }
+
         private async Task<IEnumerable<MeetingViewModel>> ProcessOfficeHours(Guid licenseKey, string userId, List<MeetingViewModel> result)
         {
             var oh = result.SingleOrDefault(x => x.Type == 2);
@@ -128,11 +140,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     x.LicenseKey == licenseKey && x.ProviderHostId == userId && x.Type == 2);
                 if (ohMeeting != null)
                 {
-                    var ohDetails = _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
-                    var detailsVm = ConvertToDetailsViewModel(ohDetails);
+                    var ohDetailsResult = _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
+                    if (!ohDetailsResult.IsSuccess)
+                        throw new Exception(ohDetailsResult.Message);
+
+                    var detailsVm = ConvertToDetailsViewModel(ohDetailsResult.Data);
                     detailsVm.Type = ohMeeting.Type;
                     detailsVm.Id = ohMeeting.Id;
-                    var vm = ConvertFromDtoToOHViewModel(ohDetails, userId, ohMeeting.Type);
+                    var vm = ConvertFromDtoToOHViewModel(ohDetailsResult.Data, userId, ohMeeting.Type);
                     vm.Id = ohMeeting.Id;
                     vm.Details = detailsVm;
                     vm.Availabilities = await _ohService.GetAvailabilities(ohMeeting.Id, userId);
@@ -141,8 +156,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
             else
             {
-                var ohDetails = _zoomApi.GetMeeting(oh.ConferenceId);
-                oh.Description = ohDetails.Agenda;
+                var ohDetailsResult = _zoomApi.GetMeeting(oh.ConferenceId);
+                if (!ohDetailsResult.IsSuccess)
+                    throw new Exception(ohDetailsResult.Message);
+
+                oh.Description = ohDetailsResult.Data.Agenda;
                 oh.Availabilities = await _ohService.GetAvailabilities(oh.Id, userId);
             }
 
@@ -152,9 +170,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<string> GetMeetingUrl(string userId, string meetingId, string email,
             Func<Task<RegistrantDto>> getRegistrant)
         {
-            var meeting = _zoomApi.GetMeeting(meetingId);
-            string baseUrl = meeting.JoinUrl;
-            if (meeting.HostId != userId && meeting.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration)
+            var meetingResult = _zoomApi.GetMeeting(meetingId);
+            string baseUrl = meetingResult.Data.JoinUrl;
+            if (meetingResult.Data.HostId != userId && meetingResult.Data.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration)
             {
                 var registrants = _zoomApi.GetMeetingRegistrants(meetingId);
                 var userReg = registrants.Registrants.FirstOrDefault(x =>
@@ -262,12 +280,15 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     vm.Id = ohMeeting.Id;
                     vm.Details = detailsVm;
                  */
-                var ohDetails = _zoomApi.GetMeeting(dbOfficeHours.ProviderMeetingId);
-                vm = ConvertToViewModel(ohDetails, dbOfficeHours, user.Id);
-                var ohJson = _jsonSerializer.JsonSerialize(ohDetails);
-                dbMeeting.ProviderMeetingId = ohDetails.Id;
+                var ohDetailsResult = _zoomApi.GetMeeting(dbOfficeHours.ProviderMeetingId);
+                if (!ohDetailsResult.IsSuccess)
+                    throw new Exception(ohDetailsResult.Message);
+
+                vm = ConvertToViewModel(ohDetailsResult.Data, dbOfficeHours, user.Id);
+                var ohJson = _jsonSerializer.JsonSerialize(ohDetailsResult.Data);
+                dbMeeting.ProviderMeetingId = ohDetailsResult.Data.Id;
                 dbMeeting.Details = ohJson;
-                dbMeeting.ProviderHostId = ohDetails.HostId;
+                dbMeeting.ProviderHostId = ohDetailsResult.Data.HostId;
             }
             else
             {

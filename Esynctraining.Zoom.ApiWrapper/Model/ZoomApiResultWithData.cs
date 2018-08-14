@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.Zoom.ApiWrapper.Model
+﻿using Newtonsoft.Json;
+
+namespace Esynctraining.Zoom.ApiWrapper.Model
 {
     public class ZoomApiResultWithData<T> : ZoomApiResult
     { 
@@ -11,6 +13,13 @@
                 IsSuccess = false,
                 Message = errorMessage
             };
+            return operationResultWithData;
+        }
+
+        public static ZoomApiResultWithData<T> ApiError(string json)
+        {
+            var operationResultWithData = JsonConvert.DeserializeObject<ZoomApiResultWithData<T>>(json);
+            operationResultWithData.IsSuccess = false;
             return operationResultWithData;
         }
 
