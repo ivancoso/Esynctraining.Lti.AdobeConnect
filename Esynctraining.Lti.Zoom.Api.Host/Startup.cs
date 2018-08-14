@@ -100,6 +100,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddTransient<IAgilixBuzzApi, DlapAPI>();
             services.AddTransient<CanvasLmsUserService, CanvasLmsUserService>();
             services.AddTransient<AgilixBuzzLmsUserService, AgilixBuzzLmsUserService>();
+            services.AddTransient<KalturaService, KalturaService>();
             services.AddTransient<ZoomUserService, ZoomUserService>();
             services.AddTransient<ZoomRecordingService, ZoomRecordingService>();
             services.AddTransient<ZoomReportService, ZoomReportService>();
