@@ -235,14 +235,13 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             LmsCourseMeeting dbOfficeHours = null;
             if (requestDto.Type.GetValueOrDefault(1) == 2) //Office Hours
             {
-                var dbMeetings = _dbContext.LmsCourseMeetings.Where(x =>
-                    x.LicenseKey == licenseDto.ConsumerKey && x.Type == 2);
+                var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => x.LicenseKey == licenseDto.ConsumerKey && x.Type == 2);
                 if (dbMeetings.Any(x => x.CourseId == courseId))
                 {
                     return OperationResultWithData<MeetingViewModel>.Error(
                         "There is already created Office Hours meeting for this course. Please refresh page");
                 }
-                dbOfficeHours = dbMeetings.FirstOrDefault();
+                dbOfficeHours = dbMeetings.FirstOrDefault(x => x.ProviderHostId == user.Id);
             }
 
             var dbMeeting = new LmsCourseMeeting
