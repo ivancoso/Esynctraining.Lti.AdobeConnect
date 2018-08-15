@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 {
-    [Route("kaltura")]
+    [Route("")]
     public class KalturaController : BaseApiController
     {
         private readonly KalturaService _kalturaService;
@@ -24,7 +25,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             _licenseAccessor = licenseAccessor;
         }
 
-        [Route("session")]
+        [Route("kaltura/session")]
         [HttpGet]
         [LmsAuthorizeBase]
         public async Task<OperationResultWithData<KalturaSessionDto>> GetSession()
@@ -45,6 +46,33 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 Logger.Error("GetKalturaSession", exception);
 
                 return OperationResultWithData<KalturaSessionDto>.Error("Can't get Kaltura Session.");
+            }
+        }
+
+        [HttpPost("meetings/{id}/kaltura-upload")]
+        public async Task<OperationResult> UploadVideoToPlayList(int id, [FromBody]VideoUploadDto request)
+        {
+            try
+            {
+                var tags = new List<string>
+                {
+                    id.ToString(),
+                    request.VideoTypeTag
+                };
+
+                var videoMediaEntry = await _kalturaService.UploadVideoMediaAsync(request.Name,
+                    request.Description,
+                    tags,
+                    request.UploadedFileTokenId);
+
+                Logger.Info($"Uploaded mediaId={videoMediaEntry?.Id}, meetingId={id}");
+                return OperationResult.Success();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"UploadVideoToPlayList", ex);
+
+                return OperationResult.Error("Server Exception during file upload.");
             }
         }
     }

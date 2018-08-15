@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
@@ -7,6 +8,7 @@ using Kaltura;
 using Kaltura.Enums;
 using Kaltura.Request;
 using Kaltura.Services;
+using Kaltura.Types;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 
 namespace Esynctraining.Lti.Zoom.Api.Services
@@ -29,6 +31,46 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var client = await GetClient();
 
             return new KalturaSessionDto { KS = client.KS, ServiceUrl = client.Configuration.ServiceUrl };
+        }
+
+        public async Task<MediaEntryDto> UploadVideoMediaAsync(string name, string description, IEnumerable<string> tagsToAdd, string uploadedFileTokenId)
+        {
+            var client = await GetClient();
+
+            MediaEntryDto result = null;
+
+            var tags = new List<string>();
+            tags.AddRange(tagsToAdd);
+
+            var mediaEntry = new MediaEntry
+            {
+                MediaType = MediaType.VIDEO,
+                Name = name,
+                Description = description,
+                Tags = string.Join(",", tags),
+            };
+
+            var response = MediaService.AddFromUploadedFile(mediaEntry, uploadedFileTokenId)
+                .ExecuteAndWaitForResponse(client);
+            result = new MediaEntryDto
+            {
+                Id = response.Id,
+                Name = response.Name,
+                Description = response.Description,
+                Views = mediaEntry.Views,
+                Duration = mediaEntry.Duration,
+                DataUrl = mediaEntry.DataUrl,
+                ThumbnailUrl = response.ThumbnailUrl,
+                CreatedAt = response.CreatedAt,
+                Status = response.Status.ToString(),
+            };
+
+            if (!tags.Contains("overview"))
+            {
+                MediaService.Approve(result.Id).ExecuteAndWaitForResponse(client);
+            }
+
+            return result;
         }
 
         private async Task<Client> GetClient(string ks = null)

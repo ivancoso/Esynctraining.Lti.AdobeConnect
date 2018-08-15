@@ -50,7 +50,8 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string DownloadMeetingDetailsReport =>
             BaseUrl + "/reports/meetings/{meetingId}/details/{meetingSessionId}/download"; //get
 
-        public string GetKalturaSession => BaseApiUrl + "/kaltura/session";
+        public string GetKalturaSession => BaseApiUrl + "/kaltura/session"; //get
+        public string UploadKalturaFile => BaseApiUrl + "/meetings/{meetingId}/kaltura-upload"; //post
     }
 
     [DataContract]
