@@ -24,6 +24,7 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         public bool EnableIndiaHost { get; set; }
 
         [DeserializeAs(Name = "join_before_host")]
+        [JsonProperty(PropertyName = "join_before_host")]
         public bool EnableJoinBeforeHost { get; set; }
 
         [DeserializeAs(Name = "mute_upon_entry")]
