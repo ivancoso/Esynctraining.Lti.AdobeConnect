@@ -186,14 +186,18 @@ namespace Esynctraining.Zoom.ApiWrapper
             return (ZoomListRegistrants)null;
         }
 
-        public ZoomAddRegistrantResponse AddRegistrant(string meetingId, ZoomAddRegistrantRequest registrant, string occurenceIds = null)
+        public ZoomApiResultWithData<ZoomAddRegistrantResponse> AddRegistrant(string meetingId, ZoomAddRegistrantRequest registrant, string occurenceIds = null)
         {
             RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}/registrants", Method.POST);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)registrant);
             IRestResponse<ZoomAddRegistrantResponse> restResponse = this.WebClient.Execute<ZoomAddRegistrantResponse>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
-                return restResponse.Data;
+                return restResponse.Data.ToSuccessZoomApiResult();
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.BadRequest)
+                return ZoomApiResultWithData<ZoomAddRegistrantResponse>.ApiError(restResponse.Content); ;
+
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
                 throw new Exception(restResponse.ErrorMessage);
             if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))

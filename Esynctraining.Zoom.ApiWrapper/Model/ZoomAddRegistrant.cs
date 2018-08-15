@@ -5,6 +5,18 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
 {
     public class ZoomAddRegistrantRequest
     {
+        public ZoomAddRegistrantRequest()
+        {
+            
+        }
+
+        public ZoomAddRegistrantRequest(string email, string firstName, string lastName)
+        {
+            Email = email;
+            FirstName = firstName;
+            LastName = lastName;
+        }
+
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -13,6 +13,7 @@ using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
+using Esynctraining.Zoom.ApiWrapper.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
@@ -100,6 +101,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 {
                     user = _userService.GetUser(Param.lis_person_contact_email_primary);
                     userId = user.Id;
+
+                    if (!IsPossibleCreateMeeting(userId, requestDto, out string errorMessage))
+                    {
+                        return OperationResultWithData<MeetingViewModel>.Error(errorMessage);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -211,6 +217,19 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return result;
 
             //return OperationResult.Error("Error during delete. Please try again or contact support.");
+        }
+
+        private bool IsPossibleCreateMeeting(string userId, CreateMeetingViewModel model, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            var zoomUser = _userService.GetUser(userId);
+            if (zoomUser.Type == (int)UserTypes.Basic && model.Settings.ApprovalType == (int)MeetingApprovalTypes.Manual)
+            {
+                errorMessage = "Basic user cannot create meeting with Enabled class roster security option.";
+                return false;
+            }
+
+            return true;
         }
     }
 }

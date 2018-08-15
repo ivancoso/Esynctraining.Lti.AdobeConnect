@@ -121,14 +121,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
                     if (addRegistrant)
                     {
-                        var addResult = _zoomApi.AddRegistrant(meetingId,
-                            new ZoomAddRegistrantRequest
-                            {
-                                Email = registrant.Email,
-                                FirstName = registrant.FirstName,
-                                LastName = registrant.LastName,
-                            });
-                        registrantsToApprove.Add(new ZoomMeetingRegistrantDto{Id = addResult.RegistrantId, Email = registrant.Email });
+                        var newZoomAddRegistrantRequest = new ZoomAddRegistrantRequest(registrant.Email, registrant.FirstName, registrant.LastName);
+                        var addResult = _zoomApi.AddRegistrant(meetingId, newZoomAddRegistrantRequest);
+                        if (!addResult.IsSuccess)
+                        {
+                            continue;
+                        }
+
+                        registrantsToApprove.Add(new ZoomMeetingRegistrantDto{Id = addResult.Data.RegistrantId, Email = registrant.Email });
 
                     }
                 }
