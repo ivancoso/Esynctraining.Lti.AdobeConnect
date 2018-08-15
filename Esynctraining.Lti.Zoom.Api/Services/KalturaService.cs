@@ -42,17 +42,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             var adminSecret = licenseDto.GetSetting<string>(LmsLicenseSettingNames.KalturaAdminSecret);
             var partnerId = licenseDto.GetSetting<int>(LmsLicenseSettingNames.KalturaAdminPartnerId);
-            SessionService.Start(adminSecret, "", SessionType.ADMIN, partnerId, 86400, "")
-                .SetCompletion(new OnCompletedHandler<string>(
-                    (string response, Exception e) =>
-                    {
-                        if (e != null)
-                            throw e;
-
-                        client.KS = response;
-                    }))
+            var session = SessionService.Start(adminSecret, "", SessionType.ADMIN, partnerId, 86400, "")
                 .ExecuteAndWaitForResponse(client);
-
+            client.KS = session;
             return client;
         }
     }
