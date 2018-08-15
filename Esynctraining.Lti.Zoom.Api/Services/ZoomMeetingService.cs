@@ -461,8 +461,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             meeting.StartTime = meeting.StartTime.AddSeconds(offset);
             meeting.Timezone = user.Timezone;
 
-            bool updated = _zoomApi.UpdateMeeting(meetingId, meeting);
-            return updated;
+            var updatedResult = _zoomApi.UpdateMeeting(meetingId, meeting);
+            if (!updatedResult.IsSuccess)
+            {
+                throw new ZoomApiException() {ErrorMessage = updatedResult.Message};
+            }
+            return updatedResult.Data;
         }
 
         private MeetingViewModel ConvertToViewModel(Meeting meeting, LmsCourseMeeting dbMeeting, string userId)

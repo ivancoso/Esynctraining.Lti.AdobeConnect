@@ -373,19 +373,19 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return ZoomApiResultWithData<Meeting>.Error($"Faild with creating meeting {userId}");
         }
 
-        public bool UpdateMeeting(string meetingId, Meeting meeting)
+        public ZoomApiResultWithData<bool> UpdateMeeting(string meetingId, Meeting meeting)
         {
             RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}", Method.PATCH);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)meeting);
             IRestResponse restResponse = this.WebClient.Execute((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NoContent)
-                return true;
-            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
-                throw new Exception(restResponse.ErrorMessage);
-            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
-                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
-            return false;
+                return true.ToSuccessZoomApiResult();
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.BadRequest)
+                return ZoomApiResultWithData<bool>.ApiError(restResponse.Content);
+
+            return ZoomApiResultWithData<bool>.Error($"Faild during update meeting {meetingId}");
         }
 
         public ZoomMeetingsReportList GetMeetingsReport(string userId, DateTime from, DateTime to, int pageSize = 30, string nextPageToken = null)
