@@ -137,7 +137,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             }
             catch (ZoomApiException ex)
             {
-                throw;
+                Logger.Error(ex.ErrorMessage, ex);
+                return OperationResultWithData<MeetingViewModel>.Error(ex.ErrorMessage);
             }
             catch (Exception ex)
             {

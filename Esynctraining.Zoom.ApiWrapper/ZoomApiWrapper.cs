@@ -345,19 +345,28 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return restResponse.Data.Token;
         }
 
-        public Meeting CreateMeeting(string userId, Meeting meeting)
+        public ZoomApiResultWithData<Meeting> CreateMeeting(string userId, Meeting meeting)
         {
             RestRequest restRequest = this.BuildRequestAuthorization("users/{userId}/meetings", Method.POST);
             restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)meeting);
             IRestResponse<Meeting> restResponse = this.WebClient.Execute<Meeting>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
-                return restResponse.Data;
+                return restResponse.Data.ToSuccessZoomApiResult();
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed 
+                && (restResponse.StatusCode == HttpStatusCode.NotFound || restResponse.StatusCode == HttpStatusCode.BadRequest))
+            {
+                return ZoomApiResultWithData<Meeting>.ApiError(restResponse.Content);
+            }
+
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
                 throw new Exception(restResponse.ErrorMessage);
+
             if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
-            return (Meeting)null;
+
+            return ZoomApiResultWithData<Meeting>.Error($"Faild with creating meeting {userId}");
         }
 
         public bool UpdateMeeting(string meetingId, Meeting meeting)

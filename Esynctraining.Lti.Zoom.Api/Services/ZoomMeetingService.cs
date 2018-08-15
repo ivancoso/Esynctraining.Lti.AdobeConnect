@@ -349,8 +349,18 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             meetingDto.StartTime = meetingDto.StartTime.AddSeconds(offset);
             meetingDto.Timezone = user.Timezone;
 
-            var meeting = _zoomApi.CreateMeeting(user.Id, meetingDto);
-            return meeting;
+            var result = _zoomApi.CreateMeeting(user.Id, meetingDto);
+
+            if (!result.IsSuccess)
+            {
+                throw new ZoomApiException()
+                {
+                    ErrorMessage = result.Message,
+                    StatusDescription = result.Code.ToString()
+                };
+            }
+
+            return result.Data;
         }
 
         public async Task<LmsCourseMeeting> GetMeeting(int meetingId, string courseId)
