@@ -227,6 +227,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var slot = await _context.OhSlots.FirstOrDefaultAsync(x => x.Id == slotId);
             if (slot == null)
                 return OperationResult.Error("Slot not found");
+
+            if (slot.Status == 2)
+            {
+                return OperationResult.Error("Slot was deleted by teacher. Please refresh page");
+            }
+
             //store availability to check who cancels
             var meeting = slot.Availability.Meeting;
             _context.Remove(slot);

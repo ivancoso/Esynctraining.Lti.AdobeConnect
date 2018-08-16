@@ -57,14 +57,9 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             {
                 Logger.Error("User doesn't exist or doesn't belong to this account", e);
             }
-            //if (!string.IsNullOrEmpty(userId))
-            //{
 
-            var zoomMeetings = await _meetingService.GetMeetings(CourseId, userId);
-            return zoomMeetings.ToSuccessResult();
-            //}
-
-            //return OperationResultWithData<IEnumerable<MeetingViewModel>>.Error("User does not exist in Zoom.");
+            var zoomMeetingsResult = await _meetingService.GetMeetings(CourseId, userId);
+            return zoomMeetingsResult;
         }
 
         [Microsoft.AspNetCore.Mvc.Route("{meetingId}")]
@@ -86,11 +81,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return OperationResultWithData<MeetingDetailsViewModel>.Error("Unexpected error happened");
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("")]
-        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [Route("")]
+        [HttpPost]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResultWithData<MeetingViewModel>> Create(
-            [FromBody] CreateMeetingViewModel requestDto)
+        public virtual async Task<OperationResultWithData<MeetingViewModel>> Create([FromBody] CreateMeetingViewModel requestDto)
         {
             OperationResultWithData<MeetingViewModel> result = null;
             try
@@ -110,10 +104,6 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 catch (Exception e)
                 {
                     Logger.Error("User doesn't exist or doesn't belong to this account", e);
-                    /*{
-"code": 1005,
-"message": "User already in the account: ivanr+zoomapitest@esynctraining.com"
-}*/
                     var userInfo = _userService.CreateUser(new CreateUserDto
                     {
                         Email = Param.lis_person_contact_email_primary,
@@ -185,10 +175,9 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             try
             {
                 var licenseSettings = LmsLicense.GetLMSSettings(Session);
-                var updated = await _meetingService.UpdateMeeting(meetingId, licenseSettings, CourseId,
-                    Param.lis_person_contact_email_primary, vm, user);
+                var updatedResult = await _meetingService.UpdateMeeting(meetingId, licenseSettings, CourseId, Param.lis_person_contact_email_primary, vm, user);
 
-                return updated ? OperationResult.Success() : OperationResult.Error("Meeting has not been updated");
+                return updatedResult;
             }
             catch (ZoomLicenseException e)
             {
