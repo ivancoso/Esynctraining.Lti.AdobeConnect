@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Net;
+using System.Reflection;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
 using Esynctraining.Core.Json;
@@ -90,8 +91,19 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             }
 
             services.AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
+
+            var migrationsAssembly = typeof(ZoomDbContext).GetTypeInfo().Assembly.GetName().Name;
+            var connectionString = Configuration.GetConnectionString("ZoomDb");
             services.AddDbContext<ZoomDbContext>(options =>
-                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
+                options.UseLazyLoadingProxies().UseSqlServer(connectionString,
+                    sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.MigrationsAssembly(migrationsAssembly);
+                        //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
+                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 15,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    }));
             services.AddTransient<ILmsLicenseService, LmsLicenseInternalApiService>();
             services.AddTransient<UserSessionService, UserSessionService>();
             services.AddSingleton<IJsonSerializer, JilSerializer>();

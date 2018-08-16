@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Reflection;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
@@ -59,6 +60,19 @@ namespace Esynctraining.Lti.Zoom.Host
             services
                 .AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor,
                     Microsoft.AspNetCore.Http.HttpContextAccessor>();
+
+            var migrationsAssembly = typeof(ZoomDbContext).GetTypeInfo().Assembly.GetName().Name;
+            var connectionString = Configuration.GetConnectionString("ZoomDb");
+            services.AddDbContext<ZoomDbContext>(options =>
+                options.UseLazyLoadingProxies().UseSqlServer(connectionString,
+                    sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.MigrationsAssembly(migrationsAssembly);
+                        //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
+                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 15,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    }));
             services.AddDbContext<ZoomDbContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
             services.AddTransient<ILmsLicenseService, LmsLicenseInternalApiService>();
