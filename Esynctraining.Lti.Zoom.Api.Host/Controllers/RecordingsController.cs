@@ -52,7 +52,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var result = new RecordingsDto{ ZoomRecordings = zoomRecordings, ExternalRecordings = externalRecordings};
             if (externalRecordings.Any(x => x.ProviderId == ExternalStorageProvider.Kaltura))
             {
-                var ks = await _kalturaService.GetKalturaSession();
+                var ks = await _kalturaService.GetKalturaUserSession();
                 result.KalturaDto = ks;
             }
             return result.ToSuccessResult();

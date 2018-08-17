@@ -37,43 +37,43 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
             try
             {
-                var kalturaSession = await _kalturaService.GetKalturaSession();
+                var kalturaSession = await _kalturaService.GetKalturaUserSession();
 
                 return kalturaSession.ToSuccessResult();
             }
             catch (Exception exception)
             {
-                Logger.Error("GetKalturaSession", exception);
+                Logger.Error("GetKalturaUserSession", exception);
 
                 return OperationResultWithData<KalturaSessionDto>.Error("Can't get Kaltura Session.");
             }
         }
 
-        [HttpPost("meetings/{id}/kaltura-upload")]
-        public async Task<OperationResult> UploadVideoToPlayList(int id, [FromBody]VideoUploadDto request)
-        {
-            try
-            {
-                var tags = new List<string>
-                {
-                    id.ToString(),
-                    request.VideoTypeTag
-                };
+        //[HttpPost("meetings/{id}/kaltura-upload")]
+        //public async Task<OperationResult> UploadVideoToPlayList(int id, [FromBody]VideoUploadDto request)
+        //{
+        //    try
+        //    {
+        //        var tags = new List<string>
+        //        {
+        //            id.ToString(),
+        //            request.VideoTypeTag
+        //        };
 
-                var videoMediaEntry = await _kalturaService.UploadVideoMediaAsync(request.Name,
-                    request.Description,
-                    tags,
-                    request.UploadedFileTokenId);
+        //        var videoMediaEntry = await _kalturaService.ApproveMedia(request.Name,
+        //            request.Description,
+        //            tags,
+        //            request.UploadedFileTokenId);
 
-                Logger.Info($"Uploaded mediaId={videoMediaEntry?.Id}, meetingId={id}");
-                return OperationResult.Success();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"UploadVideoToPlayList", ex);
+        //        Logger.Info($"Uploaded mediaId={videoMediaEntry?.Id}, meetingId={id}");
+        //        return OperationResult.Success();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.Error($"UploadVideoToPlayList", ex);
 
-                return OperationResult.Error("Server Exception during file upload.");
-            }
-        }
+        //        return OperationResult.Error("Server Exception during file upload.");
+        //    }
+        //}
     }
 }

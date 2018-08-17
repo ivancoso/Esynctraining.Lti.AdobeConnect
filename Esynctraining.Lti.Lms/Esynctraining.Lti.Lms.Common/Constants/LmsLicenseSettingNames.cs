@@ -81,7 +81,7 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string EnableKaltura = nameof(EnableKaltura);
         public const string KalturaAdminSecret = nameof(KalturaAdminSecret);
         public const string KalturaAdminPartnerId = nameof(KalturaAdminPartnerId);
-        public const string KalturaLMSVideoPath = nameof(KalturaLMSVideoPath);
+        public const string KalturaUserSecret = nameof(KalturaUserSecret);
 
         public const string PrimaryColor = nameof(PrimaryColor);
         public const string EnableClassRosterSecurity = nameof(EnableClassRosterSecurity);
