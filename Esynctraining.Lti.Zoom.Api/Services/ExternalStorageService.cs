@@ -22,7 +22,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<OperationResult> AddExternalFileRecord(LmsCourseMeeting dbMeeting,
             int providerId, string providerFileRecordId)
         {
-            if (await _dbContext.ExternalFiles.AnyAsync(x => x.Meeting.Id == dbMeeting.Id))
+            ExternalStorageProvider provider = (ExternalStorageProvider)providerId;
+            if (await _dbContext.ExternalFiles.AnyAsync(x => x.Meeting.Id == dbMeeting.Id
+                                                             && x.ProviderId == provider &&
+                                                             x.ProviderFileRecordId == providerFileRecordId))
                 return OperationResult.Error("File with this external id is already added.");
 
             var beforeSaveResult = await BeforeSave(providerId, providerFileRecordId);
@@ -50,9 +53,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<OperationResult> DeleteExternalFileRecord(int meetingId,
             int providerId, string providerFileRecordId)
         {
-            ExternalStorageProvider prId = (ExternalStorageProvider) providerId;
+            ExternalStorageProvider provider = (ExternalStorageProvider) providerId;
             var fileInfo = await _dbContext.ExternalFiles.FirstOrDefaultAsync(x =>
-                x.Meeting.Id == meetingId && x.ProviderId == prId &&
+                x.Meeting.Id == meetingId && x.ProviderId == provider &&
                 x.ProviderFileRecordId == providerFileRecordId);
             if (fileInfo == null)
                 return OperationResult.Error("File not found.");
