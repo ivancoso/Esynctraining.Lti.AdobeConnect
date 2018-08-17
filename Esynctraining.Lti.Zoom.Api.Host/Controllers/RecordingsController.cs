@@ -1,50 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 {
-    [Microsoft.AspNetCore.Mvc.Route("")]
+    [Route("")]
     public class RecordingsController : BaseApiController
     {
         private readonly ZoomRecordingService _recordingService;
         private readonly ZoomUserService _userService;
         private readonly ZoomMeetingService _meetingService;
+        private readonly ExternalStorageService _storageService;
+        private readonly KalturaService _kalturaService;
 
         public RecordingsController(
             //MeetingSetup meetingSetup,
             //API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger, ZoomRecordingService recordingService, ZoomMeetingService meetingService, ZoomUserService userService)
+            ILogger logger, ZoomRecordingService recordingService, ZoomMeetingService meetingService,
+            ZoomUserService userService, ExternalStorageService storageService, KalturaService kalturaService)
             : base(settings, logger)
         {
             _meetingService = meetingService;
             _recordingService = recordingService;
             _userService = userService;
+            _storageService = storageService;
+            _kalturaService = kalturaService;
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/recordings")]
-        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [Route("meetings/{meetingId}/recordings")]
+        [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResultWithData<IEnumerable<ZoomRecordingSessionDto>>> GetRecordings(int meetingId)
+        public async Task<OperationResultWithData<RecordingsDto>> GetRecordings(int meetingId)
         {
             var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
-                return OperationResultWithData<IEnumerable<ZoomRecordingSessionDto>>.Error("Meeting not found");
-            var recordings = _recordingService.GetRecordings(dbMeeting.ProviderHostId, dbMeeting.ProviderMeetingId);
-            return recordings.ToSuccessResult();
+                return OperationResultWithData<RecordingsDto>.Error("Meeting not found");
+
+            var zoomRecordings = _recordingService.GetRecordings(dbMeeting.ProviderHostId, dbMeeting.ProviderMeetingId);
+            var externalRecordings = await _storageService.GetExternalFileRecords(meetingId);
+            var result = new RecordingsDto{ ZoomRecordings = zoomRecordings, ExternalRecordings = externalRecordings};
+            if (externalRecordings.Any(x => x.ProviderId == ExternalStorageProvider.Kaltura))
+            {
+                var ks = await _kalturaService.GetKalturaSession();
+                result.KalturaDto = ks;
+            }
+            return result.ToSuccessResult();
         }
-        [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/recordings/trash")]
-        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [Route("meetings/{meetingId}/recordings/trash")]
+        [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResultWithData<IEnumerable<ZoomRecordingsTrashItemDto>>> GetTrashRecordings(int meetingId)
         {
@@ -60,7 +74,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         /// </summary>
         /// <param name="meetingId"></param>
         /// <param name="recordingFileId"></param>
-        /// <param name="trash">Flag whicj means how to remove recording. TRUE : Remove to TRASH, FALSE : Remove without restoring.</param>
+        /// <param name="trash">Flag which means how to remove recording. TRUE : Remove to TRASH, FALSE : Remove without restoring.</param>
         /// <returns></returns>
         [Route("meetings/{meetingId}/recordings/files/{recordingFileId}")]
         [HttpDelete]
@@ -94,8 +108,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return result ? OperationResult.Success() : OperationResult.Error("Error when deleting recordings.");
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/recordings/{recordingId}")]
-        [Microsoft.AspNetCore.Mvc.HttpDelete]
+        [Route("meetings/{meetingId}/recordings/{recordingId}")]
+        [HttpDelete]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResult> DeleteAllRecordingFiles(int meetingId, string recordingId, [FromQuery]bool trash = false) //this method is called only from trash, so no need to set trash=true by default
         {
@@ -119,8 +133,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return OperationResult.Success();
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/recordings/files/{recordingFileId}/status/recover")]
-        [Microsoft.AspNetCore.Mvc.HttpPut]
+        [Route("meetings/{meetingId}/recordings/files/{recordingFileId}/status/recover")]
+        [HttpPut]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResult> RecoverRecording(int meetingId, string recordingFileId)
         {
@@ -152,8 +166,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return result ? OperationResult.Success() : OperationResult.Error("Error when recovering recordings.");
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("meetings/{meetingId}/recordings/{recordingId}/status/recover")]
-        [Microsoft.AspNetCore.Mvc.HttpPut]
+        [Route("meetings/{meetingId}/recordings/{recordingId}/status/recover")]
+        [HttpPut]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResult> RecoverAllRecordings(int meetingId, string recordingId)
         {
@@ -162,6 +176,32 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 return OperationResult.Error("Meeting not found");
             var result = _recordingService.RecoverRecordings(WebUtility.UrlDecode(recordingId).Replace(" ", "+"));
             return result? OperationResult.Success() : OperationResult.Error("Error when recovering recordings.");
+        }
+
+        [Route("meetings/{meetingId}/external-recordings")]
+        [HttpPost]
+        [LmsAuthorizeBase]
+        public async Task<OperationResult> AddExternalRecording(int meetingId, [FromBody]AddExternalRecordingDto dto)
+        {
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
+            if (dbMeeting == null)
+                return OperationResult.Error("Meeting not found");
+
+            var result = await _storageService.AddExternalFileRecord(dbMeeting, dto.ProviderId, dto.ProviderFileRecordId);
+            return result;
+        }
+
+        [Route("meetings/{meetingId}/external-recordings")]
+        [HttpDelete]
+        [LmsAuthorizeBase]
+        public async Task<OperationResult> DeleteExternalRecording(int meetingId, [FromQuery]int providerId, [FromQuery]string providerFileRecordId)
+        {
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
+            if (dbMeeting == null)
+                return OperationResult.Error("Meeting not found");
+
+            var result = await _storageService.DeleteExternalFileRecord(meetingId, providerId, providerFileRecordId);
+            return result;
         }
     }
 }

@@ -12,6 +12,7 @@
     <PackageReference Include="Esynctraining.Mail.SmtpClient.MailKit" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Mail.TemplateTransform.RazorLight" Version="1.0.0.2" />
     <PackageReference Include="FluentValidation" Version="8.0.0" />
+    <PackageReference Include="Jil" Version="2.15.4" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />

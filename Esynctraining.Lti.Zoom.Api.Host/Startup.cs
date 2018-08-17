@@ -115,6 +115,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddTransient<KalturaService, KalturaService>();
             services.AddTransient<ZoomUserService, ZoomUserService>();
             services.AddTransient<ZoomRecordingService, ZoomRecordingService>();
+            services.AddTransient<ExternalStorageService, ExternalStorageService>();
             services.AddTransient<ZoomReportService, ZoomReportService>();
             services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
             services.AddTransient<ZoomMeetingApiService, ZoomMeetingApiService>();

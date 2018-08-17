@@ -42,6 +42,12 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string RescheduleSlot => BaseApiUrl + "/office-hours/slots/{slotId}/reschedule"; //put
         public string RescheduleDate => BaseApiUrl + "/office-hours/{meetingId}/reschedule-date"; //put
 
+        public string GetKalturaSession => BaseApiUrl + "/kaltura/session"; //get
+        //public string UploadKalturaFile => BaseApiUrl + "/meetings/{meetingId}/kaltura-upload"; //post
+
+        public string AddExternalFileRecord => BaseApiUrl + "/meetings/{meetingId}/external-recordings"; //post
+        public string DeleteExternalFileRecord => BaseApiUrl + "/meetings/{meetingId}/external-recordings"; //delete
+
         // web app
         public string JoinMeeting => BaseUrl + "/meetings/{meetingId}/join"; //get
         public string DownloadMeetingReportBySessions =>
@@ -49,9 +55,6 @@ namespace Esynctraining.Lti.Zoom.DTO
 
         public string DownloadMeetingDetailsReport =>
             BaseUrl + "/reports/meetings/{meetingId}/details/{meetingSessionId}/download"; //get
-
-        public string GetKalturaSession => BaseApiUrl + "/kaltura/session"; //get
-        public string UploadKalturaFile => BaseApiUrl + "/meetings/{meetingId}/kaltura-upload"; //post
     }
 
     [DataContract]
