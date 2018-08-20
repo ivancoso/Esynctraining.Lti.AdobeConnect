@@ -31,8 +31,13 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         {
             var licenseDto = await _licenseAccessor.GetLicense();
 
+            var enabled = licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableKaltura);
             var userSecret = licenseDto.GetSetting<string>(LmsLicenseSettingNames.KalturaUserSecret);
             var partnerId = licenseDto.GetSetting<int>(LmsLicenseSettingNames.KalturaAdminPartnerId);
+            if (!enabled || string.IsNullOrEmpty(userSecret))
+                throw new ZoomLicenseException(licenseDto.ConsumerKey,
+                    "Kaltura integration is not enabled or settings are incorrect.");
+
             var client = await GetClient(SessionType.USER, userSecret, partnerId);
 
             return new KalturaSessionDto { KS = client.KS, ServiceUrl = client.Configuration.ServiceUrl };
@@ -42,37 +47,15 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         {
             var licenseDto = await _licenseAccessor.GetLicense();
 
+            var enabled = licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableKaltura);
             var adminSecret = licenseDto.GetSetting<string>(LmsLicenseSettingNames.KalturaAdminSecret);
             var partnerId = licenseDto.GetSetting<int>(LmsLicenseSettingNames.KalturaAdminPartnerId);
+            if (!enabled || string.IsNullOrEmpty(adminSecret))
+                throw new ZoomLicenseException(licenseDto.ConsumerKey,
+                    "Kaltura integration is not enabled or settings are incorrect.");
+
             var client = await GetClient(SessionType.ADMIN, adminSecret, partnerId);
 
-            //MediaEntryDto result = null;
-
-            //var tags = new List<string>();
-            //tags.AddRange(tagsToAdd);
-
-            //var mediaEntry = new MediaEntry
-            //{
-            //    MediaType = MediaType.VIDEO,
-            //    Name = name,
-            //    Description = description,
-            //    Tags = string.Join(",", tags),
-            //};
-
-            //var response = MediaService.AddFromUploadedFile(mediaEntry, uploadedFileTokenId)
-            //    .ExecuteAndWaitForResponse(client);
-            //result = new MediaEntryDto
-            //{
-            //    Id = response.Id,
-            //    Name = response.Name,
-            //    Description = response.Description,
-            //    Views = mediaEntry.Views,
-            //    Duration = mediaEntry.Duration,
-            //    DataUrl = mediaEntry.DataUrl,
-            //    ThumbnailUrl = response.ThumbnailUrl,
-            //    CreatedAt = response.CreatedAt,
-            //    Status = response.Status.ToString(),
-            //};
             try
             {
                 var result = MediaService.Approve(mediaEntryId).ExecuteAndWaitForResponse(client);
