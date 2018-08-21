@@ -686,6 +686,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 UserGuideLink = $"{ZoomUrls.BaseUrl}/content/lti-instructions/{(license.ProductId == 1010 ? "CanvasZoomIntegration" : "BuzzZoomIntegration")}.pdf", //todo
                 EnableClassRosterSecurity = license.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity),
                 EnableOfficeHours = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
+                EnabledStorageProviders = await GetEnabledStorageProviders(license),
                 PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),
                 SupportSectionText = license.GetSetting<string>(LmsLicenseSettingNames.SupportSectionText)
                 /*!string.IsNullOrEmpty(lmsProvider.UserGuideFileUrl)
@@ -694,6 +695,19 @@ namespace Esynctraining.Lti.Zoom.Controllers
             };
 
             return model;
+        }
+
+        private async Task<List<int>> GetEnabledStorageProviders(LmsLicenseDto licenseDto)
+        {
+            var result = new List<int>();
+
+            var enabledKaltura = licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableKaltura);
+            if (enabledKaltura)
+            {
+                result.Add((int)ExternalStorageProvider.Kaltura);
+            }
+
+            return result;
         }
 
         private bool IsTeacher(LtiParamDTO param)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Esynctraining.Lti.Zoom.DTO
@@ -96,6 +97,7 @@ namespace Esynctraining.Lti.Zoom.DTO
         [DataMember(Name = "courseMeetingsEnabled")]
         public bool CourseMeetingsEnabled { get; set; }
 
+        public List<int> EnabledStorageProviders { get; set; }
         public bool EnableOfficeHours { get; set; }
         public bool EnableClassRosterSecurity { get; set; }
         public string PrimaryColor { get; set; }

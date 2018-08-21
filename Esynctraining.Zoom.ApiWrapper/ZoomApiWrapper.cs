@@ -89,11 +89,12 @@ namespace Esynctraining.Zoom.ApiWrapper
             IRestResponse<User> restResponse = this.WebClient.Execute<User>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
                 return restResponse.Data;
-            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
-                throw new Exception(restResponse.ErrorMessage);
-            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
-                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
-            return (User)null;
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
         }
 
         public ListUsers GetUsers(UserStatuses status = UserStatuses.Active, int pageSize = 30, int pageNumber = 1)
