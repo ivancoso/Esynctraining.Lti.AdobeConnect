@@ -11,7 +11,7 @@ using Esynctraining.Core.Logging;
 
 namespace Esynctraining.AdobeConnect.Security.Abstractions.Identity
 {
-    public sealed class AdobeConnectUserManager
+    public class AdobeConnectUserManager
     {
         private readonly IAcDomainValidator _acDomainValidator;
         private readonly IUserGroupPermissionProvider _userGroupPermissionProvider;
@@ -32,7 +32,6 @@ namespace Esynctraining.AdobeConnect.Security.Abstractions.Identity
             _userAuthorizationProvider = userAuthorizationProvider;
             _logger = logger;
         }
-
 
         public Task<AdobeConnectUser> FindAsync(string userName, string password)
         {
@@ -79,7 +78,7 @@ namespace Esynctraining.AdobeConnect.Security.Abstractions.Identity
             return Task.FromResult(applicationUser);
         }
 
-        private UserInfo TryLogin(AdobeConnectProvider provider, IAdobeConnectAccess credentials, out string sessionToken)
+        protected UserInfo TryLogin(AdobeConnectProvider provider, IAdobeConnectAccess credentials, out string sessionToken)
         {
             provider.Logout();
             LoginResult result = provider.Login(new UserCredentials(credentials.Login, credentials.Password));
