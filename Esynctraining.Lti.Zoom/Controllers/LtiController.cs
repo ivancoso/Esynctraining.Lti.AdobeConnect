@@ -695,7 +695,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     true, //credentials.EnableCourseMeetings.GetValueOrDefault() || param.is_course_meeting_enabled,
 
                 LmsProviderName = license.ProductId == 1010 ? "Canvas" : "AgilixBuzz", //todo
-                UserGuideLink = $"{ZoomUrls.BaseUrl}/{(license.ProductId == 1010 ? "Canvas" : "AgilixBuzz")}.pdf", //todo
+                UserGuideLink = $"{ZoomUrls.BaseUrl}/content/lti-instructions/{(license.ProductId == 1010 ? "CanvasZoomIntegration" : "BuzzZoomIntegration")}.pdf", //todo
                 EnableClassRosterSecurity = license.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity),
                 EnableOfficeHours = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
                 PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),
