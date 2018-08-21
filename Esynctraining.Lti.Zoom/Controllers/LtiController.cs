@@ -126,12 +126,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
             var license = await _licenseService.GetLicense(s.LicenseKey);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
             var swGetUsers = Stopwatch.StartNew();
-            var activeUsers = await _userService.GetUsers(UserStatuses.Active);
+            var activeUserEmails = await _userService.GetUsersEmails(UserStatuses.Active);
             swGetUsers.Stop();
-            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUsers.Count()}. GetUsers Time : {swGetUsers.Elapsed}");
+            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. GetUsersEmails Time : {swGetUsers.Elapsed}");
 
-            if (!activeUsers.Any(u =>
-                u.Email.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
+            if (!activeUserEmails.Any(x =>
+                x.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
             {
                 try
                 {
@@ -153,7 +153,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
 
             sw.Stop();
-            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUsers.Count()}. Time : {sw.Elapsed}");
+            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. Time : {sw.Elapsed}");
 
             var model = await BuildModelAsync(s);
             return View("Index", model);
@@ -402,15 +402,15 @@ namespace Esynctraining.Lti.Zoom.Controllers
 /*
         private void ValidateLoggedUser(string paramLisPersonContactEmailPrimary)
         {
-            var activeUsers = _userService.GetUsers(UserStatuses.Active);
+            var activeUsers = _userService.GetUsersEmails(UserStatuses.Active);
             if (activeUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
                 return;
 
-            var inactiveUsers = _userService.GetUsers(UserStatuses.Inactive);
+            var inactiveUsers = _userService.GetUsersEmails(UserStatuses.Inactive);
             if (inactiveUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
                 throw new LtiException("User has an account, but it is inactive.");
 
-            var pendingUsers = _userService.GetUsers(UserStatuses.Pending);
+            var pendingUsers = _userService.GetUsersEmails(UserStatuses.Pending);
             if (pendingUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
                 throw new LtiException("User has an account, but it is not activated yet.");
 

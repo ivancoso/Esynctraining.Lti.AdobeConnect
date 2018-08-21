@@ -30,16 +30,16 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _settings = settings;
         }
 
-        public async Task<IEnumerable<User>> GetUsers(UserStatuses status = UserStatuses.Active)
+        public async Task<IEnumerable<string>> GetUsersEmails(UserStatuses status = UserStatuses.Active)
         {
             var license = await _licenseAccessor.GetLicense();
             var cacheKey = "Zoom.Users." + license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey);
             IFormatter formatter = new BinaryFormatter();
-            var usersBytes = await _cache.GetAsync(cacheKey);
-            IEnumerable<User> result = null;
-            if (usersBytes == null)
+            var userEmailsBytes = await _cache.GetAsync(cacheKey);
+            IEnumerable<string> result = null;
+            if (userEmailsBytes == null)
             {
-                result = GetUsersFromApi(status);
+                result = GetUsersFromApi(status).Select(x => x.Email).ToArray();
                 var cacheEntryOption = new DistributedCacheEntryOptions
                 {
                     SlidingExpiration = TimeSpan.FromMinutes(double.Parse(_settings.LicenseUsersCacheDuration))
@@ -47,18 +47,18 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 using (var ms = new MemoryStream())
                 {
                     formatter.Serialize(ms, result);
-                    usersBytes = ms.ToArray();
+                    userEmailsBytes = ms.ToArray();
                 }
 
-                await _cache.SetAsync(cacheKey, usersBytes, cacheEntryOption);
+                await _cache.SetAsync(cacheKey, userEmailsBytes, cacheEntryOption);
             }
             else
             {
                 using (var memStream = new MemoryStream())
                 {
-                    memStream.Write(usersBytes, 0, usersBytes.Length);
+                    memStream.Write(userEmailsBytes, 0, userEmailsBytes.Length);
                     memStream.Seek(0, SeekOrigin.Begin);
-                    result = (List<User>)formatter.Deserialize(memStream);
+                    result = (string[])formatter.Deserialize(memStream);
                 }
             }
 
@@ -143,10 +143,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<bool> RegisterUsersToMeetingAndApprove(string meetingId, IEnumerable<RegistrantDto> registrants, bool checkRegistrants)
         {
             var registrantsToApprove = new List<ZoomMeetingRegistrantDto>();
-            var zoomUsers = await GetUsers();
+            var zoomUserEmails = await GetUsersEmails();
             foreach (var registrant in registrants)
             {
-                if (zoomUsers.Any(x => x.Email.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase)))
+                if (zoomUserEmails.Any(x => x.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     bool addRegistrant = !checkRegistrants;
                     if (checkRegistrants)
