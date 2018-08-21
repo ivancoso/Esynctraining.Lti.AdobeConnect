@@ -640,12 +640,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             return RedirectToAction("Home", "Lti", new
             {
-                //primaryColor = primaryColor,
-                session = session.Id.ToString(),
-                disableCacheBuster = true,
-                email = session.Email,
-                //tab = tab,
-                //meetingId = ltiId
+                session = session.Id.ToString()
             });
         }
 
