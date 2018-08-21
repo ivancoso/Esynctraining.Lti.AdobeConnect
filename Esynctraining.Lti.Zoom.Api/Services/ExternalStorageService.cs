@@ -52,13 +52,26 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<OperationResult> BeforeSave(int providerId, string providerFileRecordId)
         {
-            //todo: separate service if needed
+            //todo: separate service
             switch ((ExternalStorageProvider)providerId)
             {
                 case ExternalStorageProvider.Kaltura:
                     return await _kalturaService.ApproveMedia(providerFileRecordId);
                 default:
                     return OperationResult.Success();
+            }
+        }
+
+        private async Task<IEnumerable<ExternalMediaDto>> GetExternalMedia(ExternalStorageProvider providerId,
+            IEnumerable<string> ids)
+        {
+            //todo: separate service
+            switch ((ExternalStorageProvider)providerId)
+            {
+                case ExternalStorageProvider.Kaltura:
+                    return await _kalturaService.GetMediaRecords(ids);
+                default:
+                    return new List<ExternalMediaDto>();
             }
         }
 
@@ -87,9 +100,23 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             var fileInfos = await _dbContext.ExternalFiles
                 .Where(x => x.Meeting.Id == meetingId && providers.Any(p => p == x.ProviderId)).ToListAsync();
-            var result = fileInfos.GroupBy(x => x.ProviderId).Select(x =>
-                new ExternalRecordingsDto {ProviderId = x.Key, RecordingIds = x.Select(ef => ef.ProviderFileRecordId)});
-            return result.ToList();
+            var grouped = fileInfos.GroupBy(x => x.ProviderId);
+                var result = grouped.Select(async (x) =>
+            {
+                var recordings = await GetExternalMedia(x.Key, x.Select(ef => ef.ProviderFileRecordId));
+                return new ExternalRecordingsDto
+                {
+                    ProviderId = x.Key,
+                    Recordings = recordings
+                };
+            });
+            var recordingsDtos = new List<ExternalRecordingsDto>();
+            foreach (var task in result)
+            {
+                recordingsDtos.Add(await task);
+            }
+
+            return recordingsDtos;
         }
 
         private async Task<List<ExternalStorageProvider>> GetEnabledStorageProviders()

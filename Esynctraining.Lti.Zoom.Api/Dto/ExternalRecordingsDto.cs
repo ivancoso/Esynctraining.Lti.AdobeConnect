@@ -6,6 +6,6 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
     public class ExternalRecordingsDto
     {
         public ExternalStorageProvider ProviderId { get; set; }
-        public IEnumerable<string> RecordingIds { get; set; }
+        public IEnumerable<ExternalMediaDto> Recordings { get; set; }
     }
 }

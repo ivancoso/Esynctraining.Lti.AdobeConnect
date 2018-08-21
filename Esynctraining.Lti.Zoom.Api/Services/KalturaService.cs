@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Dto.Kaltura;
 using Kaltura;
 using Kaltura.Enums;
-using Kaltura.Request;
 using Kaltura.Services;
 using Kaltura.Types;
 using ILogger = Esynctraining.Core.Logging.ILogger;
@@ -43,7 +44,47 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return new KalturaSessionDto { KS = client.KS, ServiceUrl = client.Configuration.ServiceUrl };
         }
 
-        public async Task<OperationResult> ApproveMedia(string mediaEntryId)//name, string description, IEnumerable<string> tagsToAdd, string uploadedFileTokenId
+        public async Task<IEnumerable<ExternalMediaDto>> GetMediaRecords(IEnumerable<string> ids)
+        {
+            if (ids == null)
+                throw new ArgumentNullException(nameof(ids));
+
+            var licenseDto = await _licenseAccessor.GetLicense();
+
+            var enabled = licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableKaltura);
+            var adminSecret = licenseDto.GetSetting<string>(LmsLicenseSettingNames.KalturaAdminSecret);
+            var partnerId = licenseDto.GetSetting<int>(LmsLicenseSettingNames.KalturaAdminPartnerId);
+            if (!enabled || string.IsNullOrEmpty(adminSecret))
+                throw new ZoomLicenseException(licenseDto.ConsumerKey,
+                    "Kaltura integration is not enabled or settings are incorrect.");
+            
+            var client = await GetClient(SessionType.ADMIN, adminSecret, partnerId);
+            try
+            {
+                var filter = new MediaEntryFilter {IdIn = string.Join(",", ids)};
+                var result = MediaService.List(filter).ExecuteAndWaitForResponse(client);
+                return result.Objects.Select(x=> new ExternalMediaDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    CreatedAt = x.CreatedAt,
+                    MsDuration = x.MsDuration,
+                    DataUrl = x.DataUrl,
+                    DownloadUrl = x.DownloadUrl,
+                    Status = x.Status.ToString(),
+                    ThumbnailUrl = x.ThumbnailUrl,
+                    Description = x.Description,
+                    Views = x.Views
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.Error($"[GetMediaRecords] Error. licenseKey={licenseDto.ConsumerKey}", e);
+                return new List<ExternalMediaDto>();
+            }
+        }
+
+        public async Task<OperationResult> ApproveMedia(string mediaEntryId)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
 
@@ -62,7 +103,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
             catch (Exception e)
             {
-                //todo:
+                _logger.Error($"[ApproveMedia] Error. licenseKey={licenseDto.ConsumerKey}", e);
                 return OperationResult.Error(e.Message);
             }
 
