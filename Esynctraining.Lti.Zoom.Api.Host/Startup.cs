@@ -71,10 +71,13 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                 .AddControllersAsServices()
                 .AddApiExplorer()
                 .AddDataAnnotations();
-
+            services
+                .AddDistributedRedisCache(options =>
+                {
+                    options.Configuration = Configuration.GetConnectionString("CacheRedis");
+                });
             services
                 .AddCors();
-            //.AddMemoryCache();
             var configurationSection = Configuration.GetSection("AppSettings");
             var settings = new NameValueCollection();
             foreach (var appSetting in configurationSection.GetChildren())

@@ -184,7 +184,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var registrant = await getRegistrant();
                     if (registrant != null)
                     {
-                        var registration = _userService.RegisterUsersToMeetingAndApprove(meetingId,
+                        var registration = await _userService.RegisterUsersToMeetingAndApprove(meetingId,
                             new List<RegistrantDto> {registrant}, false);
                         var registrants2 = _zoomApi.GetMeetingRegistrants(meetingId);
                         var userReg2 = registrants2.Registrants.FirstOrDefault(x =>
@@ -324,7 +324,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                         FirstName = x.GetFirstName(),
                         LastName = x.GetLastName()
                     });
-                _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants,
+                await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants,
                     checkRegistrants: false);
             }
             vm.Id = dbMeeting.Id;
@@ -393,7 +393,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                             FirstName = x.GetFirstName(),
                             LastName = x.GetLastName()
                         });
-                    _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, true);
+                    await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, true);
                 }
 
                 return true.ToSuccessResult();

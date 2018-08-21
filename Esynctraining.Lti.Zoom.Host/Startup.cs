@@ -44,7 +44,11 @@ namespace Esynctraining.Lti.Zoom.Host
                 .AddApplicationPart(controllerAssembly)
                 .AddControllersAsServices()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            services
+                .AddDistributedRedisCache(options =>
+                {
+                    options.Configuration = Configuration.GetConnectionString("CacheRedis");
+                });
             services
                 .AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
 

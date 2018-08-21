@@ -1,23 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
+using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Dto.Enums;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Esynctraining.Lti.Zoom.Api.Services
 {
     public class ZoomUserService
     {
         private readonly ZoomApiWrapper _zoomApi;
+        private readonly IDistributedCache _cache;
+        private readonly ILmsLicenseAccessor _licenseAccessor;
+        private readonly dynamic _settings;
 
-        public ZoomUserService(ZoomApiWrapper zoomApi)
+        public ZoomUserService(ZoomApiWrapper zoomApi, IDistributedCache cache, ILmsLicenseAccessor licenseAccessor, ApplicationSettingsProvider settings)
         {
             _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _licenseAccessor = licenseAccessor ?? throw new ArgumentNullException(nameof(licenseAccessor));
+            _settings = settings;
         }
 
-        public List<User> GetUsers(UserStatuses status = UserStatuses.Active)
+        public async Task<IEnumerable<User>> GetUsers(UserStatuses status = UserStatuses.Active)
+        {
+            var license = await _licenseAccessor.GetLicense();
+            var cacheKey = "Zoom.Users." + license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey);
+            IFormatter formatter = new BinaryFormatter();
+            var usersBytes = await _cache.GetAsync(cacheKey);
+            IEnumerable<User> result = null;
+            if (usersBytes == null)
+            {
+                result = GetUsersFromApi(status);
+                var cacheEntryOption = new DistributedCacheEntryOptions
+                {
+                    SlidingExpiration = TimeSpan.FromMinutes(double.Parse(_settings.LicenseUsersCacheDuration))
+                };
+                using (var ms = new MemoryStream())
+                {
+                    formatter.Serialize(ms, result);
+                    usersBytes = ms.ToArray();
+                }
+
+                await _cache.SetAsync(cacheKey, usersBytes, cacheEntryOption);
+            }
+            else
+            {
+                using (var memStream = new MemoryStream())
+                {
+                    memStream.Write(usersBytes, 0, usersBytes.Length);
+                    memStream.Seek(0, SeekOrigin.Begin);
+                    result = (List<User>)formatter.Deserialize(memStream);
+                }
+            }
+
+            return result;
+        }
+
+        public List<User> GetUsersFromApi(UserStatuses status)
         {
             var users = new List<User>();
             var pageNumber = 1;
@@ -92,10 +140,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return registrants;
         }
 
-        public bool RegisterUsersToMeetingAndApprove(string meetingId, IEnumerable<RegistrantDto> registrants, bool checkRegistrants)
+        public async Task<bool> RegisterUsersToMeetingAndApprove(string meetingId, IEnumerable<RegistrantDto> registrants, bool checkRegistrants)
         {
             var registrantsToApprove = new List<ZoomMeetingRegistrantDto>();
-            var zoomUsers = GetUsers();
+            var zoomUsers = await GetUsers();
             foreach (var registrant in registrants)
             {
                 if (zoomUsers.Any(x => x.Email.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase)))

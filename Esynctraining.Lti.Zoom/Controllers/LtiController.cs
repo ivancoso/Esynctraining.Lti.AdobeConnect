@@ -125,11 +125,10 @@ namespace Esynctraining.Lti.Zoom.Controllers
             LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
             var license = await _licenseService.GetLicense(s.LicenseKey);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-
             var swGetUsers = Stopwatch.StartNew();
-            var activeUsers = _userService.GetUsers(UserStatuses.Active);
+            var activeUsers = await _userService.GetUsers(UserStatuses.Active);
             swGetUsers.Stop();
-            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUsers.Count}. GetUsers Time : {swGetUsers.Elapsed}");
+            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUsers.Count()}. GetUsers Time : {swGetUsers.Elapsed}");
 
             if (!activeUsers.Any(u =>
                 u.Email.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
@@ -154,7 +153,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
 
             sw.Stop();
-            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUsers.Count}. Time : {sw.Elapsed}");
+            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUsers.Count()}. Time : {sw.Elapsed}");
 
             var model = await BuildModelAsync(s);
             return View("Index", model);
@@ -298,7 +297,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 param.CalculateFields();
                 // Parse and validate the request
                 Request.CheckForRequiredLtiParameters();
-                
+
 
                 var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
 
@@ -316,12 +315,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         $"Invalid LTI request. Your Zoom integration is not set up for provided consumer key.");
                 }
 
-                string validationError = ValidateLmsLicense(license, param);
-                if (!string.IsNullOrWhiteSpace(validationError))
-                {
-                    this.ViewBag.Error = validationError;
-                    return this.View("~/Views/Lti/LtiError.cshtml");
-                }
+                //string validationError = ValidateLmsLicense(license, param);
+                //if (!string.IsNullOrWhiteSpace(validationError))
+                //{
+                //    this.ViewBag.Error = validationError;
+                //    return this.View("~/Views/Lti/LtiError.cshtml");
+                //}
 
                 //LmsProvider providerInstance = LmsProvider.Generate();
 
