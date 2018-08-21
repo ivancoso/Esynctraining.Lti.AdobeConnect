@@ -73,20 +73,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
             string userId;
             try
             {
-                /*
-                 {
-"code": 1010,
-"message": "User not belong to this account"
-}*/
                 zoomUser = _userService.GetUser(param.lis_person_contact_email_primary);
             }
             catch (Exception e)
             {
                 Logger.Error("User doesn't exist or doesn't belong to this account", e);
-                /*{
-"code": 1005,
-"message": "User already in the account: ivanr+zoomapitest@esynctraining.com"
-}*/
+
                 var userInfo = _userService.CreateUser(new CreateUserDto
                 {
                     Email = param.lis_person_contact_email_primary,
@@ -129,10 +121,16 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         public async Task<ActionResult> Home(string session)
         {
+            var sw = Stopwatch.StartNew();
             LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
             var license = await _licenseService.GetLicense(s.LicenseKey);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
+
+            var swGetUsers = Stopwatch.StartNew();
             var activeUsers = _userService.GetUsers(UserStatuses.Active);
+            swGetUsers.Stop();
+            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUsers.Count}. GetUsers Time : {swGetUsers.Elapsed}");
+
             if (!activeUsers.Any(u =>
                 u.Email.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
             {
@@ -148,16 +146,15 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                 catch (ZoomApiException ex)
                 {
-                    /*{
-    "code": 1005,
-    "message": "User already in the account: ivanr+zoomapitest@esynctraining.com"
-    }*/
                     Logger.Error($"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}", ex);
                 }
 
                 ViewBag.Message = "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
+
+            sw.Stop();
+            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUsers.Count}. Time : {sw.Elapsed}");
 
             var model = await BuildModelAsync(s);
             return View("Index", model);
@@ -293,6 +290,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
         {
             var methodTime = Stopwatch.StartNew();
             var trace = new StringBuilder();
+            var sw = Stopwatch.StartNew();
 
             try
             {
@@ -300,7 +298,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 param.CalculateFields();
                 // Parse and validate the request
                 Request.CheckForRequiredLtiParameters();
-                var sw = Stopwatch.StartNew();
+                
 
                 var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
 
@@ -327,7 +325,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                 //LmsProvider providerInstance = LmsProvider.Generate();
 
-                sw = Stopwatch.StartNew();
 
                 if (!(new BltiProviderHelper(Logger)).VerifyBltiRequest(license, Request,
                     () => true)) //todo: remove if not needed
@@ -336,9 +333,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         param.oauth_consumer_key);
                     throw new LtiException($"Invalid LTI request. Invalid signature parameter");
                 }
-
-                sw.Stop();
-                trace.AppendFormat("VerifyBltiRequest: time: {0}.\r\n", sw.Elapsed.ToString());
 
                 ValidateLtiVersion(param);
                 ValidateIntegrationRequiredParameters(license, param);
@@ -349,9 +343,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 switch ( license.ProductId)
                 {
                     case 1010:
-
-                        sw = Stopwatch.StartNew();
-
                         if (string.IsNullOrWhiteSpace(session?.Token) ||
                             await IsTokenExpired(license.Domain, session.Token))
                         {
@@ -363,6 +354,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     case 1020:
                         break;
                 }
+
+                sw.Stop();
+                Logger.InfoFormat($"Metric: LoginWithProvider time: {sw.Elapsed}.\r\n");
 
                 return await RedirectToHome(session);
             }

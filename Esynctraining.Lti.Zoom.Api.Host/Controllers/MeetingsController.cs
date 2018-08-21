@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,8 +46,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetCourseMeetings()
         {
-            StringBuilder trace = null;
-
+            var sw = Stopwatch.StartNew();
             string userId = null;
             try
             {
@@ -59,6 +59,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             }
 
             var zoomMeetingsResult = await _meetingService.GetMeetings(CourseId, userId);
+            sw.Stop();
+            Logger.InfoFormat($"Metric: MeetingController.GetCourseMeetings Time : {sw.Elapsed}");
             return zoomMeetingsResult;
         }
 
