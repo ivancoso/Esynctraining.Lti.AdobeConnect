@@ -68,34 +68,34 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             if (dbMeetings.Any())
             {
-                var zoomMeetingPairs = dbMeetings.GroupBy(x => x.ProviderHostId).ToDictionary(k => k.Key, v => v.Select(va => va.ProviderMeetingId));
+                //var zoomMeetingPairs = dbMeetings.GroupBy(x => x.ProviderHostId).ToDictionary(k => k.Key, v => v.Select(va => va.ProviderMeetingId));
 
-                foreach (var user in zoomMeetingPairs)
-                {
-                    var zoomApiResult = _zoomApi.GetMeetings(user.Key, pageSize: 300);
-                    if (!zoomApiResult.IsSuccess)
-                    {
-                        if (zoomApiResult.Code == 1001)
-                        {
-                            await DeleteMeetingsForDeletedUser(dbMeetings.Where(m => m.ProviderHostId == user.Key));
-                            continue;
-                        }
+                //foreach (var user in zoomMeetingPairs)
+                //{
+                //    var zoomApiResult = _zoomApi.GetMeetings(user.Key, pageSize: 300);
+                //    if (!zoomApiResult.IsSuccess)
+                //    {
+                //        if (zoomApiResult.Code == 1001)
+                //        {
+                //            await DeleteMeetingsForDeletedUser(dbMeetings.Where(m => m.ProviderHostId == user.Key));
+                //            continue;
+                //        }
 
-                        return OperationResultWithData<IEnumerable<MeetingViewModel>>.Error(zoomApiResult.Message);
-                    }
+                //        return OperationResultWithData<IEnumerable<MeetingViewModel>>.Error(zoomApiResult.Message);
+                //    }
 
-                    var userMeetings = zoomApiResult.Data;
+                //    var userMeetings = zoomApiResult.Data;
 
-                    result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
-                        ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));
-                    //zoom does not return meeting with current start time within user's meeting request, so handle such meetings one-by-one
-                    var notHandledMeetings = user.Value.Where(x => userMeetings.Meetings.All(m => m.Id != x));
+                //    result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
+                //        ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));
+                //    //zoom does not return meeting with current start time within user's meeting request, so handle such meetings one-by-one
+                    var notHandledMeetings = dbMeetings.Select(x => x.ProviderHostId).ToList();
                     foreach (var notHandledId in notHandledMeetings)
                     {
                         var meetingDetailResult = _zoomApi.GetMeeting(notHandledId);
                         if (!meetingDetailResult.IsSuccess)
                         {
-                            await DeleteMeeting(dbMeetings.First(db => db.ProviderMeetingId == notHandledId));
+                            //await DeleteMeeting(dbMeetings.First(db => db.ProviderMeetingId == notHandledId));
                             continue;
                         }
 
@@ -106,7 +106,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                             result.Add(vm);
                         }
                     }
-                }
+                //}
             }
             if (currentUserId != null)
             {
@@ -170,9 +170,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<string> GetMeetingUrl(string userId, string meetingId, string email,
             Func<Task<RegistrantDto>> getRegistrant)
         {
+            var licenseDto = await _licenseAccessor.GetLicense();
             var meetingResult = _zoomApi.GetMeeting(meetingId);
             string baseUrl = meetingResult.Data.JoinUrl;
-            if (meetingResult.Data.HostId != userId && meetingResult.Data.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration)
+            if (meetingResult.Data.HostId != userId 
+                && meetingResult.Data.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration
+                && licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity))
             {
                 var registrants = _zoomApi.GetMeetingRegistrants(meetingId);
                 var userReg = registrants.Registrants.FirstOrDefault(x =>
@@ -307,7 +310,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var entity = _dbContext.Add(dbMeeting);
             await _dbContext.SaveChangesAsync();
 
-            if (requestDto.Type.GetValueOrDefault(1) != 2 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1
+            if (requestDto.Type.GetValueOrDefault(1) != 2 
+                && licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity)
+                && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1
             ) //manual approval(secure connection)
             {
                 var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
@@ -381,10 +386,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             if (updatedResult.Data)
             {
-                if (vm.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
+                LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
+                if (vm.Settings.ApprovalType.GetValueOrDefault() == 1
+                    && licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity)) //manual approval(secure connection)
                 {
-                    LmsLicenseDto license = await _licenseAccessor.GetLicense();
-                    var lmsService = _lmsUserServiceFactory.GetUserService(license.ProductId);
+                    var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
                     var lmsUsers = await lmsService.GetUsers(licenseSettings, courseId);
                     var registrants = lmsUsers.Data.Where(x => !String.IsNullOrEmpty(x.Email) && !x.Email.Equals(email)).Select(x =>
                         new RegistrantDto

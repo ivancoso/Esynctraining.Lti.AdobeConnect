@@ -165,7 +165,7 @@ namespace Esynctraining.Zoom.ApiWrapper
             return ZoomApiResultWithData<ListMeetings>.Error($"Not found meetings for user {userId}");
         }
 
-        public ZoomListRegistrants GetMeetingRegistrants(string meetingId, string occurrenceId = null, string status="approved", int pageSize = 100, int pageNumber = 1)
+        public ZoomListRegistrants GetMeetingRegistrants(string meetingId, string occurrenceId = null, string status="approved", int pageSize = 300, int pageNumber = 1)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingRegistrants page size max 300");
@@ -276,7 +276,7 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return (ZoomApiRecordingList)null;
         }
 
-        public ZoomRecordingSessionList GetUserRecordings(string userId, DateTime? from = null, DateTime? to = null, int pageSize = 30, string nextPageToken = null, bool mc = false, bool trash = false)
+        public ZoomRecordingSessionList GetUserRecordings(string userId, DateTime? from = null, DateTime? to = null, int pageSize = 300, string nextPageToken = null, bool mc = false, bool trash = false)
         {
             RestRequest restRequest = this.BuildRequestAuthorization($"users/{userId}/recordings", Method.GET);
             restRequest.AddParameter("page_size", pageSize, ParameterType.QueryString);
@@ -389,7 +389,7 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return ZoomApiResultWithData<bool>.Error($"Faild during update meeting {meetingId}");
         }
 
-        public ZoomMeetingsReportList GetMeetingsReport(string userId, DateTime from, DateTime to, int pageSize = 30, string nextPageToken = null)
+        public ZoomMeetingsReportList GetMeetingsReport(string userId, DateTime from, DateTime to, int pageSize = 300, string nextPageToken = null)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
@@ -409,7 +409,7 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
             return (ZoomMeetingsReportList)null;
         }
-        public MeetingParticipantsReport GetMeetingParticipantsReport(string meetingId, int pageSize = 30, string nextPageToken = null)
+        public MeetingParticipantsReport GetMeetingParticipantsReport(string meetingId, int pageSize = 300, string nextPageToken = null)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
@@ -428,7 +428,7 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return (MeetingParticipantsReport)null;
         }
 
-        public ListMeetingParticipantsDetails GetMeetingParticipantsDetails(string meetingId, int pageSize = 30, string nextPageToken = null)
+        public ListMeetingParticipantsDetails GetMeetingParticipantsDetails(string meetingId, int pageSize = 300, string nextPageToken = null)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
