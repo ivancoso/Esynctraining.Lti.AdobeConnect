@@ -89,7 +89,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 //    result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
                 //        ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));
                 //    //zoom does not return meeting with current start time within user's meeting request, so handle such meetings one-by-one
-                    var notHandledMeetings = dbMeetings.Select(x => x.ProviderHostId).ToList();
+                    var notHandledMeetings = dbMeetings.Select(x => x.ProviderMeetingId).ToList();
                     foreach (var notHandledId in notHandledMeetings)
                     {
                         var meetingDetailResult = _zoomApi.GetMeeting(notHandledId);
@@ -248,10 +248,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         }
 
-        public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> licenseSettings, string courseId, UserInfoDto user, string email,
+        public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> lmsSettings, string courseId, UserInfoDto user, string email,
             CreateMeetingViewModel requestDto)
         {
             LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
+            
             MeetingViewModel vm = null;
             LmsCourseMeeting dbOfficeHours = null;
             if (requestDto.Type.GetValueOrDefault(1) == 2) //Office Hours
@@ -311,13 +312,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             await _dbContext.SaveChangesAsync();
 
             if (requestDto.Type.GetValueOrDefault(1) != 2 
-                && licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity)
-                && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1
-            ) //manual approval(secure connection)
+                && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
             {
                 var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
 
-                var lmsUsers = await lmsService.GetUsers(licenseSettings, courseId);
+                var lmsUsers = await lmsService.GetUsers(lmsSettings, courseId);
 
                 //take users by email, throwing out current user
                 var registrants = lmsUsers.Data.Where(x =>
@@ -337,19 +336,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             return vm.ToSuccessResult();
         }
-
-        ////todo: factory. now for Canvas only
-        //private Dictionary<string, object> GetSettings(string userToken, LmsLicenseDto license)
-        //{
-        //    var optionNamesForCanvas = new List<string> { LmsLicenseSettingNames.OAuthAppId, LmsLicenseSettingNames.OAuthAppKey };
-        //    var result = license.Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key)).ToDictionary(k => k.Key, v => (object)v.Value);
-        //    result.Add(LmsLicenseSettingNames.LicenseKey, license.ConsumerKey);
-        //    result.Add(LmsLicenseSettingNames.LmsDomain, license.Domain);
-
-
-        //    result.Add(LmsUserSettingNames.Token, userToken);
-        //    return result;
-        //}
 
         private async Task<OperationResultWithData<Meeting>> CreateApiMeeting(UserInfoDto user, CreateMeetingViewModel dto)
         {
@@ -387,8 +373,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             if (updatedResult.Data)
             {
                 LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
-                if (vm.Settings.ApprovalType.GetValueOrDefault() == 1
-                    && licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity)) //manual approval(secure connection)
+                if (vm.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure roster)
                 {
                     var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
                     var lmsUsers = await lmsService.GetUsers(licenseSettings, courseId);
