@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.9" />
+    <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.10" />
     <PackageReference Include="Esynctraining.Core.Logging.MicrosoftExtensionsLogger" Version="1.0.0.1" />
     <PackageReference Include="Esynctraining.Json.Jil" Version="1.0.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.2" />
