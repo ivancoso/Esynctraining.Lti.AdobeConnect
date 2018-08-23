@@ -32,14 +32,37 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
 
         #endregion
 
-        public static LmsProvider Generate()
+        public static LmsProvider Generate(int productId)
         {
-            var lmsProvider = new LmsProvider
+            LmsProvider lmsProvider = null;
+            switch (productId)
             {
-                LmsProviderName = "Canvas",
-                ShortName = "canvas",
-                lmsProviderId = 2,
-            };
+                case 1010:
+                    lmsProvider = new LmsProvider
+                    {
+                        LmsProviderName = "Canvas",
+                        ShortName = "canvas",
+                        UserGuideFileUrl = "CanvasZoomIntegration.pdf",
+                    };
+                    break;
+                case 1020:
+                    lmsProvider = new LmsProvider
+                    {
+                        LmsProviderName = "AgilixBuzz",
+                        ShortName = "AgilixBuzz",
+                        UserGuideFileUrl = "BuzzZoomIntegration.pdf",
+                    };
+                    break;
+                case 1030:
+                    lmsProvider = new LmsProvider
+                    {
+                        LmsProviderName = "Schoology",
+                        ShortName = "Schoology",
+                        UserGuideFileUrl = "SchoologyZoomIntegration.pdf",
+                    };
+                    break;
+            }
+
             return lmsProvider;
         }
     }

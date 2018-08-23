@@ -649,7 +649,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
         {
             var license = await _licenseService.GetLicense(session.LicenseKey);
 
-            //var credentials = session.LmsCompany;
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(session.SessionData);
 
             //TRICK: we calc shift on serverside
@@ -668,6 +667,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
             ZoomUrls.BaseApiUrl = (string) Settings.BaseApiPath.TrimEnd('/');
             ZoomUrls.BaseUrl = (string) Settings.BasePath.TrimEnd('/');
 
+            LmsProvider lmsProvider = LmsProvider.Generate(license.ProductId);
+
             //var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
             var model = new LtiViewModelDto
             {
@@ -683,8 +684,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 CourseMeetingsEnabled =
                     true, //credentials.EnableCourseMeetings.GetValueOrDefault() || param.is_course_meeting_enabled,
 
-                LmsProviderName = license.ProductId == 1010 ? "Canvas" : "AgilixBuzz", //todo
-                UserGuideLink = $"{ZoomUrls.BaseUrl}/content/lti-instructions/{(license.ProductId == 1010 ? "CanvasZoomIntegration" : "BuzzZoomIntegration")}.pdf", //todo
+
+                LmsProviderName = lmsProvider.LmsProviderName, //todo
+                UserGuideLink = $"{ZoomUrls.BaseUrl}/content/lti-instructions/{lmsProvider.UserGuideFileUrl}", //todo
                 EnableClassRosterSecurity = license.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity),
                 EnableOfficeHours = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
                 EnabledStorageProviders = await GetEnabledStorageProviders(license),
