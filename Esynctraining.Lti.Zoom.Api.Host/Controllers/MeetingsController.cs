@@ -119,8 +119,14 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    var licenseSettings = LmsLicense.GetLMSSettings(Session);
-                    var createResult = await _meetingService.CreateMeeting(licenseSettings, CourseId.ToString(),
+                    var lmsSettings = LmsLicense.GetLMSSettings(Session);
+                    if (!LmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity)
+                        && requestDto.Settings?.ApprovalType != 2)
+                    {
+                        //todo: validation error?
+                        requestDto.Settings.ApprovalType = 2;
+                    }
+                    var createResult = await _meetingService.CreateMeeting(lmsSettings, CourseId.ToString(),
                         user,
                         Param.lis_person_contact_email_primary, requestDto);
 
@@ -176,8 +182,14 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             }
             try
             {
-                var licenseSettings = LmsLicense.GetLMSSettings(Session);
-                var updatedResult = await _meetingService.UpdateMeeting(meetingId, licenseSettings, CourseId, Param.lis_person_contact_email_primary, vm, user);
+                var lmsSettings = LmsLicense.GetLMSSettings(Session);
+                if (!LmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity)
+                    && vm.Settings?.ApprovalType != 2)
+                {
+                    //todo: validation error?
+                    vm.Settings.ApprovalType = 2;
+                }
+                var updatedResult = await _meetingService.UpdateMeeting(meetingId, lmsSettings, CourseId, Param.lis_person_contact_email_primary, vm, user);
 
                 return updatedResult;
             }
