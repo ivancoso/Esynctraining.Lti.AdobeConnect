@@ -32,6 +32,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<bool> SendOHCancellationEmail(DateTime date, string meetingName, string message, string email)
         {
+            return true;
             var emailDto = new OfficeHoursCancellationEmailModel
             {
                 Date = date.ToString(),
@@ -49,6 +50,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<bool> SendOHRescheduleEmail(DateTime date, SlotDto dto, string meetingName, string message)
         {
+            return true;
             var emailDto = new OfficeHoursRescheduleEmailModel
             {
                 Date = date.ToString(),
