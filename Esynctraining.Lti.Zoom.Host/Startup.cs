@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Reflection;
+using EdugameCloud.Lti.API.Schoology;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Core.Providers;
@@ -10,6 +11,7 @@ using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Schoology;
 using Esynctraining.Lti.Zoom.Api;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Domain;
@@ -87,8 +89,10 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddTransient<IEGCEnabledCanvasAPI, EGCEnabledCanvasAPI>();
             services.AddTransient<LmsUserServiceBase, CanvasLmsUserService>();
             services.AddTransient<IAgilixBuzzApi, DlapAPI>();
+            services.AddTransient<ISchoologyRestApiClient, SchoologyRestApiClient>();
             services.AddTransient<CanvasLmsUserService, CanvasLmsUserService>();
             services.AddTransient<AgilixBuzzLmsUserService, AgilixBuzzLmsUserService>();
+            services.AddTransient<SchoologyLmsUserService, SchoologyLmsUserService>();
             services.AddSingleton<LmsUserServiceFactory, LmsUserServiceFactory>();
 
             services.AddTransient<ZoomUserService, ZoomUserService>();

@@ -61,6 +61,18 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
                     result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
                     break;
+                case 1030:
+                    var optionNamesForSchoology = new List<string>
+                    {
+                        LmsLicenseSettingNames.SchoologyConsumerKey,
+                        LmsLicenseSettingNames.SchoologyConsumerSecret
+                    };
+                    result = Settings.Where(x => optionNamesForSchoology.Any(o => o == x.Key))
+                        .ToDictionary(k => k.Key, v => (object)v.Value);
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
+                    break;
+
                 default:
                     throw new NotImplementedException($"ProductId {ProductId} is not implemented.");
             }

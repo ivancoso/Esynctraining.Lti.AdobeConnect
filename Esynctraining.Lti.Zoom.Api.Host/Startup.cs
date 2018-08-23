@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Net;
 using System.Reflection;
+using EdugameCloud.Lti.API.Schoology;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
 using Esynctraining.Core.Json;
@@ -13,6 +14,7 @@ using Esynctraining.Lti.Lms.AgilixBuzz;
 using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Schoology;
 using Esynctraining.Lti.Zoom.Api.Host.Controllers;
 using Esynctraining.Lti.Zoom.Api.Host.Swagger;
 using Esynctraining.Lti.Zoom.Api.Services;
@@ -113,8 +115,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddSingleton<IJsonDeserializer, JilSerializer>();
             services.AddTransient<IEGCEnabledCanvasAPI, EGCEnabledCanvasAPI>();
             services.AddTransient<IAgilixBuzzApi, DlapAPI>();
+            services.AddTransient<ISchoologyRestApiClient, SchoologyRestApiClient>();
             services.AddTransient<CanvasLmsUserService, CanvasLmsUserService>();
             services.AddTransient<AgilixBuzzLmsUserService, AgilixBuzzLmsUserService>();
+            services.AddTransient<SchoologyLmsUserService, SchoologyLmsUserService>();
             services.AddTransient<KalturaService, KalturaService>();
             services.AddTransient<ZoomUserService, ZoomUserService>();
             services.AddTransient<ZoomRecordingService, ZoomRecordingService>();

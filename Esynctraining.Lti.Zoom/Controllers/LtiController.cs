@@ -351,6 +351,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         break;
 
                     case 1020:
+                    case 1030:
                         break;
                 }
 
