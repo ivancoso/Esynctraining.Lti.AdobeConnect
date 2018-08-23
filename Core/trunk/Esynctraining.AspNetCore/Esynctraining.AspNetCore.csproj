@@ -3,18 +3,17 @@
   <PropertyGroup>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.0.0.9</Version>
+    <Version>2.0.0.11</Version>
     <Copyright>Copyright © 2017-2018 eSyncTraining.com</Copyright>
     <Description>Contains basic webapi stuff (global exception filter, Jil formatters etc)  and Esync ILogger wrapper (which is basic for all nuget packages)</Description>
     <Authors>Esynctraining</Authors>
     <Company>Esynctraining</Company>
-    <PackageReleaseNotes>GlobalExceptionFilterAttribute: add exception to logger</PackageReleaseNotes>
-    <AssemblyVersion>2.0.0.9</AssemblyVersion>
-    <FileVersion>2.0.0.9</FileVersion>
+    <PackageReleaseNotes>Removed Jil reference</PackageReleaseNotes>
+    <AssemblyVersion>2.0.0.11</AssemblyVersion>
+    <FileVersion>2.0.0.11</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Jil" Version="2.15.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.0" />
   </ItemGroup>
   
