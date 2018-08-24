@@ -669,7 +669,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             LmsProvider lmsProvider = LmsProvider.Generate(license.ProductId);
 
-            //var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
             var model = new LtiViewModelDto
             {
                 FullVersion = new Version(0, 6, 0, 0), //versionFileJs,
