@@ -11,13 +11,13 @@
   <blti:title>Zoom!ENVIRONMENT!</blti:title>
   <blti:description>Zoom integration</blti:description>
   <blti:icon></blti:icon>
-  <blti:launch_url>https://LOCALHOST/lti/canvas-login</blti:launch_url>
+  <blti:launch_url>LOCALHOST/canvas-login</blti:launch_url>
   <blti:extensions platform="canvas.instructure.com">
     <lticm:property name="tool_id">et_zoom_!ENVIRONMENT!</lticm:property>
     <lticm:property name="privacy_level">public</lticm:property>
-    <lticm:property name="domain">https://LOCALHOST/lti/canvas-login</lticm:property>
+    <lticm:property name="domain">LOCALHOST/canvas-login</lticm:property>
     <lticm:options name="course_navigation">
-      <lticm:property name="url">https://LOCALHOST/lti/canvas-login</lticm:property>
+      <lticm:property name="url">LOCALHOST/canvas-login</lticm:property>
       <lticm:property name="text">Zoom!ENVIRONMENT!</lticm:property>
       <lticm:property name="visibility">public</lticm:property>
       <lticm:property name="default">enabled</lticm:property>

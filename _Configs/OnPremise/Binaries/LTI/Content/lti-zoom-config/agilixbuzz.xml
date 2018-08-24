@@ -11,13 +11,13 @@
   <blti:title>ZOOM!ENVIRONMENT!</blti:title>
   <blti:description>Zoom integration</blti:description>
   <blti:icon></blti:icon>
-  <blti:launch_url>https://LOCALHOST/lti/agilixbuzz-login</blti:launch_url>
+  <blti:launch_url>LOCALHOST/agilixbuzz-login</blti:launch_url>
   <blti:extensions platform="delak12-testing.agilixbuzz.com">
     <lticm:property name="tool_id">egc_zoom</lticm:property>
     <lticm:property name="privacy_level">public</lticm:property>
-    <lticm:property name="domain">https://LOCALHOST/lti/agilixbuzz-login</lticm:property>
+    <lticm:property name="domain">LOCALHOST/agilixbuzz-login</lticm:property>
     <lticm:options name="course_navigation">
-      <lticm:property name="url">https://LOCALHOST/lti/agilixbuzz-login</lticm:property>
+      <lticm:property name="url">LOCALHOST/agilixbuzz-login</lticm:property>
       <lticm:property name="text">ZOOM!ENVIRONMENT!</lticm:property>
       <lticm:property name="visibility">public</lticm:property>
       <lticm:property name="default">enabled</lticm:property>
