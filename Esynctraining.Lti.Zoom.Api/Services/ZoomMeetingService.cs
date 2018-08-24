@@ -92,10 +92,21 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     var notHandledMeetings = dbMeetings.Select(x => x.ProviderMeetingId).ToList();
                     foreach (var notHandledId in notHandledMeetings)
                     {
-                        var meetingDetailResult = _zoomApi.GetMeeting(notHandledId);
+                        var meetingDetailResult = await _zoomApi.GetMeeting(notHandledId);
                         if (!meetingDetailResult.IsSuccess)
                         {
-                            //await DeleteMeeting(dbMeetings.First(db => db.ProviderMeetingId == notHandledId));
+                            var deleteErrorCodes = new List<ZoomApiErrorCodes>
+                            {
+                                ZoomApiErrorCodes.MeetingNotFound,
+                                ZoomApiErrorCodes.UserNotFound,
+                                ZoomApiErrorCodes.UserNotBelongToAccount
+                            };
+
+                            if (deleteErrorCodes.Any(x => (int) x == meetingDetailResult.Code))
+                            {
+                                await DeleteMeeting(dbMeetings.First(db => db.ProviderMeetingId == notHandledId));
+                            }
+
                             continue;
                         }
 
@@ -140,7 +151,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     x.LicenseKey == licenseKey && x.ProviderHostId == userId && x.Type == 2);
                 if (ohMeeting != null)
                 {
-                    var ohDetailsResult = _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
+                    var ohDetailsResult = await _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
                     if (!ohDetailsResult.IsSuccess)
                         throw new Exception(ohDetailsResult.Message);
 
@@ -156,7 +167,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
             else
             {
-                var ohDetailsResult = _zoomApi.GetMeeting(oh.ConferenceId);
+                var ohDetailsResult = await _zoomApi.GetMeeting(oh.ConferenceId);
                 if (!ohDetailsResult.IsSuccess)
                     throw new Exception(ohDetailsResult.Message);
 
@@ -171,7 +182,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             Func<Task<RegistrantDto>> getRegistrant)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
-            var meetingResult = _zoomApi.GetMeeting(meetingId);
+            var meetingResult = await _zoomApi.GetMeeting(meetingId);
             string baseUrl = meetingResult.Data.JoinUrl;
             if (meetingResult.Data.HostId != userId 
                 && meetingResult.Data.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration
@@ -284,7 +295,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     vm.Id = ohMeeting.Id;
                     vm.Details = detailsVm;
                  */
-                var ohDetailsResult = _zoomApi.GetMeeting(dbOfficeHours.ProviderMeetingId);
+                var ohDetailsResult = await _zoomApi.GetMeeting(dbOfficeHours.ProviderMeetingId);
                 if (!ohDetailsResult.IsSuccess)
                     throw new Exception(ohDetailsResult.Message);
 

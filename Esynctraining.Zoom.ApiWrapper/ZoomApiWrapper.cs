@@ -118,22 +118,30 @@ namespace Esynctraining.Zoom.ApiWrapper
             };
         }
 
-        public ZoomApiResultWithData<Meeting> GetMeeting(string meetingId)
+        public async Task<ZoomApiResultWithData<Meeting>> GetMeeting(string meetingId)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}", Method.GET);
-            restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
-            IRestResponse<Meeting> restResponse = this.WebClient.Execute<Meeting>((IRestRequest)restRequest);
+            RestRequest restRequest = BuildRequestAuthorization("meetings/{meetingId}", Method.GET);
+            restRequest.AddParameter(nameof(meetingId), meetingId, ParameterType.UrlSegment);
+            IRestResponse<Meeting> restResponse = await WebClient.ExecuteGetTaskAsync<Meeting>(restRequest);
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data.ToSuccessZoomApiResult();
 
-            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
-                return ZoomApiResultWithData<Meeting>.ApiError(restResponse.Content);
-                
-            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
-                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
+            return HandleErrorRequest(restResponse);
+        }
 
-            return ZoomApiResultWithData<Meeting>.Error($"Not meeting by meetingId {meetingId}");
+        private ZoomApiResultWithData<T> HandleErrorRequest<T>(IRestResponse<T> restResponse) where T : class
+        {
+            //todo: log
+            if (!string.IsNullOrWhiteSpace(restResponse.Content))
+                return ZoomApiResultWithData<T>.ApiError(restResponse.Content);
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
         }
 
         public ZoomApiResultWithData<ListMeetings> GetMeetings(string userId, MeetingListTypes type = MeetingListTypes.Scheduled, int pageSize = 30, int pageNumber = 1)

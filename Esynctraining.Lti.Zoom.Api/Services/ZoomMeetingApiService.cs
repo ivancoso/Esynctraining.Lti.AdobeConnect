@@ -22,7 +22,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<MeetingDetailsViewModel> GetMeetingApiDetails(LmsCourseMeeting dbMeeting)
         {
-            var meeting = _zoomApi.GetMeeting(dbMeeting.ProviderMeetingId);
+            var meeting = await _zoomApi.GetMeeting(dbMeeting.ProviderMeetingId);
             if (!meeting.IsSuccess)
             {
                 throw new Exception(meeting.Message);
