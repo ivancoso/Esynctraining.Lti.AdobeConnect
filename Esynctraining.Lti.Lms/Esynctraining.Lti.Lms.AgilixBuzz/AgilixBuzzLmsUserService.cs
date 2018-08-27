@@ -18,28 +18,37 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
             _dlapApi = dlapApi ?? throw new ArgumentNullException(nameof(dlapApi));
         }
 
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
+        {
+            if (licenseSettings == null)
+                throw new ArgumentNullException(nameof(licenseSettings));
+
+            var user = await _dlapApi.GetUserAsync(licenseSettings, lmsUserId, extraData);
+
+            return user == null 
+                ? OperationResultWithData<LmsUserDTO>.Error("User not found") 
+                : user.ToSuccessResult();
+        }
+
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
             string courseId, LtiParamDTO extraData = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
 
-            var users = await GetUsersOldStyle(licenseSettings, courseId, extraData);
-            return users.users.ToSuccessResult();
-        }
-
-        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO param = null)
-        {
-            if (licenseSettings == null)
-                throw new ArgumentNullException(nameof(licenseSettings));
-
-            var (users, error) = await _dlapApi.GetUsersForCourseAsync(licenseSettings, courseId, param);
+            var (users, error) = await _dlapApi.GetUsersForCourseAsync(licenseSettings, courseId, extraData);
 
             if (!string.IsNullOrWhiteSpace(error))
                 Logger.Error("[AgilixBuzz.dlapApi.GetUsersForCourse] error:" + error);
 
-            return (GroupUsers(users), error);
+            return users.ToSuccessResult();
+        }
+
+        [Obsolete]
+        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings,
+            string courseId, LtiParamDTO param = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

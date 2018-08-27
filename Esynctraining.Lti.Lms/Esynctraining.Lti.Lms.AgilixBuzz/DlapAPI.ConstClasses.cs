@@ -4,6 +4,11 @@
     {
         private static class Commands
         {
+            public static class Users
+            {
+                public const string GetOne = "getuser2";
+            }
+
             public static class Enrollments
             {
                 public const string List = "listenrollments";
@@ -42,6 +47,11 @@
 
         private static class Parameters
         {
+            public static class Users
+            {
+                public const string GetOne = "userid={0}";
+            }
+
             public static class Enrollments
             {
                 public const string List = "domainid={0}&limit=0&coursequery=%2Fid%3D{1}&select=user";

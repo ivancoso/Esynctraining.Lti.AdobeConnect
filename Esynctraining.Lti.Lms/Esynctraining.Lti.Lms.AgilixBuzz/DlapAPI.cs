@@ -159,6 +159,88 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
             return (result, error);
         }
 
+        public async Task<LmsUserDTO> GetUserAsync(Dictionary<string, object> licenseSettings,
+            string lmsUserId,
+            object extraData = null)
+        {
+            Session session = extraData as Session;
+
+            var (userResult, error) = await this.LoginIfNecessaryAsync(
+                session,
+                s => s.GetAsync(Commands.Users.GetOne,
+                    string.Format(Parameters.Users.GetOne, lmsUserId).ToDictionary()),
+                licenseSettings);
+
+            if (userResult != null)
+            {
+                var user = userResult.XPathSelectElement("user");
+                var userId = user.XPathEvaluate("string(@id)").ToString();
+                var email = user.XPathEvaluate("string(@email)").ToString();
+                var userName = user.XPathEvaluate("string(@username)").ToString();
+
+                return new LmsUserDTO
+                {
+                    Email = email,
+                    Login = userName,
+                    Id = userId,
+                    Name = userName,
+                };
+            }
+
+            return null;
+        }
+
+        public async Task<(LmsUserDTO result, string error)> GetEnrollmentAsync(
+            Dictionary<string, object> licenseSettings,
+            string enrollmentId,
+            object extraData = null)
+        {
+            Session session = extraData as Session;
+
+            var (enrollmentResult, error) = await this.LoginIfNecessaryAsync(
+                session,
+                s => s.GetAsync(Commands.Enrollments.GetOne,
+                    string.Format(Parameters.Enrollments.GetOne, enrollmentId).ToDictionary()),
+                licenseSettings);
+
+            if (enrollmentResult == null)
+            {
+                error = error ?? "DLAP. Unable to retrive enrollment from API";
+                return (null, error);
+            }
+
+            if (!Session.IsSuccess(enrollmentResult))
+            {
+                error = "DLAP. Unable to get course: " + Session.GetMessage(enrollmentResult);
+                _logger.Error(error);
+            }
+
+            var enrollment = enrollmentResult.XPathSelectElement("/enrollment");
+            if (enrollment != null)
+            {
+                var userId = enrollment.XPathEvaluate("string(@userid)").ToString();
+                var courseId = int.Parse(enrollment.XPathEvaluate("string(@courseid)").ToString());
+                var role = enrollment.XPathEvaluate("string(@privileges)").ToString();
+                var status = enrollment.XPathEvaluate("string(@status)").ToString();
+                var user = enrollment.XPathSelectElement("user");
+                var email = user.XPathEvaluate("string(@email)").ToString();
+                var userName = user.XPathEvaluate("string(@username)").ToString();
+
+                return (new LmsUserDTO
+                {
+                    LmsRole = role,
+                    Email = email,
+                    Login = userName,
+                    Id = userId,
+                    Name = userName,
+                }, error);
+            }
+
+            error = "Enrollment not found";
+
+            return (null, error);
+        }
+
         #endregion
 
         #region Methods

@@ -4,6 +4,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,26 +22,39 @@ namespace Esynctraining.Lti.Lms.Schoology
             _restApiClient = restApiClient ?? throw new ArgumentNullException(nameof(restApiClient));
         }
 
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
+        {
+            if (lmsUserId.Contains("::"))
+            {
+                lmsUserId = lmsUserId.Substring(0, lmsUserId.IndexOf("::"));
+            }
+
+            string clientId = licenseSettings[LmsLicenseSettingNames.SchoologyConsumerKey].ToString();
+            string clientSecret = licenseSettings[LmsLicenseSettingNames.SchoologyConsumerSecret].ToString();
+
+            var usr = await (new SchoologyRestApiClient()).GetRestCall<User>(clientId,
+                clientSecret,
+                $"users/{lmsUserId}");
+
+            var lmsUser = new LmsUserDTO
+            {
+                Id = usr.uid,
+                Login = string.IsNullOrWhiteSpace(usr.username) ? usr.primary_email : usr.username,
+                // TODO: middle name
+                Name = usr.name_first + " " + usr.name_last,
+                Email = usr.primary_email,
+                LmsRole = usr.admin == 1 ? "Teacher" : "Student",
+                PrimaryEmail = usr.primary_email,
+            };
+
+            return lmsUser.ToSuccessResult();
+        }
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
             string courseId, LtiParamDTO extraData = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
-
-            var users = await GetUsersOldStyle(licenseSettings, courseId, extraData);
-            return users.users.ToSuccessResult();
-        }
-
-        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO param = null)
-        {
-            if (licenseSettings == null)
-                throw new ArgumentNullException(nameof(licenseSettings));
-
-            //var course = _restApiClient.GetRestCall<RootObject>(lmsCompany.AdminUser.Username,
-            //    lmsCompany.AdminUser.Password,
-            //    $"courses/{courseId}/sections").Result;
 
             string clientId = licenseSettings[LmsLicenseSettingNames.SchoologyConsumerKey].ToString();
             string clientSecret = licenseSettings[LmsLicenseSettingNames.SchoologyConsumerSecret].ToString();
@@ -98,7 +112,15 @@ namespace Esynctraining.Lti.Lms.Schoology
                     PrimaryEmail = x.primary_email,
                 })
                 .ToList();
-            return (users, null);
+
+            return users.ToSuccessResult();
+        }
+
+        [Obsolete]
+        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings,
+            string courseId, LtiParamDTO param = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }
