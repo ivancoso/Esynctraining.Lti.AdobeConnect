@@ -4,7 +4,6 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
-using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
