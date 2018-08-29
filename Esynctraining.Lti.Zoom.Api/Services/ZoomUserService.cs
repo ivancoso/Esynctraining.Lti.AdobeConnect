@@ -42,7 +42,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 result = GetUsersFromApi(status).Select(x => x.Email).ToArray();
                 var cacheEntryOption = new DistributedCacheEntryOptions
                 {
-                    SlidingExpiration = TimeSpan.FromMinutes(double.Parse(_settings.LicenseUsersCacheDuration))
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(double.Parse(_settings.LicenseUsersCacheDuration))
                 };
                 using (var ms = new MemoryStream())
                 {

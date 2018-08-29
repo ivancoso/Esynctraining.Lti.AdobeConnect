@@ -474,7 +474,7 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             var signingCredentials = new SigningCredentials(signingKey,
                 SecurityAlgorithms.HmacSha256Signature, SecurityAlgorithms.Sha256Digest);
 
-            var expires = DateTime.UtcNow.AddMinutes(1);
+            var expires = DateTime.UtcNow.AddMinutes(5);
             var securityTokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = key,
