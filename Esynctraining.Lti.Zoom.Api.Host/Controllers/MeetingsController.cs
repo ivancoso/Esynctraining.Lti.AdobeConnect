@@ -50,10 +50,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             string userId = null;
             try
             {
-                Logger.InfoFormat($"Zoom API KEY {LmsLicense.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey)}");
-                Logger.InfoFormat($"Zoom API SECRETE {LmsLicense.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)}");
                 var user = _userService.GetUser(Param.lis_person_contact_email_primary);
                 userId = user.Id;
+            }
+            catch (ZoomApiException ex)
+            {
+                Logger.Error($"Zoom API Exception {ex.ErrorMessage}");
             }
             catch (Exception e)
             {
