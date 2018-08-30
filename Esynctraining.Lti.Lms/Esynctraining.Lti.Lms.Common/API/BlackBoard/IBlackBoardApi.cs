@@ -8,7 +8,7 @@ namespace Esynctraining.Lti.Lms.Common.API.BlackBoard
     {
         List<LmsUserDTO> GetUsersForCourse(
             Dictionary<string, object> licenseSettings,
-            int courseid,
+            string courseid,
             string[] userIds,
             out string error,
             ref WebserviceWrapper client);

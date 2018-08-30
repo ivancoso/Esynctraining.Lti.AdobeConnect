@@ -77,6 +77,14 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string BuzzAdminPassword = nameof(BuzzAdminPassword);
         public const string AgilixBuzzLastSignalId = nameof(AgilixBuzzLastSignalId);
 
+        public const string BlackBoardAdminUser = nameof(BlackBoardAdminUser);
+        public const string BlackBoardEnableProxyToolMode = nameof(BlackBoardEnableProxyToolMode);
+        public const string BlackBoardProxyToolSharedPassword = nameof(BlackBoardProxyToolSharedPassword);
+        public const string BlackBoardUseSSL = nameof(BlackBoardUseSSL);
+        public const string BlackBoardInitialBBPassword = nameof(BlackBoardInitialBBPassword);
+        public const string BlackBoardUsername = nameof(BlackBoardUsername);
+        public const string BlackBoardUserPassword = nameof(BlackBoardUserPassword);
+
         //Kaltura
         public const string EnableKaltura = nameof(EnableKaltura);
         public const string KalturaAdminSecret = nameof(KalturaAdminSecret);

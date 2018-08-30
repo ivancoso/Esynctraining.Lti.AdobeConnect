@@ -32,7 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.HttpClient", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.AgilixBuzz", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.AgilixBuzz\Esynctraining.Lti.Lms.AgilixBuzz.csproj", "{48FAF324-7016-439E-A33C-F3C8C50C3A7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Lti.Lms.Schoology", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj", "{B15E57D9-0D87-43C1-9549-C6672652FD18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Schoology", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj", "{B15E57D9-0D87-43C1-9549-C6672652FD18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Lti.Lms.BlackBoard", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.BlackBoard\Esynctraining.Lti.Lms.BlackBoard.csproj", "{56E3A76F-7892-42DA-905D-6954BDB9D56D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +139,14 @@ Global
 		{B15E57D9-0D87-43C1-9549-C6672652FD18}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B15E57D9-0D87-43C1-9549-C6672652FD18}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{B15E57D9-0D87-43C1-9549-C6672652FD18}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
+		{56E3A76F-7892-42DA-905D-6954BDB9D56D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56E3A76F-7892-42DA-905D-6954BDB9D56D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56E3A76F-7892-42DA-905D-6954BDB9D56D}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{56E3A76F-7892-42DA-905D-6954BDB9D56D}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{56E3A76F-7892-42DA-905D-6954BDB9D56D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56E3A76F-7892-42DA-905D-6954BDB9D56D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56E3A76F-7892-42DA-905D-6954BDB9D56D}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{56E3A76F-7892-42DA-905D-6954BDB9D56D}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
