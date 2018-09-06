@@ -46,7 +46,7 @@
 
         public virtual IList<LmsCourseSection> CourseSections { get; protected set; }
 
-        public virtual bool EnableDynamicProvisioning { get; set; }
+        public virtual bool EnableDynamicProvisioning { get; set; } // set to true when there are more than 1000 users in course. Auto-sync is not performed in this case for meeting
         
         #endregion
 
