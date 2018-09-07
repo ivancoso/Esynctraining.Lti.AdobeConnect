@@ -23,8 +23,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
 
         public string FeatureName { get; set; }
 
-
-        public LmsAuthorizeBaseAttribute() { }
+        public LmsAuthorizeBaseAttribute(){ }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
@@ -37,7 +36,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
                     // TODO: try\catch?
                     var service = (UserSessionService)context.HttpContext.RequestServices.GetService(typeof(UserSessionService));
                     LmsUserSession session = await GetReadOnlySession(service, token);
-
+                    LmsUserServiceFactory LmsUserServiceFactory = (LmsUserServiceFactory)context.HttpContext.RequestServices.GetService(typeof(LmsUserServiceFactory));
+                    
                     if (session == null)
                     {
                         context.Result = new JsonResult(OperationResult.Error("SessionTimeOut"));
@@ -61,6 +61,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
                             var licenseService = (ILmsLicenseService)context.HttpContext.RequestServices.GetService(typeof(ILmsLicenseService));
                             api.LmsLicense = await licenseService.GetLicense(session.LicenseKey);
                             api.CourseId = session.CourseId;
+
+                            var lmsUserService = LmsUserServiceFactory.GetUserService(api.LmsLicense.ProductId);
+                            var user = await lmsUserService.GetUser(api.LmsLicense.GetLMSSettings(api.Session), api.Session.LmsUserId, api.CourseId);
+                            api.User = user.Data;
+
                             if (!string.IsNullOrEmpty(session.SessionData))
                             {
                                 var deserializer = (IJsonDeserializer)context.HttpContext.RequestServices.GetService(typeof(IJsonDeserializer));

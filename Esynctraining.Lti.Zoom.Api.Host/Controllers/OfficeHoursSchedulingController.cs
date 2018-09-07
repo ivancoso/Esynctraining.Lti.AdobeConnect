@@ -24,8 +24,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             : base(settings, logger)
         {
             
-            _meetingService = meetingService;
-            _officeHoursService = officeHoursService;
+            _meetingService = meetingService ?? throw new ArgumentNullException(nameof(officeHoursService));
+            _officeHoursService = officeHoursService ?? throw new ArgumentNullException(nameof(officeHoursService));
         }
 
         [Route("{meetingId}/availabilities")]
@@ -74,7 +74,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public async Task<OperationResultWithData<SlotDto>> BookSlot(int meetingId, [FromBody]CreateSlotDto dto)
         {
-            var slotResult = await _officeHoursService.AddSlots(meetingId, Session.LmsUserId, Session.Email, new[]{dto}, status: 1);
+            var slotResult = await _officeHoursService.AddSlots(meetingId, Session.LmsUserId, User.Name, new[]{dto}, status: 1);
             return slotResult.IsSuccess ? slotResult.Data.First().ToSuccessResult() : OperationResultWithData<SlotDto>.Error(slotResult.Message);
         }
 
