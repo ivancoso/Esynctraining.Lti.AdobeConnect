@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.AgilixBuzz\Esynctraining.Lti.Lms.AgilixBuzz.csproj" />
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.BlackBoard\Esynctraining.Lti.Lms.BlackBoard.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Canvas\Esynctraining.Lti.Lms.Canvas.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj" />

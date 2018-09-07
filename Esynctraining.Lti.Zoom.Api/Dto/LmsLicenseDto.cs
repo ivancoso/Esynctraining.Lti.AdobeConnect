@@ -72,6 +72,24 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
                     result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
                     break;
+                case 1040:
+                    var optionNamesForBlackBoard = new List<string>
+                    {
+                        LmsLicenseSettingNames.AdminUsername,
+                        LmsLicenseSettingNames.AdminPassword,
+                        //LmsLicenseSettingNames.BlackBoardEnableProxyToolMode,
+                        LmsLicenseSettingNames.BlackBoardProxyToolPassword,
+                    };
+                    result = Settings.Where(x => optionNamesForBlackBoard.Any(o => o == x.Key))
+                        .ToDictionary(k => k.Key, v => (object)v.Value);
+
+                    result.Add(LmsLicenseSettingNames.BlackBoardEnableProxyToolMode, Settings[LmsLicenseSettingNames.BlackBoardEnableProxyToolMode] == "True");
+
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
+
+                    result.Add(LmsLicenseSettingNames.BlackBoardUseSSL, true);
+                    break;
 
                 default:
                     throw new NotImplementedException($"ProductId {ProductId} is not implemented.");

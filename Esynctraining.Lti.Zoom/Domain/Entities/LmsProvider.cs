@@ -61,6 +61,14 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                         UserGuideFileUrl = "SchoologyZoomIntegration.pdf",
                     };
                     break;
+                case 1040:
+                    lmsProvider = new LmsProvider
+                    {
+                        LmsProviderName = "BlackBoard",
+                        ShortName = "BlackBoard",
+                        UserGuideFileUrl = "BlackBoardZoomIntegration.pdf",
+                    };
+                    break;
             }
 
             return lmsProvider;

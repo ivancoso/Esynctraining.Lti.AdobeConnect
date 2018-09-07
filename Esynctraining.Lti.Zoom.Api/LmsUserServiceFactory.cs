@@ -3,6 +3,7 @@ using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Schoology;
 using System;
+using Esynctraining.Lti.Lms.BlackBoard;
 
 namespace Esynctraining.Lti.Zoom.Api
 {
@@ -11,12 +12,18 @@ namespace Esynctraining.Lti.Zoom.Api
         private readonly CanvasLmsUserService _canvasLmsUserService;
         private readonly AgilixBuzzLmsUserService _agilixBuzzLmsUserService;
         private readonly SchoologyLmsUserService _schoologyLmsUserService;
+        private readonly BlackboardLmsUserService _blackBoardLmsUserService;
 
-        public LmsUserServiceFactory(CanvasLmsUserService canvasLmsUserService, AgilixBuzzLmsUserService agilixBuzzLmsUserService, SchoologyLmsUserService schoologyLmsUserService)
+        public LmsUserServiceFactory(CanvasLmsUserService canvasLmsUserService, 
+            AgilixBuzzLmsUserService agilixBuzzLmsUserService, 
+            SchoologyLmsUserService schoologyLmsUserService,
+            BlackboardLmsUserService blackBoardLmsUserService
+            )
         {
             _canvasLmsUserService = canvasLmsUserService ?? throw new ArgumentNullException(nameof(canvasLmsUserService));
             _agilixBuzzLmsUserService = agilixBuzzLmsUserService ?? throw new ArgumentNullException(nameof(agilixBuzzLmsUserService));
             _schoologyLmsUserService = schoologyLmsUserService ?? throw new ArgumentNullException(nameof(schoologyLmsUserService));
+            _blackBoardLmsUserService = blackBoardLmsUserService ?? throw new ArgumentNullException(nameof(blackBoardLmsUserService));
         }
 
         public LmsUserServiceBase GetUserService(int productId)
@@ -29,6 +36,8 @@ namespace Esynctraining.Lti.Zoom.Api
                     return _agilixBuzzLmsUserService;
                 case 1030:
                     return _schoologyLmsUserService;
+                case 1040:
+                    return _blackBoardLmsUserService;
             }
 
             return null;
