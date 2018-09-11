@@ -369,11 +369,17 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<OperationResultWithData<SlotDto>> RescheduleSlot(int slotId, string lmsUserId, RescheduleSlotDto dto)
         {
+            if (dto.Start < DateTime.UtcNow)
+            {
+                return OperationResultWithData<SlotDto>.Error("Upcoming slots couldn't be moved for elapsed time");
+            }
+
             var slot = await _context.OhSlots.Include(x => x.Availability).ThenInclude(x => x.Meeting).FirstOrDefaultAsync(x => x.Id == slotId);
             if (slot == null)
                 return OperationResultWithData<SlotDto>.Error("Slot not found");
-            var currentSlots = await GetSlots(slot.Availability.Meeting.Id, lmsUserId, DateTime.UtcNow,
-                DateTime.UtcNow.AddYears(1));
+
+            var currentSlots = await GetSlots(slot.Availability.Meeting.Id, lmsUserId, DateTime.UtcNow, DateTime.UtcNow.AddYears(1));
+
             var busySlot = currentSlots.FirstOrDefault(x => x.Start == dto.Start);
             if (busySlot != null)
             {
