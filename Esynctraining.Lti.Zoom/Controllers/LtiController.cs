@@ -672,7 +672,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             var model = new LtiViewModelDto
             {
-                FullVersion = new Version(0, 6, 0, 0), //versionFileJs,
+                FullVersion = new Version(0, 7, 0, 0), //versionFileJs,
                 //                LtiVersion = version,
 
                 // TRICK:
