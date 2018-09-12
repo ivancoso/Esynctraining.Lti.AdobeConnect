@@ -36,21 +36,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     StartedAt = s.StartTime.DateTime,
                     EndedAt = s.EndTime.DateTime,
                 };
-                var participants = _zoomApi.GetMeetingParticipantsReport(s.Uuid);
-                var details = _zoomApi.GetMeetingParticipantsDetails(s.Uuid);
-                sessionDto.Participants = participants.Participants.Select(x => new ZoomSessionParticipantDto
-                {
-                    ParticipantName = x.Name,
-                    ParticipantEmail = x.Email,
-                    EnteredAt = x.JoinTime.DateTime,
-                    LeftAt = x.LeaveTime.DateTime,
-                    Duration = x.Duration,
-                    Score = x.AttentivenessScore,
-                    Details = ConvertToDto(details.Participants.FirstOrDefault(d => d.UserId == x.UserId)),
-                }).ToList();
-
                 result.Add(sessionDto);
-                
             }
             return result;
         }

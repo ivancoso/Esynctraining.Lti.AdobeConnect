@@ -18,6 +18,8 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string GetMeetingReportBySessions =>
             BaseApiUrl + "/reports/meetings/{meetingId}/by-sessions"; //get
 
+        public string GetReportParticipants => BaseApiUrl + "/reports/participants/{sessionId}"; //get
+
         public string GetRecordings => BaseApiUrl + "/meetings/{meetingId}/recordings"; //get
         public string GetTrashRecordings => BaseApiUrl + "/meetings/{meetingId}/recordings/trash"; //get
 
