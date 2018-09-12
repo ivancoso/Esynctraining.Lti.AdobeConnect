@@ -55,6 +55,25 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return result;
         }
 
+        public IEnumerable<ZoomSessionParticipantDto> GetParticipantsBySessionId(string sessionId)
+        {
+            var participants = _zoomApi.GetMeetingParticipantsReport(sessionId);
+            var details = _zoomApi.GetMeetingParticipantsDetails(sessionId);
+            List<ZoomSessionParticipantDto> result = participants.Participants.Select(x => new ZoomSessionParticipantDto
+                {
+                    ParticipantName = x.Name,
+                    ParticipantEmail = x.Email,
+                    EnteredAt = x.JoinTime.DateTime,
+                    LeftAt = x.LeaveTime.DateTime,
+                    Duration = x.Duration,
+                    Score = x.AttentivenessScore,
+                    Details = ConvertToDto(details.Participants.FirstOrDefault(d => d.UserId == x.UserId)),
+                }).ToList();
+
+            return result;
+        }
+
+
         private static ZoomSessionParticipantDetailsDto ConvertToDto(ZoomMeetingParticipantDetails apiDetails)
         {
             if(apiDetails == null)

@@ -36,5 +36,15 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
             return sessions.ToSuccessResult();
         }
+
+        [Route("participants/{sessionId}")]
+        [HttpGet]
+        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        public virtual async Task<OperationResultWithData<IEnumerable<ZoomSessionParticipantDto>>> GetReportParticipantsBySessions(string sessionId)
+        {
+            var sessions = _reportService.GetParticipantsBySessionId(sessionId);
+            return sessions.ToSuccessResult();
+        }
+
     }
 }
