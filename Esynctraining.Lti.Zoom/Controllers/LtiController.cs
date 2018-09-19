@@ -121,42 +121,55 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         public async Task<ActionResult> Home(string session)
         {
-            var sw = Stopwatch.StartNew();
-            LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
-            var license = await _licenseService.GetLicense(s.LicenseKey);
-            var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-            var swGetUsers = Stopwatch.StartNew();
-            var activeUserEmails = await _userService.GetUsersEmails(UserStatuses.Active);
-            swGetUsers.Stop();
-            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. GetUsersEmails Time : {swGetUsers.Elapsed}");
-
-            if (!activeUserEmails.Any(x =>
-                x.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
+            try
             {
-                try
+                var sw = Stopwatch.StartNew();
+                LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
+                var license = await _licenseService.GetLicense(s.LicenseKey);
+                var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
+                var swGetUsers = Stopwatch.StartNew();
+                var activeUserEmails = await _userService.GetUsersEmails(UserStatuses.Active);
+                swGetUsers.Stop();
+                Logger.InfoFormat(
+                    $"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. GetUsersEmails Time : {swGetUsers.Elapsed}");
+
+                if (!activeUserEmails.Any(x =>
+                    x.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
                 {
-                    var userInfo = _userService.CreateUser(new CreateUserDto
+                    try
                     {
-                        Email = param.lis_person_contact_email_primary,
-                        FirstName = param.PersonNameGiven,
-                        LastName = param.PersonNameFamily
-                    });
+                        var userInfo = _userService.CreateUser(new CreateUserDto
+                        {
+                            Email = param.lis_person_contact_email_primary,
+                            FirstName = param.PersonNameGiven,
+                            LastName = param.PersonNameFamily
+                        });
+                    }
+
+                    catch (ZoomApiException ex)
+                    {
+                        Logger.Error(
+                            $"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}",
+                            ex);
+                    }
+
+                    ViewBag.Message =
+                        "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
+                    return this.View("~/Views/Lti/LtiError.cshtml");
                 }
 
-                catch (ZoomApiException ex)
-                {
-                    Logger.Error($"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}", ex);
-                }
+                sw.Stop();
+                Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. Time : {sw.Elapsed}");
 
-                ViewBag.Message = "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
+                var model = await BuildModelAsync(s);
+                return View("Index", model);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Error with Session :{session}", ex);
+                ViewBag.Message = "Unexpected error occurred. Please contact support.";
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
-
-            sw.Stop();
-            Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. Time : {sw.Elapsed}");
-
-            var model = await BuildModelAsync(s);
-            return View("Index", model);
         }
 
         public virtual async Task<ActionResult> About()
