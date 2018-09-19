@@ -223,10 +223,13 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         public async Task<OperationResult> DeleteMeeting(int meetingId, string courseId, string email, bool remove, string occurenceId = null)
         {
+
             var meeting = await GetMeeting(meetingId, courseId);
             if (meeting == null)
                 return OperationResult.Error("Meeting not found");
             //check permissions
+
+            _logger.Info($"User {email} deleted meeting {meetingId} with details {meeting.Details}");
 
             if (meeting.Type == 2)
             {
