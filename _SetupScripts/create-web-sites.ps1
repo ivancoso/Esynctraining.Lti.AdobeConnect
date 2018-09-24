@@ -130,7 +130,7 @@ $fileStorageFolderPath = "C:\inetpub\EdugameCloud.$environmentAlias.FileStorage"
 CreateFolder -folderPath $fileStorageFolderPath
 
 SetFolderPermissionsForUser -directoryPath $fileStorageFolderPath `
-    -$userName "IIS APPPOOL\EdugameCloud.$environmentAlias" `
+    -userName "IIS APPPOOL\EdugameCloud.$environmentAlias" `
     -permissions "Modify, Read, ReadAndExecute, Write"
 
 SetFolderWritePermissionsForUser `
