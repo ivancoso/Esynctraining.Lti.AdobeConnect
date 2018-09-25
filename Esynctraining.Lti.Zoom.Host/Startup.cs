@@ -126,6 +126,15 @@ namespace Esynctraining.Lti.Zoom.Host
                 app.UseHsts();
             }
 
+            var origins = Configuration.GetSection("AllowedHosts").Value.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            app.UseCors(builder =>
+                builder
+                    .WithOrigins(origins)
+                    // TODO: use if required .WithMethods("POST")
+                    .AllowAnyMethod()
+                    .WithHeaders("Authorization", "X-Requested-With", "Content-Type", "Accept", "Origin")
+                    .SetPreflightMaxAge(TimeSpan.FromDays(1)));
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
