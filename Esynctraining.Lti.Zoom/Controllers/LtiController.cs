@@ -119,6 +119,48 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return Content("Error when joining.");
         }
 
+        [HttpGet]
+        public virtual async Task<ActionResult<JoinLinkParamDto>> JoinMeetingMobile(int meetingId, string session)
+        {
+            var userSession = await GetSession(session);
+            var license = await _licenseService.GetLicense(userSession.LicenseKey);
+            var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(userSession.SessionData);
+            var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
+
+            if (dbMeeting == null)
+                return NotFound(meetingId);
+            UserInfoDto zoomUser = null;
+            string userId;
+            try
+            {
+                zoomUser = _userService.GetUser(param.lis_person_contact_email_primary);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("User doesn't exist or doesn't belong to this account", e);
+
+                var userInfo = _userService.CreateUser(new CreateUserDto
+                {
+                    Email = param.lis_person_contact_email_primary,
+                    FirstName = param.PersonNameGiven,
+                    LastName = param.PersonNameFamily
+                });
+
+                return Content(
+                    "User either in 'pending' or 'inactive' status. Please check your email or contact Administrator and try again.");
+            }
+
+            var joinLinkParam = new JoinLinkParamDto()
+            {
+                ConfoNo = dbMeeting.ProviderMeetingId,
+                Uid = zoomUser.Id,
+                Uname = $"{zoomUser.FirstName} {zoomUser.LastName}",
+                Tk = _meetingService.GetZpkToken(zoomUser.Id)
+            };
+
+            return joinLinkParam;
+        }
+
         public async Task<ActionResult> Home(string session)
         {
             try
