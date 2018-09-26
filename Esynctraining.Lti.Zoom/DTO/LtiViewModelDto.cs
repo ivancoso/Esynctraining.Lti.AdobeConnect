@@ -53,6 +53,7 @@ namespace Esynctraining.Lti.Zoom.DTO
 
         // web app
         public string JoinMeeting => BaseUrl + "/meetings/{meetingId}/join"; //get
+        public string JoinMeetingMobile => BaseUrl + "/meetings/{meetingId}/joinmobile"; //get
         public string DownloadMeetingReportBySessions =>
             BaseUrl + "/reports/meetings/{meetingId}/by-sessions/download"; //get
 
