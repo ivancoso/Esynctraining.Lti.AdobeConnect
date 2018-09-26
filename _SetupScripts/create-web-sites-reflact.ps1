@@ -13,7 +13,6 @@ param([string]$environmentAlias = "Dev")
 InstallIIS
 Import-Module WebAdministration
 
-InstallAspNetCoreWindowsHosting
 InstallWCF
 
 # CREATE EdugameCloud.$environmentAlias SITE   
