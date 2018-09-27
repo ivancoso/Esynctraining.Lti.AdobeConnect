@@ -349,11 +349,11 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             public string Token { get; set; }
         }
 
-        public string GetUserZpkToken(string userId)
+        public string GetUserToken(string userId, string type)
         {
             RestRequest restRequest = this.BuildRequestAuthorization("users/{userId}/token", Method.GET);
             restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
-            restRequest.AddParameter("type", "zpk", ParameterType.QueryString);
+            restRequest.AddParameter("type", type, ParameterType.QueryString);
             IRestResponse<ZoomToken> restResponse = this.WebClient.Execute<ZoomToken>((IRestRequest)restRequest);
             return restResponse.Data.Token;
         }

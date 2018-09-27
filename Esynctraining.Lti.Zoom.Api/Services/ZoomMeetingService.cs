@@ -213,7 +213,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             //    var m = _client.Meetings.GetMeeting(meeting.Id);
             //    if (m.Agenda == meetingId.ToString())
             //    {
-                    var userToken = _zoomApi.GetUserZpkToken(userId);
+                    var userToken = _zoomApi.GetUserToken(userId, "zpk");
                     return baseUrl + (baseUrl.Contains("?") ? "&" : "?") + "zpk=" + userToken;
             //    }
             //}
@@ -221,9 +221,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             //return null;
         }
 
-        public string GetZpkToken(string userId)
+        public string GetToken(string userId)
         {
-            return _zoomApi.GetUserZpkToken(userId);
+            return _zoomApi.GetUserToken(userId, "token");
         }
 
         public async Task<OperationResult> DeleteMeeting(int meetingId, string courseId, string email, bool remove, string occurenceId = null)
