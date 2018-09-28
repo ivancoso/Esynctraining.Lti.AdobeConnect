@@ -221,9 +221,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             //return null;
         }
 
-        public string GetToken(string userId)
+        public string GetToken(string userId, string type)
         {
-            return _zoomApi.GetUserToken(userId, "token");
+            return _zoomApi.GetUserToken(userId, type);
         }
 
         public async Task<OperationResult> DeleteMeeting(int meetingId, string courseId, string email, bool remove, string occurenceId = null)

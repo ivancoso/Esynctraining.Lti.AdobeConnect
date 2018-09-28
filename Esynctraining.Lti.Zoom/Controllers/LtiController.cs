@@ -155,7 +155,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 ConfoNo = dbMeeting.ProviderMeetingId,
                 Uid = zoomUser.Id,
                 Uname = $"{zoomUser.FirstName} {zoomUser.LastName}",
-                Tk = _meetingService.GetToken(zoomUser.Id)
+                Tk = _meetingService.GetToken(zoomUser.Id, "token"),
+                Zpk = _meetingService.GetToken(zoomUser.Id, "zpk")
             };
 
             return joinLinkParam;
