@@ -7,5 +7,7 @@
         public string Uid { get; set; }
         public string Tk { get; set; }
         public string Zpk { get; set; }
+        public string Zak { get; set; }
+        public string Email { get; set; }
     }
 }
