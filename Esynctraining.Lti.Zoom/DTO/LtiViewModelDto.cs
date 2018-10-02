@@ -14,6 +14,7 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string UpdateMeeting => BaseApiUrl + "/meetings/{meetingId}"; //put
         public string GetMeetingDetails => BaseApiUrl + "/meetings/{meetingId}"; //get
         public string DeleteMeeting => BaseApiUrl + "/meetings/{meetingId}"; //delete
+        public string GetMeetingRegistrants => BaseApiUrl + "/meetings/{meetingId}/registrants"; //get
 
         public string GetMeetingReportBySessions =>
             BaseApiUrl + "/reports/meetings/{meetingId}/by-sessions"; //get

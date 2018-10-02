@@ -184,7 +184,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
 
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/v1/swagger/v1/swagger.json", "eSyncTraining LTI Zoom API V1");
+                    c.SwaggerEndpoint("/v1/swagger.json", "eSyncTraining LTI Zoom API V1");
                 });
             }
         }

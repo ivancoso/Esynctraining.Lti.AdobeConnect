@@ -133,8 +133,18 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
             foreach (var st in statuses)
             {
-                var users = _zoomApi.GetMeetingRegistrants(meetingId, occurrenceId, st.ToString().ToLower());
-                registrants.AddRange(users.Registrants.Select(x => ConvertFromApiObjectToDto(x)));
+                var pageNumber = 1;
+                var pageSize = 300;
+                var totalRecords = 0;
+
+                do
+                {
+                    var page = _zoomApi.GetMeetingRegistrants(meetingId, occurrenceId, st.ToString().ToLower(), pageSize, pageNumber);
+                    registrants.AddRange(page.Registrants.Select(x => ConvertFromApiObjectToDto(x)));
+                    totalRecords = page.TotalRecords;
+                    pageNumber++;
+                } while (pageSize * (pageNumber - 1) < totalRecords);
+
             }
 
             return registrants;

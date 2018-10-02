@@ -10,6 +10,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
+using Esynctraining.Lti.Zoom.Api.Dto.Enums;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Domain;
@@ -231,6 +232,16 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return result;
 
             //return OperationResult.Error("Error during delete. Please try again or contact support.");
+        }
+
+        [Route("{meetgingId}/registrants")]
+        [HttpGet]
+        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        public virtual async Task<OperationResultWithData<List<ZoomMeetingRegistrantDto>>> GetMeetingRegistrants(int meetgingId, [FromQuery] ZoomMeetingRegistrantStatus status)
+        {
+            LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
+            var registrants = _userService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, status);
+            return registrants.ToSuccessResult();
         }
 
         private bool IsPossibleCreateMeeting(UserInfoDto zoomUser, CreateMeetingViewModel model, out string errorMessage)
