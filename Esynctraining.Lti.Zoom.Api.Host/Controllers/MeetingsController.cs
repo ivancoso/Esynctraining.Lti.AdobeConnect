@@ -27,22 +27,18 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         private readonly ZoomUserService _userService;
 
         private readonly ZoomMeetingService _meetingService;
-        private readonly LmsUserServiceFactory _lmsUserServiceFactory;
-        private readonly ILmsLicenseAccessor _licenseAccessor;
-        //private readonly LmsFactory _lmsFactory;
 
         #region Constructors and Destructors
 
         public MeetingsController(
             ApplicationSettingsProvider settings,
-            ILogger logger, IJsonSerializer jsonSerializer, LmsUserServiceFactory lmsUserServiceFactory, ILmsLicenseAccessor licenseAccessor,
-            ZoomUserService userService, ZoomRecordingService recordingService, ZoomMeetingService meetingService)
-            : base(settings, logger)
+            ILogger logger, IJsonSerializer jsonSerializer,
+            ZoomUserService userService, 
+            ZoomRecordingService recordingService, 
+            ZoomMeetingService meetingService) : base(settings, logger)
         {
             _userService = userService;
             _meetingService = meetingService;
-            _lmsUserServiceFactory = lmsUserServiceFactory ?? throw new ArgumentNullException(nameof(lmsUserServiceFactory));
-            _licenseAccessor = licenseAccessor ?? throw new ArgumentNullException(nameof(licenseAccessor));
         }
 
         #endregion
@@ -238,41 +234,6 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
             //return OperationResult.Error("Error during delete. Please try again or contact support.");
         }
-
-        [Route("{meetgingId}/registrants")]
-        [HttpGet]
-        [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResultWithData<List<ZoomMeetingRegistrantDto>>> GetMeetingRegistrants(int meetgingId, [FromQuery] ZoomMeetingRegistrantStatus status)
-        {
-            LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
-            var registrants = _userService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, status);
-            return registrants.ToSuccessResult();
-        }
-
-        [Route("{meetgingId}/syncparticipants")]
-        [HttpGet]
-        [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResultWithData<SyncParticipantsDto>> GetSyncParticipants(int meetgingId)
-        {
-            LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
-            var registrants = _userService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, ZoomMeetingRegistrantStatus.Approved);
-
-            var lmsSettings = LmsLicense.GetLMSSettings(Session);
-            var licenseDto = await _licenseAccessor.GetLicense();
-            var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
-            var lmsUsers = await lmsService.GetUsers(lmsSettings, CourseId);
-
-            var lmsAvailableUsers = lmsUsers.Data.Where(lmsUser => !registrants.Any(r => string.Equals(r.Email, lmsUser.Email))).ToList();
-
-            var syncParticipants = new SyncParticipantsDto
-            {
-                MeetingRegistants = registrants,
-                LmsAvailableUsers = lmsAvailableUsers
-            };
-
-            return syncParticipants.ToSuccessResult();
-        }
-
 
         private bool IsPossibleCreateMeeting(UserInfoDto zoomUser, CreateMeetingViewModel model, out string errorMessage)
         {
