@@ -36,7 +36,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             _lmsUserServiceFactory = lmsUserServiceFactory ?? throw new ArgumentNullException(nameof(lmsUserServiceFactory));
         }
 
-        [Route("meetings/{meetgingId}/registrants")]
+        [Route("/meetings/{meetgingId}/registrants")]
         [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResultWithData<List<ZoomMeetingRegistrantDto>>> GetMeetingRegistrants(int meetgingId, [FromQuery] ZoomMeetingRegistrantStatus status)
@@ -46,7 +46,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return registrants.ToSuccessResult();
         }
 
-        [Route("meetings/{meetgingId}/syncparticipants")]
+        [Route("/meetings/{meetgingId}/syncparticipants")]
         [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResultWithData<SyncParticipantsDto>> GetSyncParticipants(int meetgingId)
