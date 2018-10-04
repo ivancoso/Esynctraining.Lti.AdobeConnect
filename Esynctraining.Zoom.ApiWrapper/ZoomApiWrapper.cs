@@ -185,6 +185,7 @@ namespace Esynctraining.Zoom.ApiWrapper
             }
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
+            restRequest.AddParameter("status", (object)status, ParameterType.QueryString);
             IRestResponse<ZoomListRegistrants> restResponse = this.WebClient.Execute<ZoomListRegistrants>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;

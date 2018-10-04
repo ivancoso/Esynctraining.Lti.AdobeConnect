@@ -101,6 +101,16 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
         }
 
+        public UserDto CreateUser(string email, string firstName, string lastName)
+        {
+            return CreateUser(new CreateUserDto()
+            {
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+            });
+        }
+
         public UserDto CreateUser(CreateUserDto dto)
         {
             var user = _zoomApi.CreateUser(new CreateUser
@@ -154,6 +164,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         {
             var registrantsToApprove = new List<ZoomMeetingRegistrantDto>();
             var zoomUserEmails = await GetUsersEmails();
+            var regs = GetMeetingRegistrants(meetingId);
+
+            CleanApprovedRegistrant(meetingId, registrants, regs);
+
             foreach (var registrant in registrants)
             {
                 if (zoomUserEmails.Any(x => x.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase)))
@@ -161,16 +175,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     bool addRegistrant = !checkRegistrants;
                     if (checkRegistrants)
                     {
-                        var regs = GetMeetingRegistrants(meetingId);
-                        var reg = regs.FirstOrDefault(x =>
-                            x.Email.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase));
+                        var reg = regs.FirstOrDefault(x => x.Email.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase));
                         if (reg == null)
                         {
                             addRegistrant = true;
                         }
                         else
                         {
-                            if (reg.Status == ZoomMeetingRegistrantStatus.Pending)
+                            if (reg.Status == ZoomMeetingRegistrantStatus.Pending || reg.Status == ZoomMeetingRegistrantStatus.Denied)
                             {
                                 registrantsToApprove.Add(reg);
                             }
@@ -187,43 +199,66 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                         }
 
                         registrantsToApprove.Add(new ZoomMeetingRegistrantDto{Id = addResult.Data.RegistrantId, Email = registrant.Email });
-
                     }
                 }
                 else
                 {
-                    //create user
-                    try
-                    {
-                        var userInfo = CreateUser(new CreateUserDto
-                        {
-                            Email = registrant.Email,
-                            FirstName = registrant.FirstName,
-                            LastName = registrant.LastName,
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                        
-                    }
+                    CreateUser(registrant.Email, registrant.FirstName, registrant.LastName);
                 }
             }
 
             if (registrantsToApprove.Any())
             {
-                _zoomApi.UpdateRegistrantsStatus(meetingId, new ZoomUpdateRegistrantStatusRequest
-                {
-                    Action = "approve",
-                    Registrants = registrantsToApprove.Select(x => new ZoomRegistrantForStatusRequest
-                    {
-                        Email = x.Email,
-                        Id = x.Id,
-                    }).ToList()
-                }, null);
+                UpdateRegistrantStatus(meetingId, registrantsToApprove.Select(r => r.Email), nameof(RegistrantUpdateStatusAction.Approve));
             }
 
             return true;
         }
+
+        private void CleanApprovedRegistrant(string meetingId, IEnumerable<RegistrantDto> updatedRegistrants, List<ZoomMeetingRegistrantDto> regs)
+        {
+            var approvedRegistrants = regs.Where(r => r.Status == ZoomMeetingRegistrantStatus.Approved);
+
+            var deletedRegistrants = approvedRegistrants.Where(r =>
+                !updatedRegistrants.Any(newReg => newReg.Email.Equals(r.Email, StringComparison.CurrentCultureIgnoreCase)));
+
+            if (deletedRegistrants.Any())
+            {
+                UpdateRegistrantStatus(meetingId, deletedRegistrants.Select(dr => dr.Email), nameof(RegistrantUpdateStatusAction.Deny));
+            }
+        }
+
+        public void UpdateRegistrantStatus(string meetingId, string email, string status)
+        {
+            var registrants = new List<ZoomRegistrantForStatusRequest>();
+            registrants.Add(new ZoomRegistrantForStatusRequest
+            {
+                Email = email
+            });
+
+            _zoomApi.UpdateRegistrantsStatus(meetingId, new ZoomUpdateRegistrantStatusRequest
+                                                            {
+                                                                Action = status,
+                                                                Registrants = registrants
+                                                            }, null);
+        }
+
+        public void UpdateRegistrantStatus(string meetingId, IEnumerable<string> emails, string status)
+        {
+            status = status.ToLower();
+            var registrants = emails.Select(email => new ZoomRegistrantForStatusRequest
+                {
+                    Email = email
+                })
+                .ToList();
+
+            _zoomApi.UpdateRegistrantsStatus(meetingId, new ZoomUpdateRegistrantStatusRequest
+            {
+                Action = status,
+                Registrants = registrants
+            }, null);
+        }
+
 
         private ZoomMeetingRegistrantDto ConvertFromApiObjectToDto(ZoomMeetingRegistrant apiObject)
         {

@@ -330,7 +330,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var entity = _dbContext.Add(dbMeeting);
             await _dbContext.SaveChangesAsync();
 
-            if (requestDto.Type.GetValueOrDefault(1) != 2 
+            if (requestDto.Type.GetValueOrDefault(1) != 2 && requestDto.Type.GetValueOrDefault(1) != 3
                 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
             {
                 var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
@@ -350,6 +350,14 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants,
                     checkRegistrants: false);
             }
+
+            //Study groups meeting
+            if (requestDto.Type.GetValueOrDefault(1) == 3 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
+            {
+                var registrants = requestDto.Participants.Where(x => !x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
+                await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, false);
+            }
+
             vm.Id = dbMeeting.Id;
             vm.Type = dbMeeting.Type;
 
@@ -391,19 +399,28 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             if (updatedResult.Data)
             {
-                LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
-                if (vm.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure roster)
+                if (dbMeeting.Type != (int)CourseMeetingType.StudyGroup)
                 {
-                    var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
-                    var lmsUsers = await lmsService.GetUsers(licenseSettings, courseId);
-                    var registrants = lmsUsers.Data.Where(x => !String.IsNullOrEmpty(x.Email) && !x.Email.Equals(email)).Select(x =>
-                        new RegistrantDto
-                        {
-                            Email = x.Email,
-                            FirstName = x.GetFirstName(),
-                            LastName = x.GetLastName()
-                        });
-                    await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, true);
+                    LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
+                    if (vm.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure roster)
+                    {
+                        var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
+                        var lmsUsers = await lmsService.GetUsers(licenseSettings, courseId);
+                        var registrants = lmsUsers.Data
+                            .Where(x => !String.IsNullOrEmpty(x.Email) && !x.Email.Equals(email)).Select(x =>
+                                new RegistrantDto
+                                {
+                                    Email = x.Email,
+                                    FirstName = x.GetFirstName(),
+                                    LastName = x.GetLastName()
+                                });
+                        await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, true);
+                    }
+                }
+
+                if (dbMeeting.Type == (int) CourseMeetingType.StudyGroup)
+                {
+                    await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, vm.Participants, true);
                 }
 
                 return true.ToSuccessResult();

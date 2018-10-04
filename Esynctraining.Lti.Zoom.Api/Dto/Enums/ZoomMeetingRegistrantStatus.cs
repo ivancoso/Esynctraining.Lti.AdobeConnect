@@ -6,4 +6,11 @@
         Pending,
         Denied
     }
+
+    public enum RegistrantUpdateStatusAction
+    {
+        Approve,
+        Deny
+    }
+
 }

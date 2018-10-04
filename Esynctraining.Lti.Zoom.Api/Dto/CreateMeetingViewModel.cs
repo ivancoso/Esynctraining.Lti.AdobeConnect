@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Esynctraining.Lti.Zoom.Api.Dto
 {
@@ -20,6 +22,6 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
 
         public CreateMeetingSettingsViewModel Settings { get; set; }
         public CreateMeetingRecurrenceViewModel Recurrence { get; set; }
-
+        public IEnumerable<RegistrantDto> Participants { get; set; }
     }
 }
