@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
-using Esynctraining.Lti.Lms.Common;
-using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Dto.Enums;
@@ -45,13 +43,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _logger = logger;
         }
 
-        //public IEnumerable<MeetingDto> GetMeetings(string userId)
-        //{
-        //    var meetings = _zoomApi.GetMeetings(userId, MeetingListTypes.Scheduled);
-
-        //    return meetings.Meetings.Select(x => ConvertZoomObjToDto(x, userId));
-        //}
-
         public async Task<MeetingDetailsViewModel> GetMeetingDetails(int meetingId, string courseId)
         {
             var dbMeeting = await GetMeeting(meetingId, courseId);
@@ -68,27 +59,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             if (dbMeetings.Any())
             {
-                //var zoomMeetingPairs = dbMeetings.GroupBy(x => x.ProviderHostId).ToDictionary(k => k.Key, v => v.Select(va => va.ProviderMeetingId));
-
-                //foreach (var user in zoomMeetingPairs)
-                //{
-                //    var zoomApiResult = _zoomApi.GetMeetings(user.Key, pageSize: 300);
-                //    if (!zoomApiResult.IsSuccess)
-                //    {
-                //        if (zoomApiResult.Code == 1001)
-                //        {
-                //            await DeleteMeetingsForDeletedUser(dbMeetings.Where(m => m.ProviderHostId == user.Key));
-                //            continue;
-                //        }
-
-                //        return OperationResultWithData<IEnumerable<MeetingViewModel>>.Error(zoomApiResult.Message);
-                //    }
-
-                //    var userMeetings = zoomApiResult.Data;
-
-                //    result.AddRange(userMeetings.Meetings.Where(m => user.Value.Contains(m.Id)).Select(x =>
-                //        ConvertToViewModel(x, dbMeetings.First(db => db.ProviderMeetingId == x.Id), currentUserId)));
-                //    //zoom does not return meeting with current start time within user's meeting request, so handle such meetings one-by-one
                     var notHandledMeetings = dbMeetings.Select(x => x.ProviderMeetingId).ToList();
                     foreach (var notHandledId in notHandledMeetings)
                     {
@@ -117,7 +87,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                             result.Add(vm);
                         }
                     }
-                //}
             }
             if (currentUserId != null)
             {
@@ -126,14 +95,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
 
             return OperationResultWithData<IEnumerable<MeetingViewModel>>.Success(result);
-        }
-
-        private async Task DeleteMeetingsForDeletedUser(IEnumerable<LmsCourseMeeting> meetings)
-        {
-            ///User can be deleted from the Zoom.
-            /// If we have user who was deleted from zoom We will delete all meetings related to this user.
-            _dbContext.RemoveRange(meetings);
-            await _dbContext.SaveChangesAsync();
         }
 
         private async Task DeleteMeeting(LmsCourseMeeting meeting)
@@ -184,7 +145,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var licenseDto = await _licenseAccessor.GetLicense();
             var meetingResult = await _zoomApi.GetMeeting(meetingId);
             string baseUrl = meetingResult.Data.JoinUrl;
-            if (meetingResult.Data.HostId != userId 
+            if (meetingResult.Data.HostId != userId
                 && meetingResult.Data.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration
                 && licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity))
             {
@@ -208,17 +169,8 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     }
                 }
             }
-            //foreach (var meeting in meetings.Meetings)
-            //{
-            //    var m = _client.Meetings.GetMeeting(meeting.Id);
-            //    if (m.Agenda == meetingId.ToString())
-            //    {
-                    var userToken = _zoomApi.GetUserToken(userId, "zpk");
-                    return baseUrl + (baseUrl.Contains("?") ? "&" : "?") + "zpk=" + userToken;
-            //    }
-            //}
-
-            //return null;
+            var userToken = _zoomApi.GetUserToken(userId, "zpk");
+            return baseUrl + (baseUrl.Contains("?") ? "&" : "?") + "zpk=" + userToken;
         }
 
         public string GetToken(string userId, string type)
@@ -294,15 +246,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             };
             if (dbOfficeHours != null)
             {
-                /*
-                 var ohDetails = _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
-                    var detailsVm = ConvertToDetailsViewModel(ohDetails);
-                    detailsVm.Type = ohMeeting.Type;
-                    detailsVm.Id = ohMeeting.Id;
-                    var vm = ConvertFromDtoToOHViewModel(ohDetails, userId, ohMeeting.Type);
-                    vm.Id = ohMeeting.Id;
-                    vm.Details = detailsVm;
-                 */
                 var ohDetailsResult = await _zoomApi.GetMeeting(dbOfficeHours.ProviderMeetingId);
                 if (!ohDetailsResult.IsSuccess)
                     throw new Exception(ohDetailsResult.Message);
@@ -347,8 +290,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                         FirstName = x.GetFirstName(),
                         LastName = x.GetLastName()
                     });
-                await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants,
-                    checkRegistrants: false);
+                await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, false);
             }
 
             //Study groups meeting
@@ -466,20 +408,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                             .RecurrenceRegistrationType.Value;
                 }
             }
-            /*
-            if (dto.Recurrence != null)
-            {
-                meetingDto.Recurrence = new MeetingRecurrence
-                {
-                    Type = MeetingRecurrenceTypes.Weekly,
-                    WeeklyDaysList = new List<MeetingRecurrenceWeekDays>(dto.Recurrence.DaysOfWeek.Select(x => (MeetingRecurrenceWeekDays)x)),
-                    RepeatInterval = 1,
-                    EndDateTime = new DateTimeOffset(dto.StartTime.Value.AddDays(dto.Recurrence.Weeks * 7)),
-
-                };
-            }
-            */
-
             return meetingDto;
         }
 
