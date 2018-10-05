@@ -60,7 +60,6 @@ namespace Esynctraining.Lti.Zoom.Api.Services.MeetingLoader
             }
 
             return result;
-
         }
 
         private OfficeHoursViewModel ConvertFromDtoToOHViewModel(Meeting dto, string userId, int type = 1)

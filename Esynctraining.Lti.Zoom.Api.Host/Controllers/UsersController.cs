@@ -93,6 +93,31 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return OperationResult.Success();
         }
 
+        [Route("")]
+        [HttpGet]
+        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        public virtual async Task<OperationResultWithData<UserInfoDto>> GetUserInfo()
+        {
+            UserInfoDto user = null;
+            try
+            {
+                user = _zoomUserService.GetUser(Param.lis_person_contact_email_primary);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("User doesn't exist or doesn't belong to this account", e);
+                _zoomUserService.CreateUser(new CreateUserDto
+                {
+                    Email = Param.lis_person_contact_email_primary,
+                    FirstName = Param.PersonNameGiven,
+                    LastName = Param.PersonNameFamily
+                });
 
+                return OperationResultWithData<UserInfoDto>.Error(
+                    "User either in 'pending' or 'inactive' status. Please check your email or contact Administrator and try again.");
+            }
+
+            return user.ToSuccessResult();
+        }
     }
 }
