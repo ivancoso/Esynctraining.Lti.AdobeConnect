@@ -54,6 +54,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         {
             var licenseDto = await _licenseAccessor.GetLicense();
             List<MeetingViewModel> result = new List<MeetingViewModel>();
+
             var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => 
                 x.LicenseKey == licenseDto.ConsumerKey && courseId == x.CourseId);
 
@@ -82,16 +83,17 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
                         if (meetingDetailResult.Data != null)
                         {
-                            var vm = ConvertToViewModel(meetingDetailResult.Data,
-                                dbMeetings.First(db => db.ProviderMeetingId == meetingDetailResult.Data.Id), currentUserId);
+                            var dbMeeting = dbMeetings.First(db => db.ProviderMeetingId == meetingDetailResult.Data.Id);
+                            var vm = ConvertToViewModel(meetingDetailResult.Data, dbMeeting, currentUserId);
                             result.Add(vm);
                         }
                     }
             }
             if (currentUserId != null)
             {
-                var processOfficeHoursResult = await ProcessOfficeHours(licenseDto.ConsumerKey, currentUserId, result);
-                return processOfficeHoursResult.ToSuccessResult();
+                var processedMeetings = await ProcessOfficeHours(licenseDto.ConsumerKey, currentUserId, result);
+                //var processStudyGroupMeetings = ProcessStudyGroups(currentUserId, processedMeetings);
+                return processedMeetings.ToSuccessResult();
             }
 
             return OperationResultWithData<IEnumerable<MeetingViewModel>>.Success(result);
@@ -138,6 +140,27 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             return result;
         }
+
+        private IEnumerable<MeetingViewModel> ProcessStudyGroups(string userId, List<MeetingViewModel> meetings)
+        {
+            IList<MeetingViewModel> result = new List<MeetingViewModel>();
+
+            var sgMeetings = meetings.Where(x => x.Type == (int)CourseMeetingType.StudyGroup);
+            if (!sgMeetings.Any())
+                return meetings;
+
+            foreach (var meeting in sgMeetings)
+            {
+                var zoomListRegistrants = _zoomApi.GetMeetingRegistrants(meeting.ConferenceId, null, nameof(ZoomMeetingRegistrantStatus.Approved));
+                if (zoomListRegistrants.Registrants.Any(r => r.Id == userId) || meeting.HostId == userId)
+                {
+                    result.Add(meeting);
+                }
+            }
+
+            return result;
+        }
+
 
         public async Task<string> GetMeetingUrl(string userId, string meetingId, string email,
             Func<Task<RegistrantDto>> getRegistrant)
@@ -296,8 +319,12 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             //Study groups meeting
             if (requestDto.Type.GetValueOrDefault(1) == 3 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
             {
-                var registrants = requestDto.Participants.Where(x => !x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
-                await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, false);
+
+                if (requestDto.Participants != null)
+                {
+                    var registrants = requestDto.Participants.Where(x => !x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
+                    await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, false);
+                }
             }
 
             vm.Id = dbMeeting.Id;
@@ -434,6 +461,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 ConferenceId = meeting.Id,
                 CanJoin = userId != null,
                 CanEdit = meeting.HostId == userId,
+                HostId = meeting.HostId,
                 Duration = meeting.Duration,
                 Timezone = meeting.Timezone,
                 Topic = meeting.Topic,

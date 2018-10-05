@@ -9,6 +9,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
+using Esynctraining.Lti.Zoom.Api.Dto.Enums;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Zoom.ApiWrapper;

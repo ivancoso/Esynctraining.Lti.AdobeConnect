@@ -8,7 +8,7 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
     {
         public int Id { get; set; }
         public string ConferenceId { get; set; }
-        //public string HostId { get; set; }
+        public string HostId { get; set; }
         public string Topic { get; set; }
         public string Description { get; set; }
         public long StartTime { get; set; }
