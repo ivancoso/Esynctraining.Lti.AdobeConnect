@@ -65,7 +65,13 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
             var lmsUsers = await lmsService.GetUsers(lmsSettings, CourseId);
 
-            var lmsAvailableUsers = lmsUsers.Data.Where(lmsUser => !registrants.Any(r => string.Equals(r.Email, lmsUser.Email))).ToList();
+            var lmsAvailableUsers = lmsUsers.Data.Where(lmsUser => !registrants.Any(r => string.Equals(r.Email, lmsUser.Email)))
+                .Select(u => new LmsAvailableUserDto
+            {
+                    Email = u.Email,
+                    FirstName = u.GetFirstName(),
+                    LastName = u.GetLastName()
+            }).ToList();
 
             var syncParticipants = new SyncParticipantsDto
             {
