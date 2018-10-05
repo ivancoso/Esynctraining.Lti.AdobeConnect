@@ -79,10 +79,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [Route("/meetings/{meetgingId}/registrants")]
         [HttpDelete]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResult> UpdateRegistrantStatus(int meetgingId, [FromBody]RegistrantDto registrant)
+        public virtual async Task<OperationResult> UpdateRegistrantStatus(int meetgingId)
         {
             LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
-            _zoomUserService.UpdateRegistrantStatus(meeting.ProviderMeetingId, registrant.Email, "deny");
+            _zoomUserService.UpdateRegistrantStatus(meeting.ProviderMeetingId, Session.Email, "deny");
 
             return OperationResult.Success();
         }
