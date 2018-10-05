@@ -42,7 +42,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [Route("")]
         [HttpGet]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetCourseMeetings()
+        public virtual async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetCourseMeetings(CourseMeetingType type = CourseMeetingType.Undefined)
         {
             var sw = Stopwatch.StartNew();
             string userId = null;
@@ -60,7 +60,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 Logger.Error($"User {Param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account", e);
             }
 
-            var zoomMeetingsResult = await _meetingService.GetMeetings(CourseId, userId);
+            var zoomMeetingsResult = await _meetingService.GetMeetings(CourseId, type, Param.lis_person_contact_email_primary, userId);
             sw.Stop();
             Logger.InfoFormat($"Metric: MeetingController.GetCourseMeetings Time : {sw.Elapsed}");
             return zoomMeetingsResult;

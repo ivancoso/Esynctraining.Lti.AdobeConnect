@@ -8,6 +8,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Dto.Enums;
+using Esynctraining.Lti.Zoom.Api.Services.MeetingLoader;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
@@ -50,9 +51,41 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return await _zoomMeetingApiService.GetMeetingApiDetails(dbMeeting);
         }
 
-        public async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetMeetings(string courseId, string currentUserId = null)
+        public async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetMeetings(string courseId, CourseMeetingType type, string email, string currentUserId = null)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
+            /************************/
+            MeetingsLoader meetingsLoader = null;
+            switch (type)
+            {
+                case CourseMeetingType.Basic:
+                    meetingsLoader = new BasicMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId);
+                    break;
+                case CourseMeetingType.OfficeHour:
+                    meetingsLoader = new OfficeHoursMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, _ohService);
+                    break;
+                case CourseMeetingType.StudyGroup:
+                    meetingsLoader = new StudyGroupMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, email);
+                    break;
+                case CourseMeetingType.Undefined:
+                    var basicMeetingsLoader = new BasicMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId);
+                    var ohMeetingsLoader = new OfficeHoursMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, _ohService);
+                    var sgMeetingsLoader = new StudyGroupMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, email);
+
+                    List<MeetingViewModel> rez = new List<MeetingViewModel>();
+                    rez.AddRange(await basicMeetingsLoader.Load());
+                    rez.AddRange(await ohMeetingsLoader.Load());
+                    rez.AddRange(await sgMeetingsLoader.Load());
+                    IEnumerable<MeetingViewModel> e = new List<MeetingViewModel>(rez);
+                    return e.ToSuccessResult();
+                    break;
+            }
+
+            var newResult = await meetingsLoader.Load();
+            return newResult.ToSuccessResult();
+            /************************/
+
+
             List<MeetingViewModel> result = new List<MeetingViewModel>();
 
             var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => 

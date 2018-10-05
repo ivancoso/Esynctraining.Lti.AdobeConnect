@@ -2,8 +2,9 @@
 {
     public enum CourseMeetingType
     {
-        Instant = 1,
+        Basic = 1,
         OfficeHour = 2,
         StudyGroup = 3,
+        Undefined = 10
     }
 }
