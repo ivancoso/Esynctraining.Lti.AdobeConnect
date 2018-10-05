@@ -6,6 +6,6 @@ namespace Esynctraining.Lti.Zoom.Api.Dto
     public class SyncParticipantsDto
     {
         public List<RegistrantDto> MeetingRegistants { get; set; }
-        public List<LmsUserDTO> LmsAvailableUsers { get; set; }
+        public List<LmsAvailableUserDto> LmsAvailableUsers { get; set; }
     }
 }
