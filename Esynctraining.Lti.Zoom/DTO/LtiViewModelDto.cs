@@ -106,6 +106,7 @@ namespace Esynctraining.Lti.Zoom.DTO
 
         public List<int> EnabledStorageProviders { get; set; }
         public bool EnableOfficeHours { get; set; }
+        public bool EnableStudyGroups { get; set; }
         public bool EnableClassRosterSecurity { get; set; }
         public string PrimaryColor { get; set; }
         public string SupportSectionText { get; set; }

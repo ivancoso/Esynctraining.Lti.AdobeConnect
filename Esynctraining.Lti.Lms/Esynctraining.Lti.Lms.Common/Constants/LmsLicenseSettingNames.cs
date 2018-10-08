@@ -97,6 +97,7 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string PrimaryColor = nameof(PrimaryColor);
         public const string EnableClassRosterSecurity = nameof(EnableClassRosterSecurity);
         public const string EnableOfficeHours = nameof(EnableOfficeHours);
+        public const string EnableStudyGroups = nameof(EnableStudyGroups);
         public const string SupportSectionText = nameof(SupportSectionText);
 
         public static class Telephony
