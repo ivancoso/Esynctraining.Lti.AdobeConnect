@@ -54,7 +54,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         public async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetMeetings(string courseId, CourseMeetingType type, string email, string currentUserId = null)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
-            /************************/
+            
             MeetingsLoader meetingsLoader = null;
             switch (type)
             {
@@ -67,133 +67,13 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 case CourseMeetingType.StudyGroup:
                     meetingsLoader = new StudyGroupMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, email);
                     break;
-                case CourseMeetingType.Undefined:
-                    var basicMeetingsLoader = new BasicMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId);
-                    var ohMeetingsLoader = new OfficeHoursMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, _ohService);
-                    var sgMeetingsLoader = new StudyGroupMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, email);
-
-                    List<MeetingViewModel> rez = new List<MeetingViewModel>();
-                    rez.AddRange(await basicMeetingsLoader.Load());
-                    rez.AddRange(await ohMeetingsLoader.Load());
-                    rez.AddRange(await sgMeetingsLoader.Load());
-                    IEnumerable<MeetingViewModel> e = new List<MeetingViewModel>(rez);
-                    return e.ToSuccessResult();
-                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
 
             var newResult = await meetingsLoader.Load();
             return newResult.ToSuccessResult();
-            /************************/
-
-
-            List<MeetingViewModel> result = new List<MeetingViewModel>();
-
-            var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => 
-                x.LicenseKey == licenseDto.ConsumerKey && courseId == x.CourseId);
-
-            if (dbMeetings.Any())
-            {
-                    var notHandledMeetings = dbMeetings.Select(x => x.ProviderMeetingId).ToList();
-                    foreach (var notHandledId in notHandledMeetings)
-                    {
-                        var meetingDetailResult = await _zoomApi.GetMeeting(notHandledId);
-                        if (!meetingDetailResult.IsSuccess)
-                        {
-                            var deleteErrorCodes = new List<ZoomApiErrorCodes>
-                            {
-                                ZoomApiErrorCodes.MeetingNotFound,
-                                ZoomApiErrorCodes.UserNotFound,
-                                ZoomApiErrorCodes.UserNotBelongToAccount
-                            };
-
-                            if (deleteErrorCodes.Any(x => (int) x == meetingDetailResult.Code))
-                            {
-                                await DeleteMeeting(dbMeetings.First(db => db.ProviderMeetingId == notHandledId));
-                            }
-
-                            continue;
-                        }
-
-                        if (meetingDetailResult.Data != null)
-                        {
-                            var dbMeeting = dbMeetings.First(db => db.ProviderMeetingId == meetingDetailResult.Data.Id);
-                            var vm = ConvertToViewModel(meetingDetailResult.Data, dbMeeting, currentUserId);
-                            result.Add(vm);
-                        }
-                    }
-            }
-            if (currentUserId != null)
-            {
-                var processedMeetings = await ProcessOfficeHours(licenseDto.ConsumerKey, currentUserId, result);
-                //var processStudyGroupMeetings = ProcessStudyGroups(currentUserId, processedMeetings);
-                return processedMeetings.ToSuccessResult();
-            }
-
-            return OperationResultWithData<IEnumerable<MeetingViewModel>>.Success(result);
         }
-
-        private async Task DeleteMeeting(LmsCourseMeeting meeting)
-        {
-            _dbContext.Remove(meeting);
-            await _dbContext.SaveChangesAsync();
-        }
-
-        private async Task<IEnumerable<MeetingViewModel>> ProcessOfficeHours(Guid licenseKey, string userId, List<MeetingViewModel> result)
-        {
-            var oh = result.SingleOrDefault(x => x.Type == 2);
-            if (oh == null)
-            {
-                var ohMeeting =  await _dbContext.LmsCourseMeetings.FirstOrDefaultAsync(x =>
-                    x.LicenseKey == licenseKey && x.ProviderHostId == userId && x.Type == 2);
-                if (ohMeeting != null)
-                {
-                    var ohDetailsResult = await _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
-                    if (!ohDetailsResult.IsSuccess)
-                        throw new Exception(ohDetailsResult.Message);
-
-                    var detailsVm = ConvertToDetailsViewModel(ohDetailsResult.Data);
-                    detailsVm.Type = ohMeeting.Type;
-                    detailsVm.Id = ohMeeting.Id;
-                    var vm = ConvertFromDtoToOHViewModel(ohDetailsResult.Data, userId, ohMeeting.Type);
-                    vm.Id = ohMeeting.Id;
-                    vm.Details = detailsVm;
-                    vm.Availabilities = await _ohService.GetAvailabilities(ohMeeting.Id, userId);
-                    result.Add(vm);
-                }
-            }
-            else
-            {
-                var ohDetailsResult = await _zoomApi.GetMeeting(oh.ConferenceId);
-                if (!ohDetailsResult.IsSuccess)
-                    throw new Exception(ohDetailsResult.Message);
-
-                oh.Description = ohDetailsResult.Data.Agenda;
-                oh.Availabilities = await _ohService.GetAvailabilities(oh.Id, userId);
-            }
-
-            return result;
-        }
-
-        private IEnumerable<MeetingViewModel> ProcessStudyGroups(string userId, List<MeetingViewModel> meetings)
-        {
-            IList<MeetingViewModel> result = new List<MeetingViewModel>();
-
-            var sgMeetings = meetings.Where(x => x.Type == (int)CourseMeetingType.StudyGroup);
-            if (!sgMeetings.Any())
-                return meetings;
-
-            foreach (var meeting in sgMeetings)
-            {
-                var zoomListRegistrants = _zoomApi.GetMeetingRegistrants(meeting.ConferenceId, null, nameof(ZoomMeetingRegistrantStatus.Approved));
-                if (zoomListRegistrants.Registrants.Any(r => r.Id == userId) || meeting.HostId == userId)
-                {
-                    result.Add(meeting);
-                }
-            }
-
-            return result;
-        }
-
 
         public async Task<string> GetMeetingUrl(string userId, string meetingId, string email,
             Func<Task<RegistrantDto>> getRegistrant)
