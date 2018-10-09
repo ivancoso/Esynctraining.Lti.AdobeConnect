@@ -131,6 +131,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                         //todo: validation error?
                         requestDto.Settings.ApprovalType = 2;
                     }
+
+                    if (requestDto.Type == (int) CourseMeetingType.StudyGroup)
+                    {
+                        requestDto.Settings.ApprovalType = 1;
+                    }
                     var createResult = await _meetingService.CreateMeeting(lmsSettings, CourseId,
                         user,
                         Param.lis_person_contact_email_primary, requestDto);
@@ -200,6 +205,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                     //todo: validation error?
                     vm.Settings.ApprovalType = 2;
                 }
+
+                if (vm.Type == (int)CourseMeetingType.StudyGroup)
+                {
+                    vm.Settings.ApprovalType = 1;
+                }
+
                 var updatedResult = await _meetingService.UpdateMeeting(meetingId, lmsSettings, CourseId, Param.lis_person_contact_email_primary, vm, user);
 
                 return updatedResult;

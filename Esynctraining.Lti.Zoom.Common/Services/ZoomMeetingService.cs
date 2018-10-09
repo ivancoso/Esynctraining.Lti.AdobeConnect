@@ -230,10 +230,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, false);
             }
 
-            //Study groups meeting
-            if (requestDto.Type.GetValueOrDefault(1) == 3 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
+            if (requestDto.Type.GetValueOrDefault(1) == (int)CourseMeetingType.StudyGroup)
             {
-
                 if (requestDto.Participants != null)
                 {
                     var registrants = requestDto.Participants.Where(x => !x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
