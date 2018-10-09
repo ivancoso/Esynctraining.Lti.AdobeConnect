@@ -15,16 +15,14 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         private readonly INotificationService _notificationService;
         private readonly ZoomMeetingApiService _meetingService;
         private readonly ILmsLicenseAccessor _licenseAccessor;
-        private readonly IBackgroundTaskQueue _queue;
 
         public ZoomOfficeHoursService(ZoomDbContext context, INotificationService notificationService,
-            ILmsLicenseAccessor licenseAccessor, ZoomMeetingApiService meetingService, IBackgroundTaskQueue queue)
+            ILmsLicenseAccessor licenseAccessor, ZoomMeetingApiService meetingService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _meetingService = meetingService ?? throw new ArgumentNullException(nameof(meetingService));
             _licenseAccessor = licenseAccessor ?? throw new ArgumentNullException(nameof(licenseAccessor));
-            _queue = queue ?? throw new ArgumentNullException(nameof(queue));
         }
 
         public async Task<IEnumerable<OfficeHoursTeacherAvailabilityDto>> GetAvailabilities(int meetingId, string userId)
