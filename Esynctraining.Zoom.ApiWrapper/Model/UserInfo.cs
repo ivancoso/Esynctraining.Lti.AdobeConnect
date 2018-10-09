@@ -17,12 +17,10 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         public DateTime CreatedAt { get; set; }
         public DateTime LastLoginTime { get; set; }
     }
-    public abstract class BaseObject
+    
+    public class User
     {
         public string Id { get; set; }
-    }
-    public class User : BaseObject
-    {
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

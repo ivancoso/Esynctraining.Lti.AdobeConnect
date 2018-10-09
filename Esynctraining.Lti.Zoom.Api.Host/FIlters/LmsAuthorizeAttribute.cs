@@ -2,7 +2,6 @@
 using Esynctraining.Core.Json;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Zoom.Api.Host.Controllers;
-using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.Services;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
 {

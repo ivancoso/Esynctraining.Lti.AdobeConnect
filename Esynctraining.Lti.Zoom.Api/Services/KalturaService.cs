@@ -7,6 +7,8 @@ using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Dto.Kaltura;
+using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Kaltura;
 using Kaltura.Enums;
 using Kaltura.Services;

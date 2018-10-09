@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
@@ -9,7 +8,8 @@ using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
-using Esynctraining.Lti.Zoom.Domain;
+using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.Controllers

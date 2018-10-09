@@ -6,9 +6,11 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Zoom.Api.Dto;
-using Esynctraining.Lti.Zoom.Api.Dto.Enums;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
-using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.Dto;
+using Esynctraining.Lti.Zoom.Common.Dto.Enums;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore.Mvc;
 

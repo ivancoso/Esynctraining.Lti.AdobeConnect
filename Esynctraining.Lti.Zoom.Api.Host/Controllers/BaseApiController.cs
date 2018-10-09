@@ -3,7 +3,7 @@ using Esynctraining.Core;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Dto;
-using Esynctraining.Lti.Zoom.Api.Dto;
+using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore.Mvc;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Esynctraining.Lti.Lms.Common.Constants;
-using Esynctraining.Lti.Zoom.Api.Dto;
+using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Domain.Entities;
 
 namespace Esynctraining.Lti.Zoom.OAuth

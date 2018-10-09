@@ -8,10 +8,12 @@ using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
-using Esynctraining.Lti.Zoom.Api.Dto;
-using Esynctraining.Lti.Zoom.Api.Dto.Enums;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.Dto;
+using Esynctraining.Lti.Zoom.Common.Dto.Enums;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -22,16 +24,17 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
     public class MeetingsController : BaseApiController
     {
         private readonly ZoomUserService _userService;
+
         private readonly ZoomMeetingService _meetingService;
+        //private readonly LmsFactory _lmsFactory;
 
         #region Constructors and Destructors
 
         public MeetingsController(
             ApplicationSettingsProvider settings,
             ILogger logger, IJsonSerializer jsonSerializer,
-            ZoomUserService userService, 
-            ZoomRecordingService recordingService, 
-            ZoomMeetingService meetingService) : base(settings, logger)
+            ZoomUserService userService, ZoomRecordingService recordingService, ZoomMeetingService meetingService)
+            : base(settings, logger)
         {
             _userService = userService;
             _meetingService = meetingService;
@@ -75,7 +78,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
             try
             {
-                var viewModel = await _meetingService.GetMeetingDetails(meetingId, CourseId.ToString());
+                var viewModel = await _meetingService.GetMeetingDetails(meetingId, CourseId);
                 return viewModel.ToSuccessResult();
             }
             catch (Exception e)
@@ -108,7 +111,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 catch (Exception e)
                 {
                     Logger.Error("User doesn't exist or doesn't belong to this account", e);
-                    _userService.CreateUser(new CreateUserDto
+                    var userInfo = _userService.CreateUser(new CreateUserDto
                     {
                         Email = Param.lis_person_contact_email_primary,
                         FirstName = Param.PersonNameGiven,
@@ -128,7 +131,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                         //todo: validation error?
                         requestDto.Settings.ApprovalType = 2;
                     }
-                    var createResult = await _meetingService.CreateMeeting(lmsSettings, CourseId.ToString(),
+                    var createResult = await _meetingService.CreateMeeting(lmsSettings, CourseId,
                         user,
                         Param.lis_person_contact_email_primary, requestDto);
 
@@ -157,7 +160,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [Route("{meetingId}")]
         [HttpPut]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual async Task<OperationResult> Update([FromBody] CreateMeetingViewModel vm, [FromRoute] int meetingId)
+        public virtual async Task<OperationResult> Update([FromBody] CreateMeetingViewModel vm,
+            [FromRoute] int meetingId)
         {
             UserInfoDto user = null;
             try
@@ -173,8 +177,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             catch (Exception e)
             {
                 Logger.Error("User doesn't exist or doesn't belong to this account", e);
-
-                _userService.CreateUser(new CreateUserDto
+                /*{
+"code": 1005,
+"message": "User already in the account: ivanr+zoomapitest@esynctraining.com"
+}*/
+                var userInfo = _userService.CreateUser(new CreateUserDto
                 {
                     Email = Param.lis_person_contact_email_primary,
                     FirstName = Param.PersonNameGiven,
@@ -218,10 +225,13 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResult> DeleteMeeting(int meetingId, [FromQuery] bool remove = false)
         {
+            //param.lis_person_contact_email_primary
             var result = await _meetingService.DeleteMeeting(meetingId, CourseId,
                 Param.lis_person_contact_email_primary, remove);
 
             return result;
+
+            //return OperationResult.Error("Error during delete. Please try again or contact support.");
         }
 
         private bool IsPossibleCreateMeeting(UserInfoDto zoomUser, CreateMeetingViewModel model, out string errorMessage)

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using Esynctraining.Lti.Zoom.Api.Dto.Enums;
+using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 
 namespace Esynctraining.Lti.Zoom.Api.Dto
 {

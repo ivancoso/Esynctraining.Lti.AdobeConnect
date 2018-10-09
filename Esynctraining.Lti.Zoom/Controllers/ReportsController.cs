@@ -10,8 +10,8 @@ using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Dto;
-using Esynctraining.Lti.Zoom.Api.Dto;
-using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Common.Dto;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 

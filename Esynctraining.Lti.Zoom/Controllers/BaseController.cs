@@ -1,9 +1,9 @@
 ﻿using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Zoom.Common.Services;
+using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using Esynctraining.Lti.Zoom.Api.Services;
-using Esynctraining.Lti.Zoom.Domain;
 using System.Threading.Tasks;
 
 namespace Esynctraining.Lti.Zoom.Controllers

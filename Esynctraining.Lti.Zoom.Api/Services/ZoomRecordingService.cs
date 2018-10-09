@@ -144,5 +144,4 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         }
 
     }
-
 }

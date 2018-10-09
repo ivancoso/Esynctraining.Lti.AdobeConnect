@@ -111,5 +111,4 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string PrimaryColor { get; set; }
         public string SupportSectionText { get; set; }
     }
-
 }

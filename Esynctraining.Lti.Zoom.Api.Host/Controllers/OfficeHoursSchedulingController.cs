@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using Esynctraining.Lti.Zoom.Api.Dto.OfficeHours;
 using Esynctraining.Lti.Zoom.Api.Host.FIlters;
-using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.Dto.OfficeHours;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
@@ -17,15 +18,23 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
     {
         private readonly ZoomOfficeHoursService _officeHoursService;
         private readonly ZoomMeetingService _meetingService;
+//        private readonly ZoomMeetingApiService _meetingApiService;
+//        private readonly ZoomUserService _userService;
+//        private readonly IBackgroundTaskQueue _queue;
+//        private readonly INotificationService _notificationService;
 
-        public OfficeHoursSchedulingController(
-            ApplicationSettingsProvider settings,
-            ILogger logger, ZoomMeetingService meetingService, ZoomOfficeHoursService officeHoursService)
+        public OfficeHoursSchedulingController(ApplicationSettingsProvider settings, ILogger logger,
+            ZoomMeetingService meetingService, ZoomOfficeHoursService officeHoursService
+            //, IBackgroundTaskQueue queue, INotificationService notificationService, ZoomMeetingApiService meetingApiService, ZoomUserService userService
+            )
             : base(settings, logger)
         {
-            
             _meetingService = meetingService ?? throw new ArgumentNullException(nameof(officeHoursService));
             _officeHoursService = officeHoursService ?? throw new ArgumentNullException(nameof(officeHoursService));
+            //_queue = queue ?? throw new ArgumentNullException(nameof(queue));
+            //_notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            //_meetingApiService = meetingApiService ?? throw new ArgumentNullException(nameof(meetingApiService));
+            //_userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         [Route("{meetingId}/availabilities")]
@@ -74,7 +83,26 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public async Task<OperationResultWithData<SlotDto>> BookSlot(int meetingId, [FromBody]CreateSlotDto dto)
         {
+            var meeting = await _meetingService.GetMeeting(meetingId, CourseId);
+            if (meeting == null)
+                return OperationResultWithData<SlotDto>.Error("Meeting not found");
+
             var slotResult = await _officeHoursService.AddSlots(meetingId, Session.LmsUserId, User.Name, new[]{dto}, status: 1);
+            //if (slotResult.IsSuccess)
+            //{
+            //    var details = await _meetingApiService.GetMeetingApiDetails(meeting);
+            //    var host = _userService.GetUser(meeting.ProviderHostId); //todo: get user data from lmsUser table
+            //    if (host != null)
+            //    {
+            //        _queue.QueueBackgroundWorkItem(async token =>
+            //        {
+            //            await _notificationService.SendOHBookSlotEmail(slotResult.Data.First(), details.Topic, host.Email,
+            //                $"{host.FirstName} {host.LastName}");
+            //            Logger.Info($"Email for slotId={slotResult.Data.First().Id} is sent to host {host.Email}");
+            //        });
+            //    }
+            //}
+
             return slotResult.IsSuccess ? slotResult.Data.First().ToSuccessResult() : OperationResultWithData<SlotDto>.Error(slotResult.Message);
         }
 

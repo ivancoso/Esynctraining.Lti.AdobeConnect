@@ -6,7 +6,7 @@ using Esynctraining.Zoom.ApiWrapper;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
+namespace Esynctraining.Lti.Zoom.Controllers
 {
     public class ErrorController : Controller
     {

@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Utils;
-using Esynctraining.Lti.Zoom.Api.Dto;
-using Esynctraining.Lti.Zoom.Domain.Entities;
+using Esynctraining.Lti.Zoom.Common.Dto;
 using LtiLibrary.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Http;
 

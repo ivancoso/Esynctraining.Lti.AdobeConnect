@@ -5,6 +5,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.EntityFrameworkCore;
 

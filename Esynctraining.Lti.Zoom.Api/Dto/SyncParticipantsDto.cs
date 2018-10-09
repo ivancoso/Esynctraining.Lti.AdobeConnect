@@ -1,5 +1,5 @@
-﻿using Esynctraining.Lti.Lms.Common.Dto;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Esynctraining.Lti.Zoom.Common.Dto;
 
 namespace Esynctraining.Lti.Zoom.Api.Dto
 {

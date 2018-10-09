@@ -9,7 +9,6 @@ using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Core.Providers;
 using Esynctraining.Extensions;
-using Esynctraining.Json.Jil;
 using Esynctraining.Lti.Lms.AgilixBuzz;
 using Esynctraining.Lti.Lms.BlackBoard;
 using Esynctraining.Lti.Lms.Canvas;
@@ -17,9 +16,12 @@ using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.BlackBoard;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Schoology;
+using Esynctraining.Lti.Zoom.Api.Host.BackgroundServices;
 using Esynctraining.Lti.Zoom.Api.Host.Controllers;
 using Esynctraining.Lti.Zoom.Api.Host.Swagger;
 using Esynctraining.Lti.Zoom.Api.Services;
+using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Mail;
 using Esynctraining.Mail.Configuration;
@@ -144,6 +146,9 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                 .AddScoped<ITemplateTransformer, ViewRenderService>()
                 .AddScoped<ISmtpClient, MailKitSmtpClient>()
                 .AddScoped<INotificationService, NotificationService>();
+
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
