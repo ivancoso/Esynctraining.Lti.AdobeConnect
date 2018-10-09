@@ -6,7 +6,6 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.Constants;
-using Esynctraining.Lti.Zoom.Api;
 using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Lti.Zoom.Common.Services.MeetingLoader;
@@ -393,62 +392,6 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return vm;
         }
 
-        private MeetingDetailsViewModel ConvertToDetailsViewModel(Meeting dto)
-        {
-            int? regType = null;
-            if (dto.Settings.RegistrationType.HasValue)
-            {
-                regType = (int)dto.Settings.RegistrationType.Value;
-            }
-            var vm = new MeetingDetailsViewModel
-            {
-                Duration = dto.Duration,
-                ConferenceId = dto.Id,
-                //Id = id,
-                Timezone = dto.Timezone,
-                Topic = dto.Topic,
-                StartTime = GetUtcTime(dto),
-                Agenda = dto.Agenda,
-                Password = dto.Password,
-                JoinUrl = dto.JoinUrl,
-                //Type = type,
-                //HasSessions = dto.HasSessions
-                Settings = new CreateMeetingSettingsViewModel
-                {
-                    AudioType = (int)ConvertAudioToEnum(dto.Settings.Audio),
-                    EnableJoinBeforeHost = dto.Settings.EnableJoinBeforeHost,
-                    ApprovalType = (int)dto.Settings.ApprovalType,
-                    AlternativeHosts = dto.Settings.AlternativeHosts,
-                    EnableParticipantVideo = dto.Settings.EnableParticipantVideo,
-                    EnableMuteOnEntry = dto.Settings.EnableMuteOnEntry,
-                    EnableHostVideo = dto.Settings.EnableHostVideo,
-                    RecordingType = (int)(Enum.TryParse<AutomaticRecordingType>(dto.Settings.AutoRecording, out AutomaticRecordingType recordingType) ? recordingType : AutomaticRecordingType.None),
-                    //EnableWaitingRoom = dto.Settings.,
-                    RecurrenceRegistrationType = regType,
-                }
-            };
-
-            return vm;
-        }
-
-        private OfficeHoursViewModel ConvertFromDtoToOHViewModel(Meeting dto, string userId, int type = 1)
-        {
-            return new OfficeHoursViewModel
-            {
-                ConferenceId = dto.Id,
-                CanJoin = userId != null,
-                CanEdit = dto.HostId == userId,
-                Duration = dto.Duration,
-                // Id = id,
-                Timezone = dto.Timezone,
-                Topic = dto.Topic,
-                StartTime = GetUtcTime(dto),
-                HasSessions = (dto.Type == MeetingTypes.RecurringWithTime),
-                Type = type
-            };
-
-        }
-
         private long GetTimezoneOffset(UserInfoDto user, DateTimeOffset meetingTime)
         {
             if (user == null)
@@ -494,15 +437,6 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             }
 
             return MeetingAudioOptions.Both;
-        }
-
-        private MeetingAudioType ConvertAudioToEnum(string options)
-        {
-            if (options == MeetingAudioOptions.Voip)
-                return MeetingAudioType.Computer;
-            if (options == MeetingAudioOptions.Telephone)
-                return MeetingAudioType.Telephone;
-            return MeetingAudioType.Both;
         }
     }
 }
