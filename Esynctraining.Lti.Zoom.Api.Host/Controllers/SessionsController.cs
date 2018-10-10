@@ -5,6 +5,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Zoom.Api.Dto.Sessions;
+using Esynctraining.Lti.Zoom.Api.Host.FIlters;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("meetings/{meetingId}/sessions/createBatch")]
         [HttpPost]
+        [LmsAuthorizeBase]
         //[TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<IEnumerable<MeetingSessionDto>>> CreateBatch(int meetingId, [FromBody]CreateMeetingSessionsBatchDto dto)
         {
@@ -51,6 +53,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("meetings/{meetingId}/sessions")]
         [HttpGet]
+        [LmsAuthorizeBase]
         //[TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<IEnumerable<MeetingSessionDto>>> GetSessions(int meetingId)
         {
@@ -74,6 +77,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("meetings/{meetingId}/sessions")]
         [HttpPost]
+        [LmsAuthorizeBase]
         //[TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<MeetingSessionDto>> CreateSession(int meetingId)
         {
@@ -98,6 +102,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("meetings/{meetingId}/sessions/{sessionId}")]
         [HttpPut]
+        [LmsAuthorizeBase]
         //[TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<MeetingSessionDto>> SaveEvent(int meetingId, int sessionId, [FromBody]MeetingSessionUpdateDto model)
         {
@@ -122,6 +127,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("meetings/{meetingId}/sessions/{sessionId}")]
         [HttpDelete]
+        [LmsAuthorizeBase]
         //[TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public async Task<OperationResult> DeleteEvent(int meetingId, int? sessionId)
         {
