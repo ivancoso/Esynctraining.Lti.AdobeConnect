@@ -4,7 +4,7 @@ namespace Esynctraining.Lti.Zoom.Api.Dto.Sessions
 {
     public class CreateMeetingSessionsBatchDto
     {
-        public string Duration { get; set; }
+        public int Duration { get; set; } //minutes
 
         // TRICK: to support JIL instead of DayOfWeek
         public int[] DaysOfWeek { get; set; }

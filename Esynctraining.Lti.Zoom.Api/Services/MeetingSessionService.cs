@@ -41,10 +41,8 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         {
             var apiDetails = await _zoomMeetingApiService.GetMeetingApiDetails(meeting);
             DateTime startDate = dto.StartDate;
-            
-            var endDate = TimeSpan.TryParse(dto.Duration, out var duration)
-                ? startDate.AddMinutes((int)duration.TotalMinutes)
-                : startDate.AddHours(1);
+
+            var endDate = startDate.AddMinutes(dto.Duration);
 
             //MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(meeting.MeetingNameJson)
             //    ? new MeetingNameInfo()

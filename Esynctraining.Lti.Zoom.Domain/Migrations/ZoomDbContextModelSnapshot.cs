@@ -15,7 +15,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+                .HasAnnotation("ProductVersion", "2.1.2-rtm-30932")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -71,6 +71,33 @@ namespace Esynctraining.Lti.Zoom.Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LmsCourseMeeting");
+                });
+
+            modelBuilder.Entity("Esynctraining.Lti.Zoom.Domain.LmsMeetingSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("EndDate");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200);
+
+                    b.Property<DateTime>("StartDate");
+
+                    b.Property<string>("Summary")
+                        .HasMaxLength(2000);
+
+                    b.Property<int?>("lmsCourseMeetingId")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("lmsCourseMeetingId");
+
+                    b.ToTable("LmsMeetingSession");
                 });
 
             modelBuilder.Entity("Esynctraining.Lti.Zoom.Domain.LmsUserSession", b =>
@@ -176,6 +203,14 @@ namespace Esynctraining.Lti.Zoom.Domain.Migrations
                 {
                     b.HasOne("Esynctraining.Lti.Zoom.Domain.LmsCourseMeeting", "Meeting")
                         .WithMany()
+                        .HasForeignKey("lmsCourseMeetingId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Esynctraining.Lti.Zoom.Domain.LmsMeetingSession", b =>
+                {
+                    b.HasOne("Esynctraining.Lti.Zoom.Domain.LmsCourseMeeting", "Meeting")
+                        .WithMany("MeetingSessions")
                         .HasForeignKey("lmsCourseMeetingId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
