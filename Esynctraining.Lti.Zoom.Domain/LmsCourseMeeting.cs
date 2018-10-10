@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Esynctraining.Lti.Zoom.Domain
@@ -13,5 +14,8 @@ namespace Esynctraining.Lti.Zoom.Domain
         public string ProviderHostId { get; set; }
         public bool Reused { get; set; }
         public string Details { get; set; }
+
+        public virtual List<LmsMeetingSession> MeetingSessions { get; protected set; }
+
     }
 }

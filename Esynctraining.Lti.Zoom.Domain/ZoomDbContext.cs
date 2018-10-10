@@ -18,6 +18,7 @@ namespace Esynctraining.Lti.Zoom.Domain
             modelBuilder.ApplyConfiguration(new OfficeHoursTeacherAvailabilityMap());
             modelBuilder.ApplyConfiguration(new OfficeHoursSlotMap());
             modelBuilder.ApplyConfiguration(new ExternalFileInfoMap());
+            modelBuilder.ApplyConfiguration(new LmsMeetingSessionMap());
         }
 
         public DbSet<LmsCourseMeeting> LmsCourseMeetings { get; set; }
@@ -26,6 +27,7 @@ namespace Esynctraining.Lti.Zoom.Domain
         //public DbSet<LmsUser> LmsUsers { get; set; }
         public DbSet<LmsUserSession> LmsUserSessions { get; set; }
         public DbSet<ExternalFileInfo> ExternalFiles { get; set; }
+        public DbSet<LmsMeetingSession> MeetingSessions { get; set; }
         //public DbSet<LmsLicense> LmsLicenses { get; set; }
         //public DbSet<LmsLicenseSetting> LmsLicenseSettings { get; set; }
     }
