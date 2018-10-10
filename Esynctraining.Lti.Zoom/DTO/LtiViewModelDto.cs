@@ -49,6 +49,13 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string RescheduleSlot => BaseApiUrl + "/office-hours/slots/{slotId}/reschedule"; //put
         public string RescheduleDate => BaseApiUrl + "/office-hours/{meetingId}/reschedule-date"; //put
 
+        //sessions
+        public string CreateSessionsBatch { get; set; } = BaseApiUrl + "/meetings/{meetingId}/sessions/createBatch"; // post
+        public string GetSessions { get; set; } = BaseApiUrl + "/meetings/{meetingId}/sessions"; // get
+        public string CreateSession { get; set; } = BaseApiUrl + "/meetings/{meetingId}/sessions"; // post
+        public string SaveSession { get; set; } = BaseApiUrl + "/meetings/{meetingId}/sessions/{sessionId}"; // put
+        public string DeleteSession { get; set; } = BaseApiUrl + "/meetings/{meetingId}/sessions/{sessionId}"; // delete
+
         public string GetKalturaSession => BaseApiUrl + "/kaltura/session"; //get
         //public string UploadKalturaFile => BaseApiUrl + "/meetings/{meetingId}/kaltura-upload"; //post
 
