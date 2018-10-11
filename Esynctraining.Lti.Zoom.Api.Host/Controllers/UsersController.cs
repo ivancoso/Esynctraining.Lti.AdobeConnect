@@ -12,6 +12,7 @@ using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
+using Esynctraining.Zoom.ApiWrapper.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
@@ -67,7 +68,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
             var lmsUsers = await lmsService.GetUsers(lmsSettings, CourseId);
 
-            var lmsAvailableUsers = lmsUsers.Data.Where(lmsUser => (!registrants.Any(r => string.Equals(r.Email, lmsUser.Email)) && !lmsUser.Email.Equals(Param.lis_person_contact_email_primary, StringComparison.InvariantCultureIgnoreCase)))
+            var zoomActiveUsers = _zoomUserService.GetUsersFromApi(UserStatuses.Active);
+
+            var lmsAvailableUsers = lmsUsers.Data.Where(lmsUser => (!registrants.Any(r => string.Equals(r.Email, lmsUser.Email)) 
+                                                                    && !lmsUser.Email.Equals(Param.lis_person_contact_email_primary, StringComparison.InvariantCultureIgnoreCase)
+                                                                    && zoomActiveUsers.Any(au => au.Email.Equals(lmsUser.Email, StringComparison.InvariantCultureIgnoreCase))))
                 .Select(u => new LmsAvailableUserDto
             {
                     Email = u.Email,
