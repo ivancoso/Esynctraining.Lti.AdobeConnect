@@ -70,9 +70,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
             var zoomActiveUsers = _zoomUserService.GetUsersFromApi(UserStatuses.Active);
 
-            var lmsAvailableUsers = lmsUsers.Data.Where(lmsUser => (!registrants.Any(r => string.Equals(r.Email, lmsUser.Email)) 
+            var lmsAvailableUsers = lmsUsers.Data.Where(lmsUser => (!string.IsNullOrEmpty(lmsUser.Email)
+                                                                    && !registrants.Any(r => string.Equals(r.Email, lmsUser.Email)) 
                                                                     && !lmsUser.Email.Equals(Param.lis_person_contact_email_primary, StringComparison.InvariantCultureIgnoreCase)
-                                                                    && zoomActiveUsers.Any(au => au.Email.Equals(lmsUser.Email, StringComparison.InvariantCultureIgnoreCase))))
+                                                                    && zoomActiveUsers.Any(au => au.Email.Equals(lmsUser.Email, StringComparison.InvariantCultureIgnoreCase))
+                                                                    ))
                 .Select(u => new LmsAvailableUserDto
             {
                     Email = u.Email,
