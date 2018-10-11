@@ -751,7 +751,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 EnableStudyGroups = license.GetSetting<bool>(LmsLicenseSettingNames.EnableStudyGroups),
                 EnabledStorageProviders = await GetEnabledStorageProviders(license),
                 PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),
-                SupportSectionText = license.GetSetting<string>(LmsLicenseSettingNames.SupportSectionText)
+                SupportSectionText = license.GetSetting<string>(LmsLicenseSettingNames.SupportSectionText),
+                EnableMeetingSessions = license.GetSetting<bool>(LmsLicenseSettingNames.EnableMeetingSessions)
                 /*!string.IsNullOrEmpty(lmsProvider.UserGuideFileUrl)
                     ? lmsProvider.UserGuideFileUrl
                     : new Uri(new Uri((string)Settings.BasePath, UriKind.Absolute), $"content/lti-instructions/{lmsProvider.LmsProviderName}.pdf").ToString(),*/

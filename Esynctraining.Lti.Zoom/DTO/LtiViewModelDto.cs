@@ -117,5 +117,6 @@ namespace Esynctraining.Lti.Zoom.DTO
         public bool EnableClassRosterSecurity { get; set; }
         public string PrimaryColor { get; set; }
         public string SupportSectionText { get; set; }
+        public bool EnableMeetingSessions { get; set; }
     }
 }
