@@ -104,8 +104,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
             if (dbMeeting == null)
                 return NotFound(meetingId);
 
-            var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId, WebUtility.UrlDecode(meetingSessionId).Replace(" ", "+"));
-            var records = sessions.First().Participants.Select(x => new
+            var participants = _reportService.GetParticipantsBySessionId(WebUtility.UrlDecode(meetingSessionId).Replace(" ", "+"));
+            var records = participants.Select(x => new
             {
                 x.Details.Name,
                 x.Details.EnteredAt,
