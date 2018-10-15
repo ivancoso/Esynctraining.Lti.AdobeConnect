@@ -44,7 +44,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
             var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
             var apiMeeting = await _meetingService.GetMeetingDetails(meetingId, param.course_id.ToString());
-            var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
+            var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId, null, true);
 
             byte[] fileBytes = new byte[0];
             var url = Settings.ReportsUrl.TrimEnd('/') + "/ReportBySession";

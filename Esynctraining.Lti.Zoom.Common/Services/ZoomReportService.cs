@@ -17,8 +17,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
         }
 
-
-        public IEnumerable<ZoomSessionDto> GetSessionsReport(string meetingId, string userId, string sessionId = null)
+        public IEnumerable<ZoomSessionDto> GetSessionsReport(string meetingId, string userId, string sessionId = null, bool inclideParticipants = false)
         {
             var allUserSessions = _zoomApi.GetMeetingsReport(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
             var meetingSessions = allUserSessions.Meetings.Where(x => x.Id == meetingId);
@@ -35,6 +34,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     SessionId = s.Uuid,
                     StartedAt = s.StartTime.DateTime,
                     EndedAt = s.EndTime.DateTime,
+                    Participants = inclideParticipants ? GetParticipantsBySessionId(s.Uuid).ToList() : null
                 };
                 result.Add(sessionDto);
             }
