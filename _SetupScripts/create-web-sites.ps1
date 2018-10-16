@@ -133,9 +133,10 @@ SetFolderPermissionsForUser -directoryPath $fileStorageFolderPath `
     -userName "IIS APPPOOL\EdugameCloud.$environmentAlias" `
     -permissions "Modify, Read, ReadAndExecute, Write"
 
-SetFolderWritePermissionsForUser `
+SetFolderPermissionsForUser `
     -directoryPath $fileStorageFolderPath `
-    -appPoolName "EdugameCloud.$environmentAlias.Wcf"
+    -userName "IIS APPPOOL\EdugameCloud.$environmentAlias.Wcf" `
+    -permissions "Modify, Read, ReadAndExecute, Write"
 
 # CREATE c:\inetpub\EdugameCloud.$environmentAlias\Content\swf\pub
 CreateFolder -folderPath "c:\inetpub\EdugameCloud.$environmentAlias\Content\swf\pub"
