@@ -393,8 +393,9 @@
                     ErrorsTexts.ImportError_Subject,
                     ErrorsTexts.ImportError_NotFound);
             }
-            catch
+            catch(Exception ex)
             {
+                Logger.Error("Import", ex);
                 error = new Error(
                     Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED,
                     ErrorsTexts.ImportError_Subject,
