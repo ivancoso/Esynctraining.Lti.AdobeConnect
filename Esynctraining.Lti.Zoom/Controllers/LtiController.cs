@@ -335,9 +335,24 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 switch ( license.ProductId)
                 {
                     case 1010:
+                        var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
+                        var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
+                        
+                        
                         if (string.IsNullOrWhiteSpace(session?.Token) || _canvasApi.IsTokenExpired(license.Domain, session.Token))
                         {
-                            return this.StartOAuth2Authentication(license, "canvas", sessionKey, param);
+                            if (string.IsNullOrEmpty(session.RefreshToken))
+                            {
+                                return StartOAuth2Authentication(license, "canvas", sessionKey, param);
+                            }
+
+                            var accessToken = await _canvasApi.RequestTokenByRefreshToken(session.RefreshToken, oAuthId, oAuthKey, license.Domain);
+                            if (string.IsNullOrEmpty(accessToken))
+                            {
+                                return StartOAuth2Authentication(license, "canvas", sessionKey, param);
+                            }
+
+                            await _sessionService.UpdateSessionAccessToken(session, accessToken);
                         }
 
                         break;
@@ -491,7 +506,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             var model = new LtiViewModelDto
             {
-                FullVersion = new Version(0, 7, 0, 0), //versionFileJs,
+                FullVersion = new Version(0, 8, 0, 0), //versionFileJs,
                 //                LtiVersion = version,
 
                 // TRICK:
