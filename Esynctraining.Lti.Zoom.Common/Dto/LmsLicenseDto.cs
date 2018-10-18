@@ -48,6 +48,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
                     result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
                     result.Add(LmsUserSettingNames.Token, session.Token);
+                    result.Add(LmsUserSettingNames.RefreshToken, session.RefreshToken);
                     break;
 
                 case 1020:

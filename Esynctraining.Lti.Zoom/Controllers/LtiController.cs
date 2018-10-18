@@ -1,39 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using EdugameCloud.Lti.Canvas;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Providers;
-using Esynctraining.Core.Utils;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
-using Esynctraining.Lti.Zoom.Api;
 using Esynctraining.Lti.Zoom.Common;
 using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Constants;
-using Esynctraining.Lti.Zoom.Core.Extensions;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Lti.Zoom.Domain.Entities;
 using Esynctraining.Lti.Zoom.DTO;
 using Esynctraining.Lti.Zoom.Extensions;
 using Esynctraining.Lti.Zoom.OAuth;
-using Esynctraining.Lti.Zoom.OAuth.Canvas;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using LtiLibrary.NetCore.Common;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 
@@ -49,6 +42,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private readonly ZoomUserService _userService;
         private readonly LmsUserServiceFactory _lmsUserServiceFactory;
 
+        private readonly CanvasAPI _canvasApi;
+
         public LtiController(ILogger logger, ApplicationSettingsProvider settings, ILmsLicenseService licenseService,
             UserSessionService sessionService, IJsonDeserializer jsonDeserializer, ZoomMeetingService meetingService,
             ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory) : base(logger, settings, sessionService)
@@ -58,6 +53,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
             _meetingService = meetingService;
             _userService = userService;
             _lmsUserServiceFactory = lmsUserServiceFactory;
+
+            _canvasApi = new CanvasAPI(logger, jsonDeserializer);
         }
 
         [HttpGet]
@@ -218,19 +215,11 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
         }
 
-        public virtual async Task<ActionResult> About()
-        {
-            ViewData["Message"] = "Your application description page.";
-            return this.View("About");
-        }
-
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification =
             "Reviewed. Suppression is OK here.")]
         [AllowAnonymous]
         public virtual async Task<ActionResult> AuthenticationCallback(
-            // ReSharper disable once InconsistentNaming
             string __provider__,
-            // ReSharper disable once InconsistentNaming
             string __sid__ = null,
             string code = null,
             string state = null,
@@ -270,48 +259,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     //if (provider == LmsProviderNames.Canvas)
                     {
+
                         var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
                         var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
 
-                        IList<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
-                        pairs.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
-                        pairs.Add(new KeyValuePair<string, string>("client_id", oAuthId));
-                        pairs.Add(new KeyValuePair<string, string>("redirect_uri",
-                            $"{Settings.BasePath}/oauth_complete"));
-                        pairs.Add(new KeyValuePair<string, string>("client_secret", oAuthKey));
-                        pairs.Add(new KeyValuePair<string, string>("code", code));
-
-
-                        System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
-                        var httpResponseMessage = await httpClient.PostAsync(
-                            $"https://{license.Domain}/login/oauth2/token", new FormUrlEncodedContent(pairs));
-                        if (httpResponseMessage.IsSuccessStatusCode)
-                        {
-                            if (provider.ToLower() == LmsProviderNames.Canvas)
-                            {
-                                if (param.lms_user_login == "$Canvas.user.loginId")
-                                    throw new InvalidOperationException(
-                                        "[Canvas Authentication Error]. Please login to Canvas.");
-                            }
-                        }
-                        else
-                        {
-                            var sid = Request.Query["__sid__"].ToString();
-                            var cookie = Request.Cookies[sid];
-
-                            this.ViewBag.Error = string.Format(
-                                "Generic OAuth fail: code:[{0}] provider:[{1}] sid:[{2}] cookie:[{3}]",
-                                Request.Query["code"],
-                                Request.Query["__provider__"],
-                                sid);
-                        }
-
-
-                        var resp = await httpResponseMessage.Content.ReadAsStringAsync();
-                        ResponseToken responseToken = _jsonDeserializer.JsonDeserialize<ResponseToken>(resp);
-                        string tocken = responseToken.access_token;
-                        await _sessionService.UpdateSessionToken(s, tocken);
+                        EdugameCloud.Lti.Canvas.ResponseToken responseTocken = await _canvasApi.RequestToken($"{Settings.BasePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain);
+                        await _sessionService.UpdateSessionRefreshToken(s, responseTocken.access_token, responseTocken.refresh_token);
 
                         return await RedirectToHome(s);
                     }
@@ -327,12 +281,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 }
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
-            //catch (Core.WarningMessageException ex)
-            //{
-            //    Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", session);
-            //    ViewBag.Message = ex.Message;
-            //    return View("~/Views/Lti/LtiError.cshtml");
-            //}
             catch (Exception ex)
             {
                 Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", session);
@@ -340,14 +288,10 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 return View("~/Views/Lti/LtiError.cshtml");
             }
 
-            ViewData["Message"] = __provider__;
-            return this.View("About");
         }
 
         public virtual async Task<ActionResult> LoginWithProvider(string provider, LtiParamDTO param)
         {
-            var methodTime = Stopwatch.StartNew();
-            var trace = new StringBuilder();
             var sw = Stopwatch.StartNew();
 
             try
@@ -374,16 +318,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         $"Invalid LTI request. Your Zoom integration is not set up for provided consumer key.");
                 }
 
-                //string validationError = ValidateLmsLicense(license, param);
-                //if (!string.IsNullOrWhiteSpace(validationError))
-                //{
-                //    this.ViewBag.Error = validationError;
-                //    return this.View("~/Views/Lti/LtiError.cshtml");
-                //}
-
-                //LmsProvider providerInstance = LmsProvider.Generate();
-
-
                 if (!(new BltiProviderHelper(Logger)).VerifyBltiRequest(license, Request,
                     () => true)) //todo: remove if not needed
                 {
@@ -401,8 +335,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 switch ( license.ProductId)
                 {
                     case 1010:
-                        if (string.IsNullOrWhiteSpace(session?.Token) ||
-                            await IsTokenExpired(license.Domain, session.Token))
+                        if (string.IsNullOrWhiteSpace(session?.Token) || _canvasApi.IsTokenExpired(license.Domain, session.Token))
                         {
                             return this.StartOAuth2Authentication(license, "canvas", sessionKey, param);
                         }
@@ -429,88 +362,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     ViewBag.ReturnUrl = param.launch_presentation_return_url;
                 }
                 return View("~/Views/Lti/LtiError.cshtml");
-            }
-            //catch (Core.WarningMessageException ex)
-            //{
-            //    _logger.WarnFormat("[WarningMessageException] param:{0}.",
-            //        JsonSerializer.JsonSerialize(param));
-            //    this.ViewBag.Message = ex.Message;
-            //    return this.View("~/Views/Lti/LtiError.cshtml");
-            //}
-            //catch (Exception ex)
-            //{
-            //    Logger.ErrorFormat(ex, "LoginWithProvider exception. oauth_consumer_key:{0}.",
-            //        param.oauth_consumer_key);
-            //    this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
-            //    return this.View("~/Views/Lti/LtiError.cshtml");
-            //}
-            {
-                methodTime.Stop();
-                var time = methodTime.Elapsed;
-                if (time > TimeSpan.FromSeconds(int.Parse((string) Settings.Monitoring_MaxLoginTime)))
-                {
-                    var monitoringLog = IoC.Resolve<ILogger>("Monitoring");
-
-                    monitoringLog.ErrorFormat("LoginWithProvider takes more than {0} seconds. Time: {1}. Details: {2}.",
-                        Settings.Monitoring_MaxLoginTime.ToString(),
-                        time.ToString(), trace.ToString());
-                }
-            }
-
-            ViewData["Message"] = provider;
-            return this.View("~/Views/Lti/About.cshtml");
-        }
-/*
-        private void ValidateLoggedUser(string paramLisPersonContactEmailPrimary)
-        {
-            var activeUsers = _userService.GetUsersEmails(UserStatuses.Active);
-            if (activeUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
-                return;
-
-            var inactiveUsers = _userService.GetUsersEmails(UserStatuses.Inactive);
-            if (inactiveUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
-                throw new LtiException("User has an account, but it is inactive.");
-
-            var pendingUsers = _userService.GetUsersEmails(UserStatuses.Pending);
-            if (pendingUsers.Users.Any(u => u.Email.Equals(paramLisPersonContactEmailPrimary, StringComparison.CurrentCultureIgnoreCase)))
-                throw new LtiException("User has an account, but it is not activated yet.");
-
-
-            throw new LtiException("User doesn't have zoom account.");
-        }
-        */
-        public async Task<bool> IsTokenExpired(string api, string userToken)
-        {
-            try
-            {
-                Validate(api, userToken);
-
-                var client = CreateRestClient(api);
-
-                RestRequest request = CreateRequest(
-                    api,
-                    "/api/v1/users/self/profile",
-                    Method.GET,
-                    userToken);
-
-                IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
-
-                return response.StatusCode == HttpStatusCode.Unauthorized;
-
-                //-------------------------
-                //var builder = new UriBuilder("https://esynctraining.instructure.com" + "/api/v1/users/self/profile");
-
-                //HttpClient httpClient = new HttpClient();
-                //var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.Uri.AbsoluteUri);
-                //requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Authorization", "Bearer " + userToken);
-                //HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
-
-                //return response.StatusCode == HttpStatusCode.Unauthorized;
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorFormat(ex, "[CanvasAPI.IsTokenExpired] API:{0}. UserToken:{1}.", api, userToken);
-                throw;
             }
         }
 
@@ -587,37 +438,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
         }
 
-        private string ValidateLmsLicense(LmsLicenseDto lmsLicense, LtiParamDTO param)
-        {
-            if (!true)
-                //TODO update
-                //if (!lmsLicense.HasLmsDomain(param.lms_domain))
-            {
-                Logger.ErrorFormat(
-                    "LTI integration is already set for different domain. Request's lms_domain:{0}. oauth_consumer_key:{1}.",
-                    param.lms_domain, param.oauth_consumer_key);
-                return "This LTI integration is already set for different domain.";
-            }
-
-            //if (!lmsLicense.IsActive)
-            //{
-            //    _logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
-            //    return "LMS License is not active. Please contact administrator.";
-            //}
-
-
-            if (!true)
-                //TODO update
-                //if (!CompanyModel.IsActive(lmsLicense.CompanyId))
-            {
-                Logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.",
-                    param.oauth_consumer_key);
-                return "Sorry, your company doesn't have any active license. Please contact administrator.";
-            }
-
-            return null;
-        }
-
         private ActionResult StartOAuth2Authentication(LmsLicenseDto lmsLicense, string provider, string session,
             LtiParamDTO model)
         {
@@ -628,56 +448,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
             switch (provider)
             {
                 case LmsProviderNames.Canvas:
-                    returnUrl = UriBuilderExtensions.AddQueryStringParameter(
-                        returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName,
-                        HttpScheme.Https + model.lms_domain);
-
                     var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
-                    var oAuthKey = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
-                    returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, session);
-                   
-                    if (string.IsNullOrEmpty(oAuthId) || string.IsNullOrEmpty(oAuthKey))
-                    {
-                        var message = "Invalid OAuth parameters. Application Id and Application Key cannot be empty.";
-                        throw new LtiException(message);
-                    }
-                    
-                    Uri uri = new Uri(returnUrl);
-                    var baseUri =
-                        uri.GetComponents(
-                            UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
-                            UriFormat.UriEscaped);
-                    var query = QueryHelpers.ParseQuery(uri.Query);
-                    var items = query.SelectMany(x => x.Value,
-                        (col, value) => new KeyValuePair<string, string>(col.Key, value)).ToList();
-                    string parameterValue = Guid.NewGuid().ToString("N");
-                    var qb = new QueryBuilder(items);
-                    qb.Add("__sid__", parameterValue);
-                    qb.Add("__provider__", "canvas");
-                    var fullUri = baseUri + qb.ToQueryString();
-
-
-                    var builder = new UriBuilder($"https://{lmsLicense.Domain}/login/oauth2/auth");
-
-                    var parameters = new Dictionary<string, string>
-                    {
-                        {"client_id", oAuthId},
-                        {"redirect_uri", fullUri},
-                        {"response_type", "code"},
-                        {
-                            "state",
-                            Convert.ToBase64String(
-                                Encoding.ASCII.GetBytes($"{lmsLicense.Domain}&&&ru={fullUri}"))
-                        }
-                    };
-
-                    foreach (var key in parameters.Keys)
-                    {
-                        builder.AppendQueryArgument(key, parameters[key]);
-                    }
-
-                    return Redirect(builder.Uri.AbsoluteUri);
-                    break;
+                    string authUrl = _canvasApi.BuildAuthUrl(returnUrl, model.lms_domain, oAuthId, session);
+                    return Redirect(authUrl);
             }
 
             return null;
@@ -685,7 +458,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private async Task<LmsUserSession> SaveSession(LmsLicenseDto license, LtiParamDTO param)
         {
-            //var session = await _sessionService.GetSession(license.ConsumerKey, param.course_id.ToString(), param.lms_user_id);
             var session = await _sessionService.SaveSession(license.ConsumerKey, param.course_id.ToString(), param,
                           param.lis_person_contact_email_primary, param.lms_user_id);
             return session;
@@ -694,11 +466,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private async Task<ActionResult> RedirectToHome(LmsUserSession session, StringBuilder trace = null)
         {
             LtiViewModelDto model = await BuildModelAsync(session, trace);
-            //TempData["lti-index-model"] = model;
-
-            //var primaryColor = session.LmsUser.PrimaryColor;
-            //primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (session.LmsCompany.PrimaryColor ?? string.Empty);
-
             return RedirectToAction("Home", "Lti", new
             {
                 session = session.Id.ToString()
@@ -716,13 +483,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             string userFullName = param.lis_person_name_full ??
                                   param.lis_person_name_given + " " + param.lis_person_name_family;
-            //var settings = LicenseSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), Cache);
-
-            //var filePattern = (string)Settings.JsBuildSelector;
-            //var versionFileJs = CacheUtility.GetCachedItem<Version>(PersistantCache, CachePolicies.Keys.VersionFileName(filePattern), () =>
-            //{
-            //    return VersionProcessor.ProcessVersion(Server.MapPath("~/extjs/"), filePattern);
-            //});
 
             ZoomUrls.BaseApiUrl = (string) Settings.BaseApiPath.TrimEnd('/');
             ZoomUrls.BaseUrl = (string) Settings.BasePath.TrimEnd('/');
@@ -753,9 +513,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),
                 SupportSectionText = license.GetSetting<string>(LmsLicenseSettingNames.SupportSectionText),
                 EnableMeetingSessions = license.GetSetting<bool>(LmsLicenseSettingNames.EnableMeetingSessions)
-                /*!string.IsNullOrEmpty(lmsProvider.UserGuideFileUrl)
-                    ? lmsProvider.UserGuideFileUrl
-                    : new Uri(new Uri((string)Settings.BasePath, UriKind.Absolute), $"content/lti-instructions/{lmsProvider.LmsProviderName}.pdf").ToString(),*/
             };
 
             return model;
@@ -779,16 +536,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
             string teacherRoles = Settings.TeacherRoles;
             return !string.IsNullOrWhiteSpace(teacherRoles) && teacherRoles.Split(',')
                        .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
-        }
-
-        private bool IsAdminRole(LtiParamDTO param)
-        {
-            if (param == null)
-            {
-                return this.IsDebug;
-            }
-
-            return param.roles.Contains("Administrator");
         }
     }
 }

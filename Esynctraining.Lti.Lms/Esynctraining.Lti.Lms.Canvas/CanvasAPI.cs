@@ -1,17 +1,27 @@
-﻿using Esynctraining.Core.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Esynctraining.Core.Json;
+using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Common.Constants;
-using RestSharp;
-using System;
-using System.Net;
 using Esynctraining.Lti.Lms.Common.Dto;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.WebUtilities;
+using RestSharp;
 
 namespace EdugameCloud.Lti.Canvas
 {
     public class CanvasAPI : ILmsAPI, ICanvasAPI
     {
         protected readonly ILogger _logger;
+        private readonly IJsonDeserializer _jsonDeserializer;
 
         #region Static Fields
 
@@ -22,12 +32,51 @@ namespace EdugameCloud.Lti.Canvas
 
         #endregion
 
-        public CanvasAPI(ILogger logger)
+        public CanvasAPI(ILogger logger, IJsonDeserializer jsonDeserializer)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _jsonDeserializer = jsonDeserializer ?? throw new ArgumentNullException(nameof(jsonDeserializer));
         }
 
         #region Public Methods and Operators
+
+        public async Task<ResponseToken> RequestToken(string basePath, string oAuthId, string oAuthKey, string code, string lmsDomain)
+        {
+            IList<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
+            pairs.Add(new KeyValuePair<string, string>("grant_type", "authorization_code"));
+            pairs.Add(new KeyValuePair<string, string>("client_id", oAuthId));
+            pairs.Add(new KeyValuePair<string, string>("redirect_uri", basePath));
+            pairs.Add(new KeyValuePair<string, string>("client_secret", oAuthKey));
+            pairs.Add(new KeyValuePair<string, string>("code", code));
+
+
+            HttpClient httpClient = new HttpClient();
+            var httpResponseMessage = await httpClient.PostAsync(
+                $"https://{lmsDomain}/login/oauth2/token", new FormUrlEncodedContent(pairs));
+
+            var resp = await httpResponseMessage.Content.ReadAsStringAsync();
+            ResponseToken responseToken = _jsonDeserializer.JsonDeserialize<ResponseToken>(resp);
+            return responseToken;
+
+        }
+
+        public async Task<string> RequestTokenByRefreshToken(string refreshToken, string oAuthId, string oAuthKey, string lmsDomain)
+        {
+            IList<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
+            pairs.Add(new KeyValuePair<string, string>("grant_type", "refresh_token"));
+            pairs.Add(new KeyValuePair<string, string>("client_id", oAuthId));
+            pairs.Add(new KeyValuePair<string, string>("client_secret", oAuthKey));
+            pairs.Add(new KeyValuePair<string, string>("refresh_token", refreshToken));
+
+            HttpClient httpClient = new HttpClient();
+            var httpResponseMessage = await httpClient.PostAsync(
+                $"https://{lmsDomain}/login/oauth2/token", new FormUrlEncodedContent(pairs));
+
+            var resp = await httpResponseMessage.Content.ReadAsStringAsync();
+            ResponseToken responseToken = _jsonDeserializer.JsonDeserialize<ResponseToken>(resp);
+            return responseToken.access_token;
+        }
+
 
         public bool IsTokenExpired(string api, string userToken)
         {
@@ -36,15 +85,10 @@ namespace EdugameCloud.Lti.Canvas
                 Validate(api, userToken);
 
                 var client = CreateRestClient(api);
-
-                RestRequest request = CreateRequest(
-                    api,
-                    "/api/v1/users/self/profile",
-                    Method.GET,
-                    userToken);
+                var request = new RestRequest("/api/v1/users/self/profile", Method.GET);
+                request.AddHeader("Authorization", "Bearer " + userToken);
 
                 IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
-
                 return response.StatusCode == HttpStatusCode.Unauthorized;
             }
             catch (Exception ex)
@@ -54,96 +98,57 @@ namespace EdugameCloud.Lti.Canvas
             }
         }
 
-        //public void AddMoreDetailsForUser(string api, string userToken, LmsUserDTO user)
-        //{
-        //    try
-        //    {
-        //        Validate(api, userToken);
-
-        //        LmsUserDTO canvasProfile = GetUser(api, userToken, user.id);
-
-        //        if (canvasProfile != null)
-        //        {
-        //            user.primary_email = canvasProfile.primary_email;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.ErrorFormat(ex, "[CanvasAPI.AddMoreDetailsForUser] API:{0}. UserToken:{1}.", api, userToken);
-        //        throw;
-        //    }
-        //}
-
-        public LmsUserDTO GetUser(string api, string userToken, string userId)
+        public string BuildAuthUrl(string returnUrl, string lmsDomain, string oAuthId, string session)
         {
-            IRestResponse<LmsUserDTO> response;
-            try
+            var builder1 = new UriBuilder(returnUrl);
+            builder1.AppendQueryArgument("providerUrl", HttpScheme.Https + lmsDomain);
+            returnUrl = builder1.Uri.AbsoluteUri;
+
+            var builder2 = new UriBuilder(returnUrl);
+            builder2.AppendQueryArgument("providerKey", session);
+            returnUrl = builder2.Uri.AbsoluteUri;
+
+            if (string.IsNullOrEmpty(oAuthId))
             {
-                Validate(api, userToken);
-
-                var client = CreateRestClient(api);
-
-                RestRequest request = CreateRequest(
-                    api,
-                    string.Format("/api/v1/users/{0}/profile", userId),
-                    Method.GET,
-                    userToken);
-
-                response = client.Execute<LmsUserDTO>(request);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "[CanvasAPI.GetUser] API:{0}. UserToken:{1}. UserId:{2}.", api, userToken, userId);
-                throw;
+                var message = "Invalid OAuth parameters. Application Id and Application Key cannot be empty.";
+                throw new Exception(message);
             }
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            Uri uri = new Uri(returnUrl);
+            var baseUri =
+                uri.GetComponents(
+                    UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
+                    UriFormat.UriEscaped);
+            var query = QueryHelpers.ParseQuery(uri.Query);
+            var items = query.SelectMany(x => x.Value,
+                (col, value) => new KeyValuePair<string, string>(col.Key, value)).ToList();
+            string parameterValue = Guid.NewGuid().ToString("N");
+            var qb = new QueryBuilder(items);
+            qb.Add("__sid__", parameterValue);
+            qb.Add("__provider__", "canvas");
+            var fullUri = baseUri + qb.ToQueryString();
+
+
+            var builder = new UriBuilder($"https://{lmsDomain}/login/oauth2/auth");
+
+            var parameters = new Dictionary<string, string>
+                    {
+                        {"client_id", oAuthId},
+                        {"redirect_uri", fullUri},
+                        {"response_type", "code"},
+                        {
+                            "state",
+                            Convert.ToBase64String(
+                                Encoding.ASCII.GetBytes($"{lmsDomain}&&&ru={fullUri}"))
+                        }
+                    };
+
+            foreach (var key in parameters.Keys)
             {
-                _logger.ErrorFormat("[CanvasAPI.GetUser] API:{0}. UserToken:{1}. UserId:{2}. {3}",
-                    api, userToken, userId, BuildInformation(response));
-                throw new InvalidOperationException(string.Format("[CanvasAPI.GetUser] Canvas returns '{0}'", response.StatusDescription));
+                builder.AppendQueryArgument(key, parameters[key]);
             }
 
-            return response.Data;
-        }
-        
-        public AnnouncementDTO CreateAnnouncement(
-            string api,
-            string userToken,
-            string courseId,
-            string title,
-            string message)
-        {
-            IRestResponse<AnnouncementDTO> response;
-            try
-            {
-                Validate(api, userToken);
-
-                var client = CreateRestClient(api);
-                RestRequest request = CreateRequest(
-                    api,
-                    string.Format("/api/v1/courses/{0}/discussion_topics", courseId),
-                    Method.POST,
-                    userToken);
-                request.AddParameter("title", title);
-                request.AddParameter("message", message);
-                request.AddParameter("is_announcement", true);
-
-                response = client.Execute<AnnouncementDTO>(request);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "[CanvasAPI.CreateAnnouncement] API:{0}. UserToken:{1}. CourseId:{2}.", api, userToken, courseId);
-                throw;
-            }
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.ErrorFormat("[CanvasAPI.CreateAnnouncement] API:{0}. UserToken:{1}. CourseId:{2}. {3}",
-                    api, userToken, courseId, BuildInformation(response));
-                throw new InvalidOperationException(string.Format("[CanvasAPI.CreateAnnouncement] Canvas returns '{0}'", response.StatusDescription));
-            }
-            return response.Data;
+            return builder.Uri.AbsoluteUri;
         }
 
         #endregion
@@ -165,8 +170,14 @@ namespace EdugameCloud.Lti.Canvas
             return client;
         }
 
-        protected static RestRequest CreateRequest(string api, string resource, Method method, string userToken)
+        protected async Task<RestRequest> CreateRequest(string apiDomain, string resource, Method method, string userToken, string oauthId, string oauthKey, string refreshToken)
         {
+            if (IsTokenExpired(apiDomain, userToken))
+            {
+                var newAccessToken = await RequestTokenByRefreshToken(refreshToken, oauthId, oauthKey, apiDomain);
+                userToken = newAccessToken;
+            }
+
             var request = new RestRequest(resource, method);
             request.AddHeader("Authorization", "Bearer " + userToken);
             return request;
@@ -180,8 +191,17 @@ namespace EdugameCloud.Lti.Canvas
                     response.ErrorException);
         }
 
+
         #endregion
 
+    }
+
+    public class ResponseToken
+    {
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+        public string refresh_token { get; set; }
+        public int expires_in { get; set; }
     }
 
 }

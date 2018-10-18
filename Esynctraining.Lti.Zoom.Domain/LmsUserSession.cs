@@ -15,16 +15,9 @@ namespace Esynctraining.Lti.Zoom.Domain
         public string Email { get; set; }
         public string LmsUserId { get; set; }
         public string Token { get; set; }
+        [MaxLength(200)]
+        public string RefreshToken { get; set; }
         public string CourseId { get; set; }
-        public string SessionData { get; set; } //json LtiParamDTO
-        //public virtual LtiParamDTO LtiSession
-        //{
-        //    get
-        //    {
-        //        return !string.IsNullOrWhiteSpace(this.SessionData)
-        //            ? JsonConvert.DeserializeObject<LtiParamDTO>(this.SessionData)
-        //            : null;
-        //    }
-        //}
+        public string SessionData { get; set; }
     }
 }

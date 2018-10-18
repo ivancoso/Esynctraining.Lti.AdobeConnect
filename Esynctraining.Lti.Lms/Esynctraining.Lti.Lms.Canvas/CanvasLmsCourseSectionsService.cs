@@ -16,14 +16,5 @@ namespace EdugameCloud.Lti.Canvas
         {
             _canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
         }
-
-        public override async Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSections()
-        {
-            IEnumerable<LmsCourseSectionDTO> result = await _canvasApi.GetCourseSections((string)LicenseSettings["LmsDomain"],
-                (string)LicenseSettings["AdminUser.Token"],
-                Param.course_id.ToString());
-
-            return result;
-        }
     }
 }

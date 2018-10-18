@@ -68,13 +68,23 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return session;
         }
 
-        public async Task<LmsUserSession> UpdateSessionToken(LmsUserSession session, string token)
+        public async Task<LmsUserSession> UpdateSessionRefreshToken(LmsUserSession session, string token, string refreshToken)
+        {
+            var lmsSession = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x => x.Id == session.Id);
+            lmsSession.Token = token;
+            lmsSession.RefreshToken = refreshToken;
+            await _dbContext.SaveChangesAsync();
+            return lmsSession;
+        }
+
+        public async Task<LmsUserSession> UpdateSessionAccessToken(LmsUserSession session, string token)
         {
             var lmsSession = await _dbContext.LmsUserSessions.FirstOrDefaultAsync(x => x.Id == session.Id);
             lmsSession.Token = token;
             await _dbContext.SaveChangesAsync();
             return lmsSession;
         }
+
 
     }
 

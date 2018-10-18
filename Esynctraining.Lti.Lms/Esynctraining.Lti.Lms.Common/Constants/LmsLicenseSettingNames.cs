@@ -3,6 +3,7 @@ namespace Esynctraining.Lti.Lms.Common.Constants
     public class LmsUserSettingNames
     {
         public const string Token = nameof(Token);
+        public const string RefreshToken = nameof(RefreshToken);
     }
 
     public class LmsLicenseSettingNames
