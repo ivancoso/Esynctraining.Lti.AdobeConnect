@@ -58,8 +58,11 @@ namespace Esynctraining.Lti.Zoom.Host
             services
                 .AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
 
-            var configurationSection = Configuration.GetSection("AppSettings");
             var settings = new NameValueCollection();
+            var version = typeof(Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+            settings.Add("Version", version);
+            var configurationSection = Configuration.GetSection("AppSettings");
+            
             foreach (var appSetting in configurationSection.GetChildren())
             {
                 settings.Add(appSetting.Key, appSetting.Value);

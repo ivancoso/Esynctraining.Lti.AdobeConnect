@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -506,9 +507,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             var model = new LtiViewModelDto
             {
-                FullVersion = new Version(0, 8, 0, 0), //versionFileJs,
-                //                LtiVersion = version,
 
+                FullVersion = new Version(Settings.Version),
                 // TRICK:
                 // BB contains: lis_person_name_full:" Blackboard  Administrator"
                 CurrentUserName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline),
