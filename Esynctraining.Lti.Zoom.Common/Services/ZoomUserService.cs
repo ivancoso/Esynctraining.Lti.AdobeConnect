@@ -182,7 +182,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                         }
                         else
                         {
-                            if (reg.Status == ZoomMeetingRegistrantStatus.Pending || reg.Status == ZoomMeetingRegistrantStatus.Denied)
+                            if (reg.Status == ZoomMeetingRegistrantStatus.Approval || reg.Status == ZoomMeetingRegistrantStatus.Approval || reg.Status == ZoomMeetingRegistrantStatus.Pending || reg.Status == ZoomMeetingRegistrantStatus.Denied)
                             {
                                 registrantsToApprove.Add(reg);
                             }

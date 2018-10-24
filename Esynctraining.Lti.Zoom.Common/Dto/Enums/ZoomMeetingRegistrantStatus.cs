@@ -2,6 +2,7 @@
 {
     public enum ZoomMeetingRegistrantStatus
     {
+        Approval,
         Approved,
         Pending,
         Denied
