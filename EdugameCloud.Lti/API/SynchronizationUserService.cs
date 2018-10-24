@@ -57,14 +57,13 @@ namespace EdugameCloud.Lti.API
             }
 
             var acProvider = acAccountService.GetProvider(lmsCompany);
-//            var meetings = lmsCompany.LmsCourseMeetings.ToList();
-            var scoIds = new HashSet<string>(lmsCompany.LmsCourseMeetings.Select(x => x.GetMeetingScoId())).ToList();
+            var meetings = lmsCompany.LmsCourseMeetings.Where(x =>
+                meetingIds == null || meetingIds.Any(m => m == x.Id)).ToList();
+            var scoIds = new HashSet<string>(meetings.Select(x => x.GetMeetingScoId())).ToList();
             var scos = acProvider.ReportBulkObjects(scoIds).Values;
             var settings = lmsCompany.Settings.ToList(); //to avoid nhibernate errors
-            var groupedMeetings = lmsCompany.LmsCourseMeetings
-                .Where(x =>
-                    (meetingIds == null || meetingIds.Any(m => m == x.Id))
-                    && scos.Any(s => s.ScoId == x.ScoId))
+            var groupedMeetings = meetings
+                .Where(x => scos.Any(s => s.ScoId == x.ScoId))
                 .GroupBy(y => y.CourseId);
             List<LmsUser> users = lmsCompany.LmsUsers.ToList();//meetingIds == null ? lmsCompany.LmsUsers.ToList() : null;
 
@@ -252,7 +251,7 @@ namespace EdugameCloud.Lti.API
 
             var company = lmsCompanyModel.GetOneById(lmsCompany.Id).Value;
 
-            foreach (var lmsUserDto in lmsUserDtos)
+            foreach (var lmsUserDto in lmsUserDtos.Where(x => x.PrimaryEmail != null || x.Login != null || x.Name != null))
             {
                 var dbUser = existedDbUsers.FirstOrDefault(u =>
                     (lmsUserDto.LtiId != null && u.UserId == lmsUserDto.LtiId) || u.UserId == lmsUserDto.Id);
@@ -269,6 +268,7 @@ namespace EdugameCloud.Lti.API
                     catch (Exception ex)
                     {
                         logger.Error("SyncUsers - GetOrCreatePrincipal", ex);
+                        continue;
                     }
 
                     var loginLength = login.Length > 50 ? 50 : login.Length;
