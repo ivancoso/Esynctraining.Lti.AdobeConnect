@@ -45,12 +45,14 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         {
             var license = await _licenseAccessor.GetLicense();
             var cacheKey = "Zoom.Users." + license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey);
+            var sw = Stopwatch.StartNew();
             var cacheData = await _cache.GetAsync(cacheKey);
-
+            sw.Stop();
+            _logger.InfoFormat($"[GetActiveUsers:{license.ConsumerKey}] Get Time: {sw.Elapsed}");
             if (cacheData == null)
             {
                 _logger.Info($"[GetActiveUsers:{license.ConsumerKey}] Empty cache data");
-                var sw = Stopwatch.StartNew();
+                sw = Stopwatch.StartNew();
                 await StaticStorage.NamedLocker.WaitAsync(license.ConsumerKey);
                 try
                 {

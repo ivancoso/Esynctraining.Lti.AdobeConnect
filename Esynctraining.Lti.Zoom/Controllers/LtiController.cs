@@ -167,7 +167,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
         {
             try
             {
-                var sw = Stopwatch.StartNew();
+//                var sw = Stopwatch.StartNew();
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
                 //var license = await _licenseService.GetLicense(s.LicenseKey);
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
@@ -202,8 +202,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     return this.View("~/Views/Lti/LtiError.cshtml");
                 }
 
-                sw.Stop();
-                Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. Time : {sw.Elapsed}");
+//                sw.Stop();
+//                Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. Time : {sw.Elapsed}");
 
                 var model = await BuildModelAsync(s);
                 return View("Index", model);
