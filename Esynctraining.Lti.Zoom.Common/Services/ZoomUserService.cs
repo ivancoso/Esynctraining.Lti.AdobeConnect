@@ -75,24 +75,6 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return result;
         }
 
-        public List<User> GetUsersFromApi(UserStatus status)
-        {
-            var users = new List<User>();
-            var pageNumber = 1;
-            var pageSize = 300;
-            var totalRecords = 0;
-            do
-            {
-                var page = _zoomApi.GetUsers(status, pageSize: pageSize, pageNumber: pageNumber);
-                users.AddRange(page.Users);
-                totalRecords = page.TotalRecords;
-                pageNumber++;
-
-            } while (pageSize * (pageNumber - 1) < totalRecords);
-
-            return users;
-        }
-
         public UserInfoDto GetUser(string idOrEmail)
         {
             var user = _zoomApi.GetUser(idOrEmail);

@@ -89,7 +89,7 @@ namespace Esynctraining.Lti.Zoom.Host
                     }));
             services.AddDbContext<ZoomDbContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("ZoomDb")));
-            services.AddTransient<ILmsLicenseService, LmsLicenseInternalApiService>();
+            services.AddSingleton<ILmsLicenseService, LmsLicenseInternalApiService>();
             services.AddTransient<UserSessionService, UserSessionService>();
             services.AddSingleton<JilSerializer, JilSerializer>();
             services.AddSingleton<IJsonSerializer, JilSerializer>(s => s.GetService<JilSerializer>());
