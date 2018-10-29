@@ -97,7 +97,7 @@ namespace Esynctraining.Zoom.ApiWrapper
             };
         }
 
-        public ListUsers GetUsers(UserStatuses status = UserStatuses.Active, int pageSize = 30, int pageNumber = 1)
+        public ListUsers GetUsers(UserStatus status = UserStatus.Active, int pageSize = 30, int pageNumber = 1)
         {
             if (pageSize > 300)
                 throw new Exception("GetUsers page size max 300");

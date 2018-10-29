@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Threading.Tasks;
+using Esynctraining.Core.Json;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Common.Dto;
@@ -20,52 +24,58 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         private readonly ZoomApiWrapper _zoomApi;
         private readonly IDistributedCache _cache;
         private readonly ILmsLicenseAccessor _licenseAccessor;
+        private readonly IJsonDeserializer _jsonDeserializer;
         private readonly dynamic _settings;
+        private readonly UserCacheUpdater _cacheUpdater;
+        private readonly ILogger _logger;
 
-        public ZoomUserService(ZoomApiWrapper zoomApi, IDistributedCache cache, ILmsLicenseAccessor licenseAccessor, ApplicationSettingsProvider settings)
+        public ZoomUserService(ZoomApiWrapper zoomApi, IDistributedCache cache, ILmsLicenseAccessor licenseAccessor, 
+            ApplicationSettingsProvider settings, IJsonDeserializer jsonDeserializer, UserCacheUpdater cacheUpdater, ILogger logger)
         {
             _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _licenseAccessor = licenseAccessor ?? throw new ArgumentNullException(nameof(licenseAccessor));
             _settings = settings;
+            _jsonDeserializer = jsonDeserializer;
+            _cacheUpdater = cacheUpdater;
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<string>> GetUsersEmails(UserStatuses status = UserStatuses.Active)
+        public async Task<IEnumerable<User>> GetActiveUsers()
         {
             var license = await _licenseAccessor.GetLicense();
             var cacheKey = "Zoom.Users." + license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey);
-            IFormatter formatter = new BinaryFormatter();
-            var userEmailsBytes = await _cache.GetAsync(cacheKey);
-            IEnumerable<string> result = null;
-            if (userEmailsBytes == null)
-            {
-                result = GetUsersFromApi(status).Select(x => x.Email).ToArray();
-                var cacheEntryOption = new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(double.Parse(_settings.LicenseUsersCacheDuration))
-                };
-                using (var ms = new MemoryStream())
-                {
-                    formatter.Serialize(ms, result);
-                    userEmailsBytes = ms.ToArray();
-                }
+            var cacheData = await _cache.GetAsync(cacheKey);
 
-                await _cache.SetAsync(cacheKey, userEmailsBytes, cacheEntryOption);
-            }
-            else
+            if (cacheData == null)
             {
-                using (var memStream = new MemoryStream())
+                _logger.Info($"[GetActiveUsers:{license.ConsumerKey}] Empty cache data");
+                var sw = Stopwatch.StartNew();
+                await StaticStorage.NamedLocker.WaitAsync(license.ConsumerKey);
+                try
                 {
-                    memStream.Write(userEmailsBytes, 0, userEmailsBytes.Length);
-                    memStream.Seek(0, SeekOrigin.Begin);
-                    result = (string[])formatter.Deserialize(memStream);
+                    cacheData = await _cache.GetAsync(cacheKey);
+                    if (cacheData == null)
+                    {
+                        await _cacheUpdater.UpdateUsers(license.ConsumerKey);
+                        cacheData = await _cache.GetAsync(cacheKey);
+                    }
                 }
+                finally
+                {
+                    StaticStorage.NamedLocker.Release(license.ConsumerKey);
+                }
+                sw.Stop();
+                _logger.InfoFormat($"[GetActiveUsers:{license.ConsumerKey}] Update Time: {sw.Elapsed}");
             }
+
+            var json = Encoding.UTF8.GetString(cacheData);
+            List<User> result = _jsonDeserializer.JsonDeserialize<List<User>>(json);
 
             return result;
         }
 
-        public List<User> GetUsersFromApi(UserStatuses status)
+        public List<User> GetUsersFromApi(UserStatus status)
         {
             var users = new List<User>();
             var pageNumber = 1;
@@ -163,7 +173,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         public async Task<bool> RegisterUsersToMeetingAndApprove(string meetingId, IEnumerable<RegistrantDto> registrants, bool checkRegistrants)
         {
             var registrantsToApprove = new List<ZoomMeetingRegistrantDto>();
-            var zoomUserEmails = await GetUsersEmails();
+            var zoomUserEmails = (await GetActiveUsers()).Select(x =>x.Email);
             var regs = GetMeetingRegistrants(meetingId);
 
             CleanApprovedRegistrant(meetingId, registrants, regs);
@@ -182,7 +192,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                         }
                         else
                         {
-                            if (reg.Status == ZoomMeetingRegistrantStatus.Approval || reg.Status == ZoomMeetingRegistrantStatus.Approval || reg.Status == ZoomMeetingRegistrantStatus.Pending || reg.Status == ZoomMeetingRegistrantStatus.Denied)
+                            if (reg.Status == ZoomMeetingRegistrantStatus.Approval || reg.Status == ZoomMeetingRegistrantStatus.All 
+                                || reg.Status == ZoomMeetingRegistrantStatus.Pending || reg.Status == ZoomMeetingRegistrantStatus.Denied)
                             {
                                 registrantsToApprove.Add(reg);
                             }

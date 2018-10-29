@@ -16,6 +16,7 @@ using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Schoology;
 using Esynctraining.Lti.Zoom.Api;
 using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.HostedServices;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Core;
 using Esynctraining.Lti.Zoom.Domain;
@@ -109,13 +110,14 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
             services.AddScoped<ZoomMeetingApiService, ZoomMeetingApiService>();
             services.AddTransient<ZoomOfficeHoursService, ZoomOfficeHoursService>();
-
+            services.AddSingleton<UserCacheUpdater, UserCacheUpdater>();
             services.AddSingleton<ILtiTokenAccessor, QueryStringTokenAccessor>();
             services.AddScoped<ZoomLicenseAccessor, ZoomLicenseAccessor>();
             services.AddScoped<IZoomOptionsAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
             services.AddScoped<ILmsLicenseAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
             services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
             services.AddScoped<INotificationService, EmptyNotificationService>();
+            services.AddHostedService<UserCacheHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

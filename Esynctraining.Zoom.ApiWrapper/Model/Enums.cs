@@ -38,7 +38,7 @@
         public static string SsoCreate = "ssoCreate";
     }
 
-    public enum UserStatuses
+    public enum UserStatus
     {
         Active,
         Inactive,

@@ -9,6 +9,7 @@ using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Core.Providers;
 using Esynctraining.Extensions;
+using Esynctraining.Json.Jil;
 using Esynctraining.Lti.Lms.AgilixBuzz;
 using Esynctraining.Lti.Lms.BlackBoard;
 using Esynctraining.Lti.Lms.Canvas;
@@ -150,6 +151,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
 
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            services.AddSingleton<UserCacheUpdater, UserCacheUpdater>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

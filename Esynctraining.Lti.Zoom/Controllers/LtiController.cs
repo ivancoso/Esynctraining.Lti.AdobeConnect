@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -42,19 +41,20 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private readonly ZoomMeetingService _meetingService;
         private readonly ZoomUserService _userService;
         private readonly LmsUserServiceFactory _lmsUserServiceFactory;
+        private readonly UserCacheUpdater _cacheUpdater;
 
         private readonly CanvasAPI _canvasApi;
 
         public LtiController(ILogger logger, ApplicationSettingsProvider settings, ILmsLicenseService licenseService,
             UserSessionService sessionService, IJsonDeserializer jsonDeserializer, ZoomMeetingService meetingService,
-            ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory) : base(logger, settings, sessionService)
+            ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory, UserCacheUpdater cacheUpdater) : base(logger, settings, sessionService)
         {
             _licenseService = licenseService;
             _jsonDeserializer = jsonDeserializer;
             _meetingService = meetingService;
             _userService = userService;
             _lmsUserServiceFactory = lmsUserServiceFactory;
-
+            _cacheUpdater = cacheUpdater;
             _canvasApi = new CanvasAPI(logger, jsonDeserializer);
         }
 
@@ -69,7 +69,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             if (dbMeeting == null)
                 return NotFound(meetingId);
             UserInfoDto zoomUser = null;
-            string userId;
+            //string userId;
             try
             {
                 zoomUser = _userService.GetUser(param.lis_person_contact_email_primary);
@@ -122,14 +122,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
         public virtual async Task<ActionResult<JoinLinkParamDto>> JoinMeetingMobile(int meetingId, string session)
         {
             var userSession = await GetSession(session);
-            var license = await _licenseService.GetLicense(userSession.LicenseKey);
+            //var license = await _licenseService.GetLicense(userSession.LicenseKey);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(userSession.SessionData);
             var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
 
             if (dbMeeting == null)
                 return NotFound(meetingId);
             UserInfoDto zoomUser = null;
-            string userId;
+            //string userId;
             try
             {
                 zoomUser = _userService.GetUser(param.lis_person_contact_email_primary);
@@ -169,10 +169,10 @@ namespace Esynctraining.Lti.Zoom.Controllers
             {
                 var sw = Stopwatch.StartNew();
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
-                var license = await _licenseService.GetLicense(s.LicenseKey);
+                //var license = await _licenseService.GetLicense(s.LicenseKey);
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
                 var swGetUsers = Stopwatch.StartNew();
-                var activeUserEmails = await _userService.GetUsersEmails(UserStatuses.Active);
+                var activeUserEmails = (await _userService.GetActiveUsers()).Select(x => x.Email);
                 swGetUsers.Stop();
                 Logger.InfoFormat(
                     $"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. GetUsersEmails Time : {swGetUsers.Elapsed}");
@@ -310,6 +310,19 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     //TODO: Add logic to get culture from DB by lmsCompany.LanguageId
                     System.Threading.Thread.CurrentThread.CurrentUICulture =
                         new System.Globalization.CultureInfo("en-US");
+                    if (!StaticStorage.RequestedLicenses.Contains(license.ConsumerKey))
+                    {
+                        StaticStorage.RequestedLicenses.Add(license.ConsumerKey);
+                        await StaticStorage.NamedLocker.WaitAsync(license.ConsumerKey);
+                        try
+                        {
+                            await _cacheUpdater.UpdateUsers(license.ConsumerKey);
+                        }
+                        finally
+                        {
+                            StaticStorage.NamedLocker.Release(license.ConsumerKey);
+                        }
+                    }
                 }
                 else
                 {
@@ -481,7 +494,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private async Task<ActionResult> RedirectToHome(LmsUserSession session, StringBuilder trace = null)
         {
-            LtiViewModelDto model = await BuildModelAsync(session, trace);
+            //LtiViewModelDto model = await BuildModelAsync(session, trace);
             return RedirectToAction("Home", "Lti", new
             {
                 session = session.Id.ToString()

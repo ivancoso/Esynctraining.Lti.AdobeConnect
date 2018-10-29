@@ -2,9 +2,10 @@
 {
     public enum ZoomMeetingRegistrantStatus
     {
-        Approval,
+        Approval, // fake from api for "pending" request
         Approved,
         Pending,
-        Denied
+        Denied,
+        All // fake from api for "denied" request
     }
 }
