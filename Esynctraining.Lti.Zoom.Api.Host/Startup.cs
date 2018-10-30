@@ -22,6 +22,7 @@ using Esynctraining.Lti.Zoom.Api.Host.Controllers;
 using Esynctraining.Lti.Zoom.Api.Host.Swagger;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Common;
+using Esynctraining.Lti.Zoom.Common.HostedServices;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Mail;
@@ -78,11 +79,19 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                 .AddControllersAsServices()
                 .AddApiExplorer()
                 .AddDataAnnotations();
-            services
-                .AddDistributedRedisCache(options =>
-                {
-                    options.Configuration = Configuration.GetConnectionString("CacheRedis");
-                });
+            if (bool.TryParse(Configuration["UseRedis"], out bool useRedis) && !useRedis)
+            {
+                services.AddDistributedMemoryCache();
+                services.AddHostedService<UserCacheHostedService>(); //don't need if using redis - cache is refreshed by Zoom.Host
+            }
+            else
+            {
+                services
+                    .AddDistributedRedisCache(options =>
+                    {
+                        options.Configuration = Configuration.GetConnectionString("CacheRedis");
+                    });
+            }
             services
                 .AddCors();
             var configurationSection = Configuration.GetSection("AppSettings");

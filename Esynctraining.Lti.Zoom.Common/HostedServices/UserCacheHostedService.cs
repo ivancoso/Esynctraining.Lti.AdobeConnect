@@ -1,27 +1,44 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Services;
+using Esynctraining.Zoom.ApiWrapper;
 
 namespace Esynctraining.Lti.Zoom.Common.HostedServices
 {
     public class UserCacheHostedService : TimedHostedService
     {
         private readonly UserCacheUpdater _cacheUpdater;
+        private readonly ILmsLicenseService _lmsLicenseService;
 
-        public UserCacheHostedService(ILogger logger, UserCacheUpdater cacheUpdater, ApplicationSettingsProvider settings) : base(logger, settings)
+        public UserCacheHostedService(ILogger logger, UserCacheUpdater cacheUpdater, ApplicationSettingsProvider settings, ILmsLicenseService lmsLicenseService) : base(logger, settings)
         {
             _cacheUpdater = cacheUpdater;
+            _lmsLicenseService = lmsLicenseService;
         }
 
         protected override async void DoWork(object state)
         {
             var sw = Stopwatch.StartNew();
-            foreach (var licenseKey in StaticStorage.RequestedLicenses.ToList())
+            var licenses = new List<LmsLicenseDto>();
+            foreach (var key in new HashSet<Guid>(StaticStorage.RequestedLicenses))
             {
-                await _cacheUpdater.UpdateUsers(licenseKey);
+                licenses.Add(await _lmsLicenseService.GetLicense(key));
             }
+
+            var groupedByZoomKey = licenses.GroupBy(x => x.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey));
+            foreach (var licenseSet in groupedByZoomKey)
+            {
+                var license = licenseSet.First();
+                var zoomApi = new ZoomApiWrapper(new ZoomApiOptions { ZoomApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey), ZoomApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret) });
+                await _cacheUpdater.UpdateUsers(licenseSet.Key, zoomApi);
+            }
+
             sw.Stop();
             Logger.Info($"[UpdateCache] Time: {sw.Elapsed}.");
         }

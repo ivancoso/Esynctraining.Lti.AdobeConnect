@@ -316,7 +316,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         await StaticStorage.NamedLocker.WaitAsync(license.ConsumerKey);
                         try
                         {
-                            await _cacheUpdater.UpdateUsers(license.ConsumerKey);
+                            var zoomApi = new ZoomApiWrapper(new ZoomApiOptions
+                            {
+                                ZoomApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
+                                ZoomApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                            });
+                            await _cacheUpdater.UpdateUsers(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey), zoomApi);
                         }
                         finally
                         {

@@ -59,7 +59,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     cacheData = await _cache.GetAsync(cacheKey);
                     if (cacheData == null)
                     {
-                        await _cacheUpdater.UpdateUsers(license.ConsumerKey);
+                        await _cacheUpdater.UpdateUsers(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey), _zoomApi);
                         cacheData = await _cache.GetAsync(cacheKey);
                     }
                 }
