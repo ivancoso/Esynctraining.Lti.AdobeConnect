@@ -239,12 +239,16 @@ namespace EdugameCloud.WCFService
                     var shouldBeOneDistractor = distractors.FirstOrDefault();
                     if (shouldBeOneDistractor == null)
                         throw new InvalidOperationException("There should be a distractor for true/false question");
+
                     var isCorrect = answer.trueFalseAnswer.answer == (shouldBeOneDistractor.IsCorrect ?? false);
                     if (isCorrect)
                     {
                         score++;
                     }
+
                     questionResult.IsCorrect = isCorrect;
+
+                    QuizQuestionResultModel.RegisterSave(questionResult, true);
                 }
 
                 if (answer.singleChoiceAnswer != null)
@@ -256,14 +260,17 @@ namespace EdugameCloud.WCFService
                         Value = quizDistractorAnswer.DistractorName,
                         QuizDistractorAnswer = quizDistractorAnswer,
                     };
+
                     var distractor = distractors.FirstOrDefault(x => x.Id == quizDistractorAnswer.Id);
                     if (distractor == null)
                         throw new InvalidOperationException("How come answered distractor id is not present in question distractors???");
+
                     var isCorrect = distractor.IsCorrect ?? false;
                     if (isCorrect)
                     {
                         score++;
                     }
+
                     questionResult.IsCorrect = isCorrect;
 
                     QuizQuestionResultModel.RegisterSave(questionResult, true);
@@ -278,6 +285,7 @@ namespace EdugameCloud.WCFService
                     {
                         score++;
                     }
+
                     questionResult.IsCorrect = isCorrect;
 
                     QuizQuestionResultModel.RegisterSave(questionResult, true);
@@ -291,6 +299,7 @@ namespace EdugameCloud.WCFService
                             Value = distrator.DistractorName,
                             QuizDistractorAnswer = distrator,
                         };
+
                         QuizQuestionResultAnswerModel.RegisterSave(quizQuestionResultAnswer);
                     }
                 }
