@@ -211,7 +211,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             await _dbContext.SaveChangesAsync();
 
             if (requestDto.Type.GetValueOrDefault(1) != 2 && requestDto.Type.GetValueOrDefault(1) != 3
-                && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure connection)
+                && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure roster)
             {
                 var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
 

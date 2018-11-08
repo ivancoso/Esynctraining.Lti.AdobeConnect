@@ -162,41 +162,57 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             foreach (var registrant in registrants)
             {
-                if (zoomUserEmails.Any(x => x.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase)))
+                try
                 {
-                    bool addRegistrant = !checkRegistrants;
-                    if (checkRegistrants)
+                    if (zoomUserEmails.Any(x =>
+                        x.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        var reg = regs.FirstOrDefault(x => x.Email.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase));
-                        if (reg == null)
+                        bool addRegistrant = !checkRegistrants;
+                        if (checkRegistrants)
                         {
-                            addRegistrant = true;
-                        }
-                        else
-                        {
-                            if (reg.Status == ZoomMeetingRegistrantStatus.Approval || reg.Status == ZoomMeetingRegistrantStatus.All 
-                                || reg.Status == ZoomMeetingRegistrantStatus.Pending || reg.Status == ZoomMeetingRegistrantStatus.Denied)
+                            var reg = regs.FirstOrDefault(x =>
+                                x.Email.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase));
+                            if (reg == null)
                             {
-                                registrantsToApprove.Add(reg);
+                                addRegistrant = true;
+                            }
+                            else
+                            {
+                                if (reg.Status == ZoomMeetingRegistrantStatus.Approval ||
+                                    reg.Status == ZoomMeetingRegistrantStatus.All
+                                    || reg.Status == ZoomMeetingRegistrantStatus.Pending ||
+                                    reg.Status == ZoomMeetingRegistrantStatus.Denied)
+                                {
+                                    registrantsToApprove.Add(reg);
+                                }
                             }
                         }
-                    }
 
-                    if (addRegistrant)
-                    {
-                        var newZoomAddRegistrantRequest = new ZoomAddRegistrantRequest(registrant.Email, registrant.FirstName, registrant.LastName);
-                        var addResult = _zoomApi.AddRegistrant(meetingId, newZoomAddRegistrantRequest);
-                        if (!addResult.IsSuccess)
+                        if (addRegistrant)
                         {
-                            continue;
-                        }
+                            var newZoomAddRegistrantRequest = new ZoomAddRegistrantRequest(registrant.Email,
+                                registrant.FirstName, registrant.LastName);
+                            var addResult = _zoomApi.AddRegistrant(meetingId, newZoomAddRegistrantRequest);
+                            if (!addResult.IsSuccess)
+                            {
+                                continue;
+                            }
 
-                        registrantsToApprove.Add(new ZoomMeetingRegistrantDto{Id = addResult.Data.RegistrantId, Email = registrant.Email });
+                            registrantsToApprove.Add(new ZoomMeetingRegistrantDto
+                            {
+                                Id = addResult.Data.RegistrantId,
+                                Email = registrant.Email
+                            });
+                        }
+                    }
+                    else
+                    {
+                        CreateUser(registrant.Email, registrant.FirstName, registrant.LastName);
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    CreateUser(registrant.Email, registrant.FirstName, registrant.LastName);
+                    _logger.Error($"[RegisterAndApprove] meetingId={meetingId}, email={registrant.Email}", e);
                 }
             }
 

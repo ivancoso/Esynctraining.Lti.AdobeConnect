@@ -79,7 +79,19 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                 .AddControllersAsServices()
                 .AddApiExplorer()
                 .AddDataAnnotations();
-            if (bool.TryParse(Configuration["UseRedis"], out bool useRedis) && !useRedis)
+
+            services
+                .AddCors();
+            var configurationSection = Configuration.GetSection("AppSettings");
+            var settings = new NameValueCollection();
+            foreach (var appSetting in configurationSection.GetChildren())
+            {
+                settings.Add(appSetting.Key, appSetting.Value);
+            }
+            services
+                .AddSingleton(new ApplicationSettingsProvider(settings));
+
+            if (bool.TryParse(settings["UseRedis"], out bool useRedis) && !useRedis)
             {
                 services.AddDistributedMemoryCache();
                 services.AddHostedService<UserCacheHostedService>(); //don't need if using redis - cache is refreshed by Zoom.Host
@@ -92,16 +104,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                         options.Configuration = Configuration.GetConnectionString("CacheRedis");
                     });
             }
-            services
-                .AddCors();
-            var configurationSection = Configuration.GetSection("AppSettings");
-            var settings = new NameValueCollection();
-            foreach (var appSetting in configurationSection.GetChildren())
-            {
-                settings.Add(appSetting.Key, appSetting.Value);
-            }
-            services
-                .AddSingleton(new ApplicationSettingsProvider(settings));
+
             services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
 
             if (HostingEnvironment.IsDevelopment())

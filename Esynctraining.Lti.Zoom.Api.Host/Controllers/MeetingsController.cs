@@ -44,7 +44,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("")]
         [HttpGet]
-        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        [LmsAuthorizeBase]
         public virtual async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetCourseMeetings(CourseMeetingType type = CourseMeetingType.Undefined)
         {
             var sw = Stopwatch.StartNew();
@@ -65,13 +65,17 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
             var zoomMeetingsResult = await _meetingService.GetMeetings(CourseId, type, Param.lis_person_contact_email_primary, userId);
             sw.Stop();
-            Logger.InfoFormat($"Metric: MeetingController.GetCourseMeetings Time : {sw.Elapsed}");
+            if (sw.Elapsed.TotalSeconds >= 2)
+            {
+                Logger.InfoFormat($"[GetCourseMeetings] Time : {sw.Elapsed}, License={LmsLicense.ConsumerKey}, User={Param.lis_person_contact_email_primary}");
+            }
+
             return zoomMeetingsResult;
         }
 
         [Route("{meetingId}")]
         [HttpGet]
-        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        [LmsAuthorizeBase]
         public virtual async Task<OperationResultWithData<MeetingDetailsViewModel>> GetMeetingDetails(int meetingId)
         {
             StringBuilder trace = null;
@@ -90,7 +94,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("")]
         [HttpPost]
-        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        [LmsAuthorizeBase]
         public virtual async Task<OperationResultWithData<MeetingViewModel>> Create([FromBody] CreateMeetingViewModel requestDto)
         {
             OperationResultWithData<MeetingViewModel> result = null;
@@ -164,7 +168,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("{meetingId}")]
         [HttpPut]
-        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        [LmsAuthorizeBase]
         public virtual async Task<OperationResult> Update([FromBody] CreateMeetingViewModel vm,
             [FromRoute] int meetingId)
         {
@@ -233,7 +237,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         [Route("{meetingId}")]
         [HttpDelete]
-        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        [LmsAuthorizeBase]
         public virtual async Task<OperationResult> DeleteMeeting(int meetingId, [FromQuery] bool remove = false)
         {
             //param.lis_person_contact_email_primary

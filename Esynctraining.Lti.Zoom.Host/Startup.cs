@@ -51,18 +51,7 @@ namespace Esynctraining.Lti.Zoom.Host
                 .AddApplicationPart(controllerAssembly)
                 .AddControllersAsServices()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            if (bool.TryParse(Configuration["UseRedis"], out bool useRedis) && !useRedis)
-            {
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                services
-                    .AddDistributedRedisCache(options =>
-                    {
-                        options.Configuration = Configuration.GetConnectionString("CacheRedis");
-                    });
-            }
+
             services
                 .AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
 
@@ -77,6 +66,19 @@ namespace Esynctraining.Lti.Zoom.Host
             }
             services
                 .AddSingleton(new ApplicationSettingsProvider(settings));
+
+            if (bool.TryParse(settings["UseRedis"], out bool useRedis) && !useRedis)
+            {
+                services.AddDistributedMemoryCache();
+            }
+            else
+            {
+                services
+                    .AddDistributedRedisCache(options =>
+                    {
+                        options.Configuration = Configuration.GetConnectionString("CacheRedis");
+                    });
+            }
 
             services
                 .AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor,
