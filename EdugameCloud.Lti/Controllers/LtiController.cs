@@ -987,7 +987,6 @@
             });
 
             LtiViewModelDto.SettingsInfo.ActionUrls.RestWebApiBaseUrl = (string)Settings.LtiRestWebApiBaseUrl;
-            ZoomUrls.BaseUrl = (string)Settings.BasePath.TrimEnd('/');
 
             var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
             var model = new LtiViewModelDto

@@ -3,24 +3,15 @@ using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    /// <summary>
-    /// The office hours map.
-    /// </summary>
     public sealed class OfficeHoursMap : BaseClassMap<OfficeHours>
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OfficeHoursMap"/> class.
-        /// </summary>
         public OfficeHoursMap()
         {
-            this.Map(x => x.Hours).Nullable();
-            this.Map(x => x.ScoId).Not.Nullable();
+            Map(x => x.Hours).Nullable();
+            Map(x => x.ScoId).Not.Nullable();
 
-            this.References(x => x.LmsUser).Not.Nullable();
+            References(x => x.LmsUser).Not.Nullable();
+            HasMany(x => x.Availabilities).KeyColumn("officeHoursId").Cascade.AllDeleteOrphan().Inverse();
         }
-
-        #endregion
     }
 }

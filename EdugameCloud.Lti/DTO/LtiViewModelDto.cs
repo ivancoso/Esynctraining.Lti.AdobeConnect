@@ -6,31 +6,6 @@ using Esynctraining.AdobeConnect.Api.Meeting;
 
 namespace EdugameCloud.Lti.DTO
 {
-    public class ZoomUrls
-    {
-        public static string BaseUrl { get; set; }
-
-        public string JoinMeeting => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/join";//get
-
-        public string GetMeetings => BaseUrl + "/lti-zoom-api/meetings"; //get
-        public string CreateMeeting => BaseUrl + "/lti-zoom-api/meetings"; //post
-        public string UpdateMeeting => BaseUrl + "/lti-zoom-api/meetings/{meetingId}"; //put
-        public string GetMeetingDetails => BaseUrl + "/lti-zoom-api/meetings/{meetingId}"; //get
-        public string DeleteMeeting => BaseUrl + "/lti-zoom-api/meetings/{meetingId}"; //delete
-
-        public string GetMeetingReportBySessions => BaseUrl + "/lti-zoom-api/reports/meetings/{meetingId}/by-sessions"; //get
-        public string DownloadMeetingReportBySessions => BaseUrl + "/lti-zoom-api/reports/meetings/{meetingId}/by-sessions/download"; //get
-        public string DownloadMeetingDetailsReport => BaseUrl + "/lti-zoom-api/reports/meetings/{meetingId}/details/{meetingSessionId}/download"; //get
-
-        public string GetRecordings => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings"; //get
-        public string GetTrashRecordings => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/trash"; //get
-        public string DeleteRecordingFile => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}"; //delete
-        public string DeleteRecording => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}"; //delete
-        public string RecoverRecordingFile => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/files/{recordingFileId}/status/recover"; //put
-        public string RecoverRecording => BaseUrl + "/lti-zoom-api/meetings/{meetingId}/recordings/{recordingId}/status/recover"; //put
-
-    }
-
     [DataContract]
     public class LtiViewModelDto
     {
@@ -119,8 +94,16 @@ namespace EdugameCloud.Lti.DTO
                 public string ReportByRecordingsFile { get; set; } = FileReportBase + "meeting-recordings-report"; // lti.host
                 public string ReportBySessionsFile { get; set; } = FileReportBase + "meeting-sessions-report"; // lti.host
                 public string ReportByAttendanceFile { get; set; } = FileReportBase + "meeting-attendance-report"; // lti.host
-                [DataMember]
-                public ZoomUrls Zoom { get; set; } = new ZoomUrls();
+
+                public string GetTeacherAlailability => RestWebApiBaseUrl + "office-hours/availabilities";
+                public string AddTeacherAlailability => RestWebApiBaseUrl + "office-hours/availabilities/add";
+                public string GetSlots => RestWebApiBaseUrl + "office-hours/slots"; //get
+                public string BookSlot => RestWebApiBaseUrl + "office-hours/slots/book"; //post
+                public string DenySlot => RestWebApiBaseUrl + "office-hours/slots/deny"; //put
+                public string DenyDate => RestWebApiBaseUrl + "office-hours/slots/deny-date"; //put
+                public string DenySlotByDate => RestWebApiBaseUrl + "office-hours/slots/deny-by-date"; //put, post
+                public string RescheduleSlot => RestWebApiBaseUrl + "office-hours/slots/reschedule"; //put
+                public string RescheduleDate => RestWebApiBaseUrl + "office-hours/reschedule-date"; //put
             }
         }
 

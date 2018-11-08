@@ -42,6 +42,7 @@ namespace EdugameCloud.Lti
                 Component.For<IRecordingsService>().ImplementedBy<RecordingsService>().LifeStyle.Transient,
                 Component.For<IAudioProfilesService>().ImplementedBy<AudioProfilesService>().LifeStyle.Transient,
                 Component.For<ISeminarService>().ImplementedBy<SeminarService>().LifestyleSingleton(),
+                Component.For<OfficeHoursService>().ImplementedBy<OfficeHoursService>().LifeStyle.Transient,
 
                 Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>().LifestyleSingleton(),
                 Component.For<LmsRoleService>().ImplementedBy<LmsRoleService>().LifestyleSingleton(),

@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EdugameCloud.Lti.Api.Controllers
 {
     [Route("calendar")]
-    public partial class CalendarController : BaseApiController
+    public class CalendarController : BaseApiController
     {
         private readonly LmsFactory _lmsFactory;
 

@@ -85,5 +85,7 @@ namespace EdugameCloud.Lti.Domain.Entities
         public virtual IList<LmsUserMeetingRole> MeetingRoles { get; protected set; }
 
         #endregion
+
+        //todo: delete OH slots when deleting LmsUser
     }
 }
