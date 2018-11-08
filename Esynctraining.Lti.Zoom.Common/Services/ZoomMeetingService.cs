@@ -301,6 +301,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
                 if (dbMeeting.Type == (int)CourseMeetingType.StudyGroup)
                 {
+                    var registrants = _userService.GetMeetingRegistrants(dbMeeting.ProviderMeetingId);
+                    _userService.CleanApprovedRegistrant(dbMeeting.ProviderMeetingId, vm.Participants, registrants);
+
                     await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, vm.Participants, true);
                 }
 

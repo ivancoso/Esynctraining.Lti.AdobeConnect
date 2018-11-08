@@ -160,8 +160,6 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             var zoomUserEmails = (await GetActiveUsers()).Select(x =>x.Email);
             var regs = GetMeetingRegistrants(meetingId);
 
-            CleanApprovedRegistrant(meetingId, registrants, regs);
-
             foreach (var registrant in registrants)
             {
                 if (zoomUserEmails.Any(x => x.Equals(registrant.Email, StringComparison.InvariantCultureIgnoreCase)))
@@ -210,7 +208,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return true;
         }
 
-        private void CleanApprovedRegistrant(string meetingId, IEnumerable<RegistrantDto> updatedRegistrants, List<ZoomMeetingRegistrantDto> regs)
+        public void CleanApprovedRegistrant(string meetingId, IEnumerable<RegistrantDto> updatedRegistrants, List<ZoomMeetingRegistrantDto> regs)
         {
             var approvedRegistrants = regs.Where(r => r.Status == ZoomMeetingRegistrantStatus.Approved);
 
