@@ -86,6 +86,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                         {
                             try
                             {
+                                logger.Warn($"[Sync start] LicenseId={lmsCompany.Id}");
                                 var timer = Stopwatch.StartNew();
                                 await syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
                                 timer.Stop();

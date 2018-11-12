@@ -179,6 +179,18 @@ namespace EdugameCloud.Lti.API
                                     existedUserIds = existedDbUsers.Select(x => x.Id).ToList();
                                     newUsers = new List<LmsUser>();
                                 }
+
+                                //sync DB roles
+                                foreach (var dbRole in meeting.MeetingRoles)
+                                {
+                                    var lmsUser =
+                                        licenseUsersVar.FirstOrDefault(x => (x.LtiId ?? x.Id) == dbRole.User.UserId);
+                                    if (lmsUser != null)
+                                    {
+                                        dbRole.LmsRole = lmsUser.LmsRole;
+                                    }
+                                }
+
                                 var userRolesToDelete =
                                     meeting.MeetingRoles.Where(x => existedUserIds.All(u => u != x.User.Id)).ToList();
 
