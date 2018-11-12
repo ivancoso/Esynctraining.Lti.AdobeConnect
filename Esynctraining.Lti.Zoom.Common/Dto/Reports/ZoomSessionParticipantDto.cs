@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Esynctraining.Lti.Zoom.Common.Dto.Sessions
+namespace Esynctraining.Lti.Zoom.Common.Dto.Reports
 {
     public class ZoomSessionParticipantDto
     {

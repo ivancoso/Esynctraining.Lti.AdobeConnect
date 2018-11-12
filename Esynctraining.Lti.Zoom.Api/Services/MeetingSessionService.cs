@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
-using Esynctraining.Lti.Zoom.Api.Dto.Sessions;
+using Esynctraining.Lti.Zoom.Common.Dto.Sessions;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
 
@@ -87,13 +87,13 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }));
 
             await _dbContext.SaveChangesAsync();
-            return meeting.MeetingSessions.Select(ConvertFromEntity).ToArray();
+            return meeting.MeetingSessions.Select(MeetingSessionConverter.ConvertFromEntity).ToArray();
         }
 
         public async Task<IEnumerable<MeetingSessionDto>> GetSessions(LmsCourseMeeting meeting)
         {
             //LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
-            return meeting.MeetingSessions.Select(ConvertFromEntity).ToArray();
+            return meeting.MeetingSessions.Select(MeetingSessionConverter.ConvertFromEntity).ToArray();
         }
 
         public async Task<MeetingSessionDto> CreateSessionAsync(LmsCourseMeeting meeting)
@@ -131,7 +131,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             };
             meeting.MeetingSessions.Add(session);
             await _dbContext.SaveChangesAsync();
-            return ConvertFromEntity(session);
+            return MeetingSessionConverter.ConvertFromEntity(session);
         }
 
         public async Task<MeetingSessionDto> SaveSessionAsync(LmsCourseMeeting meeting, int sessionId, MeetingSessionUpdateDto dto)
@@ -158,7 +158,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             await _dbContext.SaveChangesAsync();
 
-            return ConvertFromEntity(session);
+            return MeetingSessionConverter.ConvertFromEntity(session);
         }
 
         public async Task DeleteSessionAsync(LmsCourseMeeting meeting, int id)
@@ -219,35 +219,5 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 await _dbContext.SaveChangesAsync();
             }
         }
-
-
-        //private static void FixDateTimeFields(CreateMeetingSessionsBatchDto dto)
-        //{
-        //    if (dto.StartTime != null)
-        //    {
-        //        dto.StartTime = dto.StartTime.PadLeft(8, '0');
-        //    }
-
-        //    if (dto.StartDate != null)
-        //    {
-        //        dto.StartDate = dto.StartDate.Substring(6, 4) + "-"
-        //                        + dto.StartDate.Substring(0, 5);
-        //    }
-        //}
-
-        private MeetingSessionDto ConvertFromEntity(LmsMeetingSession entity)
-        {
-            var result = new MeetingSessionDto
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                StartDate = entity.StartDate,
-                EndDate = entity.EndDate,
-                Summary = entity.Summary,
-            };
-
-            return result;
-        }
-
     }
 }

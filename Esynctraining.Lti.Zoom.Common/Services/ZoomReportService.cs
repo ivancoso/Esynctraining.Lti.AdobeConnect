@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Esynctraining.Lti.Zoom.Common.Dto.Sessions;
+using Esynctraining.Lti.Zoom.Common.Dto.Reports;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
 

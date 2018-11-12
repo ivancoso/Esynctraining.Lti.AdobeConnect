@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Esynctraining.Lti.Zoom.Common.Dto.Sessions
+namespace Esynctraining.Lti.Zoom.Common.Dto.Reports
 {
     [DataContract]
     public class ZoomSessionDto

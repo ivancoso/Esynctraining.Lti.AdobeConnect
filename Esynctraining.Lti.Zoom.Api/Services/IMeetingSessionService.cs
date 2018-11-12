@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Esynctraining.Lti.Zoom.Api.Dto.Sessions;
+using Esynctraining.Lti.Zoom.Common.Dto.Sessions;
 using Esynctraining.Lti.Zoom.Domain;
 
 namespace Esynctraining.Lti.Zoom.Api.Services
