@@ -160,18 +160,19 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public async Task<OperationResultWithData<IEnumerable<SlotDto>>> DenyDate(int meetingId, [FromBody]DenyDateDto dto)
         {
+            //var result = await _officeHoursService.ResetDeniedSlots(meetingId, dto, Session.LmsUserId);
             var result = await _officeHoursService.DeleteSlots(meetingId, dto, Session.LmsUserId);
             return result;
         }
 
-        //[Route("{meetingId}/slots/reset-date")]
-        //[HttpPut]
-        //[LmsAuthorizeBase(ApiCallEnabled = true)]
-        //public async Task<OperationResultWithData<IEnumerable<SlotDto>>> ResetDeniedDate(int meetingId, [FromBody]DenyDateDto dto)
-        //{
-        //    var result = await _officeHoursService.ResetDeniedSlots(meetingId, dto, Session.LmsUserId);
-        //    return result;
-        //}
+        [Route("{meetingId}/slots/reset-date")]
+        [HttpPut]
+        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        public async Task<OperationResult> ResetDeniedDate(int meetingId, [FromBody]DenyDateDto dto)
+        {
+            var result = await _officeHoursService.ResetDeniedSlots(meetingId, dto, Session.LmsUserId);
+            return result;
+        }
 
     }
 }

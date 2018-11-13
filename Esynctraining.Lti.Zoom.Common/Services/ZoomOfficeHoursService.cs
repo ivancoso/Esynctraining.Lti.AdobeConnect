@@ -53,6 +53,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
         public async Task<OperationResultWithData<OfficeHoursTeacherAvailabilityDto>> AddAvailability(LmsCourseMeeting meeting, string lmsUserId, OfficeHoursTeacherAvailabilityDto availabilityDto)
         {
+
+
             var overlappingSlots = await ValidateSlotsRange(meeting, lmsUserId, availabilityDto);
             if (overlappingSlots.Any())
             {
@@ -243,6 +245,20 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 await _notificationService.SendOHCancellationEmail(slot.Start, details.Topic, message, slot.RequesterName);
             }
 
+            return OperationResult.Success();
+        }
+
+        public async Task<OperationResult> ResetDeniedSlots(int meetingId, DenyDateDto dto, string lmsUserId)
+        {
+            var dbSlots =
+                await _context.OhSlots.Where(x =>
+                    x.Start >= dto.Start && x.Start < dto.End && x.Availability.Meeting.Id == meetingId && x.Status == 2).ToListAsync();
+            foreach (var dbSlot in dbSlots)
+            {
+                _context.Remove(dbSlot);
+            }
+
+            var saveResult = await _context.SaveChangesAsync();
             return OperationResult.Success();
         }
 

@@ -48,6 +48,7 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string DenySlotByDate => BaseApiUrl + "/office-hours/{meetingId}/slots/deny"; //put, post
         public string RescheduleSlot => BaseApiUrl + "/office-hours/slots/{slotId}/reschedule"; //put
         public string RescheduleDate => BaseApiUrl + "/office-hours/{meetingId}/reschedule-date"; //put
+        public string ResetDeniedDate => BaseApiUrl + "/office-hours/{meetingId}/slots/reset-date"; //put
 
         //sessions
         public string CreateSessionsBatch { get; set; } = BaseApiUrl + "/meetings/{meetingId}/sessions/createBatch"; // post
