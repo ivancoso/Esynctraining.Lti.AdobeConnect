@@ -164,8 +164,7 @@ namespace EdugameCloud.Lti.API
         public async Task<OperationResultWithData<IEnumerable<SlotDto>>> DeleteSlots(int ohId, DenyDateDto dto,
             LmsUser lmsUser)
         {
-            var dbSlots =
-                _slotModel.GetAll(x => x.Start >= dto.Start && x.Start < dto.End && x.Availability.Meeting.Id == ohId);
+            var dbSlots = _slotModel.GetSlotsForDate(dto.Start, dto.End, ohId);
 
             foreach (var dbSlot in dbSlots)
             {
@@ -193,8 +192,7 @@ namespace EdugameCloud.Lti.API
 
         public async Task<OperationResultWithData<SlotDto>> DenySlotByDate(int ohId, DateTime start, LmsUser lmsUser)
         {
-            var dbSlot = _slotModel.GetAll(x =>
-                x.Start == start && x.Availability.Meeting.Id == ohId).FirstOrDefault();
+            var dbSlot = _slotModel.GetSlotForDate(start, ohId);
 
             if (dbSlot != null)
             {
@@ -227,7 +225,7 @@ namespace EdugameCloud.Lti.API
                 return OperationResult.Error("Slot was deleted by teacher. Please refresh page");
             }
 
-            if (slot.User.Id != lmsUser.Id || slot.Availability.User.Id != lmsUser.Id)
+            if (slot.User.Id != lmsUser.Id && slot.Availability.User.Id != lmsUser.Id)
             {
                 return OperationResult.Error("You don't have permissions to delete slot");
             }
