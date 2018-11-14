@@ -117,7 +117,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             return slot;
         }
 
-        [Route("reschedule-date")]
+        [Route("slots/reschedule-date")]
         [HttpPost]
         [TeacherOnly]
         public async Task<OperationResultWithData<List<SlotDto>>> RescheduleDate([FromBody]RescheduleDateDto dto)
@@ -166,6 +166,18 @@ namespace EdugameCloud.Lti.Api.Controllers
             if (meeting?.OfficeHours == null)
                 return OperationResultWithData<IEnumerable<SlotDto>>.Error("Meeting not found");
             var result = await _officeHoursService.DeleteSlots(meeting.OfficeHours.Id, dto, Session.LmsUser);
+            return result;
+        }
+
+        [Route("slots/reset-date")]
+        [HttpPost]
+        [LmsAuthorizeBase(ApiCallEnabled = true)]
+        public async Task<OperationResult> ResetDeniedDate([FromBody]DenyDateDto dto)
+        {
+            LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, dto.MeetingId);
+            if (meeting?.OfficeHours == null)
+                return OperationResultWithData<IEnumerable<SlotDto>>.Error("Meeting not found");
+            var result = await _officeHoursService.ResetDeniedSlots(meeting.OfficeHours.Id, dto);
             return result;
         }
     }

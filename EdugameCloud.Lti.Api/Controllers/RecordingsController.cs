@@ -14,6 +14,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
+using WarningMessageException = EdugameCloud.Lti.Core.WarningMessageException;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -121,7 +122,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 // TODO : FeatureName - but default value is true here!
                 if (!LmsCompany.CanRemoveRecordings)
-                    throw new Core.WarningMessageException("Recording deletion is not enabled for the LMS license");
+                    throw new WarningMessageException("Recording deletion is not enabled for the LMS license");
 
                 var param = Session.LtiSession.LtiParam;
                 OperationResult result = RecordingsService.RemoveRecording(
@@ -149,7 +150,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 // TODO : FeatureName - but default value is true here!
                 if (LmsCompany.AutoPublishRecordings)
-                    throw new Core.WarningMessageException("Publishing is not allowed by LMS license settings");
+                    throw new WarningMessageException("Publishing is not allowed by LMS license settings");
 
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
                 var recording = new LmsCourseMeetingRecording
@@ -178,7 +179,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 // TODO : FeatureName - but default value is true here!
                 if (LmsCompany.AutoPublishRecordings)
-                    throw new Core.WarningMessageException("UnPublishing is not allowed by LMS license settings");
+                    throw new WarningMessageException("UnPublishing is not allowed by LMS license settings");
 
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(LmsCompany.Id, CourseId, request.MeetingId);
                 var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == request.RecordingId);

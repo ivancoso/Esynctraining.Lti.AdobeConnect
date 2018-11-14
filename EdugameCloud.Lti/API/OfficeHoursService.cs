@@ -305,6 +305,7 @@ namespace EdugameCloud.Lti.API
             //var details = await _meetingService.GetMeetingApiDetails(meeting);
             //if (dto.KeepRegistration)
             //{
+            var dbSlots = _slotModel.GetSlotsForDate(dto.Start, dto.End, ohId);
             foreach (var slotDto in slotsToAdd) //todo: add many slots at once
             {
                 if (slotDto.Status == (int)OfficeHoursSlotStatus.Booked)
@@ -313,7 +314,7 @@ namespace EdugameCloud.Lti.API
                     slotDto.End = slotDto.End.AddMilliseconds(dto.FirstSlotTimeshift);
                     if (dto.KeepRegistration)
                     {
-                        var s = await AddSlots(oh.Id, lmsUser, new[] { slotDto });
+                        var s = await AddSlots(oh.Id, dbSlots.First(x => x.Id == slotDto.Id).User, new[] { slotDto });
                         if (!s.IsSuccess)
                         {
                             notAddedSlots.Add(slotDto.UserName);
@@ -451,6 +452,18 @@ namespace EdugameCloud.Lti.API
             //todo: send email
 
             return newSlotResult.IsSuccess ? newSlotResult.Data.First().ToSuccessResult() : OperationResultWithData<SlotDto>.Error(newSlotResult.Message);
+        }
+
+        public async Task<OperationResult> ResetDeniedSlots(int meetingId, DenyDateDto dto)
+        {
+            var dbSlots = _slotModel.GetSlotsForDate(dto.Start, dto.End, meetingId).Where(x => x.Status == 2);
+            foreach (var dbSlot in dbSlots)
+            {
+                _slotModel.RegisterDelete(dbSlot, false);
+            }
+
+            _slotModel.Flush();
+            return OperationResult.Success();
         }
 
         private static OfficeHoursTeacherAvailability ConvertFromDto(OfficeHours oh, LmsUser lmsUser, OfficeHoursTeacherAvailabilityDto availabilityDto)

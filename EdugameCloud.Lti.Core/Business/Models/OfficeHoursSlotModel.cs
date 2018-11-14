@@ -18,8 +18,10 @@ namespace EdugameCloud.Lti.Core.Business.Models
             OfficeHoursTeacherAvailability availability = null;
             OfficeHoursSlot x = null;
             OfficeHours oh = null;
+            LmsUser u = null;
             var defaultQuery = new DefaultQueryOver<OfficeHoursSlot, int>()
                 .GetQueryOver(() => x)
+                .JoinAlias(() => x.User, () => u, JoinType.InnerJoin)
                 .JoinAlias(() => x.Availability, () => availability, JoinType.InnerJoin)
                 .JoinAlias(() => availability.Meeting, () => oh, JoinType.InnerJoin)
                 .Where(() => x.Start >= start && x.Start < end && oh.Id == ohId);
@@ -31,8 +33,10 @@ namespace EdugameCloud.Lti.Core.Business.Models
             OfficeHoursTeacherAvailability availability = null;
             OfficeHoursSlot x = null;
             OfficeHours oh = null;
+            LmsUser u = null;
             var defaultQuery = new DefaultQueryOver<OfficeHoursSlot, int>()
                 .GetQueryOver(() => x)
+                .JoinAlias(() => x.User, () => u, JoinType.InnerJoin)
                 .JoinAlias(() => x.Availability, () => availability, JoinType.InnerJoin)
                 .JoinAlias(() => availability.Meeting, () => oh, JoinType.InnerJoin)
                 .Where(() => x.Start == start && oh.Id == ohId);

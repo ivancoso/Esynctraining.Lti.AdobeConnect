@@ -139,7 +139,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var lmsUser = _lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, LmsCompany.Id).Value;
                 if (lmsUser == null)
                 {
-                    throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
+                    throw new EdugameCloud.Lti.Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
                 }
 
                 string breezeToken = MeetingSetup.ACLogin(LmsCompany, param, lmsUser, ac).BreezeSession;

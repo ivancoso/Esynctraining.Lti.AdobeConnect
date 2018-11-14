@@ -20,7 +20,7 @@
     <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Crypto" Version="1.0.2" />
     <PackageReference Include="Esynctraining.FluentValidation" Version="1.0.1" />
-    <PackageReference Include="Esynctraining.Json.Jil" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Json.Jil" Version="1.0.0.3" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.1" />
     <PackageReference Include="LtiLibrary.AspNet" Version="1.6.1" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />

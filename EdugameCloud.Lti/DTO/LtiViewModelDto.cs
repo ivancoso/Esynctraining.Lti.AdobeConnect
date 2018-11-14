@@ -97,13 +97,14 @@ namespace EdugameCloud.Lti.DTO
 
                 public string GetTeacherAlailability => RestWebApiBaseUrl + "office-hours/availabilities";
                 public string AddTeacherAlailability => RestWebApiBaseUrl + "office-hours/availabilities/add";
-                public string GetSlots => RestWebApiBaseUrl + "office-hours/slots"; //get
-                public string BookSlot => RestWebApiBaseUrl + "office-hours/slots/book"; //post
-                public string DenySlot => RestWebApiBaseUrl + "office-hours/slots/deny"; //put
-                public string DenyDate => RestWebApiBaseUrl + "office-hours/slots/deny-date"; //put
-                public string DenySlotByDate => RestWebApiBaseUrl + "office-hours/slots/deny-by-date"; //put, post
-                public string RescheduleSlot => RestWebApiBaseUrl + "office-hours/slots/reschedule"; //put
-                public string RescheduleDate => RestWebApiBaseUrl + "office-hours/reschedule-date"; //put
+                public string GetSlots => RestWebApiBaseUrl + "office-hours/slots";
+                public string BookSlot => RestWebApiBaseUrl + "office-hours/slots/book";
+                public string DenySlot => RestWebApiBaseUrl + "office-hours/slots/deny";
+                public string DenyDate => RestWebApiBaseUrl + "office-hours/slots/deny-date";
+                public string DenySlotByDate => RestWebApiBaseUrl + "office-hours/slots/deny-by-date";
+                public string RescheduleSlot => RestWebApiBaseUrl + "office-hours/slots/reschedule";
+                public string RescheduleDate => RestWebApiBaseUrl + "office-hours/slots/reschedule-date";
+                public string ResetDeniedDate => RestWebApiBaseUrl + "office-hours/slots/reset-date";
             }
         }
 

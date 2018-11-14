@@ -24,6 +24,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
+using WarningMessageException = EdugameCloud.Lti.Core.WarningMessageException;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -75,7 +76,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     else
                         principal = provider.GetOneByPrincipalId(request.PrincipalId).PrincipalInfo.Principal;
                 }
-                catch (Core.WarningMessageException ex)
+                catch (WarningMessageException ex)
                 {
                     return OperationResultWithData<LmsUserDTO>.Error(ex.Message);
                 }
@@ -206,27 +207,27 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.duplicate)
                 {
-                    throw new Core.WarningMessageException(string.Format(Messages.PrincipalValidateAlreadyInAc, login ?? user.Email));
+                    throw new WarningMessageException(string.Format(Messages.PrincipalValidateAlreadyInAc, login ?? user.Email));
                 }
 
                 if (pu.Status.InvalidField == "name" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new Core.WarningMessageException(Messages.PrincipalValidateNameLength);
+                    throw new WarningMessageException(Messages.PrincipalValidateNameLength);
                 }
 
                 if (pu.Status.InvalidField == "email" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new Core.WarningMessageException(Messages.PrincipalValidateEmailLength);
+                    throw new WarningMessageException(Messages.PrincipalValidateEmailLength);
                 }
 
                 if (pu.Status.InvalidField == "email" && pu.Status.SubCode == StatusSubCodes.format)
                 {
-                    throw new Core.WarningMessageException(Messages.PrincipalValidateEmailFormat);
+                    throw new WarningMessageException(Messages.PrincipalValidateEmailFormat);
                 }
 
                 if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new Core.WarningMessageException(Messages.PrincipalValidateLoginLength);
+                    throw new WarningMessageException(Messages.PrincipalValidateLoginLength);
                 }
 
                 string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", user.FirstName, user.LastName, user.Login, user.Email);

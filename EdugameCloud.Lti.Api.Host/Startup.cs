@@ -58,7 +58,7 @@ namespace EdugameCloud.Lti.Api.Host
                     setup.OutputFormatters.Insert(0, new JilOutputFormatter());
 
                     setup.Filters.Add(new CheckModelForNullAttribute(HostingEnvironment.IsDevelopment()));
-                    setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, new JilSerializer(), HostingEnvironment.IsDevelopment()));
+                    setup.Filters.Add(new EdugameCloud.Lti.Api.Core.Filters.ValidateModelAttribute(LoggerFactory, new JilSerializer(), HostingEnvironment.IsDevelopment()));
                     setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                 })
                 .AddApplicationPart(typeof(Controllers.BaseApiController).Assembly)
