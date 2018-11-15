@@ -231,7 +231,8 @@ namespace EdugameCloud.Lti.API
             }
 
             //store availability to check who cancels
-            var meeting = slot.Availability.Meeting;
+            //var meeting = slot.Availability.Meeting;
+            slot.Availability.Slots.Remove(slot);
             _slotModel.RegisterDelete(slot, true);
             if (!string.IsNullOrEmpty(message))
             {
