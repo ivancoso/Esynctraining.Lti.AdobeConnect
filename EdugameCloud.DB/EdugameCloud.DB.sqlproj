@@ -210,6 +210,8 @@
     <Build Include="dbo\Tables\CompanyEventQuizMapping.sql" />
     <Build Include="dbo\Tables\LmsCourseSection.sql" />
     <Build Include="dbo\Tables\CompanyAcDomains.sql" />
+    <Build Include="dbo\Tables\OfficeHoursTeacherAvailability.sql" />
+    <Build Include="dbo\Tables\OfficeHoursSlot.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
