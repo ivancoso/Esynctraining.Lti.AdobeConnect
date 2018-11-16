@@ -30,13 +30,13 @@ namespace EdugameCloud.Core.Domain.DTO
                 throw new ArgumentNullException(nameof(dto));
 
             this.TotalQuestion = dto.TotalQuestion;
-            this.endTime = dto.endTime.ConvertToUnixTimestamp();
+            this.endTime = DateTime.SpecifyKind(dto.endTime, DateTimeKind.Utc).ConvertToUnixTimestamp();
             this.acEmail = dto.acEmail;
             this.participantName = dto.participantName;
             this.position = dto.position;
             this.quizResultId = dto.quizResultId;
             this.score = dto.score;
-            this.startTime = dto.startTime.ConvertToUnixTimestamp();
+            this.startTime = DateTime.SpecifyKind(dto.startTime, DateTimeKind.Utc).ConvertToUnixTimestamp();
             this.isCompleted = dto.isCompleted;
             this.isPostQuiz = dto.isPostQuiz;
             this.quizResultGuid = dto.quizResultGuid;
