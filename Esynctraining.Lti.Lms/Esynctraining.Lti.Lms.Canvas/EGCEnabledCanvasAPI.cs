@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Lms.Canvas.Convertors;
+using Esynctraining.Lti.Lms.Canvas.DTOs;
 
 namespace Esynctraining.Lti.Lms.Canvas
 {
@@ -118,6 +120,7 @@ namespace Esynctraining.Lti.Lms.Canvas
                 throw;
             }
         }
+
 
         public async Task<List<LmsUserDTO>> GetUsersForCourse(string domain, string courseId, Dictionary<string, object> licenseSettings)
         {
@@ -245,6 +248,144 @@ namespace Esynctraining.Lti.Lms.Canvas
             return null;
         }
 
+        Task IEGCEnabledCanvasAPI.UpdateCalendarEvent(string domain, string courseId, Dictionary<string, object> licenseSettings, DateTime startTime, string endTime, string title)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<LmsCalendarEventDTO> CreateCalendarEvent(string courseId, Dictionary<string, object> licenseSettings, LmsCalendarEventDTO lmsEvent)
+        {
+            var domain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
+            string userToken = (string)licenseSettings[LmsUserSettingNames.Token];
+            string refreshToken = (string)licenseSettings[LmsUserSettingNames.RefreshToken];
+
+            var client = CreateRestClient(domain);
+
+            string startTimeUtc = lmsEvent.StartAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            string endTimeUtc = lmsEvent.EndAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            var link = $"/api/v1/calendar_events?calendar_event[context_code]=course_{courseId}&calendar_event[title]={lmsEvent.Title}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
+
+            string oauthId = licenseSettings[LmsLicenseSettingNames.CanvasOAuthId].ToString();
+            string oauthKey = licenseSettings[LmsLicenseSettingNames.CanvasOAuthKey].ToString();
+
+            RestRequest request = await CreateRequest(domain, link, Method.POST, userToken, oauthId, oauthKey, refreshToken);
+            IRestResponse<CanvasCalendarEventDTO> response = await client.ExecuteTaskAsync<CanvasCalendarEventDTO>(request);
+
+            if (response.StatusCode != HttpStatusCode.Created)
+            {
+                var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
+                if (errorData?.errors != null && errorData.errors.Any())
+                {
+                    _logger.Error(
+                        $"[Canvas API error] StatusCode:{response.StatusCode}, StatusDescription:{response.StatusDescription}, link: {link}, domain:{domain}.");
+                    foreach (var error in errorData.errors)
+                    {
+                        _logger.Error($"[Canvas API error] Response error: {error.message}");
+                    }
+                }
+            }
+            LmsCalendarEventDTO lmsCalendarEvent = CanvasCalendarConvertor.ConvertToLmsCalendarEvent(response.Data);
+            return lmsCalendarEvent;
+        }
+
+        public async Task<LmsCalendarEventDTO> UpdateCalendarEvent(string courseId, Dictionary<string, object> licenseSettings, LmsCalendarEventDTO lmsEvent)
+        {
+            var domain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
+            string userToken = (string)licenseSettings[LmsUserSettingNames.Token];
+            string refreshToken = (string)licenseSettings[LmsUserSettingNames.RefreshToken];
+
+            var client = CreateRestClient(domain);
+
+            string startTimeUtc = lmsEvent.StartAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            string endTimeUtc = lmsEvent.EndAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            var link = $"/api/v1/calendar_events/{lmsEvent.Id}?calendar_event[title]={lmsEvent.Title}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
+
+            string oauthId = licenseSettings[LmsLicenseSettingNames.CanvasOAuthId].ToString();
+            string oauthKey = licenseSettings[LmsLicenseSettingNames.CanvasOAuthKey].ToString();
+
+            RestRequest request = await CreateRequest(domain, link, Method.PUT, userToken, oauthId, oauthKey, refreshToken);
+            IRestResponse<CanvasCalendarEventDTO> response = await client.ExecuteTaskAsync<CanvasCalendarEventDTO>(request);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
+                if (errorData?.errors != null && errorData.errors.Any())
+                {
+                    _logger.Error(
+                        $"[Canvas API error] StatusCode:{response.StatusCode}, StatusDescription:{response.StatusDescription}, link: {link}, domain:{domain}.");
+                    foreach (var error in errorData.errors)
+                    {
+                        _logger.Error($"[Canvas API error] Response error: {error.message}");
+                    }
+                }
+            }
+            LmsCalendarEventDTO lmsCalendarEvent = CanvasCalendarConvertor.ConvertToLmsCalendarEvent(response.Data);
+            return lmsCalendarEvent;
+
+        }
+
+
+        public async Task<IEnumerable<LmsCalendarEventDTO>> GetUserCalendarEvents(string userId, Dictionary<string, object> licenseSettings)
+        {
+
+            var domain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
+            string userToken = (string)licenseSettings[LmsUserSettingNames.Token];
+            string refreshToken = (string)licenseSettings[LmsUserSettingNames.RefreshToken];
+            string oauthId = licenseSettings[LmsLicenseSettingNames.CanvasOAuthId].ToString();
+            string oauthKey = licenseSettings[LmsLicenseSettingNames.CanvasOAuthKey].ToString();
+
+            var client = CreateRestClient(domain);
+            var link = $"/api/v1/users/{userId}/calendar_events";
+
+            RestRequest request = await CreateRequest(domain, link, Method.GET, userToken, oauthId, oauthKey, refreshToken);
+            IRestResponse<IEnumerable<CanvasCalendarEventDTO>> response = await client.ExecuteTaskAsync<IEnumerable<CanvasCalendarEventDTO>>(request);
+            
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
+                if (errorData?.errors != null && errorData.errors.Any())
+                {
+                    _logger.Error(
+                        $"[Canvas API error] StatusCode:{response.StatusCode}, StatusDescription:{response.StatusDescription}, link: {link}, domain:{domain}.");
+                    foreach (var error in errorData.errors)
+                    {
+                        _logger.Error($"[Canvas API error] Response error: {error.message}");
+                    }
+                }
+            }
+
+            IEnumerable<CanvasCalendarEventDTO> events = response.Data;
+            return events.Select(e => CanvasCalendarConvertor.ConvertToLmsCalendarEvent(e));
+        }
+
+        public async Task DeleteCalendarEvents(int eventId, Dictionary<string, object> licenseSettings)
+        {
+            var domain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
+            string userToken = (string)licenseSettings[LmsUserSettingNames.Token];
+            string refreshToken = (string)licenseSettings[LmsUserSettingNames.RefreshToken];
+            string oauthId = licenseSettings[LmsLicenseSettingNames.CanvasOAuthId].ToString();
+            string oauthKey = licenseSettings[LmsLicenseSettingNames.CanvasOAuthKey].ToString();
+
+            var client = CreateRestClient(domain);
+            var link = $"/api/v1/calendar_events/{eventId}";
+
+            RestRequest request = await CreateRequest(domain, link, Method.DELETE, userToken, oauthId, oauthKey, refreshToken);
+            IRestResponse<IEnumerable<CanvasCalendarEventDTO>> response = await client.ExecuteTaskAsync<IEnumerable<CanvasCalendarEventDTO>>(request);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
+                if (errorData?.errors != null && errorData.errors.Any())
+                {
+                    _logger.Error(
+                        $"[Canvas API error] StatusCode:{response.StatusCode}, StatusDescription:{response.StatusDescription}, link: {link}, domain:{domain}.");
+                    foreach (var error in errorData.errors)
+                    {
+                        _logger.Error($"[Canvas API error] Response error: {error.message}");
+                    }
+                }
+            }
+        }
     }
 
 }

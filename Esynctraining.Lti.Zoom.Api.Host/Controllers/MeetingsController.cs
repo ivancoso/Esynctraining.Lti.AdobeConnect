@@ -98,6 +98,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         public virtual async Task<OperationResultWithData<MeetingViewModel>> Create([FromBody] CreateMeetingViewModel requestDto)
         {
             OperationResultWithData<MeetingViewModel> result = null;
+
             try
             {
                 string userId = null;
@@ -142,7 +143,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                     }
                     var createResult = await _meetingService.CreateMeeting(lmsSettings, CourseId,
                         user,
-                        Param.lis_person_contact_email_primary, requestDto);
+                        Param.lis_person_contact_email_primary, requestDto, User);
 
                     return createResult;
                 }

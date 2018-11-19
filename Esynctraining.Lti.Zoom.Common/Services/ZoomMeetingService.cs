@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Lti.Zoom.Common.Services.MeetingLoader;
@@ -28,10 +30,11 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         private readonly ILmsLicenseAccessor _licenseAccessor;
         private readonly ZoomOfficeHoursService _ohService;
         private readonly ILogger _logger;
+        private readonly CalendarEventService _calendarEventService;
 
         public ZoomMeetingService(ZoomApiWrapper zoomApi, ZoomUserService userService, ZoomDbContext dbContext,
             LmsUserServiceFactory lmsUserServiceFactory, IJsonSerializer jsonSerializer, ILmsLicenseAccessor licenseAccessor,
-            ZoomOfficeHoursService ohService, ZoomMeetingApiService zoomMeetingApiService, ILogger logger)
+            ZoomOfficeHoursService ohService, ZoomMeetingApiService zoomMeetingApiService, ILogger logger, CalendarEventService calendarEventService)
         {
             _zoomApi = zoomApi;
             _zoomMeetingApiService = zoomMeetingApiService;
@@ -42,6 +45,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             _licenseAccessor = licenseAccessor;
             _ohService = ohService;
             _logger = logger;
+            _calendarEventService = calendarEventService;
         }
 
         public async Task<MeetingDetailsViewModel> GetMeetingDetails(int meetingId, string courseId)
@@ -157,7 +161,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         }
 
         public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> lmsSettings, string courseId, UserInfoDto user, string email,
-            CreateMeetingViewModel requestDto)
+            CreateMeetingViewModel requestDto, LmsUserDTO lmsUser)
         {
             LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
 
@@ -209,6 +213,26 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             var entity = _dbContext.Add(dbMeeting);
             await _dbContext.SaveChangesAsync();
+
+            //if (licenseDto.ProductId == 1010 && requestDto.Type.GetValueOrDefault(1) == (int)CourseMeetingType.Basic)
+            //{
+            //    var unixDate = requestDto.StartTime.Value;
+            //    DateTime start = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            //    DateTime date = start.AddMilliseconds(unixDate);
+
+            //    LmsCalendarEventDTO lmsCalendarEvent = new  LmsCalendarEventDTO()
+            //    {
+            //        StartAt = date,
+            //        EndAt = date.AddMinutes(requestDto.Duration.Value),
+            //        Title = requestDto.Topic
+            //    };
+
+            //    LmsCalendarEventDTO lmsEvent = await _calendarEventService.CreateEvent(courseId, lmsSettings, lmsCalendarEvent);
+
+            //    var events = await _calendarEventService.GetUserCalendarEvents(lmsUser.Id, lmsSettings);
+            //    lmsEvent.Title = lmsEvent.Title + "xxx";
+            //    var eventUpdated = await _calendarEventService.UpdateEvent(courseId, lmsSettings, lmsEvent);
+            //}
 
             if (requestDto.Type.GetValueOrDefault(1) != 2 && requestDto.Type.GetValueOrDefault(1) != 3
                 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure roster)
