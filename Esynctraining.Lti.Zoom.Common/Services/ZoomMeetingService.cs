@@ -216,11 +216,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             //if (licenseDto.ProductId == 1010 && requestDto.Type.GetValueOrDefault(1) == (int)CourseMeetingType.Basic)
             //{
-            //    var unixDate = requestDto.StartTime.Value;
-            //    DateTime start = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            //    DateTime date = start.AddMilliseconds(unixDate);
+            //    var date = LongToDateTime(requestDto);
 
-            //    LmsCalendarEventDTO lmsCalendarEvent = new  LmsCalendarEventDTO()
+            //    LmsCalendarEventDTO lmsCalendarEvent = new LmsCalendarEventDTO()
             //    {
             //        StartAt = date,
             //        EndAt = date.AddMinutes(requestDto.Duration.Value),
@@ -228,10 +226,6 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             //    };
 
             //    LmsCalendarEventDTO lmsEvent = await _calendarEventService.CreateEvent(courseId, lmsSettings, lmsCalendarEvent);
-
-            //    var events = await _calendarEventService.GetUserCalendarEvents(lmsUser.Id, lmsSettings);
-            //    lmsEvent.Title = lmsEvent.Title + "xxx";
-            //    var eventUpdated = await _calendarEventService.UpdateEvent(courseId, lmsSettings, lmsEvent);
             //}
 
             if (requestDto.Type.GetValueOrDefault(1) != 2 && requestDto.Type.GetValueOrDefault(1) != 3
@@ -267,6 +261,14 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             vm.Type = dbMeeting.Type;
 
             return vm.ToSuccessResult();
+        }
+
+        private static DateTime LongToDateTime(CreateMeetingViewModel requestDto)
+        {
+            var unixDate = requestDto.StartTime.Value;
+            DateTime start = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            DateTime date = start.AddMilliseconds(unixDate);
+            return date;
         }
 
         private async Task<OperationResultWithData<Meeting>> CreateApiMeeting(UserInfoDto user, CreateMeetingViewModel dto)
