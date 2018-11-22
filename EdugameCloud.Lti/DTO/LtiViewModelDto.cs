@@ -114,7 +114,7 @@ namespace EdugameCloud.Lti.DTO
         public Version FullVersion { get; set; }
 
         [DataMember(Name = "version")]
-        public string LtiVersion => FullVersion.ToString(3);
+        public string LtiVersion => FullVersion.ToString(2);
 
         [DataMember(Name = "currentUserName")]
         public string CurrentUserName { get; set; }
