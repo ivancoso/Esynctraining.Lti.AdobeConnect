@@ -233,10 +233,10 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
         [LmsAuthorizeBase]
-        public FileUploadResultDto PostVttFile(string fileScoId, [FromForm]IFormFile file)
+        public object PostVttFile(string fileScoId, [FromForm]IFormFile file)
         {
             if (file == null)
-                return new FileUploadResultDto
+                return new //FileUploadResultDto
                 {
                     IsSuccess = false,
                     Message = "No file uploaded",
@@ -251,7 +251,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 file.OpenReadStream().ReadFully(),
                 ac);
 
-            return new FileUploadResultDto
+            return new //FileUploadResultDto
             {
                 IsSuccess = true,
                 Message = "OK",
