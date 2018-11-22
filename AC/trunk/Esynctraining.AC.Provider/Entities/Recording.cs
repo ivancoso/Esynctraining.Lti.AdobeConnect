@@ -99,7 +99,8 @@ namespace Esynctraining.AC.Provider.Entities
                 return null;
             try
             {
-                return TimeSpan.Parse(value);
+                // for recordings with >1 day duration: <duration>1d 07:52:30.243</duration> 
+                return TimeSpan.Parse(value.Replace("d ", "."));
             }
             catch (FormatException ex)
             {

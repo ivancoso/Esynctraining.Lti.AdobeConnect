@@ -28,7 +28,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingRecording
                 return item;
 
             var t = recording.GetActualDuration();
-            item.Duration = (t == null) ? null : $"{t.Value.Hours:D2}:{t.Value.Minutes:D2}:{t.Value.Seconds:D2}";
+            item.Duration = (t == null) ? null : $"{(t.Value.Days * 24 + t.Value.Hours):D2}:{t.Value.Minutes:D2}:{t.Value.Seconds:D2}";
             return item;
         }
 
