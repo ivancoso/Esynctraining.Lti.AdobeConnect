@@ -314,6 +314,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AudioProfileUnique, dto.audioProfileUnique.ToString());
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseCourseSections, dto.UseCourseSections);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseCourseMeetingsCustomLayout, dto.UseCourseMeetingsCustomLayout);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableOfficeHoursSlots, dto.EnableOfficeHoursSlots);
 
             //OAuth options
             if (lmsProvider.Id == (int) LmsProviderEnum.Brightspace || lmsProvider.Id == (int)LmsProviderEnum.Canvas)

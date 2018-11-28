@@ -257,12 +257,9 @@
                 {
                     model = await BuildModelAsync(s);
                 }
-                var isZoom = s.LmsCompany.GetSetting<bool>(LmsCompanySettingNames.ZoomLicense);
-                return View(isZoom ?
-                    "Zoom" :
-                    (s.LmsCompany.LmsProviderId == (int) LmsProviderEnum.Bridge 
-                    ? "Bridge" 
-                    : "Index"),
+                return View(s.LmsCompany.LmsProviderId == (int) LmsProviderEnum.Bridge
+                        ? "Bridge"
+                        : "Index",
                     model);
             }
             catch (Core.WarningMessageException ex)
@@ -674,33 +671,6 @@
             {
                 throw new LtiException($"{Resources.Messages.LtiValidationRequiredACParameters} {string.Join(", ", missingIntegrationRequiredFields.ToArray())}");
             }
-        }
-
-        private IEnumerable<LtiLibrary.Core.Lti1.Role> GetContextRoles(string roleParam)
-        {
-            var roles = new List<LtiLibrary.Core.Lti1.Role>();
-            var roleNames = roleParam.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            if (string.IsNullOrWhiteSpace(roleParam))
-            {
-                throw new LtiException("Missing parameter: roles");
-            }
-
-            foreach (var roleName in roleNames)
-            {
-                LtiLibrary.Core.Lti1.Role role;
-                if (Enum.TryParse(roleName, true, out role))
-                {
-                    roles.Add(role);
-                }
-                else
-                {
-                    if (LtiConstants.RoleUrns.ContainsKey(roleName))
-                    {
-                        roles.Add(LtiConstants.RoleUrns[roleName]);
-                    }
-                }
-            }
-            return roles;
         }
         
         private static string FixExtraDataIssue(string keyToFix)

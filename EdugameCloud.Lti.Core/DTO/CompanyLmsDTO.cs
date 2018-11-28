@@ -141,6 +141,7 @@ namespace EdugameCloud.Lti.DTO
             bridgeApiTokenSecret = instance.GetSetting<string>(LmsCompanySettingNames.BridgeApiTokenSecret);
             UseCourseSections = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections);
             UseCourseMeetingsCustomLayout = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout);
+            EnableOfficeHoursSlots = instance.GetSetting<bool>(LmsCompanySettingNames.EnableOfficeHoursSlots);
             Telephony = new TelephonyDTO(instance);
         }
 
@@ -516,6 +517,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "useCourseMeetingsCustomLayout")]
         public bool UseCourseMeetingsCustomLayout { get; set; }
+
+        [DataMember(Name = "enableOfficeHoursSlots")]
+        public bool EnableOfficeHoursSlots { get; set; }
     }
 
 }

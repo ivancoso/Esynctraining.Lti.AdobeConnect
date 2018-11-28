@@ -59,7 +59,7 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string BridgeApiTokenKey = nameof(BridgeApiTokenKey);
         public const string BridgeApiTokenSecret = nameof(BridgeApiTokenSecret);
 
-        public const string ZoomLicense = nameof(ZoomLicense);
+        public const string EnableOfficeHoursSlots = nameof(EnableOfficeHoursSlots);
 
         public static class Telephony
         {

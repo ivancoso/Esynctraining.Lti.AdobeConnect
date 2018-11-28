@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -217,6 +218,33 @@ namespace EdugameCloud.Lti.Controllers
                     break;
             }
             return View("~/Views/Lti/Outcomes.cshtml", model);
+        }
+
+        private IEnumerable<LtiLibrary.Core.Lti1.Role> GetContextRoles(string roleParam)
+        {
+            var roles = new List<LtiLibrary.Core.Lti1.Role>();
+            var roleNames = roleParam.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (string.IsNullOrWhiteSpace(roleParam))
+            {
+                throw new LtiException("Missing parameter: roles");
+            }
+
+            foreach (var roleName in roleNames)
+            {
+                LtiLibrary.Core.Lti1.Role role;
+                if (Enum.TryParse(roleName, true, out role))
+                {
+                    roles.Add(role);
+                }
+                else
+                {
+                    if (LtiConstants.RoleUrns.ContainsKey(roleName))
+                    {
+                        roles.Add(LtiConstants.RoleUrns[roleName]);
+                    }
+                }
+            }
+            return roles;
         }
     }
 }

@@ -166,6 +166,9 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "useCourseMeetingsCustomLayout")]
         public bool UseCourseMeetingsCustomLayout { get; set; }
 
+        [DataMember(Name = "enableOfficeHoursSlots")]
+        public bool EnableOfficeHoursSlots { get; set; }
+
         public static LicenseSettingsDto Build(LmsCompany value, Language lmsLicenseLanguage, ICache cache)
         {
             if (value == null)
@@ -221,6 +224,7 @@ namespace EdugameCloud.Lti.DTO
                     ShowAudioProfile = value.GetSetting<bool>(LmsCompanySettingNames.ShowAudioProfile),
                     UseCourseSections = value.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections),
                     UseCourseMeetingsCustomLayout = value.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout),
+                    EnableOfficeHoursSlots = value.GetSetting<bool>(LmsCompanySettingNames.EnableOfficeHoursSlots),
 
                     Labels = new LabelsDto
                     {

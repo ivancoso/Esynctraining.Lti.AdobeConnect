@@ -274,7 +274,6 @@
     <Content Include="Views\Lti\Redirect.cshtml" />
     <Content Include="Views\Lti\Outcomes.cshtml" />
     <Content Include="Views\Lti\Bridge.cshtml" />
-    <Content Include="Views\Lti\Zoom.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
