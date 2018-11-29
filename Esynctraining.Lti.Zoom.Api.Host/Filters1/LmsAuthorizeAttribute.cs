@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Esynctraining.Lti.Zoom.Common;
 using Esynctraining.Lti.Zoom.Common.Services;
 
-namespace Esynctraining.Lti.Zoom.Api.Host.FIlters
+namespace Esynctraining.Lti.Zoom.Api.Host.Filters
 {
     public class LmsAuthorizeBaseAttribute : ActionFilterAttribute
     {
