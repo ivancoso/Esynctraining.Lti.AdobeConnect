@@ -546,7 +546,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 UserGuideLink = $"{ZoomUrls.BaseUrl}/content/lti-instructions/{lmsProvider.UserGuideFileUrl}", //todo
                 EnableClassRosterSecurity = license.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity),
                 EnableOfficeHours = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
-                EnableOfficeHoursSlots = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
+                EnableOfficeHoursSlots = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHoursSlots),
                 EnableStudyGroups = license.GetSetting<bool>(LmsLicenseSettingNames.EnableStudyGroups),
                 EnabledStorageProviders = await GetEnabledStorageProviders(license),
                 PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),
