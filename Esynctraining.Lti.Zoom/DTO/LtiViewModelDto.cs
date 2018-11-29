@@ -47,7 +47,7 @@ namespace Esynctraining.Lti.Zoom.DTO
         public string DenyDate => BaseApiUrl + "/office-hours/{meetingId}/slots/deny-date"; //put
         public string DenySlotByDate => BaseApiUrl + "/office-hours/{meetingId}/slots/deny"; //put, post
         public string RescheduleSlot => BaseApiUrl + "/office-hours/slots/{slotId}/reschedule"; //put
-        public string RescheduleDate => BaseApiUrl + "/office-hours/{meetingId}/reschedule-date"; //put
+        public string RescheduleDate => BaseApiUrl + "/office-hours/{meetingId}/slots/reschedule-date"; //put
         public string ResetDeniedDate => BaseApiUrl + "/office-hours/{meetingId}/slots/reset-date"; //put
 
         //sessions
@@ -114,6 +114,7 @@ namespace Esynctraining.Lti.Zoom.DTO
 
         public List<int> EnabledStorageProviders { get; set; }
         public bool EnableOfficeHours { get; set; }
+        public bool EnableOfficeHoursSlots { get; set; }
         public bool EnableStudyGroups { get; set; }
         public bool EnableClassRosterSecurity { get; set; }
         public string PrimaryColor { get; set; }

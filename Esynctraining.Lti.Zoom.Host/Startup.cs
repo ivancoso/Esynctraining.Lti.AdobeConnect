@@ -51,7 +51,7 @@ namespace Esynctraining.Lti.Zoom.Host
                 .AddApplicationPart(controllerAssembly)
                 .AddControllersAsServices()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
             services
                 .AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
 

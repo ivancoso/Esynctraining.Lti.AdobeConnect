@@ -13,7 +13,6 @@ using Esynctraining.Lti.Zoom.DTO;
 using Esynctraining.Lti.Zoom.Extensions;
 using Esynctraining.Lti.Zoom.OAuth;
 using Esynctraining.Zoom.ApiWrapper;
-using Esynctraining.Zoom.ApiWrapper.Model;
 using LtiLibrary.NetCore.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +31,7 @@ using ILogger = Esynctraining.Core.Logging.ILogger;
 
 namespace Esynctraining.Lti.Zoom.Controllers
 {
-    public class LtiController : BaseController
+    public partial class LtiController : BaseController
     {
         private const string ProviderKeyCookieName = "providerKey";
 
@@ -301,7 +300,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 param.CalculateFields();
                 // Parse and validate the request
                 Request.CheckForRequiredLtiParameters();
-
+                if (!Guid.TryParse(param.oauth_consumer_key, out Guid consumerKey))
+                {
+                    Logger.ErrorFormat("Invalid LTI request. Invalid consumerKey. oauth_consumer_key:{0}.",
+                        param.oauth_consumer_key);
+                    throw new LtiException(
+                        $"Consumer key is empty or has invalid format.");
+                }
 
                 var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
 
@@ -334,7 +339,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     Logger.ErrorFormat("Zoom integration is not set up. param:{0}.",
                         JsonConvert.SerializeObject(param));
                     throw new LtiException(
-                        $"Invalid LTI request. Your Zoom integration is not set up for provided consumer key.");
+                        $"Your Zoom integration is not set up for provided consumer key.");
                 }
 
                 if (!(new BltiProviderHelper(Logger)).VerifyBltiRequest(license, Request,
@@ -342,7 +347,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     Logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.",
                         param.oauth_consumer_key);
-                    throw new LtiException($"Invalid LTI request. Invalid signature parameter");
+                    throw new LtiException($"Invalid signature parameter");
                 }
 
                 ValidateLtiVersion(param);
@@ -541,6 +546,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 UserGuideLink = $"{ZoomUrls.BaseUrl}/content/lti-instructions/{lmsProvider.UserGuideFileUrl}", //todo
                 EnableClassRosterSecurity = license.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity),
                 EnableOfficeHours = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
+                EnableOfficeHoursSlots = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
                 EnableStudyGroups = license.GetSetting<bool>(LmsLicenseSettingNames.EnableStudyGroups),
                 EnabledStorageProviders = await GetEnabledStorageProviders(license),
                 PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),

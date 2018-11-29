@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using Esynctraining.Lti.Zoom.Api.Host.FIlters;
+using Esynctraining.Lti.Zoom.Api.Host.Filters;
 using Esynctraining.Lti.Zoom.Common.Dto.Reports;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Microsoft.AspNetCore.Mvc;

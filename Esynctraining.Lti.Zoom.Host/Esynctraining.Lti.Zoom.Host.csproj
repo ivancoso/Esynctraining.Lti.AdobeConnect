@@ -32,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Lti\Outcomes.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Lti\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

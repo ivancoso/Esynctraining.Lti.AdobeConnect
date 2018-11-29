@@ -326,6 +326,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             var details = await _meetingService.GetMeetingApiDetails(meeting);
             //if (dto.KeepRegistration)
             //{
+            var dbSlots =
+                await _context.OhSlots.Where(x =>
+                    x.Start >= dto.Start && x.Start < dto.End && x.Availability.Meeting.Id == meetingId).ToListAsync();
             foreach (var slotDto in slotsToAdd) //todo: add many slots at once
             {
                 if (slotDto.Status == 1)
@@ -334,7 +337,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     slotDto.End = slotDto.End.AddMilliseconds(dto.FirstSlotTimeshift);
                     if (dto.KeepRegistration)
                     {
-                        var s = await AddSlots(meeting.Id, lmsUserId, slotDto.UserName, new[] {slotDto});
+                        var s = await AddSlots(meeting.Id, dbSlots.First(x => x.Id == slotDto.Id).LmsUserId, slotDto.UserName, new[] {slotDto});
                         if (!s.IsSuccess)
                         {
                             notAddedSlots.Add(slotDto.UserName);

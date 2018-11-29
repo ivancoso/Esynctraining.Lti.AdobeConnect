@@ -72,7 +72,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                     setup.OutputFormatters.Insert(0, new JilOutputFormatter());
 
                     setup.Filters.Add(new CheckModelForNullAttribute(HostingEnvironment.IsDevelopment()));
-                    setup.Filters.Add(new ValidateModelAttribute(LoggerFactory, new JilSerializer(), HostingEnvironment.IsDevelopment()));
+                    setup.Filters.Add(new Esynctraining.Lti.Zoom.Api.Host.Filters.ValidateModelAttribute(LoggerFactory, new JilSerializer(), HostingEnvironment.IsDevelopment()));
                     setup.Filters.Add(new GlobalExceptionFilterAttribute(LoggerFactory, HostingEnvironment.IsDevelopment()));
                 })
                 .AddApplicationPart(typeof(BaseApiController).Assembly)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using Esynctraining.Lti.Zoom.Api.Host.FIlters;
+using Esynctraining.Lti.Zoom.Api.Host.Filters;
 using Esynctraining.Lti.Zoom.Common;
 using Esynctraining.Lti.Zoom.Common.Dto.OfficeHours;
 using Esynctraining.Lti.Zoom.Common.Services;
@@ -51,11 +51,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public async Task<OperationResultWithData<OfficeHoursTeacherAvailabilityDto>> AddAvailabitily(int meetingId, [FromBody]OfficeHoursTeacherAvailabilityDto dto)
         {
-            if (dto.DaysOfWeek == null || dto.DaysOfWeek.Length == 0)
-            {
-                return OperationResultWithData<OfficeHoursTeacherAvailabilityDto>.Error(
-                    "Check Available Days.");
-            }
+            //if (dto.DaysOfWeek == null || dto.DaysOfWeek.Length == 0)
+            //{
+            //    return OperationResultWithData<OfficeHoursTeacherAvailabilityDto>.Error(
+            //        "Check Available Days.");
+            //}
             // check isTeacher
             var meeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (meeting == null)
@@ -120,7 +120,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             return slot;
         }
 
-        [Route("{meetingId}/reschedule-date")]
+        [Route("{meetingId}/slots/reschedule-date")]
         [HttpPut]
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public async Task<OperationResultWithData<List<SlotDto>>> RescheduleDate(int meetingId, [FromBody]RescheduleDateDto dto)
