@@ -129,7 +129,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             _logger.Info($"User {email} deleted meeting {meetingId} with details {meeting.Details}");
 
-            if (meeting.Type == 2)
+            if (meeting.Type == (int)CourseMeetingType.OfficeHour)
             {
                 if (remove)
                 {
@@ -146,7 +146,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
 
                     var meetings = _dbContext.LmsCourseMeetings.Where(x =>
-                        x.LicenseKey == licenseDto.ConsumerKey && x.ProviderHostId == userId && x.Type == 2);
+                        x.LicenseKey == licenseDto.ConsumerKey && x.ProviderHostId == userId && x.Type == (int)CourseMeetingType.OfficeHour);
                     _dbContext.RemoveRange(meetings);
                 }
             }
@@ -167,10 +167,10 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             MeetingViewModel vm = null;
             LmsCourseMeeting dbOfficeHours = null;
-            if (requestDto.Type.GetValueOrDefault(1) == 2) //Office Hours
+            if (requestDto.Type.GetValueOrDefault(1) == (int)CourseMeetingType.OfficeHour)
             {
-                var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => x.LicenseKey == licenseDto.ConsumerKey && x.Type == 2);
-                if (dbMeetings.Any(x => x.CourseId == courseId))
+                var dbMeetings = _dbContext.LmsCourseMeetings.Where(x => x.LicenseKey == licenseDto.ConsumerKey && x.Type == (int)CourseMeetingType.OfficeHour);
+                if (dbMeetings.Any(x => x.CourseId == courseId && x.ProviderHostId == user.Id))
                 {
                     return OperationResultWithData<MeetingViewModel>.Error(
                         "There is already created Office Hours meeting for this course. Please refresh page");
@@ -228,7 +228,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             //    LmsCalendarEventDTO lmsEvent = await _calendarEventService.CreateEvent(courseId, lmsSettings, lmsCalendarEvent);
             //}
 
-            if (requestDto.Type.GetValueOrDefault(1) != 2 && requestDto.Type.GetValueOrDefault(1) != 3
+            if (requestDto.Type.GetValueOrDefault(1) != (int)CourseMeetingType.OfficeHour 
+                && requestDto.Type.GetValueOrDefault(1) != (int)CourseMeetingType.StudyGroup
                 && requestDto.Settings.ApprovalType.GetValueOrDefault() == 1) //manual approval(secure roster)
             {
                 var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);

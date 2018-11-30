@@ -28,11 +28,23 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
 
         protected override async Task<IEnumerable<MeetingViewModel>> ProcessMergedMeetings(List<MeetingViewModel> result)
         {
-            var oh = result.SingleOrDefault(x => x.Type == (int)CourseMeetingType.OfficeHour);
-            if (oh == null)
+            if (result.Any())
             {
+                foreach (var oh in result)
+                {
+                    var ohDetailsResult = await _zoomApi.GetMeeting(oh.ConferenceId);
+                    if (!ohDetailsResult.IsSuccess)
+                        throw new Exception(ohDetailsResult.Message);
+
+                    oh.Description = ohDetailsResult.Data.Agenda;
+                    oh.Availabilities = await _ohService.GetAvailabilities(oh.Id, _currentUserId);
+                }
+            }
+            else
+            {
+                //getting current teacher's OH from other course
                 var ohMeeting = await _dbContext.LmsCourseMeetings.FirstOrDefaultAsync(x =>
-                    x.LicenseKey == _licenseKey && x.ProviderHostId == _currentUserId && x.Type == 2);
+                    x.LicenseKey == _licenseKey && x.ProviderHostId == _currentUserId && x.Type == (int)CourseMeetingType.OfficeHour);
                 if (ohMeeting != null)
                 {
                     var ohDetailsResult = await _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
@@ -49,20 +61,11 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
                     result.Add(vm);
                 }
             }
-            else
-            {
-                var ohDetailsResult = await _zoomApi.GetMeeting(oh.ConferenceId);
-                if (!ohDetailsResult.IsSuccess)
-                    throw new Exception(ohDetailsResult.Message);
-
-                oh.Description = ohDetailsResult.Data.Agenda;
-                oh.Availabilities = await _ohService.GetAvailabilities(oh.Id, _currentUserId);
-            }
 
             return result;
         }
 
-        private OfficeHoursViewModel ConvertFromDtoToOHViewModel(Meeting dto, string userId, int type = 1)
+        private OfficeHoursViewModel ConvertFromDtoToOHViewModel(Meeting dto, string userId, int type = (int)CourseMeetingType.Basic)
         {
             return new OfficeHoursViewModel
             {
