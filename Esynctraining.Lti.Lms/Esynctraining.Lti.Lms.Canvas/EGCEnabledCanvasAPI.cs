@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using Esynctraining.Lti.Lms.Canvas.Convertors;
 using Esynctraining.Lti.Lms.Canvas.DTOs;
 
@@ -263,7 +264,8 @@ namespace Esynctraining.Lti.Lms.Canvas
 
             string startTimeUtc = lmsEvent.StartAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
             string endTimeUtc = lmsEvent.EndAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
-            var link = $"/api/v1/calendar_events?calendar_event[context_code]=course_{courseId}&calendar_event[title]={lmsEvent.Title}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
+            string eventTitle = HttpUtility.UrlEncode(lmsEvent.Title);
+            var link = $"/api/v1/calendar_events?calendar_event[context_code]=course_{courseId}&calendar_event[title]={eventTitle}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
 
             string oauthId = licenseSettings[LmsLicenseSettingNames.CanvasOAuthId].ToString();
             string oauthKey = licenseSettings[LmsLicenseSettingNames.CanvasOAuthKey].ToString();
@@ -273,16 +275,8 @@ namespace Esynctraining.Lti.Lms.Canvas
 
             if (response.StatusCode != HttpStatusCode.Created)
             {
-                var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
-                if (errorData?.errors != null && errorData.errors.Any())
-                {
-                    _logger.Error(
-                        $"[Canvas API error] StatusCode:{response.StatusCode}, StatusDescription:{response.StatusDescription}, link: {link}, domain:{domain}.");
-                    foreach (var error in errorData.errors)
-                    {
-                        _logger.Error($"[Canvas API error] Response error: {error.message}");
-                    }
-                }
+                _logger.Error($"[Canvas API error] Response error: {response.Content}");
+                return null;
             }
             LmsCalendarEventDTO lmsCalendarEvent = CanvasCalendarConvertor.ConvertToLmsCalendarEvent(response.Data);
             return lmsCalendarEvent;
@@ -298,7 +292,8 @@ namespace Esynctraining.Lti.Lms.Canvas
 
             string startTimeUtc = lmsEvent.StartAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
             string endTimeUtc = lmsEvent.EndAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
-            var link = $"/api/v1/calendar_events/{lmsEvent.Id}?calendar_event[title]={lmsEvent.Title}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
+            string eventTitle = HttpUtility.UrlEncode(lmsEvent.Title);
+            var link = $"/api/v1/calendar_events/{lmsEvent.Id}?calendar_event[title]={eventTitle}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
 
             string oauthId = licenseSettings[LmsLicenseSettingNames.CanvasOAuthId].ToString();
             string oauthKey = licenseSettings[LmsLicenseSettingNames.CanvasOAuthKey].ToString();

@@ -14,6 +14,7 @@ namespace Esynctraining.Lti.Zoom.Domain
         public string ProviderHostId { get; set; }
         public bool Reused { get; set; }
         public string Details { get; set; }
+        public int? LmsCalendarEventId { get; set; }
 
         public virtual List<LmsMeetingSession> MeetingSessions { get; protected set; }
 

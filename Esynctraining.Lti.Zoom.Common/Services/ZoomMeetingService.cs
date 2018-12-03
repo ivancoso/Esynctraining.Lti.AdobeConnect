@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Esynctraining.Core.Domain;
+﻿using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Canvas;
@@ -16,6 +12,10 @@ using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Esynctraining.Lti.Zoom.Common.Services
 {
@@ -119,9 +119,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return _zoomApi.GetUserToken(userId, type);
         }
 
-        public async Task<OperationResult> DeleteMeeting(int meetingId, string courseId, string email, bool remove, string occurenceId = null)
+        public async Task<OperationResult> DeleteMeeting(int meetingId, string courseId, string email, bool remove, Dictionary<string, object> lmsSettings, string occurenceId = null)
         {
-
             var meeting = await GetMeeting(meetingId, courseId);
             if (meeting == null)
                 return OperationResult.Error("Meeting not found");
@@ -137,7 +136,6 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 }
                 else
                 {
-
                     string userId = null;
                     var user = _userService.GetUser(email);
                     userId = user.Id;
@@ -153,6 +151,10 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             else
             {
                 var isDeleted = _zoomApi.DeleteMeeting(meeting.ProviderMeetingId, occurenceId);
+
+                await RemoveLmsCalendarEventForMeeting(lmsSettings, meeting);
+                await RemoveLmsCalendarEventsForMeetingSessions(lmsSettings, meeting);
+
                 _dbContext.Remove(meeting);
             }
             await _dbContext.SaveChangesAsync();
@@ -211,22 +213,14 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 dbMeeting.ProviderHostId = m.Data.HostId;
             }
 
+            if (licenseDto.ProductId == 1010 && requestDto.Type == (int)CourseMeetingType.Basic)
+            {
+                var lmsEvent = await CreateLmsCalendarEvent(lmsSettings, courseId, requestDto);
+                dbMeeting.LmsCalendarEventId = lmsEvent?.Id;
+            }
+
             var entity = _dbContext.Add(dbMeeting);
             await _dbContext.SaveChangesAsync();
-
-            //if (licenseDto.ProductId == 1010 && requestDto.Type.GetValueOrDefault(1) == (int)CourseMeetingType.Basic)
-            //{
-            //    var date = LongToDateTime(requestDto);
-
-            //    LmsCalendarEventDTO lmsCalendarEvent = new LmsCalendarEventDTO()
-            //    {
-            //        StartAt = date,
-            //        EndAt = date.AddMinutes(requestDto.Duration.Value),
-            //        Title = requestDto.Topic
-            //    };
-
-            //    LmsCalendarEventDTO lmsEvent = await _calendarEventService.CreateEvent(courseId, lmsSettings, lmsCalendarEvent);
-            //}
 
             if (requestDto.Type.GetValueOrDefault(1) != (int)CourseMeetingType.OfficeHour 
                 && requestDto.Type.GetValueOrDefault(1) != (int)CourseMeetingType.StudyGroup
@@ -264,9 +258,65 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return vm.ToSuccessResult();
         }
 
-        private static DateTime LongToDateTime(CreateMeetingViewModel requestDto)
+        private async Task<LmsCalendarEventDTO> CreateLmsCalendarEvent(Dictionary<string, object> lmsSettings, string courseId,
+            CreateMeetingViewModel requestDto)
         {
-            var unixDate = requestDto.StartTime.Value;
+            var date = LongToDateTime(requestDto.StartTime.Value);
+
+            LmsCalendarEventDTO lmsCalendarEvent = new LmsCalendarEventDTO()
+            {
+                StartAt = date,
+                EndAt = date.AddMinutes(requestDto.Duration.Value),
+                Title = requestDto.Topic
+            };
+
+            try
+            {
+                var lmsEvent = await _calendarEventService.CreateEvent(courseId, lmsSettings, lmsCalendarEvent);
+                return lmsEvent;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.Message);
+                return null;
+            }
+        }
+
+        private async Task RemoveLmsCalendarEventForMeeting(Dictionary<string, object> lmsSettings, LmsCourseMeeting meeting)
+        {
+            try
+            {
+                if (meeting.LmsCalendarEventId.HasValue)
+                {
+                    await _calendarEventService.DeleteCalendarEvent(meeting.LmsCalendarEventId.Value, lmsSettings);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.Message);
+            }
+        }
+
+        private async Task RemoveLmsCalendarEventsForMeetingSessions(Dictionary<string, object> lmsSettings, LmsCourseMeeting meeting)
+        {
+            if (meeting.MeetingSessions == null)
+                return;
+
+            try
+            {
+                foreach (var meetingSession in meeting.MeetingSessions.Where(s => s.LmsCalendarEventId.HasValue))
+                {
+                    await _calendarEventService.DeleteCalendarEvent(meetingSession.LmsCalendarEventId.Value, lmsSettings);
+                }
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e.Message);
+            }
+        }
+
+        private static DateTime LongToDateTime(long unixDate)
+        {
             DateTime start = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             DateTime date = start.AddMilliseconds(unixDate);
             return date;
@@ -324,6 +374,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                                 });
                         await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, true);
                     }
+
+                    await UpdateLmsCalendarEvent(licenseSettings, courseId, vm, dbMeeting);
                 }
 
                 if (dbMeeting.Type == (int)CourseMeetingType.StudyGroup)
@@ -338,6 +390,29 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             }
 
             return OperationResultWithData<bool>.Error("Meeting has not been updated");
+        }
+
+        private async Task UpdateLmsCalendarEvent(Dictionary<string, object> licenseSettings, string courseId, CreateMeetingViewModel vm, LmsCourseMeeting dbMeeting)
+        {
+            if (!dbMeeting.LmsCalendarEventId.HasValue)
+                return;
+
+            var lmsCalendarEvent = new LmsCalendarEventDTO
+            {
+                Id = dbMeeting.LmsCalendarEventId.Value,
+                StartAt = LongToDateTime(vm.StartTime.Value),
+                EndAt = LongToDateTime(vm.StartTime.Value).AddMinutes(vm.Duration.Value),
+                Title = vm.Topic
+            };
+
+            try
+            {
+                await _calendarEventService.UpdateEvent(courseId, licenseSettings, lmsCalendarEvent);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.Message);
+            }
         }
 
         private Meeting ConvertFromDto(CreateMeetingViewModel dto)

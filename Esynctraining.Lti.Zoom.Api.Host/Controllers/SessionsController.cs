@@ -40,7 +40,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                     //log
                     return OperationResultWithData<IEnumerable<MeetingSessionDto>>.Error("Meeting not found or cannot be accessed with current session");
                 }
-                var result = await _meetingSessionService.CreateBatchAsync(dto, meeting);
+                var lmsSettings = LmsLicense.GetLMSSettings(Session);
+                var result = await _meetingSessionService.CreateBatchAsync(dto, meeting, CourseId, lmsSettings);
                 return result.ToSuccessResult();
             }
             catch (Exception ex)
@@ -90,7 +91,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                     return OperationResultWithData<MeetingSessionDto>.Error("Meeting not found or cannot be accessed with current session");
                 }
 
-                var session = await _meetingSessionService.CreateSessionAsync(meeting);
+                var lmsSettings = LmsLicense.GetLMSSettings(Session);
+                var session = await _meetingSessionService.CreateSessionAsync(meeting, lmsSettings);
                 return session.ToSuccessResult();
             }
             catch (Exception ex)
@@ -140,7 +142,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                     return OperationResultWithData<MeetingSessionDto>.Error("Meeting not found or cannot be accessed with current session");
                 }
 
-                await _meetingSessionService.DeleteSessionAsync(meeting, sessionId.GetValueOrDefault());
+                var lmsSettings = LmsLicense.GetLMSSettings(Session);
+                await _meetingSessionService.DeleteSessionAsync(meeting, sessionId.GetValueOrDefault(), lmsSettings);
                 return OperationResult.Success();
             }
             catch (Exception ex)

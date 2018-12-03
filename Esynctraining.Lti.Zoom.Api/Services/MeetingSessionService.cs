@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Canvas;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Sessions;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
@@ -20,11 +22,18 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         //        //private readonly ICalendarExportService _calendarExportService;
         //        private readonly ILmsLicense _license;
         private readonly ILogger _logger;
+        private readonly CalendarEventService _calendarEventService;
 
         private readonly ZoomMeetingService _meetingService;
         //
-        public MeetingSessionService(ZoomDbContext dbContext, IJsonSerializer jsonSerializer, 
-            ILmsLicenseAccessor licenseAccessor, ILogger logger, ZoomMeetingService meetingService, ZoomMeetingApiService zoomMeetingApiService)
+        public MeetingSessionService(
+            ZoomDbContext dbContext, 
+            IJsonSerializer jsonSerializer, 
+            ILmsLicenseAccessor licenseAccessor, 
+            ILogger logger, 
+            ZoomMeetingService meetingService, 
+            ZoomMeetingApiService zoomMeetingApiService, 
+            CalendarEventService calendarEventService)
         {
             //            _lmsCourseMeetingModel = lmsCourseMeetingModel ?? throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -35,9 +44,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _licenseAccessor = licenseAccessor;
             _meetingService = meetingService;
             _zoomMeetingApiService = zoomMeetingApiService;
+            _calendarEventService = calendarEventService;
         }
 
-        public async Task<IEnumerable<MeetingSessionDto>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LmsCourseMeeting meeting)
+        public async Task<IEnumerable<MeetingSessionDto>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LmsCourseMeeting meeting, string courseId, Dictionary<string, object> lmsSettings)
         {
             var apiDetails = await _zoomMeetingApiService.GetMeetingApiDetails(meeting);
             DateTime startDate = dto.StartDate;
@@ -51,7 +61,8 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             int i = 1;
             var latestDateToCheck = startDate.AddDays(dto.Weeks * 7);
 
-            var listOfEvents = new List<MeetingSessionDto>();
+            var meetingSessions = new List<MeetingSessionDto>();
+            var lmsEvents = new List<LmsCalendarEventDTO>();
             while (startDate < latestDateToCheck)
             {
                 if (dto.DaysOfWeek.Contains((int)startDate.DayOfWeek))
@@ -63,7 +74,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                         StartDate = startDate,//.ToString("yyyy-MM-dd HH:mm"),
                         EndDate = endDate,//.ToString("yyyy-MM-dd HH:mm"),
                     };
-                    listOfEvents.Add(ev);
+                    meetingSessions.Add(ev);
                     i++;
                 }
 
@@ -71,20 +82,26 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 endDate = endDate.AddDays(1);
             }
 
-            //if (_calendarExportService != null)
-            //{
-            //    listOfEvents = (await _calendarExportService.SaveEventsAsync(meeting.Id, listOfEvents, param, _license))
-            //        .ToList();
-            //}
-
-            meeting.MeetingSessions.AddRange(listOfEvents.Select(x => new LmsMeetingSession
+            foreach (var session in meetingSessions)
             {
-                //EventId = x.EventId,
-                Name = x.Name,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-                Meeting = meeting
-            }));
+                var lmsEvent = new LmsCalendarEventDTO
+                {
+                    StartAt = session.StartDate,
+                    EndAt = session.EndDate,
+                    Title = session.Name
+                };
+                var calendarEvent = await _calendarEventService.CreateEvent(courseId, lmsSettings, lmsEvent);
+
+                var newLmsMeetingSession = new LmsMeetingSession
+                {
+                    Name = session.Name,
+                    StartDate = session.StartDate,
+                    EndDate = session.EndDate,
+                    Meeting = meeting,
+                    LmsCalendarEventId = calendarEvent?.Id
+                };
+                meeting.MeetingSessions.Add(newLmsMeetingSession);
+            }
 
             await _dbContext.SaveChangesAsync();
             return meeting.MeetingSessions.Select(MeetingSessionConverter.ConvertFromEntity).ToArray();
@@ -96,7 +113,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return meeting.MeetingSessions.Select(MeetingSessionConverter.ConvertFromEntity).ToArray();
         }
 
-        public async Task<MeetingSessionDto> CreateSessionAsync(LmsCourseMeeting meeting)
+        public async Task<MeetingSessionDto> CreateSessionAsync(LmsCourseMeeting meeting, Dictionary<string, object> lmsSettings)
         {
             var apiDetails = await _zoomMeetingApiService.GetMeetingApiDetails(meeting);
             
@@ -121,6 +138,15 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             //    var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDto[] { ev }, param, _license);
             //    ev = sakaiEventResult.Single();
             //}
+
+            LmsCalendarEventDTO lmsCalendarEvent = new LmsCalendarEventDTO
+            {
+                Title = ev.Name,
+                StartAt = ev.StartDate,
+                EndAt = ev.EndDate
+            };
+            var newLmsEvent = await _calendarEventService.CreateEvent(meeting.CourseId, lmsSettings, lmsCalendarEvent);
+
             var session = new LmsMeetingSession
             {
                 //EventId = ev.EventId,
@@ -128,6 +154,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 StartDate = ev.StartDate,
                 EndDate = ev.EndDate,
                 Meeting = meeting,
+                LmsCalendarEventId = newLmsEvent?.Id
             };
             meeting.MeetingSessions.Add(session);
             await _dbContext.SaveChangesAsync();
@@ -161,7 +188,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return MeetingSessionConverter.ConvertFromEntity(session);
         }
 
-        public async Task DeleteSessionAsync(LmsCourseMeeting meeting, int id)
+        public async Task DeleteSessionAsync(LmsCourseMeeting meeting, int id, Dictionary<string, object> lmsSettings)
         {
             LmsMeetingSession session = null;
 //            if (meetingId != 0)
@@ -192,12 +219,17 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             //if (meetingId != 0)
             //{
+            if (session.LmsCalendarEventId.HasValue)
+            {
+                await _calendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId.Value, lmsSettings);
+            }
+            
             meeting.MeetingSessions.Remove(session);
             await _dbContext.SaveChangesAsync();
             //}
         }
 
-        public async Task DeleteMeetingSessionsAsync(LmsCourseMeeting meeting)
+        public async Task DeleteMeetingSessionsAsync(LmsCourseMeeting meeting, Dictionary<string, object> lmsSettings)
         {
             if (meeting.MeetingSessions.Any())
             {
@@ -214,6 +246,11 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 //        throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
                 //    }
                 //}
+
+                foreach (var session in meeting.MeetingSessions.Where(s=> s.LmsCalendarEventId.HasValue))
+                {
+                    await _calendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId.Value, lmsSettings);
+                }
 
                 meeting.MeetingSessions.Clear();
                 await _dbContext.SaveChangesAsync();

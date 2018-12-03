@@ -242,8 +242,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         public virtual async Task<OperationResult> DeleteMeeting(int meetingId, [FromQuery] bool remove = false)
         {
             //param.lis_person_contact_email_primary
+            var lmsSettings = LmsLicense.GetLMSSettings(Session);
+
             var result = await _meetingService.DeleteMeeting(meetingId, CourseId,
-                Param.lis_person_contact_email_primary, remove);
+                Param.lis_person_contact_email_primary, remove, lmsSettings);
 
             return result;
 

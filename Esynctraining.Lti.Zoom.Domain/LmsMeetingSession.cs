@@ -18,5 +18,6 @@ namespace Esynctraining.Lti.Zoom.Domain
 
         public string Summary { get; set; }
 
+        public int? LmsCalendarEventId { get; set; }
     }
 }
