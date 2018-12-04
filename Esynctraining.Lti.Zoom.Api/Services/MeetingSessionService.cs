@@ -82,15 +82,21 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 endDate = endDate.AddDays(1);
             }
 
+            var licenseDto = await _licenseAccessor.GetLicense();
+
             foreach (var session in meetingSessions)
             {
-                var lmsEvent = new LmsCalendarEventDTO
+                LmsCalendarEventDTO calendarEvent = null;
+                if (licenseDto.ProductId == 1010)
                 {
-                    StartAt = session.StartDate,
-                    EndAt = session.EndDate,
-                    Title = session.Name
-                };
-                var calendarEvent = await _calendarEventService.CreateEvent(courseId, lmsSettings, lmsEvent);
+                    var lmsEvent = new LmsCalendarEventDTO
+                    {
+                        StartAt = session.StartDate,
+                        EndAt = session.EndDate,
+                        Title = session.Name
+                    };
+                    calendarEvent = await _calendarEventService.CreateEvent(courseId, lmsSettings, lmsEvent);
+                }
 
                 var newLmsMeetingSession = new LmsMeetingSession
                 {
@@ -139,13 +145,19 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             //    ev = sakaiEventResult.Single();
             //}
 
-            LmsCalendarEventDTO lmsCalendarEvent = new LmsCalendarEventDTO
+            var licenseDto = await _licenseAccessor.GetLicense();
+            LmsCalendarEventDTO newLmsEvent = null;
+            if (licenseDto.ProductId == 1010)
             {
-                Title = ev.Name,
-                StartAt = ev.StartDate,
-                EndAt = ev.EndDate
-            };
-            var newLmsEvent = await _calendarEventService.CreateEvent(meeting.CourseId, lmsSettings, lmsCalendarEvent);
+                LmsCalendarEventDTO lmsCalendarEvent = new LmsCalendarEventDTO
+                {
+                    Title = ev.Name,
+                    StartAt = ev.StartDate,
+                    EndAt = ev.EndDate
+                };
+                newLmsEvent =
+                    await _calendarEventService.CreateEvent(meeting.CourseId, lmsSettings, lmsCalendarEvent);
+            }
 
             var session = new LmsMeetingSession
             {

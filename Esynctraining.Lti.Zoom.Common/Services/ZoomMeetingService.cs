@@ -152,8 +152,12 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             {
                 var isDeleted = _zoomApi.DeleteMeeting(meeting.ProviderMeetingId, occurenceId);
 
-                await RemoveLmsCalendarEventForMeeting(lmsSettings, meeting);
-                await RemoveLmsCalendarEventsForMeetingSessions(lmsSettings, meeting);
+                LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
+                if (licenseDto.ProductId == 1010)
+                {
+                    await RemoveLmsCalendarEventForMeeting(lmsSettings, meeting);
+                    await RemoveLmsCalendarEventsForMeetingSessions(lmsSettings, meeting);
+                }
 
                 _dbContext.Remove(meeting);
             }
@@ -375,7 +379,11 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                         await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, true);
                     }
 
-                    await UpdateLmsCalendarEvent(licenseSettings, courseId, vm, dbMeeting);
+
+                    if (licenseDto.ProductId == 1010)
+                    {
+                        await UpdateLmsCalendarEvent(licenseSettings, courseId, vm, dbMeeting);
+                    }
                 }
 
                 if (dbMeeting.Type == (int)CourseMeetingType.StudyGroup)
