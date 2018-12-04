@@ -28,6 +28,7 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         public bool EnableJoinBeforeHost { get; set; }
 
         [DeserializeAs(Name = "mute_upon_entry")]
+        [JsonProperty(PropertyName = "mute_upon_entry")]
         public bool EnableMuteOnEntry { get; set; }
 
         [DeserializeAs(Name = "watermark")]
