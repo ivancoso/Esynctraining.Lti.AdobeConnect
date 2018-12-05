@@ -25,6 +25,8 @@ namespace Esynctraining.Lti.Lms.Canvas
     // ReSharper disable once InconsistentNaming
     public sealed class EGCEnabledCanvasAPI : CanvasAPI, IEGCEnabledLmsAPI, IEGCEnabledCanvasAPI
     {
+        private const string StandartTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
+
         public EGCEnabledCanvasAPI(ILogger logger, IJsonDeserializer jsonDeserializer)
             : base(logger, jsonDeserializer)
         {
@@ -262,8 +264,8 @@ namespace Esynctraining.Lti.Lms.Canvas
 
             var client = CreateRestClient(domain);
 
-            string startTimeUtc = lmsEvent.StartAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ");
-            string endTimeUtc = lmsEvent.EndAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ");
+            string startTimeUtc = lmsEvent.StartAt.ToString(StandartTimeFormat);
+            string endTimeUtc = lmsEvent.EndAt.ToString(StandartTimeFormat);
             string eventTitle = HttpUtility.UrlEncode(lmsEvent.Title);
             var link = $"/api/v1/calendar_events?calendar_event[context_code]=course_{courseId}&calendar_event[title]={eventTitle}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
 
@@ -290,8 +292,8 @@ namespace Esynctraining.Lti.Lms.Canvas
 
             var client = CreateRestClient(domain);
 
-            string startTimeUtc = lmsEvent.StartAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
-            string endTimeUtc = lmsEvent.EndAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            string startTimeUtc = lmsEvent.StartAt.ToString(StandartTimeFormat);
+            string endTimeUtc = lmsEvent.EndAt.ToString(StandartTimeFormat);
             string eventTitle = HttpUtility.UrlEncode(lmsEvent.Title);
             var link = $"/api/v1/calendar_events/{lmsEvent.Id}?calendar_event[title]={eventTitle}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
 
