@@ -262,8 +262,8 @@ namespace Esynctraining.Lti.Lms.Canvas
 
             var client = CreateRestClient(domain);
 
-            string startTimeUtc = lmsEvent.StartAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
-            string endTimeUtc = lmsEvent.EndAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            string startTimeUtc = lmsEvent.StartAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ");
+            string endTimeUtc = lmsEvent.EndAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ");
             string eventTitle = HttpUtility.UrlEncode(lmsEvent.Title);
             var link = $"/api/v1/calendar_events?calendar_event[context_code]=course_{courseId}&calendar_event[title]={eventTitle}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
 
