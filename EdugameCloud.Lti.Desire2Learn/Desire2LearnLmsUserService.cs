@@ -12,6 +12,9 @@ using EdugameCloud.Lti.OAuth.Desire2Learn;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Desire2Learn
 {
@@ -31,13 +34,13 @@ namespace EdugameCloud.Lti.Desire2Learn
             this.settings = settings;
         }
 
-        public override async Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
         {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (licenseSettings == null)
+                throw new ArgumentNullException(nameof(licenseSettings));
 
-            var param = extraData as LtiParamDTO;
-
+            var param = extraData;
+            //todo: to license/session settings
             var isCurrentUserAndAdmin =
                 param != null
                 && param.lms_user_id == lmsUserId
@@ -47,58 +50,40 @@ namespace EdugameCloud.Lti.Desire2Learn
             //if current user is admin but not allowed to call api - process 'error' parameter in call stack
             if (isCurrentUserAndAdmin)
             {
-                var error = $"[GetD2LUsers] AdminUser is not set for LmsCompany with id={lmsCompany.Id}";
-                return (null, error);
+                var error = $"[GetD2LUsers] AdminUser is not set for LmsCompany with key={licenseSettings[LmsLicenseSettingNames.LicenseKey]}";
+                return OperationResultWithData<LmsUserDTO>.Error(error);
             }
 
-            var result = await GetUsersOldStyle(lmsCompany, courseId, extraData);
-            if (string.IsNullOrWhiteSpace(result.error))
-                return (result.users.FirstOrDefault(u => u.Id == lmsUserId), result.error);
-
-            return (null, result.error);
+            var result = await GetUsers(licenseSettings, courseId, extraData);
+            return result.IsSuccess
+                ? result.Data.FirstOrDefault(u => u.Id == lmsUserId)?.ToSuccessResult()
+                : OperationResultWithData<LmsUserDTO>.Error(result.Message);
         }
 
-        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
-            int courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
+            string courseId, LtiParamDTO param = null)
         {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (licenseSettings == null)
+                throw new ArgumentNullException(nameof(licenseSettings));
 
-            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
-            return users.users.ToSuccessResult();
-        }
-
-        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
-            int courseId, LtiParamDTO param = null)
-        {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
-
-            LmsUser lmsUser = lmsCompany.AdminUser;
-            if (lmsUser == null)
+            if (string.IsNullOrEmpty((string)licenseSettings[LmsUserSettingNames.Token]))
             {
-                Logger.ErrorFormat("[GetD2LUsers] AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
+                Logger.WarnFormat("[GetD2LUsers]: Admin Token does not exist for LmsCompany key: {1}.", licenseSettings[LmsLicenseSettingNames.LicenseKey]);
                 throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
-            if (string.IsNullOrEmpty(lmsUser.Token))
-            {
-                Logger.WarnFormat("[GetD2LUsers]: Token does not exist for LmsUser with id={0}. LmsCompany ID: {1}.", lmsUser.Id, lmsCompany.Id);
-                throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
-            }
-
-            string[] tokens = lmsUser.Token.Split(' ');
+            string[] tokens = ((string)licenseSettings[LmsUserSettingNames.Token]).Split(' ');
 
             // get course users list
             var classlistEnrollments = d2lApiService.GetApiObjects<List<ClasslistUser>>(
                 tokens[0],
                 tokens[1],
-                lmsCompany.LmsDomain,
+                (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
                 string.Format(
                     d2lApiService.EnrollmentsClasslistUrlFormat,
                     (string)this.settings.BrightspaceApiVersion,
                     courseId),
-                lmsCompany);
+                licenseSettings);
 
             // mapping to LmsUserDTO
             var result = new List<LmsUserDTO>();
@@ -112,18 +97,18 @@ namespace EdugameCloud.Lti.Desire2Learn
                     enrollments = d2lApiService.GetApiObjects<PagedResultSet<OrgUnitUser>>(
                         tokens[0],
                         tokens[1],
-                        lmsCompany.LmsDomain,
+                        (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
                         string.Format(
                             d2lApiService.EnrollmentsUrlFormat,
                             (string)this.settings.BrightspaceApiVersion,
                             courseId)
                         + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
-                        lmsCompany);
+                        licenseSettings);
                     if (enrollments == null || enrollments.Items == null)
                     {
                         var error = "Incorrect API call or returned data. Please contact site administrator";
                         Logger.Error("[D2L Enrollments]: Object returned from API has null value");
-                        return (new List<LmsUserDTO>(), error);
+                        return OperationResultWithData<List<LmsUserDTO>>.Error(error);
                     }
 
                     enrollmentsList.AddRange(enrollments.Items);
@@ -135,7 +120,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                 // current user is not enrolled to this course (user is admin) -> add him to user list
                 if (AllowAdminAdditionToCourse && classlistEnrollments.All(x => x.Identifier != currentLmsUserId))
                 {
-                    var currentLmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(currentLmsUserId, lmsCompany.Id).Value;
+                    var currentLmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(currentLmsUserId, (int)licenseSettings[LmsLicenseSettingNames.LicenseId]).Value;
 
                     if ((currentLmsUser != null) && !string.IsNullOrEmpty(currentLmsUser.Token))
                     {
@@ -144,18 +129,18 @@ namespace EdugameCloud.Lti.Desire2Learn
                         var currentUserInfo = d2lApiService.GetApiObjects<WhoAmIUser>(
                             currentUserTokens[0],
                             currentUserTokens[1],
-                            lmsCompany.LmsDomain,
+                            (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
                             string.Format(d2lApiService.WhoAmIUrlFormat, (string)this.settings.BrightspaceApiVersion),
-                            lmsCompany);
+                            licenseSettings);
 
                         if (currentUserInfo != null)
                         {
                             //
                             var userInfo = d2lApiService.GetApiObjects<UserData>(tokens[0], tokens[1],
-                                lmsCompany.LmsDomain,
+                                (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
                                 string.Format(d2lApiService.GetUserUrlFormat, (string)this.settings.BrightspaceApiVersion,
                                     currentUserInfo.Identifier),
-                                lmsCompany);
+                                licenseSettings);
 
                             classlistEnrollments.Add(
                                 new ClasslistUser
@@ -186,7 +171,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                 }
             }
 
-            return (result, null);
+            return result.ToSuccessResult();
         }
 
         protected virtual bool AllowAdminAdditionToCourse

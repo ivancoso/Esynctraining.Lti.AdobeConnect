@@ -1,14 +1,16 @@
-﻿using Castle.Windsor;
+﻿using System.Collections.Generic;
+using Castle.Windsor;
 using EdugameCloud.Lti.API.AdobeConnect;
 using Esynctraining.Core.Utils;
-using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.API.Canvas;
-using EdugameCloud.Lti.API.Moodle;
-using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.API.BlackBoard;
+using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.API.Moodle;
+using Esynctraining.Lti.Lms.Common.API.Sakai;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API
 {
@@ -80,10 +82,11 @@ namespace EdugameCloud.Lti.API
             return null;
         }
 
-        public LmsUserServiceBase GetUserService(LmsProviderEnum lmsId)
+        public Esynctraining.Lti.Lms.Common.API.LmsUserServiceBase GetUserService(LmsProviderEnum lmsId)
         {
-            return IoC.Resolve<LmsUserServiceBase>(lmsId.ToString());
+            return IoC.Resolve<Esynctraining.Lti.Lms.Common.API.LmsUserServiceBase>(lmsId.ToString());
         }
+
 
         public LmsCourseSectionsServiceBase GetCourseSectionsService(ILmsLicense lmsLicense, LtiParamDTO param)
         {
@@ -99,7 +102,7 @@ namespace EdugameCloud.Lti.API
                         new {license = lmsLicense, param});
             }
 
-            return new LmsCourseSectionsServiceBase(lmsLicense, param);
+            return new LmsCourseSectionsServiceBase(new Dictionary<string, object>(), param);
         }
 
         public IMeetingSessionService GetMeetingSessionService(ILmsLicense lmsLicense, LtiParamDTO param)

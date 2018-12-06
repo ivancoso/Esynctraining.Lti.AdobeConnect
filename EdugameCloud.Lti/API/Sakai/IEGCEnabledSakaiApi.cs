@@ -1,6 +1,6 @@
 namespace EdugameCloud.Lti.API.Sakai
 {
-    public interface IEGCEnabledSakaiApi : IEGCEnabledLmsAPI
-    {
-    }
+    //public interface IEGCEnabledSakaiApi : IEGCEnabledLmsAPI
+    //{
+    //}
 }

@@ -1,22 +1,16 @@
-﻿using EdugameCloud.Lti.Core.Constants;
+﻿using Esynctraining.Lti.Lms.Common.API.Moodle;
+using Esynctraining.Lti.Lms.Common.Dto;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 
 namespace EdugameCloud.Lti.Moodle
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EdugameCloud.Lti.API.Moodle;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using Esynctraining.Core.Logging;
-    using Esynctraining.Core.Providers;
-
-    /// <summary>
-    /// The Moodle API.
-    /// </summary>
-    // ReSharper disable once InconsistentNaming
     public sealed class EGCEnabledMoodleApi : MoodleApi, IEGCEnabledMoodleApi
     {
         public EGCEnabledMoodleApi(ApplicationSettingsProvider settings, ILogger logger)
@@ -29,12 +23,12 @@ namespace EdugameCloud.Lti.Moodle
             get { return "edugamecloud"; }
         }
 
-        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
+        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
         {
             string error = null;
             try
             {
-                var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
+                var moodleServiceToken = (string)licenseSettings[LmsLicenseSettingNames.MoodleQuizServiceToken];
                 //var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
                 //    ? GetQuizzes(moodleServiceToken, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms)
                 //    : LoginIfNecessary(
@@ -49,7 +43,7 @@ namespace EdugameCloud.Lti.Moodle
                 IEnumerable<LmsQuizInfoDTO> quizResult;
                 if (!string.IsNullOrEmpty(moodleServiceToken))
                 {
-                    quizResult = await GetQuizzes(moodleServiceToken, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms);
+                    quizResult = await GetQuizzes(moodleServiceToken, isSurvey, (string)licenseSettings[LmsUserSettingNames.CourseId], licenseSettings);
                 }
                 else
                 {
@@ -57,9 +51,9 @@ namespace EdugameCloud.Lti.Moodle
                     null,
                     async c =>
                     {
-                        return await GetQuizzes(c.Token, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms);
+                        return await GetQuizzes(c.Token, isSurvey, (string)licenseSettings[LmsUserSettingNames.CourseId], licenseSettings);
                     },
-                    lmsUserParameters.LmsUser);
+                    licenseSettings);
 
                     //popov
                     quizResult = await quizResultTuple.result;
@@ -71,7 +65,7 @@ namespace EdugameCloud.Lti.Moodle
                 {
                     error = error ?? "Moodle XML. Unable to retrive result from API";
 
-                    _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+                    _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
 
                     return (Data: Enumerable.Empty<LmsQuizInfoDTO>(), Error: error);
                 }
@@ -80,7 +74,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey);
                 throw;
             }
         }
@@ -88,22 +82,7 @@ namespace EdugameCloud.Lti.Moodle
         /// <summary>
         /// The get quiz list for user.
         /// </summary>
-        /// <param name="lmsUserParameters">
-        /// The LMS User Parameters.
-        /// </param>
-        /// <param name="isSurvey">
-        /// The is Survey.
-        /// </param>
-        /// <param name="quizIds">
-        /// The quiz Ids.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{LmsQuizDTO}"/>.
-        /// </returns>
-        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds)
+        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
         {
             try
             {
@@ -112,7 +91,7 @@ namespace EdugameCloud.Lti.Moodle
                 foreach (int quizId in quizIds)
                 {
                     int id = quizId;
-                    var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
+                    var moodleServiceToken = (string)licenseSettings[LmsLicenseSettingNames.MoodleQuizServiceToken];
                     //var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
                     //    ? GetQuiz(moodleServiceToken, isSurvey, quizId, lmsUserParameters.CompanyLms)
                     //    : LoginIfNecessary(
@@ -128,17 +107,17 @@ namespace EdugameCloud.Lti.Moodle
                     LmsQuizDTO quizResult;
                     if (!string.IsNullOrEmpty(moodleServiceToken))
                     {
-                        quizResult = await GetQuiz(moodleServiceToken, isSurvey, quizId, lmsUserParameters.CompanyLms);
+                        quizResult = await GetQuiz(moodleServiceToken, isSurvey, quizId, licenseSettings);
                     }
                     else
                     {
                         var quizResultTuple = await LoginIfNecessary(
-                        null,
-                        async c =>
-                        {
-                            return await GetQuiz(c.Token, isSurvey, quizId, lmsUserParameters.CompanyLms);
-                        },
-                        lmsUserParameters.LmsUser);
+                            null,
+                            async c =>
+                            {
+                                return await GetQuiz(c.Token, isSurvey, quizId, licenseSettings);
+                            },
+                            licenseSettings);
                         //popov
                         quizResult = await quizResultTuple.result;
                         error = quizResultTuple.error;
@@ -149,7 +128,7 @@ namespace EdugameCloud.Lti.Moodle
                     {
                         error = error ?? "Moodle XML. Unable to retrive result from API";
 
-                        _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+                        _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
 
                         return (Data: result, Error: error);
                     }
@@ -161,7 +140,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey);
                 throw;
             }
         }
@@ -178,13 +157,13 @@ namespace EdugameCloud.Lti.Moodle
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        public async Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
+        public async Task SendAnswersAsync(Dictionary<string, object> licenseSettings, string json, bool isSurvey, string[] answers)
         {
             string error;
 
             try
             {
-                var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
+                var moodleServiceToken = (string)licenseSettings[LmsLicenseSettingNames.MoodleQuizServiceToken];
                 //var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
                 //    ? SendQuiz(moodleServiceToken, isSurvey, json, lmsUserParameters)
                 //    : LoginIfNecessary(
@@ -199,7 +178,7 @@ namespace EdugameCloud.Lti.Moodle
                 LmsQuizDTO quizResult;
                 if (!string.IsNullOrEmpty(moodleServiceToken))
                 {
-                    quizResult = await SendQuiz(moodleServiceToken, isSurvey, json, lmsUserParameters);
+                    quizResult = await SendQuiz(moodleServiceToken, isSurvey, json, licenseSettings);
                 }
                 else
                 {
@@ -207,9 +186,9 @@ namespace EdugameCloud.Lti.Moodle
                         null,
                         c =>
                         {
-                            return SendQuiz(c.Token, isSurvey, json, lmsUserParameters);
+                            return SendQuiz(c.Token, isSurvey, json, licenseSettings);
                         },
-                        lmsUserParameters.LmsUser);
+                        licenseSettings);
 
                     //popov
                     quizResult = await quizResultTuple.result;
@@ -220,18 +199,18 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", lmsUserParameters.Id, isSurvey, json);
+                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, json);
                 throw;
             }
         }
 
-        public void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId)
+        public async Task PublishQuiz(Dictionary<string, object> licenseSettings, string courseId, int quizId)
         {
             throw new NotImplementedException();
         }
 
 
-        private async Task<LmsQuizDTO> SendQuiz(string token, bool isSurvey, string json, LmsUserParameters lmsUserParameters)
+        private async Task<LmsQuizDTO> SendQuiz(string token, bool isSurvey, string json, Dictionary<string, object> licenseSettings)
         {
             json = json.Replace("\"", "\"");
             var pairs = new Dictionary<string, string>
@@ -240,7 +219,7 @@ namespace EdugameCloud.Lti.Moodle
                 { "wstoken",  token },
                 { "reportObject", json }
             };
-            var url = GetServicesUrl(lmsUserParameters.CompanyLms);
+            var url = GetServicesUrl(licenseSettings);
             var xmlDoc = await UploadValues(url, pairs);
 
             string errorMessage = string.Empty;
@@ -250,7 +229,7 @@ namespace EdugameCloud.Lti.Moodle
             if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
             {
                 _logger.ErrorFormat("[EGCEnabledMoodleApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
-                    lmsUserParameters.Id,
+                    licenseSettings[LmsUserSettingNames.SessionId],
                     isSurvey,
                     errorMessage,
                     err,
@@ -260,7 +239,7 @@ namespace EdugameCloud.Lti.Moodle
             return result;
         }
 
-        private async Task<IEnumerable<LmsQuizInfoDTO>> GetQuizzes(string token, bool isSurvey, int courseId, ILmsLicense lmsCompany)
+        private async Task<IEnumerable<LmsQuizInfoDTO>> GetQuizzes(string token, bool isSurvey, string courseId, Dictionary<string, object> licenseSettings)
         {
             var functionName = isSurvey
                 ? "local_edugamecloud_get_total_survey_list"
@@ -272,13 +251,13 @@ namespace EdugameCloud.Lti.Moodle
                 { "wstoken",  token },
                 { "course", courseId.ToString( CultureInfo.InvariantCulture) }
             };
-            var url = GetServicesUrl(lmsCompany);
+            var url = GetServicesUrl(licenseSettings);
             var xmlDoc = await UploadValues(url, pairs);
 
             return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
         }
 
-        private async Task<LmsQuizDTO> GetQuiz(string token, bool isSurvey, int courseId, ILmsLicense lmsCompany)
+        private async Task<LmsQuizDTO> GetQuiz(string token, bool isSurvey, int courseId, Dictionary<string, object> licenseSettings)
         {
             var pairs = new Dictionary<string, string>
             {
@@ -287,7 +266,7 @@ namespace EdugameCloud.Lti.Moodle
                 {  isSurvey ? "surveyId" : "quizId",  courseId.ToString(CultureInfo.InvariantCulture) }
             };
 
-            var url = GetServicesUrl(lmsCompany);
+            var url = GetServicesUrl(licenseSettings);
             var xmlDoc = await UploadValues(url, pairs);
             string errorMessage = string.Empty;
             string err = string.Empty;

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.MeetingOne;
 using Esynctraining.MeetingOne.RestClient;
 

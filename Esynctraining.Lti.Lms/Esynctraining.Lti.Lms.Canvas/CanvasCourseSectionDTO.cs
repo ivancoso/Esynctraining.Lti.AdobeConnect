@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace EdugameCloud.Lti.Canvas
+namespace Esynctraining.Lti.Lms.Canvas
 {
     internal sealed class CanvasCourseSectionDTO
     {

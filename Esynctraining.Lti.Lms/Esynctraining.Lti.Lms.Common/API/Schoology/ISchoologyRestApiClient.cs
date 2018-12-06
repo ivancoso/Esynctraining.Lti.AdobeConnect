@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace EdugameCloud.Lti.API.Schoology
+namespace Esynctraining.Lti.Lms.Common.API.Schoology
 {
     public interface ISchoologyRestApiClient
     {

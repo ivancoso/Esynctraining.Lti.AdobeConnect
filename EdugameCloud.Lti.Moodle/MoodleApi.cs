@@ -1,34 +1,25 @@
-﻿using System.Net.Http;
-using EdugameCloud.Lti.Core.Constants;
+﻿using Esynctraining.Lti.Lms.Common.API.Moodle;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Script.Serialization;
+using System.Xml;
+using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Extensions;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
+using System.Threading.Tasks;
+using Esynctraining.HttpClient;
+using Esynctraining.Lti.Lms.Common.API;
 
 namespace EdugameCloud.Lti.Moodle
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Web.Script.Serialization;
-    using System.Xml;
-    using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.Moodle;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Logging;
-    using Esynctraining.Core.Providers;
-    using EdugameCloud.HttpClient;
-    using System.Threading.Tasks;
-
-    /// <summary>
-    /// The Moodle API.
-    /// </summary>
-    // ReSharper disable once InconsistentNaming
     public class MoodleApi : ILmsAPI, IMoodleApi
     {
-
         private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper(TimeSpan.FromMilliseconds(Core.Utils.Constants.MoodleUsersApiRequestTimeout));
-
         protected readonly ILogger _logger;
         private readonly dynamic _settings;
 
@@ -46,23 +37,23 @@ namespace EdugameCloud.Lti.Moodle
         }
         
 
-        public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourse(ILmsLicense company, int courseId)
+        public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourse(Dictionary<string, object> licenseSettings, string courseId)
         {
             try
             {
-                if (company == null)
-                    throw new ArgumentNullException(nameof(company));
+                if (licenseSettings == null)
+                    throw new ArgumentNullException(nameof(licenseSettings));
 
                 MoodleSession token = null;
                 string error = null;
                 var result = new List<LmsUserDTO>();
-                var moodleServiceToken = company.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
+                var moodleServiceToken = (string)licenseSettings[LmsLicenseSettingNames.MoodleCoreServiceToken];
                 string resp = null;
 
                 List<LmsUserDTO> enrollmentsResult = null;
                 if (!string.IsNullOrEmpty(moodleServiceToken))
                 {
-                    enrollmentsResult = await GetUsers(moodleServiceToken, courseId, company);
+                    enrollmentsResult = await GetUsers(moodleServiceToken, courseId, licenseSettings);
                 }
                 else
                 {
@@ -70,19 +61,23 @@ namespace EdugameCloud.Lti.Moodle
                         token,
                         async c =>
                         {
-                        try
-                        {
-                            var users = await GetUsers(c.Token, courseId, company);
-                            return new Tuple<List<LmsUserDTO>, string>(users, null);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
+                            try
+                            {
+                                var users = await GetUsers(c.Token, courseId, licenseSettings);
+                                return new Tuple<List<LmsUserDTO>, string>(users, null);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.ErrorFormat(ex,
+                                    "[MoodleApi.GetUsersForCourse.ResponseParsing] LmsCompany key:{0}. CourseId:{1}. Response:{2}.",
+                                    licenseSettings[LmsLicenseSettingNames.LicenseKey], courseId, resp);
 
-                            return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.Message));
-                        }
-                    },
-                            company);
+                                return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(),
+                                    string.Format("Error during parsing response: {0}; exception: {1}", resp,
+                                        ex.Message));
+                            }
+                        },
+                        licenseSettings);
 
                     //Popov
                     var enrollmentsResultTemp = await tupleEnrollmentsResult.result;
@@ -100,7 +95,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse] LmsCompanyId:{0}. CourseId:{1}.", company.Id, courseId);
+                _logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse] LmsCompany key:{0}. CourseId:{1}.", licenseSettings[LmsLicenseSettingNames.LicenseKey], courseId);
                 throw;
             }
         }
@@ -121,35 +116,14 @@ namespace EdugameCloud.Lti.Moodle
             return (session != null, error);
         }
 
-
-        internal async Task<(T result, string error)> LoginIfNecessary<T>(
-            MoodleSession session,
-            Func<MoodleSession, T> action,
-            LmsUser lmsUser = null)
-        {
-            string error = null;
-            var tuple = await BeginBatch(lmsUser.LmsCompany);
-            //session = session ?? BeginBatch(out error, lmsUser.LmsCompany);
-            session = session ?? tuple.moodleSession;
-            error = tuple.error;
-
-            if (session != null)
-            {
-                var actionResult = action(session);
-                return (actionResult, error);
-            }
-
-            return (default(T), error);
-        }
-
         // TRICK: marked as 'internal'
         internal async Task<(T result, string error)> LoginIfNecessary<T>(
             MoodleSession session,
             Func<MoodleSession, T> action,
-            ILmsLicense lmsCompany)
+            Dictionary<string, object> licenseSettings)
         {
             string error = null;
-            var tuple = await BeginBatch(lmsCompany);
+            var tuple = await BeginBatch(licenseSettings);
 
             session = session ?? tuple.moodleSession;
             error = tuple.error;
@@ -166,10 +140,10 @@ namespace EdugameCloud.Lti.Moodle
         internal async Task<(T result, string error)> LoginIfNecessary<T>(
             MoodleSession session,
             Func<MoodleSession, Tuple<T, string>> action,
-            ILmsLicense lmsCompany)
+            Dictionary<string, object> licenseSettings)
         {
             string error = null;
-            var tupleSession = await BeginBatch(lmsCompany);
+            var tupleSession = await BeginBatch(licenseSettings);
             //session = session ?? BeginBatch(out error, lmsCompany);
             session = session ?? tupleSession.moodleSession;
             error = tupleSession.error;
@@ -187,20 +161,20 @@ namespace EdugameCloud.Lti.Moodle
 
             return (default(T), error);
         }
+        
 
-
-        private async Task<List<LmsUserDTO>> GetUsers(string token, int courseId, ILmsLicense lmsCompany)
+        private async Task<List<LmsUserDTO>> GetUsers(string token, string courseId, Dictionary<string, object> licenseSettings)
         {
             var pairs = new Dictionary<string, string>
             {
                 { "wsfunction", "core_enrol_get_enrolled_users" },
                 { "wstoken", token },
-                { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) },
+                { "courseid",  courseId },
                 { "options[0][name]", "userfields" },
                 { "options[0][value]", "id,username,firstname,lastname,fullname,email,roles" } //decreasing response size and time, including only fields that are used by MoodleLmsUserParser
             };
 
-            var url = GetServicesUrl(lmsCompany);
+            var url = GetServicesUrl(licenseSettings);
             var xmlDoc = await UploadValues(url, pairs);
             return MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
         }
@@ -265,18 +239,17 @@ namespace EdugameCloud.Lti.Moodle
             }
         }
 
-        private async Task<(MoodleSession moodleSession, string error)> BeginBatch(ILmsLicense lmsCompany)
+        private async Task<(MoodleSession moodleSession, string error)> BeginBatch(Dictionary<string, object> licenseSettings)
         {
             string error = null;
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (licenseSettings == null)
+                throw new ArgumentNullException(nameof(licenseSettings));
 
-            LmsUser lmsUser = lmsCompany.AdminUser;
-            if (lmsUser != null)
+            if (licenseSettings.ContainsKey(LmsLicenseSettingNames.AdminUsername))
             {
-                string lmsDomain = lmsUser.LmsCompany.LmsDomain;
-                bool useSsl = lmsUser.LmsCompany.UseSSL ?? false;
-                return await LoginAndCreateAClient(useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
+                string lmsDomain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
+                bool useSsl = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL];
+                return await LoginAndCreateAClient(useSsl, lmsDomain, (string)licenseSettings[LmsLicenseSettingNames.AdminUsername], (string)licenseSettings[LmsLicenseSettingNames.AdminPassword]);
             }
 
             error = "ASP.NET Session is expired";
@@ -322,9 +295,9 @@ namespace EdugameCloud.Lti.Moodle
             return await _httpClientWrapper.PostValuesAsync(url, pairs);
         }
 
-        protected string GetServicesUrl(ILmsLicense lmsCompany)
+        protected string GetServicesUrl(Dictionary<string, object> licenseSettings)
         {
-            return GetServicesUrl(lmsCompany.LmsDomain, lmsCompany.UseSSL ?? false);
+            return GetServicesUrl((string)licenseSettings[LmsLicenseSettingNames.LmsDomain], (bool)licenseSettings[LmsLicenseSettingNames.UseSSL]);
         }
 
         protected string GetServicesUrl(string domain, bool useSsl)

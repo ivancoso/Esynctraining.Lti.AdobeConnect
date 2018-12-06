@@ -1,5 +1,6 @@
 ﻿using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting
 {

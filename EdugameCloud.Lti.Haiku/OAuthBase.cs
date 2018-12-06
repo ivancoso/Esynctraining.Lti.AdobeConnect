@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using EdugameCloud.HttpClient;
+using Esynctraining.HttpClient;
 
 namespace EdugameCloud.Lti.Haiku
 {

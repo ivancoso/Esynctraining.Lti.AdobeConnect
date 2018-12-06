@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace EdugameCloud.Lti.Canvas
+namespace Esynctraining.Lti.Lms.Canvas
 {
     /// <summary>
     /// todo: temporary class, will be updated

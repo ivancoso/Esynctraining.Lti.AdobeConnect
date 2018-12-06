@@ -18,6 +18,7 @@
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
+    <ProjectReference Include="..\Esynctraining.HttpClient\Esynctraining.HttpClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,17 +1,13 @@
-﻿namespace EdugameCloud.Lti.Moodle
+﻿using Esynctraining.Lti.Lms.Common.Dto;
+using Esynctraining.Lti.Lms.Common.Dto.Moodle;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using EdugameCloud.Lti.Extensions;
+
+namespace EdugameCloud.Lti.Moodle
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Xml;
-
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-
-    /// <summary>
-    /// The moodle quiz parser.
-    /// </summary>
     internal static class MoodleQuizParser
     {
         #region Constants
@@ -118,7 +114,7 @@
                 int courseIdInt;
                 if (int.TryParse(courseSingle.GetNodeValue("id"), out courseIdInt))
                 {
-                    ret.course = courseIdInt;
+                    ret.course = courseIdInt.ToString();
                 }
 
                 ret.courseName = courseSingle.GetNodeValue("fullname");

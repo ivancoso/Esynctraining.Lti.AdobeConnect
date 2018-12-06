@@ -29,7 +29,9 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -101,6 +103,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private ISynchronizationUserService SynchronizationUserService => IoC.Resolve<ISynchronizationUserService>();
 
         private ILogger Logger => IoC.Resolve<ILogger>();
+        private dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
 
         #endregion
 
@@ -360,16 +363,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 //lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
                 
                 var rr = await UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, param.lms_user_id);
-                string userCreationError = rr.error;
-                lmsUserDto = rr.user;
+                lmsUserDto = rr.Data;
                 //lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
 
-                if (userCreationError != null)
+                if (!rr.IsSuccess)
                 {
                     throw new Core.WarningMessageException(
                         string.Format(
                             "[Dynamic provisioning] Could not create user, id={0}. Message: {1}",
-                            param.lms_user_id, userCreationError));
+                            param.lms_user_id, rr.Message));
                 }
 
                 ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
@@ -402,11 +404,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Blackboard)
             {
                 var lmsUserService = LmsFactory.GetUserService(LmsProviderEnum.Blackboard);
-                var currentUserRes = await lmsUserService.GetUser(lmsCompany,
+                var currentUserRes = await lmsUserService.GetUser(lmsCompany.GetLMSSettings(Settings),
                     param.lms_user_id,
-                    param.course_id,
+                    param.course_id.ToString(),
                     param);
-                var currentUser = currentUserRes.user;
+                var currentUser = currentUserRes.Data;
                 //string error = currentUserRes.error;
 
                 if (currentUser != null)

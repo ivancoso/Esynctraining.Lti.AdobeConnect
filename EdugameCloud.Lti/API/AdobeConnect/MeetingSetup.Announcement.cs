@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.API.BlackBoard;
+using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -62,7 +63,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         announcementMessage);
                     break;
                 case (int)LmsProviderEnum.Blackboard:
-                    BlackboardApi.CreateAnnouncement(param.course_id, param.user_id, lmsCompany, announcementTitle, announcementMessage);
+                    BlackboardApi.CreateAnnouncement(param.course_id.ToString(), param.user_id, lmsCompany.GetLMSSettings(Settings), announcementTitle, announcementMessage);
                     break;
                 case (int)LmsProviderEnum.AgilixBuzz:
                     // string error;
@@ -157,7 +158,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         announcementMessage);
                     break;
                 case (int)LmsProviderEnum.Blackboard:
-                    BlackboardApi.CreateAnnouncement(param.course_id, param.user_id, lmsCompany, announcementTitle, announcementMessage);
+                    BlackboardApi.CreateAnnouncement(param.course_id.ToString(), param.user_id, lmsCompany.GetLMSSettings(Settings), announcementTitle, announcementMessage);
                     break;
                 case (int)LmsProviderEnum.AgilixBuzz:
                     // string error;

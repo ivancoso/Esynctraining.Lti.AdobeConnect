@@ -1,5 +1,4 @@
-﻿using EdugameCloud.Lti.Canvas;
-using Esynctraining.Core.Json;
+﻿using Esynctraining.Core.Json;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
@@ -26,8 +25,11 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Lms.Canvas;
+using Esynctraining.Lti.Lms.Common.API.Canvas;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
+using OAuthTokenResponse = Esynctraining.Lti.Lms.Common.API.Canvas.OAuthTokenResponse;
 
 namespace Esynctraining.Lti.Zoom.Controllers
 {
@@ -264,8 +266,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
 
-                        EdugameCloud.Lti.Canvas.ResponseToken responseTocken = await _canvasApi.RequestToken($"{Settings.BasePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain);
-                        await _sessionService.UpdateSessionRefreshToken(s, responseTocken.access_token, responseTocken.refresh_token);
+                        OAuthTokenResponse token = await _canvasApi.RequestToken($"{Settings.BasePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain);
+                        await _sessionService.UpdateSessionRefreshToken(s, token.access_token, token.refresh_token);
 
                         return await RedirectToHome(s);
                     }
@@ -363,14 +365,21 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
                         
                         
-                        if (string.IsNullOrWhiteSpace(session?.Token) || _canvasApi.IsTokenExpired(license.Domain, session.Token))
+                        if (string.IsNullOrWhiteSpace(session?.Token) || await _canvasApi.IsTokenExpired(license.Domain, session.Token))
                         {
                             if (string.IsNullOrEmpty(session.RefreshToken))
                             {
                                 return StartOAuth2Authentication(license, "canvas", sessionKey, param);
                             }
 
-                            var accessToken = await _canvasApi.RequestTokenByRefreshToken(session.RefreshToken, oAuthId, oAuthKey, license.Domain);
+                            var refreshParams = new RefreshTokenParamsDto
+                            {
+                                OAuthId = oAuthId,
+                                OAuthKey = oAuthKey,
+                                RefreshToken = session.RefreshToken
+                            };
+
+                            var accessToken = await _canvasApi.RequestTokenByRefreshToken(refreshParams, license.Domain);
                             if (string.IsNullOrEmpty(accessToken))
                             {
                                 return StartOAuth2Authentication(license, "canvas", sessionKey, param);

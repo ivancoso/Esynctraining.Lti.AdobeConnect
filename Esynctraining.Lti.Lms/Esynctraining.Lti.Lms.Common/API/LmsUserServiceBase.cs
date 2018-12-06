@@ -35,8 +35,6 @@ namespace Esynctraining.Lti.Lms.Common.API
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-
-        // <param name="currentUser">When we get all users for course, we use admin's token (currentUser.token)</param>
         // <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
         public virtual async Task<OperationResultWithData<LmsUserDTO>> GetUser(
             Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
@@ -68,9 +66,6 @@ namespace Esynctraining.Lti.Lms.Common.API
 
         public abstract Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(
             Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO extraData = null);
-
-        public abstract Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO param = null);
-
 
         // TODO: ROLEMAPPING
         protected List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)

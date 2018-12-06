@@ -1,20 +1,15 @@
-﻿using EdugameCloud.HttpClient;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Mail;
-using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
-using System.Web.UI;
 using System.Web.UI.WebControls;
+using Esynctraining.HttpClient;
 
 namespace EdugameCloud.Web
 {

@@ -1,22 +1,23 @@
-﻿namespace EdugameCloud.Lti.Sakai
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Net;
-    using System.Security.Cryptography;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Xml.Linq;
-    using System.Xml.XPath;
-    using API;
-    using EdugameCloud.HttpClient;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Logging;
+﻿using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Dto;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
+using Esynctraining.HttpClient;
+using Esynctraining.Lti.Lms.Common.Constants;
 
+namespace EdugameCloud.Lti.Sakai
+{
     /// <summary>
     /// The LTI 2 API.
     /// </summary>
@@ -37,7 +38,7 @@
         #region Public Methods and Operators
 
         public async Task<Tuple<List<LmsUserDTO>, string>> GetUsersForCourse(
-            ILmsLicense company, 
+            Dictionary<string, object> licenseSettings, 
             string servicePattern, 
             string lis_result_sourcedid, 
             string ltiVersion = null)
@@ -46,7 +47,7 @@
             try
             {
                 XElement response = await CreateSignedRequestAndGetResponse(
-                    company, 
+                    licenseSettings, 
                     servicePattern, 
                     lis_result_sourcedid, 
                     ltiVersion);
@@ -65,7 +66,7 @@
                         response.XPathSelectElement("/statusinfo/severity")?.Value
                         );
 
-                    _logger.ErrorFormat("{0}. Service: {1}. LmsCompanyId: {2}.", error, servicePattern, company.Id);
+                    _logger.ErrorFormat("{0}. Service: {1}. LmsCompany key: {2}.", error, servicePattern, licenseSettings[LmsLicenseSettingNames.LicenseKey]);
 
                     return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), error);
                 }
@@ -126,7 +127,7 @@
         #region Methods
         
         private static async Task<XElement> CreateSignedRequestAndGetResponse(
-            ILmsLicense company, 
+            Dictionary<string, object> licenseSettings, 
             string serviceUrl, 
             string lis_result_sourcedid, 
             string ltiVersion)
@@ -138,8 +139,8 @@
                            new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture)));
             string oauthTimestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture);
             string oauthCallback = "about:blank";
-            string key = company.ConsumerKey;
-            string secret = company.SharedSecret;
+            string key = (string)licenseSettings[LmsLicenseSettingNames.LicenseKey];
+            string secret = (string)licenseSettings[LmsLicenseSettingNames.LicenseSecret];
             string url = serviceUrl;
 
             ltiVersion = ltiVersion ?? LtiVersions.LTI1p0;
@@ -194,7 +195,8 @@
             };
             
             var http = new HttpClientWrapper(TimeSpan.FromMilliseconds(5000));
-            Encoding encoding = (company.LanguageId == LmsCompany.SpanishLanguageId)
+            var language = (int) licenseSettings[LmsLicenseSettingNames.LanguageId];
+            Encoding encoding = language == LmsCompany.SpanishLanguageId
                     ? Encoding.GetEncoding("ISO-8859-1")
                     : Encoding.UTF8;
             string resp = await http.PostValuesAsync(url, pairs, encoding);

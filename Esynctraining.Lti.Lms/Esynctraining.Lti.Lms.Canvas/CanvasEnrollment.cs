@@ -1,4 +1,4 @@
-namespace EdugameCloud.Lti.Canvas
+namespace Esynctraining.Lti.Lms.Canvas
 {
     public class CanvasEnrollment
     {

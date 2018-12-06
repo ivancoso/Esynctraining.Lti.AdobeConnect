@@ -1,20 +1,17 @@
-﻿namespace EdugameCloud.Lti.Core.Business.Models
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using Esynctraining.NHibernate;
-    using Esynctraining.NHibernate.Queries;
-    using Esynctraining.Core.Extensions;
-    using NHibernate;
-    using NHibernate.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Core.Extensions;
+using Esynctraining.NHibernate;
+using Esynctraining.NHibernate.Queries;
+using Esynctraining.Lti.Lms.Common.Dto;
+using NHibernate;
+using NHibernate.Linq;
 
-    /// <summary>
-    /// The LMS user model
-    /// </summary>
+namespace EdugameCloud.Lti.Core.Business.Models
+{
     public sealed class LmsUserModel : BaseModel<LmsUser, int>
     {
         #region Constructors and Destructors

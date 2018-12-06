@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Canvas
+﻿using Esynctraining.Lti.Lms.Common.Dto;
+
+namespace EdugameCloud.Lti.Canvas
 {
     using System;
     using System.Collections.Generic;

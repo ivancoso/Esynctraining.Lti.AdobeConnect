@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
-using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.API.Sakai;
 
 namespace EdugameCloud.WCFService.Converters
 {
@@ -46,7 +46,7 @@ namespace EdugameCloud.WCFService.Converters
                 ret.Add(answers.ContainsKey(question.LmsQuestionId.GetValueOrDefault()) ? answers[question.LmsQuestionId.GetValueOrDefault()] : "0");
             }
 
-            await SakaiApi.SendAnswersAsync(lmsUserParameters, quizResult.Quiz.LmsQuizId.GetValueOrDefault().ToString(), false, ret.ToArray());
+            await SakaiApi.SendAnswersAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters), quizResult.Quiz.LmsQuizId.GetValueOrDefault().ToString(), false, ret.ToArray());
         }
 
         public override async Task ConvertAndSendSurveyResultToLmsAsync(IEnumerable<SurveyQuestionResultDTO> results, SurveyResult surveyResult, LmsUserParameters lmsUserParameters)
@@ -85,7 +85,7 @@ namespace EdugameCloud.WCFService.Converters
                 ret.Add(answers.ContainsKey(question.LmsQuestionId.GetValueOrDefault()) ? answers[question.LmsQuestionId.GetValueOrDefault()] : "0");
             }
 
-            await SakaiApi.SendAnswersAsync(lmsUserParameters, surveyResult.Survey.LmsSurveyId.GetValueOrDefault().ToString(), true, ret.ToArray());
+            await SakaiApi.SendAnswersAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters), surveyResult.Survey.LmsSurveyId.GetValueOrDefault().ToString(), true, ret.ToArray());
         }
 
         

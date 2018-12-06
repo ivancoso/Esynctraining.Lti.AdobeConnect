@@ -9,8 +9,13 @@ using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json;
 using RestSharp;
+using LmsCourseDTO = EdugameCloud.Lti.DTO.LmsCourseDTO;
+using LmsCourseSectionDTO = EdugameCloud.Lti.DTO.LmsCourseSectionDTO;
+using LmsQuizDTO = EdugameCloud.Lti.DTO.LmsQuizDTO;
+using LmsQuizInfoDTO = EdugameCloud.Lti.DTO.LmsQuizInfoDTO;
 
 namespace EdugameCloud.Lti.Canvas
 {

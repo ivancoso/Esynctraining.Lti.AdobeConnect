@@ -1,17 +1,12 @@
-﻿namespace EdugameCloud.Lti.Moodle
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using EdugameCloud.Lti.Extensions;
+using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Dto;
+
+namespace EdugameCloud.Lti.Moodle
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Xml;
-
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-
-    using Esynctraining.Core.Utils;
-
-    /// <summary>
-    /// The moodle LMS user parser.
-    /// </summary>
     internal static class MoodleLmsUserParser
     {
         /// <summary>

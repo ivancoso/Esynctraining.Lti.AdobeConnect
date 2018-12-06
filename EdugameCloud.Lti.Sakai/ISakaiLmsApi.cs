@@ -1,15 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Sakai
 {
     public interface ISakaiLmsApi
     {
         Task<(List<LmsUserDTO> Data, string Error)> GetUsersForCourseAsync(
-            LmsCompany company,
-            int courseid);
+            Dictionary<string, object> licenseSettings,
+            string courseid);
 
         Task<(bool Data, string Error)> LoginAndCheckSessionAsync(
             bool useSsl,

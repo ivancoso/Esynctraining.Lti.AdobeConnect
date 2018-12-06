@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Api.Controllers
+﻿using Esynctraining.Lti.Lms.Common.Dto;
+
+namespace EdugameCloud.Lti.Api.Controllers
 {
     using System;
     using System.Collections.Generic;

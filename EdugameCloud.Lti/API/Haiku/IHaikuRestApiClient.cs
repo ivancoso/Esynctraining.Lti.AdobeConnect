@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API.Haiku
 {
@@ -9,9 +8,9 @@ namespace EdugameCloud.Lti.API.Haiku
     {
         Task<bool> TestOauthAsync(string lmsDomain, string consumerKey, string consumerSecret, string token, string tokenSecret);
 
-        Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(ILmsLicense lmsCompany, int courseId);
+        Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(Dictionary<string, object> licenseSettings, string courseId);
 
-        Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(ILmsLicense lmsCompany, int courseId);
+        Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(Dictionary<string, object> licenseSettings, string courseId);
 
     }
 

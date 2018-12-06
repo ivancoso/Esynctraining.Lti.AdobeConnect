@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Sakai.Dto;
+using Esynctraining.HttpClient;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Sakai

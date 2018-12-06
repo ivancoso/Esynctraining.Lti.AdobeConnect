@@ -8,12 +8,14 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API
 {
@@ -27,10 +29,10 @@ namespace EdugameCloud.Lti.API
         private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
         private readonly IAdobeConnectUserService acUserService;
         private readonly ILogger logger;
-
-
+        private readonly dynamic _settings;
+        
         public SynchronizationUserService(LmsFactory lmsFactory, AdobeConnect.IAdobeConnectAccountService acAccountService, UsersSetup usersSetup,
-            LmsUserModel lmsUserModel, LmsCompanyModel lmsCompanyModel,
+            LmsUserModel lmsUserModel, LmsCompanyModel lmsCompanyModel, ApplicationSettingsProvider settings,
             LmsCourseMeetingModel lmsCourseMeetingModel, IAdobeConnectUserService acUserService, ILogger logger)
         {
             this.lmsFactory = lmsFactory;
@@ -41,6 +43,7 @@ namespace EdugameCloud.Lti.API
             this.lmsCourseMeetingModel = lmsCourseMeetingModel;
             this.acUserService = acUserService;
             this.logger = logger;
+            _settings = settings;
         }
 
 
@@ -78,7 +81,7 @@ namespace EdugameCloud.Lti.API
                 foreach (var groupedMeeting in groupedMeetings)
                 {
                     var courseId = groupedMeeting.Key;
-                    var opResult = await service.GetUsers(lmsCompany, courseId);
+                    var opResult = await service.GetUsers(lmsCompany.GetLMSSettings(_settings), courseId.ToString());
                     if (opResult.IsSuccess)
                     {
                         licenseUsers.Add(courseId, opResult.Data);

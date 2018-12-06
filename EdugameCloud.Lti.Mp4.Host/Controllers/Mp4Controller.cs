@@ -18,6 +18,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Mp4Service.Tasks.Client;
 using Esynctraining.Mp4Service.Tasks.Client.Dto;
 using Microsoft.AspNetCore.Http;
@@ -264,7 +265,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         }
 
 
-        private Principal GetPrincipal(ILmsLicense lmsCompany, DTO.LtiParamDTO param, string scoId,
+        private Principal GetPrincipal(ILmsLicense lmsCompany, LtiParamDTO param, string scoId,
              IAdobeConnectProxy provider, out string breezeToken)
         {
             breezeToken = string.Empty;

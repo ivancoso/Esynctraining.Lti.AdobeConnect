@@ -1,5 +1,5 @@
 ﻿using System;
-using EdugameCloud.Lti.Domain.Entities;
+using System.Collections.Generic;
 
 namespace EdugameCloud.Lti.API.Desire2Learn
 {
@@ -10,9 +10,9 @@ namespace EdugameCloud.Lti.API.Desire2Learn
         string EnrollmentsUrlFormat { get; }
         string EnrollmentsClasslistUrlFormat { get; }
 
-        Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl, ILmsLicense company);
-        T GetApiObjects<T>(Uri urlWithAuthParams, string hostUrl, string apiUrl, ILmsLicense company) where T : new();
-        T GetApiObjects<T>(string userId, string userKey, string hostUrl, string apiUrl, ILmsLicense company) where T : new();
+        Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl, Dictionary<string, object> licenseSettings);
+        T GetApiObjects<T>(Uri urlWithAuthParams, string hostUrl, string apiUrl, Dictionary<string, object> licenseSettings) where T : new();
+        T GetApiObjects<T>(string userId, string userKey, string hostUrl, string apiUrl, Dictionary<string, object> licenseSettings) where T : new();
 
     }
 

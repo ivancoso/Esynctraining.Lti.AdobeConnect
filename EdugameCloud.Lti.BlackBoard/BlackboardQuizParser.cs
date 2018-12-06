@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using EdugameCloud.Lti.BlackBoard.QuizQuestionParsers;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.BlackBoard
 {

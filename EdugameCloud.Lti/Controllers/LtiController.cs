@@ -1,4 +1,7 @@
-﻿namespace EdugameCloud.Lti.Controllers
+﻿using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.Dto;
+
+namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -16,13 +19,11 @@
     using EdugameCloud.Core.Business;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Desire2Learn;
     using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Core.OAuth;
-	using EdugameCloud.Lti.Core.Routes;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
@@ -144,12 +145,12 @@
                     var hostUrl = authority.Replace(scheme, string.Empty);
 
                     string username = null;
-                    var company = s.With(x => x.LmsCompany);
-                    var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, string.Format(d2lService.WhoAmIUrlFormat, (string)Settings.BrightspaceApiVersion), company);
+                    var lmsLicense = s.With(x => x.LmsCompany);
+                    var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, string.Format(d2lService.WhoAmIUrlFormat, (string)Settings.BrightspaceApiVersion), lmsLicense.GetLMSSettings(Settings));
                     if (string.IsNullOrEmpty(user.UniqueName))
                     {
                         var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
-                            string.Format(d2lService.GetUserUrlFormat, (string)Settings.BrightspaceApiVersion, user.Identifier), company);
+                            string.Format(d2lService.GetUserUrlFormat, (string)Settings.BrightspaceApiVersion, user.Identifier), lmsLicense.GetLMSSettings(Settings));
                         if (userInfo != null)
                         {
                             username = userInfo.UserName;
@@ -451,7 +452,7 @@
                         sw = Stopwatch.StartNew();
 
                         if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
-                            CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
+                            await CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
                         {
                             this.StartOAuth2Authentication(lmsCompany, lmsProvider, sessionKey, param);
                             return null;
@@ -497,7 +498,7 @@
                             Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, sessionKey));
                             return Redirect(
                                 d2lService
-                                    .GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain, lmsCompany)
+                                    .GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain, lmsCompany.GetLMSSettings(Settings))
                                     .AbsoluteUri);
                         }
 
@@ -729,7 +730,7 @@
         {
             LmsUser lmsUser = null;
             LmsUserSession session = GetSession(providerKey);
-            var company = session.With(x => x.LmsCompany);
+            var lmsLicense = session.With(x => x.LmsCompany);
             var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
             if (!string.IsNullOrEmpty(token))
             {
@@ -737,7 +738,7 @@
                 if (string.IsNullOrWhiteSpace(username) && (provider.ToLower() == LmsProviderNames.Canvas) && (param.lms_user_login == "$Canvas.user.loginId"))
                 {
                     Logger.Warn("[Canvas Auth Issue]. lms_user_login == '$Canvas.user.loginId'");
-                    LmsUserDTO user = CanvasApi.GetUser(company.LmsDomain, token, userId);
+                    LmsUserDTO user = await CanvasApi.GetUser(lmsLicense.LmsDomain, token, userId);
                     if (user != null)
                         userName = user.Login;
                 }
@@ -745,19 +746,19 @@
                 if (string.IsNullOrWhiteSpace(username))
                     userName = param.GetUserNameOrEmail();
 
-                lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value 
-                    ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
+                lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, lmsLicense.Id).Value 
+                    ?? new LmsUser { UserId = userId, LmsCompany = lmsLicense, Username = userName };
                 lmsUser.Username = userName;
                 lmsUser.Token = token;
                 
                 // TRICK: during loginwithprovider we redirect to Oauth before we create AC principal - so we need to do it here
                 Principal acPrincipal = acUserService.GetOrCreatePrincipal(
-                                this.GetAdminProvider(company),
+                                this.GetAdminProvider(lmsLicense),
                                 param.lms_user_login,
                                 param.lis_person_contact_email_primary,
                                 param.PersonNameGiven,
                                 param.PersonNameFamily,
-                                company);
+                                lmsLicense);
                 if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
                 {
                     lmsUser.PrincipalId = acPrincipal.PrincipalId;
@@ -774,14 +775,14 @@
 
                 if (acPrincipal == null)
                 {
-                    Logger.ErrorFormat("[AuthCallbackSave] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", company.Id, lmsUser.Id, param.lms_user_login);
+                    Logger.ErrorFormat("[AuthCallbackSave] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", lmsLicense.Id, lmsUser.Id, param.lms_user_login);
                     throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
                 }
             }
 
-            if (company != null)
+            if (lmsLicense != null)
             {
-                if (company.AdminUser == null)//this.IsAdminRole(providerKey))
+                if (lmsLicense.AdminUser == null)//this.IsAdminRole(providerKey))
                 {
                     bool currentUserIsAdmin = IsAdminRole(param);
                     if (!currentUserIsAdmin && provider.ToLower() == LmsProviderNames.Brightspace)
@@ -806,7 +807,7 @@
                                     String.Format(d2lService.EnrollmentsUrlFormat,
                                         (string) Settings.BrightspaceApiVersion, param.context_id) +
                                     (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
-                                    company);
+                                    lmsLicense.GetLMSSettings(Settings));
                                 if (enrollments != null || enrollments.Items == null)
                                 {
                                     enrollmentsList.AddRange(enrollments.Items);
@@ -819,12 +820,12 @@
 
                     if (currentUserIsAdmin)
                     {
-                        company.AdminUser = lmsUser;
-                        lmsCompanyModel.RegisterSave(company);
+                        lmsLicense.AdminUser = lmsUser;
+                        lmsCompanyModel.RegisterSave(lmsLicense);
                     }
                     else
                     {
-                        Logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", company.Id);
+                        Logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsLicense.Id);
                         throw new Core.WarningMessageException(Resources.Messages.LtiNoLmsAdmin);
                     }
                 }

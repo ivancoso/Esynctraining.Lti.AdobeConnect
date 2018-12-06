@@ -1,17 +1,12 @@
-﻿namespace EdugameCloud.Lti.Sakai
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using EdugameCloud.Lti.Extensions;
+using Esynctraining.Lti.Lms.Common.Dto;
+
+namespace EdugameCloud.Lti.Sakai
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Xml;
-
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-
-    /// <summary>
-    ///     The Sakai quiz parser.
-    /// </summary>
     internal sealed class SakaiQuizParser2
     {
         #region Constants
@@ -118,7 +113,7 @@
                 int courseIdInt;
                 if (int.TryParse(courseSingle.GetNodeValue("id"), out courseIdInt))
                 {
-                    ret.course = courseIdInt;
+                    ret.course = courseIdInt.ToString();
                 }
 
                 ret.courseName = courseSingle.GetNodeValue("fullname");

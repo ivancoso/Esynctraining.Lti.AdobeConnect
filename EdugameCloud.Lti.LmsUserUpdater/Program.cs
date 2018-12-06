@@ -81,7 +81,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     //todo: Task for each lms if possible
                     foreach (var group in groupedByCompany)
                     {
-                        var service = lmsFactory.GetUserService((LmsProviderEnum)group.Key);
+                        //var service = lmsFactory.GetUserService((LmsProviderEnum)group.Key);
                         foreach (var lmsCompany in group)
                         {
                             try

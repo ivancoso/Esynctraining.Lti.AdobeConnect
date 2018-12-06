@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.BlackBoardClient;
 using Esynctraining.BlackBoardClient.Content;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.API.BlackBoard;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -22,9 +23,9 @@ namespace EdugameCloud.Lti.BlackBoard
         {
         }
 
-        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
+        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
         {
-            var quizzes = await GetItemsForUserAsync(lmsUserParameters, isSurvey, null);
+            var quizzes = await GetItemsForUserAsync(licenseSettings, isSurvey, null);
             if (quizzes.Data == null)
                 throw new InvalidOperationException("There was a problem establishing connection to an api");
 
@@ -41,7 +42,7 @@ namespace EdugameCloud.Lti.BlackBoard
             return (Data: result, Error: quizzes.Error);
         }
 
-        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds)
+        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
         {
             WebserviceWrapper client = null;
             string error;
@@ -52,7 +53,7 @@ namespace EdugameCloud.Lti.BlackBoard
                     var egc = c.getEdugameCloudWrapper();
                     var content = c.getContentWrapper();
 
-                    var tos = content.getTOCsByCourseId(lmsUserParameters.Course.ToString());
+                    var tos = content.getTOCsByCourseId((string)licenseSettings[LmsUserSettingNames.CourseId]);
 
                     if (tos != null)
                     {
@@ -75,7 +76,7 @@ namespace EdugameCloud.Lti.BlackBoard
                             contentId = tos.First().courseContentsId
                         };
 
-                        var loaded = content.loadFilteredContent(lmsUserParameters.Course.ToString(), contentFilter);
+                        var loaded = content.loadFilteredContent((string)licenseSettings[LmsUserSettingNames.CourseId], contentFilter);
                         if (loaded != null)
                         {
                             tsts =
@@ -97,8 +98,8 @@ namespace EdugameCloud.Lti.BlackBoard
                         {
                             var lqd = new LmsQuizDTO()
                             {
-                                course = lmsUserParameters.Course,
-                                courseName = lmsUserParameters.CourseName,
+                                course = (string)licenseSettings[LmsUserSettingNames.CourseId],
+                                courseName = (string)licenseSettings[LmsUserSettingNames.CourseId],
                                 description = t.body.ClearName(),
                                 title = t.title.ClearName(),
                                 id = BlackboardHelper.GetBBId(t.id),
@@ -129,13 +130,13 @@ namespace EdugameCloud.Lti.BlackBoard
 
                     return new List<LmsQuizDTO> { };
                 },
-                lmsUserParameters.CompanyLms,
+                licenseSettings,
                 out error);
 
             return (Data: tests, Error: error);
         }
 
-        public async Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string contentId, bool isSurvey, string[] answers)
+        public async Task SendAnswersAsync(Dictionary<string, object> licenseSettings, string contentId, bool isSurvey, string[] answers)
         {
             WebserviceWrapper client = null;
 
@@ -148,16 +149,16 @@ namespace EdugameCloud.Lti.BlackBoard
 
                         return egc.submitTestResult(
                             contentId1,
-                            lmsUserParameters.Wstoken,
+                            (string)licenseSettings[LmsUserSettingNames.Token],
                             answers,
                             null,
                             isSurvey);
                     },
-                lmsUserParameters.CompanyLms,
+                licenseSettings,
                 out contentId);
         }
 
-        public void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId)
+        public async Task PublishQuiz(Dictionary<string, object> licenseSettings, string courseId, int quizId)
         {
             throw new NotImplementedException();
         }

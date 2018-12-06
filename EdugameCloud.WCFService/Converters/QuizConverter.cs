@@ -1,29 +1,25 @@
 ﻿using System.Text.RegularExpressions;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Core.Domain.Entities;
+using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.Extensions;
+using EdugameCloud.Lti.Moodle;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Utils;
+using Newtonsoft.Json;
+using RestSharp;
+using EdugameCloud.Lti.Core;
 
 namespace EdugameCloud.WCFService.Converters
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Core.Business.Models;
-    using EdugameCloud.Lti.Core.Constants;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-    using EdugameCloud.Lti.Moodle;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Utils;
-    using Newtonsoft.Json;
-    using RestSharp;
-    using EdugameCloud.Lti.Core;
-
-    /// <summary>
-    /// The quiz converter.
-    /// </summary>
     public sealed class QuizConverter
     {
         /// <summary>
@@ -193,12 +189,12 @@ namespace EdugameCloud.WCFService.Converters
         private SubModuleCategory ProcessSubModuleCategory(LmsQuizDTO quiz, User user, int companyLmsId, bool isSurvey)
         {
             var subModuleCategoryModel = this.SubModuleCategoryModel;
-            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(quiz.course, companyLmsId).Value
+            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(int.Parse(quiz.course), companyLmsId).Value
                 ?? new SubModuleCategory
                 {
                     CompanyLmsId = this.LmsCompanyModel.GetOneById(companyLmsId).Value.With(x => x.Id),
                     CategoryName = quiz.courseName,
-                    LmsCourseId = quiz.course,
+                    LmsCourseId = int.Parse(quiz.course),
                     User = user,
                     DateModified = DateTime.Now,
                     IsActive = true,

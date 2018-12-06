@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Web;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers

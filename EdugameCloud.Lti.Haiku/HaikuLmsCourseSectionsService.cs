@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Haiku;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Haiku
 {
@@ -12,15 +11,15 @@ namespace EdugameCloud.Lti.Haiku
     {
         private readonly IHaikuRestApiClient _haikuApi;
 
-        public HaikuLmsCourseSectionsService(ILmsLicense license, LtiParamDTO param, IHaikuRestApiClient apiClient) :
-            base(license, param)
+        public HaikuLmsCourseSectionsService(Dictionary<string, object> licenseSettings, LtiParamDTO param, IHaikuRestApiClient apiClient) :
+            base(licenseSettings, param)
         {
             _haikuApi = apiClient ?? throw new ArgumentNullException(nameof(apiClient));
         }
 
         public override async Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSections()
         {
-            return await _haikuApi.GetCourseSectionsAsync(License, Param.course_id);
+            return await _haikuApi.GetCourseSectionsAsync(LicenseSettings, Param.course_id.ToString());
         }
     }
 }

@@ -8,6 +8,7 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Bridge
 {
@@ -77,7 +78,7 @@ namespace EdugameCloud.Lti.Bridge
 
         public async Task<IEnumerable<MeetingSessionDTO>> GetSessions(int meetingId)
         {
-            var sessions = await _api.ListSessions(_param.course_id.ToString(), _license);
+            var sessions = await _api.ListSessions(_param.course_id.ToString(), _license.GetLMSSettings(null)); //todo: settings parameter
             return sessions.Select(ConvertToDto);
         }
 
@@ -141,7 +142,7 @@ namespace EdugameCloud.Lti.Bridge
                 //dto.EventId = dto.Id.ToString();
                 var session = await _api.UpdateSession(param.course_id.ToString(), int.Parse(dto.EventId),
                     new LiveSessionRequest {start_at = dto.StartDate, end_at = dto.EndDate, notes = dto.Summary},
-                    _license);
+                    _license.GetLMSSettings(null)); //todo: settings parameter
                 return ConvertToDto(session);
                 //_calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] { dto }, param, _license);
                 //dto = sakaiEventResult.Single();

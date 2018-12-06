@@ -1,22 +1,20 @@
 ﻿using System.Threading.Tasks;
-using EdugameCloud.HttpClient;
+using Esynctraining.HttpClient;
+using Esynctraining.Lti.Lms.Common.API.BlackBoard;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using Esynctraining.Core.Logging;
+using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Models;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
-    using System.Web.Mvc;
-    using System.Xml.Linq;
-    using System.Xml.XPath;
-    using Esynctraining.Core.Logging;
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Models;
-    using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
-
     public partial class LtiProxyToolController : Controller
     {
         private readonly ILogger logger;

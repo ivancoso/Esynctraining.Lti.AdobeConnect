@@ -10,7 +10,6 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -23,6 +22,7 @@ using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 using WarningMessageException = EdugameCloud.Lti.Core.WarningMessageException;
 

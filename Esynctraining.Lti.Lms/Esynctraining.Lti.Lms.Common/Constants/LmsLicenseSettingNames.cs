@@ -2,8 +2,13 @@ namespace Esynctraining.Lti.Lms.Common.Constants
 {
     public class LmsUserSettingNames
     {
+        public const string SessionId = nameof(SessionId);
+        public const string CourseId = nameof(CourseId);
+        public const string CourseName = nameof(CourseName);
         public const string Token = nameof(Token);
         public const string RefreshToken = nameof(RefreshToken);
+        public const string UserId = nameof(UserId);
+        public const string Username = nameof(Username);
     }
 
     public class LmsLicenseSettingNames
@@ -11,6 +16,10 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string IsOAuthSandbox = nameof(IsOAuthSandbox);
         public const string OAuthAppId = nameof(OAuthAppId);
         public const string OAuthAppKey = nameof(OAuthAppKey);
+
+        public const string BrightspaceAppId = nameof(BrightspaceAppId);
+        public const string BrightspaceAppKey = nameof(BrightspaceAppKey);
+
         public const string CanvasOAuthId = nameof(CanvasOAuthId);
         public const string CanvasOAuthKey = nameof(CanvasOAuthKey);
         public const string UseSynchronizedUsers = nameof(UseSynchronizedUsers);
@@ -71,8 +80,9 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string ZoomApiSecret = nameof(ZoomApiSecret);
         public const string LicenseId = nameof(LicenseId);
         public const string LicenseKey = nameof(LicenseKey);
+        public const string LicenseSecret = nameof(LicenseSecret);
         public const string LmsDomain = nameof(LmsDomain);
-
+        public const string UseSSL = nameof(UseSSL);
 
         public const string BuzzAdminUsername = nameof(BuzzAdminUsername);
         public const string BuzzAdminPassword = nameof(BuzzAdminPassword);

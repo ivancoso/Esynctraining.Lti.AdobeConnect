@@ -1,4 +1,5 @@
 ﻿using System.Web.Hosting;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.WCFService
 {
@@ -317,7 +318,7 @@ namespace EdugameCloud.WCFService
             {
                 var lmsApi = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
 
-                lmsApi.PublishQuiz(lmsUserParameters, courseId, quizId);
+                lmsApi.PublishQuiz(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true), courseId.ToString(), quizId);
 
                 return OperationResultDto.Success();
             }
@@ -342,7 +343,7 @@ namespace EdugameCloud.WCFService
 
                 string errorString;
                 var lmsAPI = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
-                var itemsInfoForUserResult = await lmsAPI.GetItemsInfoForUserAsync(lmsUserParameters, isSurvey);
+                var itemsInfoForUserResult = ((IEnumerable<LmsQuizInfoDTO> Data, string Error))await lmsAPI.GetItemsInfoForUserAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true), isSurvey);
                 errorString = itemsInfoForUserResult.Error;
                 var quizzesForCourse = itemsInfoForUserResult.Data
                         .ToList();
@@ -419,7 +420,7 @@ namespace EdugameCloud.WCFService
                     string error;
                     var lmsAPI = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)companyLms.LmsProviderId);
 
-                    var itemsForUserResult = await lmsAPI.GetItemsForUserAsync(lmsUserParameters,
+                    var itemsForUserResult = await lmsAPI.GetItemsForUserAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true),
                             isSurvey,
                             quizIds);
 

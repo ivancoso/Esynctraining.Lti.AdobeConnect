@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using EdugameCloud.Lti.API.Haiku;
-using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
+using HttpScheme = EdugameCloud.Lti.Core.Constants.HttpScheme;
 
 namespace EdugameCloud.Lti.Haiku
 {
@@ -21,15 +21,15 @@ namespace EdugameCloud.Lti.Haiku
         }
 
 
-        public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(ILmsLicense lmsCompany, int courseId)
+        public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(Dictionary<string, object> licenseSettings, string courseId)
         {
-            var consumerKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerKey);
-            var consumerSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerSecret);
-            var token = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
-            var tokenSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
+            var consumerKey = (string)licenseSettings[LmsLicenseSettingNames.HaikuConsumerKey];
+            var consumerSecret = (string)licenseSettings[LmsLicenseSettingNames.HaikuConsumerSecret];
+            var token = (string)licenseSettings[LmsLicenseSettingNames.HaikuToken];
+            var tokenSecret = (string)licenseSettings[LmsLicenseSettingNames.HaikuTokenSecret];
 
-            var scheme = lmsCompany.UseSSL.GetValueOrDefault() ? HttpScheme.Https : HttpScheme.Http;
-            var lmsDomain = $"{scheme}{lmsCompany.LmsDomain.TrimEnd('/')}";
+            var scheme = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL] ? HttpScheme.Https : HttpScheme.Http;
+            var lmsDomain = $"{scheme}{((string)licenseSettings[LmsLicenseSettingNames.LmsDomain]).TrimEnd('/')}";
 
             var oAuth = new OAuthBase()
             {
@@ -92,15 +92,15 @@ namespace EdugameCloud.Lti.Haiku
             }
         }
 
-        public async Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(ILmsLicense lmsCompany, int courseId)
+        public async Task<IEnumerable<LmsCourseSectionDTO>> GetCourseSectionsAsync(Dictionary<string, object> licenseSettings, string courseId)
         {
-            var consumerKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerKey);
-            var consumerSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerSecret);
-            var token = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
-            var tokenSecret = lmsCompany.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
+            var consumerKey = (string)licenseSettings[LmsLicenseSettingNames.HaikuConsumerKey];
+            var consumerSecret = (string)licenseSettings[LmsLicenseSettingNames.HaikuConsumerSecret];
+            var token = (string)licenseSettings[LmsLicenseSettingNames.HaikuToken];
+            var tokenSecret = (string)licenseSettings[LmsLicenseSettingNames.HaikuTokenSecret];
 
-            var scheme = lmsCompany.UseSSL.GetValueOrDefault() ? HttpScheme.Https : HttpScheme.Http;
-            var lmsDomain = $"{scheme}{lmsCompany.LmsDomain.TrimEnd('/')}";
+            var scheme = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL] ? HttpScheme.Https : HttpScheme.Http;
+            var lmsDomain = $"{scheme}{((string)licenseSettings[LmsLicenseSettingNames.LmsDomain]).TrimEnd('/')}";
 
             var oAuth = new OAuthBase()
             {

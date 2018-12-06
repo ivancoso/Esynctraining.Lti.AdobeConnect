@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text.RegularExpressions;
-using EdugameCloud.Lti.API;
-using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.BlackBoardClient;
 using Esynctraining.BlackBoardClient.Announcements;
@@ -15,6 +9,11 @@ using Esynctraining.BlackBoardClient.CourseMembership;
 using Esynctraining.BlackBoardClient.User;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.API.BlackBoard;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
+using HttpScheme = EdugameCloud.Lti.Core.Constants.HttpScheme;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
@@ -143,8 +142,8 @@ namespace EdugameCloud.Lti.BlackBoard
         }
 
         public List<LmsUserDTO> GetUsersForCourse(
-            ILmsLicense company,
-            int courseId,
+            Dictionary<string, object> licenseSettings,
+            string courseId,
             string[] userIds,
             out string error,
             ref WebserviceWrapper client)
@@ -233,7 +232,7 @@ namespace EdugameCloud.Lti.BlackBoard
 
                     return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
                 },
-                company,
+                licenseSettings,
                 out error);
 
             if (enrollmentsResult == null)
@@ -370,25 +369,18 @@ namespace EdugameCloud.Lti.BlackBoard
         /// <returns>
         /// The <see cref="RestClient"/>.
         /// </returns>
-        private WebserviceWrapper BeginBatch(out string error, ILmsLicense lmsCompany)
+        private WebserviceWrapper BeginBatch(out string error, Dictionary<string, object> licenseSettings)
         {
-            var lmsUser = lmsCompany.AdminUser;
-
-            if (lmsUser != null || lmsCompany.EnableProxyToolMode == true)
+            var enableProxy = (bool)licenseSettings[LmsLicenseSettingNames.BlackBoardEnableProxyToolMode];
+            bool useSsl = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL];
+            var lmsDomain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
+            if (enableProxy)
             {
-                string defaultToolRegistrationPassword = ConfigurationManager.AppSettings["InitialBBPassword"];
-                string toolPassword = string.IsNullOrWhiteSpace(lmsCompany.ProxyToolSharedPassword)
-                                          ? defaultToolRegistrationPassword
-                                          : lmsCompany.ProxyToolSharedPassword;
-                string lmsDomain = lmsCompany.LmsDomain;
-                bool useSsl = lmsCompany.UseSSL ?? false;
-                return lmsCompany.EnableProxyToolMode == true
-                           ? LoginToolAndCreateAClient(out error, useSsl, lmsDomain, toolPassword)
-                           : LoginUserAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
+                string toolPassword = (string)licenseSettings[LmsLicenseSettingNames.BlackBoardProxyToolPassword];
+                return LoginToolAndCreateAClient(out error, useSsl, lmsDomain, toolPassword);
             }
 
-            error = "ASP.NET Session is expired";
-            return null;
+            return LoginUserAndCreateAClient(out error, useSsl, lmsDomain, (string)licenseSettings[LmsLicenseSettingNames.AdminUsername], (string)licenseSettings[LmsLicenseSettingNames.AdminPassword]);
         }
 
         /// <summary>
@@ -493,10 +485,10 @@ namespace EdugameCloud.Lti.BlackBoard
         /// The <see cref="bool"/>.
         /// </returns>
         // ReSharper disable once UnusedMember.Local
-        public T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, ILmsLicense lmsCompany, out string error)
+        public T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, Dictionary<string, object> licenseSettings, out string error)
         {
             error = null;
-            client = client ?? BeginBatch(out error, lmsCompany);
+            client = client ?? BeginBatch(out error, licenseSettings);
             if (client != null)
             {
                 return action(client);
@@ -505,10 +497,10 @@ namespace EdugameCloud.Lti.BlackBoard
             return default(T);
         }
 
-        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, Tuple<T, string>> action, ILmsLicense lmsCompany, out string error)
+        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, Tuple<T, string>> action, Dictionary<string, object> licenseSettings, out string error)
         {
             error = null;
-            client = client ?? BeginBatch(out error, lmsCompany);
+            client = client ?? BeginBatch(out error, licenseSettings);
             if (client != null)
             {
                 var result = action(client);
@@ -542,12 +534,12 @@ namespace EdugameCloud.Lti.BlackBoard
             return false;
         }
 
-        public string[] CreateAnnouncement(int courseId, string userUuid, ILmsLicense lmsCompany, string announcementTitle, string announcementMessage)
+        public string[] CreateAnnouncement(string courseId, string userUuid, Dictionary<string, object> licenseSettings, string announcementTitle, string announcementMessage)
         {
             string error;
             var courseIdFixed = string.Format("_{0}_1", courseId);
 
-            var client = BeginBatch(out error, lmsCompany);
+            var client = BeginBatch(out error, licenseSettings);
 
             CourseMembershipWrapper membershipWS = client.getCourseMembershipWrapper();
             var membershipFilter = new MembershipFilter

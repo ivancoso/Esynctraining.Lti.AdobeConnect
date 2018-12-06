@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 //using AndcultureCode.ZoomClient.Models.Meetings;
-using Newtonsoft.Json;
 
-namespace EdugameCloud.Lti.Zoom.Api.Host.Models
+namespace Esynctraining.Lti.Zoom.Api.Host.Models
 {
     //public class MeetingViewModel
     //{

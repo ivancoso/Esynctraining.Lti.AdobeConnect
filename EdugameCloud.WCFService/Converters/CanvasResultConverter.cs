@@ -1,19 +1,16 @@
 ﻿using System;
+using Esynctraining.Lti.Lms.Common.API.Canvas;
 using SimpleJson;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Core.Domain.Entities;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Lti.Lms.Common.Dto.Canvas;
 
 namespace EdugameCloud.WCFService.Converters
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-
-    using RestSharp;
-
     public class CanvasResultConverter : QuizResultConverter
     {
         private readonly IEGCEnabledCanvasAPI _canvasApi;
@@ -27,7 +24,7 @@ namespace EdugameCloud.WCFService.Converters
 
         public override async Task ConvertAndSendQuizResultToLmsAsync(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
         {
-            var quizSubmission = _canvasApi.CreateQuizSubmission(
+            var quizSubmission = await _canvasApi.CreateQuizSubmission(
                 lmsUserParameters.CompanyLms.LmsDomain,
                 lmsUserParameters.LmsUser.Token,
                 lmsUserParameters.Course,                
@@ -51,7 +48,7 @@ namespace EdugameCloud.WCFService.Converters
             }
             try
             {
-                _canvasApi.AnswerQuestionsForQuiz(
+                await _canvasApi.AnswerQuestionsForQuiz(
                     lmsUserParameters.CompanyLms.LmsDomain,
                     lmsUserParameters.LmsUser.Token,
                     quizSubmission);
@@ -61,7 +58,7 @@ namespace EdugameCloud.WCFService.Converters
             }
             finally
             {
-                _canvasApi.CompleteQuizSubmission(
+                await _canvasApi.CompleteQuizSubmission(
                     lmsUserParameters.CompanyLms.LmsDomain,
                     lmsUserParameters.LmsUser.Token,
                     lmsUserParameters.Course,
@@ -73,7 +70,7 @@ namespace EdugameCloud.WCFService.Converters
             SurveyResult surveyResult, 
             LmsUserParameters lmsUserParameters)
         {
-            var quizSubmission = _canvasApi.CreateQuizSubmission(
+            var quizSubmission = await _canvasApi.CreateQuizSubmission(
                 lmsUserParameters.CompanyLms.LmsDomain,
                 lmsUserParameters.LmsUser.Token,
                 lmsUserParameters.Course,
@@ -115,7 +112,7 @@ namespace EdugameCloud.WCFService.Converters
 
             try
             {
-                _canvasApi.AnswerQuestionsForQuiz(
+                await _canvasApi.AnswerQuestionsForQuiz(
                     lmsUserParameters.CompanyLms.LmsDomain,
                     lmsUserParameters.LmsUser.Token,
                     quizSubmission);
@@ -125,13 +122,13 @@ namespace EdugameCloud.WCFService.Converters
                 
             }
                 finally
-                {
-                    _canvasApi.CompleteQuizSubmission(
-                   lmsUserParameters.CompanyLms.LmsDomain,
-                   lmsUserParameters.LmsUser.Token,
-                   lmsUserParameters.Course,
-                   quizSubmission);
-                }
+            {
+                await _canvasApi.CompleteQuizSubmission(
+                    lmsUserParameters.CompanyLms.LmsDomain,
+                    lmsUserParameters.LmsUser.Token,
+                    lmsUserParameters.Course,
+                    quizSubmission);
+            }
             
         }
 

@@ -79,6 +79,8 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         TelephonyProfileOption GetTelephonyOption(LmsMeetingType meetingType);
 
+        //todo: service
+        Dictionary<string, object> GetLMSSettings(dynamic settings, LmsUserParameters userParameters = null, bool preferUserSettings = true);
     }
 
 }

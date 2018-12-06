@@ -10,6 +10,7 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.API.AdobeConnect

@@ -12,6 +12,8 @@ using Esynctraining.AdobeConnect.Api.MeetingReports;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Json;
 using Esynctraining.Json.Jil;
+using Esynctraining.Lti.Lms.Common.API;
+using LmsFactory = EdugameCloud.Lti.API.LmsFactory;
 
 namespace EdugameCloud.Lti
 {

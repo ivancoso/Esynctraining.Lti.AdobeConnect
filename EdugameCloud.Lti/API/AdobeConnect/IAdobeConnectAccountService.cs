@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
-using Esynctraining.AdobeConnect.Api.Meeting.Dto;
 using Esynctraining.Core.Caching;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -27,7 +26,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string password,
             IAdobeConnectProxy provider,
             bool updateAcUser = true);
-
     }
 
 }

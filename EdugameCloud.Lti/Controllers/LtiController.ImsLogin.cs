@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using EdugameCloud.Lti.Core.OAuth;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using EdugameCloud.Lti.Models;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Lti.Lms.Common.Dto;
 using LtiLibrary.Core.Common;
 using LtiLibrary.Core.Outcomes;
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
@@ -13,6 +12,7 @@ using Esynctraining.AdobeConnect.Api.MeetingRecording.Dto;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.AdobeConnect;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -273,14 +273,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 && lmsCompany.UseSynchronizedUsers)
             {
                 var lmsUserDtoRes = await usersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, courseMeeting, param.lms_user_id);
-                string userCreationError = lmsUserDtoRes.Item2;
-                lmsUserDto = lmsUserDtoRes.Item1;
-                if (userCreationError != null)
+                lmsUserDto = lmsUserDtoRes.Data;
+                if (!lmsUserDtoRes.IsSuccess)
                 {
                     throw new Core.WarningMessageException(
                         string.Format(
                             "[Dynamic provisioning] Could not create user, id={0}. Message: {1}",
-                            param.lms_user_id, userCreationError));
+                            param.lms_user_id, lmsUserDtoRes.Message));
                 }
 
                 meetingSetup.ProcessDynamicProvisioning(provider, lmsCompany, courseMeeting, lmsUser, lmsUserDto);

@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Net;
 using D2L.Extensibility.AuthSdk;
 using EdugameCloud.Lti.API.Desire2Learn;
-using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.OAuth;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 using RestSharp;
+using HttpScheme = EdugameCloud.Lti.Core.Constants.HttpScheme;
 
 namespace EdugameCloud.Lti.Desire2Learn
 {
     public class Desire2LearnApiService : IDesire2LearnApiService
     {
         private readonly ILogger _logger;
-        private readonly dynamic _settings;
 
         public string WhoAmIUrlFormat => "/d2l/api/lp/{0}/users/whoami";
         public string GetUserUrlFormat => "/d2l/api/lp/{0}/users/{1}";
@@ -23,32 +20,27 @@ namespace EdugameCloud.Lti.Desire2Learn
         public string EnrollmentsClasslistUrlFormat => "/d2l/api/le/{0}/{1}/classlist/";
 
 
-        public Desire2LearnApiService(ILogger logger, ApplicationSettingsProvider settings)
+        public Desire2LearnApiService(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
-
-        public Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl, ILmsLicense company)
+        public Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl, Dictionary<string, object> licenseSettings)
         {
             var m_valenceHost = new HostSpec("https", hostUrl, 443);
-            var oAuthSettings = GetOAuthSettings(company);
-            var context = InitializeAppContext(oAuthSettings);
+            var context = InitializeAppContext(licenseSettings);
             return context.CreateUrlForAuthentication(m_valenceHost, returnUrl);
         }
 
-        public T GetApiObjects<T>(Uri urlWithAuthParams, string hostUrl, string apiUrl, ILmsLicense company) where T : new()
+        public T GetApiObjects<T>(Uri urlWithAuthParams, string hostUrl, string apiUrl, Dictionary<string, object> licenseSettings) where T : new()
         {
-            var oAuthSettings = GetOAuthSettings(company);
-            var userContext = GetUserContext(oAuthSettings, urlWithAuthParams, hostUrl);
+            var userContext = GetUserContext(licenseSettings, urlWithAuthParams, hostUrl);
             return MakeApiCall<T>(userContext, hostUrl, apiUrl);
         }
 
-        public T GetApiObjects<T>(string userId, string userKey, string hostUrl, string apiUrl, ILmsLicense company) where T : new()
+        public T GetApiObjects<T>(string userId, string userKey, string hostUrl, string apiUrl, Dictionary<string, object> licenseSettings) where T : new()
         {
-            var oAuthSettings = GetOAuthSettings(company);
-            var userContext = GetUserContext(oAuthSettings, userId, userKey, hostUrl);
+            var userContext = GetUserContext(licenseSettings, userId, userKey, hostUrl);
             return MakeApiCall<T>(userContext, hostUrl, apiUrl);
         }
 
@@ -74,35 +66,30 @@ namespace EdugameCloud.Lti.Desire2Learn
             return response.Data;
         }
 
-        private ID2LUserContext GetUserContext(KeyValuePair<string, string> appSettings, Uri url, string hostUrl)
+        private ID2LUserContext GetUserContext(Dictionary<string, object> licenseSettings, Uri url, string hostUrl)
         {
             var host = new HostSpec("https", hostUrl, 443);
-            var context = InitializeAppContext(appSettings);
+            var context = InitializeAppContext(licenseSettings);
             return context.CreateUserContext(url, host);
         }
 
-        private ID2LUserContext GetUserContext(KeyValuePair<string, string> appSettings, string userId, string userKey, string hostUrl)
+        private ID2LUserContext GetUserContext(Dictionary<string, object> licenseSettings, string userId, string userKey, string hostUrl)
         {
             var host = new HostSpec("https", hostUrl, 443);
-            var context = InitializeAppContext(appSettings);
+            var context = InitializeAppContext(licenseSettings);
             return context.CreateUserContext(userId, userKey, host);
         }
 
-        private ID2LAppContext InitializeAppContext(KeyValuePair<string, string> oAuthSettings)
+        private ID2LAppContext InitializeAppContext(Dictionary<string, object> licenseSettings)
         {
-            if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))
+            var appId = (string)licenseSettings[LmsLicenseSettingNames.BrightspaceAppId];
+            var appKey = (string)licenseSettings[LmsLicenseSettingNames.BrightspaceAppKey];
+            if (string.IsNullOrEmpty(appId) || string.IsNullOrEmpty(appKey))
             {
                 throw new InvalidOperationException("D2L keys are not set"); // todo: log lmsCompanyId
             }
 
-            return new D2LAppContextFactory().Create(oAuthSettings.Key, oAuthSettings.Value);
+            return new D2LAppContextFactory().Create(appId, appKey);
         }
-
-        private KeyValuePair<string, string> GetOAuthSettings(ILmsLicense company)
-        {
-            return OAuthWebSecurityWrapper.GetOAuthSettings(company, (string)_settings.BrightspaceAppId, (string)_settings.BrightspaceAppKey);
-        }
-
     }
-
 }

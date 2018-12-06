@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.API;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Bridge
 {
@@ -17,10 +16,10 @@ namespace EdugameCloud.Lti.Bridge
             this.api = api;
         }
 
-        public override async Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
         {
-            var result = await api.GetUserProfile(lmsUserId, lmsCompany);
-            return (new LmsUserDTO
+            var result = await api.GetUserProfile(lmsUserId, licenseSettings);
+            return new LmsUserDTO
             {
                 Email = result?.Email,
                 Id = result?.Id.ToString(),
@@ -29,19 +28,14 @@ namespace EdugameCloud.Lti.Bridge
                 LtiId = result?.Id.ToString(),
                 Login = result?.Uid,
                 PrimaryEmail = result?.Email
-            }, null);
+            }.ToSuccessResult();
         }
 
-        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
-            int courseId, LtiParamDTO extraData = null)
-        {
-            return (await GetUsersOldStyle(lmsCompany, courseId, extraData)).users.ToSuccessResult();
-        }
 
-        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
-            int courseId, LtiParamDTO param = null)
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
+            string courseId, LtiParamDTO param = null)
         {
-            var res = await api.GetCourseUsers(courseId.ToString(), lmsCompany);
+            var res = await api.GetCourseUsers(courseId, licenseSettings);
             var users = res.Select(result => new LmsUserDTO()
             {
                 Email = result?.Email,
@@ -52,7 +46,7 @@ namespace EdugameCloud.Lti.Bridge
                 Login = result?.Uid,
                 PrimaryEmail = result?.Email
             });
-            return (users.ToList(), null);
+            return users.ToList().ToSuccessResult();
         }
     }
 }

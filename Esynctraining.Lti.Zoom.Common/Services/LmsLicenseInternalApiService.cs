@@ -6,7 +6,6 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using Esynctraining.Lti.Zoom.Api;
 using Esynctraining.Lti.Zoom.Common.Dto;
 
 namespace Esynctraining.Lti.Zoom.Common.Services

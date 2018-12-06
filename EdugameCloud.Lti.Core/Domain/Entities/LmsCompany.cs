@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Esynctraining.Lti.Lms.Common.Constants;
 
 namespace EdugameCloud.Lti.Domain.Entities
 {
@@ -111,7 +112,7 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 var domainUrl = this.lmsDomain.Return(x => x.ToLower(), string.Empty);
-                
+
                 return domainUrl.RemoveHttpProtocolAndTrailingSlash();
             }
 
@@ -122,7 +123,8 @@ namespace EdugameCloud.Lti.Domain.Entities
                     this.UseSSL = true;
                 }
 
-                this.lmsDomain = value.Return(x => x.TrimEnd(@"/\".ToCharArray()), null).RemoveHttpProtocolAndTrailingSlash();
+                this.lmsDomain = value.Return(x => x.TrimEnd(@"/\".ToCharArray()), null)
+                    .RemoveHttpProtocolAndTrailingSlash();
             }
         }
 
@@ -242,14 +244,16 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 var useFLV = false;
-                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseFLV) == 0);
+                var setting =
+                    this.Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseFLV) == 0);
                 return setting != null && bool.TryParse(setting.Value, out useFLV) && useFLV;
             }
             set
             {
                 if ((Id == default(int)) && (Settings == null))
                     this.Settings = new List<LmsCompanySetting>();
-                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseFLV, true) == 0);
+                var setting =
+                    Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseFLV, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
@@ -269,19 +273,21 @@ namespace EdugameCloud.Lti.Domain.Entities
         /// <summary>
         /// Gets or sets the enable use mp4.
         /// </summary>
-        public virtual bool UseMP4 
+        public virtual bool UseMP4
         {
             get
             {
                 var useMP4 = false;
-                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseMP4) == 0);
+                var setting =
+                    this.Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseMP4) == 0);
                 return setting != null && bool.TryParse(setting.Value, out useMP4) && useMP4;
             }
             set
             {
                 if ((Id == default(int)) && (Settings == null))
                     this.Settings = new List<LmsCompanySetting>();
-                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseMP4, true) == 0);
+                var setting =
+                    Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseMP4, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
@@ -306,14 +312,17 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 var enableMultipleMeetings = false;
-                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.EnableMultipleMeetings) == 0);
-                return setting != null && bool.TryParse(setting.Value, out enableMultipleMeetings) && enableMultipleMeetings;
+                var setting = this.Settings.SingleOrDefault(x =>
+                    string.Compare(x.Name, LmsCompanySettingNames.EnableMultipleMeetings) == 0);
+                return setting != null && bool.TryParse(setting.Value, out enableMultipleMeetings) &&
+                       enableMultipleMeetings;
             }
             set
             {
                 if ((Id == default(int)) && (Settings == null))
                     this.Settings = new List<LmsCompanySetting>();
-                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.EnableMultipleMeetings, true) == 0);
+                var setting = Settings.SingleOrDefault(x =>
+                    string.Compare(x.Name, LmsCompanySettingNames.EnableMultipleMeetings, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
@@ -335,7 +344,8 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 bool denyACUserCreation = false;
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, LmsCompanySettingNames.DenyACUserCreation, true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x =>
+                    String.Compare(x.Name, LmsCompanySettingNames.DenyACUserCreation, true) == 0);
                 return setting != null && bool.TryParse(setting.Value, out denyACUserCreation) && denyACUserCreation;
             }
             set
@@ -343,7 +353,8 @@ namespace EdugameCloud.Lti.Domain.Entities
                 if ((Id == default(int)) && (Settings == null))
                     Settings = new List<LmsCompanySetting>();
 
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.DenyACUserCreation, true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x =>
+                    string.Compare(x.Name, LmsCompanySettingNames.DenyACUserCreation, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
@@ -364,7 +375,8 @@ namespace EdugameCloud.Lti.Domain.Entities
         {
             get
             {
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.MeetingNameFormatterId, true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x =>
+                    string.Compare(x.Name, LmsCompanySettingNames.MeetingNameFormatterId, true) == 0);
                 if (setting == null)
                     return MeetingNameFormatterFactory.DefaultFormatterId;
 
@@ -375,7 +387,8 @@ namespace EdugameCloud.Lti.Domain.Entities
                 if ((Id == default(int)) && (Settings == null))
                     Settings = new List<LmsCompanySetting>();
 
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.MeetingNameFormatterId, true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x =>
+                    string.Compare(x.Name, LmsCompanySettingNames.MeetingNameFormatterId, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
@@ -397,8 +410,10 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 bool useSynchronizedUsers = false;
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseSynchronizedUsers, true) == 0);
-                return setting != null && bool.TryParse(setting.Value, out useSynchronizedUsers) && useSynchronizedUsers;
+                LmsCompanySetting setting = Settings.SingleOrDefault(x =>
+                    string.Compare(x.Name, LmsCompanySettingNames.UseSynchronizedUsers, true) == 0);
+                return setting != null && bool.TryParse(setting.Value, out useSynchronizedUsers) &&
+                       useSynchronizedUsers;
             }
         }
 
@@ -407,7 +422,8 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 bool enableMeetingReuse = false;
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, LmsCompanySettingNames.EnableMeetingReuse, true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x =>
+                    String.Compare(x.Name, LmsCompanySettingNames.EnableMeetingReuse, true) == 0);
                 return setting != null && bool.TryParse(setting.Value, out enableMeetingReuse) && enableMeetingReuse;
             }
         }
@@ -425,20 +441,14 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         public virtual bool CanRemoveRecordings
         {
-            get
-            {
-                return GetSetting<bool>(LmsCompanySettingNames.CanRemoveRecordings, true);
-            }
+            get { return GetSetting<bool>(LmsCompanySettingNames.CanRemoveRecordings, true); }
         }
 
         public virtual bool AutoPublishRecordings
         {
-            get
-            {
-                return GetSetting<bool>(LmsCompanySettingNames.AutoPublishRecordings, true);
-            }
+            get { return GetSetting<bool>(LmsCompanySettingNames.AutoPublishRecordings, true); }
         }
-        
+
         public virtual int LanguageId
         {
             get
@@ -465,7 +475,7 @@ namespace EdugameCloud.Lti.Domain.Entities
             if (!string.IsNullOrEmpty(LmsDomain))
                 domains.Add(CleanDomain(LmsDomain));
 
-            if ((LmsProviderId == (int)LmsProviderEnum.Blackboard) && EnableProxyToolMode.GetValueOrDefault())
+            if ((LmsProviderId == (int) LmsProviderEnum.Blackboard) && EnableProxyToolMode.GetValueOrDefault())
             {
                 domains.AddRange(AdditionalLmsDomains.Select(x => x.RemoveHttpProtocolAndTrailingSlash()));
             }
@@ -480,18 +490,20 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         public virtual T GetSetting<T>(string settingName)
         {
-            LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, settingName, StringComparison.OrdinalIgnoreCase) == 0);
+            LmsCompanySetting setting = Settings.SingleOrDefault(x =>
+                String.Compare(x.Name, settingName, StringComparison.OrdinalIgnoreCase) == 0);
             return setting == null || string.IsNullOrWhiteSpace(setting.Value)
                 ? default(T)
-                : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
+                : (T) Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
         }
 
         public virtual T GetSetting<T>(string settingName, T defaultValue)
         {
-            LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, settingName, StringComparison.OrdinalIgnoreCase) == 0);
+            LmsCompanySetting setting = Settings.SingleOrDefault(x =>
+                String.Compare(x.Name, settingName, StringComparison.OrdinalIgnoreCase) == 0);
             return setting == null || string.IsNullOrWhiteSpace(setting.Value)
                 ? defaultValue
-                : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
+                : (T) Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
         }
 
         public virtual TelephonyProfileOption GetTelephonyOption(LmsMeetingType meetingType)
@@ -501,13 +513,14 @@ namespace EdugameCloud.Lti.Domain.Entities
                 case LmsMeetingType.Meeting:
                 case LmsMeetingType.VirtualClassroom:
                 case LmsMeetingType.Seminar:
-                    return (TelephonyProfileOption)GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption);
+                    return (TelephonyProfileOption) GetSetting<int>(
+                        LmsCompanySettingNames.Telephony.CourseMeetingOption);
 
                 case LmsMeetingType.OfficeHours:
-                    return (TelephonyProfileOption)GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption);
+                    return (TelephonyProfileOption) GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption);
 
                 case LmsMeetingType.StudyGroup:
-                    return (TelephonyProfileOption)GetSetting<int>(LmsCompanySettingNames.Telephony.StudyGroupOption);
+                    return (TelephonyProfileOption) GetSetting<int>(LmsCompanySettingNames.Telephony.StudyGroupOption);
 
                 default:
                     throw new ArgumentOutOfRangeException("Non supported meeting type");
@@ -522,6 +535,169 @@ namespace EdugameCloud.Lti.Domain.Entities
             return input;
         }
 
+        /// <param name="preferUserSettings">when true - means that user tokens/parameters will be used instead of license(admin)
+        /// to retrieve information from API</param>
+        public Dictionary<string, object> GetLMSSettings(dynamic settings, LmsUserParameters userParameters = null,
+            bool preferUserSettings = false)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            switch (LmsProviderId)
+            {
+                case (int) LmsProviderEnum.Canvas:
+//                        LmsLicenseSettingNames.CanvasOAuthId,
+//                        LmsLicenseSettingNames.CanvasOAuthKey
+
+
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+                    if (userParameters != null)
+                    {
+                        result.Add(LmsUserSettingNames.Token,
+                            preferUserSettings ? userParameters.LmsUser.Token : AdminUser?.Token);
+                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course.ToString());
+                    }
+                    else
+                    {
+                        result.Add(LmsUserSettingNames.Token, AdminUser?.Token);
+                    }
+                    //result.Add(LmsUserSettingNames.RefreshToken, session.RefreshToken);
+                    break;
+
+                case (int) LmsProviderEnum.AgilixBuzz:
+                    result.Add(LmsLicenseSettingNames.BuzzAdminUsername,
+                        GetSetting<string>(LmsLicenseSettingNames.BuzzAdminUsername));
+                    result.Add(LmsLicenseSettingNames.BuzzAdminPassword,
+                        GetSetting<string>(LmsLicenseSettingNames.BuzzAdminPassword));
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+                    break;
+                case (int)LmsProviderEnum.Schoology:
+                    result.Add(LmsLicenseSettingNames.SchoologyConsumerKey, GetSetting<string>(LmsLicenseSettingNames.SchoologyConsumerKey));
+                    result.Add(LmsLicenseSettingNames.SchoologyConsumerSecret, GetSetting<string>(LmsLicenseSettingNames.SchoologyConsumerSecret));
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+                    break;
+                case (int) LmsProviderEnum.Blackboard:
+                    var enableProxy = EnableProxyToolMode.GetValueOrDefault();
+                    result.Add(LmsLicenseSettingNames.UseSSL, UseSSL.GetValueOrDefault());
+                    result.Add(LmsLicenseSettingNames.BlackBoardEnableProxyToolMode, enableProxy);
+                    if (enableProxy)
+                    {
+                        string defaultToolRegistrationPassword = settings?.InitialBBPassword;
+                        string toolPassword = string.IsNullOrWhiteSpace(ProxyToolSharedPassword)
+                            ? defaultToolRegistrationPassword
+                            : ProxyToolSharedPassword;
+                        result.Add(LmsLicenseSettingNames.BlackBoardProxyToolPassword, toolPassword);
+                    }
+                    else
+                    {
+                        result.Add(LmsLicenseSettingNames.AdminUsername, AdminUser?.Username);
+                        result.Add(LmsLicenseSettingNames.AdminPassword, AdminUser?.Password);
+                    }
+
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+
+                    //result.Add(LmsLicenseSettingNames.BlackBoardUseSSL, true);
+
+                    if (userParameters != null)
+                    {
+                        result.Add(LmsUserSettingNames.Token, userParameters.Wstoken);//todo: separate setting?
+                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course.ToString());
+                        result.Add(LmsUserSettingNames.CourseName, userParameters.CourseName);
+                    }
+                    
+                    break;
+                case (int) LmsProviderEnum.Bridge:
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+                    result.Add(LmsLicenseSettingNames.BridgeApiTokenKey,
+                        GetSetting<string>(LmsLicenseSettingNames.BridgeApiTokenKey));
+                    result.Add(LmsLicenseSettingNames.BridgeApiTokenSecret,
+                        GetSetting<string>(LmsLicenseSettingNames.BridgeApiTokenSecret));
+                    break;
+                case (int)LmsProviderEnum.Brightspace:
+                    result.Add(LmsUserSettingNames.Token, AdminUser?.Token);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LicenseId, Id);
+                    var keys = GetApiKeys(this, (string) settings.BrightspaceAppId,
+                        (string) settings.BrightspaceAppKey);
+                    result.Add(LmsLicenseSettingNames.BrightspaceAppId, keys.Key);
+                    result.Add(LmsLicenseSettingNames.BrightspaceAppKey, keys.Value);
+                    break;
+                case (int)LmsProviderEnum.Moodle:
+                    result.Add(LmsLicenseSettingNames.MoodleCoreServiceToken, GetSetting<string>(LmsLicenseSettingNames.MoodleCoreServiceToken));
+                    result.Add(LmsLicenseSettingNames.MoodleQuizServiceToken, GetSetting<string>(LmsLicenseSettingNames.MoodleQuizServiceToken));
+                    result.Add(LmsLicenseSettingNames.UseSSL, UseSSL.GetValueOrDefault());
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    if (AdminUser != null)
+                    {
+                        result.Add(LmsLicenseSettingNames.AdminUsername, AdminUser.Username);
+                        result.Add(LmsLicenseSettingNames.AdminPassword, AdminUser.Password);
+                    }
+                    if (userParameters != null)
+                    {
+                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course.ToString());
+                        result.Add(LmsUserSettingNames.SessionId, userParameters.Id);
+                    }
+                    break;
+                case (int)LmsProviderEnum.Haiku:
+                    result.Add(LmsLicenseSettingNames.HaikuConsumerKey, GetSetting<string>(LmsLicenseSettingNames.HaikuConsumerKey));
+                    result.Add(LmsLicenseSettingNames.HaikuConsumerSecret, GetSetting<string>(LmsLicenseSettingNames.HaikuConsumerSecret));
+                    result.Add(LmsLicenseSettingNames.HaikuToken, GetSetting<string>(LmsLicenseSettingNames.HaikuToken));
+                    result.Add(LmsLicenseSettingNames.HaikuTokenSecret, GetSetting<string>(LmsLicenseSettingNames.HaikuTokenSecret));
+                    result.Add(LmsLicenseSettingNames.UseSSL, UseSSL.GetValueOrDefault());
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    break;
+                case (int)LmsProviderEnum.Sakai:
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LicenseSecret, SharedSecret);
+                    result.Add(LmsLicenseSettingNames.LanguageId, LanguageId);
+                    result.Add(LmsLicenseSettingNames.UseSSL, UseSSL.GetValueOrDefault());
+                    result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
+                    if (AdminUser != null)
+                    {
+                        result.Add(LmsLicenseSettingNames.AdminUsername, AdminUser.Username);
+                        result.Add(LmsLicenseSettingNames.AdminPassword, AdminUser.Password);
+                    }
+                    if (userParameters != null)
+                    {
+                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course.ToString());
+                        result.Add(LmsUserSettingNames.CourseName, userParameters.CourseName);
+                        result.Add(LmsUserSettingNames.SessionId, userParameters.Id);
+                        result.Add(LmsUserSettingNames.UserId, userParameters.LmsUser.UserId);
+                        result.Add(LmsUserSettingNames.Username, userParameters.LmsUser.Username);
+                    }
+                    break;
+
+                default:
+                    throw new NotImplementedException($"LmsProviderId {LmsProviderId} is not implemented.");
+            }
+
+            return result;
+        }
+
+        //todo: move to companyLms/settings service?
+        public static KeyValuePair<string, string> GetApiKeys(ILmsLicense lmsCompany, string globalAppId, string globalAppKey)
+        {
+            string appId = null;
+            string appKey = null;
+            var isSandbox = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.IsOAuthSandbox);
+            if (isSandbox)
+            {
+                appId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
+                appKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
+            }
+            else
+            {
+                appId = globalAppId;
+                appKey = globalAppKey;
+            }
+
+            return new KeyValuePair<string, string>(appId, appKey);
+        }
     }
 
 }

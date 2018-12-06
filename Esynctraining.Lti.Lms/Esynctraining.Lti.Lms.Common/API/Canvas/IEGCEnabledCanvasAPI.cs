@@ -1,7 +1,7 @@
-﻿using System;
-using Esynctraining.Lti.Lms.Common.Dto;
+﻿using Esynctraining.Lti.Lms.Common.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Lms.Common.Dto.Canvas;
 
 namespace Esynctraining.Lti.Lms.Common.API.Canvas
 {
@@ -10,11 +10,28 @@ namespace Esynctraining.Lti.Lms.Common.API.Canvas
         Task<LmsUserDTO> GetCourseUser(string userId, Dictionary<string, object> licenseSettings, string courseId);
         Task<List<LmsUserDTO>> GetUsersForCourse(string domain, string courseid, Dictionary<string, object> licenseSettings);
 
+        //sections
+        Task<List<LmsCourseSectionDTO>> GetCourseSections(string domain, string userToken, int courseId);
+
+        //quizzes
+        Task<CanvasQuizSubmissionDTO> CreateQuizSubmission(
+            string api,
+            string userToken,
+            int courseid,
+            int quizid);
+
+        Task AnswerQuestionsForQuiz(string api, string userToken, CanvasQuizSubmissionDTO submission);
+
+        Task CompleteQuizSubmission(
+            string api,
+            string userToken,
+            int courseid,
+            CanvasQuizSubmissionDTO submission);
+
+        //calendar
         Task<LmsCalendarEventDTO> CreateCalendarEvent(string courseId, Dictionary<string, object> licenseSettings, LmsCalendarEventDTO lmsEvent);
 
         Task<LmsCalendarEventDTO> UpdateCalendarEvent(string courseId, Dictionary<string, object> licenseSettings, LmsCalendarEventDTO lmsEvent);
-
-        Task UpdateCalendarEvent(string domain, string courseId, Dictionary<string, object> licenseSettings, DateTime startTime, string endTime, string title);
 
         Task<IEnumerable<LmsCalendarEventDTO>> GetUserCalendarEvents(string userId, Dictionary<string, object> licenseSettings);
 

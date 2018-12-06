@@ -562,10 +562,6 @@
       <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.AgilixBuzz\EdugameCloud.Lti.AgilixBuzz.csproj">
-      <Project>{48cbb08f-362b-4add-a48c-175fa094d030}</Project>
-      <Name>EdugameCloud.Lti.AgilixBuzz</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
       <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
       <Name>EdugameCloud.Lti.BlackBoard</Name>
@@ -573,10 +569,6 @@
     <ProjectReference Include="..\EdugameCloud.Lti.Bridge\EdugameCloud.Lti.Bridge.csproj">
       <Project>{5bd06fb7-1f43-400e-a71c-627b94a0afe5}</Project>
       <Name>EdugameCloud.Lti.Bridge</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj">
-      <Project>{1b19293e-b5ca-463a-93a8-ef09cc255275}</Project>
-      <Name>EdugameCloud.Lti.Canvas</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
       <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
@@ -598,10 +590,6 @@
       <Project>{2a856007-ffab-4d1d-b8d5-510451bf8b79}</Project>
       <Name>EdugameCloud.Lti.Sakai</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Schoology\EdugameCloud.Lti.Schoology.csproj">
-      <Project>{9d09f5a0-9adb-49ef-985f-89641ecf9e00}</Project>
-      <Name>EdugameCloud.Lti.Schoology</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
       <Name>EdugameCloud.Lti</Name>
@@ -609,6 +597,10 @@
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
       <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
       <Name>EdugameCloud.Persistence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj">
+      <Project>{856DFC9A-1C9B-4E9E-B056-FBEE6D4030B5}</Project>
+      <Name>Esynctraining.Lti.Lms.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

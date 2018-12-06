@@ -10,13 +10,13 @@ using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EdugameCloud.Lti.Api.Controllers
@@ -142,8 +142,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                             Session.LtiSession.LtiParam,
                             user,
                             request.MeetingId);
-                        updatedUser = updatedUserRes.user;
-                        error = updatedUserRes.error;
+                        updatedUser = updatedUserRes.Data;
+                        error = updatedUserRes.Message;
                     }
 
                     if (!string.IsNullOrEmpty(error))

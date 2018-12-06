@@ -1,29 +1,25 @@
-﻿namespace EdugameCloud.WCFService.Converters
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml;
+using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Core.Domain.Entities;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
+using Newtonsoft.Json;
+
+namespace EdugameCloud.WCFService.Converters
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Xml;
-
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Core.Utils;
-
-    using Newtonsoft.Json;
-
-    /// <summary>
-    /// The quiz result converter.
-    /// </summary>
     public abstract class QuizResultConverter
     {
         #region Properties
 
         protected QuestionModel QuestionModel => IoC.Resolve<QuestionModel>();
+        public dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
 
         #endregion
 

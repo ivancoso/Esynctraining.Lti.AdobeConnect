@@ -12,7 +12,6 @@ namespace Esynctraining.Lti.Lms.Common.API
         {
         }
 
-
         public override Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO extraData = null)
         {
             //if (lmsCompany == null)
@@ -20,15 +19,5 @@ namespace Esynctraining.Lti.Lms.Common.API
 
             return Task.FromResult(new List<LmsUserDTO>().ToSuccessResult());
         }
-
-        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO param = null)
-        {
-            //if (lmsCompany == null)
-            //    throw new ArgumentNullException(nameof(lmsCompany));
-
-            return Task.FromResult<(List<LmsUserDTO> users, string error)>((new List<LmsUserDTO>(), null));
-        }
-
     }
-
 }

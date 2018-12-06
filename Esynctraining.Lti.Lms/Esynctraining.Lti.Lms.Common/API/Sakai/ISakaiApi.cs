@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EdugameCloud.Lti.API.Sakai
+﻿namespace Esynctraining.Lti.Lms.Common.API.Sakai
 {
     public interface ISakaiApi : IEGCEnabledSakaiApi
     {

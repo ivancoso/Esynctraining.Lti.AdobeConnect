@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Web;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.Sakai

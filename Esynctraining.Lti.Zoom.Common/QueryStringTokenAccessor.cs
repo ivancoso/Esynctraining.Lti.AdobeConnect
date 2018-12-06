@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
-namespace Esynctraining.Lti.Zoom.Api
+namespace Esynctraining.Lti.Zoom.Common
 {
     public class QueryStringTokenAccessor : ILtiTokenAccessor
     {

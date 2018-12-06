@@ -6,6 +6,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Bridge
 {
@@ -23,18 +24,23 @@ namespace EdugameCloud.Lti.Bridge
         public async Task<IEnumerable<MeetingSessionDTO>> SaveEventsAsync(int meetingId, IEnumerable<MeetingSessionDTO> eventDtos, LtiParamDTO param, ILmsLicense license)
         {
             List<MeetingSessionDTO> result = eventDtos.ToList();
-            var sessions = await _api.CreateSessions(param.course_id.ToString(),
-                eventDtos.Select(x => new LiveSessionRequest {start_at = x.StartDate,end_at = x.EndDate, notes = x.Summary}), license);
+            IEnumerable<LiveSessionResponse> sessions = await _api.CreateSessions(param.course_id.ToString(),
+                eventDtos.Select(x => new LiveSessionRequest {start_at = x.StartDate,end_at = x.EndDate, notes = x.Summary}), license.GetLMSSettings(_settings));
 
-            var users = await _api.GetCourseUsers(param.course_id.ToString(), license);
+            var users = await _api.GetCourseUsers(param.course_id.ToString(), license.GetLMSSettings(_settings));
             foreach (var session in sessions)
             {
                 var webConf = await _api.UpdateSessionWebconference(param.course_id.ToString(), session.id,
-                    new WebConferenceRequest { provider = "Other", other_provider = "eSyncTraining AC", meeting_url = $"{_settings.BasePath.TrimEnd('/')}/lti/meeting/join?session={"123"}&meetingId={meetingId}" }, license);
-                var publishedSession = await _api.PublishSession(param.course_id.ToString(), session.id, license);
+                    new WebConferenceRequest
+                    {
+                        provider = "Other",
+                        other_provider = "eSyncTraining AC",
+                        meeting_url = $"{_settings.BasePath.TrimEnd('/')}/lti/meeting/join?session={"123"}&meetingId={meetingId}"
+                    }, license.GetLMSSettings(_settings));
+                var publishedSession = await _api.PublishSession(param.course_id.ToString(), session.id, license.GetLMSSettings(_settings));
                 foreach (var user in users)
                 {
-                    var userRegistered = await _api.RegisterUserToSession(session.id, user.Id, license);
+                    var userRegistered = await _api.RegisterUserToSession(session.id, user.Id, license.GetLMSSettings(_settings));
                 }
 
                 //var evt = result.FirstOrDefault(x => session.start_at.Value == x.StartDate);
@@ -67,7 +73,7 @@ namespace EdugameCloud.Lti.Bridge
             List<string> ids = new List<string>();
             foreach (var id in eventIds)
             {
-                var result = await _api.DeleteSession(param.course_id.ToString(), id, license);
+                var result = await _api.DeleteSession(param.course_id.ToString(), id, license.GetLMSSettings(_settings));
                 if(result)
                     ids.Add(id);
             }

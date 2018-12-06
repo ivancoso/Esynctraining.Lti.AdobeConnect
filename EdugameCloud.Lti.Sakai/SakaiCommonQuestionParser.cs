@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
+using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.Sakai
@@ -128,7 +128,7 @@ namespace EdugameCloud.Lti.Sakai
                             }
                             else
                             {
-                                quizAnswer.variables.Add(new VariableDTO()
+                                quizAnswer.variables.Add(new Esynctraining.Lti.Lms.Common.Dto.VariableDTO
                                 {
                                     name = variable.Key,
                                     value = variable.Value.ToString()

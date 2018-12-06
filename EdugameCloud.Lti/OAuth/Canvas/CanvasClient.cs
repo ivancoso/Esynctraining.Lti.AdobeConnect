@@ -1,26 +1,21 @@
 ﻿using System.Net.Http;
-using EdugameCloud.HttpClient;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
+using System.Web;
+using DotNetOpenAuth.AspNet.Clients;
+using DotNetOpenAuth.Messaging;
+using Esynctraining.Core.Extensions;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using Esynctraining.HttpClient;
 
 namespace EdugameCloud.Lti.OAuth.Canvas
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Text;
-    using System.Web;
-
-    using DotNetOpenAuth.AspNet.Clients;
-    using DotNetOpenAuth.Messaging;
-    using Esynctraining.Core.Extensions;
-
-    using Newtonsoft.Json;
-    using System.Threading.Tasks;
-    using System.Net.Http.Headers;
-
     /// <summary>
     /// The canvas client.
     /// </summary>

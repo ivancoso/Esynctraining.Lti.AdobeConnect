@@ -6,7 +6,7 @@ namespace Esynctraining.Lti.Lms.Common.API.Moodle
 {
     public interface IMoodleApi
     {
-        Task<(List<LmsUserDTO> users, string error)> GetUsersForCourse(Dictionary<string, object> licenseSettings, int courseId);
+        Task<(List<LmsUserDTO> users, string error)> GetUsersForCourse(Dictionary<string, object> licenseSettings, string courseId);
 
         Task<(bool result, string error)> LoginAndCheckSession(
             bool useSsl,

@@ -6,6 +6,8 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Sakai
 {
@@ -20,26 +22,22 @@ namespace EdugameCloud.Lti.Sakai
         }
 
 
-        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany, 
-            int courseId, LtiParamDTO extraData = null)
-        {
-            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
-            return users.Item1.ToSuccessResult();
-        }
-
-        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany, int courseId, LtiParamDTO param = null)
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, 
+            string courseId, LtiParamDTO param = null)
         {
             if (param == null)
             {
-                return (new List<LmsUserDTO>(), "Extra data is not set.");
+                return OperationResultWithData<List<LmsUserDTO>>.Error("Extra data is not set.");
             }
 
             var result = await _lti2Api.GetUsersForCourse(
-                lmsCompany,
+                licenseSettings,
                 param.ext_ims_lis_memberships_url ?? param.ext_ims_lti_tool_setting_url,
                 param.ext_ims_lis_memberships_id);
 
-            return (GroupUsers(result.Item1), result.Item2);
+            return string.IsNullOrEmpty(result.Item2)
+                ? GroupUsers(result.Item1).ToSuccessResult()
+                : OperationResultWithData<List<LmsUserDTO>>.Error(result.Item2);
         }
 
     }

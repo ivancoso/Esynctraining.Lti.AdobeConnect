@@ -1,27 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using Esynctraining.Lti.Lms.Common.API.BlackBoard;
+using System.Linq;
+using System.Threading.Tasks;
+using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Core.Domain.Entities;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.WCFService.Converters
 {
-    using System.Linq;
-    using System.Threading.Tasks;
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Core.Utils;
-
     public class BlackboardResultConverter : QuizResultConverter
     {
-        private IEGCEnabledBlackBoardApi BlackboardApi
-        {
-            get
-            {
-                return IoC.Resolve<IEGCEnabledBlackBoardApi>();
-            }
-        }
-
+        private IEGCEnabledBlackBoardApi BlackboardApi => IoC.Resolve<IEGCEnabledBlackBoardApi>();
 
         public override async Task ConvertAndSendQuizResultToLmsAsync(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
         {
@@ -48,7 +39,7 @@ namespace EdugameCloud.WCFService.Converters
                 ret.Add(answers.ContainsKey(question.LmsQuestionId.GetValueOrDefault()) ? answers[question.LmsQuestionId.GetValueOrDefault()] : "0");
             }
 
-            await BlackboardApi.SendAnswersAsync(lmsUserParameters, quizResult.Quiz.LmsQuizId.GetValueOrDefault().ToString(), false, ret.ToArray());
+            await BlackboardApi.SendAnswersAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters), quizResult.Quiz.LmsQuizId.GetValueOrDefault().ToString(), false, ret.ToArray());
         }
 
         public override async Task ConvertAndSendSurveyResultToLmsAsync(IEnumerable<SurveyQuestionResultDTO> results, SurveyResult surveyResult, LmsUserParameters lmsUserParameters)
@@ -87,7 +78,7 @@ namespace EdugameCloud.WCFService.Converters
                 ret.Add(answers.ContainsKey(question.LmsQuestionId.GetValueOrDefault()) ? answers[question.LmsQuestionId.GetValueOrDefault()] : "0");
             }
 
-            await BlackboardApi.SendAnswersAsync(lmsUserParameters, surveyResult.Survey.LmsSurveyId.GetValueOrDefault().ToString(), true, ret.ToArray());
+            await BlackboardApi.SendAnswersAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters), surveyResult.Survey.LmsSurveyId.GetValueOrDefault().ToString(), true, ret.ToArray());
         }
 
         /// <summary>

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Esynctraining.Core.Providers;
-using Esynctraining.Lti.Lms.Common;
-using Esynctraining.Lti.Lms.Common.Dto;
-
-namespace EdugameCloud.Lti.API
+﻿namespace Esynctraining.Lti.Lms.Common.API
 {
     //public class LmsRoleService
     //{

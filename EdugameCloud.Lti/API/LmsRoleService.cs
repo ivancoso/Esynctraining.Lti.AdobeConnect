@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API
 {

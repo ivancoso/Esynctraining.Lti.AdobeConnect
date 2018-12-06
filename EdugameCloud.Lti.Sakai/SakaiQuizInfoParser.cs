@@ -1,14 +1,10 @@
-﻿namespace EdugameCloud.Lti.Sakai
+﻿using Esynctraining.Lti.Lms.Common.Dto;
+using System.Collections.Generic;
+using System.Xml;
+using EdugameCloud.Lti.Extensions;
+
+namespace EdugameCloud.Lti.Sakai
 {
-    using System.Collections.Generic;
-    using System.Xml;
-
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-
-    /// <summary>
-    /// The Sakai quiz info parser.
-    /// </summary>
     internal sealed class SakaiQuizInfoParser
     {
         /// <summary>
@@ -90,7 +86,7 @@
                 info.id = int.Parse(i.GetNodeValue("id") ?? "0");
                 info.name = i.GetNodeValue("name");
                 var course = i.GetNodeValue("course") ?? "0";
-                info.course = int.Parse(course);
+                info.course = course;
                 info.courseName = courseNames.ContainsKey(course) ? courseNames[course] : string.Empty;
                 info.lastModifiedLMS = int.Parse(i.GetNodeValue("timemodified"));
                 ret.Add(info);

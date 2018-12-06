@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.WCFService.Contracts
+﻿using Esynctraining.Lti.Lms.Common.Dto;
+
+namespace EdugameCloud.WCFService.Contracts
 {
     using System.Diagnostics.CodeAnalysis;
     using System.ServiceModel;

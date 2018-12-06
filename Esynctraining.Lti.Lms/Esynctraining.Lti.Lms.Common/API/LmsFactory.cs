@@ -1,9 +1,9 @@
-﻿using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.API.Sakai;
-using Esynctraining.Core.Logging;
+﻿using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.API.BlackBoard;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
+using Esynctraining.Lti.Lms.Common.API.Sakai;
 using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace Esynctraining.Lti.Lms.Common.API

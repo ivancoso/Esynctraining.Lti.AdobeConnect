@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Lti.Lms.Common.Dto;
+
 //using EdugameCloud.Lti.BlackBoard.QuizQuestionParsers;
 
 namespace EdugameCloud.Lti.Sakai

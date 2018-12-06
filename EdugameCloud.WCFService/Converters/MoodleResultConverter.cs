@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Esynctraining.Lti.Lms.Common.API.Moodle;
 using SimpleJson;
+using System.Linq;
+using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Core.Domain.Entities;
+using Esynctraining.Core.Extensions;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Utils;
+using System.Threading.Tasks;
 
 namespace EdugameCloud.WCFService.Converters
 {
-    using System.Linq;
-
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Extensions;
-    using EdugameCloud.Lti.API.Moodle;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-
-    using Esynctraining.Core.Utils;
-
-    using RestSharp;
-    using System.Threading.Tasks;
-
     public class MoodleResultConverter : QuizResultConverter
     {
         private IEGCEnabledMoodleApi MoodleApi
@@ -74,7 +68,7 @@ namespace EdugameCloud.WCFService.Converters
 
             string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
 
-            await this.MoodleApi.SendAnswersAsync(lmsUserParameters, json, false, null);
+            await this.MoodleApi.SendAnswersAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters), json, false, null);
         }
 
         public override async Task ConvertAndSendSurveyResultToLmsAsync(IEnumerable<SurveyQuestionResultDTO> results, SurveyResult surveyResult, LmsUserParameters lmsUserParameters)
@@ -127,7 +121,7 @@ namespace EdugameCloud.WCFService.Converters
 
             string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
 
-            await this.MoodleApi.SendAnswersAsync(lmsUserParameters, json, true, null);
+            await this.MoodleApi.SendAnswersAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters), json, true, null);
         }
 
         private object[] ProcessAnswers(Question question, QuizQuestionResultDTO answer)

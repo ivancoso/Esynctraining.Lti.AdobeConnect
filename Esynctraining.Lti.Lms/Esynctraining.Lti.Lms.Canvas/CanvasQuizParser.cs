@@ -1,15 +1,14 @@
-﻿using Esynctraining.Core.Extensions;
-using Esynctraining.Lti.Lms.Common.Dto;
-using Esynctraining.Lti.Lms.Common.Dto.Canvas;
-using HtmlAgilityPack;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Xml;
+using Esynctraining.Lti.Lms.Common.Dto;
+using Esynctraining.Lti.Lms.Common.Dto.Canvas;
+using HtmlAgilityPack;
 
-namespace EdugameCloud.Lti.Canvas
+namespace Esynctraining.Lti.Lms.Canvas
 {
     /// <summary>
     /// The canvas quiz parser.

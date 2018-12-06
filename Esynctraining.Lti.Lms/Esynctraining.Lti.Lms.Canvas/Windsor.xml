@@ -3,23 +3,23 @@
   <components>
     <component
       id="ICanvasAPI"
-      service="EdugameCloud.Lti.API.Canvas.ICanvasAPI, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Canvas.CanvasAPI, EdugameCloud.Lti.Canvas"
+      service="Esynctraining.Lti.Lms.Common.API.Canvas.ICanvasAPI, EdugameCloud.Lti.Lms.Common"
+      type="EdugameCloud.Lti.Canvas.CanvasAPI, EdugameCloud.Lti.Lms.Canvas"
       lifestyle="singleton"></component>
     <component
       id="IEGCEnabledCanvasAPI"
-      service="EdugameCloud.Lti.API.Canvas.IEGCEnabledCanvasAPI, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Canvas.EGCEnabledCanvasAPI, EdugameCloud.Lti.Canvas"
+      service="Esynctraining.Lti.Lms.Common.API.Canvas, EdugameCloud.Lti.Lms.Common"
+      type="EdugameCloud.Lti.Canvas.EGCEnabledCanvasAPI, EdugameCloud.Lti.Lms.Canvas"
       lifestyle="singleton"></component>
     <component
       id="Canvas"
-      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Canvas.CanvasLmsUserService, EdugameCloud.Lti.Canvas"
+      service="Esynctraining.Lti.Lms.Common.API.LmsUserServiceBase, EdugameCloud.Lti.Lms.Common"
+      type="EdugameCloud.Lti.Canvas.CanvasLmsUserService, EdugameCloud.Lti.Lms.Canvas"
       lifestyle="singleton"></component>
     <component
       id="CanvasSectionsService"
-      service="EdugameCloud.Lti.API.LmsCourseSectionsServiceBase, EdugameCloud.Lti"
-      type="EdugameCloud.Lti.Canvas.CanvasLmsCourseSectionsService, EdugameCloud.Lti.Canvas"
+      service="Esynctraining.Lti.Lms.Common.API.LmsCourseSectionsServiceBase, EdugameCloud.Lti.Lms.Common"
+      type="EdugameCloud.Lti.Canvas.CanvasLmsCourseSectionsService, EdugameCloud.Lti.Lms.Canvas"
       lifestyle="transient"></component>
   </components>
 </configuration>

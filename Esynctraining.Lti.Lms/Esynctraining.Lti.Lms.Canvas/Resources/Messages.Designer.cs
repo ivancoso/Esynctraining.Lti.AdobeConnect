@@ -8,10 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EdugameCloud.Lti.Canvas.Resources {
-    using System;
-    
-    
+namespace Esynctraining.Lti.Lms.Canvas.Resources {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>

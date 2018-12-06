@@ -6,9 +6,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using EdugameCloud.HttpClient;
 using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.HttpClient;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Bridge
@@ -16,72 +16,72 @@ namespace EdugameCloud.Lti.Bridge
     public class BridgeApi : IBridgeApi
     {
         // https://api.bridgeapp.com/doc/api/html/file.API_Overview.html
-        private string GetBasicHeader(ILmsLicense license)
+        private string GetBasicHeader(Dictionary<string, object> licenseSettings)
         {
-            var key = license.GetSetting<string>(LmsCompanySettingNames.BridgeApiTokenKey);
-            var secret = license.GetSetting<string>(LmsCompanySettingNames.BridgeApiTokenSecret);
+            var key = licenseSettings[LmsCompanySettingNames.BridgeApiTokenKey];
+            var secret = licenseSettings[LmsCompanySettingNames.BridgeApiTokenSecret];
             return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{key}:{secret}"));
         }
 
-        public async Task<List<BridgeApiUser>> GetCourseUsers(string courseId, ILmsLicense lmsCompany)
+        public async Task<List<BridgeApiUser>> GetCourseUsers(string courseId, Dictionary<string, object> licenseSettings)
         {
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"api/author/live_courses/{courseId}/learners";
             var users = await GetRestCall<LiveCourseEnrollmentsResponse>(basicHeader, apiUrl, relativeUrl);
-            return await GetUsersById(users?.enrollments?.Select(x => x.user_id), lmsCompany);
+            return await GetUsersById(users?.enrollments?.Select(x => x.user_id), licenseSettings);
         }
 
-        public async Task<BridgeApiUser> GetUserProfile(string uuid, ILmsLicense lmsCompany)
+        public async Task<BridgeApiUser> GetUserProfile(string uuid, Dictionary<string, object> licenseSettings)
         {
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = "/api/author/users?search=" + uuid;
             var users = await GetRestCall<BridgeApiUsersResponse>(basicHeader, apiUrl, relativeUrl);
             return users?.Users?.FirstOrDefault();
         }
 
-        public async Task<List<BridgeApiUser>> GetUsersById(IEnumerable<string> ids, ILmsLicense lmsCompany)
+        public async Task<List<BridgeApiUser>> GetUsersById(IEnumerable<string> ids, Dictionary<string, object> licenseSettings)
         {
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = "/api/author/users";
             var users = await GetRestCall<BridgeApiUsersResponse>(basicHeader, apiUrl, relativeUrl);
             return users?.Users?.Where(x => ids.Any(id => id == x.Id.ToString())).ToList();
         }
 
-        public async Task<IEnumerable<LiveSessionResponse>> ListSessions(string courseId, ILmsLicense lmsCompany)
+        public async Task<IEnumerable<LiveSessionResponse>> ListSessions(string courseId, Dictionary<string, object> licenseSettings)
         {
             if(courseId == null)
                 throw new ArgumentNullException(nameof(courseId));
 
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"/api/author/live_courses/{courseId}/sessions";
             var response = await GetRestCall<ListSessionsResponse>(basicHeader, apiUrl, relativeUrl);
             return response?.Sessions;
         }
 
-        public async Task<IEnumerable<LiveSessionResponse>> CreateSessions(string courseId, IEnumerable<LiveSessionRequest> sessions, ILmsLicense lmsCompany)
+        public async Task<IEnumerable<LiveSessionResponse>> CreateSessions(string courseId, IEnumerable<LiveSessionRequest> sessions, Dictionary<string, object> licenseSettings)
         {
             if (courseId == null)
                 throw new ArgumentNullException(nameof(courseId));
 
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"/api/author/live_courses/{courseId}/sessions";
             var jsonData = JsonConvert.SerializeObject(new {sessions = sessions.ToArray()});
             var response = await GetRestCall<ListSessionsResponse>(basicHeader, apiUrl, relativeUrl, HttpMethod.Post, jsonData);
             return response?.Sessions;
         }
 
-        public async Task<bool> RegisterUserToSession(int sessionId, int userId, ILmsLicense lmsCompany)
+        public async Task<bool> RegisterUserToSession(int sessionId, int userId, Dictionary<string, object> licenseSettings)
         {
             if (sessionId == 0)
                 throw new ArgumentOutOfRangeException();
 
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"/api/author/live_course_sessions/{sessionId}/registrations";
             var jsonData = JsonConvert.SerializeObject(new { user_id = userId});
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, relativeUrl);
@@ -92,28 +92,28 @@ namespace EdugameCloud.Lti.Bridge
             return response.StatusCode == HttpStatusCode.NoContent;
         }
 
-        public async Task<IEnumerable<LiveSessionResponse>> PublishSession(string courseId, int sessionId,ILmsLicense lmsCompany)
+        public async Task<IEnumerable<LiveSessionResponse>> PublishSession(string courseId, int sessionId, Dictionary<string, object> licenseSettings)
         {
             if (courseId == null)
                 throw new ArgumentNullException(nameof(courseId));
             if (sessionId == 0)
                 throw new ArgumentOutOfRangeException();
 
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"/api/author/live_courses/{courseId}/sessions/{sessionId}/publish";
 
             var response = await GetRestCall<ListSessionsResponse>(basicHeader, apiUrl, relativeUrl, HttpMethod.Post);
             return response?.Sessions;
         }
 
-        public async Task<IEnumerable<WebConferenceResponse>> UpdateSessionWebconference(string courseId, int sessionId, WebConferenceRequest conference, ILmsLicense lmsCompany)
+        public async Task<IEnumerable<WebConferenceResponse>> UpdateSessionWebconference(string courseId, int sessionId, WebConferenceRequest conference, Dictionary<string, object> licenseSettings)
         {
             if (courseId == null)
                 throw new ArgumentNullException(nameof(courseId));
 
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"/api/author/live_courses/{courseId}/sessions/{sessionId}/web_conference";
             var jsonData = JsonConvert.SerializeObject(new { web_conference = conference });
 
@@ -121,13 +121,13 @@ namespace EdugameCloud.Lti.Bridge
             return response?.web_conferences;
         }
 
-        public async Task<bool> DeleteSession(string courseId, string sessionId, ILmsLicense lmsCompany)
+        public async Task<bool> DeleteSession(string courseId, string sessionId, Dictionary<string, object> licenseSettings)
         {
             if (courseId == null)
                 throw new ArgumentNullException(nameof(courseId));
 
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"/api/author/live_courses/{courseId}/sessions/{sessionId}";
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, relativeUrl);
 
@@ -137,13 +137,13 @@ namespace EdugameCloud.Lti.Bridge
             return response.StatusCode == HttpStatusCode.NoContent;
         }
 
-        public async Task<LiveSessionResponse> UpdateSession(string courseId, int sessionId, LiveSessionRequest session, ILmsLicense lmsCompany)
+        public async Task<LiveSessionResponse> UpdateSession(string courseId, int sessionId, LiveSessionRequest session, Dictionary<string, object> licenseSettings)
         {
             if (courseId == null)
                 throw new ArgumentNullException(nameof(courseId));
 
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"/api/author/live_courses/{courseId}/sessions/{sessionId}";
             var jsonData = JsonConvert.SerializeObject(new { session = new {session.start_at, session.end_at} });
 
@@ -151,15 +151,15 @@ namespace EdugameCloud.Lti.Bridge
             return response?.Sessions?.Single();
         }
 
-        public async Task<LiveSessionResponse> GetSession(string courseId, string sessionId, ILmsLicense lmsCompany)
+        public async Task<LiveSessionResponse> GetSession(string courseId, string sessionId, Dictionary<string, object> licenseSettings)
         {
             if (courseId == null)
                 throw new ArgumentNullException(nameof(courseId));
             if (sessionId == null)
                 throw new ArgumentNullException(nameof(sessionId));
 
-            var basicHeader = GetBasicHeader(lmsCompany);
-            var apiUrl = "https://" + lmsCompany.LmsDomain;
+            var basicHeader = GetBasicHeader(licenseSettings);
+            var apiUrl = "https://" + licenseSettings[LmsLicenseSettingNames.LmsDomain];
             var relativeUrl = $"/api/author/live_courses/{courseId}/sessions/{sessionId}";
             var response = await GetRestCall<ListSessionsResponse>(basicHeader, apiUrl, relativeUrl);
             return response?.Sessions?.FirstOrDefault();

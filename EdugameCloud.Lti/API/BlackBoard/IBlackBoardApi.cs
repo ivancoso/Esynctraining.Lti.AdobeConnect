@@ -5,31 +5,31 @@ using Esynctraining.BlackBoardClient;
 
 namespace EdugameCloud.Lti.API.BlackBoard
 {
-    public interface IBlackBoardApi
-    {
-        List<LmsUserDTO> GetUsersForCourse(
-            ILmsLicense company,
-            int courseid,
-            string[] userIds,
-            out string error,
-            ref WebserviceWrapper client);
+    //public interface IBlackBoardApi
+    //{
+    //    List<LmsUserDTO> GetUsersForCourse(
+    //        ILmsLicense company,
+    //        int courseid,
+    //        string[] userIds,
+    //        out string error,
+    //        ref WebserviceWrapper client);
 
-        WebserviceWrapper LoginToolAndCreateAClient(
-            out string error,
-            bool useSsl,
-            string lmsDomain,
-            string password);
+    //    WebserviceWrapper LoginToolAndCreateAClient(
+    //        out string error,
+    //        bool useSsl,
+    //        string lmsDomain,
+    //        string password);
 
-        WebserviceWrapper LoginUserAndCreateAClient(
-            out string error,
-            bool useSsl,
-            string lmsDomain,
-            string userName,
-            string password);
+    //    WebserviceWrapper LoginUserAndCreateAClient(
+    //        out string error,
+    //        bool useSsl,
+    //        string lmsDomain,
+    //        string userName,
+    //        string password);
 
-        bool TryRegisterEGCTool(string lmsDomain, string registrationPassword, string initialPassword, out string error);
+    //    bool TryRegisterEGCTool(string lmsDomain, string registrationPassword, string initialPassword, out string error);
 
-        string[] CreateAnnouncement(int courseId, string userUuid, ILmsLicense lmsCompany, string announcementTitle, string announcementMessage);
-    }
+    //    string[] CreateAnnouncement(int courseId, string userUuid, ILmsLicense lmsCompany, string announcementTitle, string announcementMessage);
+    //}
 
 }

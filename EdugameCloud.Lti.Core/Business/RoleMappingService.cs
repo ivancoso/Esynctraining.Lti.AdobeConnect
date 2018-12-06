@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect.Api.Meeting;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Core.Business
 {

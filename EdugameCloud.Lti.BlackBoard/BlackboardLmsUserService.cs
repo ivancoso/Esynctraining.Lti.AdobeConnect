@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.Core.Logging;
-using EdugameCloud.Lti.API;
-using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Domain;
 using Esynctraining.BlackBoardClient;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.API.BlackBoard;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
@@ -17,48 +16,36 @@ namespace EdugameCloud.Lti.BlackBoard
     {
         private readonly IBlackBoardApi _soapApi;
 
-
         public BlackboardLmsUserService(ILogger logger, IBlackBoardApi soapApi) : base(logger)
         {
             _soapApi = soapApi ?? throw new ArgumentNullException(nameof(soapApi)); 
         }
 
-
-        public override async Task<(LmsUserDTO user, string error)> GetUser(ILmsLicense lmsCompany, string lmsUserId, int courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
         {
             Guid guid;
             //return GetUsersOldStyle(lmsCompany, courseId, out error)
             //    .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.LtiId : u.Id));
 
-            var result = await GetUsersOldStyle(lmsCompany, courseId, extraData);
-            if (string.IsNullOrWhiteSpace(result.error))
-                return (result.users.FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.LtiId : u.Id)), result.error);
-
-            return (null, result.error);
+            var result = await GetUsers(licenseSettings, courseId, extraData);
+            return result.IsSuccess
+                ? result.Data
+                    .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.LtiId : u.Id))
+                    .ToSuccessResult()
+                : OperationResultWithData<LmsUserDTO>.Error(result.Message);
         }
         
-        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(ILmsLicense lmsCompany,
-            int courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO param = null)
         {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
-
-            var users = await GetUsersOldStyle(lmsCompany, courseId, extraData);
-            return users.Item1.ToSuccessResult();
-        }
-
-        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(ILmsLicense lmsCompany,
-            int courseId, LtiParamDTO param = null)
-        {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (licenseSettings == null)
+                throw new ArgumentNullException(nameof(licenseSettings));
 
             string error = null;
             string[] userIds = null;
 
             WebserviceWrapper client = null;
             List<LmsUserDTO> users = _soapApi.GetUsersForCourse(
-                lmsCompany,
+                licenseSettings,
                 courseId,
                 userIds,
                 out error,
@@ -76,7 +63,7 @@ namespace EdugameCloud.Lti.BlackBoard
                 // NOTE: set to null to re-create session.
                 client = null;
                 users = _soapApi.GetUsersForCourse(
-                    lmsCompany,
+                    licenseSettings,
                     courseId,
                     userIds,
                     out error,
@@ -86,8 +73,10 @@ namespace EdugameCloud.Lti.BlackBoard
             // NOTE: always call logout
             if (client != null)
                 client.logout();
-            
-            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), error));
+
+            return !string.IsNullOrEmpty(error)
+                ? OperationResultWithData<List<LmsUserDTO>>.Error(error)
+                : users.ToSuccessResult();
         }
         
     }

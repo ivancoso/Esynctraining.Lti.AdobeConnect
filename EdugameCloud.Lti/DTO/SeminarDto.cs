@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Esynctraining.AdobeConnect.Api.Seminar.Dto;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 //TODO: Esynctraining.AdobeConnect.WebApi.Seminar.Dto
 namespace EdugameCloud.Lti.DTO

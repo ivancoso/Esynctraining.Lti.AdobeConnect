@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Reflection;
-using EdugameCloud.Lti.API.Schoology;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging.MicrosoftExtensionsLogger;
 using Esynctraining.Core.Providers;
@@ -13,8 +12,8 @@ using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.BlackBoard;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.API.Schoology;
 using Esynctraining.Lti.Lms.Schoology;
-using Esynctraining.Lti.Zoom.Api;
 using Esynctraining.Lti.Zoom.Common;
 using Esynctraining.Lti.Zoom.Common.HostedServices;
 using Esynctraining.Lti.Zoom.Common.Services;

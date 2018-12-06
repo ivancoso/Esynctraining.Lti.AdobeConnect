@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.API;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
-using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Sakai
 {
@@ -12,8 +10,8 @@ namespace EdugameCloud.Lti.Sakai
     {
         private readonly LTI2Api _lti2Api;
 
-        public SakaiLmsCourseSectionsService(ILmsLicense license, LtiParamDTO param, LTI2Api lti2Api) :
-            base(license, param)
+        public SakaiLmsCourseSectionsService(Dictionary<string, object> licenseSettings, LtiParamDTO param, LTI2Api lti2Api) :
+            base(licenseSettings, param)
         {
             _lti2Api = lti2Api ?? throw new ArgumentNullException(nameof(lti2Api));
         }

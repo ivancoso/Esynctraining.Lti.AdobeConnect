@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.API.Sakai;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.API.Sakai;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Sakai
 {
@@ -20,7 +20,7 @@ namespace EdugameCloud.Lti.Sakai
 
         protected override string SakaiServiceShortName => "edugamecloud";
 
-        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey)
+        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
         {
             try
             {
@@ -36,20 +36,20 @@ namespace EdugameCloud.Lti.Sakai
                         {
                             { "wsfunction", functionName },
                             { "wstoken", c.Token },
-                            { "course", lmsUserParameters.Course.ToString( CultureInfo.InvariantCulture) }
+                            { "course", (string)licenseSettings[LmsUserSettingNames.CourseId]}
                         };
 
-                        var xmlDoc = await UploadValuesAsyn(c.Url, pairs);
+                        var xmlDoc = await UploadValuesAsync(c.Url, pairs);
 
                         return SakaiQuizInfoParser.Parse(xmlDoc, isSurvey);
                     },
-                    lmsUserParameters.LmsUser);
+                    licenseSettings);
 
                 if (quizResult.Data == null)
                 {
                     var error = quizResult.Error ?? "Sakai XML. Unable to retrive result from API";
 
-                    _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+                    _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
 
                     return (Data: Enumerable.Empty<LmsQuizInfoDTO>(), Error: error);
                 }
@@ -58,7 +58,7 @@ namespace EdugameCloud.Lti.Sakai
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey);
                 throw;
             }
         }
@@ -81,7 +81,7 @@ namespace EdugameCloud.Lti.Sakai
         /// <returns>
         /// The <see cref="IEnumerable{LmsQuizDTO}"/>.
         /// </returns>
-        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds)
+        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
         {
             try
             {
@@ -101,18 +101,18 @@ namespace EdugameCloud.Lti.Sakai
                                 {  isSurvey ? "surveyId" : "quizId",  id.ToString(CultureInfo.InvariantCulture) }
                             };
 
-                            var xmlDoc = await UploadValuesAsyn(c.Url, pairs);
+                            var xmlDoc = await UploadValuesAsync(c.Url, pairs);
                             string errorMessage = string.Empty;
                             string err = string.Empty;
                             return SakaiQuizParser2.Parse(xmlDoc, ref errorMessage, ref err);
                         },
-                        lmsUserParameters.LmsUser);
+                        licenseSettings);
 
                     if (quizResult.Data == null)
                     {
                         var error = quizResult.Error ?? "Sakai XML. Unable to retrive result from API";
 
-                        _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+                        _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
 
                         return (Data: result, Error: error);
                     }
@@ -124,7 +124,7 @@ namespace EdugameCloud.Lti.Sakai
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey);
                 throw;
             }
         }
@@ -141,7 +141,7 @@ namespace EdugameCloud.Lti.Sakai
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        public async Task SendAnswersAsync(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
+        public async Task SendAnswersAsync(Dictionary<string, object> licenseSettings, string json, bool isSurvey, string[] answers)
         {
             string error;
 
@@ -160,7 +160,7 @@ namespace EdugameCloud.Lti.Sakai
                             { "reportObject", json }
                         };
 
-                        var xmlDoc = await UploadValuesAsyn(c.Url, pairs);
+                        var xmlDoc = await UploadValuesAsync(c.Url, pairs);
 
                         string errorMessage = string.Empty;
                         string err = string.Empty;
@@ -169,7 +169,7 @@ namespace EdugameCloud.Lti.Sakai
                         if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
                         {
                             _logger.ErrorFormat("[EGCEnabledSakaiApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
-                                lmsUserParameters.Id,
+                                licenseSettings[LmsUserSettingNames.SessionId],
                                 isSurvey,
                                 errorMessage,
                                 err,
@@ -178,16 +178,16 @@ namespace EdugameCloud.Lti.Sakai
 
                         return result;
                     },
-                    lmsUserParameters.LmsUser);
+                    licenseSettings);
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", lmsUserParameters.Id, isSurvey, json);
+                _logger.ErrorFormat(ex, "[EGCEnabledSakaiApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, json);
                 throw;
             }
         }
 
-        public void PublishQuiz(LmsUserParameters lmsUserParameters, int courseId, int quizId)
+        public async Task PublishQuiz(Dictionary<string, object> licenseSettings, string courseId, int quizId)
         {
             throw new NotImplementedException();
         }

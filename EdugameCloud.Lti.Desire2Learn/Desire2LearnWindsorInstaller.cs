@@ -1,10 +1,9 @@
-﻿using System;
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Desire2Learn;
 using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Lti.Lms.Common.API;
 
 namespace EdugameCloud.Lti.Desire2Learn
 {

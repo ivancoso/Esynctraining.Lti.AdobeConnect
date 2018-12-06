@@ -1,11 +1,11 @@
-﻿using EdugameCloud.Lti.API.Schoology;
-using Esynctraining.HttpClient;
+﻿using Esynctraining.HttpClient;
 using System;
 using System.Collections.Specialized;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Lms.Common.API.Schoology;
 
 namespace Esynctraining.Lti.Lms.Schoology
 {

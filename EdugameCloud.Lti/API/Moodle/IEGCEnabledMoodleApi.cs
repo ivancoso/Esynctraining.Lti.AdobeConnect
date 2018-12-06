@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace EdugameCloud.Lti.API.Moodle
 {
-    public interface IEGCEnabledMoodleApi : IEGCEnabledLmsAPI
-    {
-    }
+    //public interface IEGCEnabledMoodleApi : IEGCEnabledLmsAPI
+    //{
+    //}
 
 }

@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Xml;
-using EdugameCloud.HttpClient;
-using EdugameCloud.Lti.API;
-using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.HttpClient;
+using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Sakai
 {
@@ -59,13 +59,13 @@ namespace EdugameCloud.Lti.Sakai
         #region Public Methods and Operators
 
         public async Task<(List<LmsUserDTO> Data, string Error)> GetUsersForCourseAsync(
-            LmsCompany company,
-            int courseId)
+            Dictionary<string, object> licenseSettings,
+            string courseId)
         {
             try
             {
-                if (company == null)
-                    throw new ArgumentNullException(nameof(company));
+                if (licenseSettings == null)
+                    throw new ArgumentNullException(nameof(licenseSettings));
 
                 SakaiSession token = null;
 
@@ -77,7 +77,7 @@ namespace EdugameCloud.Lti.Sakai
                         {
                             { "wsfunction", "core_enrol_get_enrolled_users" },
                             { "wstoken", c.Token },
-                            { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
+                            { "courseid",  courseId }
                         };
 
                         string resp = await _httpClientWrapper.PostValuesAsync(c.Url, pairs);
@@ -90,12 +90,12 @@ namespace EdugameCloud.Lti.Sakai
                         }
                         catch (Exception ex)
                         {
-                            _logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
+                            _logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse.ResponseParsing] LmsCompany key:{0}. CourseId:{1}. Response:{2}.", licenseSettings[LmsLicenseSettingNames.LicenseKey], courseId, resp);
 
                             return (Data: new List<LmsUserDTO>(), Error: string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
                         }
                     },
-                    company);
+                    licenseSettings);
 
                 if (data.Data == null)
                 {
@@ -107,7 +107,7 @@ namespace EdugameCloud.Lti.Sakai
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse] LmsCompanyId:{0}. CourseId:{1}.", company.Id, courseId);
+                _logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse] LmsCompany key:{0}. CourseId:{1}.", licenseSettings[LmsLicenseSettingNames.LicenseKey], courseId);
                 throw;
             }
         }
@@ -212,17 +212,17 @@ namespace EdugameCloud.Lti.Sakai
             }
         }
 
-        private async Task<(SakaiSession session, string error)> BeginBatchAsync(ILmsLicense lmsCompany)
+        private async Task<(SakaiSession session, string error)> BeginBatchAsync(Dictionary<string, object> licenseSettings)
         {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (licenseSettings == null)
+                throw new ArgumentNullException(nameof(licenseSettings));
 
-            LmsUser lmsUser = lmsCompany.AdminUser;
-            if (lmsUser != null)
+            
+            if (licenseSettings.ContainsKey(LmsLicenseSettingNames.AdminUsername))
             {
-                string lmsDomain = lmsUser.LmsCompany.LmsDomain;
-                bool useSsl = lmsUser.LmsCompany.UseSSL ?? false;
-                return await LoginAndCreateAClientAsync(useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
+                var lmsDomain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
+                bool useSsl = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL];
+                return await LoginAndCreateAClientAsync(useSsl, lmsDomain, (string)licenseSettings[LmsLicenseSettingNames.AdminUsername], (string)licenseSettings[LmsLicenseSettingNames.AdminPassword]);
             }
 
             return (session: null, error: "ASP.NET Session is expired");
@@ -250,41 +250,41 @@ namespace EdugameCloud.Lti.Sakai
             return FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
         }
 
-        internal async Task<(T Data, string Error)> LoginIfNecessaryAsync<T>(
-            SakaiSession session,
-            Func<SakaiSession, Task<T>> action,
-            LmsUser lmsUser = null)
-        {
-            string error = null;
-            if (session == null)
-            {
-                var beginBatchResult = await BeginBatchAsync(lmsUser.Return(x => x.LmsCompany, null));
+        //internal async Task<(T Data, string Error)> LoginIfNecessaryAsync<T>(
+        //    SakaiSession session,
+        //    Func<SakaiSession, Task<T>> action,
+        //    LmsUser lmsUser = null)
+        //{
+        //    string error = null;
+        //    if (session == null)
+        //    {
+        //        var beginBatchResult = await BeginBatchAsync(lmsUser.Return(x => x.LmsCompany, null));
 
-                session = session ?? beginBatchResult.session;
-                error = beginBatchResult.error;
-            }
+        //        session = session ?? beginBatchResult.session;
+        //        error = beginBatchResult.error;
+        //    }
             
-            if (session != null)
-            {
-                var data = await action(session);
+        //    if (session != null)
+        //    {
+        //        var data = await action(session);
 
-                return (Data: data, Error: error);
-            }
+        //        return (Data: data, Error: error);
+        //    }
 
-            return (Data: default(T), Error: error);
-        }
+        //    return (Data: default(T), Error: error);
+        //}
 
         // TRICK: marked as 'internal'
         internal async Task<(T Data, string Error)> LoginIfNecessaryAsync<T>(
             SakaiSession session,
             Func<SakaiSession, Task<T>> action,
-            ILmsLicense lmsCompany)
+            Dictionary<string, object> licenseSettings)
         {
             string error = null;
 
             if (session == null)
             {
-                (session, error) = await BeginBatchAsync(lmsCompany);
+                (session, error) = await BeginBatchAsync(licenseSettings);
             }
 
             if (session != null)
@@ -295,35 +295,35 @@ namespace EdugameCloud.Lti.Sakai
             return (default(T), error);
         }
 
-        internal async Task<(T Data, string Error)> LoginIfNecessaryAsync<T>(
-            SakaiSession session,
-            Func<SakaiSession, Tuple<T, string>> action,
-            ILmsLicense lmsCompany)
-        {
-            string error = null;
-            if (session == null)
-            {
-                var beginBatchResult = await BeginBatchAsync(lmsCompany);
+        //internal async Task<(T Data, string Error)> LoginIfNecessaryAsync<T>(
+        //    SakaiSession session,
+        //    Func<SakaiSession, Tuple<T, string>> action,
+        //    Dictionary<string, object> licenseSettings)
+        //{
+        //    string error = null;
+        //    if (session == null)
+        //    {
+        //        var beginBatchResult = await BeginBatchAsync(licenseSettings);
 
-                session = session ?? beginBatchResult.session;
-                error = beginBatchResult.error;
-            }
+        //        session = session ?? beginBatchResult.session;
+        //        error = beginBatchResult.error;
+        //    }
 
-            if (session != null && string.IsNullOrWhiteSpace(error))
-            {
-                var res = action(session);
-                if (res.Item2 != null)
-                {
-                    error = res.Item2;
-                }
+        //    if (session != null && string.IsNullOrWhiteSpace(error))
+        //    {
+        //        var res = action(session);
+        //        if (res.Item2 != null)
+        //        {
+        //            error = res.Item2;
+        //        }
 
-                return (Data: res.Item1, Error: error);
-            }
+        //        return (Data: res.Item1, Error: error);
+        //    }
 
-            return (Data: default(T), Error: error);
-        }
+        //    return (Data: default(T), Error: error);
+        //}
 
-        protected async Task<XmlDocument> UploadValuesAsyn(string url, Dictionary<string, string> pairs)
+        protected async Task<XmlDocument> UploadValuesAsync(string url, Dictionary<string, string> pairs)
         {
             string resp = await _httpClientWrapper.PostValuesAsync(url, pairs);
 

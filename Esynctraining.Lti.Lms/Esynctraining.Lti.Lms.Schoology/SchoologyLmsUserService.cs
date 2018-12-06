@@ -1,5 +1,4 @@
-﻿using EdugameCloud.Lti.API.Schoology;
-using Esynctraining.Core.Domain;
+﻿using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Lms.Common.API.Schoology;
 
 namespace Esynctraining.Lti.Lms.Schoology
 {
@@ -113,13 +113,6 @@ namespace Esynctraining.Lti.Lms.Schoology
                 .ToList();
 
             return users.ToSuccessResult();
-        }
-
-        [Obsolete]
-        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO param = null)
-        {
-            throw new NotImplementedException();
         }
     }
 }

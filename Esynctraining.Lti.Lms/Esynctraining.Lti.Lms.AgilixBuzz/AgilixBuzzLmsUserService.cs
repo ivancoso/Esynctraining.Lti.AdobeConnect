@@ -43,12 +43,5 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
 
             return users.ToSuccessResult();
         }
-
-        [Obsolete]
-        public override async Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO param = null)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

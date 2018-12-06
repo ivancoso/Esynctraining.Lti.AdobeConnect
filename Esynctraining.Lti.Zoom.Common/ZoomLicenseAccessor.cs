@@ -7,7 +7,7 @@ using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
 using Microsoft.AspNetCore.Http;
 
-namespace Esynctraining.Lti.Zoom.Api
+namespace Esynctraining.Lti.Zoom.Common
 {
     public class ZoomLicenseAccessor : IZoomOptionsAccessor, ILmsLicenseAccessor
     {

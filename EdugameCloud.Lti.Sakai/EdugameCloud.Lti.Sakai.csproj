@@ -19,12 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EdugameCloud.HttpClient\EdugameCloud.HttpClient.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
+    <ProjectReference Include="..\Esynctraining.HttpClient\Esynctraining.HttpClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="EdugameCloud.HttpClient">
+      <HintPath>..\EdugameCloud.WCFService\Bin\EdugameCloud.HttpClient.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
