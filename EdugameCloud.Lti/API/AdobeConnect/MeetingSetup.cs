@@ -223,12 +223,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             // NOTE: add office hours meeting, if it exists for the user, but not in current course
             bool addedOfficeHoursFromOtherCourse = false;
-            if (lmsLicense.EnableOfficeHours.GetValueOrDefault() && !meetings.Any(m => m.LmsMeetingType == (int)LmsMeetingType.OfficeHours))
+            if (lmsLicense.EnableOfficeHours.GetValueOrDefault() && !meetings.Any(m => m.LmsMeetingType == (int)LmsMeetingType.OfficeHours && m.OfficeHours.LmsUser.Id == lmsUser.Id))
             {
                 sw = Stopwatch.StartNew();
 
                 var officeHoursMeeting =
-                    this.LmsCourseMeetingModel.GetOneByUserAndType(lmsLicense.Id, param.lms_user_id, LmsMeetingType.OfficeHours).Value;
+                    this.LmsCourseMeetingModel.GetOneByUserAndType(lmsLicense.Id, param.lms_user_id, LmsMeetingType.OfficeHours).Value; //works like FirstOrDefault, so not changing
 
                 if (officeHoursMeeting == null)
                 {
@@ -316,7 +316,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (addedOfficeHoursFromOtherCourse)
             {
-                var ohDto = ret.FirstOrDefault(m => m.Type == (int)LmsMeetingType.OfficeHours);
+                var ohDto = ret.FirstOrDefault(m => m.Type == (int)LmsMeetingType.OfficeHours && m.IsEditable); //IsEditable means that current user is owner
                 // NOTE: can be NULL if OH meeting not found in AC
                 if (ohDto != null)
                     ohDto.IsDisabledForThisCourse = true;
