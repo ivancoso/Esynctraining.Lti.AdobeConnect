@@ -79,7 +79,7 @@ namespace EdugameCloud.Lti.Api.Host
             container.Register(Component.For<LmsCourseSectionsServiceBase>().ImplementedBy<CanvasLmsCourseSectionsService>().Named(LmsProviderEnum.Canvas.ToString() + "SectionsService").LifeStyle.Transient);
 
             //agilixbuzz
-            container.Register(Component.For<IAgilixBuzzApi>().ImplementedBy<DlapAPI>().LifeStyle.Singleton);
+            container.Register(Component.For<IAgilixBuzzApi>().ImplementedBy<DlapAPI>().Named("IAgilixBuzzApi").LifeStyle.Singleton);
             //container.Register(Component.For<IAgilixBuzzScheduling>().ImplementedBy<ShedulingHelper>().LifeStyle.Singleton);
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<AgilixBuzzLmsUserService>().Named(LmsProviderEnum.AgilixBuzz.ToString()).LifeStyle.Singleton);
             container.Register(Component.For<DlapAPI>().ImplementedBy<DlapAPI>().LifeStyle.Singleton);
@@ -92,9 +92,9 @@ namespace EdugameCloud.Lti.Api.Host
             //sakai
             container.Register(Component.For<LTI2Api>().ImplementedBy<LTI2Api>().LifeStyle.Singleton);
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<SakaiLmsUserService>().Named(LmsProviderEnum.Sakai.ToString()).LifeStyle.Singleton);
-            container.Register(Component.For<ISakaiApi>().ImplementedBy<SakaiApi>().LifeStyle.Singleton);
+            container.Register(Component.For<ISakaiApi>().ImplementedBy<SakaiApi>().Named("ISakaiApi").LifeStyle.Singleton);
             container.Register(Component.For<ICalendarExportService>().ImplementedBy<SakaiCalendarExportService>().Named(LmsProviderEnum.Sakai.ToString() + "CalendarExportService").LifeStyle.Singleton);
-            container.Register(Component.For<IEGCEnabledSakaiApi>().ImplementedBy<SakaiApi>().LifeStyle.Singleton);
+            container.Register(Component.For<IEGCEnabledSakaiApi>().ImplementedBy<SakaiApi>().Named("IEGCEnabledSakaiApi").LifeStyle.Singleton);
             container.Register(Component.For<LmsCourseSectionsServiceBase>().ImplementedBy<SakaiLmsCourseSectionsService>().LifeStyle.Transient);
 
             //bridge

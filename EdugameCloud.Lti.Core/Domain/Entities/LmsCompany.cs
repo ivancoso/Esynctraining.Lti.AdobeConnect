@@ -537,7 +537,7 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         /// <param name="preferUserSettings">when true - means that user tokens/parameters will be used instead of license(admin)
         /// to retrieve information from API</param>
-        public Dictionary<string, object> GetLMSSettings(dynamic settings, LmsUserParameters userParameters = null,
+        public virtual Dictionary<string, object> GetLMSSettings(dynamic settings, LmsUserParameters userParameters = null,
             bool preferUserSettings = false)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();

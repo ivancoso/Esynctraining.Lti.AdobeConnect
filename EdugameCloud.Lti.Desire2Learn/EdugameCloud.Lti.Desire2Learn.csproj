@@ -17,7 +17,7 @@
     <PackageReference Include="D2L.Extensibility.AuthSdk" Version="1.2.1" />
     <PackageReference Include="Esynctraining.NHibernate" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="RestSharp" Version="106.2.2" />
+    <PackageReference Include="RestSharp" Version="106.5.4" />
   </ItemGroup>
 
   <ItemGroup>
