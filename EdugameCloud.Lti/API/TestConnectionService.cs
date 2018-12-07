@@ -2,11 +2,6 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.API.AgilixBuzz;
-using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.API.Haiku;
-using EdugameCloud.Lti.API.Moodle;
-using EdugameCloud.Lti.API.Schoology;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
@@ -17,8 +12,11 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.BlackBoard;
+using Esynctraining.Lti.Lms.Common.API.Haiku;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
+using Esynctraining.Lti.Lms.Common.API.Schoology;
 
 namespace EdugameCloud.Lti.API
 {

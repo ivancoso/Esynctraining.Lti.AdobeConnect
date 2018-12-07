@@ -1,13 +1,11 @@
-﻿namespace EdugameCloud.Lti.Controllers
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Web.Mvc;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.AgilixBuzz;
-    using EdugameCloud.Lti.Core.Business.Models;
-    using EdugameCloud.Lti.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Domain.Entities;
 
+namespace EdugameCloud.Lti.Controllers
+{
     [HandleError]
     public class LtiScheduleController : Controller
     {

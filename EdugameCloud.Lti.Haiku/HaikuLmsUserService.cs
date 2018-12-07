@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.API.Haiku;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.API.Haiku;
 using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Haiku

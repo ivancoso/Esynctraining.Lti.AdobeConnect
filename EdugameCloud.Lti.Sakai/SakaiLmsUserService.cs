@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Esynctraining.Core.Logging;
-using EdugameCloud.Lti.API;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
 using System.Threading.Tasks;
 using Esynctraining.Lti.Lms.Common.API;
@@ -11,7 +8,7 @@ using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Sakai
 {
-    internal sealed class SakaiLmsUserService : LmsUserServiceBase
+    public sealed class SakaiLmsUserService : LmsUserServiceBase
     {
         private readonly LTI2Api _lti2Api;
 

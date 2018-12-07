@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using EdugameCloud.Lti.API.Haiku;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.API.Haiku;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using HttpScheme = EdugameCloud.Lti.Core.Constants.HttpScheme;
@@ -19,7 +19,6 @@ namespace EdugameCloud.Lti.Haiku
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
 
         public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(Dictionary<string, object> licenseSettings, string courseId)
         {

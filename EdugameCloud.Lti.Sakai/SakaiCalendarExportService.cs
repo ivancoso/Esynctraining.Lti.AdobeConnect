@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Sakai
 {
-    internal sealed class SakaiCalendarExportService : ICalendarExportService
+    public sealed class SakaiCalendarExportService : ICalendarExportService
     {
         private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 

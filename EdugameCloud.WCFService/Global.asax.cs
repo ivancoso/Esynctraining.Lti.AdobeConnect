@@ -1,14 +1,13 @@
-﻿namespace EdugameCloud.WCFService
+﻿using System;
+using System.Web;
+using Esynctraining.Core.Logging;
+using Castle.Windsor;
+using Esynctraining.Core.Utils;
+using Esynctraining.Windsor;
+using EdugameCloud.Core.Business;
+
+namespace EdugameCloud.WCFService
 {
-    using System;
-    using System.Web;
-    using Esynctraining.Core.Logging;
-    using Castle.Windsor;
-
-    using Esynctraining.Core.Utils;
-    using Esynctraining.Windsor;
-    using Core.Business;
-
     public class Global : HttpApplication
     {
         #region Methods

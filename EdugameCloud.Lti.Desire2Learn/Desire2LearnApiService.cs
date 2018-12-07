@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using D2L.Extensibility.AuthSdk;
-using EdugameCloud.Lti.API.Desire2Learn;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.API.Desire2Learn;
 using Esynctraining.Lti.Lms.Common.Constants;
 using RestSharp;
 using HttpScheme = EdugameCloud.Lti.Core.Constants.HttpScheme;

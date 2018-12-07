@@ -10,7 +10,7 @@ using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Bridge
 {
-    internal sealed class BridgeCalendarExportService : ICalendarExportService
+    public sealed class BridgeCalendarExportService : ICalendarExportService
     {
         private readonly IBridgeApi _api;
         private readonly ILogger _logger;

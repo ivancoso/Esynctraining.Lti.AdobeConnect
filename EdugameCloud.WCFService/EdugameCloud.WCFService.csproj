@@ -598,9 +598,21 @@
       <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
       <Name>EdugameCloud.Persistence</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.AgilixBuzz\Esynctraining.Lti.Lms.AgilixBuzz.csproj">
+      <Project>{fc2de60e-d087-4366-8fe1-158ac9b87026}</Project>
+      <Name>Esynctraining.Lti.Lms.AgilixBuzz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Canvas\Esynctraining.Lti.Lms.Canvas.csproj">
+      <Project>{c580ca4f-71db-43ee-aee8-ca6a1ca76f62}</Project>
+      <Name>Esynctraining.Lti.Lms.Canvas</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj">
       <Project>{856DFC9A-1C9B-4E9E-B056-FBEE6D4030B5}</Project>
       <Name>Esynctraining.Lti.Lms.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj">
+      <Project>{1c0d3806-361a-4cd8-acdb-43aff540ac72}</Project>
+      <Name>Esynctraining.Lti.Lms.Schoology</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -14,10 +14,10 @@ using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.Sakai
 {
-    internal sealed class SakaiApi : ISakaiApi
+    public sealed class SakaiApi : ISakaiApi
     {
         private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
-
+        
         public SakaiApi()
         {
         }
