@@ -35,16 +35,6 @@ namespace Esynctraining.Lti.Lms.BlackBoard
         //}
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO extraData = null)
-        {
-            if (licenseSettings == null)
-                throw new ArgumentNullException(nameof(licenseSettings));
-
-            var users = await GetUsersOldStyle(licenseSettings, courseId, extraData);
-            return users.Item1.ToSuccessResult();
-        }
-
-        public override Task<(List<LmsUserDTO> users, string error)> GetUsersOldStyle(Dictionary<string, object> licenseSettings,
             string courseId, LtiParamDTO param = null)
         {
             if (licenseSettings == null)
@@ -81,7 +71,9 @@ namespace Esynctraining.Lti.Lms.BlackBoard
             if (client != null)
                 client.logout();
 
-            return Task.FromResult<(List<LmsUserDTO> users, string error)>((GroupUsers(users), error));
+            return string.IsNullOrEmpty(error)
+                ? GroupUsers(users).ToSuccessResult()
+                : OperationResultWithData<List<LmsUserDTO>>.Error(error);
         }
 
     }
