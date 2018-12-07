@@ -82,15 +82,15 @@ namespace EdugameCloud.Lti.API
             return null;
         }
 
-        public Esynctraining.Lti.Lms.Common.API.LmsUserServiceBase GetUserService(LmsProviderEnum lmsId)
+        public LmsUserServiceBase GetUserService(LmsProviderEnum lmsId)
         {
-            return IoC.Resolve<Esynctraining.Lti.Lms.Common.API.LmsUserServiceBase>(lmsId.ToString());
+            return IoC.Resolve<LmsUserServiceBase>(lmsId.ToString());
         }
 
 
-        public LmsCourseSectionsServiceBase GetCourseSectionsService(ILmsLicense lmsLicense, LtiParamDTO param)
+        public LmsCourseSectionsServiceBase GetCourseSectionsService(int lmsProviderId, Dictionary<string, object> licenseSettings, LtiParamDTO param)
         {
-            var lmsId = (LmsProviderEnum)lmsLicense.LmsProviderId;
+            var lmsId = (LmsProviderEnum)lmsProviderId;
 
             switch (lmsId)
             {
@@ -99,7 +99,7 @@ namespace EdugameCloud.Lti.API
                 //case LmsProviderEnum.Sakai:
                     var container = IoC.Resolve<IWindsorContainer>(); //bad hack - until parameterized methods are added to IoC and IServiceLocator
                     return container.Resolve<LmsCourseSectionsServiceBase>(lmsId + "SectionsService",
-                        new {license = lmsLicense, param});
+                        new { licenseSettings, param});
             }
 
             return new LmsCourseSectionsServiceBase(new Dictionary<string, object>(), param);

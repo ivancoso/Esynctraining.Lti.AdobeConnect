@@ -12,7 +12,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     public interface IMeetingSetup
     {
         Task<OperationResult> SaveMeeting(
-            ILmsLicense lmsCompany,
+            ILmsLicense lmsLicense,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             MeetingDTOInput meetingDTO,
@@ -21,12 +21,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool retrieveLmsUsers = false);
 
         Task<(List<string> data, string error)> DeleteMeetingAsync(
-            ILmsLicense lmsCompany,
+            ILmsLicense lmsLicense,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             int id);
         
-        MeetingSetup.LoginResult ACLogin(ILmsLicense lmsCompany,
+        MeetingSetup.LoginResult ACLogin(ILmsLicense lmsLicense,
             LtiParamDTO param, 
             LmsUser lmsUser,
             IAdobeConnectProxy provider);

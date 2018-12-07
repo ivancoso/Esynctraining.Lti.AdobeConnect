@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Web.Security;
 using EdugameCloud.Core;
 using EdugameCloud.Core.Business.Models;
-using EdugameCloud.Lti.Controllers;
 using EdugameCloud.Lti.Core.Business;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -31,6 +30,7 @@ using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
@@ -112,18 +112,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
         public async Task<OperationResult> DeleteMeetingAsync(
-            ILmsLicense lmsCompany,
+            ILmsLicense lmsLicense,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             int id,
             bool softDelete = false)
         {
-            if (!lmsCompany.CanRemoveMeeting.GetValueOrDefault())
+            if (!lmsLicense.CanRemoveMeeting.GetValueOrDefault())
             {
                 return OperationResult.Error(Resources.Messages.MeetingDeletionDisabled);
             }
 
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, param.course_id, id);
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsLicense.Id, param.course_id, id);
             if (meeting == null)
             {
                 return OperationResult.Error(Resources.Messages.MeetingNotFound);
@@ -143,13 +143,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //softDelete - means that we should not delete meeting from AC even in case when it is not reused by any other meeting
             string meetingScoId = meeting.GetMeetingScoId();
             //bool acMeetingIsStillUsed =
-            //    lmsCompany.EnableMeetingReuse && 
+            //    lmsLicense.EnableMeetingReuse && 
             //        (softDelete || 
-            //            this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id));
+            //            this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsLicense, meetingScoId, meeting.Id));
             bool skipRemovingFromAC = softDelete; 
 
             var meetingSessionService =
-                LmsFactory.GetMeetingSessionService(lmsCompany, param);
+                LmsFactory.GetMeetingSessionService(lmsLicense, param);
 
             await meetingSessionService.DeleteMeetingSessionsAsync(meeting, param);
 
@@ -161,7 +161,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             
             // TRICK: remove ALL(all cources \ all licenses) references in DB if we are going to delete from AC!!
-            var meetings = this.LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id);
+            var meetings = this.LmsCourseMeetingModel.GetByCompanyAndScoId(lmsLicense, meetingScoId, meeting.Id);
             if (meetings.Any())
             {
                 foreach (var m in meetings)
@@ -182,7 +182,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var result = provider.DeleteSco(meetingScoId);
             if (result.Code == StatusCodes.ok)
             {
-                DeleteAudioProfile(lmsCompany, meeting, provider);
+                DeleteAudioProfile(lmsLicense, meeting, provider);
 
                 return OperationResult.Success();
             }
@@ -190,11 +190,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Error(result.InnerXml);
         }
 
-        public async Task<IEnumerable<MeetingDTO>> GetMeetingsAsync(ILmsLicense lmsCompany, int courseId, IAdobeConnectProxy provider,
+        public async Task<IEnumerable<MeetingDTO>> GetMeetingsAsync(ILmsLicense lmsLicense, int courseId, IAdobeConnectProxy provider,
             LmsUser lmsUser, LtiParamDTO param, StringBuilder trace)
         {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (lmsLicense == null)
+                throw new ArgumentNullException(nameof(lmsLicense));
             if (lmsUser == null)
                 throw new ArgumentNullException(nameof(lmsUser));
             if (provider == null)
@@ -204,12 +204,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var ret = new List<MeetingDTO>();
             var sw = Stopwatch.StartNew();
-            var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(lmsCompany.Id, courseId).ToList();
+            var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(lmsLicense.Id, courseId).ToList();
             sw.Stop();
-            bool isTeacher = this.UsersSetup.IsTeacher(param, lmsCompany);
-            if (!isTeacher && lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+            bool isTeacher = this.UsersSetup.IsTeacher(param, lmsLicense);
+            if (!isTeacher && lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
             {
-                var sectionsService = LmsFactory.GetCourseSectionsService(lmsCompany, param);
+                LmsCourseSectionsServiceBase sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense.LmsProviderId, lmsLicense.GetLMSSettings(Settings), param);
                 var sections = await sectionsService.GetCourseSections();
                 meetings =
                     meetings.Where(
@@ -223,12 +223,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             // NOTE: add office hours meeting, if it exists for the user, but not in current course
             bool addedOfficeHoursFromOtherCourse = false;
-            if (lmsCompany.EnableOfficeHours.GetValueOrDefault() && !meetings.Any(m => m.LmsMeetingType == (int)LmsMeetingType.OfficeHours))
+            if (lmsLicense.EnableOfficeHours.GetValueOrDefault() && !meetings.Any(m => m.LmsMeetingType == (int)LmsMeetingType.OfficeHours))
             {
                 sw = Stopwatch.StartNew();
 
                 var officeHoursMeeting =
-                    this.LmsCourseMeetingModel.GetOneByUserAndType(lmsCompany.Id, param.lms_user_id, LmsMeetingType.OfficeHours).Value;
+                    this.LmsCourseMeetingModel.GetOneByUserAndType(lmsLicense.Id, param.lms_user_id, LmsMeetingType.OfficeHours).Value;
 
                 if (officeHoursMeeting == null)
                 {
@@ -239,7 +239,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         {
                             OfficeHours = officeHours,
                             LmsMeetingType = (int)LmsMeetingType.OfficeHours,
-                            LmsCompanyId = lmsCompany.Id,
+                            LmsCompanyId = lmsLicense.Id,
                             CourseId = courseId,
                         };
                     }
@@ -258,7 +258,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             sw = Stopwatch.StartNew();
 
             // TRICK: not to lazy load within Parallel.ForEach
-            var sett = lmsCompany.Settings.ToList();
+            var sett = lmsLicense.Settings.ToList();
             var resultCollection = new List<MeetingInfo>();
             object localLockObject = new object();
 
@@ -267,7 +267,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (!string.IsNullOrWhiteSpace(lmsUser.PrincipalId))
                 principalsToCheckPermissions.Add(lmsUser.PrincipalId);
 
-            var lmsCompanyId = lmsCompany.Id;
+            var lmsCompanyId = lmsLicense.Id;
             // TRICK: not to have DB calls from Parallel.ForEach 
             var input = meetings.Select(x => new Tuple<LmsCourseMeeting, string>(x, x.GetMeetingScoId())).ToList();
             Parallel.ForEach<Tuple<LmsCourseMeeting, string>, List<MeetingInfo>>(
@@ -302,7 +302,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 MeetingDTO dto = await BuildDto(
                         lmsUser,
                         param,
-                        lmsCompany,
+                        lmsLicense,
                         meeting,
                         //timeZone,
                         trace);
@@ -324,10 +324,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return ret;
         }
 
-        public async Task<(string meetingJoinUrl, string breezeSession)> JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, int meetingId, IAdobeConnectProxy provider)
+        public async Task<(string meetingJoinUrl, string breezeSession)> JoinMeeting(LmsCompany lmsLicense, LtiParamDTO param, int meetingId, IAdobeConnectProxy provider)
         {
             this.LmsCourseMeetingModel.Flush();
-            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, param.course_id, meetingId);
+            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsLicense.Id, param.course_id, meetingId);
 
             if (currentMeeting == null)
             {
@@ -343,11 +343,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ScoContent currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
                 if (currentMeetingSco != null)
                 {
-                    meetingUrl = string.Concat(lmsCompany.AcServer.TrimEnd('/'), currentMeetingSco.UrlPath);
+                    meetingUrl = string.Concat(lmsLicense.AcServer.TrimEnd('/'), currentMeetingSco.UrlPath);
                 }
             }
 
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsLicense.Id).Value;
             if (lmsUser == null)
             {
                 throw new Core.WarningMessageException(string.Format("No user with id {0} found.", param.lms_user_id));
@@ -357,14 +357,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //string login = param.lms_user_login;
             LmsUserDTO lmsUserDto = null;
             if ((LmsMeetingType)currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup
-                && currentMeeting.EnableDynamicProvisioning && lmsCompany.UseSynchronizedUsers)
+                && currentMeeting.EnableDynamicProvisioning && lmsLicense.UseSynchronizedUsers)
             {
                 //string userCreationError = null;
-                //lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
+                //lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsLicense, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
                 
-                var rr = await UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, param.lms_user_id);
+                var rr = await UsersSetup.GetOrCreateUserWithAcRole(lmsLicense, provider, param, currentMeeting, param.lms_user_id);
                 lmsUserDto = rr.Data;
-                //lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
+                //lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsLicense, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
 
                 if (!rr.IsSuccess)
                 {
@@ -374,10 +374,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             param.lms_user_id, rr.Message));
                 }
 
-                ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
+                ProcessDynamicProvisioning(provider, lmsLicense, currentMeeting, lmsUser, lmsUserDto);
             }
 
-            var loginResult = ACLogin(lmsCompany, param, lmsUser, provider);
+            var loginResult = ACLogin(lmsLicense, param, lmsUser, provider);
 
             // NOTE: ??? re-apply deleted from AC host role??
             if (currentMeeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
@@ -394,17 +394,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            ProcessGuestAuditUsers(provider, lmsCompany, currentMeetingScoId, loginResult.User.PrincipalId, param,
-                () => LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, currentMeetingScoId, 0));
+            ProcessGuestAuditUsers(provider, lmsLicense, currentMeetingScoId, loginResult.User.PrincipalId, param,
+                () => LmsCourseMeetingModel.GetByCompanyAndScoId(lmsLicense, currentMeetingScoId, 0));
 
             string breezeToken = loginResult.BreezeSession;
 
             string wstoken = null;
 
-            if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Blackboard)
+            if (lmsLicense.LmsProviderId == (int)LmsProviderEnum.Blackboard)
             {
                 var lmsUserService = LmsFactory.GetUserService(LmsProviderEnum.Blackboard);
-                var currentUserRes = await lmsUserService.GetUser(lmsCompany.GetLMSSettings(Settings),
+                var currentUserRes = await lmsUserService.GetUser(lmsLicense.GetLMSSettings(Settings),
                     param.lms_user_id,
                     param.course_id.ToString(),
                     param);
@@ -417,14 +417,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            SaveLMSUserParameters(param, lmsCompany, loginResult.User.PrincipalId, wstoken);
+            SaveLMSUserParameters(param, lmsLicense, loginResult.User.PrincipalId, wstoken);
 
             var breezeSession = breezeToken ?? string.Empty;
-            bool isTeacher = this.UsersSetup.IsTeacher(param, lmsCompany);
-            bool forcedAddInInstallation = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
+            bool isTeacher = this.UsersSetup.IsTeacher(param, lmsLicense);
+            bool forcedAddInInstallation = lmsLicense.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
 
             string meetingJoinUrl;
-            if (lmsCompany.LoginUsingCookie.GetValueOrDefault())
+            if (lmsLicense.LoginUsingCookie.GetValueOrDefault())
             {
                 meetingJoinUrl = string.Concat(
                     meetingUrl,
@@ -440,7 +440,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return (meetingJoinUrl, breezeSession);
         }
 
-        public LoginResult ACLogin(ILmsLicense lmsCompany, LtiParamDTO param, LmsUser lmsUser, IAdobeConnectProxy adminProvider)
+        public LoginResult ACLogin(ILmsLicense lmsLicense, LtiParamDTO param, LmsUser lmsUser, IAdobeConnectProxy adminProvider)
         {
             if (lmsUser.PrincipalId == null)
                 throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
@@ -459,9 +459,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string generatedPassword = null;
             if (lmsUser.AcConnectionMode == AcConnectionMode.Overwrite && string.IsNullOrEmpty(lmsUser.ACPassword))
             {
-                if (lmsCompany.AcUsername.Equals(registeredUser.Login, StringComparison.OrdinalIgnoreCase))
+                if (lmsLicense.AcUsername.Equals(registeredUser.Login, StringComparison.OrdinalIgnoreCase))
                 {
-                    generatedPassword = lmsCompany.AcPassword;
+                    generatedPassword = lmsLicense.AcPassword;
                     UsersSetup.ResetUserACPassword(lmsUser, generatedPassword);
                 }
                 else
@@ -478,7 +478,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (!string.IsNullOrEmpty(password))
             {
                 breezeToken = AcAccountService.LoginIntoAC(
-                    lmsCompany,
+                    lmsLicense,
                     param,
                     registeredUser,
                     password,
@@ -493,7 +493,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         UsersSetup.ResetUserACPassword(lmsUser, generatedPassword);
                     }
                     breezeToken = AcAccountService.LoginIntoAC(
-                        lmsCompany,
+                        lmsLicense,
                         param,
                         registeredUser,
                         generatedPassword,
@@ -504,10 +504,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return new LoginResult { BreezeSession = breezeToken, User = registeredUser };
         }
 
-        public OperationResult LeaveMeeting(ILmsLicense lmsCompany, LtiParamDTO param, int id, IAdobeConnectProxy provider)
+        public OperationResult LeaveMeeting(ILmsLicense lmsLicense, LtiParamDTO param, int id, IAdobeConnectProxy provider)
         {
             this.LmsCourseMeetingModel.Flush();
-            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, param.course_id, id);
+            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsLicense.Id, param.course_id, id);
 
             if (currentMeeting == null)
             {
@@ -524,7 +524,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string login = param.lms_user_login;
             string email = param.lis_person_contact_email_primary;
             
-            Principal registeredUser = AcUserService.GetPrincipalByLoginOrEmail(provider, login, email, lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
+            Principal registeredUser = AcUserService.GetPrincipalByLoginOrEmail(provider, login, email, lmsLicense.ACUsesEmailAsLogin.GetValueOrDefault());
 
             if (registeredUser != null)
             {
@@ -542,7 +542,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
         
         public async Task<OperationResult> SaveMeeting(
-            ILmsLicense lmsCompany,
+            ILmsLicense lmsLicense,
             IAdobeConnectProxy provider, 
             LtiParamDTO param,
             MeetingDTOInput meetingDTO,
@@ -550,8 +550,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IFolderBuilder fb,
             bool retrieveLmsUsers = false)
         {
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (lmsLicense == null)
+                throw new ArgumentNullException(nameof(lmsLicense));
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
             if (param == null)
@@ -562,8 +562,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(fb));
             
             if ((meetingDTO.GetMeetingType() == LmsMeetingType.StudyGroup) 
-                && !UsersSetup.IsTeacher(param, lmsCompany)
-                && !lmsCompany.GetSetting<bool>(LmsCompanySettingNames.CanStudentCreateStudyGroup, true))
+                && !UsersSetup.IsTeacher(param, lmsLicense)
+                && !lmsLicense.GetSetting<bool>(LmsCompanySettingNames.CanStudentCreateStudyGroup, true))
             {
                 return OperationResult.Error("Students are not allowed to create Study Groups.");
             }
@@ -575,15 +575,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             FixDateTimeFields(meetingDTO);
 
-            LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+            LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsLicense.Id).Value;
             if (lmsUser == null)
             {
-                return OperationResult.Error(string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, lmsCompany.Id));
+                return OperationResult.Error(string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, lmsLicense.Id));
             }
 
             if (meetingDTO.Id == 0 && meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours)
             {
-                var meetings = LmsCourseMeetingModel.GetAllByCourseId(lmsCompany.Id, param.course_id);
+                var meetings = LmsCourseMeetingModel.GetAllByCourseId(lmsLicense.Id, param.course_id);
                 var ohMeeting =
                     meetings.FirstOrDefault(x => x.OfficeHours != null && x.OfficeHours.LmsUser.Id == lmsUser.Id);
                 if (ohMeeting != null)
@@ -595,7 +595,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if(meeting == null)
             {
-                meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingDTO.Id ?? 0,
+                meeting = this.GetCourseMeeting(lmsLicense, param.course_id, meetingDTO.Id ?? 0,
                     meetingDTO.GetMeetingType());
                 string meetingSco = meeting.GetMeetingScoId();
 
@@ -624,7 +624,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     provider,
                     param.lms_user_login,
                     param.lis_person_contact_email_primary,
-                    lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
+                    lmsLicense.ACUsesEmailAsLogin.GetValueOrDefault());
 
                 sw.Stop();
                 trace.AppendFormat("SaveMeeting: GetScoInfo+GetPrincipalByLoginOrEmail: time: {0}.",
@@ -649,7 +649,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         || (meeting.LmsMeetingType == (int) LmsMeetingType.StudyGroup)
                         || (meeting.LmsMeetingType == (int) LmsMeetingType.Seminar))
                     {
-                        var lmsUsersRes = await UsersSetup.GetLMSUsers(lmsCompany,
+                        var lmsUsersRes = await UsersSetup.GetLMSUsers(lmsLicense,
                             meeting,
                             meeting.CourseId,
                             param);
@@ -661,7 +661,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
                         }
 
-                        if (lmsCompany.UseSynchronizedUsers && lmsUsers.Count > Core.Utils.Constants.SyncUsersCountLimit)
+                        if (lmsLicense.UseSynchronizedUsers && lmsUsers.Count > Core.Utils.Constants.SyncUsersCountLimit)
                         {
                             meeting.EnableDynamicProvisioning = true;
                         }
@@ -680,13 +680,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 sw = Stopwatch.StartNew();
 
                 SetMeetingUpdateItemFields(
-                    lmsCompany,
+                    lmsLicense,
                     meetingDTO,
                     updateItem,
                     meetingFolder,
                     isNewMeeting);
 
-                ProcessMeetingName(lmsCompany, param, meetingDTO, lmsUser,
+                ProcessMeetingName(lmsLicense, param, meetingDTO, lmsUser,
                     isNewMeeting, updateItem, meeting, officeHours);
 
                 sw.Stop();
@@ -723,7 +723,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     provider.UpdateVirtualClassroomLicenseModel(result.ScoInfo.ScoId, false);
                 }
 
-                bool audioProfileProccesed = ProcessAudio(lmsCompany, param, isNewMeeting, meetingDTO, updateItem.Name,
+                bool audioProfileProccesed = ProcessAudio(lmsLicense, param, isNewMeeting, meetingDTO, updateItem.Name,
                     lmsUser, meeting, result.ScoInfo, provider);
                 if (!audioProfileProccesed)
                 {
@@ -772,9 +772,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
                     && lmsUsers.Count <= Core.Utils.Constants.SyncUsersCountLimit)
                 {
-                    if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+                    if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
                     {
-                        var sectionsService = LmsFactory.GetCourseSectionsService(lmsCompany, param);
+                        LmsCourseSectionsServiceBase sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense.LmsProviderId, lmsLicense.GetLMSSettings(Settings), param);
                         var sections = await sectionsService.GetCourseSections();
                         var firstSection = sections.OrderBy(x => x.Id).FirstOrDefault(); //
                         if (firstSection != null)
@@ -792,14 +792,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         }
                     }
                     string msg;
-                    List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers,
+                    List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsLicense, lmsUsers,
                         out msg);
                     message += msg;
 
                     sw = Stopwatch.StartNew();
 
                     this.UsersSetup.SetDefaultUsers(
-                        lmsCompany,
+                        lmsLicense,
                         meeting,
                         provider,
                         param.lms_user_id,
@@ -818,7 +818,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         CreateAnnouncement(
                             (LmsMeetingType) meeting.LmsMeetingType,
-                            lmsCompany,
+                            lmsLicense,
                             param,
                             meetingDTO);
                     }
@@ -836,7 +836,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //    provider,
             //    lmsUser,
             //    param,
-            //    lmsCompany,
+            //    lmsLicense,
             //    result.ScoInfo,
             //    meeting,
             //    timeZone);
@@ -846,21 +846,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingInfo info = this.GetAcMeetingInfo(
                            provider,
                            new List<string> { "public-access", lmsUser.PrincipalId },
-                           lmsCompany.Id,
+                           lmsLicense.Id,
                            meeting.GetMeetingScoId(),
                            meeting,
                            null);
             MeetingDTO updatedMeeting = await BuildDto(
                  lmsUser,
                  param,
-                 lmsCompany,
+                 lmsLicense,
                  info,
                  //timeZone,
                  trace);
 
             if (retrieveLmsUsers)
             {
-                var users = await UsersSetup.GetUsers(lmsCompany,
+                var users = await UsersSetup.GetUsers(lmsLicense,
                     provider,
                     param.course_id,
                     param,
@@ -977,7 +977,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
                 {
-                    var sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense, param);
+                    LmsCourseSectionsServiceBase sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense.LmsProviderId, lmsLicense.GetLMSSettings(Settings), param);
                     var sections = await sectionsService.GetCourseSections();
                     if (originalMeeting != null)
                     {
@@ -1077,13 +1077,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public async Task<(List<string> data, string error)> DeleteMeetingAsync(
-            ILmsLicense lmsCompany,
+            ILmsLicense lmsLicense,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             int id)
         {
             var model = this.LmsCourseMeetingModel;
-            LmsCourseMeeting meeting = model.GetOneByCourseAndId(lmsCompany.Id, param.course_id, id);
+            LmsCourseMeeting meeting = model.GetOneByCourseAndId(lmsLicense.Id, param.course_id, id);
 
             if (meeting == null)
             {
@@ -1094,31 +1094,31 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             // TODO: REVIEW
 
-            bool acMeetingIsStillUsed = lmsCompany.EnableMeetingReuse
-                ? this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id)
+            bool acMeetingIsStillUsed = lmsLicense.EnableMeetingReuse
+                ? this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsLicense, meeting.GetMeetingScoId(), meeting.Id)
                 : false;
 
             List<MeetingPermissionInfo> enrollments = this.UsersSetup.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
 
             var meetingSessionService =
-                LmsFactory.GetMeetingSessionService(lmsCompany, param);
+                LmsFactory.GetMeetingSessionService(lmsLicense, param);
 
             await meetingSessionService.DeleteMeetingSessionsAsync(meeting, param);
 
             model.RegisterDelete(meeting, true);
 
-            if (lmsCompany.EnableMeetingReuse && !acMeetingIsStillUsed)
+            if (lmsLicense.EnableMeetingReuse && !acMeetingIsStillUsed)
             {
                 if (!meeting.Reused.GetValueOrDefault() || (meeting.Reused.GetValueOrDefault() && meeting.SourceCourseMeetingId.HasValue))
                 {
                     provider.DeleteSco(meeting.GetMeetingScoId());
-                    DeleteAudioProfile(lmsCompany, meeting, provider);
+                    DeleteAudioProfile(lmsLicense, meeting, provider);
                 }
             }
             else
             {
                 provider.DeleteSco(meeting.GetMeetingScoId());
-                DeleteAudioProfile(lmsCompany, meeting, provider);
+                DeleteAudioProfile(lmsLicense, meeting, provider);
             }
 
             return (data: enrollments.Select(x => x.Login).ToList(), error: null);
@@ -1148,23 +1148,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //    }
         //}
         
-        //public string GetMeetingFolder(LmsCompany lmsCompany, IAdobeConnectProxy provider, Principal user, bool useLmsUserEmailForSearch)
+        //public string GetMeetingFolder(LmsCompany lmsLicense, IAdobeConnectProxy provider, Principal user, bool useLmsUserEmailForSearch)
         //{
         //    string adobeConnectScoId = null;
 
-        //    if (lmsCompany.UseUserFolder.GetValueOrDefault() && user != null)
+        //    if (lmsLicense.UseUserFolder.GetValueOrDefault() && user != null)
         //    {
         //        ////TODO Think about user folders + renaming directory
-        //        adobeConnectScoId = SetupUserMeetingsFolder(lmsCompany, provider, user, useLmsUserEmailForSearch);
+        //        adobeConnectScoId = SetupUserMeetingsFolder(lmsLicense, provider, user, useLmsUserEmailForSearch);
         //    }
 
         //    if (adobeConnectScoId == null)
         //    {
-        //        LmsProvider lmsProvider = LmsProviderModel.GetById(lmsCompany.LmsProviderId);
-        //        SetupSharedMeetingsFolder(lmsCompany, lmsProvider, provider);
-        //        this.LmsСompanyModel.RegisterSave(lmsCompany);
+        //        LmsProvider lmsProvider = LmsProviderModel.GetById(lmsLicense.LmsProviderId);
+        //        SetupSharedMeetingsFolder(lmsLicense, lmsProvider, provider);
+        //        this.LmsСompanyModel.RegisterSave(lmsLicense);
         //        this.LmsСompanyModel.Flush();
-        //        adobeConnectScoId = lmsCompany.ACScoId;
+        //        adobeConnectScoId = lmsLicense.ACScoId;
         //    }
 
         //    return adobeConnectScoId;
@@ -1247,14 +1247,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
         #region Methods
-        private void ProcessMeetingName(ILmsLicense lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, LmsUser lmsUser,
+        private void ProcessMeetingName(ILmsLicense lmsLicense, LtiParamDTO param, MeetingDTO meetingDTO, LmsUser lmsUser,
             bool isNewMeeting, MeetingUpdateItem updateItem, LmsCourseMeeting meeting, OfficeHours officeHours)
         {
             string courseId = meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours
                 ? lmsUser.Id.ToString(CultureInfo.InvariantCulture)
                 : param.course_id.ToString(CultureInfo.InvariantCulture);
 
-            int formatterId = lmsCompany.MeetingNameFormatterId;
+            int formatterId = lmsLicense.MeetingNameFormatterId;
             IMeetingNameFormatter formatter = MeetingNameFormatterFactory.GetFormatter(formatterId);
 
             // officeHours - map existing AC meeting but new LmsCourseMeeting record
@@ -1293,9 +1293,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             else
             {
                 // HACK: TEST!!!
-                // TODO: is it OK to use the setting here? if (lmsCompany.EnableMeetingReuse)
-                var thisScoMeetings = lmsCompany.EnableMeetingReuse
-                    ? LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id)
+                // TODO: is it OK to use the setting here? if (lmsLicense.EnableMeetingReuse)
+                var thisScoMeetings = lmsLicense.EnableMeetingReuse
+                    ? LmsCourseMeetingModel.GetByCompanyAndScoId(lmsLicense, meeting.GetMeetingScoId(), meeting.Id)
                     : Enumerable.Empty<LmsCourseMeeting>();
 
                 // NOTE: it's reused meeting or source for any reused meeting
@@ -1308,7 +1308,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     updateItem.Name = meetingDTO.Name;
 
                     // NOTE: find original LTI meeting and all its reusings; and change their name AS WELL
-                    //var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId());
+                    //var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsLicense, meeting.GetMeetingScoId());
                     foreach (LmsCourseMeeting m in thisScoMeetings)
                     {
                         MeetingNameInfo name = JsonDeserializer.JsonDeserialize<MeetingNameInfo>(m.MeetingNameJson);
@@ -1349,7 +1349,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private bool ProcessAudio(ILmsLicense lmsCompany, LtiParamDTO param, bool isNewMeeting, 
+        private bool ProcessAudio(ILmsLicense lmsLicense, LtiParamDTO param, bool isNewMeeting, 
             MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
             LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
         {
@@ -1357,7 +1357,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if ((LmsMeetingType)meeting.LmsMeetingType == LmsMeetingType.Seminar)
                 return true;
 
-            TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
+            TelephonyProfileOption option = lmsLicense.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
             if (option == TelephonyProfileOption.TurnOff)
                 return true;
 
@@ -1391,14 +1391,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (!isNewMeeting)
                     return true;
 
-                string providerName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
+                string providerName = lmsLicense.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
 
                 if (TelephonyDTO.SupportedProfiles.None.Equals(providerName, StringComparison.OrdinalIgnoreCase))
                     throw new InvalidOperationException("GenerateNewProfile option with None provider");
 
                 string profileName = acMeetingName;
 
-                TelephonyProfile profile = IoC.Resolve<ITelephonyProfileEngine>(providerName).CreateProfile(lmsCompany, param, profileName, provider);
+                TelephonyProfile profile = IoC.Resolve<ITelephonyProfileEngine>(providerName).CreateProfile(lmsLicense, param, profileName, provider);
 
                 if (profile != null)
                 {
@@ -1415,7 +1415,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return false;
         }
 
-        private void DeleteAudioProfile(ILmsLicense lmsCompany, LmsCourseMeeting meeting, IAdobeConnectProxy provider)
+        private void DeleteAudioProfile(ILmsLicense lmsLicense, LmsCourseMeeting meeting, IAdobeConnectProxy provider)
         {
             if (string.IsNullOrWhiteSpace(meeting.AudioProfileId))
                 return;
@@ -1431,14 +1431,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             AudioProfileService.DeleteAudioProfile(meeting.AudioProfileId, provider);
 
-            TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
+            TelephonyProfileOption option = lmsLicense.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
             if (option != TelephonyProfileOption.GenerateNewProfile)
                 return;
 
-            string providerName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
+            string providerName = lmsLicense.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
             // Trying to delete profile from Meeting1 - only if it was generated by M1 integration
             if (meeting.AudioProfileProvider == providerName)
-                IoC.Resolve<ITelephonyProfileEngine>(providerName).DeleteProfile(lmsCompany, profile);
+                IoC.Resolve<ITelephonyProfileEngine>(providerName).DeleteProfile(lmsLicense, profile);
         }
 
         //private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
@@ -1454,14 +1454,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private void SaveLMSUserParameters(
             int lmsCourseId,
-            LmsCompany lmsCompany,
+            LmsCompany lmsLicense,
             string lmsUserId,
             string adobeConnectUserId,
             string courseName,
             string userEmail,
             string userId)
         {
-            LmsUserParameters lmsUserParameters = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(adobeConnectUserId, lmsCourseId, lmsCompany.Id).Value;
+            LmsUserParameters lmsUserParameters = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(adobeConnectUserId, lmsCourseId, lmsLicense.Id).Value;
 
             if (lmsUserParameters == null)
             {
@@ -1469,7 +1469,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     AcId = adobeConnectUserId,
                     Course = lmsCourseId,
-                    CompanyLms = lmsCompany
+                    CompanyLms = lmsLicense
                 };
             }
 
@@ -1477,11 +1477,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             lmsUserParameters.LastLoggedIn = DateTime.UtcNow;
             lmsUserParameters.CourseName = courseName;
             lmsUserParameters.UserEmail = userEmail;
-            lmsUserParameters.LmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
+            lmsUserParameters.LmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsLicense.Id).Value;
             this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
         }
         
-        private bool CanEdit(LtiParamDTO param, LmsCourseMeeting meeting, ILmsLicense lmsCompany)
+        private bool CanEdit(LtiParamDTO param, LmsCourseMeeting meeting, ILmsLicense lmsLicense)
         {
             if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
             {
@@ -1493,7 +1493,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return meeting.Owner.UserId.Equals(param.lms_user_id);
             }
 
-            return UsersSetup.IsTeacher(param, lmsCompany);
+            return UsersSetup.IsTeacher(param, lmsLicense);
         }
         
         private bool CanJoin(
@@ -1519,11 +1519,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 .Any();
         }
 
-        private IEnumerable<LmsCompanyRoleMapping> GetGuestAuditRoleMappings(ILmsLicense lmsCompany, LtiParamDTO param)
+        private IEnumerable<LmsCompanyRoleMapping> GetGuestAuditRoleMappings(ILmsLicense lmsLicense, LtiParamDTO param)
         {
-            if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry))
+            if (!lmsLicense.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry))
                 return Enumerable.Empty<LmsCompanyRoleMapping>();
-            var customRoles = lmsCompany.RoleMappings.Where(x => !x.IsDefaultLmsRole && new[] { AcRole.Host.Id, AcRole.Presenter.Id }.Contains(x.AcRole));
+            var customRoles = lmsLicense.RoleMappings.Where(x => !x.IsDefaultLmsRole && new[] { AcRole.Host.Id, AcRole.Presenter.Id }.Contains(x.AcRole));
             var currentUserLtiRoles = new List<string>();
             if (!string.IsNullOrEmpty(param.roles))
             {
@@ -1533,11 +1533,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return customRoles.Where(x => currentUserLtiRoles.Any(lr => lr.Equals(x.LmsRoleName)));
         }
 
-        public void ProcessGuestAuditUsers(IAdobeConnectProxy provider, ILmsLicense lmsCompany, string scoId, 
+        public void ProcessGuestAuditUsers(IAdobeConnectProxy provider, ILmsLicense lmsLicense, string scoId, 
             string principalId, LtiParamDTO param, Func<IEnumerable<LmsCourseMeeting>> retrieveMeetings)
         {
 
-            var auditRoles = GetGuestAuditRoleMappings(lmsCompany, param);
+            var auditRoles = GetGuestAuditRoleMappings(lmsLicense, param);
             if (auditRoles.Any())
             {
                 MeetingPermissionCollectionResult meetingEnrollments =
@@ -1568,11 +1568,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public void ProcessDynamicProvisioning(IAdobeConnectProxy provider, ILmsLicense lmsCompany, LmsCourseMeeting courseMeeting, LmsUser lmsUser, LmsUserDTO lmsUserDto)
+        public void ProcessDynamicProvisioning(IAdobeConnectProxy provider, ILmsLicense lmsLicense, LmsCourseMeeting courseMeeting, LmsUser lmsUser, LmsUserDTO lmsUserDto)
         {
             if(lmsUser?.PrincipalId != null && lmsUserDto != null)
             { 
-                var acRole = new RoleMappingService().SetAcRole(lmsCompany, lmsUserDto);
+                var acRole = new RoleMappingService().SetAcRole(lmsLicense, lmsUserDto);
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(courseMeeting.GetMeetingScoId(),
                     lmsUser.PrincipalId, acRole);
             }
@@ -1628,7 +1628,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private async Task<MeetingDTO> BuildDto(
             LmsUser lmsUser,
             LtiParamDTO param,
-            ILmsLicense lmsCompany,
+            ILmsLicense lmsLicense,
             MeetingInfo meeting,
             //TimeZoneInfo timeZone,
             StringBuilder trace = null)
@@ -1637,8 +1637,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(meeting));
             if (lmsUser == null)
                 throw new ArgumentNullException(nameof(lmsUser));
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (lmsLicense == null)
+                throw new ArgumentNullException(nameof(lmsLicense));
 
             if (meeting.Sco == null)
                 return null;
@@ -1679,18 +1679,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // HACK: TEST!!!
             bool scoIdReused = false;
             int usedByAnotherMeeting = 0;
-            if (lmsCompany.EnableMeetingReuse)
+            if (lmsLicense.EnableMeetingReuse)
             {
-                usedByAnotherMeeting = LmsCourseMeetingModel.CourseCountByCompanyAndScoId(lmsCompany,
+                usedByAnotherMeeting = LmsCourseMeetingModel.CourseCountByCompanyAndScoId(lmsLicense,
                     meeting.Sco.ScoId,
                     meeting.DbRecord.Id);
                 scoIdReused = meeting.DbRecord.Reused.HasValue && meeting.DbRecord.Reused.Value;
             }
 
             MeetingSessionDTO[] sessions = null;
-            if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingSessions))
+            if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingSessions))
             {
-                var sessionsService = LmsFactory.GetMeetingSessionService(lmsCompany, param);
+                var sessionsService = LmsFactory.GetMeetingSessionService(lmsLicense, param);
                 sessions = (await sessionsService.GetSessions(meeting.DbRecord.Id)).ToArray();
                 //sessions = meeting.DbRecord.MeetingSessions.Select(x => new MeetingSessionDTO
                 //{
@@ -1750,14 +1750,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     ret,
                     lmsUser,
                     param,
-                    lmsCompany,
+                    lmsLicense,
                     meeting);
 
             if (meeting.AudioProfile?.TelephonyProfile != null)
             {
                 ret.AudioProfileName = meeting.AudioProfile.TelephonyProfile.ProfileName;
 
-                if (lmsCompany.GetTelephonyOption((LmsMeetingType) meeting.DbRecord.LmsMeetingType) ==
+                if (lmsLicense.GetTelephonyOption((LmsMeetingType) meeting.DbRecord.LmsMeetingType) ==
                     TelephonyProfileOption.GenerateNewProfile)
                     ret.TelephonyProfileFields = new TelephonyProfileHumanizer().Humanize(meeting.AudioProfile.TelephonyProfileFields);
             }
@@ -1769,23 +1769,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingDTO dto,
             LmsUser lmsUser,
             LtiParamDTO param,
-            ILmsLicense lmsCompany,
+            ILmsLicense lmsLicense,
             MeetingInfo meeting)
         {
             if (meeting == null)
                 throw new ArgumentNullException(nameof(meeting));
             if (lmsUser == null)
                 throw new ArgumentNullException(nameof(lmsUser));
-            if (lmsCompany == null)
-                throw new ArgumentNullException(nameof(lmsCompany));
+            if (lmsLicense == null)
+                throw new ArgumentNullException(nameof(lmsLicense));
 
-            bool isEditable = this.CanEdit(param, meeting.DbRecord, lmsCompany);
+            bool isEditable = this.CanEdit(param, meeting.DbRecord, lmsLicense);
             var type = (LmsMeetingType)meeting.DbRecord.LmsMeetingType;
 
             var canJoin = this.CanJoin(lmsUser, type, meeting.Permissions)
                           || (type != LmsMeetingType.StudyGroup
-                              && (GetGuestAuditRoleMappings(lmsCompany, param).Any()
-                                  || (lmsCompany.UseSynchronizedUsers && meeting.DbRecord.EnableDynamicProvisioning)));
+                              && (GetGuestAuditRoleMappings(lmsLicense, param).Any()
+                                  || (lmsLicense.UseSynchronizedUsers && meeting.DbRecord.EnableDynamicProvisioning)));
 
             dto.AccessLevel = meeting.GetPublicAccessPermission().Replace("-", "_");
             dto.CanJoin = canJoin;
@@ -1801,9 +1801,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //    return offset;
         //}
         
-        private void SaveLMSUserParameters(LtiParamDTO param, LmsCompany lmsCompany, string adobeConnectUserId, string wstoken)
+        private void SaveLMSUserParameters(LtiParamDTO param, LmsCompany lmsLicense, string adobeConnectUserId, string wstoken)
         {
-            this.SaveLMSUserParameters(param.course_id, lmsCompany, param.lms_user_id, adobeConnectUserId, param.context_title, param.lis_person_contact_email_primary, wstoken);
+            this.SaveLMSUserParameters(param.course_id, lmsLicense, param.lms_user_id, adobeConnectUserId, param.context_title, param.lis_person_contact_email_primary, wstoken);
         }
 
         private static void FixDateTimeFields(MeetingDTOInput meetingDTO)
@@ -1819,19 +1819,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public LmsCourseMeeting GetCourseMeeting(ILmsLicense lmsCompany, int courseId, long id, LmsMeetingType type)
+        public LmsCourseMeeting GetCourseMeeting(ILmsLicense lmsLicense, int courseId, long id, LmsMeetingType type)
         {
             LmsCourseMeeting meeting = null;
 
             if (id > 0)
-                meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, courseId, id);
+                meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsLicense.Id, courseId, id);
 
             // TRICK: we should always pass ID from client if it's UPDATE operation for meeting within the course
             //if (meeting == null && type == LmsMeetingType.OfficeHours)
             //{
             //    meeting =
             //        this.LmsCourseMeetingModel.GetOneByCourseAndType(
-            //            lmsCompany.Id,
+            //            lmsLicense.Id,
             //            courseId,
             //            LmsMeetingType.OfficeHours).Value;
             //}
@@ -1840,7 +1840,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 meeting = new LmsCourseMeeting
                 {
-                    LmsCompanyId = lmsCompany.Id,
+                    LmsCompanyId = lmsLicense.Id,
                     CourseId = courseId,
                     LmsMeetingType = (int)type,
                     // HACK: IMPLEMENT
@@ -1852,7 +1852,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private void SetMeetingUpdateItemFields(
-            ILmsLicense lmsCompany,
+            ILmsLicense lmsLicense,
             MeetingDTOInput meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
@@ -1860,7 +1860,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             updateItem.Description = meetingDTO.Summary;
             updateItem.FolderId = folderSco;
-            updateItem.Language = LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode;
+            updateItem.Language = LanguageModel.GetById(lmsLicense.LanguageId).TwoLetterCode;
             updateItem.Type = ScoType.meeting;
             updateItem.ScoTag = string.IsNullOrWhiteSpace(meetingDTO.ClassRoomId) ? null : meetingDTO.ClassRoomId;
             
@@ -1995,15 +1995,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         //}
         
-        //private static string SetupUserMeetingsFolder(LmsCompany lmsCompany, IAdobeConnectProxy provider,
+        //private static string SetupUserMeetingsFolder(LmsCompany lmsLicense, IAdobeConnectProxy provider,
         //    Principal user, bool useLmsUserEmailForSearch)
         //{
         //    var shortcut = provider.GetShortcutByType("user-meetings");
 
         //    var userFolderName = useLmsUserEmailForSearch ? user.Email : user.Login;
-        //    var meetingsFolderName = string.IsNullOrEmpty(lmsCompany.UserFolderName)
+        //    var meetingsFolderName = string.IsNullOrEmpty(lmsLicense.UserFolderName)
         //        ? userFolderName
-        //        : lmsCompany.UserFolderName;
+        //        : lmsLicense.UserFolderName;
         //    string meetingFolderScoId;
 
         //    CreateUserFoldersStructure(shortcut.ScoId, provider, userFolderName,
@@ -2017,7 +2017,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             var meeting = LmsCourseMeetingModel.GetOneById(updateCourseSectionsDto.MeetingId).Value;
 
-            var sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense, param);
+            LmsCourseSectionsServiceBase sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense.LmsProviderId, lmsLicense.GetLMSSettings(Settings), param);
             var sections = await sectionsService.GetCourseSections();
             var sectionsToRemove = meeting.CourseSections.Where(x => updateCourseSectionsDto.SectionIds.All(s => s != x.LmsId)).ToList();
             foreach (var lmsCourseSection in sectionsToRemove)

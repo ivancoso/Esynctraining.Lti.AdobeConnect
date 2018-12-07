@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
@@ -45,7 +44,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResult.Error("License doesn't support 'Sections' feature");
             }
 
-            var sectionsService = lmsFactory.GetCourseSectionsService(LmsCompany, Session.LtiSession.LtiParam);
+            var sectionsService = lmsFactory.GetCourseSectionsService(LmsCompany.LmsProviderId, LmsCompany.GetLMSSettings(Settings), Session.LtiSession.LtiParam);
             return (await sectionsService.GetCourseSections()).ToSuccessResult();
         }
 
