@@ -6,6 +6,7 @@
     [endDate]             DATETIME2 (7)   NOT NULL,
     [lmsCourseMeetingId]  INT             NOT NULL,
     [summary]             NVARCHAR (2000) NULL,
+    [lmsCalendarEventId] INT NULL, 
     CONSTRAINT [PK_LmsMeetingSession] PRIMARY KEY CLUSTERED ([lmsMeetingSessionId] ASC) WITH (FILLFACTOR = 80),
     CONSTRAINT [FK_LmsMeetingSession_LmsCourseMeeting] FOREIGN KEY ([lmsCourseMeetingId]) REFERENCES [dbo].[LmsCourseMeeting] ([lmsCourseMeetingId])
 );

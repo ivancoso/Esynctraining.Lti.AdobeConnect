@@ -12,6 +12,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.StartDate).Not.Nullable();
             this.Map(x => x.EndDate).Not.Nullable();
             this.Map(x => x.Summary).Nullable().Length(2000);
+            this.Map(x => x.LmsCalendarEventId).Nullable();
             this.References(x => x.LmsCourseMeeting).Column("lmsCourseMeetingId");
         }
     }

@@ -27,6 +27,8 @@
 
         public virtual string AudioProfileId { get; set; }
 
+        public virtual int? LmsCalendarEventId { get; set; }
+
         /// <summary>
         /// If non empty - represents provider profile was generated for.
         /// </summary>

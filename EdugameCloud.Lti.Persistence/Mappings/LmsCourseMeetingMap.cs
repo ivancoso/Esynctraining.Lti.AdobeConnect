@@ -23,6 +23,8 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.AudioProfileId).Nullable();
             this.Map(x => x.AudioProfileProvider).Nullable();
 
+            this.Map(x => x.LmsCalendarEventId).Nullable();
+
             this.Map(x => x.LmsCompanyId).Column("companyLmsId").Not.Nullable();
             this.Map(x => x.EnableDynamicProvisioning).Not.Nullable();
             

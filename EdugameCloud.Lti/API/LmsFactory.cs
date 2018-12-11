@@ -87,6 +87,16 @@ namespace EdugameCloud.Lti.API
             return IoC.Resolve<LmsUserServiceBase>(lmsId.ToString());
         }
 
+        public LmsCalendarEventServiceBase GetCalendarEventService(LmsProviderEnum lmsId)
+        {
+            switch (lmsId)
+            {
+                case LmsProviderEnum.Canvas:
+                    return IoC.Resolve<LmsCalendarEventServiceBase>(lmsId + "CalendarService");
+            }
+
+            return null;
+        }
 
         public LmsCourseSectionsServiceBase GetCourseSectionsService(int lmsProviderId, Dictionary<string, object> licenseSettings, LtiParamDTO param)
         {
@@ -121,7 +131,7 @@ namespace EdugameCloud.Lti.API
                         new { license = lmsLicense, param, calendarExportService });
             }
 
-            return new MeetingSessionService(lmsCourseMeetingModel, logger, calendarExportService, lmsLicense);
+            return new MeetingSessionService(lmsCourseMeetingModel, logger, calendarExportService, lmsLicense, GetCalendarEventService(lmsId));
         }
         #endregion
 

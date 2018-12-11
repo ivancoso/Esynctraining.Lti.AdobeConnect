@@ -10,6 +10,9 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json;
 
@@ -17,17 +20,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public class MeetingSessionService : IMeetingSessionService
     {
+        private dynamic Settings => IoC.Resolve<ApplicationSettingsProvider>();
+
         private readonly LmsCourseMeetingModel _lmsCourseMeetingModel;
         private readonly ICalendarExportService _calendarExportService;
         private readonly ILmsLicense _license;
         private readonly ILogger _logger;
+        private readonly LmsCalendarEventServiceBase _calendarEventService;
 
-        public MeetingSessionService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ICalendarExportService calendarExportService, ILmsLicense license)
+        public MeetingSessionService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ICalendarExportService calendarExportService, ILmsLicense license, LmsCalendarEventServiceBase calendarEventService)
         {
             _lmsCourseMeetingModel = lmsCourseMeetingModel ?? throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _calendarExportService = calendarExportService;
             _license = license;
+            _calendarEventService = calendarEventService ?? throw new ArgumentNullException(nameof(calendarEventService));
         }
 
         public async Task<IEnumerable<MeetingSessionDTO>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LtiParamDTO param)
@@ -89,8 +96,42 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 EndDate = x.EndDate,
                 LmsCourseMeeting = meeting
             }));
+
+            await CreateCalendarEvents(param, meeting);
+
             _lmsCourseMeetingModel.RegisterSave(meeting, true);
             return meeting.MeetingSessions.Select(ConvertFromEntity).ToArray();
+        }
+
+        private async Task CreateCalendarEvents(LtiParamDTO param, LmsCourseMeeting meeting)
+        {
+            if (_calendarEventService == null)
+                return;
+
+            foreach (var session in meeting.MeetingSessions)
+            {
+                var eventDto = new LmsCalendarEventDTO
+                {
+                    StartAt = session.StartDate,
+                    EndAt = session.EndDate,
+                    Title = session.Name
+                };
+
+                var lmsSettings = _license.GetLMSSettings(Settings);
+
+                try
+                {
+                    LmsCalendarEventDTO lmsCalendarEvent =
+                        await _calendarEventService.CreateEvent(param.course_id.ToString(), lmsSettings, eventDto);
+
+                    session.LmsCalendarEventId = lmsCalendarEvent?.Id;
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e.Message);
+                    return;
+                }
+            }
         }
 
         public async Task<IEnumerable<MeetingSessionDTO>> GetSessions(int meetingId)
@@ -134,6 +175,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 EndDate = ev.EndDate,
                 LmsCourseMeeting = meeting,
             };
+
+            if (_calendarEventService != null)
+            {
+                var lmsSettings = _license.GetLMSSettings(Settings);
+                LmsCalendarEventDTO calendarEventDto = new LmsCalendarEventDTO()
+                {
+                    Title = dbEvent.Name,
+                    StartAt = dbEvent.StartDate,
+                    EndAt = dbEvent.EndDate
+                };
+                await _calendarEventService.CreateEvent(param.course_id.ToString(), lmsSettings, calendarEventDto);
+            }
+
             meeting.MeetingSessions.Add(dbEvent);
             _lmsCourseMeetingModel.RegisterSave(meeting, true);
             return ConvertFromEntity(dbEvent);
@@ -195,6 +249,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
+            await RemoveCalendarEvent(dbEvent);
+
             if (meetingId != 0)
             {
                 meeting.MeetingSessions.Remove(dbEvent);
@@ -220,8 +276,48 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
                 }
 
+                await RemoveCalendarEvents(meeting);
+
                 meeting.MeetingSessions.Clear();
                 _lmsCourseMeetingModel.RegisterSave(meeting);
+            }
+        }
+
+        private async Task RemoveCalendarEvent(LmsMeetingSession dbEvent)
+        {
+            if (_calendarEventService != null)
+            {
+                try
+                {
+                    var lmsSettings = _license.GetLMSSettings(Settings);
+                    if (dbEvent.LmsCalendarEventId.HasValue)
+                    {
+                        await _calendarEventService.DeleteCalendarEvent(dbEvent.LmsCalendarEventId.Value, lmsSettings);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e.Message);
+                }
+            }
+        }
+
+        private async Task RemoveCalendarEvents(LmsCourseMeeting meeting)
+        {
+            if (_calendarEventService != null)
+            {
+                try
+                {
+                    var lmsSettings = _license.GetLMSSettings(Settings);
+                    foreach (var session in meeting.MeetingSessions.Where(s => s.LmsCalendarEventId.HasValue))
+                    {
+                        await _calendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId.Value, lmsSettings);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e.Message);
+                }
             }
         }
 

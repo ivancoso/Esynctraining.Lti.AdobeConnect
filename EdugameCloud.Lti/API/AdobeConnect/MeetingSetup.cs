@@ -154,6 +154,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             await meetingSessionService.DeleteMeetingSessionsAsync(meeting, param);
 
             this.LmsCourseMeetingModel.RegisterDelete(meeting, flush: true);
+
+            await RemoveLmsCalendarEventForMeeting(lmsLicense, meeting);
                         
             if (skipRemovingFromAC)
             {
@@ -304,6 +306,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         param,
                         lmsLicense,
                         meeting,
+                        null,
                         //timeZone,
                         trace);
 
@@ -593,7 +596,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            if(meeting == null)
+            LmsCalendarEventDTO lmsCalendarEvent = null;
+
+            if (meeting == null)
             {
                 meeting = this.GetCourseMeeting(lmsLicense, param.course_id, meetingDTO.Id ?? 0,
                     meetingDTO.GetMeetingType());
@@ -694,6 +699,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 sw = Stopwatch.StartNew();
 
                 ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
+
+                //--------------------------- CalendarEvent
+                lmsCalendarEvent = await CreateOrUpdateCalendarEvent(lmsLicense, meeting, updateItem, meetingDTO, param, isNewMeeting);
+                //-----------------------------
 
                 sw.Stop();
                 trace.AppendFormat("SaveMeeting: CreateSco: time: {0}.", sw.Elapsed.ToString());
@@ -855,6 +864,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                  param,
                  lmsLicense,
                  info,
+                 lmsCalendarEvent,
                  //timeZone,
                  trace);
 
@@ -886,7 +896,106 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return OperationResultWithData<MeetingDTO>.Success(message, updatedMeeting);
         }
-        
+
+        private async Task<LmsCalendarEventDTO> CreateOrUpdateCalendarEvent(ILmsLicense lmsLicense, LmsCourseMeeting meeting, MeetingUpdateItem updateItem, MeetingDTOInput meetingDTO, LtiParamDTO param, bool isNewMeeting)
+        {
+            LmsCalendarEventDTO lmsCalendarEvent = null;
+
+            var lmsCalendarService =
+                LmsFactory.GetCalendarEventService((LmsProviderEnum)lmsLicense.LmsProviderId);
+
+            if (lmsCalendarService == null)
+                return null;
+
+            if (meeting.LmsMeetingType != (int) LmsMeetingType.Meeting &&
+                meeting.LmsMeetingType != (int) LmsMeetingType.VirtualClassroom &&
+                meeting.LmsMeetingType != (int) LmsMeetingType.Seminar)
+                return null;
+
+            var lmsSettings = lmsLicense.GetLMSSettings(Settings);
+
+            if (isNewMeeting)
+            {
+                var eventDto = new LmsCalendarEventDTO
+                {
+                    StartAt = DateTime.Parse(updateItem.DateBegin),
+                    EndAt = DateTime.Parse(updateItem.DateEnd),
+                    Title = meetingDTO.Name
+                };
+                lmsCalendarEvent =
+                    await lmsCalendarService.CreateEvent(param.course_id.ToString(), lmsSettings, eventDto);
+            }
+            else
+            {
+                var eventDto = new LmsCalendarEventDTO
+                {
+                    Id = meeting.LmsCalendarEventId.Value,
+                    StartAt = DateTime.Parse(updateItem.DateBegin),
+                    EndAt = DateTime.Parse(updateItem.DateEnd),
+                    Title = meetingDTO.Name
+                };
+                lmsCalendarEvent =
+                    await lmsCalendarService.UpdateEvent(param.course_id.ToString(), lmsSettings, eventDto);
+            }
+
+            return lmsCalendarEvent;
+        }
+
+        private async Task RemoveLmsCalendarEventForMeeting(ILmsLicense lmsLicense, LmsCourseMeeting meeting)
+        {
+            var lmsCalendarService = LmsFactory.GetCalendarEventService((LmsProviderEnum) lmsLicense.LmsProviderId);
+            if (lmsCalendarService == null)
+                return;
+
+            if (!((meeting.LmsMeetingType == (int) LmsMeetingType.Meeting)
+                  || (meeting.LmsMeetingType == (int) LmsMeetingType.VirtualClassroom)
+                  || (meeting.LmsMeetingType == (int) LmsMeetingType.Seminar)))
+                return;
+
+            var lmsSettings = lmsLicense.GetLMSSettings(Settings);
+            try
+            {
+                if (meeting.LmsCalendarEventId.HasValue)
+                {
+                    await lmsCalendarService.DeleteCalendarEvent(meeting.LmsCalendarEventId.Value, lmsSettings);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message);
+            }
+        }
+
+        //private async Task RemoveLmsCalendarEventsForMeetingSessions(ILmsLicense lmsLicense, LmsCourseMeeting meeting)
+        //{
+        //    var lmsCalendarService = LmsFactory.GetCalendarEventService((LmsProviderEnum) lmsLicense.LmsProviderId);
+        //    if (lmsCalendarService == null)
+        //        return;
+
+        //    if (!((meeting.LmsMeetingType == (int) LmsMeetingType.Meeting)
+        //          || (meeting.LmsMeetingType == (int) LmsMeetingType.VirtualClassroom)
+        //          || (meeting.LmsMeetingType == (int) LmsMeetingType.Seminar)))
+        //        return;
+
+        //    if (meeting.MeetingSessions == null)
+        //        return;
+
+        //    var lmsSettings = lmsLicense.GetLMSSettings(Settings);
+
+        //    try
+        //    {
+        //        foreach (var meetingSession in meeting.MeetingSessions.Where(s => s.LmsCalendarEventId.HasValue))
+        //        {
+        //            await lmsCalendarService.DeleteCalendarEvent(meetingSession.LmsCalendarEventId.Value, lmsSettings);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Logger.Error(e.Message);
+        //    }
+        //}
+
+
         // TODO: move MeetingReuseDTO
         public async Task<OperationResult> ReuseExistedAdobeConnectMeeting(ILmsLicense lmsLicense,
             LmsUser lmsUser,
@@ -1630,6 +1739,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             ILmsLicense lmsLicense,
             MeetingInfo meeting,
+            LmsCalendarEventDTO lmsCalendarEventDto,
             //TimeZoneInfo timeZone,
             StringBuilder trace = null)
         {
@@ -1646,6 +1756,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var type = (LmsMeetingType)meeting.DbRecord.LmsMeetingType;
             string officeHoursString = (type == LmsMeetingType.OfficeHours) ? meeting.DbRecord.OfficeHours.Hours : null;
 
+            meeting.DbRecord.LmsCalendarEventId = lmsCalendarEventDto?.Id;
             string meetingName = string.Empty;
             // NOTE: support created meetings; update MeetingNameJson
             if (string.IsNullOrWhiteSpace(meeting.DbRecord.MeetingNameJson))
