@@ -8,11 +8,11 @@ using Esynctraining.Lti.Lms.Common.API;
 
 namespace Esynctraining.Lti.Lms.Canvas
 {
-    public class CalendarEventService : LmsCalendarEventServiceBase
+    public class CanvasCalendarEventService : LmsCalendarEventServiceBase
     {
         private readonly IEGCEnabledCanvasAPI _canvasApi;
 
-        public CalendarEventService(IEGCEnabledCanvasAPI canvasApi, ILogger logger)
+        public CanvasCalendarEventService(IEGCEnabledCanvasAPI canvasApi, ILogger logger)
         {
             _canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
         }

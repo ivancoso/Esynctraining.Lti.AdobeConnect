@@ -9,5 +9,17 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         public DateTime StartAt { get; set; }
         public DateTime EndAt { get; set; }
         public string Description { get; set; }
+
+        public LmsCalendarEventDTO()
+        {
+            
+        }
+
+        public LmsCalendarEventDTO(DateTime startTime, DateTime endTime, string title)
+        {
+            StartAt = startTime;
+            EndAt = endTime;
+            Title = title;
+        }
     }
 }
