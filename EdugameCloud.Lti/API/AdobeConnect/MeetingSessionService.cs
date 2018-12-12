@@ -185,7 +185,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     StartAt = dbEvent.StartDate,
                     EndAt = dbEvent.EndDate
                 };
-                await _calendarEventService.CreateEvent(param.course_id.ToString(), lmsSettings, calendarEventDto);
+                LmsCalendarEventDTO newClaendarEventDto =  await _calendarEventService.CreateEvent(param.course_id.ToString(), lmsSettings, calendarEventDto);
+                dbEvent.LmsCalendarEventId = newClaendarEventDto?.Id;
             }
 
             meeting.MeetingSessions.Add(dbEvent);
