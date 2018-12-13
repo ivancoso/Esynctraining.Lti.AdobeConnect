@@ -1,4 +1,5 @@
-﻿using EdugameCloud.Lti.Core.Constants;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using EdugameCloud.Lti.Core.Constants;
 
 namespace EdugameCloud.Lti.DTO
 {
@@ -142,6 +143,7 @@ namespace EdugameCloud.Lti.DTO
             UseCourseSections = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections);
             UseCourseMeetingsCustomLayout = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout);
             EnableOfficeHoursSlots = instance.GetSetting<bool>(LmsCompanySettingNames.EnableOfficeHoursSlots);
+            EnableCanvasExportToCalendar = instance.GetSetting<bool>(LmsCompanySettingNames.EnableCanvasExportToCalendar);
             Telephony = new TelephonyDTO(instance);
         }
 
@@ -520,6 +522,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "enableOfficeHoursSlots")]
         public bool EnableOfficeHoursSlots { get; set; }
+
+        [DataMember(Name = "enableCanvasExportToCalendar")]
+        public bool EnableCanvasExportToCalendar { get; set; }
     }
 
 }
