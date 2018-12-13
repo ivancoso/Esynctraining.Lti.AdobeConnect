@@ -39,6 +39,7 @@
                                  SpeakerImage = xml.SelectSingleNodeValue("speaker-image/text()"),
                                  SpeakerBriefOverview = xml.SelectSingleNodeValue("speaker-brief-overview/text()"),
                                  SpeakerDetailedOverview = xml.SelectSingleNodeValue("speaker-detailed-overview/text()"),
+                                 PasswordBypass = xml.ParseNodeBool("password-bypass/text()"),
                 };
 
                 ei.Duration = ei.DateEnd.Subtract(ei.DateBegin);
@@ -58,3 +59,34 @@
         }
     }
 }
+/*
+ <results>
+<status code="ok"/>
+<event-info>
+<account-id>7</account-id>
+<account-name>Enterprise Account</account-name>
+<date-begin>2018-12-20T02:30:00.000-08:00</date-begin>
+<date-end>2018-12-20T03:30:00.000-08:00</date-end>
+<date-modified>2018-12-13T02:45:09.447-08:00</date-modified>
+<domain-name>https://connectstage.esynctraining.com</domain-name>
+<event-category>live</event-category>
+<event-guest-policy>guest</event-guest-policy>
+<event-status>not-cancelled</event-status>
+<group-id>1890593</group-id>
+<is-registration-limit-enabled>false</is-registration-limit-enabled>
+<is-social-enabled>false</is-social-enabled>
+<login-is-email>false</login-is-email>
+<login-url>/_a7/e10idmt6gyw/event/login.html</login-url>
+<name>BC-464 Without password</name>
+<number-registered-users>1</number-registered-users>
+<password-bypass>true</password-bypass>
+<registration-login-url>/_a7/e10idmt6gyw/event/registration_login.html</registration-login-url>
+<registration-type>advance</registration-type>
+<require-approval>false</require-approval>
+<sc-tracking-sco-name-signature>BC-464 Without password(1890591)</sc-tracking-sco-name-signature>
+<type>meeting</type>
+<url-path>/e10idmt6gyw/</url-path>
+</event-info>
+<preferences acl-id="1890591" lang="en" time-zone-id="4"/>
+</results>
+ */

@@ -59,6 +59,12 @@ namespace Esynctraining.AC.Provider.Entities
         public bool Expired { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether Register Without Password.
+        /// </summary>
+        [XmlElement("password-bypass")]
+        public bool PasswordBypass { get; set; }
+
+        /// <summary>
         /// Gets or sets the duration.
         /// </summary>
         [XmlElement("duration")]
