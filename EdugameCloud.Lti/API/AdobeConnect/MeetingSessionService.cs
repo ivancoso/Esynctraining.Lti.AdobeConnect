@@ -31,10 +31,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public MeetingSessionService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ICalendarExportService calendarExportService, ILmsLicense license, LmsCalendarEventServiceBase calendarEventService)
         {
             _lmsCourseMeetingModel = lmsCourseMeetingModel ?? throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _calendarExportService = calendarExportService;
             _license = license;
-            _calendarEventService = calendarEventService ?? throw new ArgumentNullException(nameof(calendarEventService));
+            _calendarEventService = calendarEventService;
         }
 
         public async Task<IEnumerable<MeetingSessionDTO>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LtiParamDTO param)

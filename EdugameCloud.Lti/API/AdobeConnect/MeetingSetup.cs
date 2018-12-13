@@ -899,10 +899,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private async Task<LmsCalendarEventDTO> CreateOrUpdateCalendarEvent(ILmsLicense lmsLicense, LmsCourseMeeting meeting, MeetingUpdateItem updateItem, MeetingDTOInput meetingDTO, LtiParamDTO param, bool isNewMeeting)
         {
+            
+
             LmsCalendarEventDTO lmsCalendarEvent = null;
 
             var lmsCalendarService =
-                LmsFactory.GetCalendarEventService((LmsProviderEnum)lmsLicense.LmsProviderId);
+                LmsFactory.GetCalendarEventService((LmsProviderEnum)lmsLicense.LmsProviderId, lmsLicense);
 
             if (lmsCalendarService == null)
                 return null;
@@ -943,7 +945,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private async Task RemoveLmsCalendarEventForMeeting(ILmsLicense lmsLicense, LmsCourseMeeting meeting)
         {
-            var lmsCalendarService = LmsFactory.GetCalendarEventService((LmsProviderEnum) lmsLicense.LmsProviderId);
+            var lmsCalendarService = LmsFactory.GetCalendarEventService((LmsProviderEnum) lmsLicense.LmsProviderId, lmsLicense);
             if (lmsCalendarService == null)
                 return;
 

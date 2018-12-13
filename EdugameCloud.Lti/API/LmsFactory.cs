@@ -3,6 +3,7 @@ using Castle.Windsor;
 using EdugameCloud.Lti.API.AdobeConnect;
 using Esynctraining.Core.Utils;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.API;
@@ -87,11 +88,15 @@ namespace EdugameCloud.Lti.API
             return IoC.Resolve<LmsUserServiceBase>(lmsId.ToString());
         }
 
-        public LmsCalendarEventServiceBase GetCalendarEventService(LmsProviderEnum lmsId)
+        public LmsCalendarEventServiceBase GetCalendarEventService(LmsProviderEnum lmsId, ILmsLicense lmsLicense)
         {
             switch (lmsId)
             {
                 case LmsProviderEnum.Canvas:
+                    bool enableExportToCalendar = lmsLicense.GetSetting<bool>(LmsCompanySettingNames.EnableCanvasExportToCalendar);
+                    if (!enableExportToCalendar)
+                        return null;
+
                     return IoC.Resolve<LmsCalendarEventServiceBase>(lmsId + "CalendarService");
             }
 
@@ -131,7 +136,7 @@ namespace EdugameCloud.Lti.API
                         new { license = lmsLicense, param, calendarExportService });
             }
 
-            return new MeetingSessionService(lmsCourseMeetingModel, logger, calendarExportService, lmsLicense, GetCalendarEventService(lmsId));
+            return new MeetingSessionService(lmsCourseMeetingModel, logger, calendarExportService, lmsLicense, GetCalendarEventService(lmsId, lmsLicense));
         }
         #endregion
 
