@@ -10,10 +10,10 @@
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
     <PackageReleaseNotes>update to last code base</PackageReleaseNotes>
-    <Version>1.0.5.0</Version>
+    <Version>1.0.5.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.5.0</FileVersion>
-    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <FileVersion>1.0.5.1</FileVersion>
+    <AssemblyVersion>1.0.5.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

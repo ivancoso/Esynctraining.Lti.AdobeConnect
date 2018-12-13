@@ -9,9 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect.Api</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect.Api</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>parsing of recording with duration &gt;1 day</PackageReleaseNotes>
+    <PackageReleaseNotes>GetEventInfo added parsing of PasswordBypass field</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.3.17</Version>
+    <Version>1.0.3.18</Version>
+    <AssemblyVersion>1.0.3.18</AssemblyVersion>
+    <FileVersion>1.0.3.18</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
