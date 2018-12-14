@@ -152,10 +152,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 LmsFactory.GetMeetingSessionService(lmsLicense, param);
 
             await meetingSessionService.DeleteMeetingSessionsAsync(meeting, param);
+            await RemoveLmsCalendarEventForMeeting(lmsLicense, meeting);
 
             this.LmsCourseMeetingModel.RegisterDelete(meeting, flush: true);
-
-            await RemoveLmsCalendarEventForMeeting(lmsLicense, meeting);
                         
             if (skipRemovingFromAC)
             {
@@ -702,6 +701,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 //--------------------------- CalendarEvent
                 lmsCalendarEvent = await CreateOrUpdateCalendarEvent(lmsLicense, meeting, updateItem, meetingDTO, param, isNewMeeting);
+                if (isNewMeeting)
+                {
+                    meeting.LmsCalendarEventId = lmsCalendarEvent?.Id;
+                }
                 //-----------------------------
 
                 sw.Stop();
@@ -1758,7 +1761,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var type = (LmsMeetingType)meeting.DbRecord.LmsMeetingType;
             string officeHoursString = (type == LmsMeetingType.OfficeHours) ? meeting.DbRecord.OfficeHours.Hours : null;
 
-            meeting.DbRecord.LmsCalendarEventId = lmsCalendarEventDto?.Id;
             string meetingName = string.Empty;
             // NOTE: support created meetings; update MeetingNameJson
             if (string.IsNullOrWhiteSpace(meeting.DbRecord.MeetingNameJson))

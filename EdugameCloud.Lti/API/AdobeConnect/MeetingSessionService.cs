@@ -212,6 +212,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] {dto}, param, _license);
                 dto = sakaiEventResult.Single();
             }
+
+            if (_calendarEventService != null)
+            {
+                if (dbEvent.LmsCalendarEventId.HasValue)
+                {
+                    var lmsSettings = _license.GetLMSSettings(Settings);
+                    LmsCalendarEventDTO calendarEventDto = new LmsCalendarEventDTO()
+                    {
+                        Id = dbEvent.LmsCalendarEventId.Value,
+                        Title = dbEvent.Name,
+                        StartAt = dbEvent.StartDate,
+                        EndAt = dbEvent.EndDate
+                    };
+                    await _calendarEventService.UpdateEvent(param.course_id.ToString(), lmsSettings, calendarEventDto);
+                }
+            }
+
             dbEvent.Name = dto.Name;
             dbEvent.Summary = dto.Summary;
             dbEvent.StartDate = dto.StartDate;
