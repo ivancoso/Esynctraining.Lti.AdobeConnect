@@ -143,7 +143,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                     }
                     var createResult = await _meetingService.CreateMeeting(lmsSettings, CourseId,
                         user,
-                        Param.lis_person_contact_email_primary, requestDto, User);
+                        Param.lis_person_contact_email_primary, requestDto);
 
                     return createResult;
                 }

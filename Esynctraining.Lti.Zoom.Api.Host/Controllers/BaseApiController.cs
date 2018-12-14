@@ -63,7 +63,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 
         public string CourseId { get; set; }
         public LtiParamDTO Param { get; set; }
-        public LmsUserDTO User { get; set; }
+        //public LmsUserDTO User { get; set; }
 
         #region Constructors and Destructors
 

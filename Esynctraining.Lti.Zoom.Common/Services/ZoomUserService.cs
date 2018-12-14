@@ -157,7 +157,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         public async Task<bool> RegisterUsersToMeetingAndApprove(string meetingId, IEnumerable<RegistrantDto> registrants, bool checkRegistrants)
         {
             var registrantsToApprove = new List<ZoomMeetingRegistrantDto>();
-            var zoomUserEmails = (await GetActiveUsers()).Select(x =>x.Email);
+            var zoomUserEmails = (await GetActiveUsers()).Where(x => !string.IsNullOrEmpty(x.Email)).Select(x =>x.Email);
             var regs = GetMeetingRegistrants(meetingId);
 
             foreach (var registrant in registrants)

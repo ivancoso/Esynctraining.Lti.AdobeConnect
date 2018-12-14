@@ -173,7 +173,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 //var license = await _licenseService.GetLicense(s.LicenseKey);
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
                 var swGetUsers = Stopwatch.StartNew();
-                var activeUserEmails = (await _userService.GetActiveUsers()).Select(x => x.Email);
+                var activeUserEmails = (await _userService.GetActiveUsers()).Where(x => !string.IsNullOrEmpty(x.Email)).Select(x => x.Email);
                 swGetUsers.Stop();
                 Logger.InfoFormat(
                     $"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. GetUsersEmails Time : {swGetUsers.Elapsed}");

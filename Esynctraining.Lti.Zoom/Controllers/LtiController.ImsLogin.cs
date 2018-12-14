@@ -278,7 +278,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 ZoomApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
             });
 
-            var activeUserEmails = (GetUsersFromApi(UserStatus.Active, zoomApi)).Select(x => x.Email);
+            var activeUserEmails = (GetUsersFromApi(UserStatus.Active, zoomApi)).Where(x => !string.IsNullOrEmpty(x.Email)).Select(x => x.Email);
 
             if (!activeUserEmails.Any(x =>
                 x.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))

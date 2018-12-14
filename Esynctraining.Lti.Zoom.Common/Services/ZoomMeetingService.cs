@@ -170,7 +170,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         }
 
         public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> lmsSettings, string courseId, UserInfoDto user, string email,
-            CreateMeetingViewModel requestDto, LmsUserDTO lmsUser)
+            CreateMeetingViewModel requestDto)
         {
             LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
 

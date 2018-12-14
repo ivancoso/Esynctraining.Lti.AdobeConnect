@@ -54,12 +54,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Filters
                             var api = context.Controller as BaseApiController;
                             
                             var licenseService = (ILmsLicenseService)context.HttpContext.RequestServices.GetService(typeof(ILmsLicenseService));
-                            var lmsUserServiceFactory = (LmsUserServiceFactory)context.HttpContext.RequestServices.GetService(typeof(LmsUserServiceFactory));
+//                            var lmsUserServiceFactory = (LmsUserServiceFactory)context.HttpContext.RequestServices.GetService(typeof(LmsUserServiceFactory));
 
                             api.Session = session;
                             api.LmsLicense = await licenseService.GetLicense(session.LicenseKey);
                             api.CourseId = session.CourseId;
-                            api.User = await GetLmsUser(api, lmsUserServiceFactory);
+                            //api.User = await GetLmsUser(api, lmsUserServiceFactory);
                             api.Param = GetParam(session.SessionData, context.HttpContext);
                         }
                     }
@@ -73,12 +73,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Filters
             await base.OnActionExecutionAsync(context, next);
         }
 
-        private async Task<LmsUserDTO> GetLmsUser(BaseApiController controller, LmsUserServiceFactory lmsUserServiceFactory)
-        {
-            var lmsUserService = lmsUserServiceFactory.GetUserService(controller.LmsLicense.ProductId);
-            var user = await lmsUserService.GetUser(controller.LmsLicense.GetLMSSettings(controller.Session), controller.Session.LmsUserId, controller.CourseId);
-            return user.Data;
-        }
+//        private async Task<LmsUserDTO> GetLmsUser(BaseApiController controller, LmsUserServiceFactory lmsUserServiceFactory)
+//        {
+//            var lmsUserService = lmsUserServiceFactory.GetUserService(controller.LmsLicense.ProductId);
+//            var user = await lmsUserService.GetUser(controller.LmsLicense.GetLMSSettings(controller.Session), controller.Session.LmsUserId, controller.CourseId);
+//            return user.Data;
+//        }
 
         private LtiParamDTO GetParam(string sessionData, HttpContext httpContext)
         {
