@@ -932,6 +932,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else
             {
+                if (!meeting.LmsCalendarEventId.HasValue)
+                    return null;
+
                 var eventDto = new LmsCalendarEventDTO
                 {
                     Id = meeting.LmsCalendarEventId.Value,
