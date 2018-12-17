@@ -198,44 +198,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public async Task<MeetingSessionDTO> SaveSessionAsync(int meetingId, MeetingSessionDTO dto, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
-            var dbEvent = meeting.MeetingSessions.SingleOrDefault(x => x.Id == dto.Id)
-                   ?? new LmsMeetingSession { LmsCourseMeeting = meeting};
-
-            if (dbEvent.Id == 0)
+            var meetingSession = GetMeetingSession(dto, meeting);
+            if (meetingSession.Id == 0)
             {
-                meeting.MeetingSessions.Add(dbEvent);
+                meeting.MeetingSessions.Add(meetingSession);
             }
 
-            if (_calendarExportService != null)
-            {
-                dto.EventId = dbEvent.EventId;
-                var sakaiEventResult = await _calendarExportService.SaveEventsAsync(meetingId, new MeetingSessionDTO[] {dto}, param, _license);
-                dto = sakaiEventResult.Single();
-            }
-
-            if (_calendarEventService != null)
-            {
-                if (dbEvent.LmsCalendarEventId.HasValue)
-                {
-                    var lmsSettings = _license.GetLMSSettings(Settings);
-                    LmsCalendarEventDTO calendarEventDto = new LmsCalendarEventDTO()
-                    {
-                        Id = dbEvent.LmsCalendarEventId.Value,
-                        Title = dbEvent.Name,
-                        StartAt = dbEvent.StartDate,
-                        EndAt = dbEvent.EndDate
-                    };
-                    await _calendarEventService.UpdateEvent(param.course_id.ToString(), lmsSettings, calendarEventDto);
-                }
-            }
-
-            dbEvent.Name = dto.Name;
-            dbEvent.Summary = dto.Summary;
-            dbEvent.StartDate = dto.StartDate;
-            dbEvent.EndDate = dto.EndDate;
-
+            await UpdateCalendarEvent(dto, param, meetingSession);
+            UpdateMeetingSession(dto, meetingSession);
             _lmsCourseMeetingModel.RegisterSave(meeting, true);
-            return ConvertFromEntity(dbEvent);
+            return ConvertFromEntity(meetingSession);
         }
 
         public async Task DeleteSessionAsync(int meetingId, int id, LtiParamDTO param)
@@ -367,6 +339,40 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             };
 
             return result;
+        }
+
+        private static LmsMeetingSession GetMeetingSession(MeetingSessionDTO dto, LmsCourseMeeting meeting)
+        {
+            var meetingSession = meeting.MeetingSessions.SingleOrDefault(x => x.Id == dto.Id)
+                                 ?? new LmsMeetingSession { LmsCourseMeeting = meeting };
+            return meetingSession;
+        }
+
+        private static void UpdateMeetingSession(MeetingSessionDTO dto, LmsMeetingSession dbEvent)
+        {
+            dbEvent.Name = dto.Name;
+            dbEvent.Summary = dto.Summary;
+            dbEvent.StartDate = dto.StartDate;
+            dbEvent.EndDate = dto.EndDate;
+        }
+
+        private async Task UpdateCalendarEvent(MeetingSessionDTO dto, LtiParamDTO param, LmsMeetingSession dbEvent)
+        {
+            if (_calendarEventService != null)
+            {
+                if (dbEvent.LmsCalendarEventId.HasValue)
+                {
+                    var lmsSettings = _license.GetLMSSettings(Settings);
+                    LmsCalendarEventDTO calendarEventDto = new LmsCalendarEventDTO()
+                    {
+                        Id = dbEvent.LmsCalendarEventId.Value,
+                        Title = dto.Name,
+                        StartAt = dto.StartDate,
+                        EndAt = dto.EndDate
+                    };
+                    await _calendarEventService.UpdateEvent(param.course_id.ToString(), lmsSettings, calendarEventDto);
+                }
+            }
         }
 
     }
