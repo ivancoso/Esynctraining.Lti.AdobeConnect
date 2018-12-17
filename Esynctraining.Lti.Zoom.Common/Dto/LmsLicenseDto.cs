@@ -49,6 +49,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
                     result.Add(LmsUserSettingNames.Token, session.Token);
                     result.Add(LmsUserSettingNames.RefreshToken, session.RefreshToken);
+                    result.Add(LmsLicenseSettingNames.EnableCanvasExportToCalendar, Settings.ContainsKey(LmsLicenseSettingNames.EnableCanvasExportToCalendar) && Settings[LmsLicenseSettingNames.EnableCanvasExportToCalendar] == "True");
                     break;
 
                 case 1020:

@@ -271,7 +271,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             var date = LongToDateTime(requestDto.StartTime.Value);
 
             var lmsCalendarEvent = new LmsCalendarEventDTO(date, date.AddMinutes(requestDto.Duration.Value), requestDto.Topic);
-            var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId);
+            var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
 
             if (calendarEventService == null)
                 return null;
@@ -290,7 +290,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
         private async Task RemoveLmsCalendarEventForMeeting(LmsLicenseDto licenseDto, Dictionary<string, object> lmsSettings, LmsCourseMeeting meeting)
         {
-            var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId);
+            var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
             if (calendarEventService == null)
                 return;
 
@@ -311,7 +311,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         {
             if (meeting.MeetingSessions == null)
                 return;
-            var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId);
+            var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
             if (calendarEventService == null)
                 return;
 
@@ -409,7 +409,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
         private async Task UpdateLmsCalendarEvent(LmsLicenseDto licenseDto, Dictionary<string, object> licenseSettings, string courseId, CreateMeetingViewModel vm, LmsCourseMeeting dbMeeting)
         {
-            var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId);
+            var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, licenseSettings);
             if (calendarEventService == null)
                 return;
 

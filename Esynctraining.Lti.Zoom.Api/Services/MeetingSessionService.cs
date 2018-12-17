@@ -76,7 +76,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             }
 
             var licenseDto = await _licenseAccessor.GetLicense();
-            var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId);
+            var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
             
 
             foreach (var session in meetingSessions)
@@ -129,7 +129,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             };
 
             var licenseDto = await _licenseAccessor.GetLicense();
-            var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId);
+            var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
             LmsCalendarEventDTO newLmsEvent = null;
             if (lmsCalendarEventService != null)
             {
@@ -183,7 +183,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                     $"Could not find meeting session in database. MeetingId={meeting.Id}, Id={id}");
             }
             var licenseDto = await _licenseAccessor.GetLicense();
-            var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId);
+            var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
 
             if (lmsCalendarEventService != null)
             {
@@ -202,7 +202,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             if (meeting.MeetingSessions.Any())
             {
                 var licenseDto = await _licenseAccessor.GetLicense();
-                var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId);
+                var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
                 if (lmsCalendarEventService != null)
                 {
                     foreach (var session in meeting.MeetingSessions.Where(s => s.LmsCalendarEventId.HasValue))
