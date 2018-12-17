@@ -194,8 +194,13 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             List<SlotDto> result = new List<SlotDto>();
             result.AddRange(dbSlots.Select(x => ConvertToDto(x, lmsUserId)));
-            var resultDto = await AddSlots(meetingId, lmsUserId, null, freeSlots, 2);
-            result.AddRange(resultDto.Data);
+            var addDeletedSlotsResult = await AddSlots(meetingId, lmsUserId, null, freeSlots, 2);
+            if (!addDeletedSlotsResult.IsSuccess)
+            {
+                return OperationResultWithData<IEnumerable<SlotDto>>.Error(addDeletedSlotsResult.Message);
+            }
+
+            result.AddRange(addDeletedSlotsResult.Data);
             return (result as IEnumerable<SlotDto>).ToSuccessResult();
         }
 
