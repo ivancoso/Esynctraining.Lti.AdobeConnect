@@ -29,7 +29,7 @@ namespace EdugameCloud.Lti.Moodle
             List<LmsUserDTO> users = usersTuple.users;
             error = usersTuple.error;
 
-            return string.IsNullOrEmpty(error)
+            return !string.IsNullOrEmpty(error)
                 ? OperationResultWithData<List<LmsUserDTO>>.Error(error)
                 : GroupUsers(users).ToSuccessResult();
         }
