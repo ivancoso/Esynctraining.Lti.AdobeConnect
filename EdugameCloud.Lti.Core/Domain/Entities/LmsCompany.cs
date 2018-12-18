@@ -564,10 +564,8 @@ namespace EdugameCloud.Lti.Domain.Entities
                     break;
 
                 case (int) LmsProviderEnum.AgilixBuzz:
-                    result.Add(LmsLicenseSettingNames.BuzzAdminUsername,
-                        GetSetting<string>(LmsLicenseSettingNames.BuzzAdminUsername));
-                    result.Add(LmsLicenseSettingNames.BuzzAdminPassword,
-                        GetSetting<string>(LmsLicenseSettingNames.BuzzAdminPassword));
+                    result.Add(LmsLicenseSettingNames.BuzzAdminUsername, AdminUser?.Username);
+                    result.Add(LmsLicenseSettingNames.BuzzAdminPassword, AdminUser?.Password);
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
                     result.Add(LmsLicenseSettingNames.LmsDomain, LmsDomain);
                     break;
