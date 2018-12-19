@@ -57,9 +57,6 @@ namespace Esynctraining.Lti.Lms.Common.Dto
             } 
         }
         
-        [IgnoreDataMember]
-        public string PrimaryEmail { get; set; }
-        
         [DataMember]
         public bool IsEditable { get; set; }
 
@@ -83,9 +80,9 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         
         public string GetEmail()
         {
-            if (this.PrimaryEmail != null)
+            if (Email != null)
             {
-                return this.PrimaryEmail;
+                return Email;
             }
 
             try

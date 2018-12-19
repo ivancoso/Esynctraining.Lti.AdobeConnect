@@ -40,7 +40,7 @@ namespace Esynctraining.Lti.Lms.Canvas
             List<LmsUserDTO> users = await _canvasApi.GetUsersForCourse(lmsDomain, courseId, licenseSettings);
 
             // IF emails are NOT included (for student + lmsCompany.AdminUser == null)
-            if (users.Any(x => string.IsNullOrEmpty(x.PrimaryEmail)))
+            if (users.Any(x => string.IsNullOrEmpty(x.Email)))
             {
                 // TODO: details about ampty email users
                 Logger.Error($"[Canvas GetUsers] API did not return emails. CourseID={courseId}. License: '{licenseSettings[LmsLicenseSettingNames.LicenseKey]}'.");

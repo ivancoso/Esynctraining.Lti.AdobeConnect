@@ -118,10 +118,6 @@ namespace EdugameCloud.Lti.Api.Controllers
             {
                 try
                 {
-                    // TRICK: client-side passes 'email' but user.GetEmail() expects primary-email
-                    if (string.IsNullOrEmpty(user.PrimaryEmail) && !string.IsNullOrEmpty(user.Email))
-                        user.PrimaryEmail = user.Email;
-
                     LmsUserDTO updatedUser = null;
                     string error;
                     if (user.GuestId.HasValue)

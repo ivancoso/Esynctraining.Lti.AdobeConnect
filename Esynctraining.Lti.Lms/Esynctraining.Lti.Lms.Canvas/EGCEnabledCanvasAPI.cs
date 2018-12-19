@@ -118,7 +118,6 @@ namespace Esynctraining.Lti.Lms.Canvas
                     Email = user.Email,
                     Login = user.login_id,
                     Name = user.Name,
-                    PrimaryEmail = user.Email,
                     LmsRole = SetRole(user, courseId)
                 };
 
@@ -158,7 +157,6 @@ namespace Esynctraining.Lti.Lms.Canvas
                         Email = user.Email,
                         Login = user.login_id,
                         Name = user.Name,
-                        PrimaryEmail = user.Email,
                         LmsRole = SetRole(user, courseId),
                         SectionIds = user.enrollments.Select(x => x.course_section_id.ToString()).ToList()
                     }).ToList();

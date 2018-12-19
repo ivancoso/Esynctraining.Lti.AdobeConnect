@@ -43,7 +43,6 @@ namespace Esynctraining.Lti.Lms.Schoology
                 Name = usr.name_first + " " + usr.name_last,
                 Email = usr.primary_email,
                 LmsRole = usr.admin == 1 ? "Teacher" : "Student",
-                PrimaryEmail = usr.primary_email,
             };
 
             return lmsUser.ToSuccessResult();
@@ -108,7 +107,6 @@ namespace Esynctraining.Lti.Lms.Schoology
                     Name = x.name_first + " " + x.name_last,
                     Email = x.primary_email,
                     LmsRole = x.admin == 1 ? "Teacher" : "Student",
-                    PrimaryEmail = x.primary_email,
                 })
                 .ToList();
 

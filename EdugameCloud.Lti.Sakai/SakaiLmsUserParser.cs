@@ -64,7 +64,7 @@ namespace EdugameCloud.Lti.Sakai
             var info = new LmsUserDTO();
             info.Id = node.GetNodeValue("id");
             info.Login = node.GetNodeValue("username");
-            info.PrimaryEmail = node.GetNodeValue("email");
+            info.Email = node.GetNodeValue("email");
             info.Name = node.GetNodeValue("fullname");
             info.LmsRole = GetRole(node.GetNodeXmlValues("roles"));
             return info;

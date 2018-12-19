@@ -26,8 +26,7 @@ namespace EdugameCloud.Lti.Bridge
                 LmsRole = result?.Roles?.FirstOrDefault(),
                 Name = result?.Name,
                 LtiId = result?.Id.ToString(),
-                Login = result?.Uid,
-                PrimaryEmail = result?.Email
+                Login = result?.Uid
             }.ToSuccessResult();
         }
 
@@ -43,8 +42,7 @@ namespace EdugameCloud.Lti.Bridge
                 LmsRole = result?.Roles?.FirstOrDefault(),
                 Name = result?.Name,
                 LtiId = result?.Id.ToString(),
-                Login = result?.Uid,
-                PrimaryEmail = result?.Email
+                Login = result?.Uid
             });
             return users.ToList().ToSuccessResult();
         }

@@ -106,7 +106,7 @@ namespace EdugameCloud.Lti.Sakai
                         new LmsUserDTO
                         {
                             LmsRole = groupName,
-                            PrimaryEmail = email,
+                            Email = email,
                             Login = userName,
                             Id = userId,
                             Name = fullName,

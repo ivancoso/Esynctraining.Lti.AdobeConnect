@@ -266,7 +266,7 @@ namespace EdugameCloud.Lti.API
 
             var company = lmsCompanyModel.GetOneById(lmsCompany.Id).Value;
 
-            foreach (var lmsUserDto in lmsUserDtos.Where(x => x.PrimaryEmail != null || x.Login != null || x.Name != null))
+            foreach (var lmsUserDto in lmsUserDtos.Where(x => x.Email != null || x.Login != null || x.Name != null))
             {
                 var dbUser = existedDbUsers.FirstOrDefault(u =>
                     (lmsUserDto.LtiId != null && u.UserId == lmsUserDto.LtiId) || u.UserId == lmsUserDto.Id);
@@ -276,7 +276,7 @@ namespace EdugameCloud.Lti.API
                     Principal principal = null;
                     try
                     {
-                        principal = acUserService.GetOrCreatePrincipal(provider, login, lmsUserDto.PrimaryEmail,
+                        principal = acUserService.GetOrCreatePrincipal(provider, login, lmsUserDto.Email,
                             lmsUserDto.GetFirstName(),
                             lmsUserDto.GetLastName(), lmsCompany);
                     }
@@ -298,11 +298,11 @@ namespace EdugameCloud.Lti.API
                     newUsers.Add(dbUser);
                     logger.InfoFormat(
                         "New user to DB: lmsCompanyId={0}, UserId={1}, Username={2}, Name={3}, Email={4}",
-                        lmsCompany.Id, dbUser.UserId, login, lmsUserDto.Name, lmsUserDto.PrimaryEmail);
+                        lmsCompany.Id, dbUser.UserId, login, lmsUserDto.Name, lmsUserDto.Email);
                     lmsUserModel.RegisterSave(dbUser);
                 }
                 dbUser.Name = lmsUserDto.Name;
-                dbUser.Email = lmsUserDto.PrimaryEmail;
+                dbUser.Email = lmsUserDto.Email;
                 dbUser.UserIdExtended = lmsUserDto.LtiId != null ? lmsUserDto.Id : null;
                 // todo: save lmsUserDto.id to dbUser.UserId
             }
@@ -331,7 +331,7 @@ namespace EdugameCloud.Lti.API
                         LtiId = x.User.UserId,
                         Login = x.User.Username,
                         Name = x.User.Name,
-                        PrimaryEmail = x.User.Email,
+                        Email = x.User.Email,
                         LmsRole = x.LmsRole
                     }),
                     dbUsers,

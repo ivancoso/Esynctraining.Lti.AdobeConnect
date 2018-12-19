@@ -82,7 +82,7 @@ namespace EdugameCloud.Lti.Haiku
                 Id = node.Attribute("user_id").Value,
                 LmsRole = node.Attribute("role").Value == "S" ? "Student" : "Teacher",
                 Login = user.Attribute("login").Value,
-                PrimaryEmail = user.Attribute("email")?.Value ?? user.Attribute("unconfirmed_email")?.Value,
+                Email = user.Attribute("email")?.Value ?? user.Attribute("unconfirmed_email")?.Value,
                 Name = user.Attribute("first_name").Value + " " + user.Attribute("last_name").Value,
                 SectionIds = node.Elements("section").Select( s => s.Attribute("id").Value).ToList()
             };

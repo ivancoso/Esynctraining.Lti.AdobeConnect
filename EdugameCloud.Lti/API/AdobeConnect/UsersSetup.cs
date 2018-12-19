@@ -188,7 +188,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     LtiId = x.User.UserId,
                     Login = x.User.Username,
                     Name = x.User.Name,
-                    PrimaryEmail = x.User.Email,
+                    Email = x.User.Email,
                     LmsRole = x.LmsRole,
                 });
 
@@ -435,16 +435,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             ProcessGuests(users, meeting, attendees.Hosts.Where(h => !h.HasChildren), AcRole.Host);
             ProcessGuests(users, meeting, attendees.Presenters.Where(h => !h.HasChildren), AcRole.Presenter);
             ProcessGuests(users, meeting, attendees.Participants.Where(h => !h.HasChildren), AcRole.Participant);
-
-            //TRICK: we need email on client side only if AC uses emails as login!!
-            // we use emails to check they are not empty and are unique within a course
-            if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault())
-            {
-                users.ForEach(x => 
-                {
-                    x.Email = x.PrimaryEmail;
-                });
-            }
 
             return new Tuple<IList<LmsUserDTO>, string>(users, null);
         }
@@ -865,8 +855,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault())
             {
-                bool containsEmptyEmails = lmsUsers.Any(x => string.IsNullOrWhiteSpace(x.PrimaryEmail));
-                bool containsDuplicateEmails = lmsUsers.Select(x => x.PrimaryEmail).Count() != lmsUsers.Select(x => x.PrimaryEmail).Distinct().Count();
+                bool containsEmptyEmails = lmsUsers.Any(x => string.IsNullOrWhiteSpace(x.Email));
+                bool containsDuplicateEmails = lmsUsers.Select(x => x.Email).Count() != lmsUsers.Select(x => x.Email).Distinct().Count();
                 if (containsEmptyEmails || containsDuplicateEmails)
                 {
                     message += Resources.Messages.UsersCannotBeSync;
@@ -879,23 +869,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     message += ". ";
                 }
 
-                var duplicateEmails = lmsUsers.GroupBy(x => x.PrimaryEmail)
+                var duplicateEmails = lmsUsers.GroupBy(x => x.Email)
                     .Where(g => g.Count() > 1)
                     .Select(y => y.Key)
                     .ToList();
 
                 // NOTE: process ONLY VALID users
-                usersToAddToMeeting = lmsUsers.Where(x => !string.IsNullOrWhiteSpace(x.PrimaryEmail) && !duplicateEmails.Contains(x.PrimaryEmail)).ToList();
-            }
-
-            //TRICK: we need email on client side only if AC uses emails as login!!
-            // we use emails to check they are not empty and are unique within a course
-            if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault())
-            {
-                usersToAddToMeeting.ForEach(x =>
-                {
-                    x.Email = x.PrimaryEmail;
-                });
+                usersToAddToMeeting = lmsUsers.Where(x => !string.IsNullOrWhiteSpace(x.Email) && !duplicateEmails.Contains(x.Email)).ToList();
             }
 
             return usersToAddToMeeting;
