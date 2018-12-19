@@ -9,6 +9,7 @@ using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
@@ -108,6 +109,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (_calendarEventService == null)
                 return;
+
 
             foreach (var session in meeting.MeetingSessions)
             {

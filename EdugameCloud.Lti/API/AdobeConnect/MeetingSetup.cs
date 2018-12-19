@@ -700,7 +700,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
 
                 //--------------------------- CalendarEvent
-                lmsCalendarEvent = await CreateOrUpdateCalendarEvent(lmsLicense, meeting, updateItem, meetingDTO, param, isNewMeeting);
+                lmsCalendarEvent = await CreateOrUpdateCalendarEvent(lmsLicense, meeting, param, isNewMeeting, result);
                 if (isNewMeeting)
                 {
                     meeting.LmsCalendarEventId = lmsCalendarEvent?.Id;
@@ -900,10 +900,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResultWithData<MeetingDTO>.Success(message, updatedMeeting);
         }
 
-        private async Task<LmsCalendarEventDTO> CreateOrUpdateCalendarEvent(ILmsLicense lmsLicense, LmsCourseMeeting meeting, MeetingUpdateItem updateItem, MeetingDTOInput meetingDTO, LtiParamDTO param, bool isNewMeeting)
+        private async Task<LmsCalendarEventDTO> CreateOrUpdateCalendarEvent(ILmsLicense lmsLicense, LmsCourseMeeting meeting, LtiParamDTO param, bool isNewMeeting, ScoInfoResult result)
         {
-            
-
             LmsCalendarEventDTO lmsCalendarEvent = null;
 
             var lmsCalendarService =
@@ -923,9 +921,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 var eventDto = new LmsCalendarEventDTO
                 {
-                    StartAt = DateTime.Parse(updateItem.DateBegin),
-                    EndAt = DateTime.Parse(updateItem.DateEnd),
-                    Title = meetingDTO.Name
+                    StartAt = result.ScoInfo.BeginDate,
+                    EndAt = result.ScoInfo.EndDate,
+                    Title = result.ScoInfo.Name
                 };
                 lmsCalendarEvent =
                     await lmsCalendarService.CreateEvent(param.course_id.ToString(), lmsSettings, eventDto);
@@ -938,9 +936,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 var eventDto = new LmsCalendarEventDTO
                 {
                     Id = meeting.LmsCalendarEventId.Value,
-                    StartAt = DateTime.Parse(updateItem.DateBegin),
-                    EndAt = DateTime.Parse(updateItem.DateEnd),
-                    Title = meetingDTO.Name
+                    StartAt = result.ScoInfo.BeginDate,
+                    EndAt = result.ScoInfo.EndDate,
+                    Title = result.ScoInfo.Name
                 };
                 lmsCalendarEvent =
                     await lmsCalendarService.UpdateEvent(param.course_id.ToString(), lmsSettings, eventDto);
