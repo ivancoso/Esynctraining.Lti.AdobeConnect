@@ -542,7 +542,7 @@ namespace EdugameCloud.Lti.API
                             : new DateTime(checkStart.Year, checkStart.Month, checkStart.Day, checkStart.Hour, 0, 0, DateTimeKind.Utc)
                                 .AddMinutes((checkStart.Minute / availabilityDto.Duration + (checkStart.Minute % availabilityDto.Duration == 0 ? 0 : 1)) * availabilityDto.Duration);
 
-                        if (intervalCheckStart < checkStart || intervalCheckStart >= checkEnd) //check if interval start is inside of period that we need to check
+                        if (intervalCheckStart < checkStart || intervalCheckStart >= checkEnd || intervalCheckStart >= availabilityDto.PeriodEnd) //check if interval start is inside of period that we need to check
                             continue;
 
                         var intervalCheckEnd = interval.End > interval.Start
