@@ -227,7 +227,7 @@ namespace Esynctraining.Lti.Lms.BlackBoard
                                         {
                                             Id = e.userId,
                                             Login = user?.name,
-                                            PrimaryEmail = user?.extendedInfo?.emailAddress,
+                                            Email = user?.extendedInfo?.emailAddress,
                                             Name = user?.extendedInfo == null ? user?.name : $"{user.extendedInfo.givenName} {user.extendedInfo.familyName}".Trim(),
                                             LmsRole = GetRole(e.roleId, roles),
                                             LtiId = ltiIdString,
