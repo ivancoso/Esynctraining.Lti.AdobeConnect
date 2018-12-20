@@ -122,7 +122,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     LmsCalendarEventDTO lmsCalendarEvent =
                         await _calendarEventService.CreateEvent(param.course_id.ToString(), lmsSettings, eventDto);
 
-                    session.LmsCalendarEventId = lmsCalendarEvent.Id;
+                    session.LmsCalendarEventId = lmsCalendarEvent?.Id;
                 }
                 catch (Exception e)
                 {
