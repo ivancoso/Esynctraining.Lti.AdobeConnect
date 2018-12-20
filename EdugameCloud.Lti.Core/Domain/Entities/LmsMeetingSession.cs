@@ -18,7 +18,7 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
 
         public virtual string Summary { get; set; }
 
-        public virtual int? LmsCalendarEventId { get; set; }
+        public virtual string LmsCalendarEventId { get; set; }
 
     }
 }

@@ -12,6 +12,6 @@ namespace Esynctraining.Lti.Lms.Common.API
 
         public abstract Task<IEnumerable<LmsCalendarEventDTO>> GetUserCalendarEvents(string lmsUserId, Dictionary<string, object> licenseSettings);
 
-        public abstract Task DeleteCalendarEvent(int eventId, Dictionary<string, object> licenseSettings);
+        public abstract Task DeleteCalendarEvent(string eventId, Dictionary<string, object> licenseSettings);
     }
 }

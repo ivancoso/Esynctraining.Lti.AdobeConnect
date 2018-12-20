@@ -930,12 +930,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else
             {
-                if (!meeting.LmsCalendarEventId.HasValue)
+                if (string.IsNullOrEmpty(meeting.LmsCalendarEventId))
                     return null;
 
                 var eventDto = new LmsCalendarEventDTO
                 {
-                    Id = meeting.LmsCalendarEventId.Value,
+                    Id = meeting.LmsCalendarEventId,
                     StartAt = result.ScoInfo.BeginDate,
                     EndAt = result.ScoInfo.EndDate,
                     Title = result.ScoInfo.Name
@@ -961,9 +961,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var lmsSettings = lmsLicense.GetLMSSettings(Settings);
             try
             {
-                if (meeting.LmsCalendarEventId.HasValue)
+                if (!string.IsNullOrEmpty(meeting.LmsCalendarEventId))
                 {
-                    await lmsCalendarService.DeleteCalendarEvent(meeting.LmsCalendarEventId.Value, lmsSettings);
+                    await lmsCalendarService.DeleteCalendarEvent(meeting.LmsCalendarEventId, lmsSettings);
                 }
             }
             catch (Exception e)
@@ -971,36 +971,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 Logger.Error(e.Message);
             }
         }
-
-        //private async Task RemoveLmsCalendarEventsForMeetingSessions(ILmsLicense lmsLicense, LmsCourseMeeting meeting)
-        //{
-        //    var lmsCalendarService = LmsFactory.GetCalendarEventService((LmsProviderEnum) lmsLicense.LmsProviderId);
-        //    if (lmsCalendarService == null)
-        //        return;
-
-        //    if (!((meeting.LmsMeetingType == (int) LmsMeetingType.Meeting)
-        //          || (meeting.LmsMeetingType == (int) LmsMeetingType.VirtualClassroom)
-        //          || (meeting.LmsMeetingType == (int) LmsMeetingType.Seminar)))
-        //        return;
-
-        //    if (meeting.MeetingSessions == null)
-        //        return;
-
-        //    var lmsSettings = lmsLicense.GetLMSSettings(Settings);
-
-        //    try
-        //    {
-        //        foreach (var meetingSession in meeting.MeetingSessions.Where(s => s.LmsCalendarEventId.HasValue))
-        //        {
-        //            await lmsCalendarService.DeleteCalendarEvent(meetingSession.LmsCalendarEventId.Value, lmsSettings);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Logger.Error(e.Message);
-        //    }
-        //}
-
 
         // TODO: move MeetingReuseDTO
         public async Task<OperationResult> ReuseExistedAdobeConnectMeeting(ILmsLicense lmsLicense,

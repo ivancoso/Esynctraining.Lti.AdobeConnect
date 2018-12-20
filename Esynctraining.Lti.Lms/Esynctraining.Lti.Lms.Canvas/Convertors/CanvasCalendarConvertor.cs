@@ -10,7 +10,7 @@ namespace Esynctraining.Lti.Lms.Canvas.Convertors
         {
             return new LmsCalendarEventDTO
             {
-                Id = dto.id,
+                Id = dto.id.ToString(),
                 StartAt = DateTime.Parse(dto.start_at),
                 EndAt = DateTime.Parse(dto.end_at),
                 Description = dto.description,

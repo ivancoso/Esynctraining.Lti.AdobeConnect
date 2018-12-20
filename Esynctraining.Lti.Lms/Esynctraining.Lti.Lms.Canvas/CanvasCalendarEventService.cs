@@ -32,9 +32,9 @@ namespace Esynctraining.Lti.Lms.Canvas
             return await _canvasApi.GetUserCalendarEvents(lmsUserId, licenseSettings);
         }
 
-        public override async Task DeleteCalendarEvent(int eventId, Dictionary<string, object> licenseSettings)
+        public override async Task DeleteCalendarEvent(string eventId, Dictionary<string, object> licenseSettings)
         {
-            await _canvasApi.DeleteCalendarEvents(eventId, licenseSettings);
+            await _canvasApi.DeleteCalendarEvents(Int32.Parse(eventId), licenseSettings);
         }
     }
 }

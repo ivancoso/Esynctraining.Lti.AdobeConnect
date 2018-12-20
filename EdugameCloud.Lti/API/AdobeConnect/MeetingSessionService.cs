@@ -127,7 +127,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     LmsCalendarEventDTO lmsCalendarEvent =
                         await _calendarEventService.CreateEvent(param.course_id.ToString(), lmsSettings, eventDto);
 
-                    session.LmsCalendarEventId = lmsCalendarEvent?.Id;
+                    session.LmsCalendarEventId = lmsCalendarEvent.Id;
                 }
                 catch (Exception e)
                 {
@@ -283,9 +283,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 try
                 {
                     var lmsSettings = _license.GetLMSSettings(Settings);
-                    if (dbEvent.LmsCalendarEventId.HasValue)
+                    if (!string.IsNullOrEmpty(dbEvent.LmsCalendarEventId))
                     {
-                        await _calendarEventService.DeleteCalendarEvent(dbEvent.LmsCalendarEventId.Value, lmsSettings);
+                        await _calendarEventService.DeleteCalendarEvent(dbEvent.LmsCalendarEventId, lmsSettings);
                     }
                 }
                 catch (Exception e)
@@ -302,9 +302,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 try
                 {
                     var lmsSettings = _license.GetLMSSettings(Settings);
-                    foreach (var session in meeting.MeetingSessions.Where(s => s.LmsCalendarEventId.HasValue))
+                    foreach (var session in meeting.MeetingSessions.Where(s => !String.IsNullOrEmpty(s.LmsCalendarEventId)))
                     {
-                        await _calendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId.Value, lmsSettings);
+                        await _calendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId, lmsSettings);
                     }
                 }
                 catch (Exception e)
@@ -362,12 +362,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (_calendarEventService != null)
             {
-                if (dbEvent.LmsCalendarEventId.HasValue)
+                if (!string.IsNullOrEmpty(dbEvent.LmsCalendarEventId))
                 {
                     var lmsSettings = _license.GetLMSSettings(Settings);
-                    LmsCalendarEventDTO calendarEventDto = new LmsCalendarEventDTO()
+                    LmsCalendarEventDTO calendarEventDto = new LmsCalendarEventDTO
                     {
-                        Id = dbEvent.LmsCalendarEventId.Value,
+                        Id = dbEvent.LmsCalendarEventId,
                         Title = dto.Name,
                         StartAt = dto.StartDate,
                         EndAt = dto.EndDate
