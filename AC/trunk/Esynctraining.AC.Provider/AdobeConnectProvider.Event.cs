@@ -170,7 +170,10 @@ namespace Esynctraining.AC.Provider
             // act: "event-register"
             StatusInfo status;
 
-            var requestString = $"sco-id={form.ScoId}&login={UrlEncode(form.Email)}&password={form.Password}&password-verify={form.VerifyPassword}&first-name={form.FirstName}&last-name={form.LastName}";
+            var requestString = string.IsNullOrWhiteSpace(form.Password)
+                ? $"sco-id={form.ScoId}&login={UrlEncode(form.Email)}&first-name={form.FirstName}&last-name={form.LastName}"
+                : $"sco-id={form.ScoId}&login={UrlEncode(form.Email)}&password={form.Password}&password-verify={form.VerifyPassword}&first-name={form.FirstName}&last-name={form.LastName}";
+
             if (form.AdditionalFields.Values.Any())
             {
                 foreach (var key in form.AdditionalFields.Keys)
@@ -205,7 +208,7 @@ namespace Esynctraining.AC.Provider
 
             if (ResponseIsOk(doc, status))
             {
-                EventInfo result =  EventInfoParser.Parse(doc.SelectSingleNode("//event-info"));// .SelectSingleNode("//event-info"));
+                EventInfo result = EventInfoParser.Parse(doc.SelectSingleNode("//event-info"));// .SelectSingleNode("//event-info"));
                 return new EventInfoResult(status, result);
             }
 
@@ -223,5 +226,32 @@ namespace Esynctraining.AC.Provider
                 ? new EventCollectionResult(status, EventCollectionParser.Parse(doc))
                 : new EventCollectionResult(status);
         }
+
+        public EventLoginInfoResult EventLogin(string login, string password, string scoId)
+        {
+            if (string.IsNullOrWhiteSpace(login))
+                throw new ArgumentException("Non-empty value expected", nameof(login));
+
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            var requestString = string.IsNullOrWhiteSpace(password)
+                ? $"sco-id={scoId}&login={UrlEncode(login)}"
+                : $"sco-id={scoId}&login={UrlEncode(login)}&password={password}";
+
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Event.Login, requestString, out status);
+
+            // TODO: add parser
+            if (ResponseIsOk(doc, status))
+            {
+                var result = EventLoginInfoParser.Parse(doc.SelectSingleNode("//session"));
+                return new EventLoginInfoResult(status, result);
+            }
+
+            return new EventLoginInfoResult(status);
+        }
+        
     }
 }

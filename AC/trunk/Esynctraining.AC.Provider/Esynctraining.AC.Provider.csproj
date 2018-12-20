@@ -9,8 +9,8 @@
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>GetEventInfo added parsing of PasswordBypass field</PackageReleaseNotes>
-    <Version>1.0.4.5</Version>
+    <PackageReleaseNotes>added ReportEventParticipantsCompleteInformation method</PackageReleaseNotes>
+    <Version>1.0.4.6</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>

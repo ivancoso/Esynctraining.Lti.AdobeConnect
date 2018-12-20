@@ -34,6 +34,8 @@
         /// </summary>
         public const string ReportMeetingAttendance = "report-meeting-attendance";
 
+        public const string ReportEventParticipantsCompleteInformation = "report-event-participants-complete-information";
+
         /// <summary>
         /// The report bulk meeting session.
         /// </summary>
@@ -163,6 +165,8 @@
             public const string Info = "event-info";
 
             public const string List = "event-list";
+
+            public const string Login = "event-login";
         }
 
         /// <summary>

@@ -109,6 +109,17 @@ namespace Esynctraining.AC.Provider
                 : new MeetingAttendeeCollectionResult(status);
         }
 
+        public EventParticipantsCompleteInformationCollectionResult ReportEventParticipantsCompleteInformation(string scoId)
+        {
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportEventParticipantsCompleteInformation, string.Format(CommandParams.ScoId, scoId), out status);
+
+            return ResponseIsOk(doc, status)
+                ? new EventParticipantsCompleteInformationCollectionResult(status, EventParticipantsCompleteInformationCollectionParser.Parse(doc))
+                : new EventParticipantsCompleteInformationCollectionResult(status);
+        }
+
         //public QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0)
         //{
         //    // act: "report-quiz-interactions"
