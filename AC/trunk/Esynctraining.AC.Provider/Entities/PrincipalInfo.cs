@@ -24,7 +24,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// Gets or sets the principal.
         /// </summary>
         [XmlElement("principal")]
-        public Principal Principal { get; set; }
+        public PrincipalDetail Principal { get; set; }
 
         /// <summary>
         /// Gets or sets the manager.

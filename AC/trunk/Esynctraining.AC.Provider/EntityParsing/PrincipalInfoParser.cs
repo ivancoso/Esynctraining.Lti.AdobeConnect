@@ -57,7 +57,7 @@
             {
                 Contact = xml.NodeExists(ContactPath) ? ContactParser.Parse(xml.SelectSingleNode(ContactPath)) : null,
                 PrincipalPreferences = xml.NodeExists(PreferencesPath) ? PrincipalPreferencesParser.Parse(xml.SelectSingleNode(PreferencesPath)) : null,
-                Principal = PrincipalParser.Parse(xml.SelectSingleNode(PrincipalPath)),
+                Principal = PrincipalDetailParser.Parse(xml.SelectSingleNode(PrincipalPath)),
                 Manager = xml.NodeExists(ManagerPath) ? PrincipalParser.Parse(xml.SelectSingleNode(ManagerPath)) : null,
             };
         }
