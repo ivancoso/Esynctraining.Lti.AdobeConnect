@@ -12,7 +12,7 @@
     [audioProfileId]            NVARCHAR (50)   NULL,
     [enableDynamicProvisioning] BIT             CONSTRAINT [DF_LmsCourseMeeting_enableDynamicProvisioning] DEFAULT ((0)) NOT NULL,
     [audioProfileProvider]      NVARCHAR (50)   NULL,
-    [lmsCalendarEventId] INT NULL, 
+    [lmsCalendarEventId] NVARCHAR(50) NULL, 
     CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC) WITH (FILLFACTOR = 80),
     CONSTRAINT [FK_LmsCourseMeeting_CompanyLms] FOREIGN KEY ([companyLmsId]) REFERENCES [dbo].[CompanyLms] ([companyLmsId]),
     CONSTRAINT [FK_LmsCourseMeeting_LmsMeetingType] FOREIGN KEY ([lmsMeetingTypeId]) REFERENCES [dbo].[LmsMeetingType] ([lmsMeetingTypeId]),
