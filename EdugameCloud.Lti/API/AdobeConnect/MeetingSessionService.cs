@@ -45,12 +45,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             DateTime startDate = dto.StartTimestamp;
             if (dto.StartTimestamp < DateTime.UtcNow) //todo: remove these crazy conditions and parsing
             {
-                FixDateTimeFields(dto);
-                startDate = DateTime.UtcNow;
-                if (DateTime.TryParse(dto.StartDate + " " + dto.StartTime, out var dateBegin))
-                {
-                    startDate = dateBegin;
-                }
+                throw new ArgumentException("Start time should be more then current time");
             }
 
             var endDate = TimeSpan.TryParse(dto.Duration, out var duration)
