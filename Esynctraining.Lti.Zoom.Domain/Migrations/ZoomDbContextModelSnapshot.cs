@@ -56,7 +56,8 @@ namespace Esynctraining.Lti.Zoom.Domain.Migrations
 
                     b.Property<Guid>("LicenseKey");
 
-                    b.Property<int?>("LmsCalendarEventId");
+                    b.Property<string>("LmsCalendarEventId")
+                        .HasMaxLength(50);
 
                     b.Property<string>("ProviderHostId")
                         .IsRequired()
@@ -83,7 +84,8 @@ namespace Esynctraining.Lti.Zoom.Domain.Migrations
 
                     b.Property<DateTime>("EndDate");
 
-                    b.Property<int?>("LmsCalendarEventId");
+                    b.Property<string>("LmsCalendarEventId")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .IsRequired()

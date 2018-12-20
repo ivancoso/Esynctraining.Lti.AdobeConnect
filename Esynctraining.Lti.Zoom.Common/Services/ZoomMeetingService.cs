@@ -296,9 +296,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             try
             {
-                if (meeting.LmsCalendarEventId.HasValue)
+                if (!string.IsNullOrEmpty(meeting.LmsCalendarEventId))
                 {
-                    await calendarEventService.DeleteCalendarEvent(meeting.LmsCalendarEventId.Value, lmsSettings);
+                    await calendarEventService.DeleteCalendarEvent(meeting.LmsCalendarEventId, lmsSettings);
                 }
             }
             catch (Exception e)
@@ -317,9 +317,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             try
             {
-                foreach (var meetingSession in meeting.MeetingSessions.Where(s => s.LmsCalendarEventId.HasValue))
+                foreach (var meetingSession in meeting.MeetingSessions.Where(s => !string.IsNullOrEmpty(s.LmsCalendarEventId)))
                 {
-                    await calendarEventService.DeleteCalendarEvent(meetingSession.LmsCalendarEventId.Value, lmsSettings);
+                    await calendarEventService.DeleteCalendarEvent(meetingSession.LmsCalendarEventId, lmsSettings);
                 }
             }
             catch(Exception e)
@@ -413,12 +413,12 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             if (calendarEventService == null)
                 return;
 
-            if (!dbMeeting.LmsCalendarEventId.HasValue)
+            if (string.IsNullOrEmpty(dbMeeting.LmsCalendarEventId))
                 return;
 
             var lmsCalendarEvent = new LmsCalendarEventDTO
             {
-                Id = dbMeeting.LmsCalendarEventId.Value,
+                Id = dbMeeting.LmsCalendarEventId,
                 StartAt = LongToDateTime(vm.StartTime.Value),
                 EndAt = LongToDateTime(vm.StartTime.Value).AddMinutes(vm.Duration.Value),
                 Title = vm.Topic

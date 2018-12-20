@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Esynctraining.Lti.Zoom.Domain
@@ -18,6 +19,7 @@ namespace Esynctraining.Lti.Zoom.Domain
 
         public string Summary { get; set; }
 
-        public int? LmsCalendarEventId { get; set; }
+        [MaxLength(50)]
+        public string LmsCalendarEventId { get; set; }
     }
 }

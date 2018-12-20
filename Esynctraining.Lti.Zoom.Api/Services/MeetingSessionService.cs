@@ -187,9 +187,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
 
             if (lmsCalendarEventService != null)
             {
-                if (session.LmsCalendarEventId.HasValue)
+                if (!string.IsNullOrEmpty(session.LmsCalendarEventId))
                 {
-                    await lmsCalendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId.Value, lmsSettings);
+                    await lmsCalendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId, lmsSettings);
                 }
             }
 
@@ -205,9 +205,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
                 if (lmsCalendarEventService != null)
                 {
-                    foreach (var session in meeting.MeetingSessions.Where(s => s.LmsCalendarEventId.HasValue))
+                    foreach (var session in meeting.MeetingSessions.Where(s => !string.IsNullOrEmpty(s.LmsCalendarEventId)))
                     {
-                        await lmsCalendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId.Value,
+                        await lmsCalendarEventService.DeleteCalendarEvent(session.LmsCalendarEventId,
                             lmsSettings);
                     }
                 }
