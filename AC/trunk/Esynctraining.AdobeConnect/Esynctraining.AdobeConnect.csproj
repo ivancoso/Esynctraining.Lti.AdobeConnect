@@ -9,11 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>update to last code base</PackageReleaseNotes>
-    <Version>1.0.5.1</Version>
+    <PackageReleaseNotes>added event-login and ReportEventParticipantsCompleteInformation methods</PackageReleaseNotes>
+    <Version>1.0.5.2</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.5.1</FileVersion>
-    <AssemblyVersion>1.0.5.1</AssemblyVersion>
+    <FileVersion>1.0.5.2</FileVersion>
+    <AssemblyVersion>1.0.5.2</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

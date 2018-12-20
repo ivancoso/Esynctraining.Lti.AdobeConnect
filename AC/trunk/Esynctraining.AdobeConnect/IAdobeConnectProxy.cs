@@ -163,6 +163,8 @@ namespace Esynctraining.AdobeConnect
 
         MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false);
 
+        EventParticipantsCompleteInformationCollectionResult ReportEventParticipantsCompleteInformation(string scoId);
+
         MeetingSessionCollectionResult ReportMeetingSessions(string scoId, string filter = null, int startIndex = 0, int limit = 0);
 
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
@@ -244,6 +246,8 @@ namespace Esynctraining.AdobeConnect
         CollectionResult<CustomField> GetCustomFieldsByObjectType(ObjectType type);
         CollectionResult<CustomField> GetCustomFields(string fieldName, ObjectType objectType);
         SingleObjectResult<CustomField> CustomFieldUpdate(CustomField value);
+
+        EventLoginInfoResult EventLogin(string login, string password, string scoId);
         StatusInfo RegisterToEvent(EventRegistrationFormFields eventDetails);
         SaveEventResponse CreateEvent(SaveEventFields saveEventFields);
         SaveEventResponse EditEvent(SaveEventFields saveEventFields, string eventScoId, bool isTimezoneChanged);

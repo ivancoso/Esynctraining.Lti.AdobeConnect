@@ -567,6 +567,7 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.GetScoContent(scoId); },
                 scoId);
         }
+
         public ScoContentCollectionResult GetScoExpandedContent(string scoId)
         {
             if (string.IsNullOrWhiteSpace(scoId))
@@ -819,7 +820,6 @@ namespace Esynctraining.AdobeConnect
             return result;
         }
 
-
         public GenericResult PrincipalUpdatePassword(string principalId, string newPassword)
         {
             return Execute(() => { return _provider.PrincipalUpdatePassword(principalId, newPassword); },
@@ -910,6 +910,12 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
+        public EventParticipantsCompleteInformationCollectionResult ReportEventParticipantsCompleteInformation(string scoId)
+        {
+            return Execute(() => { return _provider.ReportEventParticipantsCompleteInformation(scoId); },
+                scoId);
+        }
+
         public MeetingSessionCollectionResult ReportMeetingSessions(string scoId, string filter = null, int startIndex = 0, int limit = 0)
         {
             return Execute(() => { return _provider.ReportMeetingSessions(scoId, filter: filter, startIndex: startIndex, limit: limit); },
@@ -968,6 +974,11 @@ namespace Esynctraining.AdobeConnect
         public StatusInfo RegisterToEvent(EventRegistrationFormFields eventDetails)
         {
             return Execute(() => { return _provider.RegisterToEvent(eventDetails); });
+        }
+
+        public EventLoginInfoResult EventLogin(string login, string password, string scoId)
+        {
+            return Execute(() => { return _provider.EventLogin(login, password, scoId); });
         }
 
         public SaveEventResponse CreateEvent(SaveEventFields saveEventFields)
