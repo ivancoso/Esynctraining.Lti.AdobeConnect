@@ -385,6 +385,11 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
 
         public ZoomApiResultWithData<bool> UpdateMeeting(string meetingId, Meeting meeting)
         {
+            //HACK: ZOOM API does not update AGENDA field with empty value. I  requested zoom support
+            //https://devforum.zoom.us/t/update-agenda-field-in-meeting/2800
+            if (string.IsNullOrEmpty(meeting.Agenda))
+                meeting.Agenda = " ";
+
             RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}", Method.PATCH);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)meeting);
