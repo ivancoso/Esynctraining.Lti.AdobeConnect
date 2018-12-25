@@ -419,10 +419,26 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
                 return restResponse.Data;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
                 throw new Exception(restResponse.ErrorMessage);
-            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
+             if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
             return (ZoomMeetingsReportList)null;
         }
+
+        public ZoomMeetingPoolsReport GetZoomMeetingPoolsReport(string meetingId)
+        {
+            RestRequest restRequest = this.BuildRequestAuthorization("report/meetings/{meetingId}/polls", Method.GET);
+            restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+            var restResponse = this.WebClient.Execute<ZoomMeetingPoolsReport>((IRestRequest)restRequest);
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data;
+
+            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
+                throw new Exception(restResponse.ErrorMessage);
+
+            return (ZoomMeetingPoolsReport)null;
+        }
+
         public MeetingParticipantsReport GetMeetingParticipantsReport(string meetingId, int pageSize = 300, string nextPageToken = null)
         {
             if (pageSize > 300)
