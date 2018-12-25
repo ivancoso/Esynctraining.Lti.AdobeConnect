@@ -4,12 +4,8 @@
 
     public class RegisterEventInfoResult : ResultBase
     {
+        // NOTE: Principal can be null if user was new for AC. So you need to call RegisterToEvent second time. 
         public Principal Principal { get; set; }
-
-        public override bool Success
-        {
-            get { return base.Success && Principal != null; }
-        }
 
 
         public RegisterEventInfoResult(StatusInfo status) : base(status) { }
