@@ -44,7 +44,6 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlElement("email")]
         public string Email { get; set; }
 
-
         /// <summary>
         /// Actual for groups only.
         /// </summary>

@@ -165,7 +165,7 @@ namespace Esynctraining.AC.Provider
                 : new GenericResult<EventRegistrationDetails>(status, null);
         }
 
-        public StatusInfo RegisterToEvent(EventRegistrationFormFields form)
+        public RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields form)
         {
             // act: "event-register"
             StatusInfo status;
@@ -184,7 +184,13 @@ namespace Esynctraining.AC.Provider
 
             var doc = this.requestProcessor.Process("event-register", requestString, out status);
 
-            return status;
+            if (ResponseIsOk(doc, status))
+            {
+                Principal result = PrincipalParser.Parse(doc.SelectSingleNode("//principal "));
+                return new RegisterEventInfoResult(status, result);
+            }
+
+            return new RegisterEventInfoResult(status);
         }
 
         /// <summary>
