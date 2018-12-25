@@ -971,7 +971,7 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.GetEventList(); });
         }
 
-        public StatusInfo RegisterToEvent(EventRegistrationFormFields eventDetails)
+        public RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields eventDetails)
         {
             return Execute(() => { return _provider.RegisterToEvent(eventDetails); });
         }
