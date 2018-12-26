@@ -72,15 +72,15 @@ namespace EdugameCloud.WCFService
             LmsCompany entity = isTransient ? null : this.LmsCompanyModel.GetOneById(resultDto.id).Value;
 
             string lmsPassword = resultDto.lmsAdminPassword;
-            if (!isTransient && string.IsNullOrWhiteSpace(resultDto.lmsAdminPassword))
+            if (!isTransient
+                && string.IsNullOrWhiteSpace(resultDto.lmsAdminPassword)
+                && ((entity.LmsProviderId == (int) LmsProviderEnum.Moodle &&
+                     string.IsNullOrWhiteSpace(entity.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken)))
+                    || (entity.LmsProviderId == (int) LmsProviderEnum.Blackboard && !resultDto.enableProxyToolMode)
+                    || entity.LmsProviderId == (int) LmsProviderEnum.AgilixBuzz)
+            )
             {
-                if (
-                    (entity.LmsProviderId == (int)LmsProviderEnum.Moodle && string.IsNullOrWhiteSpace(entity.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken)))
-                || ((entity.LmsProviderId == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode)
-                )
-                {
-                    lmsPassword = entity.AdminUser.Password;
-                }
+                lmsPassword = entity.AdminUser.Password;
             }
 
             if ((this.LmsProviderModel.GetByShortName(resultDto.lmsProvider).Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
