@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.API.Sakai;
@@ -20,7 +20,7 @@ namespace EdugameCloud.Lti.Sakai
 
         protected override string SakaiServiceShortName => "edugamecloud";
 
-        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
         {
             try
             {
@@ -51,10 +51,11 @@ namespace EdugameCloud.Lti.Sakai
 
                     _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
 
-                    return (Data: Enumerable.Empty<LmsQuizInfoDTO>(), Error: error);
+                    return OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>.Error(error);
                 }
 
-                return (Data: quizResult.Data, Error: string.Empty);
+                var result = quizResult.Data;
+                return ((IEnumerable<LmsQuizInfoDTO>) result).ToSuccessResult();
             }
             catch (Exception ex)
             {
@@ -81,7 +82,7 @@ namespace EdugameCloud.Lti.Sakai
         /// <returns>
         /// The <see cref="IEnumerable{LmsQuizDTO}"/>.
         /// </returns>
-        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizDTO>>> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
         {
             try
             {
@@ -111,16 +112,14 @@ namespace EdugameCloud.Lti.Sakai
                     if (quizResult.Data == null)
                     {
                         var error = quizResult.Error ?? "Sakai XML. Unable to retrive result from API";
-
                         _logger.ErrorFormat("[EGCEnabledSakaiApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
-
-                        return (Data: result, Error: error);
+                        return OperationResultWithData<IEnumerable<LmsQuizDTO>>.Error(error);
                     }
 
                     result.Add(quizResult.Data);
                 }
 
-                return (Data: result, Error: string.Empty);
+                return ((IEnumerable<LmsQuizDTO>) result).ToSuccessResult();
             }
             catch (Exception ex)
             {

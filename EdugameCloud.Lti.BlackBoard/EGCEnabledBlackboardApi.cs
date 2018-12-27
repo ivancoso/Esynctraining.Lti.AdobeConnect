@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.BlackBoardClient;
 using Esynctraining.BlackBoardClient.Content;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.API.BlackBoard;
 using Esynctraining.Lti.Lms.Common.Constants;
@@ -23,13 +23,14 @@ namespace EdugameCloud.Lti.BlackBoard
         {
         }
 
-        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
         {
-            var quizzes = await GetItemsForUserAsync(licenseSettings, isSurvey, null);
-            if (quizzes.Data == null)
-                throw new InvalidOperationException("There was a problem establishing connection to an api");
+            var quizzesResult = await GetItemsForUserAsync(licenseSettings, isSurvey, null);
 
-            var result = quizzes.Data.Select(q => new LmsQuizInfoDTO
+            if (!quizzesResult.IsSuccess)
+                return OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>.Error(quizzesResult.Message);
+
+            var result = quizzesResult.Data.Select(q => new LmsQuizInfoDTO
             {
                 id = q.id,
                 name = q.title,
@@ -39,10 +40,10 @@ namespace EdugameCloud.Lti.BlackBoard
                 isPublished = q.published
             });
 
-            return (Data: result, Error: quizzes.Error);
+            return result.ToSuccessResult();
         }
 
-        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizDTO>>> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
         {
             WebserviceWrapper client = null;
             string error;
@@ -133,7 +134,9 @@ namespace EdugameCloud.Lti.BlackBoard
                 licenseSettings,
                 out error);
 
-            return (Data: tests, Error: error);
+            return string.IsNullOrEmpty(error)
+                ? ((IEnumerable<LmsQuizDTO>)tests).ToSuccessResult()
+                : OperationResultWithData<IEnumerable<LmsQuizDTO>>.Error(error);
         }
 
         public async Task SendAnswersAsync(Dictionary<string, object> licenseSettings, string contentId, bool isSurvey, string[] answers)

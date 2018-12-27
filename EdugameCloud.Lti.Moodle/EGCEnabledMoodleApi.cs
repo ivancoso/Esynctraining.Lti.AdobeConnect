@@ -3,8 +3,8 @@ using Esynctraining.Lti.Lms.Common.Dto;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
@@ -23,7 +23,7 @@ namespace EdugameCloud.Lti.Moodle
             get { return "edugamecloud"; }
         }
 
-        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
         {
             string error = null;
             try
@@ -64,13 +64,11 @@ namespace EdugameCloud.Lti.Moodle
                 if (quizResult == null)
                 {
                     error = error ?? "Moodle XML. Unable to retrive result from API";
-
                     _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
-
-                    return (Data: Enumerable.Empty<LmsQuizInfoDTO>(), Error: error);
+                    return OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>.Error(error);
                 }
 
-                return (Data: quizResult, Error: string.Empty);
+                return quizResult.ToSuccessResult();
             }
             catch (Exception ex)
             {
@@ -82,7 +80,7 @@ namespace EdugameCloud.Lti.Moodle
         /// <summary>
         /// The get quiz list for user.
         /// </summary>
-        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizDTO>>> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
         {
             try
             {
@@ -127,16 +125,14 @@ namespace EdugameCloud.Lti.Moodle
                     if (quizResult == null)
                     {
                         error = error ?? "Moodle XML. Unable to retrive result from API";
-
                         _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
-
-                        return (Data: result, Error: error);
+                        return OperationResultWithData<IEnumerable<LmsQuizDTO>>.Error(error);
                     }
 
                     result.Add(quizResult);
                 }
 
-                return (Data: result, Error: string.Empty);
+                return ((IEnumerable<LmsQuizDTO>) result).ToSuccessResult();
             }
             catch (Exception ex)
             {

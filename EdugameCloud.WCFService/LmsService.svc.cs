@@ -1,4 +1,5 @@
 ﻿using System.Web.Hosting;
+using Esynctraining.Core.Domain;
 using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.WCFService
@@ -343,12 +344,11 @@ namespace EdugameCloud.WCFService
 
                 string errorString;
                 var lmsAPI = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
-                var itemsInfoForUserResult = ((IEnumerable<LmsQuizInfoDTO> Data, string Error))await lmsAPI.GetItemsInfoForUserAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true), isSurvey);
-                errorString = itemsInfoForUserResult.Error;
+                var itemsInfoForUserResult = (OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>)await lmsAPI.GetItemsInfoForUserAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true), isSurvey);
                 var quizzesForCourse = itemsInfoForUserResult.Data
                         .ToList();
 
-                if (string.IsNullOrWhiteSpace(errorString))
+                if (itemsInfoForUserResult.IsSuccess)
                 {
                     quizzesForCourse.ForEach(
                         q =>
@@ -383,7 +383,7 @@ namespace EdugameCloud.WCFService
                     return quizzesForCourse.ToArray();
                 }
 
-                error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "Wrong response", errorString);
+                error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "Wrong response", itemsInfoForUserResult.Message);
             }
             else
             {

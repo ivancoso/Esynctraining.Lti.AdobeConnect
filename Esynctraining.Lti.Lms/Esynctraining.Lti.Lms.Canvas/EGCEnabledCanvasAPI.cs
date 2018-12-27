@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using Esynctraining.Core.Domain;
 using Esynctraining.Lti.Lms.Canvas.Convertors;
 using Esynctraining.Lti.Lms.Canvas.DTOs;
 using Esynctraining.Lti.Lms.Canvas.Resources;
@@ -289,10 +290,13 @@ namespace Esynctraining.Lti.Lms.Canvas
 
         //quizzes
 
-        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
         {
-            var quizzes = await GetItemsForUserAsync(licenseSettings, isSurvey, null);
-            var result = quizzes.Data.Select(q => new LmsQuizInfoDTO
+            var quizzesResult = await GetItemsForUserAsync(licenseSettings, isSurvey, null);
+            if (!quizzesResult.IsSuccess)
+                return OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>.Error(quizzesResult.Message);
+
+            var result = quizzesResult.Data.Select(q => new LmsQuizInfoDTO
             {
                 id = q.id,
                 name = q.title,
@@ -302,10 +306,10 @@ namespace Esynctraining.Lti.Lms.Canvas
                 isPublished = q.published
             });
 
-            return (Data: result, Error: quizzes.Error);
+            return result.ToSuccessResult();
         }
 
-        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizDTO>>> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
         {
             try
             {
@@ -389,7 +393,7 @@ namespace Esynctraining.Lti.Lms.Canvas
                     q.courseName = course.name;
                 }
 
-                return (Data: response.Data, Error: string.Empty);
+                return ((IEnumerable<LmsQuizDTO>) response.Data).ToSuccessResult(); //todo: handle error case
             }
             catch (Exception ex)
             {

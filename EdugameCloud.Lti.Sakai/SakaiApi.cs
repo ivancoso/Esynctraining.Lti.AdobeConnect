@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Sakai.Dto;
+using Esynctraining.Core.Domain;
 using Esynctraining.HttpClient;
 using Esynctraining.Lti.Lms.Common.API.Sakai;
 using Esynctraining.Lti.Lms.Common.Constants;
@@ -22,9 +23,11 @@ namespace EdugameCloud.Lti.Sakai
         {
         }
 
-        public async Task<(IEnumerable<LmsQuizInfoDTO> Data, string Error)> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
         {
             var quizDtos = await GetItemsForUserAsync(licenseSettings, isSurvey, null);
+            if (!quizDtos.IsSuccess)
+                return OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>.Error(quizDtos.Message);
 
             var result = quizDtos.Data.Select(q => new LmsQuizInfoDTO
             {
@@ -36,10 +39,10 @@ namespace EdugameCloud.Lti.Sakai
                 isPublished = q.published
             });
 
-            return (Data: result, Error: quizDtos.Error);
+            return result.ToSuccessResult();
         }
 
-        public async Task<(IEnumerable<LmsQuizDTO> Data, string Error)> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
+        public async Task<OperationResultWithData<IEnumerable<LmsQuizDTO>>> GetItemsForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey, IEnumerable<int> quizIds)
         {
             var apiParam = new SakaiExtendedParams
             {
@@ -106,7 +109,7 @@ namespace EdugameCloud.Lti.Sakai
                 quizDto.Add(lqd);
             }
 
-            return (Data: quizDto.ToList(), Error: string.Empty);
+            return ((IEnumerable<LmsQuizDTO>)quizDto).ToSuccessResult(); //todo: handle error cases
         }
 
         public async Task SendAnswersAsync(Dictionary<string, object> licenseSettings, string json, bool isSurvey, string[] answers = null)
