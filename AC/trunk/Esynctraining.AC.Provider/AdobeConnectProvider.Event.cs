@@ -155,13 +155,14 @@ namespace Esynctraining.AC.Provider
 
         public GenericResult<EventRegistrationDetails> GetEventRegistrationDetails(string scoId)
         {
-            // act: "report-my-events"
+            // act: "event-registration-details"
             StatusInfo status;
 
             var doc = this.requestProcessor.Process("event-registration-details", $"sco-id={scoId}", out status);
 
             return ResponseIsOk(doc, status)
-                ? new GenericResult<EventRegistrationDetails>(status, EventRegistrationDetailsParser.Parse(doc.SelectSingleNode("//results")))
+                ? new GenericResult<EventRegistrationDetails>(status,
+                EventRegistrationDetailsParser.Parse(doc.SelectSingleNode("//results")))
                 : new GenericResult<EventRegistrationDetails>(status, null);
         }
 

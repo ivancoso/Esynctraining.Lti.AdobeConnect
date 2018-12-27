@@ -9,11 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>parse EventRegister</PackageReleaseNotes>
-    <Version>1.0.5.5</Version>
+    <PackageReleaseNotes>event-registration-details/asset-responses</PackageReleaseNotes>
+    <Version>1.0.5.6</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.5.5</FileVersion>
-    <AssemblyVersion>1.0.5.5</AssemblyVersion>
+    <FileVersion>1.0.5.6</FileVersion>
+    <AssemblyVersion>1.0.5.6</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

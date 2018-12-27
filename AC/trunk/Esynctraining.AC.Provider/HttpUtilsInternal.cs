@@ -18,10 +18,7 @@ namespace Esynctraining.AC.Provider
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public static string UrlEncode(string text)
-        {
-            return UrlEncode(text, Encoding.UTF8);
-        }
+        public static string UrlEncode(string text) => UrlEncode(text, Encoding.UTF8);
 
 
         /// <summary>

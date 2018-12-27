@@ -25,6 +25,8 @@ namespace Esynctraining.AC.Provider.EntityParsing
                     "field", EventFieldParser.Parse);
                 details.UserFields = GenericCollectionParser<EventUserField>.Parse(xml.SelectSingleNode("//user-fields"),
                     "field", EventUserFieldParser.Parse);
+                details.AssetResponses = GenericCollectionParser<AssetResponseInfo>.Parse(xml.SelectSingleNode("//asset-responses"),
+                    "response", AssetResponseInfoParser.Parse);
 
                 return details;
             }

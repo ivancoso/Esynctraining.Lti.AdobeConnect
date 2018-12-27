@@ -87,7 +87,7 @@
             if (string.IsNullOrWhiteSpace(meetingId))
                 throw new ArgumentException("Meeting SCO can't be empty", nameof(meetingId));
             if (principalIds == null)
-                throw new ArgumentNullException("principalIds");
+                throw new ArgumentNullException(nameof(principalIds));
 
             var filter = new StringBuilder(23 * principalIds.Count());
             foreach (string principalId in principalIds)

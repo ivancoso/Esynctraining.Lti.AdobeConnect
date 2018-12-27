@@ -106,6 +106,8 @@ namespace Esynctraining.AC.Provider.Entities
         public IEnumerable<EventField> EventFields { get; set; }
         public IEnumerable<EventUserField> UserFields { get; set; }
 
+        public IEnumerable<AssetResponseInfo> AssetResponses { get; set; }
+
         //UserInfo - implement if necessary
 
     }
