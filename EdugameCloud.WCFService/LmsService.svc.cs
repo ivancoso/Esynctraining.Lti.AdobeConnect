@@ -342,9 +342,10 @@ namespace EdugameCloud.WCFService
             {
                 var user = UserModel.GetOneById(userId);
 
-                string errorString;
                 var lmsAPI = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
-                var itemsInfoForUserResult = (OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>)await lmsAPI.GetItemsInfoForUserAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true), isSurvey);
+                var itemsInfoForUserResult =
+                    (OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>) await lmsAPI.GetItemsInfoForUserAsync(
+                        lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true), isSurvey);
                 var quizzesForCourse = itemsInfoForUserResult.Data
                         .ToList();
 
@@ -417,17 +418,14 @@ namespace EdugameCloud.WCFService
 
                     var companyLms = lmsUserParameters.CompanyLms;
 
-                    string error;
                     var lmsAPI = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)companyLms.LmsProviderId);
 
-                    var itemsForUserResult = await lmsAPI.GetItemsForUserAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true),
-                            isSurvey,
-                            quizIds);
-
-                    error = itemsForUserResult.Error;
+                    var itemsForUserResult = (OperationResultWithData<IEnumerable<LmsQuizDTO>>) await lmsAPI.GetItemsForUserAsync(
+                        lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true),
+                        isSurvey,
+                        quizIds);
 
                     IEnumerable<LmsQuizDTO> quizzes = itemsForUserResult.Data;
-
                     var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, user, isSurvey, lmsUserParameters.CompanyLms.Id);
 
                     if (isSurvey)
