@@ -72,7 +72,6 @@ namespace EdugameCloud.Lti.Api.Controllers
                 }
 
                 var acConnectionMode = (AcConnectionMode)settings.AcConnectionMode;
-                lmsUser.PrimaryColor = settings.PrimaryColor;
 
                 if (acConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
                 {

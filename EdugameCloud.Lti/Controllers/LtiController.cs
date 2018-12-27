@@ -865,8 +865,7 @@ namespace EdugameCloud.Lti.Controllers
             LtiViewModelDto model = await BuildModelAsync(session, trace);
             TempData["lti-index-model"] = model;
 
-            var primaryColor = session.LmsUser.PrimaryColor;
-            primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (session.LmsCompany.PrimaryColor ?? string.Empty);
+            var primaryColor = session.LmsCompany.PrimaryColor ?? string.Empty;
 
             if (!string.IsNullOrEmpty(sakaiId) && int.TryParse(ltiId, out meetingId))
             {

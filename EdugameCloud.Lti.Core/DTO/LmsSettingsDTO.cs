@@ -22,12 +22,6 @@
         [DataMember]
         public string Password { get; set; }
 
-        /// <summary>
-        /// Gets or sets the primary Color.
-        /// </summary>
-        [DataMember]
-        public string PrimaryColor { get; set; }
-
     }
 
 }

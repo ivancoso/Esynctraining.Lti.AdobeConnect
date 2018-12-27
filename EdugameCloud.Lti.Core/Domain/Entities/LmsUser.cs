@@ -43,9 +43,7 @@ namespace EdugameCloud.Lti.Domain.Entities
         /// </summary>
         public virtual string Username { get; set; }
 
-        /// <summary>
-        /// Gets or sets the primary color.
-        /// </summary>
+        //todo: this property is not used anymore, remove data from database (backup if necessary)
         public virtual string PrimaryColor { get; set; }
 
         /// <summary>
