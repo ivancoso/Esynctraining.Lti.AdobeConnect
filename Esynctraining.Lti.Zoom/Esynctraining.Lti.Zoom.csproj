@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Esynctraining.Lti.Zoom.Common\Esynctraining.Lti.Zoom.Common.csproj" />
-    <ProjectReference Include="..\Esynctraining.Zoom.ApiWrapper\Esynctraining.Zoom.ApiWrapper.csproj" />
   </ItemGroup>
 
 </Project>

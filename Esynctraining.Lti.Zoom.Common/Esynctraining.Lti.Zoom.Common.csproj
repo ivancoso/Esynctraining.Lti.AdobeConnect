@@ -17,7 +17,6 @@
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Zoom.Domain\Esynctraining.Lti.Zoom.Domain.csproj" />
-    <ProjectReference Include="..\Esynctraining.Zoom.ApiWrapper\Esynctraining.Zoom.ApiWrapper.csproj" />
   </ItemGroup>
 
 </Project>

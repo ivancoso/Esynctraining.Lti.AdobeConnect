@@ -14,8 +14,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Canva
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Api.Host", "Esynctraining.Lti.Zoom.Api.Host\Esynctraining.Lti.Zoom.Api.Host.csproj", "{71786850-D748-4202-AA09-321D00BBA07E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Zoom.ApiWrapper", "Esynctraining.Zoom.ApiWrapper\Esynctraining.Zoom.ApiWrapper.csproj", "{1EAACC76-0906-47BA-86A4-B7D33970E407}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Api", "Esynctraining.Lti.Zoom.Api\Esynctraining.Lti.Zoom.Api.csproj", "{E89DCEE1-7C5B-407E-8C24-19872B6794A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Host", "Esynctraining.Lti.Zoom.Host\Esynctraining.Lti.Zoom.Host.csproj", "{FB5EED86-2703-473D-9300-2EF46A45667B}"
@@ -36,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Schoo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.BlackBoard", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.BlackBoard\Esynctraining.Lti.Lms.BlackBoard.csproj", "{56E3A76F-7892-42DA-905D-6954BDB9D56D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Lti.Zoom.Common", "Esynctraining.Lti.Zoom.Common\Esynctraining.Lti.Zoom.Common.csproj", "{F32B1FB2-BF24-44FC-93CE-6AC96F300A35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Common", "Esynctraining.Lti.Zoom.Common\Esynctraining.Lti.Zoom.Common.csproj", "{F32B1FB2-BF24-44FC-93CE-6AC96F300A35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,14 +59,6 @@ Global
 		{71786850-D748-4202-AA09-321D00BBA07E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{71786850-D748-4202-AA09-321D00BBA07E}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{71786850-D748-4202-AA09-321D00BBA07E}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
-		{1EAACC76-0906-47BA-86A4-B7D33970E407}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1EAACC76-0906-47BA-86A4-B7D33970E407}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1EAACC76-0906-47BA-86A4-B7D33970E407}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{1EAACC76-0906-47BA-86A4-B7D33970E407}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
-		{1EAACC76-0906-47BA-86A4-B7D33970E407}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1EAACC76-0906-47BA-86A4-B7D33970E407}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1EAACC76-0906-47BA-86A4-B7D33970E407}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{1EAACC76-0906-47BA-86A4-B7D33970E407}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 		{E89DCEE1-7C5B-407E-8C24-19872B6794A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E89DCEE1-7C5B-407E-8C24-19872B6794A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E89DCEE1-7C5B-407E-8C24-19872B6794A5}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU

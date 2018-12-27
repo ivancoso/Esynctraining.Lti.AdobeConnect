@@ -120,9 +120,8 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddTransient<ZoomOfficeHoursService, ZoomOfficeHoursService>();
             services.AddSingleton<UserCacheUpdater, UserCacheUpdater>();
             services.AddSingleton<ILtiTokenAccessor, QueryStringTokenAccessor>();
-            services.AddScoped<ZoomLicenseAccessor, ZoomLicenseAccessor>();
-            services.AddScoped<IZoomOptionsAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
-            services.AddScoped<ILmsLicenseAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
+            services.AddScoped<IZoomOptionsAccessor, ZoomOptionsFromLicenseAccessor>();
+            services.AddScoped<ILmsLicenseAccessor, LicenseAccessor>();
             services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
             services.AddSingleton<CanvasCalendarEventService, CanvasCalendarEventService>();
             services.AddSingleton<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();

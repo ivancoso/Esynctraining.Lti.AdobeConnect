@@ -151,9 +151,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddSingleton<LmsUserServiceFactory, LmsUserServiceFactory>();
             services.AddSingleton<CanvasCalendarEventService, CanvasCalendarEventService>();
             services.AddSingleton<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();
-            services.AddScoped<ZoomLicenseAccessor, ZoomLicenseAccessor>();
-            services.AddScoped<IZoomOptionsAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
-            services.AddScoped<ILmsLicenseAccessor, ZoomLicenseAccessor>(s => s.GetService<ZoomLicenseAccessor>());
+            services.AddScoped<IZoomOptionsAccessor, ZoomOptionsFromLicenseAccessor>();
+            services.AddScoped<ILmsLicenseAccessor, LicenseAccessor>();
             services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
             //services.Configure<TemplateSettings>(Configuration.GetSection("MailTemplateSettings")).AddSingleton<ITemplateSettings>(sp => sp.GetService<IOptions<TemplateSettings>>().Value);
             //services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings")).AddSingleton<ISmtpSettings>(sp => sp.GetService<IOptions<SmtpSettings>>().Value);
