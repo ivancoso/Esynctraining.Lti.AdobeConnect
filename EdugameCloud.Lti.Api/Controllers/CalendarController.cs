@@ -43,6 +43,11 @@ namespace EdugameCloud.Lti.Api.Controllers
         {
             try
             {
+                if (!CheckStartTimeMoreCurrentTime(dto.StartTimestamp))
+                {
+                    return OperationResultWithData<IEnumerable<MeetingSessionDTO>>.Error("Start time should be more then current time");
+                }
+
                 LtiParamDTO param = Session.LtiSession.LtiParam;
                 var meetingSessionService = _lmsFactory.GetMeetingSessionService(LmsCompany, param);
                 var result = await meetingSessionService.CreateBatchAsync(dto, param);
@@ -130,6 +135,11 @@ namespace EdugameCloud.Lti.Api.Controllers
                 string errorMessage = GetOutputErrorMessage("DeleteSession", ex);
                 return OperationResult.Error(errorMessage);
             }
+        }
+
+        private bool CheckStartTimeMoreCurrentTime(DateTime dtoStartTimestamp)
+        {
+            return dtoStartTimestamp > DateTime.UtcNow;
         }
 
     }
