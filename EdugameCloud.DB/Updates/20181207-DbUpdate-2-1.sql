@@ -1,4 +1,4 @@
-EXEC sp_rename '[LmsMeetingSession].[eventId]', '[lmsCalendarEventId]', 'COLUMN'
+EXEC sp_rename '[LmsMeetingSession].[eventId]', 'lmsCalendarEventId', 'COLUMN'
 
 GO
 
