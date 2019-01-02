@@ -6,8 +6,6 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
 {
     public class LmsMeetingSession : Entity
     {
-        public virtual string EventId { get; set; }
-
         public virtual string Name { get; set; }
 
         public virtual DateTime StartDate { get; set; }

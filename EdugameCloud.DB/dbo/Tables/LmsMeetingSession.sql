@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [dbo].[LmsMeetingSession] (
     [lmsMeetingSessionId] INT             IDENTITY (1, 1) NOT NULL,
-    [eventId]             NVARCHAR (50)   NULL,
     [name]                NVARCHAR (200)  NOT NULL,
     [startDate]           DATETIME2 (7)   NOT NULL,
     [endDate]             DATETIME2 (7)   NOT NULL,

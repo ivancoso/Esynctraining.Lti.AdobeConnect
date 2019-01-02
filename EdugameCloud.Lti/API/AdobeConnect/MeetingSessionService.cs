@@ -87,7 +87,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             meeting.MeetingSessions.AddRange(listOfEvents.Select(x => new LmsMeetingSession
             {
-                EventId = x.EventId,
+                LmsCalendarEventId = x.EventId,
                 Name = x.Name,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
@@ -167,7 +167,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             var dbEvent = new LmsMeetingSession
             {
-                EventId = ev.EventId,
+                LmsCalendarEventId = ev.EventId,
                 Name = ev.Name,
                 StartDate = ev.StartDate,
                 EndDate = ev.EndDate,
@@ -226,11 +226,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (_calendarExportService != null)
             {
-                var deleteResult = (await _calendarExportService.DeleteEventsAsync(new[] { dbEvent.EventId }, param, _license))
+                var deleteResult = (await _calendarExportService.DeleteEventsAsync(new[] { dbEvent.LmsCalendarEventId }, param, _license))
                     .Single();
 
                 if (!string.IsNullOrWhiteSpace(deleteResult)
-                    && !dbEvent.EventId.Equals(deleteResult, StringComparison.InvariantCultureIgnoreCase))
+                    && !dbEvent.LmsCalendarEventId.Equals(deleteResult, StringComparison.InvariantCultureIgnoreCase))
                 {
                     // TODO: logging
                     throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
@@ -250,7 +250,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (meeting.MeetingSessions.Any())
             {
-                var events = new HashSet<string>(meeting.MeetingSessions.Select(x => x.EventId));
+                var events = new HashSet<string>(meeting.MeetingSessions.Select(x => x.LmsCalendarEventId));
 
                 if (_calendarExportService != null)
                 {

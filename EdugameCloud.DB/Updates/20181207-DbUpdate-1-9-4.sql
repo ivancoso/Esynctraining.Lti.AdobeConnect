@@ -1,5 +1,4 @@
-ALTER TABLE [LmsMeetingSession]
-	ADD [lmsCalendarEventId] NVARCHAR(50) NULL
+EXEC sp_rename '[LmsMeetingSession].[eventId]', '[lmsCalendarEventId]', 'COLUMN'
 
 GO
 

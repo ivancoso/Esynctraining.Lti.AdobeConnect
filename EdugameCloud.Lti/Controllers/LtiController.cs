@@ -870,7 +870,7 @@ namespace EdugameCloud.Lti.Controllers
             if (!string.IsNullOrEmpty(sakaiId) && int.TryParse(ltiId, out meetingId))
             {
                 var meeting = LmsCourseMeetingModel.GetOneById(meetingId).Value;
-                var meetingSession = meeting?.MeetingSessions.SingleOrDefault(x => x.EventId == sakaiId);
+                var meetingSession = meeting?.MeetingSessions.SingleOrDefault(x => x.LmsCalendarEventId == sakaiId);
                 if (meetingSession != null)
                 {
                     eventId = meetingSession.Id;
