@@ -49,7 +49,25 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
                 {
                     var ohDetailsResult = await _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
                     if (!ohDetailsResult.IsSuccess)
-                        throw new Exception(ohDetailsResult.Message);
+                    {
+                        var deleteErrorCodes = new List<ZoomApiErrorCodes>
+                        {
+                            ZoomApiErrorCodes.MeetingNotFound,
+                            ZoomApiErrorCodes.UserNotFound,
+                            ZoomApiErrorCodes.UserNotBelongToAccount
+                        };
+
+                        if (deleteErrorCodes.Any(x => (int)x == ohDetailsResult.Code))
+                        {
+                            _dbContext.Remove(ohMeeting);
+                            await _dbContext.SaveChangesAsync();
+                            return result;
+                        }
+                        else
+                        {
+                            throw new Exception(ohDetailsResult.Message);
+                        }
+                    }
 
                     var detailsVm = ConvertToDetailsViewModel(ohDetailsResult.Data);
                     detailsVm.Type = ohMeeting.Type;
