@@ -10,7 +10,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         Task<IEnumerable<MeetingSessionDto>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LmsCourseMeeting meeting, string courseId, Dictionary<string, object> lmsSettings);
         Task<IEnumerable<MeetingSessionDto>> GetSessions(LmsCourseMeeting meeting);
         Task<MeetingSessionDto> CreateSessionAsync(LmsCourseMeeting meeting, Dictionary<string, object> lmsSettings);
-        Task<MeetingSessionDto> SaveSessionAsync(LmsCourseMeeting meeting, int sessionId, MeetingSessionUpdateDto session);
+        Task<MeetingSessionDto> SaveSessionAsync(LmsCourseMeeting meeting, int sessionId, MeetingSessionUpdateDto session, string courseId, Dictionary<string, object> lmsSettings);
         Task DeleteSessionAsync(LmsCourseMeeting meeting, int sessionId, Dictionary<string, object> lmsSettings);
         Task DeleteMeetingSessionsAsync(LmsCourseMeeting meeting, Dictionary<string, object> lmsSettings);
     }

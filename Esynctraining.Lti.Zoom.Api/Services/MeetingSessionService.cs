@@ -152,7 +152,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return MeetingSessionConverter.ConvertFromEntity(session);
         }
 
-        public async Task<MeetingSessionDto> SaveSessionAsync(LmsCourseMeeting meeting, int sessionId, MeetingSessionUpdateDto dto)
+        public async Task<MeetingSessionDto> SaveSessionAsync(LmsCourseMeeting meeting, int sessionId, MeetingSessionUpdateDto dto, string courseId, Dictionary<string, object> lmsSettings)
         {
             var session = meeting.MeetingSessions.SingleOrDefault(x => x.Id == sessionId)
                           ?? new LmsMeetingSession { Meeting = meeting };
@@ -162,14 +162,45 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 meeting.MeetingSessions.Add(session);
             }
 
+            UpdateSession(session, dto);
+            await UpdateCalendarEvent(dto, courseId, lmsSettings, session);
+            
+            return MeetingSessionConverter.ConvertFromEntity(session);
+        }
+
+        private static void UpdateSession(LmsMeetingSession session, MeetingSessionUpdateDto dto)
+        {
             session.Name = dto.Name;
             session.Summary = dto.Summary;
             session.StartDate = dto.StartDate;
             session.EndDate = dto.EndDate;
+        }
 
-            await _dbContext.SaveChangesAsync();
+        private async Task UpdateCalendarEvent(MeetingSessionUpdateDto dto, string courseId,
+            Dictionary<string, object> lmsSettings, LmsMeetingSession session)
+        {
+            var licenseDto = await _licenseAccessor.GetLicense();
+            var lmsCalendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
 
-            return MeetingSessionConverter.ConvertFromEntity(session);
+            if (lmsCalendarEventService == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(session.LmsCalendarEventId))
+            {
+                return;
+            }
+
+            var lmsCalendarEvent = new LmsCalendarEventDTO
+            {
+                Id = session.LmsCalendarEventId,
+                StartAt = dto.StartDate,
+                EndAt = dto.EndDate,
+                Title = dto.Name
+            };
+
+            await lmsCalendarEventService.UpdateEvent(courseId, lmsSettings, lmsCalendarEvent);
         }
 
         public async Task DeleteSessionAsync(LmsCourseMeeting meeting, int id, Dictionary<string, object> lmsSettings)

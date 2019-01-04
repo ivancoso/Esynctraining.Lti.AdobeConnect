@@ -116,8 +116,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                     //log
                     return OperationResultWithData<MeetingSessionDto>.Error("Meeting not found or cannot be accessed with current session");
                 }
-
-                var eve = await _meetingSessionService.SaveSessionAsync(meeting, sessionId, model);
+                var lmsSettings = LmsLicense.GetLMSSettings(Session);
+                var eve = await _meetingSessionService.SaveSessionAsync(meeting, sessionId, model, CourseId, lmsSettings);
                 return eve.ToSuccessResult();
             }
             catch (Exception ex)
