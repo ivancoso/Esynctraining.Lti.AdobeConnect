@@ -40,6 +40,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         {
             var result = new List<ZoomRecordingSessionDto>();
             var apiRecordings = _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
+            if (apiRecordings.Meetings == null)
+                return Enumerable.Empty<ZoomRecordingSessionDto>();
+
             var recordings = apiRecordings.Meetings.Where(x => x.Id == meetingId);
             foreach (var rec in recordings)
             {
@@ -80,6 +83,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         {
             var result = new List<ZoomRecordingsTrashItemDto>();
             var apiRecordings = _zoomApi.GetUserRecordings(userId, trash: true);
+            if (apiRecordings.Meetings == null)
+                return Enumerable.Empty<ZoomRecordingsTrashItemDto>();
+
             var recordings = apiRecordings.Meetings.Where(x => x.Id == meetingId);
             foreach (var rec in recordings)
             {
@@ -135,6 +141,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             var apiRecordings = trash
                 ? _zoomApi.GetUserRecordings(userId, trash: true)
                 : _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
+
+            if (apiRecordings.Meetings == null)
+                return null;
 
             var meetingSession = apiRecordings.Meetings.FirstOrDefault(x =>
                 x.Id == meetingId && x.RecordingFiles.Any(rf => rf.Id != null && 
