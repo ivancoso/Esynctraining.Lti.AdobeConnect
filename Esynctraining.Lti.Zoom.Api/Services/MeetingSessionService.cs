@@ -162,18 +162,15 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 meeting.MeetingSessions.Add(session);
             }
 
-            UpdateSession(session, dto);
-            await UpdateCalendarEvent(dto, courseId, lmsSettings, session);
-            
-            return MeetingSessionConverter.ConvertFromEntity(session);
-        }
-
-        private static void UpdateSession(LmsMeetingSession session, MeetingSessionUpdateDto dto)
-        {
             session.Name = dto.Name;
             session.Summary = dto.Summary;
             session.StartDate = dto.StartDate;
             session.EndDate = dto.EndDate;
+            await _dbContext.SaveChangesAsync();
+
+            await UpdateCalendarEvent(dto, courseId, lmsSettings, session);
+            
+            return MeetingSessionConverter.ConvertFromEntity(session);
         }
 
         private async Task UpdateCalendarEvent(MeetingSessionUpdateDto dto, string courseId,
