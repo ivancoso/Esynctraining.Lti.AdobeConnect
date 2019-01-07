@@ -141,9 +141,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public async Task<MeetingSessionDTO> CreateSessionAsync(int meetingId, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
+
             MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(meeting.MeetingNameJson)
                 ? new MeetingNameInfo()
                 : JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+
             var lastEvent = meeting.MeetingSessions.OrderByDescending(x => x.StartDate).FirstOrDefault();
             DateTime startDate = DateTime.UtcNow.AddHours(1);
             DateTime endDate = startDate.AddHours(1);
@@ -152,6 +154,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 startDate = lastEvent.StartDate.AddDays(1);
                 endDate = lastEvent.EndDate.AddDays(1);
             }
+
             var ev = new MeetingSessionDTO
             {
                 Name = nameInfo.meetingName + " #",

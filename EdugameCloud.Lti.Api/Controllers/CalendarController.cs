@@ -104,6 +104,11 @@ namespace EdugameCloud.Lti.Api.Controllers
         [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<MeetingSessionDTO>> SaveEvent([FromBody]SaveMeetingEventDto model)
         {
+            if (!CheckStartTimeMoreCurrentTime(model.StartDate))
+            {
+                return OperationResultWithData<MeetingSessionDTO>.Error("Start time should be more then current time");
+            }
+
             try
             {
                 LtiParamDTO param = Session.LtiSession.LtiParam;
