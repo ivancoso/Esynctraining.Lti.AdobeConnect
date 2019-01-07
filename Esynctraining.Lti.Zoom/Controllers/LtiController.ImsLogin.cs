@@ -157,6 +157,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         //Outcomes: copy-pasted with adding eSync-lti-zoom specifics, needed for certification only
         [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public ActionResult Outcomes(string session)
         {
             if (string.IsNullOrEmpty(session))
@@ -172,7 +173,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return View("~/Views/Lti/Outcomes.cshtml", model);
         }
 
-        [ValidateAntiForgeryToken]
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<ActionResult> Outcomes(OutcomeModel model, string submit)
         {
             if (string.IsNullOrEmpty(model.Session))

@@ -24,18 +24,11 @@
         
         @Html.AntiForgeryToken()
         
-        <p>
-            Grade to send to the Tool Consumer:
-            @if (Model.Score.HasValue)
-            {
-                @Html.TextBoxFor(m => m.Score, new {Model.Score.Value})
-            }
-            else
-            {
-                @Html.TextBoxFor(m => m.Score, new {Value = ""})
-            }
-            @ViewBag.Message
-        </p>
+    <p>
+        Grade to send to the Tool Consumer:
+        <input type="text" data-val="true" data-val-number="The field Score must be a number." id="Score" name="Score" value="@Model.Score.GetValueOrDefault()" />
+        @ViewBag.Message
+    </p>
         @Html.HiddenFor(m => m.Session)
         <input type="submit" name="submit" value="Send Grade"/>
         <input type="submit" name="submit" value="Read Grade"/>
