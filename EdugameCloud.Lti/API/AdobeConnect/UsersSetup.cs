@@ -479,7 +479,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var service = LmsFactory.GetUserService((LmsProviderEnum)lmsLicense.LmsProviderId);
             //todo: not param for AgilixBuzz
 
-            var lmsSettings = lmsLicense.GetLMSSettings(_settings);
+            Dictionary<string,object> lmsSettings = lmsLicense.GetLMSSettings(_settings);
 
             var lmsUserResult = await service.GetUser(lmsSettings, lmsUserId, param.course_id.ToString(), param);
 
