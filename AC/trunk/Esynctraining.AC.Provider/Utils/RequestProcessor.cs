@@ -733,6 +733,12 @@ namespace Esynctraining.AC.Provider.Utils
                         status.SubCode = EnumReflector.ReflectEnum(node.SelectAttributeValue("subcode"), StatusSubCodes.not_set);
                         status.InvalidField = node.SelectAttributeValue("field");
                         status.Type = node.SelectAttributeValue("type");
+
+                        if (status.SubCode == StatusSubCodes.range)
+                        {
+                            status.Min = node.ParseAttributeInt("min");
+                            status.Max = node.ParseAttributeInt("max");
+                        }
                     }
 
                     break;

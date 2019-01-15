@@ -27,6 +27,9 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         public string Type { get; set; }
 
+        public int? Min { get; set; }
+
+        public int? Max { get; set; }
 
         /// <summary>
         /// Gets or sets the code.
