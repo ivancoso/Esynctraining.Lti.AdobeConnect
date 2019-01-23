@@ -57,7 +57,6 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string EnableAddGuest = nameof(EnableAddGuest);
         public const string EnableSetUserRole = nameof(EnableSetUserRole);
         public const string EnableRemoveUser = nameof(EnableRemoveUser);
-        public const string MoodleCoreServiceToken = nameof(MoodleCoreServiceToken);
         public const string MoodleQuizServiceToken = nameof(MoodleQuizServiceToken);
         public const string CanStudentCreateStudyGroup = nameof(CanStudentCreateStudyGroup);
         public const string EnableMeetingSessions = nameof(EnableMeetingSessions);
@@ -90,9 +89,15 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string BuzzAdminPassword = nameof(BuzzAdminPassword);
         public const string AgilixBuzzLastSignalId = nameof(AgilixBuzzLastSignalId);
 
+        public const string MoodleAdminUserName = nameof(MoodleAdminUserName);
+        public const string MoodleAdminUserPassword = nameof(MoodleAdminUserPassword);
+        public const string MoodleCoreServiceToken = nameof(MoodleCoreServiceToken);
+        public const string MoodleEgcServiceToken = nameof(MoodleEgcServiceToken);
+        public const string MoodleAuthMode = nameof(MoodleAuthMode);
+
         //public const string BlackBoardAdminUser = nameof(BlackBoardAdminUser);
-        
-        
+
+
         public const string BlackBoardUseSSL = nameof(BlackBoardUseSSL);
         //public const string BlackBoardInitialBBPassword = nameof(BlackBoardInitialBBPassword);
 

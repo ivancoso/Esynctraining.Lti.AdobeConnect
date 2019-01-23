@@ -92,7 +92,21 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
 
                     result.Add(LmsLicenseSettingNames.BlackBoardUseSSL, true);
                     break;
+                case 1050:
+                    var optionsNameForMoodle = new List<string>
+                    {
+                        LmsLicenseSettingNames.MoodleAdminUserName,
+                        LmsLicenseSettingNames.MoodleAdminUserPassword,
+                        LmsLicenseSettingNames.MoodleCoreServiceToken,
+                        LmsLicenseSettingNames.MoodleEgcServiceToken,
+                        LmsLicenseSettingNames.MoodleAuthMode
+                    };
+                    result = Settings.Where(x => optionsNameForMoodle.Any(o => o == x.Key))
+                        .ToDictionary(k => k.Key, v => (object)v.Value);
 
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
+                    break;
                 default:
                     throw new NotImplementedException($"ProductId {ProductId} is not implemented.");
             }

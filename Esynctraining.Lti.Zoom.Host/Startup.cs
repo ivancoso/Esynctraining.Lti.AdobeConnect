@@ -12,7 +12,9 @@ using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.BlackBoard;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.API.Moodle;
 using Esynctraining.Lti.Lms.Common.API.Schoology;
+using Esynctraining.Lti.Lms.Moodle;
 using Esynctraining.Lti.Lms.Schoology;
 using Esynctraining.Lti.Zoom.Common;
 using Esynctraining.Lti.Zoom.Common.HostedServices;
@@ -107,10 +109,12 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddTransient<IAgilixBuzzApi, DlapAPI>();
             services.AddTransient<ISchoologyRestApiClient, SchoologyRestApiClient>();
             services.AddTransient<IBlackBoardApi, SoapBlackBoardApi>();
+            services.AddTransient<IMoodleApi, MoodleApi>();
             services.AddTransient<CanvasLmsUserService, CanvasLmsUserService>();
             services.AddTransient<AgilixBuzzLmsUserService, AgilixBuzzLmsUserService>();
             services.AddTransient<SchoologyLmsUserService, SchoologyLmsUserService>();
             services.AddTransient<BlackboardLmsUserService, BlackboardLmsUserService>();
+            services.AddTransient<MoodleLmsUserService, MoodleLmsUserService>();
             services.AddSingleton<LmsUserServiceFactory, LmsUserServiceFactory>();
 
             services.AddTransient<ZoomUserService, ZoomUserService>();
