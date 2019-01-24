@@ -98,6 +98,7 @@ namespace Esynctraining.Lti.Lms.Moodle
         }
 
         public async Task<(bool result, string error)> LoginAndCheckSession(
+            bool useSsl,
             string lmsDomain,
             string userName,
             string password,
