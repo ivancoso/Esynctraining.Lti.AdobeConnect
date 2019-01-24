@@ -12,10 +12,5 @@
         /// </summary>
         public string Url { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether use SSL.
-        /// </summary>
-        public bool UseSSL { get; set; }
-
     }
 }

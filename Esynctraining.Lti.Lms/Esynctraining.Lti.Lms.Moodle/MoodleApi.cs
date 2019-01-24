@@ -23,7 +23,7 @@ namespace Esynctraining.Lti.Lms.Moodle
 
         protected virtual string MoodleServiceShortName
         {
-            get { return "lms"; }
+            get { return "zoomlms"; }
         }
 
 
@@ -98,14 +98,13 @@ namespace Esynctraining.Lti.Lms.Moodle
         }
 
         public async Task<(bool result, string error)> LoginAndCheckSession(
-            bool useSsl,
             string lmsDomain,
             string userName,
             string password,
             bool recursive = false)
         {
             string error = null;
-            var tupleSession = await LoginAndCreateAClient(useSsl, lmsDomain, userName, password);
+            var tupleSession = await LoginAndCreateAClient(lmsDomain, userName, password);
 
             var session = tupleSession.moodleSession;
             error = tupleSession.error;
@@ -177,7 +176,6 @@ namespace Esynctraining.Lti.Lms.Moodle
         }
 
         private async Task<(MoodleSession moodleSession, string error)> LoginAndCreateAClient(
-            bool useSsl,
             string lmsDomain,
             string userName,
             string password,
@@ -195,11 +193,11 @@ namespace Esynctraining.Lti.Lms.Moodle
                     { "service", this.MoodleServiceShortName }
                 };
 
-                string url = GetTokenUrl(lmsDomain, useSsl);
+                string url = GetTokenUrl(lmsDomain);
                 resp = await PostValues(url, pairs);
                 if (!recursive && resp.Contains(@"""errorcode"":""sslonlyaccess"""))
                 {
-                    return await LoginAndCreateAClient(true, lmsDomain, userName, password, true);
+                    return await LoginAndCreateAClient(lmsDomain, userName, password, true);
                 }
 
                 var token = _jsonDeserializer.JsonDeserialize<MoodleTokenDTO>(resp);
@@ -218,8 +216,7 @@ namespace Esynctraining.Lti.Lms.Moodle
                 return (new MoodleSession
                 {
                     Token = token.token,
-                    Url = GetServicesUrl(lmsDomain, useSsl),
-                    UseSSL = useSsl,
+                    Url = GetServicesUrl(lmsDomain)
                 }, error);
             }
             catch (Exception ex)
@@ -245,24 +242,11 @@ namespace Esynctraining.Lti.Lms.Moodle
             if (licenseSettings.ContainsKey(LmsLicenseSettingNames.AdminUsername))
             {
                 string lmsDomain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
-                bool useSsl = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL];
-                return await LoginAndCreateAClient(useSsl, lmsDomain, (string)licenseSettings[LmsLicenseSettingNames.AdminUsername], (string)licenseSettings[LmsLicenseSettingNames.AdminPassword]);
+                return await LoginAndCreateAClient(lmsDomain, (string)licenseSettings[LmsLicenseSettingNames.AdminUsername], (string)licenseSettings[LmsLicenseSettingNames.AdminPassword]);
             }
 
             error = "ASP.NET Session is expired";
             return (null, error);
-        }
-
-        private static string FixDomain(string domain, bool useSsl)
-        {
-            domain = domain.ToLower().AddHttpProtocol(useSsl);
-
-            if (domain.Last() != '/')
-            {
-                domain = domain + '/';
-            }
-
-            return domain;
         }
 
         protected async Task<XmlDocument> UploadValues(string url, Dictionary<string, string> pairs)
@@ -294,19 +278,29 @@ namespace Esynctraining.Lti.Lms.Moodle
 
         protected string GetServicesUrl(Dictionary<string, object> licenseSettings)
         {
-            return GetServicesUrl((string)licenseSettings[LmsLicenseSettingNames.LmsDomain], (bool)licenseSettings[LmsLicenseSettingNames.UseSSL]);
+            return GetServicesUrl((string)licenseSettings[LmsLicenseSettingNames.LmsDomain]);
         }
 
-        protected string GetServicesUrl(string domain, bool useSsl)
+        protected string GetServicesUrl(string domain)
         {
             var serviceUrl = "/webservice/rest/server.php";
-            return FixDomain(domain, useSsl) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
+            return FixDomain(domain) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
         }
 
-        protected string GetTokenUrl(string domain, bool useSsl)
+        protected string GetTokenUrl(string domain)
         {
             var tokenUrl = "/login/token.php";
-            return FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
+            return FixDomain(domain) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
+        }
+
+        private static string FixDomain(string domain)
+        {
+            if (domain.Last() != '/')
+            {
+                domain = domain + '/';
+            }
+
+            return domain;
         }
 
     }

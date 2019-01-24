@@ -9,7 +9,6 @@ namespace Esynctraining.Lti.Lms.Common.API.Moodle
         Task<(List<LmsUserDTO> users, string error)> GetUsersForCourse(Dictionary<string, object> licenseSettings, string courseId);
 
         Task<(bool result, string error)> LoginAndCheckSession(
-            bool useSsl,
             string lmsDomain,
             string userName,
             string password,
