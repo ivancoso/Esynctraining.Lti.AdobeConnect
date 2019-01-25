@@ -7,7 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
-    <PackageReference Include="Esynctraining.Zoom.ApiWrapper" Version="1.0.0" />
   </ItemGroup>
 
 

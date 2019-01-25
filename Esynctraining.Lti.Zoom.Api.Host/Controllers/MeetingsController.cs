@@ -51,7 +51,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             string userId = null;
             try
             {
-                var user = _userService.GetUser(Param.lis_person_contact_email_primary);
+                var user = await _userService.GetUser(Param.lis_person_contact_email_primary);
                 userId = user.Id;
             }
             catch (ZoomApiException ex)
@@ -105,7 +105,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 UserInfoDto user = null;
                 try
                 {
-                    user = _userService.GetUser(Param.lis_person_contact_email_primary);
+                    user = await _userService.GetUser(Param.lis_person_contact_email_primary);
                     userId = user.Id;
 
                     if (!IsPossibleCreateMeeting(user, requestDto, out string errorMessage))
@@ -116,7 +116,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 catch (Exception e)
                 {
                     Logger.Error("User doesn't exist or doesn't belong to this account", e);
-                    var userInfo = _userService.CreateUser(new CreateUserDto
+                    var userInfo = await _userService.CreateUser(new CreateUserDto
                     {
                         Email = Param.lis_person_contact_email_primary,
                         FirstName = Param.PersonNameGiven,
@@ -176,7 +176,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             UserInfoDto user = null;
             try
             {
-                user = _userService.GetUser(Param.lis_person_contact_email_primary);
+                user = await _userService.GetUser(Param.lis_person_contact_email_primary);
 
                 if (!IsPossibleCreateMeeting(user, vm, out string errorMessage))
                 {
@@ -191,7 +191,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
 "code": 1005,
 "message": "User already in the account: ivanr+zoomapitest@esynctraining.com"
 }*/
-                var userInfo = _userService.CreateUser(new CreateUserDto
+                var userInfo = await _userService.CreateUser(new CreateUserDto
                 {
                     Email = Param.lis_person_contact_email_primary,
                     FirstName = Param.PersonNameGiven,

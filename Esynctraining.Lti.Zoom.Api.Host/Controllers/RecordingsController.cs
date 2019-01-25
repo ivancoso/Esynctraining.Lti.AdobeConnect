@@ -47,7 +47,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             if (dbMeeting == null)
                 return OperationResultWithData<RecordingsDto>.Error("Meeting not found");
 
-            var zoomRecordings = _recordingService.GetRecordings(dbMeeting.ProviderHostId, dbMeeting.ProviderMeetingId);
+            var zoomRecordings = await _recordingService.GetRecordings(dbMeeting.ProviderHostId, dbMeeting.ProviderMeetingId);
             var externalRecordings = await _storageService.GetExternalFileRecords(meetingId);
             var result = new RecordingsDto{ ZoomRecordings = zoomRecordings, ExternalRecordings = externalRecordings};
             return result.ToSuccessResult();
@@ -61,7 +61,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResultWithData<IEnumerable<ZoomRecordingsTrashItemDto>>.Error("Meeting not found");
-            var recordings = _recordingService.GetTrashRecordings(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
+            var recordings = await _recordingService.GetTrashRecordings(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
             return recordings.ToSuccessResult();
         }
 
@@ -80,7 +80,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             string userId = null;
             try
             {
-                var user = _userService.GetUser(Param.lis_person_contact_email_primary);
+                var user = await _userService.GetUser(Param.lis_person_contact_email_primary);
                 userId = user.Id;
             }
             catch (Exception e)
@@ -93,14 +93,14 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 return OperationResult.Error("Meeting not found");
 
             var meetingSessionId =
-                _recordingService.GetMeetingUuId(userId, dbMeeting.ProviderMeetingId, recordingFileId, !trash);
+                await _recordingService.GetMeetingUuId(userId, dbMeeting.ProviderMeetingId, recordingFileId, !trash);
 
             if (meetingSessionId == null)
             {
                 return OperationResult.Error("Recording file not found."); //either removed or in trash(i.e. if request was made with trash=false)
             }
 
-            var result = _recordingService.DeleteRecordings(meetingSessionId, recordingFileId,  trash);
+            var result = await _recordingService.DeleteRecordings(meetingSessionId, recordingFileId,  trash);
             return result ? OperationResult.Success() : OperationResult.Error("Error when deleting recordings.");
         }
 
@@ -137,7 +137,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             string userId = null;
             try
             {
-                var user = _userService.GetUser(Param.lis_person_contact_email_primary);
+                var user = await _userService.GetUser(Param.lis_person_contact_email_primary);
                 userId = user.Id;
             }
             catch (Exception e)
@@ -152,13 +152,13 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             //    return OperationResult.Error("You are trying to delete other user's recording file.");
 
             var meetingSessionId =
-                _recordingService.GetMeetingUuId(userId, dbMeeting.ProviderMeetingId, recordingFileId, true);
+                await _recordingService.GetMeetingUuId(userId, dbMeeting.ProviderMeetingId, recordingFileId, true);
             if (meetingSessionId == null)
             {
                 return OperationResult.Error("Recording file not found."); //either removed or not in trash
             }
 
-            var result = _recordingService.RecoverRecordings(meetingSessionId, recordingFileId);
+            var result = await _recordingService.RecoverRecordings(meetingSessionId, recordingFileId);
             return result ? OperationResult.Success() : OperationResult.Error("Error when recovering recordings.");
         }
 
@@ -170,7 +170,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResult.Error("Meeting not found");
-            var result = _recordingService.RecoverRecordings(WebUtility.UrlDecode(recordingId).Replace(" ", "+"));
+            var result = await _recordingService.RecoverRecordings(WebUtility.UrlDecode(recordingId).Replace(" ", "+"));
             return result? OperationResult.Success() : OperationResult.Error("Error when recovering recordings.");
         }
 

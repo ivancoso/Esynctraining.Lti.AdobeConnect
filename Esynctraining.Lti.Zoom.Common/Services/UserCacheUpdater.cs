@@ -28,7 +28,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         {
             var cacheKey = "Zoom.Users." + zoomKey;
             var sw = Stopwatch.StartNew();
-            var users = GetUsersFromApi(UserStatus.Active, apiWrapper);
+            var users = await GetUsersFromApi(UserStatus.Active, apiWrapper);
             var json = _jsonSerializer.JsonSerialize(users);
             var cacheData = Encoding.UTF8.GetBytes(json);
             var cacheEntryOption = new DistributedCacheEntryOptions
@@ -42,7 +42,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         }
 
 
-        public List<User> GetUsersFromApi(UserStatus status, ZoomApiWrapper apiWrapper)
+        public async Task<List<User>> GetUsersFromApi(UserStatus status, ZoomApiWrapper apiWrapper)
         {
             var users = new List<User>();
             var pageNumber = 1;
@@ -50,7 +50,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             var totalRecords = 0;
             do
             {
-                var page = apiWrapper.GetUsers(status, pageSize: pageSize, pageNumber: pageNumber);
+                var page = await apiWrapper.GetUsers(status, pageSize: pageSize, pageNumber: pageNumber);
                 users.AddRange(page.Users);
                 totalRecords = page.TotalRecords;
                 pageNumber++;

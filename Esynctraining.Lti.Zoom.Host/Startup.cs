@@ -23,6 +23,8 @@ using Esynctraining.Lti.Zoom.Core;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Lti.Zoom.Routes;
 using Esynctraining.Zoom.ApiWrapper;
+using Esynctraining.Zoom.ApiWrapper.JWT;
+using Esynctraining.Zoom.ApiWrapper.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -124,13 +126,19 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddTransient<ZoomOfficeHoursService, ZoomOfficeHoursService>();
             services.AddSingleton<UserCacheUpdater, UserCacheUpdater>();
             services.AddSingleton<ILtiTokenAccessor, QueryStringTokenAccessor>();
-            services.AddScoped<IZoomOptionsAccessor, ZoomOptionsFromLicenseAccessor>();
             services.AddScoped<ILmsLicenseAccessor, LicenseAccessor>();
-            services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
             services.AddSingleton<CanvasCalendarEventService, CanvasCalendarEventService>();
             services.AddSingleton<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();
             services.AddScoped<INotificationService, EmptyNotificationService>();
             services.AddHostedService<UserCacheHostedService>();
+
+            //todo: uncomment JWT for previous workflow
+            //services.AddScoped<IZoomApiJwtOptionsAccessor, ZoomJwtOptionsFromLicenseAccessor>();
+            //services.AddScoped<IZoomAuthParamsAccessor, ZoomJwtAuthParamsAccessor>();
+            services.Configure<ZoomOAuthConfig>(Configuration.GetSection("ZoomOAuthConfig")).AddSingleton(x => x);
+            services.AddScoped<IZoomOAuthOptionsAccessor, ZoomOAuthOptionsFromLicenseAccessor>();
+            services.AddScoped<IZoomAuthParamsAccessor, ZoomOAuthParamsAccessor>();
+            services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

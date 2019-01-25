@@ -33,7 +33,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             var dbMeeting = await _meetingService.GetMeeting(meetingId, CourseId);
             if (dbMeeting == null)
                 return OperationResultWithData<IEnumerable<ZoomSessionDto>>.Error("Meeting not found");
-            var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
+            var sessions = await _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId);
             return sessions.ToSuccessResult();
         }
 
@@ -42,7 +42,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResultWithData<IEnumerable<ZoomSessionParticipantDto>>> GetReportParticipantsBySessions(string sessionId)
         {
-            var sessions = _reportService.GetParticipantsBySessionId(sessionId);
+            var sessions = await _reportService.GetParticipantsBySessionId(sessionId);
             return sessions.ToSuccessResult();
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Zoom.ApiWrapper;
 
@@ -17,9 +18,9 @@ namespace Esynctraining.Lti.Zoom.Api.Services
         }
 
 
-        public IEnumerable<ZoomRecordingFileDto> GetRecordings(string meetingId, bool trash = false)
+        public async Task<IEnumerable<ZoomRecordingFileDto>> GetRecordings(string meetingId, bool trash = false)
         {
-            var meetings = _zoomApi.GetRecordings(meetingId, trash);
+            var meetings = await _zoomApi.GetRecordings(meetingId, trash);
 
             return meetings.RecordingFiles.Where(x => x.FileType.ToUpper() == "MP4").Select(x => new ZoomRecordingFileDto
             {
@@ -36,10 +37,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             });
         }
 
-        public IEnumerable<ZoomRecordingSessionDto> GetRecordings(string userId, string meetingId)
+        public async Task<IEnumerable<ZoomRecordingSessionDto>> GetRecordings(string userId, string meetingId)
         {
             var result = new List<ZoomRecordingSessionDto>();
-            var apiRecordings = _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
+            var apiRecordings = await _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
             if (apiRecordings.Meetings == null)
                 return Enumerable.Empty<ZoomRecordingSessionDto>();
 
@@ -79,10 +80,10 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return result;
         }
 
-        public IEnumerable<ZoomRecordingsTrashItemDto> GetTrashRecordings(string meetingId, string userId)
+        public async Task<IEnumerable<ZoomRecordingsTrashItemDto>> GetTrashRecordings(string meetingId, string userId)
         {
             var result = new List<ZoomRecordingsTrashItemDto>();
-            var apiRecordings = _zoomApi.GetUserRecordings(userId, trash: true);
+            var apiRecordings = await _zoomApi.GetUserRecordings(userId, trash: true);
             if (apiRecordings.Meetings == null)
                 return Enumerable.Empty<ZoomRecordingsTrashItemDto>();
 
@@ -118,29 +119,29 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return result;
         }
 
-        public bool DeleteRecordings(string recordingId, string recordingFileId = null, bool trash = true)
+        public async Task<bool> DeleteRecordings(string recordingId, string recordingFileId = null, bool trash = true)
         {
             //check permissions
 
 
-            return _zoomApi.DeleteRecording(recordingId, recordingFileId, trash);
+            return await _zoomApi.DeleteRecording(recordingId, recordingFileId, trash);
         }
 
-        public bool RecoverRecordings(string recordingId, string recordingFileId = null)
+        public async Task<bool> RecoverRecordings(string recordingId, string recordingFileId = null)
         {
             //check permissions
-            return _zoomApi.RecoverRecording(recordingId, recordingFileId);
+            return await _zoomApi.RecoverRecording(recordingId, recordingFileId);
         }
 
         /// <summary>
         /// In zoom API this field is called "MeetingId" for recording file or "Uuid" for meeting object(recording). There is no "session" term in zoom API
         /// </summary>
-        public string GetMeetingUuId(string userId, string meetingId, string recordingFileId, bool trash = true)
+        public async Task<string> GetMeetingUuId(string userId, string meetingId, string recordingFileId, bool trash = true)
         {
             // Zoom Api returns only date for last Month. Need too implement cycle for all period from Creating meeting.
             var apiRecordings = trash
-                ? _zoomApi.GetUserRecordings(userId, trash: true)
-                : _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
+                ? await _zoomApi.GetUserRecordings(userId, trash: true)
+                : await _zoomApi.GetUserRecordings(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
 
             if (apiRecordings.Meetings == null)
                 return null;

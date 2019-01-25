@@ -44,7 +44,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
             var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
             var apiMeeting = await _meetingService.GetMeetingDetails(meetingId, param.course_id.ToString());
-            var sessions = _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId, null, true);
+            var sessions = await _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId, null, true);
 
             byte[] fileBytes = new byte[0];
             var url = Settings.ReportsUrl.TrimEnd('/') + "/ReportBySession";
@@ -104,7 +104,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             if (dbMeeting == null)
                 return NotFound(meetingId);
 
-            var participants = _reportService.GetParticipantsBySessionId(WebUtility.UrlDecode(meetingSessionId).Replace(" ", "+"));
+            var participants = await _reportService.GetParticipantsBySessionId(WebUtility.UrlDecode(meetingSessionId).Replace(" ", "+"));
             var records = participants.Select(x => new
             {
                 x.Details.Name,

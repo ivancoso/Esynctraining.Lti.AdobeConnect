@@ -27,7 +27,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
 
             foreach (var meeting in sgMeetings)
             {
-                var zoomListRegistrants = _zoomApi.GetMeetingRegistrants(meeting.ConferenceId, null, nameof(ZoomMeetingRegistrantStatus.Approved));
+                var zoomListRegistrants = await _zoomApi.GetMeetingRegistrants(meeting.ConferenceId, null, nameof(ZoomMeetingRegistrantStatus.Approved));
                 if (zoomListRegistrants.Registrants.Any(r => r.Email == _email) || meeting.HostId == _currentUserId)
                 {
                     result.Add(meeting);

@@ -12,7 +12,6 @@ using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
-using Esynctraining.Zoom.ApiWrapper.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
@@ -45,7 +44,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         public virtual async Task<OperationResultWithData<List<ZoomMeetingRegistrantDto>>> GetMeetingRegistrants(int meetgingId, [FromQuery] ZoomMeetingRegistrantStatus status)
         {
             LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
-            var registrants = _zoomUserService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, status);
+            var registrants = await _zoomUserService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, status);
             return registrants.ToSuccessResult();
         }
 
@@ -55,7 +54,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         public virtual async Task<OperationResultWithData<SyncParticipantsDto>> GetSyncParticipants(int meetgingId)
         {
             LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
-            var registrants = _zoomUserService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, ZoomMeetingRegistrantStatus.Approved)
+            var registrants = (await _zoomUserService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, ZoomMeetingRegistrantStatus.Approved))
                 .Select(r => new RegistrantDto
                             {
                                 Email = r.Email,
@@ -110,12 +109,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             UserInfoDto user = null;
             try
             {
-                user = _zoomUserService.GetUser(Param.lis_person_contact_email_primary);
+                user = await _zoomUserService.GetUser(Param.lis_person_contact_email_primary);
             }
             catch (Exception e)
             {
                 Logger.Error("User doesn't exist or doesn't belong to this account", e);
-                _zoomUserService.CreateUser(new CreateUserDto
+                await _zoomUserService.CreateUser(new CreateUserDto
                 {
                     Email = Param.lis_person_contact_email_primary,
                     FirstName = Param.PersonNameGiven,

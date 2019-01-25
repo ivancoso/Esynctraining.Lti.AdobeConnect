@@ -11,6 +11,7 @@ using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Lti.Zoom.Extensions;
 using Esynctraining.Lti.Zoom.OAuth;
 using Esynctraining.Zoom.ApiWrapper;
+using Esynctraining.Zoom.ApiWrapper.JWT;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using LtiLibrary.NetCore.Clients;
 using LtiLibrary.NetCore.Common;
@@ -275,13 +276,16 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private async Task CreateZoomAccount(LtiParamDTO param, LmsLicenseDto license)
         {
-            var zoomApi = new ZoomApiWrapper(new ZoomApiOptions
+            var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
             {
-                ZoomApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
-                ZoomApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
+                ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
             });
 
-            var activeUserEmails = (GetUsersFromApi(UserStatus.Active, zoomApi)).Where(x => !string.IsNullOrEmpty(x.Email)).Select(x => x.Email);
+            var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
+            var zoomApi = new ZoomApiWrapper(authParamsAccessor);
+
+            var activeUserEmails = (await GetUsersFromApi(UserStatus.Active, zoomApi)).Where(x => !string.IsNullOrEmpty(x.Email)).Select(x => x.Email);
 
             if (!activeUserEmails.Any(x =>
                 x.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
@@ -308,7 +312,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
         }
 
-        public List<User> GetUsersFromApi(UserStatus status, ZoomApiWrapper apiWrapper)
+        public async Task<List<User>> GetUsersFromApi(UserStatus status, ZoomApiWrapper apiWrapper)
         {
             var users = new List<User>();
             var pageNumber = 1;
@@ -316,7 +320,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             var totalRecords = 0;
             do
             {
-                var page = apiWrapper.GetUsers(status, pageSize: pageSize, pageNumber: pageNumber);
+                var page = await apiWrapper.GetUsers(status, pageSize: pageSize, pageNumber: pageNumber);
                 users.AddRange(page.Users);
                 totalRecords = page.TotalRecords;
                 pageNumber++;

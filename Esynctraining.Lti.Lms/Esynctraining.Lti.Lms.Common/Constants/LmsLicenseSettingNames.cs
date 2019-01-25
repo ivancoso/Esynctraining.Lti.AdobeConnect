@@ -79,6 +79,8 @@ namespace Esynctraining.Lti.Lms.Common.Constants
 
         public const string ZoomApiKey = nameof(ZoomApiKey);
         public const string ZoomApiSecret = nameof(ZoomApiSecret);
+        public const string ZoomApiAccessToken = nameof(ZoomApiAccessToken);
+        public const string ZoomApiRefreshToken = nameof(ZoomApiRefreshToken);
         public const string LicenseId = nameof(LicenseId);
         public const string LicenseKey = nameof(LicenseKey);
         public const string LicenseSecret = nameof(LicenseSecret);

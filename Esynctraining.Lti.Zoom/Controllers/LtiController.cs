@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Zoom.ApiWrapper.JWT;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 using OAuthTokenResponse = Esynctraining.Lti.Lms.Common.API.Canvas.OAuthTokenResponse;
@@ -73,13 +74,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
             //string userId;
             try
             {
-                zoomUser = _userService.GetUser(param.lis_person_contact_email_primary);
+                zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
             }
             catch (Exception e)
             {
                 Logger.Error("User doesn't exist or doesn't belong to this account", e);
 
-                var userInfo = _userService.CreateUser(new CreateUserDto
+                var userInfo = await _userService.CreateUser(new CreateUserDto
                 {
                     Email = param.lis_person_contact_email_primary,
                     FirstName = param.PersonNameGiven,
@@ -133,13 +134,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
             //string userId;
             try
             {
-                zoomUser = _userService.GetUser(param.lis_person_contact_email_primary);
+                zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
             }
             catch (Exception e)
             {
                 Logger.Error("User doesn't exist or doesn't belong to this account", e);
 
-                var userInfo = _userService.CreateUser(new CreateUserDto
+                var userInfo = await _userService.CreateUser(new CreateUserDto
                 {
                     Email = param.lis_person_contact_email_primary,
                     FirstName = param.PersonNameGiven,
@@ -155,9 +156,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 ConfoNo = dbMeeting.ProviderMeetingId,
                 Uid = zoomUser.Id,
                 Uname = $"{zoomUser.FirstName} {zoomUser.LastName}",
-                Tk = _meetingService.GetToken(zoomUser.Id, "token"),
-                Zpk = _meetingService.GetToken(zoomUser.Id, "zpk"),
-                Zak = _meetingService.GetToken(zoomUser.Id, "zak"),
+                Tk = await _meetingService.GetToken(zoomUser.Id, "token"),
+                Zpk = await _meetingService.GetToken(zoomUser.Id, "zpk"),
+                Zak = await _meetingService.GetToken(zoomUser.Id, "zak"),
                 Email = param.lis_person_contact_email_primary
             };
 
@@ -183,7 +184,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     try
                     {
-                        var userInfo = _userService.CreateUser(new CreateUserDto
+                        var userInfo = await _userService.CreateUser(new CreateUserDto
                         {
                             Email = param.lis_person_contact_email_primary,
                             FirstName = param.PersonNameGiven,
@@ -323,11 +324,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         await StaticStorage.NamedLocker.WaitAsync(license.ConsumerKey);
                         try
                         {
-                            var zoomApi = new ZoomApiWrapper(new ZoomApiOptions
+                            var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
                             {
-                                ZoomApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
-                                ZoomApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                                ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
+                                ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
                             });
+
+                            var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
+                            var zoomApi = new ZoomApiWrapper(authParamsAccessor);
                             await _cacheUpdater.UpdateUsers(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey), zoomApi);
                         }
                         finally

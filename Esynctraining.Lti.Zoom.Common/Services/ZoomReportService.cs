@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Esynctraining.Lti.Zoom.Common.Dto.Reports;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
@@ -17,9 +18,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
         }
 
-        public IEnumerable<ZoomSessionDto> GetSessionsReport(string meetingId, string userId, string sessionId = null, bool inclideParticipants = false)
+        public async Task<IEnumerable<ZoomSessionDto>> GetSessionsReport(string meetingId, string userId, string sessionId = null, bool inclideParticipants = false)
         {
-            var allUserSessions = _zoomApi.GetMeetingsReport(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
+            var allUserSessions = await _zoomApi.GetMeetingsReport(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
             var meetingSessions = allUserSessions.Meetings.Where(x => x.Id == meetingId);
             if (sessionId != null)
             {
@@ -34,17 +35,17 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     SessionId = s.Uuid,
                     StartedAt = s.StartTime.DateTime,
                     EndedAt = s.EndTime.DateTime,
-                    Participants = inclideParticipants ? GetParticipantsBySessionId(s.Uuid).ToList() : null
+                    Participants = inclideParticipants ? (await GetParticipantsBySessionId(s.Uuid)).ToList() : null
                 };
                 result.Add(sessionDto);
             }
             return result;
         }
 
-        public IEnumerable<ZoomSessionParticipantDto> GetParticipantsBySessionId(string sessionId)
+        public async Task<IEnumerable<ZoomSessionParticipantDto>> GetParticipantsBySessionId(string sessionId)
         {
-            var participants = _zoomApi.GetMeetingParticipantsReport(sessionId);
-            var details = _zoomApi.GetMeetingParticipantsDetails(sessionId);
+            var participants = await _zoomApi.GetMeetingParticipantsReport(sessionId);
+            var details = await _zoomApi.GetMeetingParticipantsDetails(sessionId);
             List<ZoomSessionParticipantDto> result = participants.Participants.Select(x => new ZoomSessionParticipantDto
                 {
                     ParticipantName = x.Name,

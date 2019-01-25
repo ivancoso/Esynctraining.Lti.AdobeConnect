@@ -33,6 +33,8 @@ using Esynctraining.Mail.Configuration.Json;
 using Esynctraining.Mail.SmtpClient.MailKit;
 using Esynctraining.Mail.TemplateTransform.RazorLight;
 using Esynctraining.Zoom.ApiWrapper;
+using Esynctraining.Zoom.ApiWrapper.JWT;
+using Esynctraining.Zoom.ApiWrapper.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -155,9 +157,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddSingleton<LmsUserServiceFactory, LmsUserServiceFactory>();
             services.AddSingleton<CanvasCalendarEventService, CanvasCalendarEventService>();
             services.AddSingleton<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();
-            services.AddScoped<IZoomOptionsAccessor, ZoomOptionsFromLicenseAccessor>();
             services.AddScoped<ILmsLicenseAccessor, LicenseAccessor>();
-            services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
             //services.Configure<TemplateSettings>(Configuration.GetSection("MailTemplateSettings")).AddSingleton<ITemplateSettings>(sp => sp.GetService<IOptions<TemplateSettings>>().Value);
             //services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings")).AddSingleton<ISmtpSettings>(sp => sp.GetService<IOptions<SmtpSettings>>().Value);
             services.ConfigureSingleton<ISmtpSettings, SmtpSettings>(Configuration.GetSection("SmtpSettings"), x => x)
@@ -169,6 +169,14 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddSingleton<UserCacheUpdater, UserCacheUpdater>();
+
+            //todo: uncomment JWT for previous workflow
+            //services.AddScoped<IZoomApiJwtOptionsAccessor, ZoomJwtOptionsFromLicenseAccessor>();
+            //services.AddScoped<IZoomAuthParamsAccessor, ZoomJwtAuthParamsAccessor>();
+            services.Configure<ZoomOAuthConfig>(Configuration.GetSection("ZoomOAuthConfig")).AddSingleton(x => x);
+            services.AddScoped<IZoomOAuthOptionsAccessor, ZoomOAuthOptionsFromLicenseAccessor>();
+            services.AddScoped<IZoomAuthParamsAccessor, ZoomOAuthParamsAccessor>();
+            services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
