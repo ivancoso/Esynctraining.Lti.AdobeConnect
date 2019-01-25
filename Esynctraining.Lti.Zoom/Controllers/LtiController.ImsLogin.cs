@@ -13,6 +13,7 @@ using Esynctraining.Lti.Zoom.OAuth;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.JWT;
 using Esynctraining.Zoom.ApiWrapper.Model;
+using Esynctraining.Zoom.ApiWrapper.OAuth;
 using LtiLibrary.NetCore.Clients;
 using LtiLibrary.NetCore.Common;
 using LtiLibrary.NetCore.Lis.v1;
@@ -276,13 +277,21 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private async Task CreateZoomAccount(LtiParamDTO param, LmsLicenseDto license)
         {
-            var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
+            //var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
+            //{
+            //    ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
+            //    ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+            //});
+
+            //var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
+            //var zoomApi = new ZoomApiWrapper(authParamsAccessor);
+
+            var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
             {
-                ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
-                ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
             });
 
-            var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
+            var authParamsAccessor = new ZoomOAuthParamsAccessor(optionsAccessor);
             var zoomApi = new ZoomApiWrapper(authParamsAccessor);
 
             var activeUserEmails = (await GetUsersFromApi(UserStatus.Active, zoomApi)).Where(x => !string.IsNullOrEmpty(x.Email)).Select(x => x.Email);

@@ -9,6 +9,7 @@ using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.JWT;
+using Esynctraining.Zoom.ApiWrapper.OAuth;
 
 namespace Esynctraining.Lti.Zoom.Common.HostedServices
 {
@@ -36,13 +37,21 @@ namespace Esynctraining.Lti.Zoom.Common.HostedServices
             foreach (var licenseSet in groupedByZoomKey)
             {
                 var license = licenseSet.First();
-                var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
+                //var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
+                //{
+                //    ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
+                //    ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                //});
+
+                //var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
+                //var zoomApi = new ZoomApiWrapper(authParamsAccessor);
+
+                var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
                 {
-                    ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
-                    ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                    AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
                 });
 
-                var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
+                var authParamsAccessor = new ZoomOAuthParamsAccessor(optionsAccessor);
                 var zoomApi = new ZoomApiWrapper(authParamsAccessor);
                 await _cacheUpdater.UpdateUsers(licenseSet.Key, zoomApi);
             }

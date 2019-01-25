@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Zoom.ApiWrapper.JWT;
+using Esynctraining.Zoom.ApiWrapper.OAuth;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 using OAuthTokenResponse = Esynctraining.Lti.Lms.Common.API.Canvas.OAuthTokenResponse;
@@ -324,13 +325,21 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         await StaticStorage.NamedLocker.WaitAsync(license.ConsumerKey);
                         try
                         {
-                            var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
+                            //var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
+                            //{
+                            //    ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
+                            //    ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                            //});
+
+                            //var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
+                            //var zoomApi = new ZoomApiWrapper(authParamsAccessor);
+
+                            var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
                             {
-                                ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
-                                ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
+                                AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
                             });
 
-                            var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
+                            var authParamsAccessor = new ZoomOAuthParamsAccessor(optionsAccessor);
                             var zoomApi = new ZoomApiWrapper(authParamsAccessor);
                             await _cacheUpdater.UpdateUsers(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey), zoomApi);
                         }
