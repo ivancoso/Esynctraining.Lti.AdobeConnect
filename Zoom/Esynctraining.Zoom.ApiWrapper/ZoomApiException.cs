@@ -9,11 +9,4 @@ namespace Esynctraining.Zoom.ApiWrapper
         public string StatusDescription { get; set; }
         public string Content { get; set; }
     }
-
-    public enum ZoomApiErrorCodes
-    {
-        UserNotBelongToAccount = 1010,
-        UserNotFound = 1001,
-        MeetingNotFound = 3001
-    }
 }

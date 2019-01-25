@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Esynctraining.Zoom.ApiWrapper.Model;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
 using RestSharp.Serializers;
@@ -15,44 +11,24 @@ namespace Esynctraining.Zoom.ApiWrapper
 {
     public class ZoomApiWrapper
     {
-        private ZoomApiOptions _options;
-        private readonly IZoomOptionsAccessor _accessor;
+        private readonly IZoomAuthParamsAccessor _authParamsAccessor;
+        private RestClient _webClient;
 
-        //todo: async, when other methods are async
-        private ZoomApiOptions GetOptions()
+        private async Task<RestClient> GetWebClient()
         {
-            return _options ?? (_options = Task.Run(Init).Result);
+            return _webClient ?? (_webClient = new RestClient(await _authParamsAccessor.GetApiUrl()));
         }
 
-        private RestClient WebClient { get; set; }
-
-        private async Task<ZoomApiOptions> Init()
+        public ZoomApiWrapper(IZoomAuthParamsAccessor authParamsAccessor)
         {
-            _options = await _accessor.GetOptions();
-            if (string.IsNullOrWhiteSpace(GetOptions().ZoomApiBaseUrl))
-                _options.ZoomApiBaseUrl = "https://api.zoom.us/v2/";
-            WebClient = new RestClient(GetOptions().ZoomApiBaseUrl);
-            return _options;
+            _authParamsAccessor = authParamsAccessor;
         }
 
-        public ZoomApiWrapper(IZoomOptionsAccessor accessor)
+        public async Task<UserInfo> GetUser(string idOrEmail)
         {
-            _accessor = accessor;
-        }
-
-        public ZoomApiWrapper(ZoomApiOptions options)
-        {
-            if (string.IsNullOrWhiteSpace(options.ZoomApiBaseUrl))
-                options.ZoomApiBaseUrl = "https://api.zoom.us/v2/";
-            WebClient = new RestClient(options.ZoomApiBaseUrl);
-            _options = options;
-        }
-
-        public UserInfo GetUser(string idOrEmail)
-        {
-            RestRequest restRequest = this.BuildRequestAuthorization("users/{idOrEmail}", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("/users/{idOrEmail}", Method.GET);
             restRequest.AddParameter(nameof(idOrEmail), (object)idOrEmail, ParameterType.UrlSegment);
-            IRestResponse<UserInfo> restResponse = this.WebClient.Execute<UserInfo>((IRestRequest)restRequest);
+            IRestResponse<UserInfo> restResponse = await (await GetWebClient()).ExecuteTaskAsync<UserInfo>((IRestRequest)restRequest);
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
@@ -65,7 +41,7 @@ namespace Esynctraining.Zoom.ApiWrapper
             };
         }
 
-        public User CreateUser(CreateUser createUser, string action)
+        public async Task<User> CreateUser(CreateUser createUser, string action)
         {
             List<string> stringList = createUser.Validate();
             if (stringList.Count > 0)
@@ -80,13 +56,13 @@ namespace Esynctraining.Zoom.ApiWrapper
                 }));
             if (string.IsNullOrWhiteSpace(createUser.Password) && !string.IsNullOrWhiteSpace(action) && action.Equals(CreateUserAction.AutoCreate, StringComparison.InvariantCultureIgnoreCase))
                 throw new Exception(string.Format("{0} property is required for creating user when action is set to {1}", (object)"Password", (object)CreateUserAction.AutoCreate));
-            RestRequest restRequest = this.BuildRequestAuthorization("users", Method.POST);
+            RestRequest restRequest = await BuildRequestAuthorization("users", Method.POST);
             restRequest.AddJsonBody((object)new
             {
                 action = action,
                 user_info = createUser
             });
-            IRestResponse<User> restResponse = this.WebClient.Execute<User>((IRestRequest)restRequest);
+            IRestResponse<User> restResponse = await (await GetWebClient()).ExecuteTaskAsync<User>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
                 return restResponse.Data;
             throw new ZoomApiException
@@ -97,15 +73,15 @@ namespace Esynctraining.Zoom.ApiWrapper
             };
         }
 
-        public ListUsers GetUsers(UserStatus status = UserStatus.Active, int pageSize = 30, int pageNumber = 1)
+        public async Task<ListUsers> GetUsers(UserStatus status = UserStatus.Active, int pageSize = 30, int pageNumber = 1)
         {
             if (pageSize > 300)
                 throw new Exception("GetUsers page size max 300");
-            RestRequest restRequest = this.BuildRequestAuthorization("users", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("users", Method.GET);
             restRequest.AddParameter(nameof(status), (object)status.ToString().ToLowerInvariant(), ParameterType.QueryString);
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
-            IRestResponse<ListUsers> restResponse = this.WebClient.Execute<ListUsers>((IRestRequest)restRequest);
+            IRestResponse<ListUsers> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ListUsers>((IRestRequest)restRequest);
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
@@ -120,17 +96,17 @@ namespace Esynctraining.Zoom.ApiWrapper
 
         public async Task<ZoomApiResultWithData<Meeting>> GetMeeting(string meetingId)
         {
-            RestRequest restRequest = BuildRequestAuthorization("meetings/{meetingId}", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("meetings/{meetingId}", Method.GET);
             restRequest.AddParameter(nameof(meetingId), meetingId, ParameterType.UrlSegment);
-            IRestResponse<Meeting> restResponse = await WebClient.ExecuteGetTaskAsync<Meeting>(restRequest);
+            IRestResponse<Meeting> restResponse = await (await GetWebClient()).ExecuteGetTaskAsync<Meeting>(restRequest);
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data.ToSuccessZoomApiResult();
 
-            return HandleErrorRequest(restResponse);
+            return await HandleErrorRequest(restResponse);
         }
 
-        private ZoomApiResultWithData<T> HandleErrorRequest<T>(IRestResponse<T> restResponse) where T : class
+        private async Task<ZoomApiResultWithData<T>> HandleErrorRequest<T>(IRestResponse<T> restResponse) where T : class
         {
             //todo: log
             if (!string.IsNullOrWhiteSpace(restResponse.Content))
@@ -144,17 +120,17 @@ namespace Esynctraining.Zoom.ApiWrapper
             };
         }
 
-        public ZoomApiResultWithData<ListMeetings> GetMeetings(string userId, MeetingListTypes type = MeetingListTypes.Scheduled, int pageSize = 30, int pageNumber = 1)
+        public async Task<ZoomApiResultWithData<ListMeetings>> GetMeetings(string userId, MeetingListTypes type = MeetingListTypes.Scheduled, int pageSize = 30, int pageNumber = 1)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetings page size max 300");
-            RestRequest restRequest = this.BuildRequestAuthorization("users/{userId}/meetings", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("users/{userId}/meetings", Method.GET);
             restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
             restRequest.AddParameter(nameof(type), (object)type.ToString().ToLowerInvariant(), ParameterType.QueryString);
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
 
-            IRestResponse<ListMeetings> restResponse = this.WebClient.Execute<ListMeetings>((IRestRequest)restRequest);
+            IRestResponse<ListMeetings> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ListMeetings>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data.ToSuccessZoomApiResult();
 
@@ -173,11 +149,11 @@ namespace Esynctraining.Zoom.ApiWrapper
             return ZoomApiResultWithData<ListMeetings>.Error($"Not found meetings for user {userId}");
         }
 
-        public ZoomListRegistrants GetMeetingRegistrants(string meetingId, string occurrenceId = null, string status="approved", int pageSize = 300, int pageNumber = 1)
+        public async Task<ZoomListRegistrants> GetMeetingRegistrants(string meetingId, string occurrenceId = null, string status="approved", int pageSize = 300, int pageNumber = 1)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingRegistrants page size max 300");
-            RestRequest restRequest = this.BuildRequestAuthorization("/meetings/{meetingId}/registrants", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("/meetings/{meetingId}/registrants", Method.GET);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             if (!string.IsNullOrEmpty(occurrenceId))
             {
@@ -186,7 +162,7 @@ namespace Esynctraining.Zoom.ApiWrapper
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
             restRequest.AddParameter("status", (object)status, ParameterType.QueryString);
-            IRestResponse<ZoomListRegistrants> restResponse = this.WebClient.Execute<ZoomListRegistrants>((IRestRequest)restRequest);
+            IRestResponse<ZoomListRegistrants> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomListRegistrants>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -196,12 +172,12 @@ namespace Esynctraining.Zoom.ApiWrapper
             return (ZoomListRegistrants)null;
         }
 
-        public ZoomApiResultWithData<ZoomAddRegistrantResponse> AddRegistrant(string meetingId, ZoomAddRegistrantRequest registrant, string occurenceIds = null)
+        public async Task<ZoomApiResultWithData<ZoomAddRegistrantResponse>> AddRegistrant(string meetingId, ZoomAddRegistrantRequest registrant, string occurenceIds = null)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}/registrants", Method.POST);
+            RestRequest restRequest = await BuildRequestAuthorization("meetings/{meetingId}/registrants", Method.POST);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)registrant);
-            IRestResponse<ZoomAddRegistrantResponse> restResponse = this.WebClient.Execute<ZoomAddRegistrantResponse>((IRestRequest)restRequest);
+            IRestResponse<ZoomAddRegistrantResponse> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomAddRegistrantResponse>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
                 return restResponse.Data.ToSuccessZoomApiResult();
 
@@ -224,10 +200,10 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
              */
         //public Meeting CreateMeeting(string userId, Meeting meeting)
         //{
-        //    RestRequest restRequest = this.BuildRequestAuthorization("users/{userId}/meetings", Method.POST);
+        //    RestRequest restRequest = await BuildRequestAuthorization("users/{userId}/meetings", Method.POST);
         //    restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
         //    restRequest.AddJsonBody((object)meeting);
-        //    IRestResponse<Meeting> restResponse = this.WebClient.Execute<Meeting>((IRestRequest)restRequest);
+        //    IRestResponse<Meeting> restResponse = await (await GetWebClient()).ExecuteTaskAsync<Meeting>((IRestRequest)restRequest);
         //    if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
         //        return restResponse.Data;
         //    if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -237,12 +213,12 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
         //    return (Meeting)null;
         //}
 
-        public bool UpdateRegistrantsStatus(string meetingId, ZoomUpdateRegistrantStatusRequest updateStatusRequest, string occurenceId)
+        public async Task<bool> UpdateRegistrantsStatus(string meetingId, ZoomUpdateRegistrantStatusRequest updateStatusRequest, string occurenceId)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}/registrants/status", Method.PUT);
+            RestRequest restRequest = await BuildRequestAuthorization("meetings/{meetingId}/registrants/status", Method.PUT);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)updateStatusRequest);
-            IRestResponse restResponse = this.WebClient.Execute((IRestRequest)restRequest);
+            IRestResponse restResponse = await (await GetWebClient()).ExecuteTaskAsync((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NoContent)
                 return true;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -252,13 +228,13 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return false;
         }
 
-        public bool DeleteMeeting(string meetingId, string occurrenceId = null)
+        public async Task<bool> DeleteMeeting(string meetingId, string occurrenceId = null)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}", Method.DELETE);
+            RestRequest restRequest = await BuildRequestAuthorization("meetings/{meetingId}", Method.DELETE);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             if (!string.IsNullOrWhiteSpace(occurrenceId))
                 restRequest.AddParameter("occurrence_id", (object)occurrenceId, ParameterType.QueryString);
-            IRestResponse restResponse = this.WebClient.Execute((IRestRequest)restRequest);
+            IRestResponse restResponse = await (await GetWebClient()).ExecuteTaskAsync((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NoContent)
                 return true;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -268,12 +244,12 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return false;
         }
 
-        public ZoomApiRecordingList GetRecordings(string meetingId, bool trash = false)
+        public async Task<ZoomApiRecordingList> GetRecordings(string meetingId, bool trash = false)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}/recordings", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("meetings/{meetingId}/recordings", Method.GET);
             restRequest.AddParameter(nameof(meetingId), meetingId, ParameterType.UrlSegment);
             restRequest.AddParameter(nameof(trash), trash, ParameterType.QueryString);
-            IRestResponse<ZoomApiRecordingList> restResponse = this.WebClient.Execute<ZoomApiRecordingList>((IRestRequest)restRequest);
+            IRestResponse<ZoomApiRecordingList> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomApiRecordingList>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
             if(restResponse.StatusCode == HttpStatusCode.NotFound)
@@ -285,9 +261,9 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return (ZoomApiRecordingList)null;
         }
 
-        public ZoomRecordingSessionList GetUserRecordings(string userId, DateTime? from = null, DateTime? to = null, int pageSize = 300, string nextPageToken = null, bool mc = false, bool trash = false)
+        public async Task<ZoomRecordingSessionList> GetUserRecordings(string userId, DateTime? from = null, DateTime? to = null, int pageSize = 300, string nextPageToken = null, bool mc = false, bool trash = false)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization($"users/{userId}/recordings", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization($"users/{userId}/recordings", Method.GET);
             restRequest.AddParameter("page_size", pageSize, ParameterType.QueryString);
             if(from.HasValue)
                 restRequest.AddParameter(nameof(from), from.Value.ToString("yyyy-MM-dd"), ParameterType.QueryString);
@@ -297,7 +273,7 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
                 restRequest.AddParameter("next_page_token", (object)nextPageToken, ParameterType.QueryString);
             restRequest.AddParameter(nameof(mc), mc.ToString().ToLower(), ParameterType.QueryString);
             restRequest.AddParameter(nameof(trash), trash.ToString().ToLower(), ParameterType.QueryString);
-            IRestResponse<ZoomRecordingSessionList> restResponse = this.WebClient.Execute<ZoomRecordingSessionList>((IRestRequest)restRequest);
+            IRestResponse<ZoomRecordingSessionList> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomRecordingSessionList>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
             if (restResponse.StatusCode == HttpStatusCode.NotFound)
@@ -309,9 +285,9 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return (ZoomRecordingSessionList)null;
         }
 
-        public bool DeleteRecording(string meetingId, string recordingId = null, bool trash = true)
+        public async Task<bool> DeleteRecording(string meetingId, string recordingId = null, bool trash = true)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization($"meetings/{meetingId}/recordings/{recordingId}?action={(object)(trash ? "trash" : "delete")}", Method.DELETE);
+            RestRequest restRequest = await BuildRequestAuthorization($"meetings/{meetingId}/recordings/{recordingId}?action={(object)(trash ? "trash" : "delete")}", Method.DELETE);
 
             //restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
 
@@ -319,7 +295,7 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             //    restRequest.AddParameter(nameof(recordingId), (object)recordingId, ParameterType.UrlSegment);
 
             //restRequest.AddParameter("action", (object)(trash?"trash":"delete"), ParameterType.QueryString);
-            IRestResponse restResponse = this.WebClient.Execute((IRestRequest)restRequest);
+            IRestResponse restResponse = await (await GetWebClient()).ExecuteTaskAsync((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NoContent)
                 return true;
 
@@ -331,11 +307,11 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
 
             return false;
         }
-        public bool RecoverRecording(string meetingId, string recordingId = null)
+        public async Task<bool> RecoverRecording(string meetingId, string recordingId = null)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization($"meetings/{meetingId}/recordings/{(recordingId == null? "" : recordingId + "/")}status", Method.PUT);
+            RestRequest restRequest = await BuildRequestAuthorization($"meetings/{meetingId}/recordings/{(recordingId == null? "" : recordingId + "/")}status", Method.PUT);
             restRequest.AddJsonBody(new {action = "recover"});
-            IRestResponse restResponse = this.WebClient.Execute((IRestRequest)restRequest);
+            IRestResponse restResponse = await (await GetWebClient()).ExecuteTaskAsync((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NoContent)
                 return true;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -350,21 +326,21 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             public string Token { get; set; }
         }
 
-        public string GetUserToken(string userId, string type)
+        public async Task<string> GetUserToken(string userId, string type)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("users/{userId}/token", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("users/{userId}/token", Method.GET);
             restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
             restRequest.AddParameter("type", type, ParameterType.QueryString);
-            IRestResponse<ZoomToken> restResponse = this.WebClient.Execute<ZoomToken>((IRestRequest)restRequest);
+            IRestResponse<ZoomToken> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomToken>((IRestRequest)restRequest);
             return restResponse.Data.Token;
         }
 
-        public ZoomApiResultWithData<Meeting> CreateMeeting(string userId, Meeting meeting)
+        public async Task<ZoomApiResultWithData<Meeting>> CreateMeeting(string userId, Meeting meeting)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("users/{userId}/meetings", Method.POST);
+            RestRequest restRequest = await BuildRequestAuthorization("users/{userId}/meetings", Method.POST);
             restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)meeting);
-            IRestResponse<Meeting> restResponse = this.WebClient.Execute<Meeting>((IRestRequest)restRequest);
+            IRestResponse<Meeting> restResponse = await (await GetWebClient()).ExecuteTaskAsync<Meeting>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
                 return restResponse.Data.ToSuccessZoomApiResult();
 
@@ -383,17 +359,17 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return ZoomApiResultWithData<Meeting>.Error($"Faild with creating meeting {userId}");
         }
 
-        public ZoomApiResultWithData<bool> UpdateMeeting(string meetingId, Meeting meeting)
+        public async Task<ZoomApiResultWithData<bool>> UpdateMeeting(string meetingId, Meeting meeting)
         {
             //HACK: ZOOM API does not update AGENDA field with empty value. I  requested zoom support
             //https://devforum.zoom.us/t/update-agenda-field-in-meeting/2800
             if (string.IsNullOrEmpty(meeting.Agenda))
                 meeting.Agenda = " ";
 
-            RestRequest restRequest = this.BuildRequestAuthorization("meetings/{meetingId}", Method.PATCH);
+            RestRequest restRequest = await BuildRequestAuthorization("meetings/{meetingId}", Method.PATCH);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)meeting);
-            IRestResponse restResponse = this.WebClient.Execute((IRestRequest)restRequest);
+            IRestResponse restResponse = await (await GetWebClient()).ExecuteTaskAsync((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NoContent)
                 return true.ToSuccessZoomApiResult();
 
@@ -403,18 +379,18 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return ZoomApiResultWithData<bool>.Error($"Faild during update meeting {meetingId}");
         }
 
-        public ZoomMeetingsReportList GetMeetingsReport(string userId, DateTime from, DateTime to, int pageSize = 300, string nextPageToken = null)
+        public async Task<ZoomMeetingsReportList> GetMeetingsReport(string userId, DateTime from, DateTime to, int pageSize = 300, string nextPageToken = null)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
-            RestRequest restRequest = this.BuildRequestAuthorization("report/users/{userId}/meetings", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("report/users/{userId}/meetings", Method.GET);
             restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("from", (object)from.ToString("yyyy-MM-dd"), ParameterType.QueryString);
             restRequest.AddParameter("to", (object)to.ToString("yyyy-MM-dd"), ParameterType.QueryString);
             if (!string.IsNullOrWhiteSpace(nextPageToken))
                 restRequest.AddParameter("next_page_token", (object)nextPageToken, ParameterType.QueryString);
-            IRestResponse<ZoomMeetingsReportList> restResponse = this.WebClient.Execute<ZoomMeetingsReportList>((IRestRequest)restRequest);
+            IRestResponse<ZoomMeetingsReportList> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomMeetingsReportList>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -424,11 +400,11 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return (ZoomMeetingsReportList)null;
         }
 
-        public ZoomMeetingPoolsReport GetZoomMeetingPoolsReport(string meetingId)
+        public async Task<ZoomMeetingPoolsReport> GetZoomMeetingPoolsReport(string meetingId)
         {
-            RestRequest restRequest = this.BuildRequestAuthorization("report/meetings/{meetingId}/polls", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization("report/meetings/{meetingId}/polls", Method.GET);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
-            var restResponse = this.WebClient.Execute<ZoomMeetingPoolsReport>((IRestRequest)restRequest);
+            var restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomMeetingPoolsReport>((IRestRequest)restRequest);
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
@@ -439,16 +415,16 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return (ZoomMeetingPoolsReport)null;
         }
 
-        public MeetingParticipantsReport GetMeetingParticipantsReport(string meetingId, int pageSize = 300, string nextPageToken = null)
+        public async Task<MeetingParticipantsReport> GetMeetingParticipantsReport(string meetingId, int pageSize = 300, string nextPageToken = null)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
-            RestRequest restRequest = this.BuildRequestAuthorization($"report/meetings/{meetingId}/participants", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization($"report/meetings/{meetingId}/participants", Method.GET);
             //restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             if (!string.IsNullOrWhiteSpace(nextPageToken))
                 restRequest.AddParameter("next_page_token", (object)nextPageToken, ParameterType.QueryString);
-            IRestResponse<MeetingParticipantsReport> restResponse = this.WebClient.Execute<MeetingParticipantsReport>((IRestRequest)restRequest);
+            IRestResponse<MeetingParticipantsReport> restResponse = await (await GetWebClient()).ExecuteTaskAsync<MeetingParticipantsReport>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -458,16 +434,16 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return (MeetingParticipantsReport)null;
         }
 
-        public ListMeetingParticipantsDetails GetMeetingParticipantsDetails(string meetingId, int pageSize = 300, string nextPageToken = null)
+        public async Task<ListMeetingParticipantsDetails> GetMeetingParticipantsDetails(string meetingId, int pageSize = 300, string nextPageToken = null)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
-            RestRequest restRequest = this.BuildRequestAuthorization($"metrics/meetings/{meetingId}/participants", Method.GET);
+            RestRequest restRequest = await BuildRequestAuthorization($"metrics/meetings/{meetingId}/participants", Method.GET);
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("type", "past", ParameterType.QueryString);
             if (!string.IsNullOrWhiteSpace(nextPageToken))
                 restRequest.AddParameter("next_page_token", (object)nextPageToken, ParameterType.QueryString);
-            IRestResponse<ListMeetingParticipantsDetails> restResponse = this.WebClient.Execute<ListMeetingParticipantsDetails>((IRestRequest)restRequest);
+            IRestResponse<ListMeetingParticipantsDetails> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ListMeetingParticipantsDetails>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
@@ -477,37 +453,18 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return (ListMeetingParticipantsDetails)null;
         }
 
-        private RestRequest BuildRequestAuthorization(string resource, Method method)
+        private async Task<RestRequest> BuildRequestAuthorization(string resource, Method method)
         {
             //return this.WebClient.BuildRequestAuthorization(this.Options, resource, method);
 
             RestRequest restRequest = new RestRequest(resource, method);
 
-            var token = JwtEncode(GetOptions().ZoomApiKey, GetOptions().ZoomApiSecret);
-            WebClient.Authenticator = (IAuthenticator)new JwtAuthenticator(token);
+            var token = await _authParamsAccessor.GetAuthToken();
+            var webClient = await GetWebClient();
+            webClient.Authenticator = (IAuthenticator)new JwtAuthenticator(token);
             NewtonsoftJsonSerializer newtonsoftJsonSerializer = new NewtonsoftJsonSerializer();
             restRequest.JsonSerializer = (ISerializer)newtonsoftJsonSerializer;
             return restRequest;
-        }
-
-        private static string JwtEncode(string key, string secret)
-        {
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-            var signingCredentials = new SigningCredentials(signingKey,
-                SecurityAlgorithms.HmacSha256Signature, SecurityAlgorithms.Sha256Digest);
-
-            var expires = DateTime.UtcNow.AddMinutes(5);
-            var securityTokenDescriptor = new SecurityTokenDescriptor
-            {
-                Issuer = key,
-                Expires = expires,
-                SigningCredentials = signingCredentials
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler { SetDefaultTimesOnTokenCreation = false };
-            var plainToken = tokenHandler.CreateToken(securityTokenDescriptor);
-            var signedAndEncodedToken = tokenHandler.WriteToken(plainToken);
-            return signedAndEncodedToken;
         }
     }
 }
