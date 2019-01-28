@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Esynctraining.Zoom.ApiWrapper.Model;
 using RestSharp;
@@ -38,6 +39,23 @@ namespace Esynctraining.Zoom.ApiWrapper
                 Content = restResponse.Content,
                 ErrorMessage = restResponse.ErrorMessage,
                 StatusDescription = restResponse.StatusDescription
+            };
+        }
+
+        public async Task<UserInfo> GetCurrentUser()
+        {
+            RestRequest restRequest = await BuildRequestAuthorization("/users/me", Method.GET);
+            IRestResponse<UserInfo> restResponse = await (await GetWebClient()).ExecuteTaskAsync<UserInfo>(restRequest);
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data;
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription,
+                StatusCode = restResponse.StatusCode
             };
         }
 
@@ -451,6 +469,25 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
             return (ListMeetingParticipantsDetails)null;
+        }
+
+        public async Task<OAuthTokenInfo> RefreshOauthToken(string refreshToken, string redirectUrl, string clientId, string sclientSecret)
+        {
+            RestRequest restRequest = new RestRequest($"/token?grant_type=refresh_token&&refresh_token={refreshToken}&&redirect_uri={redirectUrl}", Method.POST);
+            var webClient = new RestClient("https://zoom.us/oauth");
+
+            var token = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{clientId}:{sclientSecret}"));
+            restRequest.AddHeader("Accept", "application/json");
+            restRequest.AddHeader("Authorization", $"Basic {token}");
+
+            IRestResponse<OAuthTokenInfo> restResponse = await webClient.ExecuteTaskAsync<OAuthTokenInfo>(restRequest);
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data;
+
+            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
+                throw new Exception(restResponse.ErrorMessage);
+
+            return (OAuthTokenInfo)null;
         }
 
         private async Task<RestRequest> BuildRequestAuthorization(string resource, Method method)

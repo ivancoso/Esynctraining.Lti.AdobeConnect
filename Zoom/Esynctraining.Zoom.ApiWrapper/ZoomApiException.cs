@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace Esynctraining.Zoom.ApiWrapper
 {
@@ -8,5 +9,6 @@ namespace Esynctraining.Zoom.ApiWrapper
         public string ErrorMessage { get; set; }
         public string StatusDescription { get; set; }
         public string Content { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
     }
 }
