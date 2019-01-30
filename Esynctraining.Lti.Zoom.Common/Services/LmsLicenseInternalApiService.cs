@@ -109,6 +109,46 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             _logger.Error($"[GetLicense:{consumerKey}] Response: {httpResponseMessage.ToString()}"); //todo: check that httpResponseMessage.ToString() returns enough information
             throw new ZoomLicenseException(consumerKey, "License data could not be retrieved. Please contact support.");
         }
+
+        public async Task<LmsLicenseDto> UpdateOAuthTokensForLicense(Guid consumerKey, string accessToken, string refreshToken)
+        {
+            HttpResponseMessage httpResponseMessage = null;
+            try
+            {
+                using (var httpClient = new System.Net.Http.HttpClient())
+                {
+                    httpResponseMessage = await httpClient.PutAsync($"{_settings.LicenseServiceUrl}/{consumerKey}/tokens?accessToken={accessToken}&refreshToken={refreshToken}", null);
+                    if (httpResponseMessage.IsSuccessStatusCode)
+                    {
+                        var resp = await httpResponseMessage.Content.ReadAsStringAsync();
+                        OperationResultWithData<LmsLicenseDto> licenseDtoResult =
+                            _jsonDeserializer.JsonDeserialize<OperationResultWithData<LmsLicenseDto>>(resp);
+                        if (!licenseDtoResult.IsSuccess)
+                        {
+                            _logger.Error($"[GetLicense:{consumerKey}] {licenseDtoResult.Message}");
+                            throw new ZoomLicenseException(consumerKey, licenseDtoResult.Message);
+                        }
+
+                        return licenseDtoResult.Data;
+                    }
+                    else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        _logger.Error($"[UpdateOAuthTokensForLicense:{consumerKey}] Not found");
+                        throw new ZoomLicenseException(consumerKey, "License not found");
+                    }
+                }
+
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.Error($"[UpdateOAuthTokensFor License:{consumerKey}] Unexpected exception", e);
+                throw new ZoomLicenseException(consumerKey, "Unexpected error happened when retrieving license data. Please contact support.");
+            }
+
+            _logger.Error($"[UpdateOAuthTokensForLicense:{consumerKey}] Response: {httpResponseMessage.ToString()}"); //todo: check that httpResponseMessage.ToString() returns enough information
+            throw new ZoomLicenseException(consumerKey, "License data could not be retrieved. Please contact support.");
+
+        }
     }
 
 }

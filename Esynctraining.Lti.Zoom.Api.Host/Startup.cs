@@ -173,7 +173,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             //todo: uncomment JWT for previous workflow
             //services.AddScoped<IZoomApiJwtOptionsAccessor, ZoomJwtOptionsFromLicenseAccessor>();
             //services.AddScoped<IZoomAuthParamsAccessor, ZoomJwtAuthParamsAccessor>();
-            services.Configure<ZoomOAuthConfig>(Configuration.GetSection("ZoomOAuthConfig")).AddSingleton(x => x);
+            services.ConfigureSingleton<ZoomOAuthConfig, ZoomOAuthConfig>(Configuration.GetSection("ZoomOAuthConfig"), x => x);
             services.AddScoped<IZoomOAuthOptionsAccessor, ZoomOAuthOptionsFromLicenseAccessor>();
             services.AddScoped<IZoomAuthParamsAccessor, ZoomOAuthParamsAccessor>();
             services.AddScoped<ZoomApiWrapper, ZoomApiWrapper>();

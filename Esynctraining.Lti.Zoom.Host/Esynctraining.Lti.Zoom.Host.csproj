@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.11" />
     <PackageReference Include="Esynctraining.Core.Logging.MicrosoftExtensionsLogger" Version="1.0.0.1" />
+    <PackageReference Include="Esynctraining.Extensions" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Json.Jil" Version="1.0.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.2" />

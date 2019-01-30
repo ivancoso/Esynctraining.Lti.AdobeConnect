@@ -45,12 +45,16 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private readonly ZoomUserService _userService;
         private readonly LmsUserServiceFactory _lmsUserServiceFactory;
         private readonly UserCacheUpdater _cacheUpdater;
+        private readonly ZoomOAuthConfig _zoomOAuthConfig;
+        private readonly ILmsLicenseService _lmsLicenseService;
+
 
         private readonly CanvasAPI _canvasApi;
 
         public LtiController(ILogger logger, ApplicationSettingsProvider settings, ILmsLicenseService licenseService,
             UserSessionService sessionService, IJsonDeserializer jsonDeserializer, ZoomMeetingService meetingService,
-            ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory, UserCacheUpdater cacheUpdater) : base(logger, settings, sessionService)
+            ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory, UserCacheUpdater cacheUpdater,
+            ZoomOAuthConfig zoomOAuthConfig, ILmsLicenseService lmsLicenseService) : base(logger, settings, sessionService)
         {
             _licenseService = licenseService;
             _jsonDeserializer = jsonDeserializer;
@@ -58,6 +62,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
             _userService = userService;
             _lmsUserServiceFactory = lmsUserServiceFactory;
             _cacheUpdater = cacheUpdater;
+            _zoomOAuthConfig = zoomOAuthConfig;
+            _lmsLicenseService = lmsLicenseService;
             _canvasApi = new CanvasAPI(logger, jsonDeserializer);
         }
 
@@ -334,10 +340,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
                             //var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
                             //var zoomApi = new ZoomApiWrapper(authParamsAccessor);
 
-                            var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
-                            {
-                                AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
-                            });
+                            ILmsLicenseAccessor lmsLicenseAccessor = new LicenseConstructorAccessor(license);
+                            var optionsAccessor = new ZoomOAuthOptionsFromLicenseAccessor(lmsLicenseAccessor, _zoomOAuthConfig, _lmsLicenseService);
+
+                            //var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
+                            //{
+                            //    AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
+                            //});
 
                             var authParamsAccessor = new ZoomOAuthParamsAccessor(optionsAccessor);
                             var zoomApi = new ZoomApiWrapper(authParamsAccessor);

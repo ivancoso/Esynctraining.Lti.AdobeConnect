@@ -17,11 +17,13 @@ namespace Esynctraining.Lti.Zoom.Common.HostedServices
     {
         private readonly UserCacheUpdater _cacheUpdater;
         private readonly ILmsLicenseService _lmsLicenseService;
+        private readonly ZoomOAuthConfig _zoomOAuthConfig;
 
-        public UserCacheHostedService(ILogger logger, UserCacheUpdater cacheUpdater, ApplicationSettingsProvider settings, ILmsLicenseService lmsLicenseService) : base(logger, settings)
+        public UserCacheHostedService(ILogger logger, UserCacheUpdater cacheUpdater, ApplicationSettingsProvider settings, ILmsLicenseService lmsLicenseService, ZoomOAuthConfig zoomOAuthConfig) : base(logger, settings)
         {
-            _cacheUpdater = cacheUpdater;
-            _lmsLicenseService = lmsLicenseService;
+            _cacheUpdater = cacheUpdater ?? throw new ArgumentNullException(nameof(cacheUpdater));
+            _lmsLicenseService = lmsLicenseService ?? throw new ArgumentNullException(nameof(lmsLicenseService));
+            _zoomOAuthConfig = zoomOAuthConfig ?? throw new ArgumentNullException(nameof(zoomOAuthConfig)); ;
         }
 
         protected override async void DoWork(object state)
@@ -46,10 +48,14 @@ namespace Esynctraining.Lti.Zoom.Common.HostedServices
                 //var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
                 //var zoomApi = new ZoomApiWrapper(authParamsAccessor);
 
-                var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
-                {
-                    AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
-                });
+                ILmsLicenseAccessor lmsLicenseAccessor = new LicenseConstructorAccessor(license);
+                var optionsAccessor = new ZoomOAuthOptionsFromLicenseAccessor(lmsLicenseAccessor, _zoomOAuthConfig, _lmsLicenseService);
+
+
+                //var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
+                //{
+                //    AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
+                //});
 
                 var authParamsAccessor = new ZoomOAuthParamsAccessor(optionsAccessor);
                 var zoomApi = new ZoomApiWrapper(authParamsAccessor);

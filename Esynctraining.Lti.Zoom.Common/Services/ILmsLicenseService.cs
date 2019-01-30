@@ -10,6 +10,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
         Task<LmsLicenseDto> GetLicense(Guid consumerKey);
 
+        Task<LmsLicenseDto> UpdateOAuthTokensForLicense(Guid consumerKey, string accessToken, string refreshToken);
     }
 
 }

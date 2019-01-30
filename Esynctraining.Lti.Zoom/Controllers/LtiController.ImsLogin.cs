@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Lms.Common.Dto.Outcomes;
+using Esynctraining.Lti.Zoom.Common;
 using Esynctraining.Lti.Zoom.Common.Dto;
+using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Lti.Zoom.Extensions;
 using Esynctraining.Lti.Zoom.OAuth;
@@ -286,10 +288,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
             //var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
             //var zoomApi = new ZoomApiWrapper(authParamsAccessor);
 
-            var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
-            {
-                AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
-            });
+            ILmsLicenseAccessor lmsLicenseAccessor = new LicenseConstructorAccessor(license);
+            var optionsAccessor = new ZoomOAuthOptionsFromLicenseAccessor(lmsLicenseAccessor, _zoomOAuthConfig, _lmsLicenseService);
+
+
+            //var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
+            //{
+            //    AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
+            //});
 
             var authParamsAccessor = new ZoomOAuthParamsAccessor(optionsAccessor);
             var zoomApi = new ZoomApiWrapper(authParamsAccessor);
