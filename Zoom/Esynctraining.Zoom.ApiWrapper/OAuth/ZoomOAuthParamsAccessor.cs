@@ -14,7 +14,8 @@ namespace Esynctraining.Zoom.ApiWrapper.OAuth
 
         public async Task<string> GetAuthToken()
         {
-            if (_options == null)
+            //TODO: Investigate Question
+            //if (_options == null)
                 await Init();
 
             var token = _options.AccessToken;
