@@ -300,6 +300,21 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         }
 
+        private bool IsValidOAuthOptions(LmsLicenseDto license)
+        {
+            if (string.IsNullOrEmpty(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiRefreshToken)))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public virtual async Task<ActionResult> LoginWithProvider(string provider, LtiParamDTO param)
         {
             var sw = Stopwatch.StartNew();
@@ -322,6 +337,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                 if (license != null)
                 {
+                    if (!IsValidOAuthOptions(license))
+                    {
+                        Logger.ErrorFormat("Invalid LTI request. Need update license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                        throw new LtiException($"Please update license.");
+                    }
+
                     //TODO: Add logic to get culture from DB by lmsCompany.LanguageId
                     System.Threading.Thread.CurrentThread.CurrentUICulture =
                         new System.Globalization.CultureInfo("en-US");
