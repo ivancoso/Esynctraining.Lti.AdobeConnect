@@ -296,6 +296,8 @@ namespace Esynctraining.Lti.Lms.Moodle
 
         private static string FixDomain(string domain)
         {
+            domain = domain.ToLower().AddHttpProtocol(true);
+
             if (domain.Last() != '/')
             {
                 domain = domain + '/';
