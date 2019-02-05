@@ -680,7 +680,7 @@ namespace Esynctraining.Lti.Lms.Canvas
 
             if (response.StatusCode != HttpStatusCode.Created)
             {
-                _logger.Error($"[Canvas API error] Response error: {response.Content}");
+                _logger.Error($"[Canvas API error CreateCalendarEvent] Response error: {response.Content}");
                 return null;
             }
 

@@ -302,17 +302,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private bool IsValidOAuthOptions(LmsLicenseDto license)
         {
-            if (string.IsNullOrEmpty(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)))
-            {
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiRefreshToken)))
-            {
-                return false;
-            }
-
-            return true;
+            return license.ZoomUserDto != null;
         }
 
         public virtual async Task<ActionResult> LoginWithProvider(string provider, LtiParamDTO param)

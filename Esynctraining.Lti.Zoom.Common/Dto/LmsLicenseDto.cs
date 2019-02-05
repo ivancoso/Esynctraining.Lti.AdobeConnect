@@ -18,6 +18,8 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
 
         public Dictionary<string, string> Settings { get; set; }
 
+        public ZoomUserDto ZoomUserDto { get; set; }
+
         public T GetSetting<T>(string settingName)
         {
             return (Settings.ContainsKey(settingName))

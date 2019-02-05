@@ -1,5 +1,4 @@
-﻿using Esynctraining.Lti.Lms.Common.Constants;
-using Esynctraining.Lti.Zoom.Common.Services;
+﻿using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Zoom.ApiWrapper.OAuth;
 using System;
 using System.Net.Http;
@@ -27,13 +26,13 @@ namespace Esynctraining.Lti.Zoom.Common
 
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.zoom.us/v2/users/me");
             request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Authorization", $"Bearer  {license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)}");
+            request.Headers.Add("Authorization", $"Bearer  {license.ZoomUserDto.AccessToken}");
             using (var httpClient = new System.Net.Http.HttpClient())
             {
                 var response = await httpClient.SendAsync(request);
                 if (!response.IsSuccessStatusCode)
                 {
-                    var refreshToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiRefreshToken);
+                    var refreshToken = license.ZoomUserDto.RefreshToken;
                     request = new HttpRequestMessage(HttpMethod.Post, $"https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token={refreshToken}&&redirect_uri={_zoomOAuthConfig.RedirectURL}");
 
                     var token = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{_zoomOAuthConfig.ClientID}:{_zoomOAuthConfig.ClientSecret}"));
@@ -50,7 +49,7 @@ namespace Esynctraining.Lti.Zoom.Common
 
             return new ZoomOAuthOptions
             {
-                AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken),
+                AccessToken = license.ZoomUserDto.AccessToken,
             };
         }
 
