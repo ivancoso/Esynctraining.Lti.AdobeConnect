@@ -3,6 +3,7 @@ using Esynctraining.Zoom.ApiWrapper.OAuth;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Esynctraining.Lti.Zoom.Common
@@ -13,6 +14,8 @@ namespace Esynctraining.Lti.Zoom.Common
         private readonly ZoomOAuthConfig _zoomOAuthConfig;
         private readonly ILmsLicenseService _lmsLicenseService;
 
+        private static readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+
         public ZoomOAuthOptionsFromLicenseAccessor(ILmsLicenseAccessor licenseAccessor, ZoomOAuthConfig zoomOAuthConfig, ILmsLicenseService lmsLicenseService)
         {
             _licenseAccessor = licenseAccessor ?? throw new ArgumentNullException(nameof(licenseAccessor));
@@ -22,23 +25,15 @@ namespace Esynctraining.Lti.Zoom.Common
 
         public async Task<ZoomOAuthOptions> GetOptions()
         {
-            var license = await _licenseAccessor.GetLicense();
-
-            var request = new HttpRequestMessage(HttpMethod.Get, "https://api.zoom.us/v2/users/me");
-            request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Authorization", $"Bearer  {license.ZoomUserDto.AccessToken}");
-            using (var httpClient = new System.Net.Http.HttpClient())
+            Dto.LmsLicenseDto license = null;
+            await _sem.WaitAsync();
+            try
             {
-                var response = await httpClient.SendAsync(request);
-                if (!response.IsSuccessStatusCode)
-                {
-                    var refreshToken = license.ZoomUserDto.RefreshToken;
-                    request = new HttpRequestMessage(HttpMethod.Post, $"https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token={refreshToken}&&redirect_uri={_zoomOAuthConfig.RedirectURL}");
+                license = await _licenseAccessor.GetLicense();
 
-                    var token = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{_zoomOAuthConfig.ClientID}:{_zoomOAuthConfig.ClientSecret}"));
-                    request.Headers.Add("Accept", "application/json");
-                    request.Headers.Add("Authorization", $"Basic {token}");
-                    response = await httpClient.SendAsync(request);
+                if (!(await IsAccessTokenValid(license.ZoomUserDto.AccessToken)))
+                {
+                    var response = await UpdateAccessToken(license.ZoomUserDto.RefreshToken);
                     if (response.IsSuccessStatusCode)
                     {
                         var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
@@ -46,11 +41,47 @@ namespace Esynctraining.Lti.Zoom.Common
                     }
                 }
             }
+            finally
+            {
+                _sem.Release();
+            }
 
             return new ZoomOAuthOptions
             {
                 AccessToken = license.ZoomUserDto.AccessToken,
             };
+        }
+
+        private async Task<bool> IsAccessTokenValid(string accessToken)
+        {
+            var response = await GetZoomUserInfo(accessToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        private async Task<HttpResponseMessage> GetZoomUserInfo(string accessToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "https://api.zoom.us/v2/users/me");
+            request.Headers.Add("Accept", "application/json");
+            request.Headers.Add("Authorization", $"Bearer  {accessToken}");
+            using (var httpClient = new System.Net.Http.HttpClient())
+            {
+                var response = await httpClient.SendAsync(request);
+                return response;
+            }
+        }
+
+        private async Task<HttpResponseMessage> UpdateAccessToken(string refreshToken)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, $"https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token={refreshToken}&&redirect_uri={_zoomOAuthConfig.RedirectURL}");
+            var token = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{_zoomOAuthConfig.ClientID}:{_zoomOAuthConfig.ClientSecret}"));
+            request.Headers.Add("Accept", "application/json");
+            request.Headers.Add("Authorization", $"Basic {token}");
+
+            using (var httpClient = new System.Net.Http.HttpClient())
+            {
+                var response = await httpClient.SendAsync(request);
+                return response;
+            }
         }
 
         private class TokenResponse
