@@ -205,7 +205,7 @@ namespace EdugameCloud.Lti.Moodle
                     return await LoginAndCreateAClient(true, lmsDomain, userName, password, true);
                 }
 
-                var token = new JavaScriptSerializer().Deserialize<MoodleTokenDTO>(resp);
+                var token = new JavaScriptSerializer().Deserialize<EdugameCloud.Lti.DTO.MoodleTokenDTO>(resp);
 
                 if (token.error != null)
                 {
