@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Esynctraining.Core.Logging;
 
 namespace Esynctraining.Lti.Zoom.Common
 {
@@ -13,15 +14,17 @@ namespace Esynctraining.Lti.Zoom.Common
         private readonly ILmsLicenseAccessor _licenseAccessor;
         private readonly ZoomOAuthConfig _zoomOAuthConfig;
         private readonly ILmsLicenseService _lmsLicenseService;
+        private readonly ILogger _logger;
 
         private static readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
 
-        public ZoomOAuthOptionsFromLicenseAccessor(ILmsLicenseAccessor licenseAccessor, ZoomOAuthConfig zoomOAuthConfig, ILmsLicenseService lmsLicenseService)
+        public ZoomOAuthOptionsFromLicenseAccessor(ILmsLicenseAccessor licenseAccessor, ZoomOAuthConfig zoomOAuthConfig, ILmsLicenseService lmsLicenseService, ILogger logger)
         {
             _licenseAccessor = licenseAccessor ?? throw new ArgumentNullException(nameof(licenseAccessor));
             _zoomOAuthConfig = zoomOAuthConfig ?? throw new ArgumentNullException(nameof(zoomOAuthConfig));
             _lmsLicenseService = lmsLicenseService ?? throw new ArgumentNullException(nameof(lmsLicenseService));
-         }
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
 
         public async Task<ZoomOAuthOptions> GetOptions()
         {
@@ -30,12 +33,13 @@ namespace Esynctraining.Lti.Zoom.Common
             try
             {
                 license = await _licenseAccessor.GetLicense();
-
+                _logger.Info($"Check token for license {license.ConsumerKey}");
                 if (!(await IsAccessTokenValid(license.ZoomUserDto.AccessToken)))
                 {
                     var response = await UpdateAccessToken(license.ZoomUserDto.RefreshToken);
                     if (response.IsSuccessStatusCode)
                     {
+                        _logger.Info($"Update acees token for license key {license.ConsumerKey}");
                         var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
                         license = await _lmsLicenseService.UpdateOAuthTokensForLicense(license.ConsumerKey, tokenResponse.access_token, tokenResponse.refresh_token);
                     }
@@ -43,6 +47,7 @@ namespace Esynctraining.Lti.Zoom.Common
             }
             finally
             {
+                _logger.Info($"End Check token for license {license.ConsumerKey}");
                 _sem.Release();
             }
 
