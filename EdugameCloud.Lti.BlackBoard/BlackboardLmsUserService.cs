@@ -21,7 +21,7 @@ namespace EdugameCloud.Lti.BlackBoard
             _soapApi = soapApi ?? throw new ArgumentNullException(nameof(soapApi)); 
         }
 
-        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiUserListParam extraData = null)
         {
             Guid guid;
             //return GetUsersOldStyle(lmsCompany, courseId, out error)
@@ -35,7 +35,7 @@ namespace EdugameCloud.Lti.BlackBoard
                 : OperationResultWithData<LmsUserDTO>.Error(result.Message);
         }
         
-        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO param = null)
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, string courseId, ILtiUserListParam param = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));

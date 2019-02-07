@@ -32,8 +32,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private void CreateAnnouncement(
             LmsMeetingType meetingType,
-            ILmsLicense lmsCompany, 
-            LtiParamDTO param,
+            ILmsLicense lmsCompany,
+            ILtiParam param,
             MeetingDTOInput meetingDto)
         {
             if (!lmsCompany.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))

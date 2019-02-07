@@ -21,14 +21,14 @@ namespace Esynctraining.Lti.Lms.Canvas
         }
 
         public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings,
-            string lmsUserId, string courseId, LtiParamDTO extraData = null)
+            string lmsUserId, string courseId, ILtiUserListParam extraData = null)
         {
             var user = await _canvasApi.GetCourseUser(lmsUserId, licenseSettings, courseId);
             return user != null ? user.ToSuccessResult() : OperationResultWithData<LmsUserDTO>.Error("User not found in course");
         }
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO extraData = null)
+            string courseId, ILtiUserListParam extraData = null)
         {
             List<LmsUserDTO> users = await FetchUsers(licenseSettings, courseId);
             return users.ToSuccessResult();

@@ -545,8 +545,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         
         public async Task<OperationResult> SaveMeeting(
             ILmsLicense lmsLicense,
-            IAdobeConnectProxy provider, 
-            LtiParamDTO param,
+            IAdobeConnectProxy provider,
+            ILtiParam param,
             MeetingDTOInput meetingDTO,
             StringBuilder trace,
             IFolderBuilder fb,
@@ -640,7 +640,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     //NOTE: need to call before use GetMeetingFolder method;
                     // when we call group-membership-update api action ac create folder in the user-meetings directory called as user login;
-                    this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new[] {currentUserPrincipal.PrincipalId}, hostGroup);
+                    this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new[] { currentUserPrincipal.PrincipalId }, hostGroup);
 
                     sw.Stop();
                     trace.AppendFormat("SaveMeeting: AddUserToMeetingHostsGroup: time: {0}.", sw.Elapsed.ToString());
@@ -900,7 +900,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResultWithData<MeetingDTO>.Success(message, updatedMeeting);
         }
 
-        private async Task<LmsCalendarEventDTO> CreateOrUpdateCalendarEvent(ILmsLicense lmsLicense, LmsCourseMeeting meeting, LtiParamDTO param, bool isNewMeeting, ScoInfoResult result)
+        private async Task<LmsCalendarEventDTO> CreateOrUpdateCalendarEvent(ILmsLicense lmsLicense, LmsCourseMeeting meeting, ILtiParam param, bool isNewMeeting, ScoInfoResult result)
         {
             LmsCalendarEventDTO lmsCalendarEvent = null;
 
@@ -1332,7 +1332,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
         #region Methods
-        private void ProcessMeetingName(ILmsLicense lmsLicense, LtiParamDTO param, MeetingDTO meetingDTO, LmsUser lmsUser,
+        private void ProcessMeetingName(ILmsLicense lmsLicense, ILtiParam param, MeetingDTO meetingDTO, LmsUser lmsUser,
             bool isNewMeeting, MeetingUpdateItem updateItem, LmsCourseMeeting meeting, OfficeHours officeHours)
         {
             string courseId = meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours
@@ -1434,7 +1434,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private bool ProcessAudio(ILmsLicense lmsLicense, LtiParamDTO param, bool isNewMeeting, 
+        private bool ProcessAudio(ILmsLicense lmsLicense, ILtiParam param, bool isNewMeeting, 
             MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
             LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
         {
@@ -1566,7 +1566,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
         }
         
-        private bool CanEdit(LtiParamDTO param, LmsCourseMeeting meeting, ILmsLicense lmsLicense)
+        private bool CanEdit(ILtiParam param, LmsCourseMeeting meeting, ILmsLicense lmsLicense)
         {
             if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
             {
@@ -1604,7 +1604,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 .Any();
         }
 
-        private IEnumerable<LmsCompanyRoleMapping> GetGuestAuditRoleMappings(ILmsLicense lmsLicense, LtiParamDTO param)
+        private IEnumerable<LmsCompanyRoleMapping> GetGuestAuditRoleMappings(ILmsLicense lmsLicense, ILtiParam param)
         {
             if (!lmsLicense.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry))
                 return Enumerable.Empty<LmsCompanyRoleMapping>();
@@ -1712,7 +1712,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private async Task<MeetingDTO> BuildDto(
             LmsUser lmsUser,
-            LtiParamDTO param,
+            ILtiParam param,
             ILmsLicense lmsLicense,
             MeetingInfo meeting,
             LmsCalendarEventDTO lmsCalendarEventDto,
@@ -1854,7 +1854,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private void SetPermissions(
             MeetingDTO dto,
             LmsUser lmsUser,
-            LtiParamDTO param,
+            ILtiParam param,
             ILmsLicense lmsLicense,
             MeetingInfo meeting)
         {

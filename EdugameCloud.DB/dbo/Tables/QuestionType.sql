@@ -10,10 +10,3 @@
     [iconSource]              NVARCHAR (500) NULL,
     CONSTRAINT [PK_QuestionType] PRIMARY KEY CLUSTERED ([questionTypeId] ASC)
 );
-
-
-
-
-
-
-

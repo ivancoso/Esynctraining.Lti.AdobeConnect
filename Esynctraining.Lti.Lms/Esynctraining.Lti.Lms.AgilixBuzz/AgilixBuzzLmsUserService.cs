@@ -18,7 +18,7 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
             _dlapApi = dlapApi ?? throw new ArgumentNullException(nameof(dlapApi));
         }
 
-        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiUserListParam extraData = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
@@ -31,7 +31,7 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
         }
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO extraData = null)
+            string courseId, ILtiUserListParam extraData = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
@@ -43,5 +43,7 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
 
             return users.ToSuccessResult();
         }
+
     }
+
 }

@@ -25,12 +25,12 @@ namespace EdugameCloud.Lti.API
         private const string OkMessage = "Connected successfully";
 
 
-        private readonly ILogger logger;
+        private readonly ILogger _logger;
 
 
         public TestConnectionService(ILogger logger)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #region Properties
@@ -56,21 +56,21 @@ namespace EdugameCloud.Lti.API
             {
                 case "ac":
                     bool loginSameAsEmail;
-                    success = this.TestACConnection(test, out info, out loginSameAsEmail);
+                    success = TestACConnection(test, out info, out loginSameAsEmail);
                     break;
                 case LmsProviderNames.AgilixBuzz:
-                    success = this.TestAgilixBuzzConnection(test, out info);
+                    success = TestAgilixBuzzConnection(test, out info);
                     break;
                 case LmsProviderNames.Blackboard:
-                    success = this.TestBlackBoardConnection(test, out info);
+                    success = TestBlackBoardConnection(test, out info);
                     break;
                 case LmsProviderNames.Moodle:
-                    var tupleResult = this.TestMoodleConnection(test).Result;
+                    var tupleResult = TestMoodleConnection(test).Result;
                     success = tupleResult.result;
                     info = tupleResult.info;
                     break;
                 case LmsProviderNames.Sakai:
-                    success = this.TestSakaiConnection(test, out info);
+                    success = TestSakaiConnection(test, out info);
                     break;
                 case LmsProviderNames.Canvas:
                     success = TestCanvasConnection(test, out info);
@@ -145,7 +145,7 @@ namespace EdugameCloud.Lti.API
             }
             catch (AggregateException ex)
             {
-                logger.Error("[TestSchoologyConnection]", ex);
+                _logger.Error("[TestSchoologyConnection]", ex);
                 if (ex.InnerExceptions.First() is HttpRequestException reqEx)
                 {
                     info = reqEx.Message;
@@ -187,13 +187,13 @@ namespace EdugameCloud.Lti.API
                 return false;
 
             var session = test.enableProxyToolMode
-                ? this.SoapAPI.LoginToolAndCreateAClient(
+                ? SoapAPI.LoginToolAndCreateAClient(
                     out info,
                     test.domain.IsSSL(),
                     test.domain,
                     test.password)
 
-                : this.SoapAPI.LoginUserAndCreateAClient(
+                : SoapAPI.LoginUserAndCreateAClient(
                     out info,
                     test.domain.IsSSL(),
                     test.domain,
@@ -244,7 +244,7 @@ namespace EdugameCloud.Lti.API
 
             if (!commonInfo.Success)
             {
-                logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. {0}.", commonInfo.Status.GetErrorInfo());
+                _logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. {0}.", commonInfo.Status.GetErrorInfo());
                 info = commonInfo.Status.GetErrorInfo();
                 return false;
             }
@@ -255,7 +255,7 @@ namespace EdugameCloud.Lti.API
 
                 if (!fields.Success)
                 {
-                    logger.ErrorFormat("GetPasswordPolicies.GetAclFields. AC error. {0}.", fields.Status.GetErrorInfo());
+                    _logger.ErrorFormat("GetPasswordPolicies.GetAclFields. AC error. {0}.", fields.Status.GetErrorInfo());
                     info = fields.Status.GetErrorInfo();
                     return false;
                 }
@@ -275,7 +275,7 @@ namespace EdugameCloud.Lti.API
                 return true;
             }
 
-            logger.Error("GetPasswordPolicies. Account is NULL. Check Adobe Connect account permissions. Admin account expected.");
+            _logger.Error("GetPasswordPolicies. Account is NULL. Check Adobe Connect account permissions. Admin account expected.");
             info = "Check Adobe Connect account permissions. Admin account expected.";
             return false;
         }

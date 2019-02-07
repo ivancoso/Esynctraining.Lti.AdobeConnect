@@ -174,8 +174,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public async Task<Tuple<List<LmsUserDTO>, string>> GetLMSUsers(
             ILmsLicense lmsLicense, 
             LmsCourseMeeting meeting, 
-            int courseId, 
-            LtiParamDTO extraData = null)
+            int courseId,
+            ILtiUserListParam extraData = null)
         {
             if (lmsLicense.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null
                 && !meeting.EnableDynamicProvisioning) //when AutoSync==true and <1000 users in course - taking users from DB
@@ -265,7 +265,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
             int courseId,
-            LtiParamDTO param, 
+            ILtiUserListParam param, 
             long id, 
             List<LmsUserDTO> users = null)
         {
@@ -566,7 +566,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public bool IsTeacher(LtiParamDTO param, ILmsLicense lmsCompany)
+        public bool IsTeacher(ILtiParam param, ILmsLicense lmsCompany)
         {
             return new LmsRoleService(this._settings).IsTeacher(param, lmsCompany);
         }

@@ -14,7 +14,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         Task<OperationResult> SaveMeeting(
             ILmsLicense lmsLicense,
             IAdobeConnectProxy provider,
-            LtiParamDTO param,
+            ILtiParam param,
             MeetingDTOInput meetingDTO,
             StringBuilder trace,
             IFolderBuilder fb,

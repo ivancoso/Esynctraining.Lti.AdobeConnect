@@ -18,7 +18,7 @@ namespace EdugameCloud.Lti.Sakai
     public sealed class SakaiApi : ISakaiApi
     {
         private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
-        
+
         public SakaiApi()
         {
         }
@@ -74,7 +74,7 @@ namespace EdugameCloud.Lti.Sakai
                 var assessmentId = test.publishedAssessmentId;
                 var quizzesIds = new List<int>();
                 quizzesIds.Add(assessmentId);
-                var url = 
+                var url =
                     $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid={ courseName }&assessmentId={ assessmentId }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&secret=07951-BAUER-41481-CRLSHM&user_id={licenseSettings[LmsUserSettingNames.UserId]}&ext_sakai_provider_eid={ WebUtility.UrlEncode((string)licenseSettings[LmsUserSettingNames.Username]) }";
 
                 string resp = await _httpClientWrapper.DownloadStringAsync(url);
@@ -114,7 +114,7 @@ namespace EdugameCloud.Lti.Sakai
 
         public async Task SendAnswersAsync(Dictionary<string, object> licenseSettings, string json, bool isSurvey, string[] answers = null)
         {
-            var url = 
+            var url =
                 $@"http://sakai11.esynctraining.com/egcint/service/?" +
                 $"lti_message_type=egc_submit_results2" +
                 $"&contentId={ json }" +
@@ -137,5 +137,7 @@ namespace EdugameCloud.Lti.Sakai
         {
             throw new NotImplementedException();
         }
+
     }
+
 }

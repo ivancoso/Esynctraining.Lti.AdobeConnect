@@ -16,7 +16,7 @@ namespace EdugameCloud.Lti.Bridge
             this.api = api;
         }
 
-        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiUserListParam extraData = null)
         {
             var result = await api.GetUserProfile(lmsUserId, licenseSettings);
             return new LmsUserDTO
@@ -32,7 +32,7 @@ namespace EdugameCloud.Lti.Bridge
 
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO param = null)
+            string courseId, ILtiUserListParam param = null)
         {
             var res = await api.GetCourseUsers(courseId, licenseSettings);
             var users = res.Select(result => new LmsUserDTO()

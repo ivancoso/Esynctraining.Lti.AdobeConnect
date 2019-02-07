@@ -894,7 +894,7 @@ namespace EdugameCloud.Lti.Controllers
         {
             var sw = Stopwatch.StartNew();
             
-            var credentials = session.LmsCompany;            
+            var credentials = session.LmsCompany;
             var param = session.LtiSession.LtiParam;
             var acProvider = this.GetAdminProvider(credentials);
 

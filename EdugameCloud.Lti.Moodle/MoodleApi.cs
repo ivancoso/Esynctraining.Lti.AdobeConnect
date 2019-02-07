@@ -1,9 +1,7 @@
-﻿using Esynctraining.Lti.Lms.Common.API.Moodle;
-using Esynctraining.Lti.Lms.Common.Constants;
-using Esynctraining.Lti.Lms.Common.Dto;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Xml;
 using EdugameCloud.Lti.DTO;
@@ -11,9 +9,11 @@ using EdugameCloud.Lti.Extensions;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using System.Threading.Tasks;
 using Esynctraining.HttpClient;
 using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.API.Moodle;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.Moodle
 {

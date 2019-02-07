@@ -8,9 +8,9 @@ namespace Esynctraining.Lti.Lms.Common.API
     public class LmsCourseSectionsServiceBase
     {
         protected Dictionary<string, object> LicenseSettings { get; }
-        protected LtiParamDTO Param { get; }
+        protected ILtiParam Param { get; }
 
-        public LmsCourseSectionsServiceBase(Dictionary<string, object> licenseSettings, LtiParamDTO param)
+        public LmsCourseSectionsServiceBase(Dictionary<string, object> licenseSettings, ILtiParam param)
         {
             LicenseSettings = licenseSettings;
             Param = param;

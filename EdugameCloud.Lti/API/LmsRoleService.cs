@@ -20,7 +20,7 @@ namespace EdugameCloud.Lti.API
         }
 
 
-        public bool IsTeacher(LtiParamDTO param, ILmsLicense lmsCompany)
+        public bool IsTeacher(ILtiParam param, ILmsLicense lmsCompany)
         {
             if (param == null)
                 throw new ArgumentNullException(nameof(param));

@@ -103,7 +103,7 @@ namespace EdugameCloud.Lti.API
             return null;
         }
 
-        public LmsCourseSectionsServiceBase GetCourseSectionsService(int lmsProviderId, Dictionary<string, object> licenseSettings, LtiParamDTO param)
+        public LmsCourseSectionsServiceBase GetCourseSectionsService(int lmsProviderId, Dictionary<string, object> licenseSettings, ILtiParam param)
         {
             var lmsId = (LmsProviderEnum)lmsProviderId;
 
@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.API
             return new LmsCourseSectionsServiceBase(new Dictionary<string, object>(), param);
         }
 
-        public IMeetingSessionService GetMeetingSessionService(ILmsLicense lmsLicense, LtiParamDTO param)
+        public IMeetingSessionService GetMeetingSessionService(ILmsLicense lmsLicense, ILtiParam param)
         {
             var lmsCourseMeetingModel = IoC.Resolve<LmsCourseMeetingModel>();
             var logger = IoC.Resolve<ILogger>();

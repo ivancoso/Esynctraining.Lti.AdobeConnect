@@ -31,7 +31,7 @@ namespace EdugameCloud.Lti.Desire2Learn
             this.settings = settings;
         }
 
-        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, LtiParamDTO extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiUserListParam extraData = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
@@ -58,7 +58,7 @@ namespace EdugameCloud.Lti.Desire2Learn
         }
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO param = null)
+            string courseId, ILtiUserListParam param = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));

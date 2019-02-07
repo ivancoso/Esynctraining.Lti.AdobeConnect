@@ -7,7 +7,77 @@ using Esynctraining.Lti.Lms.Common.Constants;
 
 namespace Esynctraining.Lti.Lms.Common.Dto
 {
-    public class LtiParamDTO
+    public interface ILtiUserListParam
+    {
+        /// <summary>
+        /// Gets the extended IMS LTI tool setting url. (sakai?)
+        /// </summary>
+        string ext_ims_lti_tool_setting_url { get; }
+
+        /// <summary>
+        /// Gets or sets the membership url. (sakai)
+        /// </summary>
+        string ext_ims_lis_memberships_url { get; }
+
+        /// <summary>
+        /// Gets the extended IMS LIST memberships id. (sakai)
+        /// </summary>
+        string ext_ims_lis_memberships_id { get; }
+
+
+        // D2L
+        string lms_user_id { get; }
+
+        // D2L
+        string roles { get; }
+
+        // D2L
+        string ext_d2l_role { get; }
+    }
+
+    public interface ILtiParam: ILtiUserListParam
+    {
+        /// <summary>
+        /// Gets the custom BlackBoard role.
+        /// </summary>
+        string custom_role { get; }
+
+        /// <summary>
+        /// Gets the course id.
+        /// </summary>
+        int course_id { get; }
+
+        /// <summary>
+        /// Gets the LMS user login id.
+        /// </summary>
+        string lms_user_login { get; }
+
+        /// <summary>
+        /// Gets the LIS person contact email primary.
+        /// </summary>
+        string lis_person_contact_email_primary { get; }
+
+        /// <summary>
+        /// Gets the context label.
+        /// </summary>
+        string context_label { get; }
+
+        /// <summary>
+        /// Gets the context title.
+        /// </summary>
+        string context_title { get; }
+
+        string referer { get; }
+
+        string user_id { get; }
+
+        string PersonNameGiven { get; }
+
+        string PersonNameFamily { get; }
+
+    }
+
+    public class LtiParamDTO : ILtiParam
     {
         #region Fields
 

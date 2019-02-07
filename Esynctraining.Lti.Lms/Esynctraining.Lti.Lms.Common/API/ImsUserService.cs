@@ -12,7 +12,7 @@ namespace Esynctraining.Lti.Lms.Common.API
         {
         }
 
-        public override Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO extraData = null)
+        public override Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, string courseId, ILtiUserListParam extraData = null)
         {
             //if (lmsCompany == null)
             //    throw new ArgumentNullException(nameof(lmsCompany));

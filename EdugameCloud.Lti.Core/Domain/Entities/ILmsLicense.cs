@@ -60,6 +60,8 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         int LanguageId { get; }
 
+        bool? UseUserFolder { get; }
+
         // TODO: lazy load????
         IList<LmsCourseMeeting> LmsCourseMeetings { get; }
 
