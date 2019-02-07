@@ -113,8 +113,7 @@ namespace Esynctraining.Lti.Lms.Moodle
             return (session != null, error);
         }
 
-        // TRICK: marked as 'internal'
-        internal async Task<(T result, string error)> LoginIfNecessary<T>(
+        protected async Task<(T result, string error)> LoginIfNecessary<T>(
             MoodleSession session,
             Func<MoodleSession, T> action,
             Dictionary<string, object> licenseSettings)
@@ -134,7 +133,7 @@ namespace Esynctraining.Lti.Lms.Moodle
             return (default(T), error);
         }
 
-        internal async Task<(T result, string error)> LoginIfNecessary<T>(
+        protected async Task<(T result, string error)> LoginIfNecessary<T>(
             MoodleSession session,
             Func<MoodleSession, Tuple<T, string>> action,
             Dictionary<string, object> licenseSettings)

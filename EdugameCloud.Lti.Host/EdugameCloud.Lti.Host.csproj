@@ -364,7 +364,7 @@
       <Name>EdugameCloud.Lti.Haiku</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
-      <Project>{0e20b71c-4291-42f8-9f83-e1a51ee5494c}</Project>
+      <Project>{23c32769-727d-4f59-9746-1c75a0b39f49}</Project>
       <Name>EdugameCloud.Lti.Moodle</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj">
@@ -390,6 +390,10 @@
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj">
       <Project>{856DFC9A-1C9B-4E9E-B056-FBEE6D4030B5}</Project>
       <Name>Esynctraining.Lti.Lms.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Moodle\Esynctraining.Lti.Lms.Moodle.csproj">
+      <Project>{e4577dca-72d0-4ce8-ba01-276dbc1f6e1d}</Project>
+      <Name>Esynctraining.Lti.Lms.Moodle</Name>
     </ProjectReference>
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj">
       <Project>{1c0d3806-361a-4cd8-acdb-43aff540ac72}</Project>
@@ -448,7 +452,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>6099</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

@@ -1,6 +1,6 @@
 ﻿namespace Esynctraining.Lti.Lms.Moodle
 {
-    internal sealed class MoodleSession
+    public sealed class MoodleSession
     {
         /// <summary>
         /// Gets or sets the token.

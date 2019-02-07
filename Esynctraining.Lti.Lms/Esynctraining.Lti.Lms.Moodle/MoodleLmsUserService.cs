@@ -18,7 +18,7 @@ namespace Esynctraining.Lti.Lms.Moodle
             _moodleApi = moodleApi ?? throw new ArgumentNullException(nameof(moodleApi));
         }
 
-        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, string courseId, LtiParamDTO param = null)
+        public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, string courseId, ILtiUserListParam param = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));

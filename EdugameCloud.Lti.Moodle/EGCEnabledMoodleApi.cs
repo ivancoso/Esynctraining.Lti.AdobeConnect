@@ -8,13 +8,15 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Lms.Moodle;
+using Esynctraining.Core.Json;
 
 namespace EdugameCloud.Lti.Moodle
 {
     public sealed class EGCEnabledMoodleApi : MoodleApi, IEGCEnabledMoodleApi
     {
-        public EGCEnabledMoodleApi(ApplicationSettingsProvider settings, ILogger logger)
-            : base(settings, logger)
+        public EGCEnabledMoodleApi(ApplicationSettingsProvider settings, ILogger logger, IJsonDeserializer jsonDeserializer)
+            : base(jsonDeserializer, logger)
         { }
         
 

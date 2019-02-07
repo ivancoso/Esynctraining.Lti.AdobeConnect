@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Moodle\Esynctraining.Lti.Lms.Moodle.csproj" />
   </ItemGroup>
 
   <ItemGroup>

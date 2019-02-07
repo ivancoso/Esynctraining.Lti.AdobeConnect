@@ -4,6 +4,7 @@ using Castle.Windsor;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
+using Esynctraining.Lti.Lms.Moodle;
 
 namespace EdugameCloud.Lti.Moodle
 {

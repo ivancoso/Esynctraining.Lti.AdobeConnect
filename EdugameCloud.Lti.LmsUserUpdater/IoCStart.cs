@@ -23,6 +23,7 @@ using Esynctraining.Lti.Lms.Common.API.Haiku;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
 using Esynctraining.Lti.Lms.Common.API.Sakai;
 using Esynctraining.Lti.Lms.Common.API.Schoology;
+using Esynctraining.Lti.Lms.Moodle;
 using Esynctraining.Lti.Lms.Schoology;
 using Esynctraining.Windsor;
 using Microsoft.Extensions.Configuration;

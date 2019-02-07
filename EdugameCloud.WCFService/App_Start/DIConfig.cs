@@ -32,6 +32,7 @@ using EdugameCloud.WCFService.Providers;
 using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Providers;
 using FluentValidation;
+using Esynctraining.Lti.Lms.Moodle;
 
 namespace EdugameCloud.WCFService
 {

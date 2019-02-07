@@ -59,6 +59,7 @@
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.AgilixBuzz\Esynctraining.Lti.Lms.AgilixBuzz.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Canvas\Esynctraining.Lti.Lms.Canvas.csproj" />
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Moodle\Esynctraining.Lti.Lms.Moodle.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj" />
   </ItemGroup>
   <ItemGroup>
