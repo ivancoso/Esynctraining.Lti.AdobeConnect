@@ -35,7 +35,7 @@ namespace Esynctraining.Lti.Lms.BlackBoard
         //}
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, LtiParamDTO param = null)
+            string courseId, ILtiUserListParam param = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
