@@ -35,7 +35,7 @@ namespace Esynctraining.Lti.Zoom.Common.HostedServices
                 licenses.Add(await _lmsLicenseService.GetLicense(key));
             }
 
-            var groupedByZoomKey = licenses.GroupBy(x => x.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey));
+            var groupedByZoomKey = licenses.GroupBy(x => x.ZoomUserDto.UserId);
             foreach (var licenseSet in groupedByZoomKey)
             {
                 var license = licenseSet.First();

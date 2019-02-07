@@ -361,7 +361,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                             var authParamsAccessor = new ZoomOAuthParamsAccessor(optionsAccessor);
                             var zoomApi = new ZoomApiWrapper(authParamsAccessor);
-                            await _cacheUpdater.UpdateUsers(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey), zoomApi);
+                            await _cacheUpdater.UpdateUsers(license.ZoomUserDto.UserId, zoomApi);
                         }
                         finally
                         {

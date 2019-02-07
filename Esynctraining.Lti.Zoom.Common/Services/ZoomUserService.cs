@@ -41,7 +41,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         public async Task<IEnumerable<User>> GetActiveUsers(LmsLicenseDto licenseDto = null)
         {
             var license = licenseDto ?? await _licenseAccessor.GetLicense();
-            var cacheKey = "Zoom.Users." + license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey);
+            var cacheKey = "Zoom.Users." + license.ZoomUserDto.UserId;
             var sw = Stopwatch.StartNew();
             var cacheData = await _cache.GetAsync(cacheKey);
             sw.Stop();
@@ -56,7 +56,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     cacheData = await _cache.GetAsync(cacheKey);
                     if (cacheData == null)
                     {
-                        await _cacheUpdater.UpdateUsers(license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey), _zoomApi);
+                        await _cacheUpdater.UpdateUsers(license.ZoomUserDto.UserId, _zoomApi);
                         cacheData = await _cache.GetAsync(cacheKey);
                     }
                 }
