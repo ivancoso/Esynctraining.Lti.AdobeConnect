@@ -41,7 +41,7 @@ namespace Esynctraining.Lti.Zoom.Common
                     {
                         _logger.Info($"Update acees token for license key {license.ConsumerKey}");
                         var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
-                        license = await _lmsLicenseService.UpdateOAuthTokensForLicense(license.ConsumerKey, tokenResponse.access_token, tokenResponse.refresh_token);
+                        license.ZoomUserDto = (await _lmsLicenseService.UpdateOAuthTokensForLicense(license.ConsumerKey, tokenResponse.access_token, tokenResponse.refresh_token)).ZoomUserDto;
                     }
                 }
             }
