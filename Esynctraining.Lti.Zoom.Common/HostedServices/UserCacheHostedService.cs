@@ -49,7 +49,7 @@ namespace Esynctraining.Lti.Zoom.Common.HostedServices
                 //var zoomApi = new ZoomApiWrapper(authParamsAccessor);
 
                 ILmsLicenseAccessor lmsLicenseAccessor = new LicenseConstructorAccessor(license);
-                var optionsAccessor = new ZoomOAuthOptionsFromLicenseAccessor(lmsLicenseAccessor, _zoomOAuthConfig, _lmsLicenseService, Logger);
+                var optionsAccessor = new ZoomOAuthOptionsFromLicenseAccessor(lmsLicenseAccessor, _lmsLicenseService, Logger);
 
 
                 //var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions

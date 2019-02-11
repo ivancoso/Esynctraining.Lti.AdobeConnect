@@ -12,16 +12,14 @@ namespace Esynctraining.Lti.Zoom.Common
     public class ZoomOAuthOptionsFromLicenseAccessor : IZoomOAuthOptionsAccessor
     {
         private readonly ILmsLicenseAccessor _licenseAccessor;
-        private readonly ZoomOAuthConfig _zoomOAuthConfig;
         private readonly ILmsLicenseService _lmsLicenseService;
         private readonly ILogger _logger;
 
         private static readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
 
-        public ZoomOAuthOptionsFromLicenseAccessor(ILmsLicenseAccessor licenseAccessor, ZoomOAuthConfig zoomOAuthConfig, ILmsLicenseService lmsLicenseService, ILogger logger)
+        public ZoomOAuthOptionsFromLicenseAccessor(ILmsLicenseAccessor licenseAccessor, ILmsLicenseService lmsLicenseService, ILogger logger)
         {
             _licenseAccessor = licenseAccessor ?? throw new ArgumentNullException(nameof(licenseAccessor));
-            _zoomOAuthConfig = zoomOAuthConfig ?? throw new ArgumentNullException(nameof(zoomOAuthConfig));
             _lmsLicenseService = lmsLicenseService ?? throw new ArgumentNullException(nameof(lmsLicenseService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -36,7 +34,7 @@ namespace Esynctraining.Lti.Zoom.Common
                 _logger.Info($"Check token for license {license.ConsumerKey}");
                 if (!(await IsAccessTokenValid(license.ZoomUserDto.AccessToken)))
                 {
-                    var response = await UpdateAccessToken(license.ZoomUserDto.RefreshToken);
+                    var response = await UpdateAccessToken(license.ZoomUserDto);
                     if (response.IsSuccessStatusCode)
                     {
                         _logger.Info($"Update acees token for license key {license.ConsumerKey}");
@@ -75,10 +73,10 @@ namespace Esynctraining.Lti.Zoom.Common
             }
         }
 
-        private async Task<HttpResponseMessage> UpdateAccessToken(string refreshToken)
+        private async Task<HttpResponseMessage> UpdateAccessToken(Dto.ZoomUserDto zoomUser)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token={refreshToken}&&redirect_uri={_zoomOAuthConfig.RedirectURL}");
-            var token = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{_zoomOAuthConfig.ClientID}:{_zoomOAuthConfig.ClientSecret}"));
+            var request = new HttpRequestMessage(HttpMethod.Post, $"https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token={zoomUser.RefreshToken}&&redirect_uri={zoomUser.RedirectUrl}");
+            var token = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{zoomUser.ClientId}:{zoomUser.ClientSecret}"));
             request.Headers.Add("Accept", "application/json");
             request.Headers.Add("Authorization", $"Basic {token}");
 
