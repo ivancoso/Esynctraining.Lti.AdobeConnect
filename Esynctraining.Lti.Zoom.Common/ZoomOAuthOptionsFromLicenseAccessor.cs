@@ -34,10 +34,11 @@ namespace Esynctraining.Lti.Zoom.Common
                 _logger.Info($"Check token for license {license.ConsumerKey}");
                 if (!(await IsAccessTokenValid(license.ZoomUserDto.AccessToken)))
                 {
+                    _logger.Warn($"[Failed] Check token for license {license.ConsumerKey}");
                     var response = await UpdateAccessToken(license.ZoomUserDto);
                     if (response.IsSuccessStatusCode)
                     {
-                        _logger.Info($"Update acees token for license key {license.ConsumerKey}");
+                        _logger.Info($"Update access token for license key {license.ConsumerKey}");
                         var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
                         license.ZoomUserDto = (await _lmsLicenseService.UpdateOAuthTokensForLicense(license.ConsumerKey,
                             tokenResponse.access_token, tokenResponse.refresh_token)).ZoomUserDto;
@@ -84,7 +85,10 @@ namespace Esynctraining.Lti.Zoom.Common
 
         private async Task<HttpResponseMessage> UpdateAccessToken(Dto.ZoomUserDto zoomUser)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token={zoomUser.RefreshToken}&&redirect_uri={zoomUser.RedirectUrl}");
+            var url =
+                $"https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token={zoomUser.RefreshToken}&&redirect_uri={zoomUser.RedirectUrl}";
+            _logger.Info($"[RefreshToken] {url}");
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
             var token = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{zoomUser.ClientId}:{zoomUser.ClientSecret}"));
             request.Headers.Add("Accept", "application/json");
             request.Headers.Add("Authorization", $"Basic {token}");
