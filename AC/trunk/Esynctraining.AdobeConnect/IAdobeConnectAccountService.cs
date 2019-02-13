@@ -6,6 +6,8 @@
 
         IAdobeConnectProxy GetProvider2(IAdobeConnectAccess2 credentials);
 
+        IAdobeConnectProxy GetProvider2(IAdobeConnectAccess2 credentials, bool checkSessionIsAlive = true);
+
         ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider);
 
     }

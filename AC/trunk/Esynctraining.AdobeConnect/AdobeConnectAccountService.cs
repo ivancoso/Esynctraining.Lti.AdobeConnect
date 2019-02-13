@@ -55,6 +55,17 @@ namespace Esynctraining.AdobeConnect
             return new AdobeConnectProxy(provider, _logger, credentials.Domain);
         }
 
+        public IAdobeConnectProxy GetProvider2(IAdobeConnectAccess2 credentials, bool checkSessionIsAlive = true)
+        {
+            if (checkSessionIsAlive)
+                return GetProvider2(credentials);
+
+            var connectionDetails = new ConnectionDetails(credentials.Domain);
+            var provider = new AdobeConnectProvider(connectionDetails);
+            provider.SetSessionId(credentials.SessionToken);
+            return new AdobeConnectProxy(provider, _logger, credentials.Domain);
+        }
+
         public ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider)
         {
             if (provider == null)

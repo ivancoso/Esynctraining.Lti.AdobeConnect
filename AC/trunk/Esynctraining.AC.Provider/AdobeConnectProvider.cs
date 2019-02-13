@@ -85,6 +85,14 @@ namespace Esynctraining.AC.Provider
             return new LoginResult(status, user);
         }
 
+        public void SetSessionId(string sessionId)
+        {
+            if (string.IsNullOrWhiteSpace(sessionId))
+                throw new ArgumentException("Non-empty value expected", nameof(sessionId));
+
+            this.requestProcessor.SetSessionId(sessionId);
+        }
+
         public void Logout()
         {
             // action=logout
