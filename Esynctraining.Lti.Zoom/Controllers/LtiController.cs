@@ -27,7 +27,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
-using Esynctraining.Zoom.ApiWrapper.JWT;
+using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Zoom.ApiWrapper.OAuth;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
@@ -44,25 +44,19 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private readonly ZoomMeetingService _meetingService;
         private readonly ZoomUserService _userService;
         private readonly LmsUserServiceFactory _lmsUserServiceFactory;
-        private readonly UserCacheUpdater _cacheUpdater;
-        private readonly ZoomOAuthConfig _zoomOAuthConfig;
         private readonly ILmsLicenseService _lmsLicenseService;
-
-
         private readonly CanvasAPI _canvasApi;
 
         public LtiController(ILogger logger, ApplicationSettingsProvider settings, ILmsLicenseService licenseService,
             UserSessionService sessionService, IJsonDeserializer jsonDeserializer, ZoomMeetingService meetingService,
-            ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory, UserCacheUpdater cacheUpdater,
-            ZoomOAuthConfig zoomOAuthConfig, ILmsLicenseService lmsLicenseService) : base(logger, settings, sessionService)
+            ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory,
+            ILmsLicenseService lmsLicenseService) : base(logger, settings, sessionService)
         {
             _licenseService = licenseService;
             _jsonDeserializer = jsonDeserializer;
             _meetingService = meetingService;
             _userService = userService;
             _lmsUserServiceFactory = lmsUserServiceFactory;
-            _cacheUpdater = cacheUpdater;
-            _zoomOAuthConfig = zoomOAuthConfig;
             _lmsLicenseService = lmsLicenseService;
             _canvasApi = new CanvasAPI(logger, jsonDeserializer);
         }
@@ -82,49 +76,61 @@ namespace Esynctraining.Lti.Zoom.Controllers
             try
             {
                 zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
+                if (zoomUser.Status != ZoomUserStatus.Active)
+                {
+                    ViewBag.Message =
+                        "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
+                    return this.View("~/Views/Lti/LtiError.cshtml");
+                }
             }
             catch (Exception e)
             {
-                Logger.Error("User doesn't exist or doesn't belong to this account", e);
+                Logger.Error($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to zoom account of license {param.oauth_consumer_key}", e);
 
-                var userInfo = await _userService.CreateUser(new CreateUserDto
+                try
                 {
-                    Email = param.lis_person_contact_email_primary,
-                    FirstName = param.PersonNameGiven,
-                    LastName = param.PersonNameFamily
-                });
-
-                return Content(
-                    "User either in 'pending' or 'inactive' status. Please check your email or contact Administrator and try again.");
-            }
-            if (zoomUser != null)
-            {
-                var url = await _meetingService.GetMeetingUrl(zoomUser.Id, dbMeeting.ProviderMeetingId,
-                    param.lis_person_contact_email_primary,
-                    async () =>
+                    var userInfo = await _userService.CreateUser(new CreateUserDto
                     {
-                        var lmsSettings = license.GetLMSSettings(userSession);
-                        var lmsService = _lmsUserServiceFactory.GetUserService(license.ProductId);
-                        var lmsUserExistsInCourse = await lmsService.GetUser(lmsSettings, userSession.LmsUserId, userSession.CourseId);
-                        if (!lmsUserExistsInCourse.IsSuccess)
-                        {
-                            Logger.Warn(
-                                $"[JoinMeeting:{meetingId}] LmsUserId:{userSession.LmsUserId}, Message:{lmsUserExistsInCourse.Message}");
-                            return null;
-                        }
-
-                        return
-                            new RegistrantDto
-                            {
-                                Email = param.lis_person_contact_email_primary,
-                                FirstName = param.PersonNameGiven,
-                                LastName = param.PersonNameFamily
-                            };
+                        Email = param.lis_person_contact_email_primary,
+                        FirstName = param.PersonNameGiven,
+                        LastName = param.PersonNameFamily
                     });
-                return Redirect(url);
+                }
+                catch (ZoomApiException ex)
+                {
+                    Logger.Error(
+                        $"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}",
+                        ex);
+                }
+
+                ViewBag.Message =
+                    "The invitation to Zoom account was sent to your email. Please check your email and try to log in to LMS again.";
+                return this.View("~/Views/Lti/LtiError.cshtml");
             }
 
-            return Content("Error when joining.");
+            var url = await _meetingService.GetMeetingUrl(zoomUser.Id, dbMeeting.ProviderMeetingId,
+                param.lis_person_contact_email_primary,
+                async () =>
+                {
+                    var lmsSettings = license.GetLMSSettings(userSession);
+                    var lmsService = _lmsUserServiceFactory.GetUserService(license.ProductId);
+                    var lmsUserExistsInCourse = await lmsService.GetUser(lmsSettings, userSession.LmsUserId, userSession.CourseId);
+                    if (!lmsUserExistsInCourse.IsSuccess)
+                    {
+                        Logger.Warn(
+                            $"[JoinMeeting:{meetingId}] LmsUserId:{userSession.LmsUserId}, Message:{lmsUserExistsInCourse.Message}");
+                        return null;
+                    }
+
+                    return
+                        new RegistrantDto
+                        {
+                            Email = param.lis_person_contact_email_primary,
+                            FirstName = param.PersonNameGiven,
+                            LastName = param.PersonNameFamily
+                        };
+                });
+            return Redirect(url);
         }
 
         [HttpGet]
@@ -180,15 +186,20 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
                 //var license = await _licenseService.GetLicense(s.LicenseKey);
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-                var swGetUsers = Stopwatch.StartNew();
-                var activeUserEmails = (await _userService.GetActiveUsers()).Where(x => !string.IsNullOrEmpty(x.Email)).Select(x => x.Email);
-                swGetUsers.Stop();
-                Logger.InfoFormat(
-                    $"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. GetUsersEmails Time : {swGetUsers.Elapsed}");
-
-                if (!activeUserEmails.Any(x =>
-                    x.Equals(param.lis_person_contact_email_primary, StringComparison.CurrentCultureIgnoreCase)))
+                try
                 {
+                    var zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
+                    if (zoomUser.Status != ZoomUserStatus.Active)
+                    {
+                        ViewBag.Message =
+                            "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
+                        return this.View("~/Views/Lti/LtiError.cshtml");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to zoom account of license {param.oauth_consumer_key}", e);
+
                     try
                     {
                         var userInfo = await _userService.CreateUser(new CreateUserDto
@@ -198,7 +209,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                             LastName = param.PersonNameFamily
                         });
                     }
-
                     catch (ZoomApiException ex)
                     {
                         Logger.Error(
@@ -207,13 +217,10 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     }
 
                     ViewBag.Message =
-                        "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
+                        "The invitation to Zoom account was sent to your email. Please check your email and try to log in to LMS again.";
                     return this.View("~/Views/Lti/LtiError.cshtml");
                 }
-
-//                sw.Stop();
-//                Logger.InfoFormat($"Metric: HomeController: ZoomUsers {activeUserEmails.Count()}. Time : {sw.Elapsed}");
-
+                
                 var model = await BuildModelAsync(s);
                 return View("Index", model);
             }
@@ -336,38 +343,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     //TODO: Add logic to get culture from DB by lmsCompany.LanguageId
                     System.Threading.Thread.CurrentThread.CurrentUICulture =
                         new System.Globalization.CultureInfo("en-US");
-                    if (!StaticStorage.RequestedLicenses.Contains(license.ConsumerKey))
-                    {
-                        StaticStorage.RequestedLicenses.Add(license.ConsumerKey);
-                        await StaticStorage.NamedLocker.WaitAsync(license.ConsumerKey);
-                        try
-                        {
-                            //var optionsAccessor = new ZoomApiJwtOptionsConstructorAccessor(new ZoomApiJwtOptions
-                            //{
-                            //    ApiKey = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiKey),
-                            //    ApiSecret = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiSecret)
-                            //});
-
-                            //var authParamsAccessor = new ZoomJwtAuthParamsAccessor(optionsAccessor);
-                            //var zoomApi = new ZoomApiWrapper(authParamsAccessor);
-
-                            ILmsLicenseAccessor lmsLicenseAccessor = new LicenseConstructorAccessor(license);
-                            var optionsAccessor = new ZoomOAuthOptionsFromLicenseAccessor(lmsLicenseAccessor, _lmsLicenseService, Logger);
-
-                            //var optionsAccessor = new ZoomOAuthOptionsConstructorAccessor(new ZoomOAuthOptions
-                            //{
-                            //    AccessToken = license.GetSetting<string>(LmsLicenseSettingNames.ZoomApiAccessToken)
-                            //});
-
-                            var authParamsAccessor = new ZoomOAuthParamsAccessor(optionsAccessor);
-                            var zoomApi = new ZoomApiWrapper(authParamsAccessor);
-                            await _cacheUpdater.UpdateUsers(license.ZoomUserDto.UserId, zoomApi);
-                        }
-                        finally
-                        {
-                            StaticStorage.NamedLocker.Release(license.ConsumerKey);
-                        }
-                    }
                 }
                 else
                 {

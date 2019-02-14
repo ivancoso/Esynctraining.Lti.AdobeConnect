@@ -95,19 +95,18 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services
                 .AddSingleton(new ApplicationSettingsProvider(settings));
 
-            if (bool.TryParse(settings["UseRedis"], out bool useRedis) && !useRedis)
-            {
-                services.AddDistributedMemoryCache();
-                services.AddHostedService<UserCacheHostedService>(); //don't need if using redis - cache is refreshed by Zoom.Host
-            }
-            else
-            {
-                services
-                    .AddDistributedRedisCache(options =>
-                    {
-                        options.Configuration = Configuration.GetConnectionString("CacheRedis");
-                    });
-            }
+            //if (bool.TryParse(settings["UseRedis"], out bool useRedis) && !useRedis)
+            //{
+            //    services.AddDistributedMemoryCache();
+            //}
+            //else
+            //{
+            //    services
+            //        .AddDistributedRedisCache(options =>
+            //        {
+            //            options.Configuration = Configuration.GetConnectionString("CacheRedis");
+            //        });
+            //}
 
             services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
 
@@ -168,7 +167,6 @@ namespace Esynctraining.Lti.Zoom.Api.Host
 
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-            services.AddSingleton<UserCacheUpdater, UserCacheUpdater>();
 
             //todo: uncomment JWT for previous workflow
             //services.AddScoped<IZoomApiJwtOptionsAccessor, ZoomJwtOptionsFromLicenseAccessor>();

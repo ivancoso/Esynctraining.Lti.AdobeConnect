@@ -2,76 +2,48 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
-using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace Esynctraining.Lti.Zoom.Common.Services
 {
     public class ZoomUserService
     {
         private readonly ZoomApiWrapper _zoomApi;
-        private readonly IDistributedCache _cache;
         private readonly ILmsLicenseAccessor _licenseAccessor;
-        private readonly IJsonDeserializer _jsonDeserializer;
-        private readonly dynamic _settings;
-        private readonly UserCacheUpdater _cacheUpdater;
         private readonly ILogger _logger;
 
-        public ZoomUserService(ZoomApiWrapper zoomApi, IDistributedCache cache, ILmsLicenseAccessor licenseAccessor, 
-            ApplicationSettingsProvider settings, IJsonDeserializer jsonDeserializer, UserCacheUpdater cacheUpdater, ILogger logger)
+        public ZoomUserService(ZoomApiWrapper zoomApi, ILmsLicenseAccessor licenseAccessor, ILogger logger)
         {
             _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _licenseAccessor = licenseAccessor ?? throw new ArgumentNullException(nameof(licenseAccessor));
-            _settings = settings;
-            _jsonDeserializer = jsonDeserializer;
-            _cacheUpdater = cacheUpdater;
             _logger = logger;
         }
 
         public async Task<IEnumerable<User>> GetActiveUsers(LmsLicenseDto licenseDto = null)
         {
             var license = licenseDto ?? await _licenseAccessor.GetLicense();
-            var cacheKey = "Zoom.Users." + license.ZoomUserDto.UserId;
             var sw = Stopwatch.StartNew();
-            var cacheData = await _cache.GetAsync(cacheKey);
+            var users = new List<User>();
+            var pageNumber = 1;
+            var pageSize = 300;
+            var totalRecords = 0;
+            do
+            {
+                var page = await _zoomApi.GetUsers(UserStatus.Active, pageSize: pageSize, pageNumber: pageNumber);
+                users.AddRange(page.Users);
+                totalRecords = page.TotalRecords;
+                pageNumber++;
+
+            } while (pageSize * (pageNumber - 1) < totalRecords);
             sw.Stop();
             _logger.InfoFormat($"[GetActiveUsers:{license.ConsumerKey}] Get Time: {sw.Elapsed}");
-            if (cacheData == null)
-            {
-                _logger.Info($"[GetActiveUsers:{license.ConsumerKey}] Empty cache data");
-                sw = Stopwatch.StartNew();
-                await StaticStorage.NamedLocker.WaitAsync(license.ConsumerKey);
-                try
-                {
-                    cacheData = await _cache.GetAsync(cacheKey);
-                    if (cacheData == null)
-                    {
-                        await _cacheUpdater.UpdateUsers(license.ZoomUserDto.UserId, _zoomApi);
-                        cacheData = await _cache.GetAsync(cacheKey);
-                    }
-                }
-                finally
-                {
-                    StaticStorage.NamedLocker.Release(license.ConsumerKey);
-                }
-                sw.Stop();
-                _logger.InfoFormat($"[GetActiveUsers:{license.ConsumerKey}] Update Time: {sw.Elapsed}");
-            }
-
-            var json = Encoding.UTF8.GetString(cacheData);
-            List<User> result = _jsonDeserializer.JsonDeserialize<List<User>>(json);
-
-            return result;
+            
+            return users;
         }
 
         public async Task<UserInfoDto> GetUser(string idOrEmail)
@@ -87,7 +59,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Verified = user.Verified == 1,
-                    Timezone = user.Timezone
+                    Timezone = user.Timezone,
+                    Status = (ZoomUserStatus)((int)user.Status)
                 };
 
         }

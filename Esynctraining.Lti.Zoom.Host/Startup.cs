@@ -71,18 +71,18 @@ namespace Esynctraining.Lti.Zoom.Host
             services
                 .AddSingleton(new ApplicationSettingsProvider(settings));
 
-            if (bool.TryParse(settings["UseRedis"], out bool useRedis) && !useRedis)
-            {
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                services
-                    .AddDistributedRedisCache(options =>
-                    {
-                        options.Configuration = Configuration.GetConnectionString("CacheRedis");
-                    });
-            }
+            //if (bool.TryParse(settings["UseRedis"], out bool useRedis) && !useRedis)
+            //{
+            //    services.AddDistributedMemoryCache();
+            //}
+            //else
+            //{
+            //    services
+            //        .AddDistributedRedisCache(options =>
+            //        {
+            //            options.Configuration = Configuration.GetConnectionString("CacheRedis");
+            //        });
+            //}
 
             services
                 .AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor,
@@ -125,13 +125,11 @@ namespace Esynctraining.Lti.Zoom.Host
             services.AddTransient<ZoomMeetingService, ZoomMeetingService>();
             services.AddScoped<ZoomMeetingApiService, ZoomMeetingApiService>();
             services.AddTransient<ZoomOfficeHoursService, ZoomOfficeHoursService>();
-            services.AddSingleton<UserCacheUpdater, UserCacheUpdater>();
             services.AddSingleton<ILtiTokenAccessor, QueryStringTokenAccessor>();
             services.AddScoped<ILmsLicenseAccessor, LicenseAccessor>();
             services.AddSingleton<CanvasCalendarEventService, CanvasCalendarEventService>();
             services.AddSingleton<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();
             services.AddScoped<INotificationService, EmptyNotificationService>();
-            services.AddHostedService<UserCacheHostedService>();
 
             //todo: uncomment JWT for previous workflow
             //services.AddScoped<IZoomApiJwtOptionsAccessor, ZoomJwtOptionsFromLicenseAccessor>();

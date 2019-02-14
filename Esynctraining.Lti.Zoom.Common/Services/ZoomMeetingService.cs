@@ -105,8 +105,14 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     var registrant = await getRegistrant();
                     if (registrant != null)
                     {
-                        var registration = await _userService.RegisterUsersToMeetingAndApprove(meetingId,
-                            new List<RegistrantDto> { registrant }, false);
+                        var newZoomAddRegistrantRequest = new ZoomAddRegistrantRequest(registrant.Email,
+                            registrant.FirstName, registrant.LastName);
+                        var addResult = await _zoomApi.AddRegistrant(meetingId, newZoomAddRegistrantRequest);
+                        //if (!addResult.IsSuccess)
+                        //{
+                        //    return ;
+                        //}
+                        await _userService.UpdateRegistrantStatus(meetingId, registrant.Email, nameof(RegistrantUpdateStatusAction.Approve));
                         var registrants2 = await _zoomApi.GetMeetingRegistrants(meetingId);
                         var userReg2 = registrants2.Registrants.FirstOrDefault(x =>
                             x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));

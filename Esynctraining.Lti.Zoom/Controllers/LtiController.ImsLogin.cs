@@ -315,7 +315,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                             LastName = param.PersonNameFamily,
                             Type = IsTeacher(param) ? UserTypes.Pro : UserTypes.Basic,
                         }, "custCreate");
-                    await _cacheUpdater.UpdateUsers(license.ZoomUserDto.UserId, zoomApi);
                 }
 
                 catch (ZoomApiException ex)

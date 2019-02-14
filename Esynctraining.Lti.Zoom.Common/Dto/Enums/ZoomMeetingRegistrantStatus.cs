@@ -8,4 +8,11 @@
         Denied,
         All // fake from api for "denied" request
     }
+
+    public enum ZoomUserStatus
+    {
+        Active,
+        Inactive,
+        Pending,
+    }
 }

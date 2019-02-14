@@ -96,7 +96,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         public virtual async Task<OperationResult> UpdateRegistrantStatus(int meetgingId)
         {
             LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
-            _zoomUserService.UpdateRegistrantStatus(meeting.ProviderMeetingId, Session.Email, "deny");
+            await _zoomUserService.UpdateRegistrantStatus(meeting.ProviderMeetingId, Session.Email, "deny");
 
             return OperationResult.Success();
         }

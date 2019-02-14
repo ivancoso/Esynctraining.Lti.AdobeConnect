@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.Lti.Zoom.Common.Dto
+﻿using Esynctraining.Lti.Zoom.Common.Dto.Enums;
+
+namespace Esynctraining.Lti.Zoom.Common.Dto
 {
     public class UserDto
     {
@@ -7,5 +9,6 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int Type { get; set; }
+        public ZoomUserStatus Status { get; set; }
     }
 }
