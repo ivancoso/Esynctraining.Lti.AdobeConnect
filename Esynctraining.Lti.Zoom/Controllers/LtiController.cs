@@ -151,7 +151,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
             catch (Exception e)
             {
-                Logger.Error("User doesn't exist or doesn't belong to this account", e);
+                Logger.Error($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account", e);
 
                 var userInfo = await _userService.CreateUser(new CreateUserDto
                 {

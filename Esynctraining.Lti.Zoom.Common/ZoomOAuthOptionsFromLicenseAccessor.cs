@@ -14,6 +14,7 @@ namespace Esynctraining.Lti.Zoom.Common
         private readonly ILmsLicenseAccessor _licenseAccessor;
         private readonly ILmsLicenseService _lmsLicenseService;
         private readonly ILogger _logger;
+        private static readonly System.Net.Http.HttpClient _httpClient = new System.Net.Http.HttpClient();
 
         private static readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
 
@@ -76,11 +77,8 @@ namespace Esynctraining.Lti.Zoom.Common
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.zoom.us/v2/users/me");
             request.Headers.Add("Accept", "application/json");
             request.Headers.Add("Authorization", $"Bearer  {accessToken}");
-            using (var httpClient = new System.Net.Http.HttpClient())
-            {
-                var response = await httpClient.SendAsync(request);
-                return response;
-            }
+            var response = await _httpClient.SendAsync(request);
+            return response;
         }
 
         private async Task<HttpResponseMessage> UpdateAccessToken(Dto.ZoomUserDto zoomUser)
@@ -89,15 +87,12 @@ namespace Esynctraining.Lti.Zoom.Common
                 $"https://zoom.us/oauth/token?grant_type=refresh_token&refresh_token={zoomUser.RefreshToken}&&redirect_uri={zoomUser.RedirectUrl}";
             _logger.Info($"[RefreshToken] {url}");
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            var token = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{zoomUser.ClientId}:{zoomUser.ClientSecret}"));
+            var token = Convert.ToBase64String(
+                ASCIIEncoding.ASCII.GetBytes($"{zoomUser.ClientId}:{zoomUser.ClientSecret}"));
             request.Headers.Add("Accept", "application/json");
             request.Headers.Add("Authorization", $"Basic {token}");
-
-            using (var httpClient = new System.Net.Http.HttpClient())
-            {
-                var response = await httpClient.SendAsync(request);
-                return response;
-            }
+            var response = await _httpClient.SendAsync(request);
+            return response;
         }
 
         private class TokenResponse

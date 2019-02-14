@@ -115,7 +115,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 }
                 catch (Exception e)
                 {
-                    Logger.Error("User doesn't exist or doesn't belong to this account", e);
+                    Logger.Error($"User {Param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account", e);
                     var userInfo = await _userService.CreateUser(new CreateUserDto
                     {
                         Email = Param.lis_person_contact_email_primary,
@@ -186,7 +186,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             }
             catch (Exception e)
             {
-                Logger.Error("User doesn't exist or doesn't belong to this account", e);
+                Logger.Error($"User {Param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account", e);
                 /*{
 "code": 1005,
 "message": "User already in the account: ivanr+zoomapitest@esynctraining.com"
