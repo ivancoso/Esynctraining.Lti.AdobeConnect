@@ -123,7 +123,11 @@
         /// <summary>
         /// moving folder into itself
         /// </summary>
-        illegal_parent
+        illegal_parent,
+        /// <summary>
+        /// event limit reached
+        /// </summary>
+        limit_reached
     }
 
     public enum ScoType
