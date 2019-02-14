@@ -112,7 +112,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                         //{
                         //    return ;
                         //}
-                        await _userService.UpdateRegistrantStatus(meetingId, registrant.Email, nameof(RegistrantUpdateStatusAction.Approve));
+                        await _userService.UpdateRegistrantStatus(meetingId, new [] {registrant.Email}, nameof(RegistrantUpdateStatusAction.Approve));
                         var registrants2 = await _zoomApi.GetMeetingRegistrants(meetingId);
                         var userReg2 = registrants2.Registrants.FirstOrDefault(x =>
                             x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
