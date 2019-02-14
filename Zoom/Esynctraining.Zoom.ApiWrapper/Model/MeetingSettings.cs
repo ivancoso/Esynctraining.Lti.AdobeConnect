@@ -59,5 +59,9 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
 
         [DataMember]
         public string AlternativeHosts { get; set; }
+
+        public bool CloseRegistration { get; set; }
+
+        public bool WaitingRoom { get; set; }
     }
 }

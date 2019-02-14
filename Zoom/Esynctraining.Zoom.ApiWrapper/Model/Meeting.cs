@@ -19,6 +19,8 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         [DataMember]
         public MeetingTypes Type { get; set; }
 
+        public MeetingStatus Status { get; set; }
+
         [DataMember]
         public DateTimeOffset StartTime { get; set; }
 

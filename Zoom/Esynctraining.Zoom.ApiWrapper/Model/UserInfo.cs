@@ -16,8 +16,9 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         public string Timezone { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastLoginTime { get; set; }
+        public UserStatus Status { get; set; }
     }
-    
+
     public class User
     {
         public string Id { get; set; }

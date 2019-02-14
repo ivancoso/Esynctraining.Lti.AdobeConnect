@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <FileVersion>1.0.0.3</FileVersion>
-    <Version>1.0.0.3</Version>
+    <AssemblyVersion>1.0.0.5</AssemblyVersion>
+    <FileVersion>1.0.0.5</FileVersion>
+    <Version>1.0.0.5</Version>
     <Description>Wrapper for Zoom Api REST services</Description>
-    <PackageReleaseNotes>Zoom OAuth;
-updated methods to async</PackageReleaseNotes>
+    <PackageReleaseNotes>added Status field for Meeting and UserInfo objects;
+added CloseRegistration and WaitingRoom fields to meeting settings</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

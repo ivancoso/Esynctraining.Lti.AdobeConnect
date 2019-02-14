@@ -57,4 +57,11 @@
         public static string Telephone = "telephony";
         public static string Voip = "voip";
     }
+
+    public enum MeetingStatus
+    {
+        Waiting,
+        Started,
+        Finished,
+    }
 }
