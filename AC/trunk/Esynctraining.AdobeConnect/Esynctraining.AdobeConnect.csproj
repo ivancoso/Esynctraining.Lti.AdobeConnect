@@ -9,11 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>add limit_reached subcode</PackageReleaseNotes>
-    <Version>1.0.5.9</Version>
+    <PackageReleaseNotes>EventInfoResult parse Preferences</PackageReleaseNotes>
+    <Version>1.0.6.0</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.5.9</FileVersion>
-    <AssemblyVersion>1.0.5.9</AssemblyVersion>
+    <FileVersion>1.0.6.0</FileVersion>
+    <AssemblyVersion>1.0.6.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
