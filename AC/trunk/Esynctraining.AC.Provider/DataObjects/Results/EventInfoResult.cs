@@ -4,20 +4,22 @@
 
     public class EventInfoResult : ResultBase
     {
-        public EventInfo ScoInfo { get; set; }
+        public EventInfo EventInfo { get; set; }
+        public PrincipalPreferences Preferences { get; set; }
 
         public override bool Success
         {
-            get { return base.Success && ScoInfo != null; }
+            get { return base.Success && EventInfo != null; }
         }
 
 
         public EventInfoResult(StatusInfo status) : base(status) { }
 
-        public EventInfoResult(StatusInfo status, EventInfo scoInfo)
+        public EventInfoResult(StatusInfo status, EventInfo eventInfo, PrincipalPreferences preferences)
             : base(status)
         {
-            ScoInfo = scoInfo;
+            EventInfo = eventInfo;
+            Preferences = preferences;
         }
     }
 }

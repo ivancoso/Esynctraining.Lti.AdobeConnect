@@ -26,20 +26,20 @@
             try
             {
                 var ei = new EventInfo
-                             {
-                                 ScoId = xml.SelectAttributeValue("sco-id"),
-                                 Name = xml.SelectSingleNodeValue("name/text()"),
-                                 DomainName = xml.SelectSingleNodeValue("domain-name/text()"),
-                                 UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
-                                 DateBegin = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
-                                 DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
-                                 Expired = xml.ParseNodeBool("expired/text()"),
-                                 SpeakerName = xml.SelectSingleNodeValue("speaker-name/text()"),
-                                 Info = xml.SelectSingleNodeValue("event-info/text()"),
-                                 SpeakerImage = xml.SelectSingleNodeValue("speaker-image/text()"),
-                                 SpeakerBriefOverview = xml.SelectSingleNodeValue("speaker-brief-overview/text()"),
-                                 SpeakerDetailedOverview = xml.SelectSingleNodeValue("speaker-detailed-overview/text()"),
-                                 PasswordBypass = xml.ParseNodeBool("password-bypass/text()"),
+                {
+                    ScoId = xml.SelectAttributeValue("sco-id"),
+                    Name = xml.SelectSingleNodeValue("name/text()"),
+                    DomainName = xml.SelectSingleNodeValue("domain-name/text()"),
+                    UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
+                    DateBegin = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
+                    DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
+                    Expired = xml.ParseNodeBool("expired/text()"),
+                    SpeakerName = xml.SelectSingleNodeValue("speaker-name/text()"),
+                    Info = xml.SelectSingleNodeValue("event-info/text()"),
+                    SpeakerImage = xml.SelectSingleNodeValue("speaker-image/text()"),
+                    SpeakerBriefOverview = xml.SelectSingleNodeValue("speaker-brief-overview/text()"),
+                    SpeakerDetailedOverview = xml.SelectSingleNodeValue("speaker-detailed-overview/text()"),
+                    PasswordBypass = xml.ParseNodeBool("password-bypass/text()"),
                 };
 
                 ei.Duration = ei.DateEnd.Subtract(ei.DateBegin);

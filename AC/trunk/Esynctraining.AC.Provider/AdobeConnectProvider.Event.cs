@@ -215,8 +215,9 @@ namespace Esynctraining.AC.Provider
 
             if (ResponseIsOk(doc, status))
             {
-                EventInfo result = EventInfoParser.Parse(doc.SelectSingleNode("//event-info"));// .SelectSingleNode("//event-info"));
-                return new EventInfoResult(status, result);
+                EventInfo result = EventInfoParser.Parse(doc.SelectSingleNode("//event-info"));
+                var preferences = PrincipalPreferencesParser.Parse(doc.SelectSingleNode("//preferences"));
+                return new EventInfoResult(status, result, preferences);
             }
 
             return new EventInfoResult(status);
