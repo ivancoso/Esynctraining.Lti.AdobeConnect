@@ -99,9 +99,6 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "enableVirtualClassrooms")]
         public bool EnableVirtualClassrooms { get; set; }
 
-        [DataMember(Name = "namedVirtualClassroomManager")]
-        public bool NamedVirtualClassroomManager { get; set; }
-
         [DataMember(Name = "instructionText")]
         public string SupportPageHtml { get; set; }
         
@@ -208,7 +205,6 @@ namespace EdugameCloud.Lti.DTO
                     EnableSeminars = value.GetSetting<bool>(LmsLicenseSettingNames.SeminarsEnable),
                     EnableOfficeHours = value.EnableOfficeHours.GetValueOrDefault(),
                     EnableVirtualClassrooms = value.GetSetting<bool>(LmsLicenseSettingNames.EnableVirtualClassrooms),
-                    NamedVirtualClassroomManager = value.GetSetting<bool>(LmsLicenseSettingNames.EnableVirtualClassrooms, true),
                     EnableMyContent = value.GetSetting<bool>(LmsLicenseSettingNames.EnableMyContent),
                     EnableAddGuest = value.GetSetting<bool>(LmsLicenseSettingNames.EnableAddGuest, true),
                     EnableSetUserRole = value.GetSetting<bool>(LmsLicenseSettingNames.EnableSetUserRole, true),
