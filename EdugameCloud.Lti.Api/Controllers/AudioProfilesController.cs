@@ -7,7 +7,6 @@ using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -17,6 +16,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EdugameCloud.Lti.Api.Controllers
@@ -62,7 +62,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                     return Enumerable.Empty<AudioProfileDto>().ToSuccessResult();
                 }
 
-                var profileSetting = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) ?? TelephonyDTO.SupportedProfiles.None;
+                var profileSetting = LmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.ActiveProfile) ?? TelephonyDTO.SupportedProfiles.None;
                 // NOTE: For None option - reuse can be active for every meeting type
                 if (((LmsMeetingType)request.MeetingType != LmsMeetingType.OfficeHours)
                     && (profileSetting != TelephonyDTO.SupportedProfiles.None))

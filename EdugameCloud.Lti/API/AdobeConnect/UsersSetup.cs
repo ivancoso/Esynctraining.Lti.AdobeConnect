@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using EdugameCloud.Lti.Core.Business;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
@@ -21,6 +20,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Crypto;
+using Esynctraining.Lti.Lms.Common.Constants;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -203,7 +203,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             OperationResultWithData<List<LmsUserDTO>> serviceResult = await service.GetUsers(lmsSettings, courseId.ToString(), extraData);
             if (serviceResult.IsSuccess)
             {
-                if (lmsLicense.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections) && meeting.Return(x => x.Id, 0) > 0)
+                if (lmsLicense.GetSetting<bool>(LmsLicenseSettingNames.UseCourseSections) && meeting.Return(x => x.Id, 0) > 0)
                 {
                     var r = 
                         serviceResult.Data.Where(

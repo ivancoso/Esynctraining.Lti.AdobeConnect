@@ -7,7 +7,6 @@ using EdugameCloud.Lti.Api.Controllers;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Mp4.Host.Dto;
@@ -19,6 +18,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Mp4Service.Tasks.Client;
 using Esynctraining.Mp4Service.Tasks.Client.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -100,10 +100,10 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     : rawRecordings.Data.Select(x => map.Map<RecordingWithMp4Dto>(x));
 
                 Guid mp4;
-                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
+                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceLicenseKey), out mp4))
                     mp4 = Guid.Empty;
                 Guid mp4Subtitles;
-                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
+                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
                     mp4Subtitles = Guid.Empty;
 
                 IEnumerable<IMp4StatusContainer> result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
@@ -131,10 +131,10 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             try
             {
                 Guid mp4;
-                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
+                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceLicenseKey), out mp4))
                     mp4 = Guid.Empty;
                 Guid mp4Subtitles;
-                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
+                if (!Guid.TryParse(LmsCompany.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
                     mp4Subtitles = Guid.Empty;
 
                 if ((mp4 != Guid.Empty) || (mp4Subtitles != Guid.Empty))

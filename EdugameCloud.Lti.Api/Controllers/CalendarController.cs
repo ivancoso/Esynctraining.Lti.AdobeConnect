@@ -5,13 +5,13 @@ using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +38,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("createBatch")]
         [HttpPost]
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<IEnumerable<MeetingSessionDTO>>> CreateBatch([FromBody]CreateMeetingSessionsBatchDto dto)
         {
             try
@@ -63,7 +63,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("getevents")]
         [HttpPost]
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<IEnumerable<MeetingSessionDTO>>> GetEvents([FromBody]MeetingRequestDto request)
         {
             try
@@ -82,7 +82,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("createevent")]
         [HttpPost]
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<MeetingSessionDTO>> CreateEvent([FromBody]CreateEventDto model)
         {
             try
@@ -101,7 +101,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("saveevent")]
         [HttpPost]
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMeetingSessions)]
         public async Task<OperationResultWithData<MeetingSessionDTO>> SaveEvent([FromBody]SaveMeetingEventDto model)
         {
             if (!CheckStartTimeMoreCurrentTime(model.StartDate))
@@ -125,7 +125,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("deleteevent")]
         [HttpPost]
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingSessions)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMeetingSessions)]
         public async Task<OperationResult> DeleteEvent([FromBody]DeleteMeetingEventDto model)
         {
             try

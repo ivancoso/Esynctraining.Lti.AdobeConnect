@@ -19,7 +19,6 @@ using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Constants;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.OAuth;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -36,8 +35,10 @@ using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using LtiLibrary.Core.Common;
 using Microsoft.Web.WebPages.OAuth;
+using HttpScheme = EdugameCloud.Lti.Core.Constants.HttpScheme;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -920,7 +921,7 @@ namespace EdugameCloud.Lti.Controllers
 
             IEnumerable<SeminarLicenseDto> seminars = null;
             string seminarsMessage = null;
-            if (credentials.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable))
+            if (credentials.GetSetting<bool>(LmsLicenseSettingNames.SeminarsEnable))
             {
                 sw = Stopwatch.StartNew();
 

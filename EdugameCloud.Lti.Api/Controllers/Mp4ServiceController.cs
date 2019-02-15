@@ -41,7 +41,7 @@
 //                var session = GetReadOnlySession(lmsProviderName);
 //                lmsCompany = session.LmsCompany;
 
-//                string licenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
+//                string licenseKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceLicenseKey);
 //                if (string.IsNullOrWhiteSpace(licenseKey))
 //                    throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
 
@@ -87,7 +87,7 @@
 //                var session = GetReadOnlySession(lmsProviderName);
 //                lmsCompany = session.LmsCompany;
 
-//                string licenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
+//                string licenseKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceWithSubtitlesLicenseKey);
 //                if (string.IsNullOrWhiteSpace(licenseKey))
 //                    throw new WarningMessageException("Can't find your MP4Service licence. Contact administrator.");
 

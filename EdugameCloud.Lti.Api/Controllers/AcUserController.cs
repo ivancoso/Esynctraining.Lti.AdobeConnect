@@ -7,7 +7,6 @@ using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
@@ -22,6 +21,7 @@ using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 using WarningMessageException = EdugameCloud.Lti.Core.WarningMessageException;
@@ -64,7 +64,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             try
             {
                 // TODO: use FeatureName but this settings has true as default value
-                if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true))
+                if (!LmsCompany.GetSetting<bool>(LmsLicenseSettingNames.EnableAddGuest, true))
                     return OperationResultWithData<LmsUserDTO>.Error("Operation is not enabled.");
                 var provider = GetAdminProvider();
                 Principal principal;

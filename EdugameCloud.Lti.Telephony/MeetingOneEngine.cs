@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.MeetingOne;
 using Esynctraining.MeetingOne.RestClient;
@@ -50,9 +50,9 @@ namespace EdugameCloud.Lti.Telephony
 
                 var access = new AccessDetails
                 {
-                    UserName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.UserName),
-                    SecretHashKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.SecretHashKey),
-                    OwningAccountNumber = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.OwningAccountNumber),
+                    UserName = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.UserName),
+                    SecretHashKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.SecretHashKey),
+                    OwningAccountNumber = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.OwningAccountNumber),
                 };
 
                 var room = new RoomDto
@@ -122,9 +122,9 @@ namespace EdugameCloud.Lti.Telephony
 
             var access = new AccessDetails
             {
-                UserName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.UserName),
-                SecretHashKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.SecretHashKey),
-                OwningAccountNumber = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.OwningAccountNumber),
+                UserName = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.UserName),
+                SecretHashKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.SecretHashKey),
+                OwningAccountNumber = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.OwningAccountNumber),
             };
 
             bool deleted = false;

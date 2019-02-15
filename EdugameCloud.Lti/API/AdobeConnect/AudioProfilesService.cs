@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
+using Esynctraining.Lti.Lms.Common.Constants;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -33,7 +33,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
 
-            var usedAudioProfiles = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique) 
+            var usedAudioProfiles = lmsCompany.GetSetting<bool>(LmsLicenseSettingNames.AudioProfileUnique) 
                 ? _meetingModel.GetByCompanyWithAudioProfiles(lmsCompany).Select(x => x.AudioProfileId).ToList() 
                 : new List<string>();
             

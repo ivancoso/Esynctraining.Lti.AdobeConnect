@@ -7,7 +7,6 @@ using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -22,6 +21,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,7 +48,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         }
 
 
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMyContent)]
         [HttpPost]
         [Route("shortcuts")]
         public OperationResultWithData<IEnumerable<ScoShortcutDto>> GetShortcuts()
@@ -78,7 +78,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// Returns folder's content.
         /// </summary>
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{folderScoId:long:min(1)}")]
         public async Task<OperationResultWithData<IEnumerable<ScoContentDto>>> FolderContent(string folderScoId)
@@ -100,7 +100,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// Creates child folder.
         /// </summary>
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{folderScoId:long:min(1)}/create-sub-folder")]
         public OperationResultWithData<FolderDto> CreateSubFolder(string folderScoId, [FromBody]FolderDto dto)
@@ -124,7 +124,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// Get Download link to download file directly from AC (zip version).
         /// </summary>
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{scoId:long:min(1)}/download")]
         public OperationResult GetDownloadLink(string scoId)
@@ -156,7 +156,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         /// <summary>
         /// Deletes folder of file.
         /// </summary>
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{scoId:long:min(1)}/delete")]
         public OperationResult DeleteFileOrFolder(string scoId)
@@ -174,7 +174,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{scoId:long:min(1)}/edit")]
         public OperationResult EditSco(string scoId, [FromBody]FileUpdateDto dto)
@@ -192,7 +192,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             }
         }
 
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMyContent)]
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMyContent)]
         [HttpPost]
         [Route("content/{scoId:long:min(1)}/move-to/{destinationFolderScoId}")]
         public OperationResult MoveFileOrFolder(string scoId, string destinationFolderScoId)

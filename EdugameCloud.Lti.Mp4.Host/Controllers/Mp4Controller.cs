@@ -7,7 +7,6 @@ using EdugameCloud.Lti.Api.Controllers;
 using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Mp4.Host.Dto;
 using Esynctraining.AC.Provider.DataObjects;
@@ -18,6 +17,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Mp4Service.Tasks.Client;
 using Esynctraining.Mp4Service.Tasks.Client.Dto;
@@ -54,7 +54,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         {
             try
             {
-                string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
+                string licenseKey = LmsCompany.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceLicenseKey);
                 if (string.IsNullOrWhiteSpace(licenseKey))
                     throw new WarningMessageException("Can't find your MP4Service license. Contact administrator.");
 
@@ -83,7 +83,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         {
             try
             {
-                string licenseKey = LmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
+                string licenseKey = LmsCompany.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceWithSubtitlesLicenseKey);
                 if (string.IsNullOrWhiteSpace(licenseKey))
                     throw new WarningMessageException("Can't find your MP4Service license. Contact administrator.");
 

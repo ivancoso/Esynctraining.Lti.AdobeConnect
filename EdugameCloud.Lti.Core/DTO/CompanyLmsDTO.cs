@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Charts;
 using EdugameCloud.Lti.Core.Constants;
+using Esynctraining.Lti.Lms.Common.Constants;
 
 namespace EdugameCloud.Lti.DTO
 {
@@ -64,14 +65,15 @@ namespace EdugameCloud.Lti.DTO
             this.useUserFolder = instance.UseUserFolder.GetValueOrDefault();
             this.canRemoveMeeting = instance.CanRemoveMeeting.GetValueOrDefault();
             this.canEditMeeting = instance.CanEditMeeting.GetValueOrDefault();
-            canStudentCreateStudyGroup = instance.GetSetting<bool>(LmsCompanySettingNames.CanStudentCreateStudyGroup, true);
+            canStudentCreateStudyGroup = instance.GetSetting<bool>(LmsLicenseSettingNames.CanStudentCreateStudyGroup, true);
             this.isSettingsVisible = instance.IsSettingsVisible.GetValueOrDefault();
             this.enableOfficeHours = instance.EnableOfficeHours.GetValueOrDefault();
             this.enableStudyGroups = instance.EnableStudyGroups.GetValueOrDefault();
             this.enableCourseMeetings = instance.EnableCourseMeetings.GetValueOrDefault();
 
-            this.enableVirtualClassrooms = instance.GetSetting<bool>(LmsCompanySettingNames.EnableVirtualClassrooms, false);
-            this.labelVirtualClassroom = instance.GetSetting<string>(LmsCompanySettingNames.VirtualClassroomsLabel);
+            this.enableVirtualClassrooms = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableVirtualClassrooms, false);
+            this.namedVirtualClassroomManager = instance.GetSetting<bool>(LmsLicenseSettingNames.NamedVirtualClassroomManager, true);
+            this.labelVirtualClassroom = instance.GetSetting<string>(LmsLicenseSettingNames.VirtualClassroomsLabel);
 
             this.showEGCHelp = instance.ShowEGCHelp.GetValueOrDefault();
             this.showLmsHelp = instance.ShowLmsHelp.GetValueOrDefault();
@@ -92,58 +94,58 @@ namespace EdugameCloud.Lti.DTO
             this.meetingNameFormatterId = instance.MeetingNameFormatterId;
             this.roleMapping = instance.RoleMappings.Select(x =>
                 new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole, x.IsTeacherRole)).ToArray();
-            this.isSandbox = instance.GetSetting<bool>(LmsCompanySettingNames.IsOAuthSandbox);
-            this.oAuthAppId = instance.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
-            this.oAuthAppKey = instance.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
-            this.supportPageHtml = instance.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
+            this.isSandbox = instance.GetSetting<bool>(LmsLicenseSettingNames.IsOAuthSandbox);
+            this.oAuthAppId = instance.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
+            this.oAuthAppKey = instance.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
+            this.supportPageHtml = instance.GetSetting<string>(LmsLicenseSettingNames.SupportPageHtml);
             this.isActive = instance.IsActive;
 
-            this.labelMeeting = instance.GetSetting<string>(LmsCompanySettingNames.LabelMeeting);
-            this.labelOfficeHour = instance.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour);
-            this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
+            this.labelMeeting = instance.GetSetting<string>(LmsLicenseSettingNames.LabelMeeting);
+            this.labelOfficeHour = instance.GetSetting<string>(LmsLicenseSettingNames.LabelOfficeHour);
+            this.labelStudyGroup = instance.GetSetting<string>(LmsLicenseSettingNames.LabelStudyGroup);
 
             this.enableMeetingReuse = instance.EnableMeetingReuse;
             this.additionalLmsDomains = instance.AdditionalLmsDomains;
 
-            this.showSummary = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary);
-            this.showTime = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime);
-            this.showDuration = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration);
+            this.showSummary = instance.GetSetting<bool>(LmsLicenseSettingNames.ShowMeetingSummary);
+            this.showTime = instance.GetSetting<bool>(LmsLicenseSettingNames.ShowMeetingTime);
+            this.showDuration = instance.GetSetting<bool>(LmsLicenseSettingNames.ShowMeetingDuration);
 
             this.canRemoveRecordings = instance.CanRemoveRecordings;
             this.autoPublishRecordings = instance.AutoPublishRecordings;
-            this.forcedAddInInstallation = instance.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
+            this.forcedAddInInstallation = instance.GetSetting<bool>(LmsLicenseSettingNames.ForcedAddInInstallation);
 
             this.languageId = instance.LanguageId;
 
-            this.mp4ServiceLicenseKey = instance.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
-            this.mp4ServiceWithSubtitlesLicenseKey = instance.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
+            this.mp4ServiceLicenseKey = instance.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceLicenseKey);
+            this.mp4ServiceWithSubtitlesLicenseKey = instance.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceWithSubtitlesLicenseKey);
 
-            this.showAudioProfile = instance.GetSetting<bool>(LmsCompanySettingNames.ShowAudioProfile);
-            this.audioProfileUnique = instance.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique);
-            this.enableSeminars = instance.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable);
-            this.labelSeminar = instance.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel);
-            this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry);
-            useSakaiEvents = instance.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents);
-            enableMeetingSessions = instance.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingSessions);
-            enableMyContent = instance.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent);
-            enableAddGuest = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true);
-            enableSetUserRole = instance.GetSetting<bool>(LmsCompanySettingNames.EnableSetUserRole, true);
-            enableRemoveUser = instance.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser, true);
-            moodleCoreServiceToken = instance.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
-            moodleQuizServiceToken = instance.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
-            schoologyConsumerKey = instance.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerKey);
-            schoologyConsumerSecret = instance.GetSetting<string>(LmsCompanySettingNames.SchoologyConsumerSecret);
-            haikuConsumerKey = instance.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerKey);
-            haikuConsumerSecret = instance.GetSetting<string>(LmsCompanySettingNames.HaikuConsumerSecret);
-            haikuToken = instance.GetSetting<string>(LmsCompanySettingNames.HaikuToken);
-            haikuTokenSecret = instance.GetSetting<string>(LmsCompanySettingNames.HaikuTokenSecret);
-            isPdfMeetingUrl = instance.GetSetting<bool>(LmsCompanySettingNames.IsPdfMeetingUrl);
-            bridgeApiTokenKey = instance.GetSetting<string>(LmsCompanySettingNames.BridgeApiTokenKey);
-            bridgeApiTokenSecret = instance.GetSetting<string>(LmsCompanySettingNames.BridgeApiTokenSecret);
-            UseCourseSections = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections);
-            UseCourseMeetingsCustomLayout = instance.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout);
-            EnableOfficeHoursSlots = instance.GetSetting<bool>(LmsCompanySettingNames.EnableOfficeHoursSlots);
-            EnableCanvasExportToCalendar = instance.GetSetting<bool>(LmsCompanySettingNames.EnableCanvasExportToCalendar);
+            this.showAudioProfile = instance.GetSetting<bool>(LmsLicenseSettingNames.ShowAudioProfile);
+            this.audioProfileUnique = instance.GetSetting<bool>(LmsLicenseSettingNames.AudioProfileUnique);
+            this.enableSeminars = instance.GetSetting<bool>(LmsLicenseSettingNames.SeminarsEnable);
+            this.labelSeminar = instance.GetSetting<string>(LmsLicenseSettingNames.SeminarsLabel);
+            this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableAuditGuestEntry);
+            useSakaiEvents = instance.GetSetting<bool>(LmsLicenseSettingNames.UseSakaiEvents);
+            enableMeetingSessions = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableMeetingSessions);
+            enableMyContent = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableMyContent);
+            enableAddGuest = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableAddGuest, true);
+            enableSetUserRole = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableSetUserRole, true);
+            enableRemoveUser = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableRemoveUser, true);
+            moodleCoreServiceToken = instance.GetSetting<string>(LmsLicenseSettingNames.MoodleCoreServiceToken);
+            moodleQuizServiceToken = instance.GetSetting<string>(LmsLicenseSettingNames.MoodleQuizServiceToken);
+            schoologyConsumerKey = instance.GetSetting<string>(LmsLicenseSettingNames.SchoologyConsumerKey);
+            schoologyConsumerSecret = instance.GetSetting<string>(LmsLicenseSettingNames.SchoologyConsumerSecret);
+            haikuConsumerKey = instance.GetSetting<string>(LmsLicenseSettingNames.HaikuConsumerKey);
+            haikuConsumerSecret = instance.GetSetting<string>(LmsLicenseSettingNames.HaikuConsumerSecret);
+            haikuToken = instance.GetSetting<string>(LmsLicenseSettingNames.HaikuToken);
+            haikuTokenSecret = instance.GetSetting<string>(LmsLicenseSettingNames.HaikuTokenSecret);
+            isPdfMeetingUrl = instance.GetSetting<bool>(LmsLicenseSettingNames.IsPdfMeetingUrl);
+            bridgeApiTokenKey = instance.GetSetting<string>(LmsLicenseSettingNames.BridgeApiTokenKey);
+            bridgeApiTokenSecret = instance.GetSetting<string>(LmsLicenseSettingNames.BridgeApiTokenSecret);
+            UseCourseSections = instance.GetSetting<bool>(LmsLicenseSettingNames.UseCourseSections);
+            UseCourseMeetingsCustomLayout = instance.GetSetting<bool>(LmsLicenseSettingNames.UseCourseMeetingsCustomLayout);
+            EnableOfficeHoursSlots = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHoursSlots);
+            EnableCanvasExportToCalendar = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableCanvasExportToCalendar);
             Telephony = new TelephonyDTO(instance);
         }
 
@@ -341,6 +343,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool enableVirtualClassrooms { get; set; }
+
+        [DataMember]
+        public bool namedVirtualClassroomManager { get; set; }
 
         [DataMember]
         public string labelVirtualClassroom { get; set; }

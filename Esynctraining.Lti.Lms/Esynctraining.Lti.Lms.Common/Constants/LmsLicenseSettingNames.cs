@@ -65,6 +65,7 @@ namespace Esynctraining.Lti.Lms.Common.Constants
 
         public const string EnableVirtualClassrooms = nameof(EnableVirtualClassrooms);
         public const string VirtualClassroomsLabel = nameof(VirtualClassroomsLabel);
+        public const string NamedVirtualClassroomManager = nameof(NamedVirtualClassroomManager);
 
         public const string SchoologyConsumerKey = nameof(SchoologyConsumerKey);
         public const string SchoologyConsumerSecret = nameof(SchoologyConsumerSecret);

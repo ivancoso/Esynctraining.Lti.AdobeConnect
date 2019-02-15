@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
@@ -15,6 +14,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Lti.Lms.Common.API;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API
@@ -172,7 +172,7 @@ namespace EdugameCloud.Lti.API
                             // merge results;
                             foreach (var meeting in courseGroup)
                             {
-                                if (lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections))
+                                if (lmsCompany.GetSetting<bool>(LmsLicenseSettingNames.UseCourseSections))
                                 {
                                     licenseUsersVar =
                                     licenseUsers[courseGroup.Key].Where(

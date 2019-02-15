@@ -4,13 +4,13 @@ using System.Text;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -146,7 +146,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("useExistingMeeting")]
         [HttpPost]
-        [Filters.LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.EnableMeetingReuse)]
+        [Filters.LmsAuthorizeBase(FeatureName = LmsLicenseSettingNames.EnableMeetingReuse)]
         public virtual async Task<OperationResult> ReuseExistedAdobeConnectMeeting([FromBody]ReuseExistedAdobeConnectMeetingDto model)
         {
             if (string.IsNullOrWhiteSpace(model.ScoId))

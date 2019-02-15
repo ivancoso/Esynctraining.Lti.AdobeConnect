@@ -8,7 +8,6 @@ using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Resources;
 using Esynctraining.Core.Caching;
@@ -16,6 +15,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -176,7 +176,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [LmsAuthorizeBase]
         public OperationResultWithData<IEnumerable<LmsUserDTO>> RemoveFromAcMeeting([FromBody]CourseUsersDto request)
         {
-            if (!LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser, true))
+            if (!LmsCompany.GetSetting<bool>(LmsLicenseSettingNames.EnableRemoveUser, true))
                 return OperationResultWithData<IEnumerable<LmsUserDTO>>.Error("Operation is not enabled.");
 
             string error;

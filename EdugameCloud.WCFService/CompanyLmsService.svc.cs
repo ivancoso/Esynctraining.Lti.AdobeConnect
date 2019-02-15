@@ -1,4 +1,6 @@
 ﻿using EdugameCloud.Lti.Core.Constants;
+using Esynctraining.Lti.Lms.Common.Constants;
+
 // ReSharper disable once CheckNamespace
 namespace EdugameCloud.WCFService
 {
@@ -75,7 +77,7 @@ namespace EdugameCloud.WCFService
             if (!isTransient
                 && string.IsNullOrWhiteSpace(resultDto.lmsAdminPassword)
                 && ((entity.LmsProviderId == (int) LmsProviderEnum.Moodle &&
-                     string.IsNullOrWhiteSpace(entity.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken)))
+                     string.IsNullOrWhiteSpace(entity.GetSetting<string>(LmsLicenseSettingNames.MoodleCoreServiceToken)))
                     || (entity.LmsProviderId == (int) LmsProviderEnum.Blackboard && !resultDto.enableProxyToolMode)
                     || entity.LmsProviderId == (int) LmsProviderEnum.AgilixBuzz)
             )
@@ -264,65 +266,67 @@ namespace EdugameCloud.WCFService
             instance.ShowAnnouncements = dto.enableAnnouncements;
             instance.MeetingNameFormatterId = dto.meetingNameFormatterId;
 
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SupportPageHtml, dto.supportPageHtml);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.SupportPageHtml, dto.supportPageHtml);
 
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelMeeting, dto.labelMeeting);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelOfficeHour, dto.labelOfficeHour);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelStudyGroup, dto.labelStudyGroup);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.VirtualClassroomsLabel, dto.labelVirtualClassroom);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.LabelMeeting, dto.labelMeeting);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.LabelOfficeHour, dto.labelOfficeHour);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.LabelStudyGroup, dto.labelStudyGroup);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.VirtualClassroomsLabel, dto.labelVirtualClassroom);
 
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ShowMeetingSummary, dto.showSummary);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ShowMeetingTime, dto.showTime);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ShowMeetingDuration, dto.showDuration);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.ShowMeetingSummary, dto.showSummary);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.ShowMeetingTime, dto.showTime);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.ShowMeetingDuration, dto.showDuration);
 
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.CanRemoveRecordings, dto.canRemoveRecordings);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AutoPublishRecordings, dto.autoPublishRecordings);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ForcedAddInInstallation, dto.forcedAddInInstallation);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LanguageId, dto.languageId);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Mp4ServiceLicenseKey, dto.mp4ServiceLicenseKey);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey, dto.mp4ServiceWithSubtitlesLicenseKey);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SeminarsLabel, dto.labelSeminar);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseSakaiEvents, dto.useSakaiEvents);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableMeetingSessions, dto.enableMeetingSessions);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableCanvasExportToCalendar, dto.EnableCanvasExportToCalendar);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableVirtualClassrooms, dto.enableVirtualClassrooms);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableMyContent, dto.enableMyContent);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableAddGuest, dto.enableAddGuest);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableSetUserRole, dto.enableSetUserRole);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableRemoveUser, dto.enableRemoveUser);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.CanStudentCreateStudyGroup, dto.canStudentCreateStudyGroup);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.MoodleCoreServiceToken, dto.moodleCoreServiceToken);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.MoodleQuizServiceToken, dto.moodleQuizServiceToken);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SchoologyConsumerKey, dto.schoologyConsumerKey);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SchoologyConsumerSecret, dto.schoologyConsumerSecret);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.CanRemoveRecordings, dto.canRemoveRecordings);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.AutoPublishRecordings, dto.autoPublishRecordings);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.ForcedAddInInstallation, dto.forcedAddInInstallation);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.LanguageId, dto.languageId);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Mp4ServiceLicenseKey, dto.mp4ServiceLicenseKey);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Mp4ServiceWithSubtitlesLicenseKey, dto.mp4ServiceWithSubtitlesLicenseKey);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.SeminarsLabel, dto.labelSeminar);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.UseSakaiEvents, dto.useSakaiEvents);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableMeetingSessions, dto.enableMeetingSessions);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableCanvasExportToCalendar, dto.EnableCanvasExportToCalendar);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableMyContent, dto.enableMyContent);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableAddGuest, dto.enableAddGuest);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableSetUserRole, dto.enableSetUserRole);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableRemoveUser, dto.enableRemoveUser);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.CanStudentCreateStudyGroup, dto.canStudentCreateStudyGroup);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableVirtualClassrooms, dto.enableVirtualClassrooms);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.NamedVirtualClassroomManager, dto.namedVirtualClassroomManager);
 
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuConsumerKey, dto.haikuConsumerKey);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuConsumerSecret, dto.haikuConsumerSecret);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuToken, dto.haikuToken);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.HaikuTokenSecret, dto.haikuTokenSecret);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.MoodleCoreServiceToken, dto.moodleCoreServiceToken);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.MoodleQuizServiceToken, dto.moodleQuizServiceToken);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.SchoologyConsumerKey, dto.schoologyConsumerKey);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.SchoologyConsumerSecret, dto.schoologyConsumerSecret);
 
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.BridgeApiTokenKey, dto.bridgeApiTokenKey);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.BridgeApiTokenSecret, dto.bridgeApiTokenSecret);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.HaikuConsumerKey, dto.haikuConsumerKey);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.HaikuConsumerSecret, dto.haikuConsumerSecret);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.HaikuToken, dto.haikuToken);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.HaikuTokenSecret, dto.haikuTokenSecret);
 
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsPdfMeetingUrl, dto.isPdfMeetingUrl);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.BridgeApiTokenKey, dto.bridgeApiTokenKey);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.BridgeApiTokenSecret, dto.bridgeApiTokenSecret);
 
-            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
-            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
-            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.SeminarsEnable, dto.enableSeminars.ToString());
-            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableAuditGuestEntry, dto.enableAuditGuestEntry.ToString());
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.IsPdfMeetingUrl, dto.isPdfMeetingUrl);
 
-            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.ShowAudioProfile, dto.showAudioProfile.ToString());
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AudioProfileUnique, dto.audioProfileUnique.ToString());
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseCourseSections, dto.UseCourseSections);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseCourseMeetingsCustomLayout, dto.UseCourseMeetingsCustomLayout);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableOfficeHoursSlots, dto.EnableOfficeHoursSlots);
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsLicenseSettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsLicenseSettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsLicenseSettingNames.SeminarsEnable, dto.enableSeminars.ToString());
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsLicenseSettingNames.EnableAuditGuestEntry, dto.enableAuditGuestEntry.ToString());
+
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsLicenseSettingNames.ShowAudioProfile, dto.showAudioProfile.ToString());
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.AudioProfileUnique, dto.audioProfileUnique.ToString());
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.UseCourseSections, dto.UseCourseSections);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.UseCourseMeetingsCustomLayout, dto.UseCourseMeetingsCustomLayout);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableOfficeHoursSlots, dto.EnableOfficeHoursSlots);
 
             //OAuth options
             if (lmsProvider.Id == (int) LmsProviderEnum.Brightspace || lmsProvider.Id == (int)LmsProviderEnum.Canvas)
             {
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsOAuthSandbox, dto.isSandbox);
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.OAuthAppId, dto.oAuthAppId);
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.OAuthAppKey, dto.oAuthAppKey);
+                UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.IsOAuthSandbox, dto.isSandbox);
+                UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.OAuthAppId, dto.oAuthAppId);
+                UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.OAuthAppKey, dto.oAuthAppKey);
             }
             else if (lmsProvider.Id == (int)LmsProviderEnum.Blackboard)
             {
@@ -331,11 +335,11 @@ namespace EdugameCloud.WCFService
                     string json = (dto.additionalLmsDomains == null) || (dto.additionalLmsDomains.Length == 0)
                         ? null
                         : JsonConvert.SerializeObject(dto.additionalLmsDomains);
-                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AdditionalLmsDomains, json);
+                    UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.AdditionalLmsDomains, json);
                 }
                 else
                 {
-                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AdditionalLmsDomains, null);
+                    UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.AdditionalLmsDomains, null);
                 }
             }
 
@@ -369,26 +373,26 @@ namespace EdugameCloud.WCFService
         {
             if (dto.Telephony != null)
             {
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.ActiveProfile,
+                UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Telephony.ActiveProfile,
                     dto.Telephony.ActiveProfile);
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.CourseMeetingOption,
+                UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Telephony.CourseMeetingOption,
                     dto.Telephony.CourseMeetingOption);
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.OfficeHoursOption,
+                UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Telephony.OfficeHoursOption,
                     dto.Telephony.OfficeHoursOption);
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.StudyGroupOption,
+                UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Telephony.StudyGroupOption,
                     dto.Telephony.StudyGroupOption);
                 if (dto.Telephony.MeetingOne != null)
                 {
-                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.OwningAccountNumber,
+                    UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Telephony.MeetingOne.OwningAccountNumber,
                         dto.Telephony.MeetingOne.OwningAccountNumber);
-                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.UserName,
+                    UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Telephony.MeetingOne.UserName,
                         dto.Telephony.MeetingOne.UserName);
-                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.SecretHashKey,
+                    UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Telephony.MeetingOne.SecretHashKey,
                         dto.Telephony.MeetingOne.SecretHashKey);
                 }
                 if (dto.Telephony.Arkadin != null)
                 {
-                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.Arkadin.UserName,
+                    UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.Telephony.Arkadin.UserName,
                         dto.Telephony.Arkadin.UserName);
                 }
             }

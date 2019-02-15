@@ -7,7 +7,6 @@ using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -19,6 +18,7 @@ using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,7 +48,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("create")]
         [HttpPost]
-        [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
+        [LmsAuthorizeBase(FeatureName = LmsLicenseSettingNames.SeminarsEnable)]
         public virtual async Task<OperationResult> Create([FromBody]CreateSeminarDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
@@ -82,7 +82,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("edit")]
         [HttpPost]
-        [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
+        [LmsAuthorizeBase(FeatureName = LmsLicenseSettingNames.SeminarsEnable)]
         public virtual async Task<OperationResult> Edit([FromBody]EditSeminarDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarLicenseId))
@@ -113,7 +113,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("sessions/create")]
         [Route("sessions/edit")]
         [HttpPost]
-        [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
+        [LmsAuthorizeBase(FeatureName = LmsLicenseSettingNames.SeminarsEnable)]
         public OperationResult SaveSeminarSession([FromBody]SeminarSessionInputDto seminarSessionDto)
         {
             try
@@ -142,7 +142,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("sessions/delete")]
         [HttpPost]
-        [LmsAuthorizeBase(FeatureName = LmsCompanySettingNames.SeminarsEnable)]
+        [LmsAuthorizeBase(FeatureName = LmsLicenseSettingNames.SeminarsEnable)]
         public OperationResult DeleteSeminarSession([FromBody]DeleteSeminarSessionDto model)
         {
             if (string.IsNullOrWhiteSpace(model.SeminarSessionId))

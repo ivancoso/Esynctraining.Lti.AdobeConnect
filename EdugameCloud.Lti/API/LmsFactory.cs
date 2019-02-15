@@ -3,7 +3,6 @@ using Castle.Windsor;
 using EdugameCloud.Lti.API.AdobeConnect;
 using Esynctraining.Core.Utils;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Lms.Common.API;
@@ -11,6 +10,7 @@ using Esynctraining.Lti.Lms.Common.API.BlackBoard;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
 using Esynctraining.Lti.Lms.Common.API.Sakai;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 
 namespace EdugameCloud.Lti.API
@@ -93,7 +93,7 @@ namespace EdugameCloud.Lti.API
             switch (lmsId)
             {
                 case LmsProviderEnum.Canvas:
-                    bool enableExportToCalendar = lmsLicense.GetSetting<bool>(LmsCompanySettingNames.EnableCanvasExportToCalendar);
+                    bool enableExportToCalendar = lmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableCanvasExportToCalendar);
                     if (!enableExportToCalendar)
                         return null;
 

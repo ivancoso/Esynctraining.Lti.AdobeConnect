@@ -11,7 +11,6 @@ using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
@@ -20,6 +19,7 @@ using Esynctraining.AdobeConnect.Api.MeetingReports;
 using Esynctraining.AdobeConnect.Api.MeetingReports.Dto;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Microsoft.Reporting.WebForms;
 using NodaTime.TimeZones;
 
@@ -95,7 +95,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 }
 
                 bool isShowMeetingTitle = false;
-                bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
+                bool.TryParse(credentials.GetSetting<string>(LmsLicenseSettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
                 string mimeType;
                 var company = this.companyModel.GetOneById(s.LmsCompany.CompanyId).Value;
 
@@ -175,7 +175,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 }
                 var localDate = GetLocalDate(tz);
                 bool isShowMeetingTitle = false;
-                bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
+                bool.TryParse(credentials.GetSetting<string>(LmsLicenseSettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
                 var parametersList = GetReportParameters(new ReportParamsDto(format, company, s, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
                 var subreports = new Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>>
                 {
@@ -279,7 +279,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var acMeetingTitle = acMeeting.ScoInfo.Name;
                 var localDate = GetLocalDate(tz);
                 bool isShowMeetingTitle;
-                bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
+                bool.TryParse(credentials.GetSetting<string>(LmsLicenseSettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
                 var parametersList = GetReportParameters(new ReportParamsDto(format, company, s, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
 
                 var reportRenderedBytes = GenerateReportBytes(format, "RecordingAttendanceReport", participants,

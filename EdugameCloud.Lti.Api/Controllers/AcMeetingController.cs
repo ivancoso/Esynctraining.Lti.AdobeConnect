@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using EdugameCloud.Lti.Api.Filters;
+﻿using EdugameCloud.Lti.Api.Filters;
 using EdugameCloud.Lti.Api.Models;
-using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
@@ -12,8 +7,11 @@ using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
-using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -23,30 +21,33 @@ namespace EdugameCloud.Lti.Api.Controllers
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger, ICache cache)
-            : base( acAccountService, settings, logger, cache)
+            : base(acAccountService, settings, logger, cache)
         {
         }
 
 
         [Route("acSearchMeeting")]
         [HttpPost]
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingReuse)]
-        public virtual OperationResultWithData<IEnumerable<MeetingItemDto>> SearchExistingMeeting([FromBody]SearchRequestDto request)
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMeetingReuse)]
+        public virtual OperationResultWithData<IEnumerable<MeetingItemDto>> SearchExistingMeeting(
+            [FromBody] SearchRequestDto request)
         {
             try
             {
                 if (Session.LmsUser == null)
-                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error("Session doesn't contain LMS user.");
+                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error(
+                        "Session doesn't contain LMS user.");
                 if (string.IsNullOrWhiteSpace(Session.LmsUser.PrincipalId))
-                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error("You don't have Adobe Connect account.");
-                
+                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error(
+                        "You don't have Adobe Connect account.");
+
                 var provider = GetAdminProvider();
                 var principal = provider.GetOneByPrincipalId(Session.LmsUser.PrincipalId).PrincipalInfo.Principal;
                 var userProvider = GetUserProvider();
-                
+
                 var myMeetings = userProvider.ReportMyMeetings(MeetingPermissionId.host).Values
-                    .Where(x => x.Name.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >=0 
-                             || x.UrlPath.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
+                    .Where(x => x.Name.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0
+                                || x.UrlPath.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 return myMeetings.Select(MeetingItemDto.Build).ToSuccessResult();
             }
@@ -59,15 +60,18 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         [Route("acSearchVirtualClassRoom")]
         [HttpPost]
-        [TeacherOnly(FeatureName = LmsCompanySettingNames.EnableMeetingReuse)]
-        public virtual OperationResultWithData<IEnumerable<MeetingItemDto>> SearchExistingVirtualClassRoom([FromBody]SearchRequestDto request)
+        [TeacherOnly(FeatureName = LmsLicenseSettingNames.EnableMeetingReuse)]
+        public virtual OperationResultWithData<IEnumerable<MeetingItemDto>> SearchExistingVirtualClassRoom(
+            [FromBody] SearchRequestDto request)
         {
             try
             {
                 if (Session.LmsUser == null)
-                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error("Session doesn't contain LMS user.");
+                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error(
+                        "Session doesn't contain LMS user.");
                 if (string.IsNullOrWhiteSpace(Session.LmsUser.PrincipalId))
-                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error("You don't have Adobe Connect account.");
+                    return OperationResultWithData<IEnumerable<MeetingItemDto>>.Error(
+                        "You don't have Adobe Connect account.");
 
                 var provider = GetAdminProvider();
                 var principal = provider.GetOneByPrincipalId(Session.LmsUser.PrincipalId).PrincipalInfo.Principal;
@@ -78,13 +82,12 @@ namespace EdugameCloud.Lti.Api.Controllers
                 {
                     var myTraining = myTrainingResult.Values
                         .Where(x => x.Name.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0
-                                 || x.UrlPath.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
+                                    || x.UrlPath.IndexOf(request.SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
                     return myTraining.Select(MeetingItemDto.Build).ToSuccessResult();
                 }
 
                 Logger.Error("ReportMyTraining error." + myTrainingResult.Status.GetErrorInfo());
                 return new MeetingItemDto[0].AsEnumerable().ToSuccessResult();
-
             }
             catch (Exception ex)
             {
@@ -111,7 +114,5 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         //    return principalInfo.Values.Any() && principalInfo.Values.All(x => x.PrincipalId == principalId);
         //}
-
     }
-
 }

@@ -46,9 +46,9 @@
 
 ////                var access = new AccessDetails
 ////                {
-////                    Login = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.UserName),
-////                    Password = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.Password),
-////                    BridgeId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.BridgeId),
+////                    Login = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.Arkadin.UserName),
+////                    Password = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.Arkadin.Password),
+////                    BridgeId = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.Arkadin.BridgeId),
 ////                };
 
 
@@ -104,9 +104,9 @@
 
 //                var access = new AccessDetails
 //                {
-//                    Login = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.UserName),
-//                    Password = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.Password),
-//                    BridgeId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.BridgeId),
+//                    Login = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.Arkadin.UserName),
+//                    Password = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.Arkadin.Password),
+//                    BridgeId = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.Telephony.Arkadin.BridgeId),
 //                };
 
 

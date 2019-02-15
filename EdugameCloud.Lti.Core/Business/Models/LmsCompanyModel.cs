@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using EdugameCloud.Core.Business;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.NHibernate;
 using Esynctraining.NHibernate.Queries;
 using NHibernate;
@@ -139,7 +139,7 @@ namespace EdugameCloud.Lti.Core.Business.Models
                 defaultQuery = defaultQuery.Where(x => x.ConsumerKey == consumerKey);
             defaultQuery = defaultQuery
                 .JoinAlias(() => lc.Settings, () => lcs)
-                .Where(() => lcs.Name == LmsCompanySettingNames.UseSynchronizedUsers && lcs.Value == "True")
+                .Where(() => lcs.Name == LmsLicenseSettingNames.UseSynchronizedUsers && lcs.Value == "True")
                 .JoinAlias(() => lc.LmsCourseMeetings, () => lcm)
                 .JoinAlias(() => lcm.First().OfficeHours, () => oh, JoinType.LeftOuterJoin)
 //                .JoinAlias(() => lcm.First().MeetingRoles, () => lumr)

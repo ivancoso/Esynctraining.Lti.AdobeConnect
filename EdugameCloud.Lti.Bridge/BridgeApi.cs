@@ -18,8 +18,8 @@ namespace EdugameCloud.Lti.Bridge
         // https://api.bridgeapp.com/doc/api/html/file.API_Overview.html
         private string GetBasicHeader(Dictionary<string, object> licenseSettings)
         {
-            var key = licenseSettings[LmsCompanySettingNames.BridgeApiTokenKey];
-            var secret = licenseSettings[LmsCompanySettingNames.BridgeApiTokenSecret];
+            var key = licenseSettings[LmsLicenseSettingNames.BridgeApiTokenKey];
+            var secret = licenseSettings[LmsLicenseSettingNames.BridgeApiTokenSecret];
             return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{key}:{secret}"));
         }
 

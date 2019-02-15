@@ -5,6 +5,7 @@ using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Caching;
+using Esynctraining.Lti.Lms.Common.Constants;
 
 namespace EdugameCloud.Lti.DTO
 {
@@ -98,6 +99,8 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "enableVirtualClassrooms")]
         public bool EnableVirtualClassrooms { get; set; }
 
+        [DataMember(Name = "namedVirtualClassroomManager")]
+        public bool NamedVirtualClassroomManager { get; set; }
 
         [DataMember(Name = "instructionText")]
         public string SupportPageHtml { get; set; }
@@ -189,59 +192,60 @@ namespace EdugameCloud.Lti.DTO
 
                     CanEditMeeting = value.CanEditMeeting.GetValueOrDefault(),
                     CanRemoveMeeting = value.CanRemoveMeeting.GetValueOrDefault(),
-                    CanStudentCreateStudyGroup = value.GetSetting<bool>(LmsCompanySettingNames.CanStudentCreateStudyGroup, true),
+                    CanStudentCreateStudyGroup = value.GetSetting<bool>(LmsLicenseSettingNames.CanStudentCreateStudyGroup, true),
 
                     ACUsesEmailAsLogin = value.ACUsesEmailAsLogin ?? false,
                     UseSynchronizedUsers = value.UseSynchronizedUsers,
                     UseFLV = value.UseFLV,
                     UseMP4 = value.UseMP4,
                     EnableMultipleMeetings = value.EnableMultipleMeetings,
-                    UseSakaiEvents = value.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents),
-                    EnableMeetingSessions = value.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingSessions),
-                    SupportPageHtml = value.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml),
+                    UseSakaiEvents = value.GetSetting<bool>(LmsLicenseSettingNames.UseSakaiEvents),
+                    EnableMeetingSessions = value.GetSetting<bool>(LmsLicenseSettingNames.EnableMeetingSessions),
+                    SupportPageHtml = value.GetSetting<string>(LmsLicenseSettingNames.SupportPageHtml),
 
                     EnableMeetingReuse = value.EnableMeetingReuse,
 
-                    EnableSeminars = value.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable),
+                    EnableSeminars = value.GetSetting<bool>(LmsLicenseSettingNames.SeminarsEnable),
                     EnableOfficeHours = value.EnableOfficeHours.GetValueOrDefault(),
-                    EnableVirtualClassrooms = value.GetSetting<bool>(LmsCompanySettingNames.EnableVirtualClassrooms),
-                    EnableMyContent = value.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent),
-                    EnableAddGuest = value.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true),
-                    EnableSetUserRole = value.GetSetting<bool>(LmsCompanySettingNames.EnableSetUserRole, true),
-                    EnableRemoveUser = value.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser, true),
+                    EnableVirtualClassrooms = value.GetSetting<bool>(LmsLicenseSettingNames.EnableVirtualClassrooms),
+                    NamedVirtualClassroomManager = value.GetSetting<bool>(LmsLicenseSettingNames.EnableVirtualClassrooms, true),
+                    EnableMyContent = value.GetSetting<bool>(LmsLicenseSettingNames.EnableMyContent),
+                    EnableAddGuest = value.GetSetting<bool>(LmsLicenseSettingNames.EnableAddGuest, true),
+                    EnableSetUserRole = value.GetSetting<bool>(LmsLicenseSettingNames.EnableSetUserRole, true),
+                    EnableRemoveUser = value.GetSetting<bool>(LmsLicenseSettingNames.EnableRemoveUser, true),
 
-                    ShowMeetingSummary =  value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary),
-                    ShowMeetingTime = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime),
-                    ShowMeetingDuration = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration),
+                    ShowMeetingSummary =  value.GetSetting<bool>(LmsLicenseSettingNames.ShowMeetingSummary),
+                    ShowMeetingTime = value.GetSetting<bool>(LmsLicenseSettingNames.ShowMeetingTime),
+                    ShowMeetingDuration = value.GetSetting<bool>(LmsLicenseSettingNames.ShowMeetingDuration),
 
                     CanRemoveRecordings = value.CanRemoveRecordings,
                     AutoPublishRecordings = value.AutoPublishRecordings,
                     Language = lmsLicenseLanguage.TwoLetterCode,
 
-                    HasMp4ServiceLicenseKey = !string.IsNullOrWhiteSpace(value.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey)),
-                    HasMp4ServiceWithSubtitlesLicenseKey = !string.IsNullOrWhiteSpace(value.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey)),
+                    HasMp4ServiceLicenseKey = !string.IsNullOrWhiteSpace(value.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceLicenseKey)),
+                    HasMp4ServiceWithSubtitlesLicenseKey = !string.IsNullOrWhiteSpace(value.GetSetting<string>(LmsLicenseSettingNames.Mp4ServiceWithSubtitlesLicenseKey)),
 
-                    ShowAudioProfile = value.GetSetting<bool>(LmsCompanySettingNames.ShowAudioProfile),
-                    UseCourseSections = value.GetSetting<bool>(LmsCompanySettingNames.UseCourseSections),
-                    UseCourseMeetingsCustomLayout = value.GetSetting<bool>(LmsCompanySettingNames.UseCourseMeetingsCustomLayout),
-                    EnableOfficeHoursSlots = value.GetSetting<bool>(LmsCompanySettingNames.EnableOfficeHoursSlots),
+                    ShowAudioProfile = value.GetSetting<bool>(LmsLicenseSettingNames.ShowAudioProfile),
+                    UseCourseSections = value.GetSetting<bool>(LmsLicenseSettingNames.UseCourseSections),
+                    UseCourseMeetingsCustomLayout = value.GetSetting<bool>(LmsLicenseSettingNames.UseCourseMeetingsCustomLayout),
+                    EnableOfficeHoursSlots = value.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHoursSlots),
 
                     Labels = new LabelsDto
                     {
-                        MeetingLabel = value.GetSetting<string>(LmsCompanySettingNames.LabelMeeting) ?? "Course Meetings",
-                        OfficeHourLabel = value.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour) ?? "Office Hours",
-                        StudyGroupLabel = value.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup) ?? "Study Groups",
-                        SeminarLabel = value.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel) ?? "Seminar Rooms",
-                        VirtualClassroom = value.GetSetting<string>(LmsCompanySettingNames.VirtualClassroomsLabel) ?? "Virtual Classrooms",
+                        MeetingLabel = value.GetSetting<string>(LmsLicenseSettingNames.LabelMeeting) ?? "Course Meetings",
+                        OfficeHourLabel = value.GetSetting<string>(LmsLicenseSettingNames.LabelOfficeHour) ?? "Office Hours",
+                        StudyGroupLabel = value.GetSetting<string>(LmsLicenseSettingNames.LabelStudyGroup) ?? "Study Groups",
+                        SeminarLabel = value.GetSetting<string>(LmsLicenseSettingNames.SeminarsLabel) ?? "Seminar Rooms",
+                        VirtualClassroom = value.GetSetting<string>(LmsLicenseSettingNames.VirtualClassroomsLabel) ?? "Virtual Classrooms",
                     },
 
                     Telephony = new TelephonyDto
                     {
-                        ActiveProfile = value.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile)?.ToUpper(),
+                        ActiveProfile = value.GetSetting<string>(LmsLicenseSettingNames.Telephony.ActiveProfile)?.ToUpper(),
                         // See TelephonyProfileOption enum
-                        CourseMeetingOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption),
-                        OfficeHoursOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption),
-                        StudyGroupOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.StudyGroupOption),
+                        CourseMeetingOption = value.GetSetting<int>(LmsLicenseSettingNames.Telephony.CourseMeetingOption),
+                        OfficeHoursOption = value.GetSetting<int>(LmsLicenseSettingNames.Telephony.OfficeHoursOption),
+                        StudyGroupOption = value.GetSetting<int>(LmsLicenseSettingNames.Telephony.StudyGroupOption),
                     }
                 };
             });            

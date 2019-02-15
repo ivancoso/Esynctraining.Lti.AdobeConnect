@@ -1,21 +1,15 @@
-﻿using System.Collections.Generic;
-using EdugameCloud.Lti.Core.Constants;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Web;
+using DotNetOpenAuth.AspNet;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.OAuth.Canvas;
+using Esynctraining.Lti.Lms.Common.Constants;
+using Microsoft.Web.WebPages.OAuth;
 
 namespace EdugameCloud.Lti.OAuth
 {
-    using System;
-    using System.Reflection;
-    using System.Web;
-
-    using DotNetOpenAuth.AspNet;
-
-    using EdugameCloud.Lti.OAuth.Canvas;
-
-    using Esynctraining.Core.Providers;
-
-    using Microsoft.Web.WebPages.OAuth;
-
     /// <summary>
     /// The OAUTH web security wrapper.
     /// </summary>
@@ -51,11 +45,11 @@ namespace EdugameCloud.Lti.OAuth
         {
             string appId = null;
             string appKey = null;
-            var isSandbox = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.IsOAuthSandbox);
+            var isSandbox = lmsCompany.GetSetting<bool>(LmsLicenseSettingNames.IsOAuthSandbox);
             if (isSandbox)
             {
-                appId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
-                appKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
+                appId = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.OAuthAppId);
+                appKey = lmsCompany.GetSetting<string>(LmsLicenseSettingNames.OAuthAppKey);
             }
             else
             {

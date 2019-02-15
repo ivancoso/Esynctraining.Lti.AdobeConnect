@@ -1,11 +1,10 @@
-﻿using EdugameCloud.Lti.Core.Constants;
+﻿using System;
+using System.Runtime.Serialization;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Lti.Lms.Common.Constants;
 
 namespace EdugameCloud.Lti.DTO
 {
-    using System;
-    using System.Runtime.Serialization;
-    using EdugameCloud.Lti.Domain.Entities;
-
     [DataContract]
     public sealed class TelephonyDTO
     {
@@ -29,22 +28,22 @@ namespace EdugameCloud.Lti.DTO
                 throw new ArgumentNullException(nameof(instance));
             
 
-            ActiveProfile = instance.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile);
+            ActiveProfile = instance.GetSetting<string>(LmsLicenseSettingNames.Telephony.ActiveProfile);
 
-            CourseMeetingOption = instance.GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption);
-            OfficeHoursOption = instance.GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption);
-            StudyGroupOption = instance.GetSetting<int>(LmsCompanySettingNames.Telephony.StudyGroupOption);
+            CourseMeetingOption = instance.GetSetting<int>(LmsLicenseSettingNames.Telephony.CourseMeetingOption);
+            OfficeHoursOption = instance.GetSetting<int>(LmsLicenseSettingNames.Telephony.OfficeHoursOption);
+            StudyGroupOption = instance.GetSetting<int>(LmsLicenseSettingNames.Telephony.StudyGroupOption);
 
             MeetingOne = new TelephonyMeetingOneDTO
             {
-                OwningAccountNumber = instance.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.OwningAccountNumber),
-                UserName = instance.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.UserName),
-                SecretHashKey = instance.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.SecretHashKey),
+                OwningAccountNumber = instance.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.OwningAccountNumber),
+                UserName = instance.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.UserName),
+                SecretHashKey = instance.GetSetting<string>(LmsLicenseSettingNames.Telephony.MeetingOne.SecretHashKey),
             };
 
             Arkadin = new TelephonyArkadinDTO
             {
-                UserName = instance.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.UserName),
+                UserName = instance.GetSetting<string>(LmsLicenseSettingNames.Telephony.Arkadin.UserName),
             };
         }
 
