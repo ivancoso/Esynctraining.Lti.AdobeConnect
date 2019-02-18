@@ -11,7 +11,7 @@ namespace EdugameCloud.Lti.Haiku
     {
         private readonly IHaikuRestApiClient _haikuApi;
 
-        public HaikuLmsCourseSectionsService(Dictionary<string, object> licenseSettings, LtiParamDTO param, IHaikuRestApiClient apiClient) :
+        public HaikuLmsCourseSectionsService(Dictionary<string, object> licenseSettings, ILtiParam param, IHaikuRestApiClient apiClient) :
             base(licenseSettings, param)
         {
             _haikuApi = apiClient ?? throw new ArgumentNullException(nameof(apiClient));

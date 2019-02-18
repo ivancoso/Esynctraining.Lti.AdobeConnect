@@ -33,6 +33,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
 
         // D2L
         string ext_d2l_role { get; }
+
     }
 
     public interface ILtiParam: ILtiUserListParam
@@ -48,16 +49,6 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         int course_id { get; }
 
         /// <summary>
-        /// Gets the LMS user login id.
-        /// </summary>
-        string lms_user_login { get; }
-
-        /// <summary>
-        /// Gets the LIS person contact email primary.
-        /// </summary>
-        string lis_person_contact_email_primary { get; }
-
-        /// <summary>
         /// Gets the context label.
         /// </summary>
         string context_label { get; }
@@ -66,6 +57,16 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         /// Gets the context title.
         /// </summary>
         string context_title { get; }
+
+        /// <summary>
+        /// Gets the LMS user login id.
+        /// </summary>
+        string lms_user_login { get; }
+
+        /// <summary>
+        /// Gets the LIS person contact email primary.
+        /// </summary>
+        string lis_person_contact_email_primary { get; }
 
         string referer { get; }
 

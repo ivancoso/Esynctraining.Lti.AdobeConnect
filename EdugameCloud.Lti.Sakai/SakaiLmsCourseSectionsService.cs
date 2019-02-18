@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.Sakai
     {
         private readonly LTI2Api _lti2Api;
 
-        public SakaiLmsCourseSectionsService(Dictionary<string, object> licenseSettings, LtiParamDTO param, LTI2Api lti2Api) :
+        public SakaiLmsCourseSectionsService(Dictionary<string, object> licenseSettings, ILtiParam param, LTI2Api lti2Api) :
             base(licenseSettings, param)
         {
             _lti2Api = lti2Api ?? throw new ArgumentNullException(nameof(lti2Api));

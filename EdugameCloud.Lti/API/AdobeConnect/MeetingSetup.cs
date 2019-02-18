@@ -830,7 +830,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     try
                     {
-                        CreateAnnouncement(
+                        await CreateAnnouncement(
                             (LmsMeetingType) meeting.LmsMeetingType,
                             lmsLicense,
                             param,

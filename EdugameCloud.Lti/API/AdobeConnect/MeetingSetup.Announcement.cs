@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
@@ -30,7 +31,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         
         #endregion
 
-        private void CreateAnnouncement(
+        private async Task CreateAnnouncement(
             LmsMeetingType meetingType,
             ILmsLicense lmsCompany,
             ILtiParam param,
@@ -55,7 +56,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         ? lmsUser.Token
                         : lmsCompany.AdminUser.Return(a => a.Token, string.Empty);
                         
-                    CanvasApi.CreateAnnouncement(
+                    await CanvasApi.CreateAnnouncement(
                         lmsCompany.LmsDomain,
                         token,
                         param.course_id,

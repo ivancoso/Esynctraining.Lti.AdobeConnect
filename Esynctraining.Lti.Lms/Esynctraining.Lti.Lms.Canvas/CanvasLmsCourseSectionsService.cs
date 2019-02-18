@@ -12,7 +12,7 @@ namespace Esynctraining.Lti.Lms.Canvas
     {
         private readonly IEGCEnabledCanvasAPI _canvasApi;
 
-        public CanvasLmsCourseSectionsService(Dictionary<string, object> licenseSettings, LtiParamDTO param, IEGCEnabledCanvasAPI canvasApi) :
+        public CanvasLmsCourseSectionsService(Dictionary<string, object> licenseSettings, ILtiParam param, IEGCEnabledCanvasAPI canvasApi) :
             base(licenseSettings, param)
         {
             _canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
