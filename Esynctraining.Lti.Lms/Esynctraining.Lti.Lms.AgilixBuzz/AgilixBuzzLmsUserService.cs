@@ -39,7 +39,11 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
             var (users, error) = await _dlapApi.GetUsersForCourseAsync(licenseSettings, courseId, extraData);
 
             if (!string.IsNullOrWhiteSpace(error))
+            {
                 Logger.Error("[AgilixBuzz.dlapApi.GetUsersForCourse] error:" + error);
+                return OperationResultWithData<List<LmsUserDTO>>.Error(error);
+            }
+                
 
             return users.ToSuccessResult();
         }

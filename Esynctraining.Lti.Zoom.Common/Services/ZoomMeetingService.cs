@@ -243,6 +243,11 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
                 var lmsUsers = await lmsService.GetUsers(lmsSettings, courseId);
 
+                if (!lmsUsers.IsSuccess)
+                {
+                    return OperationResultWithData<MeetingViewModel>.Error(lmsUsers.Message);
+                }
+
                 //take users by email, throwing out current user
                 var registrants = lmsUsers.Data.Where(x =>
                     !String.IsNullOrEmpty(x.Email) &&

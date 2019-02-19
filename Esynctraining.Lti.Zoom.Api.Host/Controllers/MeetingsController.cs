@@ -145,6 +145,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                         user,
                         Param.lis_person_contact_email_primary, requestDto);
 
+                    if (!createResult.IsSuccess)
+                    {
+                        return OperationResultWithData<MeetingViewModel>.Error(createResult.Message);
+                    }
+
                     return createResult;
                 }
 
