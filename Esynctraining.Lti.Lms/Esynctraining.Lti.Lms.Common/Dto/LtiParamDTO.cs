@@ -25,7 +25,8 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         string ext_ims_lis_memberships_id { get; }
 
 
-        // D2L
+        // D2L + BB notification
+        // calculated for UNIR API
         string lms_user_id { get; }
 
         // D2L
@@ -70,7 +71,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
 
         string referer { get; }
 
-        string user_id { get; }
+        //string user_id { get; }
 
         string PersonNameGiven { get; }
 
