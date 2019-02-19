@@ -9,8 +9,8 @@
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>..\EdugameCloud.Lti.Api\EdugameCloud.Lti.Api.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>..\EdugameCloud.Lti.Api.Host\wwwroot\EdugameCloud.Lti.Api.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -63,14 +63,6 @@
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="wwwroot/EdugameCloud.Lti.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot/Esynctraining.AdobeConnect.Api.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <None Update="Logs\placeholder.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

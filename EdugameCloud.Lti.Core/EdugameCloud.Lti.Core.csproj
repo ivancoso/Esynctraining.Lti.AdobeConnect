@@ -7,6 +7,10 @@
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DocumentationFile>..\EdugameCloud.Lti.Api.Host\wwwroot\EdugameCloud.Lti.Core.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Esynctraining.AdobeConnect.Api" Version="1.0.3.17" />
     <PackageReference Include="Esynctraining.Crypto" Version="1.0.2" />

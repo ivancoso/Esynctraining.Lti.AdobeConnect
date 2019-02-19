@@ -7,6 +7,10 @@
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DocumentationFile>..\EdugameCloud.Lti.Api.Host\wwwroot\EdugameCloud.Lti.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Controllers\HashCodeController.cs" />
   </ItemGroup>
