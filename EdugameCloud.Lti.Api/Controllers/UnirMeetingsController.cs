@@ -86,8 +86,9 @@ namespace EdugameCloud.Lti.Api.Controllers
             /// Canvas: custom_canvas_user_login_id
             /// Sakai: lis_person_sourcedid
             /// </summary>
-            [IgnoreDataMember]
+            [Required]
             public string lms_user_login { get; set; }
+
             //{
             //    get
             //    {
