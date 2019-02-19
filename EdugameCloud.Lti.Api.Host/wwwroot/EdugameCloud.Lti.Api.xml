@@ -24,9 +24,58 @@
             Deletes folder of file.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Lti.Api.Controllers.BaseApiController.SessionSave">
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.course">
             <summary>
-            TRICK: do not use in most of your code.
+            Canvas: custom_canvas_course_id
+            Sakai: context_id
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.course_name">
+            <summary>
+            LTI: 'context_label' or 'context_title' form value.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.lms_user_login">
+            <summary>
+            Canvas: custom_canvas_user_login_id
+            Sakai: lis_person_sourcedid
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.lis_person_contact_email_primary">
+            <summary>
+            (sakai)
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.referer">
+            <summary>
+            LTI tool absolute URL.
+            Used within Announcement message email.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.ext_ims_lti_tool_setting_url">
+            <summary>
+            Gets the extended IMS LTI tool setting url. (sakai)
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.ext_ims_lis_memberships_url">
+            <summary>
+            Gets or sets the membership url. (sakai)
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.ext_ims_lis_memberships_id">
+            <summary>
+            Gets the extended IMS LIST memberships id. (sakai)
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.lms_user_id">
+            <summary>
+            Canvas LTI request form value: custom_canvas_user_id
+            Sakai LTI request form value: user_id
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Controllers.UnirMeetingsController.ApiLtiParam.tool_consumer_info_product_family_code">
+            <summary>
+            Possible values: canvas; sakai
             </summary>
         </member>
         <member name="T:EdugameCloud.Lti.Api.Controllers.ValuesController">
@@ -77,6 +126,11 @@
             </summary>
         </member>
         <member name="P:EdugameCloud.Lti.Api.Models.RecordingRequestDto.RecordingId">
+            <summary>
+            AC sco-id of the recording.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Api.Models.RecordingPasscodeRequestDto.RecordingId">
             <summary>
             AC sco-id of the recording.
             </summary>
