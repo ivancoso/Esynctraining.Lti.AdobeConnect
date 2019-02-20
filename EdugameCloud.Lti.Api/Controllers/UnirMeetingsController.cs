@@ -291,6 +291,7 @@ namespace EdugameCloud.Lti.Api.Controllers
             /// Meeting's ID in eSync DB.
             /// </summary>
             [Required]
+            [DataMember]
             public long Id { get; set; }
 
             [Required]
