@@ -18,6 +18,7 @@
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.0.0" />
+    <PackageReference Include="NodaTime" Version="2.4.4" />
   </ItemGroup>
 
   <ItemGroup>

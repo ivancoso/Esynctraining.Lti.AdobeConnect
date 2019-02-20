@@ -13,6 +13,15 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Microsoft.AspNetCore.Mvc;
+using EdugameCloud.Lti.Extensions;
+using Esynctraining.Core.Utils;
+using EdugameCloud.Lti.Core.Business.Models;
+using Esynctraining.AC.Provider.DataObjects.Results;
+using Esynctraining.AC.Provider.Entities;
+using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
+using Esynctraining.Core.Json;
+using NodaTime.TimeZones;
+using System.Linq;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -275,6 +284,100 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         }
 
+        [DataContract]
+        public class EditMeetingDto
+        {
+            /// <summary>
+            /// Meeting's ID in eSync DB.
+            /// </summary>
+            [Required]
+            public long Id { get; set; }
+
+            [Required]
+            [DataMember]
+            public ApiLtiParam ApiLtiParam { get; set; }
+
+            /// <summary>
+            /// Format: "02-14-2019"
+            /// </summary>
+            [DataMember]
+            public string StartDate { get; set; }
+
+            /// <summary>
+            /// Format: "03:30 PM"
+            /// </summary>
+            [DataMember]
+            public string StartTime { get; set; }
+
+            /// <summary>
+            /// Format: "02:30"
+            /// </summary>
+            [DataMember]
+            public string Duration { get; set; }
+
+            [DataMember]
+            public string Name { get; set; }
+
+            /// <summary>
+            /// max length=4000 characters
+            /// </summary>
+            [DataMember]
+            public string Summary { get; set; }
+
+            public MeetingDTOInput Build(LmsCourseMeeting existed, 
+                ScoInfo sco,
+                TimeZoneInfo tz)
+            {
+                if (string.IsNullOrWhiteSpace(Duration))
+                    Duration = null;
+                if (string.IsNullOrWhiteSpace(Name))
+                    Name = null;
+                if (string.IsNullOrWhiteSpace(StartDate))
+                    StartDate = null;
+                if (string.IsNullOrWhiteSpace(StartTime))
+                    StartTime = null;
+                if (string.IsNullOrWhiteSpace(Summary))
+                    Summary = null;
+
+                MeetingNameInfo nameInfo =
+                    IoC.Resolve<IJsonDeserializer>().JsonDeserialize<MeetingNameInfo>(existed.MeetingNameJson);
+                // NOTE: it is reused meeting or source of reusing
+                string meetingName = string.IsNullOrWhiteSpace(nameInfo.reusedMeetingName) ? nameInfo.meetingName : nameInfo.reusedMeetingName;
+
+                var start  = DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeFromUtc(sco.BeginDate, tz), DateTimeKind.Utc);
+
+                string format = sco.Language == "es" ? "dd/MM/yy" : "MM/yy/yy";
+
+                return new MeetingDTOInput
+                {
+                    AccessLevel = "view_hidden", // TODO???
+                    AcRoomUrl = sco.UrlPath.Trim('/'),
+                    //AudioProfileId = existed.AudioProfileId,
+                    //AudioProfileName
+                    //CanJoin
+                    //ClassRoomId
+                    Duration = Duration ?? (sco.EndDate - sco.BeginDate).ToString(@"h\:mm"),
+                    Id = Id,
+                    //IsDisabledForThisCourse
+                    //IsEditable
+                    Name = Name ?? meetingName,
+                    //OfficeHours
+                    //Reused
+                    //ReusedByAnotherMeeting
+                    //SectionIds
+                    //Sessions
+                    StartDate = StartDate ?? start.ToString(format),
+                    StartTime = StartTime ?? start.ToString("hh:mm tt"),
+                    //StartTimeStamp
+                    Summary = Summary ?? sco.Description,
+                    //TelephonyProfileFields
+                    //Template = Template,
+                    Type = (int)LmsMeetingType.Meeting,
+                };
+            }
+
+        }
+
         private readonly MeetingSetup _meetingSetup;
 
 
@@ -367,6 +470,88 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResult.Error(errorMessage);
             }
         }
+
+        [Route("v1/meeting")]
+        [HttpPut]
+        [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
+        public virtual async Task<OperationResult> UpdateMeeting([FromBody]EditMeetingDto input)
+        {
+            try
+            {
+                var trace = new StringBuilder();
+                var ac = GetAdminProvider();
+                //bool useLmsUserEmailForSearch = true;
+                var useLmsUserEmailForSearch = !string.IsNullOrEmpty(input.ApiLtiParam.lis_person_contact_email_primary);
+                var fb = new MeetingFolderBuilder((LmsCompany)LmsCompany, ac, useLmsUserEmailForSearch, LmsMeetingType.Meeting);
+                // HACK: we support Meeting only.
+                LmsCourseMeeting existed = _meetingSetup.GetCourseMeeting(LmsCompany, input.ApiLtiParam.course_id, input.Id, LmsMeetingType.Meeting);
+                string meetingSco = existed.GetMeetingScoId();
+                bool isNewMeeting = string.IsNullOrEmpty(meetingSco);
+                if (isNewMeeting)
+                    return OperationResult.Error("Meeting not found");
+
+                var acProvider = this.GetAdminProvider();
+                ScoInfoResult scoResult = acProvider.GetScoInfo(meetingSco);
+
+                var timeZone = acAccountService.GetAccountDetails(acProvider, IoC.Resolve<ICache>()).TimeZoneJavaId;
+                TimeZoneInfo tz = GetTimeZoneInfoForTzdbId(timeZone);
+
+                MeetingDTOInput meeting = input.Build(existed, scoResult.ScoInfo, tz);
+
+                //LmsUser lmsUser = IoC.Resolve<LmsUserModel>()
+                //    .GetOneByUserIdAndCompanyLms(input.ApiLtiParam.lms_user_id, LmsCompany.Id).Value;
+
+                //MeetingDTO dto = await _meetingSetup.BuildDto(
+                //    lmsUser,
+                //    input.ApiLtiParam,
+                //    LmsCompany,
+                //    meeting,
+                //    null,
+                //    //timeZone,
+                //    trace);
+
+                OperationResult ret = await _meetingSetup.SaveMeeting(
+                    LmsCompany,
+                    ac,
+                    input.ApiLtiParam,
+                    meeting,
+                    trace,
+                    fb);
+
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("UpdateMeeting", ex);
+                return OperationResult.Error(errorMessage);
+            }
+        }
+
+        private static TimeZoneInfo GetTimeZoneInfoForTzdbId(string tzdbId)
+        {
+            var olsonMappings = TzdbDateTimeZoneSource.Default.WindowsMapping.MapZones;
+            var map = olsonMappings.FirstOrDefault(x =>
+                x.TzdbIds.Any(z => z.Equals(tzdbId, StringComparison.OrdinalIgnoreCase)));
+            return map != null ? FindSystemTimeZoneByIdOrDefault(map.WindowsId) : null;
+        }
+
+        private static TimeZoneInfo FindSystemTimeZoneByIdOrDefault(string timezoneId)
+        {
+            //try
+            //{
+                return TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
+            //}
+            //catch (TimeZoneNotFoundException e)
+            //{
+            //    logger.Error($"Timezone not found. Id: {timezoneId}", e);
+            //    return null;
+            //}
+        }
+
+        //private DateTime FixACValue(DateTime dt, TimeZoneInfo timeZone)
+        //{
+        //    return DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeFromUtc(dt, timeZone), DateTimeKind.Utc);
+        //}
 
     }
 
