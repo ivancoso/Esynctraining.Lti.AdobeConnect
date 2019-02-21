@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.API.Desire2Learn;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Zoom.ApiWrapper.OAuth;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
@@ -46,11 +47,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private readonly LmsUserServiceFactory _lmsUserServiceFactory;
         private readonly ILmsLicenseService _lmsLicenseService;
         private readonly CanvasAPI _canvasApi;
+        private readonly IDesire2LearnApiService _brightSpaceApi;
 
         public LtiController(ILogger logger, ApplicationSettingsProvider settings, ILmsLicenseService licenseService,
             UserSessionService sessionService, IJsonDeserializer jsonDeserializer, ZoomMeetingService meetingService,
             ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory,
-            ILmsLicenseService lmsLicenseService) : base(logger, settings, sessionService)
+            ILmsLicenseService lmsLicenseService, IDesire2LearnApiService brightSpaceApi) : base(logger, settings, sessionService)
         {
             _licenseService = licenseService;
             _jsonDeserializer = jsonDeserializer;
@@ -59,6 +61,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             _lmsUserServiceFactory = lmsUserServiceFactory;
             _lmsLicenseService = lmsLicenseService;
             _canvasApi = new CanvasAPI(logger, jsonDeserializer);
+            _brightSpaceApi = brightSpaceApi ?? throw new ArgumentNullException(nameof(brightSpaceApi));
         }
 
         [HttpGet]
@@ -274,7 +277,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                 try
                 {
-                    //if (provider == LmsProviderNames.Canvas)
+                    if (provider == LmsProviderNames.Canvas)
                     {
 
                         var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
@@ -284,6 +287,26 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         OAuthTokenResponse token = await _canvasApi.RequestToken($"{Settings.BasePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain);
                         await _sessionService.UpdateSessionRefreshToken(s, token.access_token, token.refresh_token);
 
+                        return await RedirectToHome(s);
+                    }
+                    if (provider == LmsProviderNames.Brightspace)
+                    {
+                        string userId = Request.Query["x_a"];
+                        string userKey = Request.Query["x_b"];
+                        string token = null;
+                        if (!userId.Contains(' ') && !userKey.Contains(' '))
+                        {
+                            token = userId + " " + userKey;
+                        }
+                        else
+                        {
+                            Logger.ErrorFormat("[AuthenticationCallback] UserId:{0}, UserKey:{1}", userId, userKey);
+                            this.ViewBag.Error =
+                            ViewBag.Error = "Cannot get keys for BrightSpace user";
+                            return this.View("~/Views/Lti/LtiError.cshtml");
+                        }
+
+                        await _sessionService.UpdateSessionRefreshToken(s, token, token);
                         return await RedirectToHome(s);
                     }
                 }
@@ -364,7 +387,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 ValidateIntegrationRequiredParameters(license, param);
 
                 LmsUserSession session = await SaveSession(license, param);
-                var sessionKey = session.Id.ToString();
 
                 switch ( license.ProductId)
                 {
@@ -377,7 +399,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         {
                             if (string.IsNullOrEmpty(session.RefreshToken))
                             {
-                                return StartOAuth2Authentication(license, "canvas", sessionKey, param);
+                                return StartOAuth2Authentication(license, "canvas", session, param);
                             }
 
                             var refreshParams = new RefreshTokenParamsDto
@@ -390,7 +412,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                             var accessToken = await _canvasApi.RequestTokenByRefreshToken(refreshParams, license.Domain);
                             if (string.IsNullOrEmpty(accessToken))
                             {
-                                return StartOAuth2Authentication(license, "canvas", sessionKey, param);
+                                return StartOAuth2Authentication(license, "canvas", session, param);
                             }
 
                             await _sessionService.UpdateSessionAccessToken(session, accessToken);
@@ -402,6 +424,11 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     case 1030:
                     case 1040:
                     case 1050:
+                    case 1070:
+                        if (string.IsNullOrEmpty(session.Token))
+                        {
+                            return StartOAuth2Authentication(license, LmsProviderNames.Brightspace, session, param);
+                        }
                         break;
                 }
 
@@ -495,8 +522,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
         }
 
-        private ActionResult StartOAuth2Authentication(LmsLicenseDto lmsLicense, string provider, string session,
-            LtiParamDTO model)
+        private ActionResult StartOAuth2Authentication(LmsLicenseDto lmsLicense, string provider, LmsUserSession session, LtiParamDTO model)
         {
             string schema = Request.Scheme;
 
@@ -506,8 +532,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
             {
                 case LmsProviderNames.Canvas:
                     var oAuthId = lmsLicense.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
-                    string authUrl = _canvasApi.BuildAuthUrl(returnUrl, model.lms_domain, oAuthId, session);
+                    string authUrl = _canvasApi.BuildAuthUrl(returnUrl, model.lms_domain, oAuthId, session.Id.ToString());
                     return Redirect(authUrl);
+
+                case LmsProviderNames.Brightspace:
+                    Response.Cookies.Append("providerKey", session.Id.ToString());
+                    returnUrl = Url.AbsoluteCallbackAction(schema, new { __provider__ = provider });
+                    string redirectUrl = _brightSpaceApi.GetTokenRedirectUrl(new Uri(returnUrl), model.lms_domain, lmsLicense.GetLMSSettings(session)).AbsoluteUri;
+                    return Redirect(redirectUrl);
             }
 
             return null;

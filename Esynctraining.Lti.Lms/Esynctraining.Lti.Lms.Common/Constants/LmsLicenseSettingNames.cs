@@ -17,8 +17,12 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string OAuthAppId = nameof(OAuthAppId);
         public const string OAuthAppKey = nameof(OAuthAppKey);
 
-        public const string BrightspaceAppId = nameof(BrightspaceAppId);
-        public const string BrightspaceAppKey = nameof(BrightspaceAppKey);
+        public const string BrigthSpaceAppId = nameof(BrigthSpaceAppId);
+        public const string BrigthSpaceAppKey = nameof(BrigthSpaceAppKey);
+        public const string BrigthSpaceAdminName = nameof(BrigthSpaceAdminName);
+        public const string BrigthSpaceAdminPassword = nameof(BrigthSpaceAdminPassword);
+        public const string BrightspaceApiVersion = nameof(BrightspaceApiVersion);
+        public const string BrightSpaceAllowAdminAdditionToCourse = nameof(BrightSpaceAllowAdminAdditionToCourse);
 
         public const string CanvasOAuthId = nameof(CanvasOAuthId);
         public const string CanvasOAuthKey = nameof(CanvasOAuthKey);

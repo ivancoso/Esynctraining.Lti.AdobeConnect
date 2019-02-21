@@ -105,9 +105,26 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     };
                     result = Settings.Where(x => optionsNameForMoodle.Any(o => o == x.Key))
                         .ToDictionary(k => k.Key, v => (object)v.Value);
-
+                    
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
                     result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
+                    break;
+                case 1070:
+                    var optionsNameForBrightSpace = new List<string>
+                    {
+                        LmsLicenseSettingNames.BrigthSpaceAppId,
+                        LmsLicenseSettingNames.BrigthSpaceAppKey,
+                        LmsLicenseSettingNames.BrigthSpaceAdminName,
+                        LmsLicenseSettingNames.BrigthSpaceAdminPassword,
+                    };
+                    result = Settings.Where(x => optionsNameForBrightSpace.Any(o => o == x.Key))
+                        .ToDictionary(k => k.Key, v => (object)v.Value);
+
+                    result.Add(LmsUserSettingNames.Token, session.Token);
+                    result.Add(LmsLicenseSettingNames.BrightspaceApiVersion, "1.4");
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
+                    result.Add(LmsLicenseSettingNames.BrightSpaceAllowAdminAdditionToCourse, false);
                     break;
                 default:
                     throw new NotImplementedException($"ProductId {ProductId} is not implemented.");
