@@ -770,6 +770,7 @@ namespace EdugameCloud.Lti.Controllers
                 this.lmsUserModel.RegisterSave(lmsUser);
                 if (isTransientUser)
                 {
+                    //SAVE current lms user
                     this.SaveSessionUser(session, lmsUser);
                 }
 
@@ -820,6 +821,7 @@ namespace EdugameCloud.Lti.Controllers
 
                     if (currentUserIsAdmin)
                     {
+                        //SAVE license admin user
                         lmsLicense.AdminUser = lmsUser;
                         lmsCompanyModel.RegisterSave(lmsLicense);
                     }

@@ -355,10 +355,6 @@
       <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj">
-      <Project>{c55551ab-4dd5-4bfd-9e75-253456213285}</Project>
-      <Name>EdugameCloud.Lti.Desire2Learn</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Haiku\EdugameCloud.Lti.Haiku.csproj">
       <Project>{139294a8-0d29-4857-958b-d9bfb5604728}</Project>
       <Name>EdugameCloud.Lti.Haiku</Name>
@@ -390,6 +386,10 @@
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj">
       <Project>{856DFC9A-1C9B-4E9E-B056-FBEE6D4030B5}</Project>
       <Name>Esynctraining.Lti.Lms.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Desire2Learn\Esynctraining.Lti.Lms.Desire2Learn.csproj">
+      <Project>{72d8cade-9d46-4f82-8f50-85d1b0f2e68e}</Project>
+      <Name>Esynctraining.Lti.Lms.Desire2Learn</Name>
     </ProjectReference>
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Moodle\Esynctraining.Lti.Lms.Moodle.csproj">
       <Project>{e4577dca-72d0-4ce8-ba01-276dbc1f6e1d}</Project>

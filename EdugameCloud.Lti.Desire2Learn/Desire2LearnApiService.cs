@@ -82,8 +82,8 @@ namespace EdugameCloud.Lti.Desire2Learn
 
         private ID2LAppContext InitializeAppContext(Dictionary<string, object> licenseSettings)
         {
-            var appId = (string)licenseSettings[LmsLicenseSettingNames.BrightspaceAppId];
-            var appKey = (string)licenseSettings[LmsLicenseSettingNames.BrightspaceAppKey];
+            var appId = (string)licenseSettings[LmsLicenseSettingNames.BrigthSpaceAppId];
+            var appKey = (string)licenseSettings[LmsLicenseSettingNames.BrigthSpaceAppKey];
             if (string.IsNullOrEmpty(appId) || string.IsNullOrEmpty(appKey))
             {
                 throw new InvalidOperationException("D2L keys are not set"); // todo: log lmsCompanyId

@@ -175,7 +175,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
         }
 
-        public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> lmsSettings, string courseId, UserInfoDto user, string email,
+        public async Task<OperationResultWithData<MeetingViewModel>> CreateMeeting(Dictionary<string, object> lmsSettings, string courseId, UserInfoDto user, ILtiParam extraData,
             CreateMeetingViewModel requestDto)
         {
             LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
@@ -251,7 +251,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 //take users by email, throwing out current user
                 var registrants = lmsUsers.Data.Where(x =>
                     !String.IsNullOrEmpty(x.Email) &&
-                    !x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)).Select(x =>
+                    !x.Email.Equals(extraData.lis_person_contact_email_primary, StringComparison.InvariantCultureIgnoreCase)).Select(x =>
                     new RegistrantDto
                     {
                         Email = x.Email,
@@ -265,7 +265,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             {
                 if (requestDto.Participants != null)
                 {
-                    var registrants = requestDto.Participants.Where(x => !x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
+                    var registrants = requestDto.Participants.Where(x => !x.Email.Equals(extraData.lis_person_contact_email_primary, StringComparison.InvariantCultureIgnoreCase));
                     await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, false);
                 }
             }

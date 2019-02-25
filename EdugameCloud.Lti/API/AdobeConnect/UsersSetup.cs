@@ -175,7 +175,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             ILmsLicense lmsLicense, 
             LmsCourseMeeting meeting, 
             int courseId,
-            ILtiUserListParam extraData = null)
+            ILtiUserListParam extraData)
         {
             if (lmsLicense.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null
                 && !meeting.EnableDynamicProvisioning) //when AutoSync==true and <1000 users in course - taking users from DB
@@ -191,7 +191,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     Email = x.User.Email,
                     LmsRole = x.LmsRole,
                 });
-
+                 
                 if (userDtos.Any())
                 {
                     return new Tuple<List<LmsUserDTO>, string>(userDtos.ToList(), null);
@@ -200,7 +200,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var service = LmsFactory.GetUserService((LmsProviderEnum)lmsLicense.LmsProviderId);
             var lmsSettings = lmsLicense.GetLMSSettings(_settings);
-            OperationResultWithData<List<LmsUserDTO>> serviceResult = await service.GetUsers(lmsSettings, courseId.ToString(), extraData);
+            OperationResultWithData<List<LmsUserDTO>> serviceResult = await service.GetUsers(lmsSettings, courseId.ToString(), (ILtiParam)extraData);
             if (serviceResult.IsSuccess)
             {
                 if (lmsLicense.GetSetting<bool>(LmsLicenseSettingNames.UseCourseSections) && meeting.Return(x => x.Id, 0) > 0)

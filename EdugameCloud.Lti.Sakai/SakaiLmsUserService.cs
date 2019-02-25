@@ -20,7 +20,7 @@ namespace EdugameCloud.Lti.Sakai
 
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings, 
-            string courseId, ILtiUserListParam param = null)
+            string courseId, ILtiParam param = null)
         {
             if (param == null)
             {

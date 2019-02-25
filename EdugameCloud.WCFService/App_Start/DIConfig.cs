@@ -1,7 +1,6 @@
 ﻿using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.BlackBoard;
 using EdugameCloud.Lti.Bridge;
-using EdugameCloud.Lti.Desire2Learn;
 using EdugameCloud.Lti.Haiku;
 using EdugameCloud.Lti.Moodle;
 using EdugameCloud.Lti.Sakai;
@@ -31,6 +30,7 @@ using EdugameCloud.WCFService.Converters;
 using EdugameCloud.WCFService.Providers;
 using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Desire2Learn;
 using FluentValidation;
 using Esynctraining.Lti.Lms.Moodle;
 

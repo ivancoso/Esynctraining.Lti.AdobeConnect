@@ -620,8 +620,9 @@ namespace EdugameCloud.Lti.Domain.Entities
                     result.Add(LmsLicenseSettingNames.LicenseId, Id);
                     var keys = GetApiKeys(this, (string) settings.BrightspaceAppId,
                         (string) settings.BrightspaceAppKey);
-                    result.Add(LmsLicenseSettingNames.BrightspaceAppId, keys.Key);
-                    result.Add(LmsLicenseSettingNames.BrightspaceAppKey, keys.Value);
+                    result.Add(LmsLicenseSettingNames.BrigthSpaceAppId, keys.Key);
+                    result.Add(LmsLicenseSettingNames.BrigthSpaceAppKey, keys.Value);
+                    result.Add(LmsLicenseSettingNames.BrightSpaceAllowAdminAdditionToCourse, true);
                     break;
                 case (int)LmsProviderEnum.Moodle:
                     result.Add(LmsLicenseSettingNames.MoodleCoreServiceToken, GetSetting<string>(LmsLicenseSettingNames.MoodleCoreServiceToken));

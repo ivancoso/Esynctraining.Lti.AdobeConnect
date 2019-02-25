@@ -19,7 +19,7 @@ namespace EdugameCloud.Lti.Haiku
         }
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, ILtiUserListParam extraData = null)
+            string courseId, ILtiParam extraData = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));

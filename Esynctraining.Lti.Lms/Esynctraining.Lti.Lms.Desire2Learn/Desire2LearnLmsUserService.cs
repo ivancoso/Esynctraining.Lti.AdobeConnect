@@ -16,21 +16,19 @@ namespace Esynctraining.Lti.Lms.Desire2Learn
 {
     public class Desire2LearnLmsUserService : LmsUserServiceBase
     {
-        //private readonly LmsUserModel lmsUserModel;
-        //private readonly dynamic settings;
         private readonly IDesire2LearnApiService d2lApiService;
+        private readonly dynamic _settings;
 
 
-        public Desire2LearnLmsUserService(ILogger logger, /*LmsUserModel lmsUserMode,*/ IDesire2LearnApiService d2lApiService
-            /*ApplicationSettingsProvider settings*/
+        public Desire2LearnLmsUserService(ILogger logger, IDesire2LearnApiService d2lApiService,
+            ApplicationSettingsProvider settings
             ) : base(logger)
         {
-            //this.lmsUserModel = lmsUserModel;
             this.d2lApiService = d2lApiService;
-            //this.settings = settings;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings)); ;
         }
 
-        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiUserListParam extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiParam extraData = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
@@ -57,7 +55,7 @@ namespace Esynctraining.Lti.Lms.Desire2Learn
         }
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, ILtiUserListParam param = null)
+            string courseId, ILtiParam param = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
@@ -77,7 +75,7 @@ namespace Esynctraining.Lti.Lms.Desire2Learn
                 (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
                 string.Format(
                     d2lApiService.EnrollmentsClasslistUrlFormat,
-                    (string)licenseSettings[LmsLicenseSettingNames.BrightspaceApiVersion],
+                    (string)_settings.BrightspaceApiVersion,
                     courseId),
                 licenseSettings);
 
@@ -96,7 +94,7 @@ namespace Esynctraining.Lti.Lms.Desire2Learn
                         (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
                         string.Format(
                             d2lApiService.EnrollmentsUrlFormat,
-                            (string)licenseSettings[LmsLicenseSettingNames.BrightspaceApiVersion],
+                            (string)_settings.BrightspaceApiVersion,
                             courseId)
                         + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
                         licenseSettings);
@@ -114,41 +112,19 @@ namespace Esynctraining.Lti.Lms.Desire2Learn
                 string currentLmsUserId = param?.lms_user_id;
 
                 // current user is not enrolled to this course (user is admin) -> add him to user list
-                if ((bool)licenseSettings[LmsLicenseSettingNames.BrightSpaceAllowAdminAdditionToCourse] && classlistEnrollments.All(x => x.Identifier != currentLmsUserId))
+                if (((bool)licenseSettings[LmsLicenseSettingNames.BrightSpaceAllowAdminAdditionToCourse] && AllowAdminAdditionToCourse) && classlistEnrollments.All(x => x.Identifier != currentLmsUserId))
                 {
-                    //var currentLmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(currentLmsUserId, (int)licenseSettings[LmsLicenseSettingNames.LicenseId]).Value;
-
-                    //if ((currentLmsUser != null) && !string.IsNullOrEmpty(currentLmsUser.Token))
-                    //{
-                    //    string[] currentUserTokens = currentLmsUser.Token.Split(' ');
-
-                    //    var currentUserInfo = d2lApiService.GetApiObjects<WhoAmIUser>(
-                    //        currentUserTokens[0],
-                    //        currentUserTokens[1],
-                    //        (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
-                    //        string.Format(d2lApiService.WhoAmIUrlFormat, 
-                    //        (string)licenseSettings[LmsLicenseSettingNames.BrightspaceApiVersion]),
-                    //        licenseSettings);
-
-                    //    if (currentUserInfo != null)
-                    //    {
-                    //        var userInfo = d2lApiService.GetApiObjects<UserData>(tokens[0], tokens[1],
-                    //                (string)licenseSettings[LmsLicenseSettingNames.LmsDomain],
-                    //                string.Format(d2lApiService.GetUserUrlFormat,
-                    //                (string)licenseSettings[LmsLicenseSettingNames.BrightspaceApiVersion],
-                    //                currentUserInfo.Identifier),
-                    //            licenseSettings);
-
-                    //        classlistEnrollments.Add(
-                    //            new ClasslistUser
-                    //            {
-                    //                Identifier = currentUserInfo.Identifier,
-                    //                Username = currentUserInfo.UniqueName,
-                    //                DisplayName = currentUserInfo.FirstName + " " + currentUserInfo.LastName,
-                    //                Email = userInfo.ExternalEmail, // TODO: is it OK??
-                    //            });
-                    //    }
-                    //}
+                    if (param != null)
+                    {
+                        classlistEnrollments.Add(
+                            new ClasslistUser
+                            {
+                                Identifier = param.lms_user_id,
+                                Username = param.lms_user_login,
+                                DisplayName = param.PersonNameGiven + " " + param.PersonNameFamily,
+                                Email = param.lis_person_contact_email_primary, // TODO: is it OK??
+                                });
+                    }
                 }
 
                 foreach (ClasslistUser enrollment in classlistEnrollments)
@@ -180,8 +156,8 @@ namespace Esynctraining.Lti.Lms.Desire2Learn
 
     public class Desire2LearnLmsUserServiceSync : Desire2LearnLmsUserService
     {
-        public Desire2LearnLmsUserServiceSync(ILogger logger/*, LmsUserModel lmsUserModel*/, IDesire2LearnApiService d2lApiService, ApplicationSettingsProvider settings)
-            : base(logger/*, lmsUserModel*/, d2lApiService/*, settings*/)
+        public Desire2LearnLmsUserServiceSync(ILogger logger, IDesire2LearnApiService d2lApiService, ApplicationSettingsProvider settings)
+            : base(logger, d2lApiService, settings)
         {
         }
 

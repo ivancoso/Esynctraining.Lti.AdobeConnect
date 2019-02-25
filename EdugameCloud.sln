@@ -44,8 +44,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.BlackBoard
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Sakai", "EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj", "{1535300B-D67D-41F1-9D1F-EBCC5AC32B75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Desire2Learn", "EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj", "{1D04423B-12E2-41E5-BCE6-A5AA99091110}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Telephony", "EdugameCloud.Lti.Telephony\EdugameCloud.Lti.Telephony.csproj", "{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Core.Logging", "EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj", "{1223FC00-6D40-4356-9744-36474EB76917}"
@@ -81,6 +79,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Moodle", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Moodle\Esynctraining.Lti.Lms.Moodle.csproj", "{E4577DCA-72D0-4CE8-BA01-276DBC1F6E1D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.Moodle", "EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj", "{23C32769-727D-4F59-9746-1C75A0B39F49}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Desire2Learn", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Desire2Learn\Esynctraining.Lti.Lms.Desire2Learn.csproj", "{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -188,13 +188,6 @@ Global
 		{1535300B-D67D-41F1-9D1F-EBCC5AC32B75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1535300B-D67D-41F1-9D1F-EBCC5AC32B75}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1535300B-D67D-41F1-9D1F-EBCC5AC32B75}.WebRequesterRelease|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D04423B-12E2-41E5-BCE6-A5AA99091110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D04423B-12E2-41E5-BCE6-A5AA99091110}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D04423B-12E2-41E5-BCE6-A5AA99091110}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{1D04423B-12E2-41E5-BCE6-A5AA99091110}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
-		{1D04423B-12E2-41E5-BCE6-A5AA99091110}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D04423B-12E2-41E5-BCE6-A5AA99091110}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D04423B-12E2-41E5-BCE6-A5AA99091110}.WebRequesterRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EAE3C00-E91C-4B97-95E7-04E3D7A78FB6}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -324,6 +317,14 @@ Global
 		{23C32769-727D-4F59-9746-1C75A0B39F49}.Release|Any CPU.Build.0 = Release|Any CPU
 		{23C32769-727D-4F59-9746-1C75A0B39F49}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{23C32769-727D-4F59-9746-1C75A0B39F49}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
+		{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{72D8CADE-9D46-4F82-8F50-85D1B0F2E68E}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

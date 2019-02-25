@@ -37,7 +37,7 @@ namespace Esynctraining.Lti.Lms.Common.API
 
         // <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
         public virtual async Task<OperationResultWithData<LmsUserDTO>> GetUser(
-            Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiUserListParam extraData = null)
+            Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiParam extraData = null)
         {
             // meeting parameter(second) is used for Blackboard calls of the below method.
             // BB has its own implementation of GetUser, so null can be passed here until we use meeting for retrieving user
@@ -65,7 +65,7 @@ namespace Esynctraining.Lti.Lms.Common.API
         }
 
         public abstract Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(
-            Dictionary<string, object> licenseSettings, string courseId, ILtiUserListParam extraData = null);
+            Dictionary<string, object> licenseSettings, string courseId, ILtiParam extraData = null);
 
         // TODO: ROLEMAPPING
         protected List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)

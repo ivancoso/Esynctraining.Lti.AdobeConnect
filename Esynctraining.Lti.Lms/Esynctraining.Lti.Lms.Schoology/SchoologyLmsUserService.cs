@@ -21,7 +21,7 @@ namespace Esynctraining.Lti.Lms.Schoology
             _restApiClient = restApiClient ?? throw new ArgumentNullException(nameof(restApiClient));
         }
 
-        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiUserListParam extraData = null)
+        public override async Task<OperationResultWithData<LmsUserDTO>> GetUser(Dictionary<string, object> licenseSettings, string lmsUserId, string courseId, ILtiParam extraData = null)
         {
             if (lmsUserId.Contains("::"))
             {
@@ -49,7 +49,7 @@ namespace Esynctraining.Lti.Lms.Schoology
         }
 
         public override async Task<OperationResultWithData<List<LmsUserDTO>>> GetUsers(Dictionary<string, object> licenseSettings,
-            string courseId, ILtiUserListParam extraData = null)
+            string courseId, ILtiParam extraData = null)
         {
             if (licenseSettings == null)
                 throw new ArgumentNullException(nameof(licenseSettings));
