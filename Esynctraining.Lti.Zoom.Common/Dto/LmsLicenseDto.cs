@@ -48,7 +48,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     result = Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key))
                         .ToDictionary(k => k.Key, v => (object) v.Value);
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
-                    result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
+                    result.Add(LmsLicenseSettingNames.LmsDomain, RemoveHttpProtocolAndTrailingSlash(Domain));
                     result.Add(LmsUserSettingNames.Token, session.Token);
                     result.Add(LmsUserSettingNames.RefreshToken, session.RefreshToken);
                     result.Add(LmsLicenseSettingNames.EnableCanvasExportToCalendar, Settings.ContainsKey(LmsLicenseSettingNames.EnableCanvasExportToCalendar) && Settings[LmsLicenseSettingNames.EnableCanvasExportToCalendar] == "True");
@@ -107,7 +107,9 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                         .ToDictionary(k => k.Key, v => (object)v.Value);
                     
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
-                    result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
+                    result.Add(LmsLicenseSettingNames.UseSSL, Domain.StartsWith("https"));
+                    result.Add(LmsLicenseSettingNames.LmsDomain, RemoveHttpProtocolAndTrailingSlash(Domain));
+
                     break;
                 case 1070:
                     var optionsNameForBrightSpace = new List<string>
@@ -131,6 +133,29 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
             }
 
             return result;
+        }
+
+        private static string RemoveHttpProtocolAndTrailingSlash(string url)
+        {
+            if (url != null)
+            {
+                if (url.StartsWith(HttpScheme.Http, StringComparison.OrdinalIgnoreCase))
+                {
+                    url = url.Substring(HttpScheme.Http.Length);
+                }
+
+                if (url.StartsWith(HttpScheme.Https, StringComparison.OrdinalIgnoreCase))
+                {
+                    url = url.Substring(HttpScheme.Https.Length);
+                }
+
+                while (url.EndsWith("/"))
+                {
+                    url = url.Substring(0, url.Length - 1);
+                }
+            }
+
+            return url;
         }
     }
 }

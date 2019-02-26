@@ -105,7 +105,7 @@ namespace Esynctraining.Lti.Lms.Moodle
             bool recursive = false)
         {
             string error = null;
-            var tupleSession = await LoginAndCreateAClient(lmsDomain, userName, password);
+            var tupleSession = await LoginAndCreateAClient(useSsl, lmsDomain, userName, password);
 
             var session = tupleSession.moodleSession;
             error = tupleSession.error;
@@ -176,6 +176,7 @@ namespace Esynctraining.Lti.Lms.Moodle
         }
 
         private async Task<(MoodleSession moodleSession, string error)> LoginAndCreateAClient(
+            bool useSSL,
             string lmsDomain,
             string userName,
             string password,
@@ -193,11 +194,11 @@ namespace Esynctraining.Lti.Lms.Moodle
                     { "service", this.MoodleServiceShortName }
                 };
 
-                string url = GetTokenUrl(lmsDomain);
+                string url = GetTokenUrl(lmsDomain, useSSL);
                 resp = await PostValues(url, pairs);
                 if (!recursive && resp.Contains(@"""errorcode"":""sslonlyaccess"""))
                 {
-                    return await LoginAndCreateAClient(lmsDomain, userName, password, true);
+                    return await LoginAndCreateAClient(true, lmsDomain, userName, password, true);
                 }
 
                 var token = _jsonDeserializer.JsonDeserialize<MoodleTokenDTO>(resp);
@@ -216,7 +217,7 @@ namespace Esynctraining.Lti.Lms.Moodle
                 return (new MoodleSession
                 {
                     Token = token.token,
-                    Url = GetServicesUrl(lmsDomain)
+                    Url = GetServicesUrl(lmsDomain, useSSL)
                 }, error);
             }
             catch (Exception ex)
@@ -242,7 +243,8 @@ namespace Esynctraining.Lti.Lms.Moodle
             if (licenseSettings.ContainsKey(LmsLicenseSettingNames.AdminUsername))
             {
                 string lmsDomain = (string)licenseSettings[LmsLicenseSettingNames.LmsDomain];
-                return await LoginAndCreateAClient(lmsDomain, (string)licenseSettings[LmsLicenseSettingNames.AdminUsername], (string)licenseSettings[LmsLicenseSettingNames.AdminPassword]);
+                bool useSsl = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL];
+                return await LoginAndCreateAClient(useSsl, lmsDomain, (string)licenseSettings[LmsLicenseSettingNames.AdminUsername], (string)licenseSettings[LmsLicenseSettingNames.AdminPassword]);
             }
 
             error = "ASP.NET Session is expired";
@@ -278,24 +280,24 @@ namespace Esynctraining.Lti.Lms.Moodle
 
         protected string GetServicesUrl(Dictionary<string, object> licenseSettings)
         {
-            return GetServicesUrl((string)licenseSettings[LmsLicenseSettingNames.LmsDomain]);
+            return GetServicesUrl((string)licenseSettings[LmsLicenseSettingNames.LmsDomain], (bool)licenseSettings[LmsLicenseSettingNames.UseSSL]);
         }
 
-        protected string GetServicesUrl(string domain)
+        protected string GetServicesUrl(string domain, bool useSSL)
         {
             var serviceUrl = "/webservice/rest/server.php";
-            return FixDomain(domain) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
+            return FixDomain(domain, useSSL) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
         }
 
-        protected string GetTokenUrl(string domain)
+        protected string GetTokenUrl(string domain, bool useSsl)
         {
             var tokenUrl = "/login/token.php";
-            return FixDomain(domain) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
+            return FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
         }
 
-        private static string FixDomain(string domain)
+        private static string FixDomain(string domain, bool useSsl)
         {
-            domain = domain.ToLower().AddHttpProtocol(true);
+            domain = domain.ToLower().AddHttpProtocol(useSsl);
 
             if (domain.Last() != '/')
             {
