@@ -314,4 +314,7 @@
   <data name="PrincipalValidateEmailFormat" xml:space="preserve">
     <value>Not a valid e-mail address.</value>
   </data>
+  <data name="NotUniqueMeetingName" xml:space="preserve">
+    <value>There is already another meeting with this name. Please try again.</value>
+  </data>
 </root>

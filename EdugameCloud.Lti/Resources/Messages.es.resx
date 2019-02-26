@@ -308,4 +308,7 @@
   <data name="LtiOauthInvalidParameters" xml:space="preserve">
     <value>Parámetros OAuth no válidos. Application Id y Application Key no pueden estar vacíos.</value>
   </data>
+  <data name="NotUniqueMeetingName" xml:space="preserve">
+    <value>Ya hay otra reunión con este nombre. Inténtalo de nuevo.</value>
+  </data>
 </root>

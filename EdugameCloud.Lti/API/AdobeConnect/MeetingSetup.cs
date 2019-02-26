@@ -716,7 +716,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         Logger.Error($"[CreateSco\\UpdateSco error]: { result.Status.GetErrorInfo() }");
 
                     if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
-                        return OperationResult.Error(Resources.Messages.NotUniqueName);
+                        return OperationResult.Error(Resources.Messages.NotUniqueMeetingName);
 
                     if ((result.Status.SubCode == StatusSubCodes.duplicate) &&
                         (result.Status.InvalidField == "url-path"))
