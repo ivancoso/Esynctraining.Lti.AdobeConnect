@@ -33,6 +33,7 @@ using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Desire2Learn;
 using FluentValidation;
 using Esynctraining.Lti.Lms.Moodle;
+using Esynctraining.Lti.Lms.Sakai;
 
 namespace EdugameCloud.WCFService
 {

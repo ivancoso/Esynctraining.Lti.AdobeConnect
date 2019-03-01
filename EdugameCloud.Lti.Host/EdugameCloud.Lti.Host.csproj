@@ -395,6 +395,10 @@
       <Project>{e4577dca-72d0-4ce8-ba01-276dbc1f6e1d}</Project>
       <Name>Esynctraining.Lti.Lms.Moodle</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Sakai\Esynctraining.Lti.Lms.Sakai.csproj">
+      <Project>{0D722D8D-D9C6-4E4D-ADF1-B6EE8DF034F5}</Project>
+      <Name>Esynctraining.Lti.Lms.Sakai</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj">
       <Project>{1c0d3806-361a-4cd8-acdb-43aff540ac72}</Project>
       <Name>Esynctraining.Lti.Lms.Schoology</Name>

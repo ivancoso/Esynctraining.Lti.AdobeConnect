@@ -24,6 +24,7 @@ using Esynctraining.Lti.Lms.Common.API.Sakai;
 using Esynctraining.Lti.Lms.Common.API.Schoology;
 using Esynctraining.Lti.Lms.Desire2Learn;
 using Esynctraining.Lti.Lms.Moodle;
+using Esynctraining.Lti.Lms.Sakai;
 using Esynctraining.Lti.Lms.Schoology;
 using Esynctraining.Windsor;
 using FluentValidation;
