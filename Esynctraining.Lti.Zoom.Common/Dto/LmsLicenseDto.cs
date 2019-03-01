@@ -111,6 +111,15 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     result.Add(LmsLicenseSettingNames.LmsDomain, RemoveHttpProtocolAndTrailingSlash(Domain));
 
                     break;
+                case 1060:
+                    result = new Dictionary<string, object>();
+                    result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey.ToString());
+                    result.Add(LmsLicenseSettingNames.LicenseSecret, SharedSecret.ToString());
+                    //TODO Fix LanguageID
+                    result.Add(LmsLicenseSettingNames.LanguageId, 5);
+                    result.Add(LmsLicenseSettingNames.UseSSL, Domain.StartsWith("https"));
+                    result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
+                    break;
                 case 1070:
                     var optionsNameForBrightSpace = new List<string>
                     {

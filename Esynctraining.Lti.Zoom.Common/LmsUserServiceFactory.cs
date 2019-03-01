@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Threading;
 using Esynctraining.Lti.Lms.AgilixBuzz;
 using Esynctraining.Lti.Lms.BlackBoard;
 using Esynctraining.Lti.Lms.Canvas;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Desire2Learn;
 using Esynctraining.Lti.Lms.Moodle;
+using Esynctraining.Lti.Lms.Sakai;
 using Esynctraining.Lti.Lms.Schoology;
 
 namespace Esynctraining.Lti.Zoom.Common
@@ -17,13 +19,15 @@ namespace Esynctraining.Lti.Zoom.Common
         private readonly BlackboardLmsUserService _blackBoardLmsUserService;
         private readonly MoodleLmsUserService _moodleLmsUserService;
         private readonly Desire2LearnLmsUserService _desire2LearnLmsUserService;
+        private readonly SakaiLmsUserService _sakaiLmsUserService;
 
         public LmsUserServiceFactory(CanvasLmsUserService canvasLmsUserService, 
             AgilixBuzzLmsUserService agilixBuzzLmsUserService, 
             SchoologyLmsUserService schoologyLmsUserService,
             BlackboardLmsUserService blackBoardLmsUserService,
             MoodleLmsUserService moodleLmsUserService,
-            Desire2LearnLmsUserService desire2LearnLmsUserService
+            Desire2LearnLmsUserService desire2LearnLmsUserService,
+            SakaiLmsUserService sakaiLmsUserService
             )
         {
             _canvasLmsUserService = canvasLmsUserService ?? throw new ArgumentNullException(nameof(canvasLmsUserService));
@@ -32,6 +36,7 @@ namespace Esynctraining.Lti.Zoom.Common
             _blackBoardLmsUserService = blackBoardLmsUserService ?? throw new ArgumentNullException(nameof(blackBoardLmsUserService));
             _moodleLmsUserService = moodleLmsUserService ?? throw new ArgumentNullException(nameof(moodleLmsUserService));
             _desire2LearnLmsUserService = desire2LearnLmsUserService ?? throw new ArgumentNullException(nameof(desire2LearnLmsUserService));
+            _sakaiLmsUserService = sakaiLmsUserService ?? throw new ArgumentNullException(nameof(sakaiLmsUserService));
         }
 
         public LmsUserServiceBase GetUserService(int productId)
@@ -48,6 +53,8 @@ namespace Esynctraining.Lti.Zoom.Common
                     return _blackBoardLmsUserService;
                 case 1050:
                     return _moodleLmsUserService;
+                case 1060:
+                    return _sakaiLmsUserService;
                 case 1070:
                     return _desire2LearnLmsUserService;
             }

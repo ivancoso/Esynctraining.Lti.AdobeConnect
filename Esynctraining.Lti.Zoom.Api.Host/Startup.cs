@@ -20,6 +20,7 @@ using Esynctraining.Lti.Lms.Common.API.Moodle;
 using Esynctraining.Lti.Lms.Common.API.Schoology;
 using Esynctraining.Lti.Lms.Desire2Learn;
 using Esynctraining.Lti.Lms.Moodle;
+using Esynctraining.Lti.Lms.Sakai;
 using Esynctraining.Lti.Lms.Schoology;
 using Esynctraining.Lti.Zoom.Api.Host.BackgroundServices;
 using Esynctraining.Lti.Zoom.Api.Host.Controllers;
@@ -145,6 +146,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddTransient<SchoologyLmsUserService, SchoologyLmsUserService>();
             services.AddTransient<BlackboardLmsUserService, BlackboardLmsUserService>();
             services.AddTransient<MoodleLmsUserService, MoodleLmsUserService>();
+
+            services.AddTransient<LTI2Api, LTI2Api>();
+            services.AddTransient<SakaiLmsUserService, SakaiLmsUserService>();
+
             services.AddTransient<IDesire2LearnApiService, Desire2LearnApiService>();
             services.AddTransient<Desire2LearnLmsUserService, Desire2LearnLmsUserService>();
             services.AddTransient<KalturaService, KalturaService>();

@@ -241,7 +241,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             {
                 var lmsService = _lmsUserServiceFactory.GetUserService(licenseDto.ProductId);
 
-                var lmsUsers = await lmsService.GetUsers(lmsSettings, courseId);
+                var lmsUsers = await lmsService.GetUsers(lmsSettings, courseId, extraData);
 
                 if (!lmsUsers.IsSuccess)
                 {

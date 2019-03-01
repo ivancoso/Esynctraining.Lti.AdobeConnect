@@ -428,6 +428,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         break;
                     case 1050:
                         break;
+                    case 1060:
+                        break;
                     case 1070:
                         if (string.IsNullOrEmpty(session.Token))
                         {
