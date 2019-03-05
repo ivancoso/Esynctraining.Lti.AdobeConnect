@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Esynctraining.Core.Logging;
 using Esynctraining.Mail.Configuration;
+using MailKit.Security;
 using MimeKit;
 using MailKitClient = MailKit.Net.Smtp.SmtpClient;
 
@@ -113,6 +114,10 @@ namespace Esynctraining.Mail.SmtpClient.MailKit
 
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 client.Connect(_smtpSettings.Host, _smtpSettings.Port);
+
+                //client.Connect("smtp.gmail.com", 587, false);
+                //client.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
+
                 client.AuthenticationMechanisms.Remove("XOAUTH2");  // due to enabling less secure apps access
 
                 try
@@ -122,7 +127,7 @@ namespace Esynctraining.Mail.SmtpClient.MailKit
                 }
                 catch (Exception e)
                 {
-                    _logger.Error($"Smtp Authenticate failure, to: { string.Join(",", message.To.Mailboxes.Select(x => x.Address).ToArray()) }", e);
+                    _logger.Debug($"Smtp Authenticate failure, to: { string.Join(",", message.To.Mailboxes.Select(x => x.Address).ToArray()) }", e);
                     // TRICK: after this error we are still able to send email
                     //return false;
                 }
