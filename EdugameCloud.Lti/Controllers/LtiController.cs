@@ -747,7 +747,14 @@ namespace EdugameCloud.Lti.Controllers
                     userName = param.GetUserNameOrEmail();
 
                 lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, lmsLicense.Id).Value 
-                    ?? new LmsUser { UserId = userId, LmsCompany = lmsLicense, Username = userName };
+                    ?? new LmsUser {
+                                    UserId = userId,
+                                    LmsCompany = lmsLicense,
+                                    Username = userName,
+                                    Name = param.lis_person_name_full,
+                                    Email = param.lis_person_contact_email_primary
+                                    };
+
                 lmsUser.Username = userName;
                 lmsUser.Token = token;
                 
