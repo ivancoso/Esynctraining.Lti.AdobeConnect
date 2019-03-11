@@ -185,9 +185,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
         {
             try
             {
-//                var sw = Stopwatch.StartNew();
+                Logger.Error("Error");
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
-                //var license = await _licenseService.GetLicense(s.LicenseKey);
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
                 try
                 {
@@ -341,6 +340,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             try
             {
+                Logger.Error("TEst error!!!");
                 // TRICK: to save course_id in DB;
                 param.CalculateFields();
                 // Parse and validate the request
