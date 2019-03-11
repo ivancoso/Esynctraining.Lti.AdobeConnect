@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Net;
 using Esynctraining.Lti.Zoom.Domain;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Serilog;
+using Serilog.Sinks.Email;
 
 namespace Esynctraining.Lti.Zoom.Host
 {
@@ -42,8 +44,10 @@ namespace Esynctraining.Lti.Zoom.Host
                 .UseStartup<Startup>()
                 .UseSerilog((hostingContext, loggerConfiguration) =>
                     loggerConfiguration
+                        .WriteTo.Email("admin@esynctraining.com", "romanp@esynctraining.com", "192.168.10.76", "esyncadmin", "$Pr!DHEgsP4", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
                         .ReadFrom
-                        .Configuration(hostingContext.Configuration));
+                        .Configuration(hostingContext.Configuration)
+                );
 
         private static IWebHost MigrateDbContext<TContext>(IWebHost webHost)
             where TContext : DbContext
