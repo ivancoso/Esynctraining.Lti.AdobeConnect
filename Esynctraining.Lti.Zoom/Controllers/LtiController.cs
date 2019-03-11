@@ -185,7 +185,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
         {
             try
             {
-                Logger.Error("Error");
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
                 try
@@ -340,7 +339,6 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             try
             {
-                Logger.Error("TEst error!!!");
                 // TRICK: to save course_id in DB;
                 param.CalculateFields();
                 // Parse and validate the request
