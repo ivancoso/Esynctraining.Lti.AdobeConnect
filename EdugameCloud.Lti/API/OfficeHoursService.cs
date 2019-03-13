@@ -125,7 +125,7 @@ namespace EdugameCloud.Lti.API
             if (entity.User.Id == lmsUserId || entity.Availability.User.Id == lmsUserId)
             {
                 result.CanEdit = true;
-                result.UserName = entity.User.Name;
+                result.UserName = entity.User.Name ?? entity.User.Username;
                 result.Subject = entity.Subject;
                 result.Questions = entity.Questions;
             }

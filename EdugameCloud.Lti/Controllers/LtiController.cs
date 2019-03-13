@@ -532,6 +532,7 @@ namespace EdugameCloud.Lti.Controllers
                             param.PersonNameGiven,
                             param.PersonNameFamily,
                             lmsCompany);
+
                         if (lmsUser == null)
                         {
                             lmsUser = new LmsUser
@@ -540,11 +541,28 @@ namespace EdugameCloud.Lti.Controllers
                                 UserId = param.lms_user_id,
                                 Username = param.GetUserNameOrEmail(),
                                 PrincipalId = acPrincipal?.PrincipalId,
+                                Name = param.lis_person_name_full,
+                                Email = param.lis_person_contact_email_primary
                             };
                             this.lmsUserModel.RegisterSave(lmsUser);
 
                             // TRICK: save lmsUser to session
                             SaveSessionUser(session, lmsUser);
+                        }
+
+
+                        // TO SOLVE PROBLEM That existed user was created without NAME.
+                        if (string.IsNullOrEmpty(lmsUser.Name))
+                        {
+                            lmsUser.Name = param.lis_person_name_full;
+                            this.lmsUserModel.RegisterSave(lmsUser);
+                        }
+
+                        // TO SOLVE PROBLEM That existed user was created without Email
+                        if (string.IsNullOrEmpty(lmsUser.Email))
+                        {
+                            lmsUser.Email = param.lis_person_contact_email_primary;
+                            this.lmsUserModel.RegisterSave(lmsUser);
                         }
 
                         break;
