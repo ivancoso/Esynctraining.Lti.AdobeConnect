@@ -1,6 +1,5 @@
 ﻿using System;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
-using SimpleJson;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Lti.Lms.Common.Dto.Canvas;
+using RestSharp;
 
 namespace EdugameCloud.WCFService.Converters
 {

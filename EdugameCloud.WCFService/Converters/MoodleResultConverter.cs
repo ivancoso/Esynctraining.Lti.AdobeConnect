@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
-using SimpleJson;
 using System.Linq;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
@@ -9,6 +8,8 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Utils;
 using System.Threading.Tasks;
+using RestSharp;
+using RestSharp.Serialization.Json;
 
 namespace EdugameCloud.WCFService.Converters
 {
@@ -66,7 +67,7 @@ namespace EdugameCloud.WCFService.Converters
                             })
                         });
 
-            string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
+            string json = (new JsonSerializer()).Serialize(ret);
 
             await this.MoodleApi.SendAnswersAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters), json, false, null);
         }
@@ -119,7 +120,7 @@ namespace EdugameCloud.WCFService.Converters
                             })
                         });
 
-            string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
+            string json = (new JsonSerializer()).Serialize(ret);
 
             await this.MoodleApi.SendAnswersAsync(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters), json, true, null);
         }
