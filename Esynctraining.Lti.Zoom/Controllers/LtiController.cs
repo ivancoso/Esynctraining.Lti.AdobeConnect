@@ -30,6 +30,7 @@ using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Desire2Learn;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Zoom.ApiWrapper.OAuth;
+using Esynctraining.Lti.Lms.Common;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 using OAuthTokenResponse = Esynctraining.Lti.Lms.Common.API.Canvas.OAuthTokenResponse;
@@ -282,7 +283,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
 
-                        OAuthTokenResponse token = await _canvasApi.RequestToken($"{Settings.BasePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain);
+                        OAuthTokenResponse token = await _canvasApi.RequestToken($"{Settings.BasePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain.RemoveHttpProtocolAndTrailingSlash());
                         await _sessionService.UpdateSessionRefreshToken(s, token.access_token, token.refresh_token);
 
                         return await RedirectToHome(s);
@@ -393,7 +394,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
                         
                         
-                        if (string.IsNullOrWhiteSpace(session?.Token) || await _canvasApi.IsTokenExpired(license.Domain, session.Token))
+                        if (string.IsNullOrWhiteSpace(session?.Token) || await _canvasApi.IsTokenExpired(license.Domain.RemoveHttpProtocolAndTrailingSlash(), session.Token))
                         {
                             if (string.IsNullOrEmpty(session.RefreshToken))
                             {
@@ -407,7 +408,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                                 RefreshToken = session.RefreshToken
                             };
 
-                            var accessToken = await _canvasApi.RequestTokenByRefreshToken(refreshParams, license.Domain);
+                            var accessToken = await _canvasApi.RequestTokenByRefreshToken(refreshParams, license.Domain.RemoveHttpProtocolAndTrailingSlash());
                             if (string.IsNullOrEmpty(accessToken))
                             {
                                 return StartOAuth2Authentication(license, "canvas", session, param);
@@ -531,7 +532,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             string schema = Request.Scheme;
 
 
-            string returnUrl = Url.AbsoluteCallbackAction(schema, new {__provider__ = provider, session});
+            string returnUrl = Url.AbsoluteCallbackAction(schema, new {__provider__ = provider, session = session.Id.ToString() });
             switch (provider)
             {
                 case LmsProviderNames.Canvas:
