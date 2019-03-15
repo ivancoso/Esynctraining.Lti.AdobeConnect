@@ -41,7 +41,11 @@
             info.SourceScoId = xml.SelectAttributeValue("source-sco-id");
             info.Language = xml.SelectAttributeValue("lang");
             info.Type = xml.ParseAttributeEnum("type", ScoType.not_set);
+
             info.BeginDate = xml.ParseNodeDateTime("date-begin/text()", default(DateTime));
+
+            info.BeginDateOffset = xml.ParseNodeDateTimeOffset("date-begin/text()");
+
             info.EndDate = xml.ParseNodeDateTime("date-end/text()", default(DateTime));
             info.DateCreated = xml.ParseNodeDateTime("date-created/text()", DateTime.Now);
             info.DateModified = xml.ParseNodeDateTime("date-modified/text()", DateTime.Now);
