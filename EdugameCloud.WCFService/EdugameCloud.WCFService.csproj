@@ -74,8 +74,8 @@
     <Reference Include="DotNetOpenAuth.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetOpenAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.5.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.5.7\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.5.8, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.5.8\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.AdobeConnect, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.5\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>

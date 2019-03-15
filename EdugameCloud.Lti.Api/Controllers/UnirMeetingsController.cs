@@ -346,7 +346,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 // NOTE: it is reused meeting or source of reusing
                 string meetingName = string.IsNullOrWhiteSpace(nameInfo.reusedMeetingName) ? nameInfo.meetingName : nameInfo.reusedMeetingName;
 
-                var start = sco.BeginDateOffset;
+                var start = sco.BeginDateOffset.Value;
                 string format = sco.Language == "es" ? "dd/MM/yy" : "MM/yy/yy";
 
                 return new MeetingDTOInput

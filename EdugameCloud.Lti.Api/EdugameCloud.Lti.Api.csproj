@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.2" />
-    <PackageReference Include="Esynctraining.AC.Provider" Version="1.0.5.7" />
+    <PackageReference Include="Esynctraining.AC.Provider" Version="1.0.5.8" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.4" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.0.0" />

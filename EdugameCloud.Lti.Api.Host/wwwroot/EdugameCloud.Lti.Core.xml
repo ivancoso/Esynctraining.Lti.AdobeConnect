@@ -1,0 +1,1237 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EdugameCloud.Lti.Core</name>
+    </assembly>
+    <members>
+        <member name="T:EdugameCloud.Lti.Core.Business.Models.LmsCompanyModel">
+            <summary>
+            The company LMS model.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCompanyModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Lti.Domain.Entities.LmsCompany,System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.Core.Business.Models.LmsCompanyModel"/> class.
+            </summary>
+            <param name="repository">
+            The repository.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCompanyModel.GetAllByCompanyId(System.Int32)">
+            <summary>
+            The get one by company id.
+            </summary>
+            <param name="companyId">
+            The company id.
+            </param>
+            <returns>
+            The <see cref="T:NHibernate.IFutureValue`1"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel">
+            <summary>
+            The LMS course meeting model.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Lti.Domain.Entities.LmsCourseMeeting,System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel"/> class. 
+            </summary>
+            <param name="repository">
+            The repository.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsCourseMeetingModel.GetAllByMeetingId(System.String)">
+            <summary>
+            The get all by meeting id.
+            </summary>
+            <param name="meetingId">
+            The meeting id.
+            </param>
+            <returns>
+            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.Business.Models.LmsProviderModel">
+            <summary>
+            The LMS provider model.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.Business.Models.LmsQuestionTypeModel">
+            <summary>
+            The LMS question type model.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsQuestionTypeModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Lti.Domain.Entities.LmsQuestionType,System.Int32},Esynctraining.Core.Caching.ICache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.Core.Business.Models.LmsQuestionTypeModel"/> class.
+            </summary>
+            <param name="repository">
+            The repository.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Lti.Domain.Entities.LmsUser,System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.Core.Business.Models.LmsUserModel"/> class.
+            </summary>
+            <param name="repository">
+            The repository.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserModel.GetOneByUserIdAndCompanyLms(System.String,System.Int32)">
+            <summary>
+            The get one by user id.
+            </summary>
+            <param name="userId">
+            The user id.
+            </param>
+            <param name="companyLmsId">
+            The company LMS Id.
+            </param>
+            <returns>
+            The <see cref="T:NHibernate.IFutureValue`1"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.Business.Models.LmsUserParametersModel">
+            <summary>
+            The LMS user parameters model
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserParametersModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Lti.Domain.Entities.LmsUserParameters,System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.Core.Business.Models.LmsUserParametersModel"/> class. 
+            </summary>
+            <param name="repository">
+            The repository.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserParametersModel.GetOneByAcId(System.String)">
+            <summary>
+            The get one by AC id.
+            </summary>
+            <param name="id">
+            The id.
+            </param>
+            <returns>
+            The <see cref="T:NHibernate.IFutureValue`1"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(System.String,System.Int32,System.Int32)">
+            <summary>
+            The get one by AC id course id and LMS user id.
+            </summary>
+            <param name="adobeConnectUserId">
+            The adobe connect user id.
+            </param>
+            <param name="lmsCourseId">
+            The LMS course id.
+            </param>
+            <param name="companyLmsId">
+            The company LMS Id.
+            </param>
+            <returns>
+            The <see cref="T:NHibernate.IFutureValue`1"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.Business.Models.LmsUserSessionModel">
+            <summary>
+                The LMS User Session model.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserSessionModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Lti.Domain.Entities.LmsUserSession,System.Guid})">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.Core.Business.Models.LmsUserSessionModel"/> class. 
+            </summary>
+            <param name="repository">
+            The repository.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserSessionModel.GetAllOlderThen(System.DateTime)">
+            <summary>
+            The get all older then.
+            </summary>
+            <param name="dateTime">
+            The date time.
+            </param>
+            <returns>
+            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.Business.Models.ScheduleModel">
+            <summary>
+            The schedule model.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.ScheduleModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Lti.Domain.Entities.Schedule,System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.Core.Business.Models.ScheduleModel"/> class.
+            </summary>
+            <param name="repository">
+            The repository.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.ScheduleModel.ExecuteIfNecessary(EdugameCloud.Lti.Domain.Entities.Schedule,System.Action{System.DateTime})">
+            <summary>
+            The execute if necessary.
+            </summary>
+            <param name="schedule">
+            The schedule.
+            </param>
+            <param name="scheduledAction">
+            The scheduled action.
+            </param>
+            <returns>
+            The <see cref="T:EdugameCloud.Lti.Domain.Entities.Schedule"/>.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.ScheduleModel.GetSchedule(EdugameCloud.Lti.Domain.Entities.ScheduleDescriptor)">
+            <summary>
+            The get schedule.
+            </summary>
+            <param name="scheduleDescriptor">
+            The schedule descriptor.
+            </param>
+            <returns>
+            The <see cref="T:NHibernate.IFutureValue`1"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.Constants.HttpScheme">
+            <summary>
+            The http scheme.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Core.Constants.HttpScheme.Http">
+            <summary>
+            The http.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Core.Constants.HttpScheme.Https">
+            <summary>
+            The https.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.DTO.ConnectionInfoDTO">
+            <summary>
+            The connection info DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Core.DTO.ConnectionInfoDTO.status">
+            <summary>
+            Gets or sets the status.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Core.DTO.ConnectionInfoDTO.info">
+            <summary>
+            Gets or sets the info.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Core.DTO.MeetingItemDto.Url">
+            <summary>
+            Meeting's url-path.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Core.DTO.MeetingItemDto.ScoId">
+            <summary>
+            Meeting's sco-id
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.DTO.TransactionInfoDto">
+            <summary>
+            Adobe Connect TransactionInfo DTO.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Core.Utils.Constants.ReturnUriExtensionQueryParameterName">
+            <summary>
+                The return uri extension parameter.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Core.WarningMessageException">
+            <summary>
+            TRICK: used to pass messages to user through application layers.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.AcConnectionMode">
+            <summary>
+            The AC connection mode.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.AcConnectionMode.Overwrite">
+            <summary>
+            The overwrite.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.AcConnectionMode.DontOverwriteACPassword">
+            <summary>
+            The don't overwrite ac password.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.AcConnectionMode.DontOverwriteLocalPassword">
+            <summary>
+            The don't overwrite local password.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.LmsCompany">
+            <summary>
+            The company LMS.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.LmsCompany.lmsDomain">
+            <summary>
+            The LMS domain.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ACScoId">
+            <summary>
+            Folder in AC where meetings are stored.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ACTemplateScoId">
+            <summary>
+            sco-id of shared-meeting-templates folder (not longer used)
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.AcPassword">
+            <summary>
+            Gets or sets the AC password.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.AcServer">
+            <summary>
+            Gets or sets the AC server.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.AcUsername">
+            <summary>
+            Gets or sets the AC username.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.AdminUser">
+            <summary>
+            Gets or sets the admin user.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.CompanyId">
+            <summary>
+            Gets or sets the company.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ConsumerKey">
+            <summary>
+            Gets or sets the consumer key.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.UseSSL">
+            <summary>
+            Gets or sets the use SSL.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.CreatedBy">
+            <summary>
+            Gets or sets the created by.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.DateCreated">
+            <summary>
+            Gets or sets the date created.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.DateModified">
+            <summary>
+            Gets or sets the date modified.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.EnableProxyToolMode">
+            <summary>
+            Gets or sets the enable proxy tool mode.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ProxyToolSharedPassword">
+            <summary>
+            Gets or sets the proxy tool shared password.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.LoginUsingCookie">
+            <summary>
+            Gets or sets the login using cookie.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.LmsDomain">
+            <summary>
+            Gets or sets the LMS domain.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ModifiedBy">
+            <summary>
+            Gets or sets the modified by.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.PrimaryColor">
+            <summary>
+            Gets or sets the primary color.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.LastSignalId">
+            <summary>
+            Gets or sets the last signal id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.SharedSecret">
+            <summary>
+            Gets or sets the shared secret.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ShowAnnouncements">
+            <summary>
+            Gets or sets a value indicating whether show announcements.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.Title">
+            <summary>
+            Gets or sets the title.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.UseUserFolder">
+            <summary>
+            Gets or sets the use user folder.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.UserFolderName">
+            <summary>
+            Gets or sets the user folder name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.CanRemoveMeeting">
+            <summary>
+            Gets or sets the can remove meeting.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.CanEditMeeting">
+            <summary>
+            Gets or sets the can edit meeting.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.IsSettingsVisible">
+            <summary>
+            Gets or sets the is settings visible.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.EnableOfficeHours">
+            <summary>
+            Gets or sets the enable office hours.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.EnableStudyGroups">
+            <summary>
+            Gets or sets the enable study groups.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.EnableCourseMeetings">
+            <summary>
+            Gets or sets the enable course meetings.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ShowLmsHelp">
+            <summary>
+            Gets or sets the show lms help.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ShowEGCHelp">
+            <summary>
+            Gets or sets the show egc help.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.ACUsesEmailAsLogin">
+            <summary>
+            Gets or sets the search principal by email first.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.AddPrefixToMeetingName">
+            <summary>
+            Gets or sets the add prefix to meeting name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.LmsUsers">
+            <summary>
+            Gets or sets the LMS users.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.LmsCourseMeetings">
+            <summary>
+            Gets or sets the LMS course meetings.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.UseFLV">
+            <summary>
+            Gets or sets the enable use flv.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.UseMP4">
+            <summary>
+            Gets or sets the enable use mp4.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCompany.EnableMultipleMeetings">
+            <summary>
+            Gets or sets the condition of multiple meetings .
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Domain.Entities.LmsCompany.GetLMSSettings(System.Object,EdugameCloud.Lti.Domain.Entities.LmsUserParameters,System.Boolean)">
+            <param name="preferUserSettings">when true - means that user tokens/parameters will be used instead of license(admin)
+            to retrieve information from API</param>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.LmsCourseMeeting">
+            <summary>
+            The LMS AC meeting.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCourseMeeting.AudioProfileProvider">
+            <summary>
+            If non empty - represents provider profile was generated for.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsCourseMeetingRecording.ScoId">
+            <summary>
+            Gets or sets sco-id of the recording.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.LmsMeetingType">
+            <summary>
+            The lms meeting type.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.LmsMeetingType.Meeting">
+            <summary>
+            The meeting.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.LmsMeetingType.OfficeHours">
+            <summary>
+            The office hours.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.LmsMeetingType.StudyGroup">
+            <summary>
+            The study group.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.LmsMeetingType.Seminar">
+            <summary>
+            Seminar room
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.LmsMeetingType.VirtualClassroom">
+            <summary>
+            Virtual Classroom
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.LmsProvider">
+            <summary>
+            The LMS provider.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsProvider.LmsProviderName">
+            <summary>
+            Gets or sets the LMS provider name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsProvider.ShortName">
+            <summary>
+            Gets or sets the short name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsProvider.ConfigurationUrl">
+            <summary>
+            Gets or sets the configuration url.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsProvider.UserGuideFileUrl">
+            <summary>
+            Gets or sets the user guide file url.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.LmsProviderNames.AgilixBuzz">
+            <summary>
+            TRICK: use shortName. LMS returns this value.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.LmsQuestionType">
+            <summary>
+            The LMS question type.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsQuestionType.LmsProvider">
+            <summary>
+            Gets or sets the LMS provider.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsQuestionType.QuestionTypeId">
+            <summary>
+            Gets or sets the question type.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsQuestionType.LmsQuestionTypeName">
+            <summary>
+            Gets or sets the LMS question type name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsQuestionType.SubModuleId">
+            <summary>
+            Gets or sets the sub module id.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.LmsUser">
+            <summary>
+            The LMS user.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUser.LmsCompany">
+            <summary>
+            Gets or sets the company LMS;
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUser.AcConnectionMode">
+            <summary>
+            Gets or sets the AC connection mode.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUser.Password">
+            <summary>
+            Gets or sets the password.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUser.Token">
+            <summary>
+            Gets or sets the token.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUser.UserId">
+            <summary>
+            Gets or sets the user id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUser.Username">
+            <summary>
+            Gets or sets the username.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUser.PrincipalId">
+            <summary>
+            Gets or sets the principal id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUser.LmsUserParameters">
+            <summary>
+            Gets or sets the LMS user parameters.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.LmsUserParameters">
+            <summary>
+            The LMS user parameters.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserParameters.AcId">
+            <summary>
+            Gets or sets the AC id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserParameters.Course">
+            <summary>
+            Gets or sets the course.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserParameters.LmsUser">
+            <summary>
+            Gets or sets the LMS user.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserParameters.Wstoken">
+            <summary>
+            Gets or sets the WS token.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserParameters.CompanyLms">
+            <summary>
+            Gets or sets the company LMS.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserParameters.CourseName">
+            <summary>
+            Gets or sets the course name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserParameters.UserEmail">
+            <summary>
+            Gets or sets the user email.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserParameters.LastLoggedIn">
+            <summary>
+            Gets or sets the last logged in.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.LmsUserSession">
+            <summary>
+            The LMS user session.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Domain.Entities.LmsUserSession.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.Domain.Entities.LmsUserSession"/> class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserSession.LmsCompany">
+            <summary>
+            Gets or sets the company LMS.
+            Consider using LmsCompany in your BaseApiController.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserSession.LmsUser">
+            <summary>
+            Gets or sets the LMS user Id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserSession.DateCreated">
+            <summary>
+            Gets or sets the date created.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserSession.DateModified">
+            <summary>
+            Gets or sets the date modified.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserSession.LmsCourseId">
+            <summary>
+            Gets or sets the LMS course id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserSession.SessionData">
+            <summary>
+            Gets or sets the session data.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.LmsUserSession.LtiSession">
+            <summary>
+            Gets the LTI session.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.Schedule">
+            <summary>
+            The schedule.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.Schedule.nextRun">
+            <summary>
+            The next run.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.Schedule.IsEnabled">
+            <summary>
+            Gets or sets a value indicating whether schedule is enabled.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.Schedule.Interval">
+            <summary>
+            Gets or sets the interval.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.Schedule.NextRun">
+            <summary>
+            Gets or sets the next run.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.Schedule.ScheduleDescriptor">
+            <summary>
+            Gets or sets the schedule descriptor.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.Domain.Entities.Schedule.ScheduleType">
+            <summary>
+            Gets or sets the schedule type.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleDescriptor.AgilixBuzzSignals">
+            <summary>
+            Checks for signals in AgilixBuzz
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleDescriptor.CleanLmsSessions">
+            <summary>
+            Checks for LMS sessions to be cleared
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Domain.Entities.ScheduleType">
+            <summary>
+                The schedule type.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Daily">
+            <summary>
+                The daily.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Weekly">
+            <summary>
+                The weekly.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Monthly">
+            <summary>
+                The monthly.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Hourly">
+            <summary>
+                The hourly.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.EverySingleMinute">
+            <summary>
+            The every single minute.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Every5Minutes">
+            <summary>
+            The every 5 minutes.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Every10Minutes">
+            <summary>
+            The every 10 minutes.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Every15Minutes">
+            <summary>
+            The every 15 minutes.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Every20Minutes">
+            <summary>
+            The every 20 minutes.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Every25Minutes">
+            <summary>
+            The every 25 minutes.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.EveryHalfAnHour">
+            <summary>
+            The every half an hour.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Every45Minutes">
+            <summary>
+            The every 45 minutes.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Domain.Entities.ScheduleType.Custom">
+            <summary>
+            The custom
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.AnnouncementDTO">
+            <summary>
+            The announcement DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.AnnouncementDTO.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.AnnouncementDTO.message">
+            <summary>
+            Gets or sets the message.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.AnnouncementDTO.title">
+            <summary>
+            Gets or sets the title.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.CompanyLmsDTO">
+            <summary>
+            The company LMS DTO.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.DTO.CompanyLmsDTO.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.CompanyLmsDTO"/> class.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.enableMultipleMeetings">
+            <summary>
+            Gets or sets the condition of multiple meetings.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.useMP4">
+            <summary>
+            Gets or sets the enable use MP4.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.useFLV">
+            <summary>
+            Gets or sets the enable use FLV.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.companyId">
+            <summary>
+            Gets or sets the company id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.lmsAdmin">
+            <summary>
+            Gets or sets the LMS admin.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.lmsDomain">
+            <summary>
+            Gets or sets the LMS domain.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.lmsAdminPassword">
+            <summary>
+            Gets or sets the LMS admin password.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.enableProxyToolMode">
+            <summary>
+            Gets or sets the proxy tool mode.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.proxyToolPassword">
+            <summary>
+            Gets or sets the proxy tool password.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.lmsAdminToken">
+            <summary>
+            Gets or sets the LMS admin token.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.lmsProvider">
+            <summary>
+            Gets or sets the LMS provider.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.acServer">
+            <summary>
+            Gets or sets the AC server.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.acUsername">
+            <summary>
+            Gets or sets the AC username.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.acPassword">
+            <summary>
+            Gets or sets the AC password.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.consumerKey">
+            <summary>
+            Gets or sets the consumer key.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.sharedSecret">
+            <summary>
+            Gets or sets the shared secret.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.createdBy">
+            <summary>
+            Gets or sets the created by.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.modifiedBy">
+            <summary>
+            Gets or sets the modified by.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.dateCreated">
+            <summary>
+            Gets or sets the date created.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.dateModified">
+            <summary>
+            Gets or sets the date modified.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.primaryColor">
+            <summary>
+            Gets or sets the primary color.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.title">
+            <summary>
+            Gets or sets the title.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.useUserFolder">
+            <summary>
+            Gets or sets a value indicating whether use user folder.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.userFolderName">
+            <summary>
+            Gets or sets the user folder name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.canRemoveMeeting">
+            <summary>
+            Gets or sets a value indicating whether can remove meeting.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.canEditMeeting">
+            <summary>
+            Gets or sets a value indicating whether can edit meeting.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.isSettingsVisible">
+            <summary>
+            Gets or sets a value indicating whether is settings visible.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.enableOfficeHours">
+            <summary>
+            Gets or sets a value indicating whether enable office hours.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.enableStudyGroups">
+            <summary>
+            Gets or sets a value indicating whether enable study groups.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.enableCourseMeetings">
+            <summary>
+            Gets or sets a value indicating whether enable course meetings.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.showLmsHelp">
+            <summary>
+            Gets or sets a value indicating whether show lms help.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.showEGCHelp">
+            <summary>
+            Gets or sets a value indicating whether show egc help.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.addPrefixToMeetingName">
+            <summary>
+            Gets or sets a value indicating whether add prefix to meeting name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.setupUrl">
+            <summary>
+            Gets or sets the setup url.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.CompanyLmsDTO.enableAnnouncements">
+            <summary>
+            If true, enables announcement creation in LMS when new course meetings is being created
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.LmsAuthenticationParametersDTO">
+            <summary>
+            The LMS authentication parameters DTO
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.LmsAuthenticationParametersDTO.acId">
+            <summary>
+            Gets or sets the AC id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.LmsAuthenticationParametersDTO.acDomain">
+            <summary>
+            Gets or sets the AC domain.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.LmsAuthenticationParametersDTO.meetingScoId">
+            <summary>
+            Gets or sets the meeting SCO Id.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.LmsCourseDTO">
+            <summary>
+            The course dto.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.LmsCourseDTO.id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.LmsCourseDTO.name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.LmsProviderDTO">
+            <summary>
+            The LMS provider DTO.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.LmsUserSettingsDTO">
+            <summary>
+            The LMS user settings DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.LmsUserSettingsDTO.AcConnectionMode">
+            <summary>
+            Gets or sets the AC connection mode.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.LmsUserSettingsDTO.Password">
+            <summary>
+            Gets or sets the password.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.LmsUserParametersDTO">
+            <summary>
+            The LMS user parameters DTO.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.DTO.LmsUserParametersDTO.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.DTO.LmsUserParametersDTO"/> class.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.LtiSessionDTO">
+            <summary>
+            The LTI session DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.LtiSessionDTO.LtiParam">
+            <summary>
+            Gets or sets the LTI param.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MeetingDTOLtiBase`1.Id">
+            <summary>
+            Internal eSyncTraining DB meeting record ID.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MeetingDTOLtiBase`1.Type">
+            <summary>
+            Meeting = 1, OfficeHours = 2, StudyGroup = 3, Seminar = 4, VirtualClassroom = 5.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MeetingDTOLtiBase`1.Reused">
+            <summary>
+            SCO-ID of this meeting is used in several meetings. 
+            Current meeting is created by re-using existed meeting
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MeetingDTOLtiBase`1.ReusedByAnotherMeeting">
+            <summary>
+            Count of other meetings in LTI which uses the same SCO-ID as current meeting.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.DTO.MeetingDTO">
+            <summary>
+            The meeting DTO.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Lti.DTO.MeetingDTO.ClassRoomId">
+            <summary>
+            Used to support Virtual Classroom.
+            </summary>
+        </member>
+        <member name="T:EdugameCloud.Lti.Extensions.LmsCourseMeetingExtension">
+            <summary>
+            The LMS course meeting extension.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.LmsCourseMeetingExtension.GetMeetingScoId(EdugameCloud.Lti.Domain.Entities.LmsCourseMeeting)">
+            <summary>
+            The meeting SCO id.
+            </summary>
+            <param name="meeting">
+            The meeting.
+            </param>
+            <returns>
+            The <see cref="T:System.String"/>.
+            </returns>
+        </member>
+        <member name="T:EdugameCloud.Lti.Extensions.UriBuilderExtensions">
+            <summary>
+            The uri builder extensions.
+            </summary>
+        </member>
+        <member name="F:EdugameCloud.Lti.Extensions.UriBuilderExtensions.UriRfc3986CharsToEscape">
+            <summary>
+                The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.UriBuilderExtensions.AppendQueryArgument(System.UriBuilder,System.String,System.String)">
+            <summary>
+            Adds a name-value pair to the end of a given URL
+                as part of the querystring piece.  Prefixes a ? or &amp; before
+                first element as necessary.
+            </summary>
+            <param name="builder">
+            The UriBuilder to add arguments to.
+            </param>
+            <param name="name">
+            The name of the parameter to add.
+            </param>
+            <param name="value">
+            The value of the argument.
+            </param>
+            <remarks>
+            If the parameters to add match names of parameters that already are defined
+                in the query string, the existing ones are <i>not</i> replaced.
+            </remarks>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.UriBuilderExtensions.AppendQueryArgs(System.UriBuilder,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            The append query args.
+            </summary>
+            <param name="builder">
+            The builder.
+            </param>
+            <param name="args">
+            The args.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.UriBuilderExtensions.CreateQueryString(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Concatenates a list of name-value pairs as key=value&amp;key=value,
+                taking care to properly encode each key and value for URL
+                transmission according to RFC 3986.  No ? is prefixed to the string.
+            </summary>
+            <param name="args">
+            The dictionary of key/values to read from.
+            </param>
+            <returns>
+            The formulated query string style string.
+            </returns>
+        </member>
+        <member name="M:EdugameCloud.Lti.Extensions.UriBuilderExtensions.EscapeUriDataStringRfc3986(System.String)">
+            <summary>
+            Escapes a string according to the URI data string rules given in RFC 3986.
+            </summary>
+            <param name="value">
+            The value to escape.
+            </param>
+            <returns>
+            The escaped value.
+            </returns>
+            <remarks>
+            The <see cref="M:System.Uri.EscapeDataString(System.String)"/> method is <i>supposed</i> to take on
+                RFC 3986 behavior if certain elements are present in a .config file.  Even if this
+                actually worked (which in my experiments it <i>doesn't</i>), we can't rely on every
+                host actually having this configuration element present.
+            </remarks>
+        </member>
+    </members>
+</doc>
