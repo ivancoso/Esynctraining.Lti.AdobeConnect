@@ -75,7 +75,7 @@ namespace Esynctraining.AC.Provider.Entities
         public DateTime BeginDate { get; set; }
 
         [XmlIgnore]
-        public DateTimeOffset BeginDateOffset { get; set; }
+        public DateTimeOffset? BeginDateOffset { get; set; }
 
         /// <summary>
         /// Gets or sets the end date.

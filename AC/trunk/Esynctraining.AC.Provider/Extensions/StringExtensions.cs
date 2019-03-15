@@ -134,12 +134,12 @@
         }
 
         //ParseDateTimeOffset
-        public static DateTimeOffset ParseDateTimeOffset(this string stringValue)
+        public static DateTimeOffset? ParseDateTimeOffset(this string stringValue)
         {
             if (DateTimeOffset.TryParse(stringValue, out DateTimeOffset value))
                 return value;
 
-            throw new InvalidOperationException($"Can't parse '{stringValue}' to DateTimeOffset");
+            return null;
         }
 
         /// <summary>

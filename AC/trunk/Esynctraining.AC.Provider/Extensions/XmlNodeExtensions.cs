@@ -63,7 +63,7 @@
             return SelectSingleNodeValue(node, path).ParseDateTimeWithDefault(defaultValue);
         }
 
-        public static DateTimeOffset ParseNodeDateTimeOffset(this XmlNode node, string path)
+        public static DateTimeOffset? ParseNodeDateTimeOffset(this XmlNode node, string path)
         {
             return SelectSingleNodeValue(node, path).ParseDateTimeOffset();
         }
