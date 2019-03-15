@@ -103,13 +103,13 @@ namespace EdugameCloud.WCFService
 
             var eventInfo = acProxy.GetEventInfo(eventQuizMapping.acEventScoId);
 
-            if (string.IsNullOrEmpty(eventInfo.ScoInfo.Info))
+            if (string.IsNullOrEmpty(eventInfo.EventInfo.Info))
             {
                 errorMessage.Append(
                     $"Event info should be set for the event with sco-id {eventQuizMapping.acEventScoId}.{Environment.NewLine}");
             }
 
-            if (string.IsNullOrEmpty(eventInfo.ScoInfo.SpeakerName))
+            if (string.IsNullOrEmpty(eventInfo.EventInfo.SpeakerName))
             {
                 errorMessage.Append(
                     $"Speaker name should be set for the event with sco-id {eventQuizMapping.acEventScoId}.{Environment.NewLine}");

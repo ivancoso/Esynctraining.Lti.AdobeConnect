@@ -14,7 +14,7 @@
     <RootNamespace>EdugameCloud.Web</RootNamespace>
     <AssemblyName>EdugameCloud.Web</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>443</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
@@ -59,8 +59,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\EdugameCloud.WCFService\Bin\EdugameCloud.HttpClient.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.4.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.4.4\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.5.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.5.7\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.AdobeConnect, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.5\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>

@@ -4,24 +4,21 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using EdugameCloud.Lti.GetHashCodeTrick;
-using Esynctraining.Core.Caching;
-using Esynctraining.Core.Domain;
-using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
-using Esynctraining.Lti.Lms.Common.Dto;
-using Microsoft.AspNetCore.Mvc;
 using EdugameCloud.Lti.Extensions;
-using Esynctraining.Core.Utils;
-using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.GetHashCodeTrick;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
+using Esynctraining.Core.Caching;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
-using NodaTime.TimeZones;
-using System.Linq;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
+using Esynctraining.Lti.Lms.Common.Dto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EdugameCloud.Lti.Api.Controllers
 {
@@ -326,9 +323,13 @@ namespace EdugameCloud.Lti.Api.Controllers
             public string Summary { get; set; }
 
             public MeetingDTOInput Build(LmsCourseMeeting existed, 
-                ScoInfo sco,
-                TimeZoneInfo tz)
+                ScoInfo sco)
             {
+                if (existed == null)
+                    throw new ArgumentNullException(nameof(existed));
+                if (sco == null)
+                    throw new ArgumentNullException(nameof(sco));
+
                 if (string.IsNullOrWhiteSpace(Duration))
                     Duration = null;
                 if (string.IsNullOrWhiteSpace(Name))
@@ -345,8 +346,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 // NOTE: it is reused meeting or source of reusing
                 string meetingName = string.IsNullOrWhiteSpace(nameInfo.reusedMeetingName) ? nameInfo.meetingName : nameInfo.reusedMeetingName;
 
-                var start  = DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeFromUtc(sco.BeginDate, tz), DateTimeKind.Utc);
-
+                var start = sco.BeginDateOffset;
                 string format = sco.Language == "es" ? "dd/MM/yy" : "MM/yy/yy";
 
                 return new MeetingDTOInput
@@ -494,10 +494,7 @@ namespace EdugameCloud.Lti.Api.Controllers
                 var acProvider = this.GetAdminProvider();
                 ScoInfoResult scoResult = acProvider.GetScoInfo(meetingSco);
 
-                var timeZone = acAccountService.GetAccountDetails(acProvider, IoC.Resolve<ICache>()).TimeZoneJavaId;
-                TimeZoneInfo tz = GetTimeZoneInfoForTzdbId(timeZone);
-
-                MeetingDTOInput meeting = input.Build(existed, scoResult.ScoInfo, tz);
+                MeetingDTOInput meeting = input.Build(existed, scoResult.ScoInfo);
 
                 //LmsUser lmsUser = IoC.Resolve<LmsUserModel>()
                 //    .GetOneByUserIdAndCompanyLms(input.ApiLtiParam.lms_user_id, LmsCompany.Id).Value;
@@ -527,32 +524,6 @@ namespace EdugameCloud.Lti.Api.Controllers
                 return OperationResult.Error(errorMessage);
             }
         }
-
-        private static TimeZoneInfo GetTimeZoneInfoForTzdbId(string tzdbId)
-        {
-            var olsonMappings = TzdbDateTimeZoneSource.Default.WindowsMapping.MapZones;
-            var map = olsonMappings.FirstOrDefault(x =>
-                x.TzdbIds.Any(z => z.Equals(tzdbId, StringComparison.OrdinalIgnoreCase)));
-            return map != null ? FindSystemTimeZoneByIdOrDefault(map.WindowsId) : null;
-        }
-
-        private static TimeZoneInfo FindSystemTimeZoneByIdOrDefault(string timezoneId)
-        {
-            //try
-            //{
-                return TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
-            //}
-            //catch (TimeZoneNotFoundException e)
-            //{
-            //    logger.Error($"Timezone not found. Id: {timezoneId}", e);
-            //    return null;
-            //}
-        }
-
-        //private DateTime FixACValue(DateTime dt, TimeZoneInfo timeZone)
-        //{
-        //    return DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeFromUtc(dt, timeZone), DateTimeKind.Utc);
-        //}
 
     }
 
