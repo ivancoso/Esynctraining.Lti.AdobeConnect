@@ -7,7 +7,7 @@ namespace Esynctraining.Lti.Lms.Canvas
     /// </summary>
     internal sealed class CanvasLmsUserDTO
     {
-        public List<CanvasEnrollment> enrollments { get; set; }
+        public List<CanvasEnrollment> enrollments { get; set; } = new List<CanvasEnrollment>();
 
         public string Id { get; set; }
 

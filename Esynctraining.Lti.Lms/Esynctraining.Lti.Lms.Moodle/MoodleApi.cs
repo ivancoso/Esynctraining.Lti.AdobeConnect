@@ -23,7 +23,7 @@ namespace Esynctraining.Lti.Lms.Moodle
 
         protected virtual string MoodleServiceShortName
         {
-            get { return "zoomlms"; }
+            get { return "lms"; }
         }
 
 
