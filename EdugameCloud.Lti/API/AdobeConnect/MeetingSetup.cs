@@ -699,14 +699,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
 
-                //--------------------------- CalendarEvent
-                lmsCalendarEvent = await CreateOrUpdateCalendarEvent(lmsLicense, meeting, param, isNewMeeting, result);
-                if (isNewMeeting)
-                {
-                    meeting.LmsCalendarEventId = lmsCalendarEvent?.Id;
-                }
-                //-----------------------------
-
                 sw.Stop();
                 trace.AppendFormat("SaveMeeting: CreateSco: time: {0}.", sw.Elapsed.ToString());
 
@@ -727,6 +719,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                     return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
                 }
+
+                //--------------------------- CalendarEvent
+                lmsCalendarEvent = await CreateOrUpdateCalendarEvent(lmsLicense, meeting, param, isNewMeeting, result);
+                if (isNewMeeting)
+                {
+                    meeting.LmsCalendarEventId = lmsCalendarEvent?.Id;
+                }
+                //-----------------------------
+
 
                 if (meeting.LmsMeetingType == (int)LmsMeetingType.VirtualClassroom)
                 {
