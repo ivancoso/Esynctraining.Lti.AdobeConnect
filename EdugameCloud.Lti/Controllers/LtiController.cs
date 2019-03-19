@@ -554,7 +554,7 @@ namespace EdugameCloud.Lti.Controllers
                         // TO SOLVE PROBLEM That existed user was created without NAME.
                         if (string.IsNullOrEmpty(lmsUser.Name))
                         {
-                            lmsUser.Name = param.lis_person_name_full ?? param.lis_person_contact_email_primary;
+                            lmsUser.Name = param.lis_person_name_full;
                             this.lmsUserModel.RegisterSave(lmsUser);
                         }
 
@@ -769,7 +769,7 @@ namespace EdugameCloud.Lti.Controllers
                                     UserId = userId,
                                     LmsCompany = lmsLicense,
                                     Username = userName,
-                                    Name = param.lis_person_name_full ?? param.lis_person_contact_email_primary,
+                                    Name = param.lis_person_name_full,
                                     Email = param.lis_person_contact_email_primary
                                     };
 
