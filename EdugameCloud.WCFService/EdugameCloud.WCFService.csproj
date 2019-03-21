@@ -87,8 +87,8 @@
     <Reference Include="Esynctraining.Core, Version=1.0.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.4\lib\net461\Esynctraining.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.FluentValidation, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.FluentValidation.1.0.1\lib\net461\Esynctraining.FluentValidation.dll</HintPath>
+    <Reference Include="Esynctraining.FluentValidation, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.FluentValidation.1.0.2\lib\net461\Esynctraining.FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Http.Streaming">
       <HintPath>..\packages\Esynctraining.Http.Streaming.1.0.0.1\lib\net40\Esynctraining.Http.Streaming.dll</HintPath>
