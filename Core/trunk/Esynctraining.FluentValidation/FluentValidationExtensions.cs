@@ -42,7 +42,7 @@ namespace Esynctraining.FluentValidation
         {
             return rule.Configure(delegate (PropertyRule config)
             {
-                config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource { ErrorKey = errorKey, ErrorMessage = message };
+                config.CurrentValidator.Options.ErrorMessageSource = new ErrorResourceSource { ErrorKey = errorKey, ErrorMessage = message };
             });
         }
 
@@ -72,7 +72,7 @@ namespace Esynctraining.FluentValidation
         {
             return rule.Configure(delegate (PropertyRule config)
             {
-                config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource
+                config.CurrentValidator.Options.ErrorMessageSource = new ErrorResourceSource
                 {
                     ErrorKey = errorKey,
                     ErrorMessageSource = message,
@@ -105,7 +105,7 @@ namespace Esynctraining.FluentValidation
         {
             return rule.Configure(delegate (PropertyRule config) 
             {
-                config.CurrentValidator.ErrorMessageSource = new ErrorResourceSource
+                config.CurrentValidator.Options.ErrorMessageSource = new ErrorResourceSource
                 {
                     ErrorMessageSource = message,
                 };
@@ -217,7 +217,7 @@ namespace Esynctraining.FluentValidation
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string GetString(object context)
+        public string GetString(IValidationContext context)
         {
             var message = ErrorMessageSource == null ? ErrorMessage : ErrorMessageSource();
             return ErrorKey == default(int) ? message : ErrorKey + "#_#" + message;
