@@ -47,6 +47,8 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         public string Audio { get; set; }
 
         [DataMember]
+        [DeserializeAs(Name = "auto_recording")]
+        [JsonProperty(PropertyName = "auto_recording")]
         public string AutoRecording { get; set; }
 
         [DeserializeAs(Name = "enforce_login")]
@@ -63,5 +65,6 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         public bool CloseRegistration { get; set; }
 
         public bool WaitingRoom { get; set; }
+
     }
 }
