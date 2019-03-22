@@ -469,7 +469,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     ApprovalType = (MeetingApprovalTypes)(int)dto.Settings.ApprovalType,
                     AlternativeHosts = dto.Settings.AlternativeHosts,
                     Audio = ConvertAudioFromEnum((MeetingAudioType)dto.Settings.AudioType),
-                    AutoRecording = dto.Settings.RecordingType.ToString().ToLower(),
+                    AutoRecording = ConvertAutoRecordingFromEnum((AutomaticRecordingType)dto.Settings.RecordingType.Value),
                     EnableHostVideo = dto.Settings.EnableHostVideo,
                     EnableMuteOnEntry = dto.Settings.EnableMuteOnEntry,
                     EnableParticipantVideo = dto.Settings.EnableParticipantVideo
@@ -570,6 +570,21 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             }
 
             return MeetingAudioOptions.Both;
+        }
+
+        private string ConvertAutoRecordingFromEnum(AutomaticRecordingType option)
+        {
+            switch (option)
+            {
+                case AutomaticRecordingType.None:
+                    return AutoRecorgingOptions.None;
+                case AutomaticRecordingType.Local:
+                    return AutoRecorgingOptions.Local;
+                case AutomaticRecordingType.Cloud:
+                    return AutoRecorgingOptions.Cloud;
+            }
+
+            return AutoRecorgingOptions.None;
         }
     }
 }
