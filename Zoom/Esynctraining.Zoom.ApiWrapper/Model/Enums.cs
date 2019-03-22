@@ -64,4 +64,11 @@
         Started,
         Finished,
     }
+
+    public static class AutoRecorgingOptions
+    {
+        public static string None = "none";
+        public static string Local = "local";
+        public static string Cloud = "cloud";
+    }
 }
