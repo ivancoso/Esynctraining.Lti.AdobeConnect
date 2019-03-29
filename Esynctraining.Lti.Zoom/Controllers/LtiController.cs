@@ -390,6 +390,15 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 switch ( license.ProductId)
                 {
                     case 1010:
+                        //NOTE!
+                        //Mike wants to use https://canvas.instructure.com/. It is free canvas instance for teacheres.
+                        //We cannot get Admin user from this instanse of canvas. Admin user is needed to get OauthId, OauthKey.
+                        //So we will use generated token. One techer hasto have only one token. For each techer we have to create a new license.
+                        if (license.GetSetting<bool>(LmsLicenseSettingNames.UseGeneratedToken))
+                        {
+                            break;
+                        }
+
                         var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
                         

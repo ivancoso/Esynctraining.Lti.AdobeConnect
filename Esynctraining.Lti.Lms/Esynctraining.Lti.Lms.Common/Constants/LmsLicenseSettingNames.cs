@@ -27,6 +27,8 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string CanvasOAuthId = nameof(CanvasOAuthId);
         public const string CanvasOAuthKey = nameof(CanvasOAuthKey);
         public const string EnableCanvasExportToCalendar = nameof(EnableCanvasExportToCalendar);
+        public const string UseGeneratedToken = nameof(UseGeneratedToken);
+        public const string CanvasGeneratedToken = nameof(CanvasGeneratedToken);
 
         public const string UseSynchronizedUsers = nameof(UseSynchronizedUsers);
         public const string SupportPageHtml = nameof(SupportPageHtml);

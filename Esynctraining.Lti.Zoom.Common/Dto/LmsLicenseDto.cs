@@ -43,15 +43,32 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     var optionNamesForCanvas = new List<string>
                     {
                         LmsLicenseSettingNames.CanvasOAuthId,
-                        LmsLicenseSettingNames.CanvasOAuthKey
+                        LmsLicenseSettingNames.CanvasOAuthKey,
+                        LmsLicenseSettingNames.UseGeneratedToken,
+                        LmsLicenseSettingNames.CanvasGeneratedToken
                     };
                     result = Settings.Where(x => optionNamesForCanvas.Any(o => o == x.Key))
                         .ToDictionary(k => k.Key, v => (object) v.Value);
+
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
                     result.Add(LmsLicenseSettingNames.LmsDomain, RemoveHttpProtocolAndTrailingSlash(Domain));
-                    result.Add(LmsUserSettingNames.Token, session.Token);
+
+                    //NOTE!
+                    //Mike wants to use https://canvas.instructure.com/. It is free canvas instance for teacheres.
+                    //We cannot get Admin user from this instanse of canvas. Admin user is needed to get OauthId, OauthKey.
+                    //So we will use generated token. One techer hasto have only one token. For each techer we have to create a new license.
+                    if (result.ContainsKey(LmsLicenseSettingNames.UseGeneratedToken) && Boolean.Parse(result[LmsLicenseSettingNames.UseGeneratedToken].ToString()))
+                    {
+                        result.Add(LmsUserSettingNames.Token, (string)result[LmsLicenseSettingNames.CanvasGeneratedToken]);
+                    }
+                    else
+                    {
+                        result.Add(LmsUserSettingNames.Token, session.Token);
+                    }
+                    
                     result.Add(LmsUserSettingNames.RefreshToken, session.RefreshToken);
                     result.Add(LmsLicenseSettingNames.EnableCanvasExportToCalendar, Settings.ContainsKey(LmsLicenseSettingNames.EnableCanvasExportToCalendar) && Settings[LmsLicenseSettingNames.EnableCanvasExportToCalendar] == "True");
+                    
                     break;
 
                 case 1020:
