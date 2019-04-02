@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.Lti.Lms.Common.Constants;
+using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Lti.Zoom.Domain;
 
 namespace Esynctraining.Lti.Zoom.Common.Dto
@@ -37,9 +38,9 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
         public Dictionary<string, object> GetLMSSettings(LmsUserSession session)
         {
             Dictionary<string, object> result = null;
-            switch (ProductId)
+            switch ((LMS)ProductId)
             {
-                case 1010:
+                case LMS.Canvas:
                     var optionNamesForCanvas = new List<string>
                     {
                         LmsLicenseSettingNames.CanvasOAuthId,
@@ -71,7 +72,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     
                     break;
 
-                case 1020:
+                case LMS.AgilixBuzz:
                     var optionNamesForBuzz = new List<string>
                     {
                         LmsLicenseSettingNames.BuzzAdminUsername,
@@ -82,7 +83,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
                     result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
                     break;
-                case 1030:
+                case LMS.Schoology:
                     var optionNamesForSchoology = new List<string>
                     {
                         LmsLicenseSettingNames.SchoologyConsumerKey,
@@ -93,7 +94,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey);
                     result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
                     break;
-                case 1040:
+                case LMS.BlackBoard:
                     var optionNamesForBlackBoard = new List<string>
                     {
                         LmsLicenseSettingNames.AdminUsername,
@@ -111,7 +112,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
 
                     result.Add(LmsLicenseSettingNames.BlackBoardUseSSL, true);
                     break;
-                case 1050:
+                case LMS.Moodle:
                     var optionsNameForMoodle = new List<string>
                     {
                         LmsLicenseSettingNames.MoodleAdminUserName,
@@ -128,7 +129,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     result.Add(LmsLicenseSettingNames.LmsDomain, RemoveHttpProtocolAndTrailingSlash(Domain));
 
                     break;
-                case 1060:
+                case LMS.Sakai:
                     result = new Dictionary<string, object>();
                     result.Add(LmsLicenseSettingNames.LicenseKey, ConsumerKey.ToString());
                     result.Add(LmsLicenseSettingNames.LicenseSecret, SharedSecret.ToString());
@@ -137,7 +138,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
                     result.Add(LmsLicenseSettingNames.UseSSL, Domain.StartsWith("https"));
                     result.Add(LmsLicenseSettingNames.LmsDomain, Domain);
                     break;
-                case 1070:
+                case LMS.Desire2Learn:
                     var optionsNameForBrightSpace = new List<string>
                     {
                         LmsLicenseSettingNames.BrigthSpaceAppId,

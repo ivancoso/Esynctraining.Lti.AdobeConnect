@@ -387,9 +387,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                 LmsUserSession session = await SaveSession(license, param);
 
-                switch ( license.ProductId)
+                switch ((LMS)license.ProductId)
                 {
-                    case 1010:
+                    case LMS.Canvas:
                         //NOTE!
                         //Mike wants to use https://canvas.instructure.com/. It is free canvas instance for teacheres.
                         //We cannot get Admin user from this instanse of canvas. Admin user is needed to get OauthId, OauthKey.
@@ -428,17 +428,17 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                         break;
 
-                    case 1020:
+                    case LMS.AgilixBuzz:
                         break;
-                    case 1030:
+                    case LMS.Schoology:
                         break;
-                    case 1040:
+                    case LMS.BlackBoard:
                         break;
-                    case 1050:
+                    case LMS.Moodle:
                         break;
-                    case 1060:
+                    case LMS.Sakai:
                         break;
-                    case 1070:
+                    case LMS.Desire2Learn:
                         if (string.IsNullOrEmpty(session.Token))
                         {
                             return StartOAuth2Authentication(license, LmsProviderNames.Brightspace, session, param);

@@ -8,6 +8,7 @@ using Esynctraining.Lti.Lms.Desire2Learn;
 using Esynctraining.Lti.Lms.Moodle;
 using Esynctraining.Lti.Lms.Sakai;
 using Esynctraining.Lti.Lms.Schoology;
+using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 
 namespace Esynctraining.Lti.Zoom.Common
 {
@@ -41,21 +42,21 @@ namespace Esynctraining.Lti.Zoom.Common
 
         public LmsUserServiceBase GetUserService(int productId)
         {
-            switch (productId)
+            switch ((LMS)productId)
             {
-                case 1010:
+                case LMS.Canvas:
                     return _canvasLmsUserService;
-                case 1020:
+                case LMS.AgilixBuzz:
                     return _agilixBuzzLmsUserService;
-                case 1030:
+                case LMS.Schoology:
                     return _schoologyLmsUserService;
-                case 1040:
+                case LMS.BlackBoard:
                     return _blackBoardLmsUserService;
-                case 1050:
+                case LMS.Moodle:
                     return _moodleLmsUserService;
-                case 1060:
+                case LMS.Sakai:
                     return _sakaiLmsUserService;
-                case 1070:
+                case LMS.Desire2Learn:
                     return _desire2LearnLmsUserService;
             }
 

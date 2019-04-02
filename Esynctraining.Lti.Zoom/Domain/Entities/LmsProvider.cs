@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Esynctraining.Lti.Zoom.Common.Dto.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -35,9 +36,9 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
         public static LmsProvider Generate(int productId)
         {
             LmsProvider lmsProvider = null;
-            switch (productId)
+            switch ((LMS)productId)
             {
-                case 1010:
+                case LMS.Canvas:
                     lmsProvider = new LmsProvider
                     {
                         LmsProviderName = "Canvas",
@@ -45,7 +46,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                         UserGuideFileUrl = "CanvasZoomIntegration.pdf",
                     };
                     break;
-                case 1020:
+                case LMS.AgilixBuzz:
                     lmsProvider = new LmsProvider
                     {
                         LmsProviderName = "AgilixBuzz",
@@ -53,7 +54,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                         UserGuideFileUrl = "BuzzZoomIntegration.pdf",
                     };
                     break;
-                case 1030:
+                case LMS.Schoology:
                     lmsProvider = new LmsProvider
                     {
                         LmsProviderName = "Schoology",
@@ -61,7 +62,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                         UserGuideFileUrl = "SchoologyZoomIntegration.pdf",
                     };
                     break;
-                case 1040:
+                case LMS.BlackBoard:
                     lmsProvider = new LmsProvider
                     {
                         LmsProviderName = "BlackBoard",
@@ -69,7 +70,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                         UserGuideFileUrl = "BlackBoardZoomIntegration.pdf",
                     };
                     break;
-                case 1050:
+                case LMS.Moodle:
                     lmsProvider = new LmsProvider
                     {
                         LmsProviderName = "Moodle",
@@ -77,7 +78,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                         UserGuideFileUrl = "MoodleZoomIntegration.pdf",
                     };
                     break;
-                case 1060:
+                case LMS.Sakai:
                     lmsProvider = new LmsProvider
                     {
                         LmsProviderName = "Sakai",
@@ -85,7 +86,7 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                         UserGuideFileUrl = "SakaiZoomIntegration.pdf",
                     };
                     break;
-                case 1070:
+                case LMS.Desire2Learn:
                     lmsProvider = new LmsProvider
                     {
                         LmsProviderName = "BrigthSpace",
