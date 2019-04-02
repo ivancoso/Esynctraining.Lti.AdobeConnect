@@ -36,6 +36,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting
                 { 3, new CourseNumPrefixMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer) },
                 { 4, new CourseNumPrefixIdSuffixMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer) },
                 { 5, new CourseNumPrefixDateTimeSuffixMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer) },
+                { 6, new CourseNumPrefixDateTimeSuffixMeetingNameFormatter(nameInfoSerializer, nameInfoDeserializer, "dd/MM/yy") },
             };
         }
 
