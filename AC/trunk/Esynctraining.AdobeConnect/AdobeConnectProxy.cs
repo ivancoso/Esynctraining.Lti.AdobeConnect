@@ -887,10 +887,25 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.ReportBulkConsolidatedTransactions(filter, startIndex, limit); });
         }
 
-        public TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0)
+        public TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList)
         {
-            return Execute(() => { return _provider.ReportRecordingTransactions(recordingScoIdList, startIndex, limit); },
-                   string.Join(",", recordingScoIdList));
+            //todo: generic method
+            var allItems = new List<TransactionInfo>();
+            StatusInfo status = null;
+            foreach (var chunk in recordingScoIdList.Chunk(ChunkSize))
+            {
+                var chunkResult = Execute(() => _provider.ReportRecordingTransactions(chunk.ToArray()), string.Join(",", chunk));
+                if (!chunkResult.Success)
+                {
+                    var message = $"provider ReportRecordingTransactions failed for a chunk of recordings { string.Join(",", recordingScoIdList) }";
+                    throw new InvalidOperationException(message);
+                }
+                var items = chunkResult.Values;
+                allItems.AddRange(items);
+                status = chunkResult.Status;
+            }
+            var result = new TransactionCollectionResult(status, allItems);
+            return result;
         }
 
         public TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0)

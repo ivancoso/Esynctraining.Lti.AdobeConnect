@@ -38,7 +38,6 @@
     <PackageReference Include="Castle.Windsor" Version="3.3.0" />
     <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Logging.CastleLogger" Version="1.0.0.1" />
-    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.0.27" />
     <PackageReference Include="Esynctraining.Windsor" Version="1.0.0.1" />
     <PackageReference Include="log4net" Version="2.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />

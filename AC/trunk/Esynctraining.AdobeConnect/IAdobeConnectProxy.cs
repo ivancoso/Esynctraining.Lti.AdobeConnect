@@ -155,7 +155,7 @@ namespace Esynctraining.AdobeConnect
         //TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0);
         TransactionCollectionResult ReportBulkConsolidatedTransactions(string filter, int startIndex = 0, int limit = 0);
 
-        TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0);
+        TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList);
 
         TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0);
 

@@ -238,5 +238,24 @@ namespace Esynctraining.AdobeConnect.Tests
             Assert.IsTrue(result.Success);
             Assert.IsTrue(result.Values.Any());
         }
+
+
+        [Test]
+        public void WillChunkRecordingsForTransactions()
+        {
+            var scoId = "1064081639";
+            var acApiUrl = new Uri("https://ncvps.adobeconnect.com");
+            var con = new ConnectionDetails(acApiUrl);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), acApiUrl, String.Empty);
+            //proxy.report
+            proxy.Login(new UserCredentials("ncvpsadobe@ncpublicschools.gov", "***get-from-ltidb***"));//admin
+            var recordingsSco = proxy.GetRecordingsList(scoId).Values.Select(x => x.ScoId);
+            Assert.IsTrue(recordingsSco.Any());
+
+            var transactions = proxy.ReportRecordingTransactions(recordingsSco).Values.ToList();
+
+            Assert.IsTrue(transactions.Any());
+        }
     }
 }

@@ -2,19 +2,19 @@
 
   <PropertyGroup>
     <Description>Provides Adobe Connect functionality for eSyncTraining projects</Description>
-    <Copyright>Copyright � 2013-2017 eSyncTraining.com</Copyright>
+    <Copyright>Copyright � 2013-2019 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.AC.Provider</AssemblyTitle>
     <Authors>eSyncTraining.com</Authors>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>ScoInfo:+BeginDateOffset</PackageReleaseNotes>
-    <Version>1.0.5.8</Version>
+    <PackageReleaseNotes>ReportRecordingTransactions: removed paging parameters</PackageReleaseNotes>
+    <Version>1.0.5.9</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <AssemblyVersion>1.0.5.8</AssemblyVersion>
-    <FileVersion>1.0.5.8</FileVersion>
+    <AssemblyVersion>1.0.5.9</AssemblyVersion>
+    <FileVersion>1.0.5.9</FileVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">

@@ -26,7 +26,7 @@ namespace Esynctraining.AC.Provider
                 : new TransactionCollectionResult(status);
         }
 
-        public TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0)
+        public TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList)
         {
             if (recordingScoIdList == null)
                 throw new ArgumentNullException(nameof(recordingScoIdList));
@@ -38,7 +38,7 @@ namespace Esynctraining.AC.Provider
             foreach (string recordingScoId in recordingScoIdList)
                 parameters.AppendFormat(CommandParams.ReportBulkConsolidatedTransactionsFilters.AndByScoId, recordingScoId);
 
-            return ReportBulkConsolidatedTransactions(parameters.ToString(), startIndex, limit);
+            return ReportBulkConsolidatedTransactions(parameters.ToString());
         }
 
         /// <summary>

@@ -2,18 +2,18 @@
 
   <PropertyGroup>
     <Description>Esynctraining AC DTO, Proxies, Services and Wrappers</Description>
-    <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
+    <Copyright>Copyright © 2016-2019 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.AdobeConnect</AssemblyTitle>
     <Authors>eSyncTraining.com</Authors>
     <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>EventInfoResult parse Preferences</PackageReleaseNotes>
-    <Version>1.0.6.0</Version>
+    <PackageReleaseNotes>ReportRecordingTransactions: removed paging parameters, added chunked requests</PackageReleaseNotes>
+    <Version>1.0.6.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.6.0</FileVersion>
-    <AssemblyVersion>1.0.6.0</AssemblyVersion>
+    <FileVersion>1.0.6.1</FileVersion>
+    <AssemblyVersion>1.0.6.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
