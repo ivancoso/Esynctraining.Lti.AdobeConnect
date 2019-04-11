@@ -129,7 +129,8 @@ namespace Esynctraining.AdobeConnect.Tests
             var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), adobeConnectRoot, String.Empty);
             var eventName = $"__FromACLibTest{DateTime.Now:yyyy-M-d hh-mm-ss}";
             var eventStartDate = new DateTime(2017, 5, 4, 0, 30, 0);
-            var saveEventFields = new SaveEventFields(new UserCredentials(login, password), eventName, eventStartDate);
+            var eventEndDate = eventStartDate.AddDays(1);
+            var saveEventFields = new SaveEventFields(new UserCredentials(login, password), eventName, eventStartDate, eventEndDate);
             saveEventFields.TimeZoneId = 85; //Greenwich
             var result = proxy.CreateEvent(saveEventFields);
         }

@@ -58,7 +58,8 @@ namespace Esynctraining.AC.Provider.Tests
             var password = "Welcome1";
             var eventName = $"__newMyTest{DateTime.Now:yyyy-M-d hh-mm-ss}";
             var eventStartDate = DateTime.Now;
-            var saveEventFields = new SaveEventFields(new UserCredentials(login, password), eventName, eventStartDate);
+            var eventEndDate = eventStartDate.AddDays(1);
+            var saveEventFields = new SaveEventFields(new UserCredentials(login, password), eventName, eventStartDate, eventEndDate);
             var result = await acProvider.CreateEvent(saveEventFields);
         }
     }
