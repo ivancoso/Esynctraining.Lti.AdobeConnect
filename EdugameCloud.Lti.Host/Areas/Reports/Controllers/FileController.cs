@@ -231,7 +231,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         //[ActionName("meeting-recordings-report")]
-        public virtual ActionResult MeetingRecordingsReport(string session, int meetingId, string timezone, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingRecordingsReport(string session, int meetingId, string timezone, string format = "PDF")
         {
             try
             {
@@ -256,9 +256,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
 
                 var tempParticipants = ltiReports.GetRecordingsReport(
                     this.GetAdobeConnectProvider(credentials),
-                    meeting,
-                    startIndex,
-                    limit);
+                    meeting);
 
                 var participants = new List<ACRecordingViewReportDTO>();
                 if (tempParticipants.Any())

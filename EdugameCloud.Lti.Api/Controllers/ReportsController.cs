@@ -119,7 +119,7 @@ namespace EdugameCloud.Lti.Api.Controllers
         [Route("by-recordings")]
         [HttpPost]
         [Filters.LmsAuthorizeBase(ApiCallEnabled = true)]
-        public virtual OperationResultWithData<IEnumerable<RecordingTransactionDTO>> GetRecordingsReport([FromBody]ReportRequestDto request)
+        public virtual OperationResultWithData<IEnumerable<RecordingTransactionDTO>> GetRecordingsReport([FromBody]MeetingRequestDto request)
         {
             try
             {
@@ -129,9 +129,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
                 IEnumerable<RecordingTransactionDTO> report = new LtiReportService().GetRecordingsReport(
                     GetAdminProvider(),
-                    meeting,
-                    request.StartIndex,
-                    request.Limit);
+                    meeting);
 
                 return report.ToSuccessResult();
             }

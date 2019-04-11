@@ -22,8 +22,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #region Public Methods and Operators
         
-        public IEnumerable<RecordingTransactionDTO> GetRecordingsReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, LmsCourseMeeting meeting, 
-            int startIndex = 0, int limit = 0)
+        public IEnumerable<RecordingTransactionDTO> GetRecordingsReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, LmsCourseMeeting meeting)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
@@ -36,7 +35,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (!recordingsSco.Any())
                     return Enumerable.Empty<RecordingTransactionDTO>();
 
-                var transactions = provider.ReportRecordingTransactions(recordingsSco, startIndex, limit).Values.ToList();
+                var transactions = provider.ReportRecordingTransactions(recordingsSco).Values.ToList();
                 return transactions.Select(
                         us =>
                         new RecordingTransactionDTO
