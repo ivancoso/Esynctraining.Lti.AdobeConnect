@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using RestSharp.Deserializers;
+using System;
 using System.Runtime.Serialization;
 
 namespace Esynctraining.Zoom.ApiWrapper.Model
@@ -31,6 +33,11 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         public string Timezone { get; set; }
         [DataMember]
         public MeetingSettings Settings { get; set; }
+
+        [DataMember]
+        [DeserializeAs(Name = "schedule_for")]
+        [JsonProperty(PropertyName = "schedule_for")]
+        public string ScheduleFor { get; set; }
         [DataMember]
         public MeetingRecurrence Recurrence { get; set; }
         //
