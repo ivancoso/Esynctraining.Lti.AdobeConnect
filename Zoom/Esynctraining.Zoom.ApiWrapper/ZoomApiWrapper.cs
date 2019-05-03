@@ -435,10 +435,11 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
 
         public async Task<MeetingParticipantsReport> GetMeetingParticipantsReport(string meetingId, int pageSize = 300, string nextPageToken = null)
         {
+            meetingId = WebUtility.UrlEncode(meetingId);
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
-            RestRequest restRequest = await BuildRequestAuthorization($"report/meetings/{meetingId}/participants", Method.GET);
-            //restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+            RestRequest restRequest = await BuildRequestAuthorization("report/meetings/{meetingId}/participants", Method.GET);
+            restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             if (!string.IsNullOrWhiteSpace(nextPageToken))
                 restRequest.AddParameter("next_page_token", (object)nextPageToken, ParameterType.QueryString);
