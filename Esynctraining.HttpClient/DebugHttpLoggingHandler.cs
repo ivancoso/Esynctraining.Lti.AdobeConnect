@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Esynctraining.HttpClient
 {
-    public class HttpLoggingHandler : DelegatingHandler
+    public class DebugHttpLoggingHandler : DelegatingHandler
     {
         private ILogger _logger;
 
-        public HttpLoggingHandler(ILogger logger)
+        public DebugHttpLoggingHandler(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -20,16 +20,13 @@ namespace Esynctraining.HttpClient
         {
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-            if (response.IsSuccessStatusCode)
-                return response;
-
-            _logger.ErrorFormat("Request: {0}", request.ToString());
+            _logger.DebugFormat("Request: {0}", request.ToString());
             if (request.Content != null)
             {
-                _logger.Error(await request.Content.ReadAsStringAsync());
+                _logger.Debug(await request.Content.ReadAsStringAsync());
             }
 
-            _logger.ErrorFormat("Response: {0}", response.ToString());
+            _logger.DebugFormat("Response: {0}", response.ToString());
             if (response.Content != null)
             {
                 try
@@ -37,9 +34,9 @@ namespace Esynctraining.HttpClient
                     //straight call to ReadAsStringAsync can lead to exception (The character set provided in ContentType is invalid) for schoology client
                     var byteContent = await response.Content.ReadAsByteArrayAsync();
                     var stringContent = System.Text.Encoding.UTF8.GetString(byteContent);
-                    _logger.Error(stringContent);
+                    _logger.Debug(stringContent);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     _logger.Error("Error reading response content", e);
                 }

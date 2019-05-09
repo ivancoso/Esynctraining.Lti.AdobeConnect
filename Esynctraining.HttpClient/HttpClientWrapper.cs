@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Esynctraining.Core.Logging;
+using Esynctraining.Core.Utils;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -15,13 +17,7 @@ namespace Esynctraining.HttpClient
 
         public HttpClientWrapper()
         {
-            var handler = new HttpClientHandler()
-            {
-                //https://stackoverflow.com/questions/46400797/httpclienthandler-throwing-platformnotsupportedexception
-                //SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Ssl3,
-                //ServerCertificateCustomValidationCallback = delegate { return true; },
-            };
-            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(handler));
+            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(IoC.Resolve<ILogger>()));
         }
 
         public HttpClientWrapper(TimeSpan timeout, CookieContainer cookies = null, bool allowAutoRedirect = true)
@@ -40,7 +36,9 @@ namespace Esynctraining.HttpClient
                 handler.CookieContainer = cookies;
             }
 
-            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(handler))
+            var loggerHandler = new HttpLoggingHandler(IoC.Resolve<ILogger>());
+            loggerHandler.InnerHandler = handler;
+            _httpClient = new System.Net.Http.HttpClient(loggerHandler)
             {
                 Timeout = timeout,
             };
@@ -48,13 +46,7 @@ namespace Esynctraining.HttpClient
 
         public HttpClientWrapper(Uri baseAddress)
         {
-            var handler = new HttpClientHandler()
-            {
-                //https://stackoverflow.com/questions/46400797/httpclienthandler-throwing-platformnotsupportedexception
-                //SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Ssl3,
-                //ServerCertificateCustomValidationCallback = delegate { return true; },
-            };
-            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(handler))
+            _httpClient = new System.Net.Http.HttpClient(new HttpLoggingHandler(IoC.Resolve<ILogger>()))
             {
                 BaseAddress = baseAddress,
             };

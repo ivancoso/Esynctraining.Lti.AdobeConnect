@@ -16,13 +16,12 @@
   <ItemGroup>
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
-    <ProjectReference Include="..\Esynctraining.HttpClient\Esynctraining.HttpClient.csproj" />
-    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Sakai\Esynctraining.Lti.Lms.Sakai.csproj" />
   </ItemGroup>
 
   <ItemGroup>

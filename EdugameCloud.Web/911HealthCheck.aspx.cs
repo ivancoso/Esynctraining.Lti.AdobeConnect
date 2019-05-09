@@ -4,12 +4,13 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Mail;
 using System.ServiceModel.Configuration;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.UI.WebControls;
-using Esynctraining.HttpClient;
 
 namespace EdugameCloud.Web
 {
@@ -17,7 +18,12 @@ namespace EdugameCloud.Web
     // <add key="XSDProfileLocation" value="d:\Freelance\eSyncTraining\EdugameCloud\trunk\csharp\EdugameCloud.WCFService\EdugameCloud.Web\Content\xsd\vcfProfile.xsd" />
     public partial class _911HealthCheck : System.Web.UI.Page
     {
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public _911HealthCheck(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        }
 
         private int CurrentTaskNo
         {
@@ -200,7 +206,9 @@ namespace EdugameCloud.Web
                     // Got an URI, try hitting
                     try
                     {
-                        var result = _httpClientWrapper.DownloadStringAsync(uri).Result;
+                        var client = _httpClientFactory.CreateClient();
+                        var response = client.GetAsync(uri).Result;
+                        var result = response.Content.ReadAsStringAsync().Result;
                     }
                     catch (Exception x)
                     {
@@ -370,7 +378,9 @@ namespace EdugameCloud.Web
                     // Got an URI, try hitting
                     try
                     {
-                        var result = _httpClientWrapper.DownloadStringAsync(uri).Result;
+                        var client = _httpClientFactory.CreateClient();
+                        var response = client.GetAsync(uri).Result;
+                        var result = response.Content.ReadAsStringAsync().Result;
                     }
                     catch (Exception x)
                     {
@@ -459,7 +469,9 @@ namespace EdugameCloud.Web
                 var uri = new Uri(new Uri(gateway), @"UserService.svc");
                 try
                 {
-                    var result = _httpClientWrapper.DownloadStringAsync(uri).Result;
+                    var client = _httpClientFactory.CreateClient();
+                    var response = client.GetAsync(uri).Result;
+                    var result = response.Content.ReadAsStringAsync().Result;
                 }
                 catch (Exception x)
                 {

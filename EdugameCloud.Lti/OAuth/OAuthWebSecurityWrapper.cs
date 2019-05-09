@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Reflection;
 using System.Web;
 using DotNetOpenAuth.AspNet;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.OAuth.Canvas;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Utils;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Microsoft.Web.WebPages.OAuth;
 
@@ -17,13 +20,15 @@ namespace EdugameCloud.Lti.OAuth
     {
         public static AuthenticationResult VerifyLtiAuthentication(HttpContextBase context, KeyValuePair<string, string> appIdWithSecret)
         {
-            var canvasClient = new CanvasClient(appIdWithSecret.Key, appIdWithSecret.Value);
+            var httpClientFactory = IoC.Resolve<IHttpClientFactory>();
+            var canvasClient = new CanvasClient(appIdWithSecret.Key, appIdWithSecret.Value, httpClientFactory);
             return new LtiOpenAuthSecurityManager(context, canvasClient, GetProvider(typeof(OAuthWebSecurity))).VerifyAuthentication(null);
         }
 
         public static void RequestAuthentication(HttpContextBase context, KeyValuePair<string, string> appIdWithSecret, string returnUrl)
         {
-            var canvasClient = new CanvasClient(appIdWithSecret.Key, appIdWithSecret.Value);
+            var httpClientFactory = IoC.Resolve<IHttpClientFactory>();
+            var canvasClient = new CanvasClient(appIdWithSecret.Key, appIdWithSecret.Value, httpClientFactory);
             new LtiOpenAuthSecurityManager(context, canvasClient, GetProvider(typeof(OAuthWebSecurity))).RequestAuthentication(returnUrl);
         }
 

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Sakai.Dto;
-using Esynctraining.HttpClient;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Newtonsoft.Json;
 
@@ -15,7 +16,12 @@ namespace EdugameCloud.Lti.Sakai
 {
     public sealed class SakaiCalendarExportService : ICalendarExportService
     {
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public SakaiCalendarExportService(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        }
 
         public async Task<IEnumerable<MeetingSessionDTO>> SaveEventsAsync(int meetingId, IEnumerable<MeetingSessionDTO> eventDtos, LtiParamDTO param, ILmsLicense license)
         {
@@ -37,7 +43,11 @@ namespace EdugameCloud.Lti.Sakai
             };
 
             var json = JsonConvert.SerializeObject(apiParam);
-            string resp = await _httpClientWrapper.UploadJsonStringAsync(GetApiUrl(param), json);
+
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(GetApiUrl(param), content);
+            var resp = await response.Content.ReadAsStringAsync();
 
             var events = JsonConvert.DeserializeObject<ExternalEventDto[]>(resp);
             var sessions = events.Select(ConvertFromApiDtoToSessionDto).ToList();
@@ -74,7 +84,11 @@ namespace EdugameCloud.Lti.Sakai
             };
 
             var json = JsonConvert.SerializeObject(apiParam);
-            string resp = await _httpClientWrapper.UploadJsonStringAsync(GetApiUrl(param), json);
+
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(GetApiUrl(param), content);
+            var resp = await response.Content.ReadAsStringAsync();
 
             return resp.Replace("\n", String.Empty).Replace("\r", String.Empty).Split(',');
         }

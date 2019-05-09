@@ -1,6 +1,5 @@
 ﻿using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
-using Esynctraining.HttpClient;
 using Esynctraining.Lti.Lms.Common;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
@@ -9,6 +8,7 @@ using Esynctraining.Lti.Lms.Common.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -16,23 +16,21 @@ namespace Esynctraining.Lti.Lms.Moodle
 {
     public class MoodleApi : ILmsAPI, IMoodleApi
     {
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper(TimeSpan.FromMilliseconds(3 * 60 * 1000));
-        protected readonly ILogger _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IJsonDeserializer _jsonDeserializer;
 
-
+        protected ILogger Logger { get; private set; }
         protected virtual string MoodleServiceShortName
         {
             get { return "lms"; }
         }
 
-
-        public MoodleApi(IJsonDeserializer jsonDeserializer, ILogger logger)
+        public MoodleApi(IJsonDeserializer jsonDeserializer, ILogger logger, IHttpClientFactory httpClientFactory)
         {
             _jsonDeserializer = jsonDeserializer ?? throw new ArgumentNullException(nameof(jsonDeserializer));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
-
 
         public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourse(Dictionary<string, object> licenseSettings, string courseId)
         {
@@ -65,7 +63,7 @@ namespace Esynctraining.Lti.Lms.Moodle
                             }
                             catch (Exception ex)
                             {
-                                _logger.ErrorFormat(ex,
+                                Logger.ErrorFormat(ex,
                                     "[MoodleApi.GetUsersForCourse.ResponseParsing] LmsCompany key:{0}. CourseId:{1}. Response:{2}.",
                                     licenseSettings[LmsLicenseSettingNames.LicenseKey], courseId, resp);
 
@@ -92,7 +90,7 @@ namespace Esynctraining.Lti.Lms.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse] LmsCompany key:{0}. CourseId:{1}.", licenseSettings[LmsLicenseSettingNames.LicenseKey], courseId);
+                Logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse] LmsCompany key:{0}. CourseId:{1}.", licenseSettings[LmsLicenseSettingNames.LicenseKey], courseId);
                 throw;
             }
         }
@@ -222,7 +220,7 @@ namespace Esynctraining.Lti.Lms.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[MoodleApi.LoginAndCreateAClient] LmsDomain:{0}. Username:{1}. Password:{2}.", lmsDomain, userName, password);
+                Logger.ErrorFormat(ex, "[MoodleApi.LoginAndCreateAClient] LmsDomain:{0}. Username:{1}. Password:{2}.", lmsDomain, userName, password);
 
                 error = string.Format(
                     "Not able to login into: {0} for user: {1};{2} error: {3}",
@@ -263,19 +261,22 @@ namespace Esynctraining.Lti.Lms.Moodle
             }
             catch (XmlException)
             {
-                _logger.Error($"Can't parse response to XML: {resp}");
+                Logger.Error($"Can't parse response to XML: {resp}");
                 throw;
             }
         }
 
-        protected static async Task<string> PostValues(string url, Dictionary<string, string> pairs)
+        protected async Task<string> PostValues(string url, Dictionary<string, string> pairs)
         {
             if (string.IsNullOrWhiteSpace(url))
                 throw new ArgumentException("Non-empty value expected", nameof(url));
             if (pairs == null)
                 throw new ArgumentNullException(nameof(pairs));
 
-            return await _httpClientWrapper.PostValuesAsync(url, pairs);
+            var httpClient = _httpClientFactory.CreateClient(Esynctraining.Lti.Lms.Common.Constants.Http.MoodleApiClientName);
+            var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
 
         protected string GetServicesUrl(Dictionary<string, object> licenseSettings)

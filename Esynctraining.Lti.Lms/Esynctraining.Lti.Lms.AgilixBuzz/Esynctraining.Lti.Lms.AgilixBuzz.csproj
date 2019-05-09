@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Esynctraining.HttpClient\Esynctraining.HttpClient.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj" />
   </ItemGroup>
 

@@ -12,23 +12,25 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Models;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using System.Net.Http;
 
 namespace EdugameCloud.Lti.Controllers
 {
     public partial class LtiProxyToolController : Controller
     {
-        private readonly ILogger logger;
-        private readonly dynamic settings;
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
+        private readonly ILogger _logger;
+        private readonly dynamic _settings;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public LtiProxyToolController(
             ApplicationSettingsProvider settings,
-            ILogger logger)
+            ILogger logger,
+            IHttpClientFactory httpClientFactory)
         {
-            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
-
 
         [HttpGet]
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
@@ -72,7 +74,7 @@ namespace EdugameCloud.Lti.Controllers
 
         private bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
         {
-            var pass = (string)settings.InitialBBPassword;
+            var pass = (string)_settings.InitialBBPassword;
             var soapApi = IoC.Resolve<IBlackBoardApi>();
             return soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
         }
@@ -83,7 +85,9 @@ namespace EdugameCloud.Lti.Controllers
             try
             {
                 var uriBuilder = new UriBuilder(lmsDomain + "/webapps/ws/wsadmin/tcprofile");
-                var xmlResponse = await _httpClientWrapper.DownloadStringAsync(uriBuilder.Uri);
+                var client = _httpClientFactory.CreateClient();
+                var httpResponse = await client.GetAsync(uriBuilder.Uri);
+                var xmlResponse = await httpResponse.Content.ReadAsStringAsync();
                 var response = XElement.Parse(xmlResponse);
                 var name = response.XPathEvaluate("string(/tool-consumer-info/name)").ToString();
                 res.Name = name;
@@ -96,7 +100,7 @@ namespace EdugameCloud.Lti.Controllers
                 // ReSharper disable once EmptyGeneralCatchClause
             catch (Exception ex)
             {
-                logger.Error("ParseBlackBoardSharedInfo", ex);
+                _logger.Error("ParseBlackBoardSharedInfo", ex);
             }
 
             return res;

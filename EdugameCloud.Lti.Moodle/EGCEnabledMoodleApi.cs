@@ -6,19 +6,18 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Moodle;
 using Esynctraining.Core.Json;
+using System.Net.Http;
 
 namespace EdugameCloud.Lti.Moodle
 {
     public sealed class EGCEnabledMoodleApi : MoodleApi, IEGCEnabledMoodleApi
     {
-        public EGCEnabledMoodleApi(ApplicationSettingsProvider settings, ILogger logger, IJsonDeserializer jsonDeserializer)
-            : base(jsonDeserializer, logger)
+        public EGCEnabledMoodleApi(IHttpClientFactory httpClientFactory, ILogger logger, IJsonDeserializer jsonDeserializer)
+            : base(jsonDeserializer, logger, httpClientFactory)
         { }
-        
 
         protected override string MoodleServiceShortName
         {
@@ -66,7 +65,7 @@ namespace EdugameCloud.Lti.Moodle
                 if (quizResult == null)
                 {
                     error = error ?? "Moodle XML. Unable to retrive result from API";
-                    _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
+                    Logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
                     return OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>.Error(error);
                 }
 
@@ -74,7 +73,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey);
+                Logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey);
                 throw;
             }
         }
@@ -127,7 +126,7 @@ namespace EdugameCloud.Lti.Moodle
                     if (quizResult == null)
                     {
                         error = error ?? "Moodle XML. Unable to retrive result from API";
-                        _logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
+                        Logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, error);
                         return OperationResultWithData<IEnumerable<LmsQuizDTO>>.Error(error);
                     }
 
@@ -138,7 +137,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey);
+                Logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey);
                 throw;
             }
         }
@@ -197,7 +196,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, json);
+                Logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", licenseSettings[LmsUserSettingNames.SessionId], isSurvey, json);
                 throw;
             }
         }
@@ -226,7 +225,7 @@ namespace EdugameCloud.Lti.Moodle
 
             if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
             {
-                _logger.ErrorFormat("[EGCEnabledMoodleApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
+                Logger.ErrorFormat("[EGCEnabledMoodleApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
                     licenseSettings[LmsUserSettingNames.SessionId],
                     isSurvey,
                     errorMessage,

@@ -11,7 +11,6 @@ using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Utils;
 using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
 using Esynctraining.Lti.Lms.Common.API.BlackBoard;
 using Esynctraining.Lti.Lms.Common.API.Haiku;
@@ -26,26 +25,23 @@ namespace EdugameCloud.Lti.API
 
 
         private readonly ILogger _logger;
+        private readonly ISchoologyRestApiClient _schoologyClient;
+        private readonly IAgilixBuzzApi _buzzClient;
+        private readonly IMoodleApi _moodleClient;
+        private readonly IBlackBoardApi _blackboardClient;
+        private readonly IHaikuRestApiClient _haikuClient;
 
-
-        public TestConnectionService(ILogger logger)
+        public TestConnectionService(ILogger logger, IAgilixBuzzApi buzzClient,
+            IMoodleApi moodleClient, IBlackBoardApi blackboardClient,
+            IHaikuRestApiClient haikuClient, ISchoologyRestApiClient schoologyClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _schoologyClient = schoologyClient ?? throw new ArgumentNullException(nameof(schoologyClient));
+            _buzzClient = buzzClient ?? throw new ArgumentNullException(nameof(buzzClient));
+            _moodleClient = moodleClient ?? throw new ArgumentNullException(nameof(moodleClient));
+            _blackboardClient = blackboardClient ?? throw new ArgumentNullException(nameof(blackboardClient));
+            _haikuClient = haikuClient ?? throw new ArgumentNullException(nameof(haikuClient));
         }
-
-        #region Properties
-
-        private IAgilixBuzzApi DlapAPI => IoC.Resolve<IAgilixBuzzApi>();
-
-        private IMoodleApi MoodleAPI => IoC.Resolve<IMoodleApi>();
-
-        private IBlackBoardApi SoapAPI => IoC.Resolve<IBlackBoardApi>();
-
-        private ISchoologyRestApiClient SchoologyApi => IoC.Resolve<ISchoologyRestApiClient>();
-
-        private IHaikuRestApiClient HaikuRestApiClient => IoC.Resolve<IHaikuRestApiClient>();
-
-        #endregion
 
         public ConnectionInfoDTO TestConnection(ConnectionTestDTO test)
         {
@@ -76,7 +72,7 @@ namespace EdugameCloud.Lti.API
                     success = TestCanvasConnection(test, out info);
                     break;
                 case LmsProviderNames.Bridge:
-                    success = TestCanvasConnection(test, out info);
+                    success = TestBridgeConnection(test, out info);
                     break;
                 case LmsProviderNames.Brightspace:
                     success = TestBrightspaceConnection(test, out info);
@@ -100,7 +96,7 @@ namespace EdugameCloud.Lti.API
             if (!TestDomainFormat(test, out info))
                 return (false, info);
 
-            var tuple = await this.MoodleAPI.LoginAndCheckSession(
+            var tuple = await _moodleClient.LoginAndCheckSession(
                 test.domain.IsSSL(),
                 test.domain.RemoveHttpProtocolAndTrailingSlash(),
                 test.login,
@@ -140,7 +136,8 @@ namespace EdugameCloud.Lti.API
 
             try
             {
-                var courses = SchoologyApi.GetRestCall<dynamic>(test.login, test.password, "courses").Result;
+                Task<dynamic> task = Task.Run<dynamic>(async () => await _schoologyClient.GetRestCall<dynamic>(test.login, test.password, "courses"));
+                var courses = task.Result;
                 return courses != null;
             }
             catch (AggregateException ex)
@@ -159,7 +156,7 @@ namespace EdugameCloud.Lti.API
             if (!TestDomainFormat(test, out info))
                 return false;
 
-            if (!Task.Run(() => HaikuRestApiClient.TestOauthAsync(test.domain, test.consumerKey, test.consumerSecret, test.token, test.tokenSecret)).Result)
+            if (!Task.Run(() => _haikuClient.TestOauthAsync(test.domain, test.consumerKey, test.consumerSecret, test.token, test.tokenSecret)).Result)
             {
                 info = "Can't connect.";
 
@@ -174,9 +171,7 @@ namespace EdugameCloud.Lti.API
             if (!TestDomainFormat(test, out info))
                 return false;
 
-            bool result;
-
-            (result, info) = Task.Run(() => this.DlapAPI.LoginAndCheckSessionAsync(test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password)).Result;
+            bool result = Task.Run(async () => await _buzzClient.LoginAndCheckSessionAsync(test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password)).Result;
 
             return result;
         }
@@ -187,13 +182,13 @@ namespace EdugameCloud.Lti.API
                 return false;
 
             var session = test.enableProxyToolMode
-                ? SoapAPI.LoginToolAndCreateAClient(
+                ? _blackboardClient.LoginToolAndCreateAClient(
                     out info,
                     test.domain.IsSSL(),
                     test.domain,
                     test.password)
 
-                : SoapAPI.LoginUserAndCreateAClient(
+                : _blackboardClient.LoginUserAndCreateAClient(
                     out info,
                     test.domain.IsSSL(),
                     test.domain,

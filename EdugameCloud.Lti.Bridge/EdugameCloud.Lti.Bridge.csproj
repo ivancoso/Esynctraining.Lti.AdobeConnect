@@ -12,13 +12,13 @@
 
   <ItemGroup>
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
-    <ProjectReference Include="..\Esynctraining.HttpClient\Esynctraining.HttpClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>

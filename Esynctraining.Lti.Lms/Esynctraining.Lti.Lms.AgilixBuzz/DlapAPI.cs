@@ -1,5 +1,4 @@
 ﻿using Esynctraining.Core.Logging;
-using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.AgilixBuzz;
@@ -15,119 +14,46 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
 {
     public sealed partial class DlapAPI : ILmsAPI, IAgilixBuzzApi
     {
-        #region Fields
-
         private readonly ILogger _logger;
-        private readonly dynamic _settings;
+        private readonly BuzzApiClient _buzzClient;
 
-        #endregion
-
-        #region Constructors and Destructors
-
-        public DlapAPI(ApplicationSettingsProvider settings, ILogger logger)
+        public DlapAPI(ILogger logger, BuzzApiClient buzzClient)
         {
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _buzzClient = buzzClient ?? throw new ArgumentNullException(nameof(buzzClient));
         }
-
-        #endregion
 
         #region Public Methods and Operators
-
-        internal Task<(Session session, string error)> BeginBatchAsync(Dictionary<string, object> licenseSettings)
-        {
-            if (licenseSettings != null)
-            {
-                string lmsDomain = licenseSettings[LmsLicenseSettingNames.LmsDomain].ToString();
-                string userLogin = licenseSettings[LmsLicenseSettingNames.BuzzAdminUsername].ToString();
-                string password = licenseSettings[LmsLicenseSettingNames.BuzzAdminPassword].ToString();
-                return LoginAndCreateASessionAsync(lmsDomain, userLogin, password);
-            }
-
-            return Task.FromResult(((Session)null, "ASP.NET Session is expired"));
-        }
-
-        internal async Task<(Session session, string error)> LoginAndCreateASessionAsync(string lmsDomain, string userName, string password)
-        {
-            try
-            {
-                var session = new Session(_logger, "EduGameCloud", (string)_settings.AgilixBuzzApiUrl) { Verbose = true };
-                string userPrefix = lmsDomain.ToLower()
-                    .Replace(".agilixbuzz.com", string.Empty)
-                    .Replace("www.", string.Empty);
-
-                XElement result = await session.LoginAsync(userPrefix, userName, password);
-                if (!Session.IsSuccess(result))
-                {
-                    var error = "Unable to login: " + Session.GetMessage(result);
-
-                    _logger.Error(error);
-
-                    return (null, error);
-                }
-
-                session.DomainId = result.XPathEvaluate("string(user/@domainid)").ToString();
-
-                return (session, null);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("EdugameCloud.Lti.AgilixBuzz.DlapAPI.LoginAndCreateASession", ex);
-
-                return (null, ex.Message);
-            }
-        }
-
-        public async Task<(bool result, string error)> LoginAndCheckSessionAsync(string lmsDomain, string userName, string password)
-        {
-            var (session, error) = await LoginAndCreateASessionAsync(lmsDomain, userName, password);
-            return (session != null, error);
-        }
-
         public async Task<(List<LmsUserDTO> users, string error)> GetUsersForCourseAsync(
             Dictionary<string, object> licenseSettings,
             string courseid,
             object extraData)
         {
-            Session session = extraData as Session;
             var result = new List<LmsUserDTO>();
-
-            var (courseResult, error) = await LoginIfNecessaryAsync(
-                session,
-                s => s.GetAsync(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseid).ToDictionary()),
-                licenseSettings);
+            if(_buzzClient.DomainId == null)
+            {
+                var loginResponse = await InitializeClient(licenseSettings);
+                if(loginResponse == null || _buzzClient.DomainId == null)
+                {
+                    return (null, "Unable to login to Buzz API");
+                }
+            }
+            var courseResult = await _buzzClient.GetAsync(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseid).ToDictionary());
 
             if (courseResult == null)
             {
-                error = error ?? "DLAP. Unable to retrive result from API";
-
+                var error = "Unable to retrive result from Buzz API";
                 return (result, error);
-            }
-
-            if (!Session.IsSuccess(courseResult))
-            {
-                error = "DLAP. Unable to create course: " + Session.GetMessage(courseResult);
-                _logger.Error(error);
             }
 
             string domainId = courseResult.XPathSelectElement("course").XPathEvaluate("string(@domainid)").ToString();
 
-            XElement enrollmentsResult;
-            (enrollmentsResult, error) = await this.LoginIfNecessaryAsync(
-                session,
-                s => s.GetAsync(Commands.Enrollments.List, string.Format(Parameters.Enrollments.List, domainId, courseid).ToDictionary()),
-                licenseSettings);
+            XElement enrollmentsResult = await _buzzClient.GetAsync(Commands.Enrollments.List, string.Format(Parameters.Enrollments.List, domainId, courseid).ToDictionary());
 
             if (enrollmentsResult == null)
             {
-                error = error ?? "DLAP. Unable to retrive result from API";
+                var error = "Unable to retrive result from Buzz API";
                 return (result, error);
-            }
-
-            if (!Session.IsSuccess(enrollmentsResult))
-            {
-                error = "DLAP. Unable to create user: " + Session.GetMessage(enrollmentsResult);
-                _logger.Error(error);
             }
 
             IEnumerable<XElement> enrollments = enrollmentsResult.XPathSelectElements("/enrollments/enrollment");
@@ -156,20 +82,45 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
                 }
             }
 
-            return (result, error);
+            return (result, null);
+        }
+
+        public async Task<bool> LoginAndCheckSessionAsync(string lmsDomain, string userName, string password)
+        {
+            XElement result;
+            try
+            {
+                string userPrefix = lmsDomain.ToLower()
+                    .Replace(".agilixbuzz.com", string.Empty)
+                    .Replace("www.", string.Empty);
+
+                result = await _buzzClient.LoginAsync(userPrefix, userName, password); //sets DomainId internally
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("EdugameCloud.Lti.AgilixBuzz.DlapAPI.LoginAndCreateASession", ex);
+
+                return false;
+            }
+
+            return result != null;
         }
 
         public async Task<LmsUserDTO> GetUserAsync(Dictionary<string, object> licenseSettings,
             string lmsUserId,
             object extraData = null)
         {
-            Session session = extraData as Session;
+            if (_buzzClient.DomainId == null)
+            {
+                var loginResponse = await InitializeClient(licenseSettings);
+                if (loginResponse == null || _buzzClient.DomainId == null)
+                {
+                    return null;
+                }
+            }
 
-            var (userResult, error) = await this.LoginIfNecessaryAsync(
-                session,
-                s => s.GetAsync(Commands.Users.GetOne,
-                    string.Format(Parameters.Users.GetOne, lmsUserId).ToDictionary()),
-                licenseSettings);
+            var userResult = await _buzzClient.GetAsync(Commands.Users.GetOne,
+                    string.Format(Parameters.Users.GetOne, lmsUserId).ToDictionary());
 
             if (userResult != null)
             {
@@ -195,24 +146,21 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
             string enrollmentId,
             object extraData = null)
         {
-            Session session = extraData as Session;
+            if (_buzzClient.DomainId == null)
+            {
+                var loginResponse = await InitializeClient(licenseSettings);
+                if (loginResponse == null || _buzzClient.DomainId == null)
+                {
+                    return (null, "Unable to login to Buzz API");
+                }
+            }
 
-            var (enrollmentResult, error) = await this.LoginIfNecessaryAsync(
-                session,
-                s => s.GetAsync(Commands.Enrollments.GetOne,
-                    string.Format(Parameters.Enrollments.GetOne, enrollmentId).ToDictionary()),
-                licenseSettings);
+            var enrollmentResult = await _buzzClient.GetAsync(Commands.Enrollments.GetOne,
+                    string.Format(Parameters.Enrollments.GetOne, enrollmentId).ToDictionary());
 
             if (enrollmentResult == null)
             {
-                error = error ?? "DLAP. Unable to retrive enrollment from API";
-                return (null, error);
-            }
-
-            if (!Session.IsSuccess(enrollmentResult))
-            {
-                error = "DLAP. Unable to get course: " + Session.GetMessage(enrollmentResult);
-                _logger.Error(error);
+                return (null, "Unable to retrive enrollment from API");
             }
 
             var enrollment = enrollmentResult.XPathSelectElement("/enrollment");
@@ -233,10 +181,10 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
                     Login = userName,
                     Id = userId,
                     Name = userName,
-                }, error);
+                }, null);
             }
 
-            error = "Enrollment not found";
+            var error = "Enrollment not found";
 
             return (null, error);
         }
@@ -244,6 +192,28 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
         #endregion
 
         #region Methods
+
+        internal async Task<XElement> InitializeClient(Dictionary<string, object> licenseSettings)
+        {
+            string lmsDomain = licenseSettings[LmsLicenseSettingNames.LmsDomain].ToString();
+            string userLogin = licenseSettings[LmsLicenseSettingNames.BuzzAdminUsername].ToString();
+            string password = licenseSettings[LmsLicenseSettingNames.BuzzAdminPassword].ToString();
+            try
+            {
+                string userPrefix = lmsDomain.ToLower()
+                    .Replace(".agilixbuzz.com", string.Empty)
+                    .Replace("www.", string.Empty);
+
+                XElement result = await _buzzClient.LoginAsync(userPrefix, userLogin, password); //sets DomainId internally
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("EdugameCloud.Lti.AgilixBuzz.DlapAPI.LoginAndCreateASession", ex);
+
+                return null;
+            }
+        }
 
         internal bool IsEnrollmentActive(string enrollmentStatus)
         {
@@ -305,23 +275,6 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
         private static bool CheckRole(long privilegesVal, RightsFlags roleToCheck)
         {
             return ((RightsFlags)privilegesVal & roleToCheck) == roleToCheck;
-        }
-
-        private async Task<(T, string error)> LoginIfNecessaryAsync<T>(Session session, Func<Session, Task<T>> action, Dictionary<string, object> licenseSettings)
-        {
-            string error = null;
-
-            if (session == null)
-            {
-                (session, error) = await BeginBatchAsync(licenseSettings);
-            }
-
-            if (session != null)
-            {
-                return (await action(session), error);
-            }
-
-            return (default(T), error);
         }
 
         #endregion

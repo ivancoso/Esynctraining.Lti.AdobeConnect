@@ -1,5 +1,4 @@
-﻿using Esynctraining.HttpClient;
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -12,11 +11,15 @@ namespace Esynctraining.Lti.Lms.Schoology
     public class SchoologyRestApiClient : ISchoologyRestApiClient
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper(new Uri("https://api.schoology.com/v1/"));
+        private readonly HttpClient _httpClient;
+
+        public SchoologyRestApiClient(HttpClient httpClient)
+        {
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        }
 
         public async Task<T> GetRestCall<T>(string clientId, string clientSecret, string relativeUrl)
         {
-            //throw new NotImplementedException();
             long secondsSince1970 = (long)(DateTime.UtcNow - UnixEpoch).TotalSeconds;
 
             var nameValueCollection = new NameValueCollection
@@ -39,7 +42,7 @@ namespace Esynctraining.Lti.Lms.Schoology
                 header.AppendFormat("{0}=\"{1}\", ", key, nameValueCollection[key]);
 
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("OAuth", header.ToString().TrimEnd(',', ' '));
-            var response = await _httpClientWrapper.SendAsync(requestMessage);
+            var response = await _httpClient.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsAsync<T>();
         }

@@ -27,7 +27,7 @@
   <ItemGroup>
   <PackageReference Include="AutoMapper" Version="6.2.2" />
   <PackageReference Include="Castle.Windsor" Version="4.1.0" />
-    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.3.0" />
+    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.3.1" />
     <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.11" />
     <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Esynctraining.Core.Logging;
-using Esynctraining.HttpClient;
 using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
@@ -22,11 +22,12 @@ namespace Esynctraining.Lti.Lms.Sakai
         private const string OAuthVersion = "1.0";
 
         private readonly ILogger _logger;
+        private readonly HttpClient _httpClient;
 
-
-        public LTI2Api(ILogger logger)
+        public LTI2Api(ILogger logger, HttpClient httpClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
         #region Public Methods and Operators
@@ -119,7 +120,7 @@ namespace Esynctraining.Lti.Lms.Sakai
 
         #region Methods
 
-        private static async Task<XElement> CreateSignedRequestAndGetResponse(
+        private async Task<XElement> CreateSignedRequestAndGetResponse(
             Dictionary<string, object> licenseSettings,
             string serviceUrl,
             string lis_result_sourcedid,
@@ -187,16 +188,20 @@ namespace Esynctraining.Lti.Lms.Sakai
                 { "oauth_version", OAuthVersion }
             };
 
-            var http = new HttpClientWrapper(TimeSpan.FromMilliseconds(5000));
             var language = (int)licenseSettings[LmsLicenseSettingNames.LanguageId];
             //TODO FIX 10 
             Encoding encoding = language == 10
                     ? Encoding.GetEncoding("ISO-8859-1")
                     : Encoding.UTF8;
-            string resp = await http.PostValuesAsync(url, pairs, encoding);
 
-            XElement response = XElement.Parse(resp);
-            return response;
+            var response = await _httpClient.PostAsync(url, new FormUrlEncodedContent(pairs));
+
+            response.EnsureSuccessStatusCode();
+            var buffer = await response.Content.ReadAsByteArrayAsync();
+            string resp = encoding.GetString(buffer, 0, buffer.Length);
+
+            XElement xml = XElement.Parse(resp);
+            return xml;
         }
 
         #endregion

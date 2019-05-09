@@ -9,41 +9,18 @@ using Esynctraining.Lti.Lms.Common.API;
 using Esynctraining.Lti.Lms.Common.API.BlackBoard;
 using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
-using Esynctraining.Lti.Lms.Common.API.Sakai;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
+using Esynctraining.Lti.Lms.Common.API.Sakai;
 
 namespace EdugameCloud.Lti.API
 {
-    /// <summary>
-    /// The LMS factory.
-    /// </summary>
     public class LmsFactory
     {
-        #region Fields
-
-        /// <summary>
-        /// The Canvas API.
-        /// </summary>
         private readonly IEGCEnabledCanvasAPI canvasApi;
-
-        /// <summary>
-        /// The Moodle API.
-        /// </summary>
         private readonly IEGCEnabledMoodleApi moodleApi;
-
-        /// <summary>
-        /// The blackboard api.
-        /// </summary>
         private readonly IEGCEnabledBlackBoardApi blackboardApi;
-
-
         private readonly IEGCEnabledSakaiApi sakaiApi;
-        
-
-        #endregion
-
-        #region Constructors and Destructors
 
         public LmsFactory(IEGCEnabledCanvasAPI canvasApi, IEGCEnabledMoodleApi moodleApi, IEGCEnabledBlackBoardApi blackboardApi, IEGCEnabledSakaiApi sakaiApi)
         {
@@ -52,8 +29,6 @@ namespace EdugameCloud.Lti.API
             this.moodleApi = moodleApi;
             this.blackboardApi = blackboardApi;
         }
-
-        #endregion
 
         #region Public Methods and Operators
 

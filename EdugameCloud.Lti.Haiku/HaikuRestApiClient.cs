@@ -12,11 +12,12 @@ namespace EdugameCloud.Lti.Haiku
 {
     public class HaikuRestApiClient : IHaikuRestApiClient
     {
+        private readonly HaikuOAuthBaseClient _oAuth;
         private readonly ILogger _logger;
 
-
-        public HaikuRestApiClient(ILogger logger)
+        public HaikuRestApiClient(HaikuOAuthBaseClient oAuth, ILogger logger)
         {
+            _oAuth = oAuth ?? throw new ArgumentNullException(nameof(oAuth));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -30,16 +31,13 @@ namespace EdugameCloud.Lti.Haiku
             var scheme = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL] ? HttpScheme.Https : HttpScheme.Http;
             var lmsDomain = $"{scheme}{((string)licenseSettings[LmsLicenseSettingNames.LmsDomain]).TrimEnd('/')}";
 
-            var oAuth = new OAuthBase()
-            {
-                ConsumerKey = consumerKey,
-                ConsumerSecret = consumerSecret,
-                Token = token,
-                TokenSecret = tokenSecret
-            };
+            _oAuth.ConsumerKey = consumerKey;
+            _oAuth.ConsumerSecret = consumerSecret;
+            _oAuth.Token = token;
+            _oAuth.TokenSecret = tokenSecret;
 
             string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
-            string xml = await oAuth.oAuthWebRequestAsync(OAuthBase.Method.GET, uri, "");
+            string xml = await _oAuth.oAuthWebRequestAsync(HaikuOAuthBaseClient.Method.GET, uri, "");
 
             string error = null;
             List<LmsUserDTO> result = null;
@@ -62,16 +60,13 @@ namespace EdugameCloud.Lti.Haiku
         {
             try
             {
-                var oAuth = new OAuthBase()
-                {
-                    ConsumerKey = consumerKey,
-                    ConsumerSecret = consumerSecret,
-                    Token = token,
-                    TokenSecret = tokenSecret
-                };
+                _oAuth.ConsumerKey = consumerKey;
+                _oAuth.ConsumerSecret = consumerSecret;
+                _oAuth.Token = token;
+                _oAuth.TokenSecret = tokenSecret;
 
                 string uri = $"{lmsDomain}/do/services/test/oauth";
-                string xml = await oAuth.oAuthWebRequestAsync(OAuthBase.Method.GET, uri, "");
+                string xml = await _oAuth.oAuthWebRequestAsync(HaikuOAuthBaseClient.Method.GET, uri, "");
 
                 var xmlDoc = XDocument.Parse(xml);
                 var response = xmlDoc.Root;
@@ -101,13 +96,10 @@ namespace EdugameCloud.Lti.Haiku
             var scheme = (bool)licenseSettings[LmsLicenseSettingNames.UseSSL] ? HttpScheme.Https : HttpScheme.Http;
             var lmsDomain = $"{scheme}{((string)licenseSettings[LmsLicenseSettingNames.LmsDomain]).TrimEnd('/')}";
 
-            var oAuth = new OAuthBase()
-            {
-                ConsumerKey = consumerKey,
-                ConsumerSecret = consumerSecret,
-                Token = token,
-                TokenSecret = tokenSecret
-            };
+            _oAuth.ConsumerKey = consumerKey;
+            _oAuth.ConsumerSecret = consumerSecret;
+            _oAuth.Token = token;
+            _oAuth.TokenSecret = tokenSecret;
 
             string uri = $"{lmsDomain}/do/services/class/{courseId}/roster?include=user";
 
@@ -115,7 +107,7 @@ namespace EdugameCloud.Lti.Haiku
 
             try
             {
-                xml = await oAuth.oAuthWebRequestAsync(OAuthBase.Method.GET, uri, "");
+                xml = await _oAuth.oAuthWebRequestAsync(HaikuOAuthBaseClient.Method.GET, uri, "");
             }
             catch (Exception ex)
             {

@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-//using System.IO;
-//using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using Esynctraining.HttpClient;
 
 namespace EdugameCloud.Lti.Haiku
 {
-    public class OAuthBase
+    public class HaikuOAuthBaseClient
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public HaikuOAuthBaseClient(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        }
+
         /// <summary>
         /// Provides a predefined set of algorithms that are supported officially by the protocol
         /// </summary>
@@ -88,8 +93,6 @@ namespace EdugameCloud.Lti.Haiku
         protected Random random = new Random();
 
         protected string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
-
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
 
         /// <summary>
         /// Helper function to compute a hash value
@@ -202,7 +205,7 @@ namespace EdugameCloud.Lti.Haiku
         /// <param name="callBackUrl">The callback URL (for OAuth 1.0a).If your client cannot accept callbacks, the value MUST be 'oob' </param>
         /// <param name="oauthVerifier">This value MUST be included when exchanging Request Tokens for Access Tokens. Otherwise pass a null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
-        /// <param name="signatureType">The signature type. To use the default values use <see cref="OAuthBase.SignatureTypes">OAuthBase.SignatureTypes</see>.</param>
+        /// <param name="signatureType">The signature type. To use the default values use <see cref="HaikuOAuthBaseClient.SignatureTypes">OAuthBase.SignatureTypes</see>.</param>
         /// <returns>The signature base</returns>
         public string GenerateSignatureBase(Uri url, string callBackUrl, string oauthVerifier, string httpMethod, string timeStamp, string nonce, string signatureType, out string normalizedUrl, out string normalizedRequestParameters)
         {
@@ -433,9 +436,9 @@ namespace EdugameCloud.Lti.Haiku
                 outUrl += "?";
             }
 
-            ret = await _httpClientWrapper.DownloadStringAsync(outUrl + querystring);
-            //ret = WebRequest(method, outUrl + querystring, postData);
-            return ret;
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync(outUrl + querystring);
+            return await response.Content.ReadAsStringAsync();
         }
 
         ///// <summary>

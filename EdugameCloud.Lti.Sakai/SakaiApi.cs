@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Sakai.Dto;
 using Esynctraining.Core.Domain;
-using Esynctraining.HttpClient;
 using Esynctraining.Lti.Lms.Common.API.Sakai;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
@@ -15,12 +16,13 @@ using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.Sakai
 {
-    public sealed class SakaiApi : ISakaiApi
+    public sealed class SakaiApi : IEGCEnabledSakaiApi
     {
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
+        private readonly HttpClient _httpClient;
 
-        public SakaiApi()
+        public SakaiApi(HttpClient httpClient)
         {
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
         public async Task<OperationResultWithData<IEnumerable<LmsQuizInfoDTO>>> GetItemsInfoForUserAsync(Dictionary<string, object> licenseSettings, bool isSurvey)
@@ -51,8 +53,8 @@ namespace EdugameCloud.Lti.Sakai
 
             var courseName = (string)licenseSettings[LmsUserSettingNames.CourseName];
             var testsUrl = $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessments&sourcedid={ courseName }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&secret=07951-BAUER-41481-CRLSHM&user_id={licenseSettings[LmsUserSettingNames.UserId]}&ext_sakai_provider_eid={ WebUtility.UrlEncode((string)licenseSettings[LmsUserSettingNames.Username]) }";
-
-            string testsJson = await _httpClientWrapper.DownloadStringAsync(testsUrl);
+            var testsResponse = await _httpClient.GetAsync(testsUrl);
+            string testsJson = await testsResponse.Content.ReadAsStringAsync();
 
             SakaiSiteDto[] tests = null;
             if (!testsJson.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
@@ -76,8 +78,8 @@ namespace EdugameCloud.Lti.Sakai
                 quizzesIds.Add(assessmentId);
                 var url =
                     $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid={ courseName }&assessmentId={ assessmentId }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&secret=07951-BAUER-41481-CRLSHM&user_id={licenseSettings[LmsUserSettingNames.UserId]}&ext_sakai_provider_eid={ WebUtility.UrlEncode((string)licenseSettings[LmsUserSettingNames.Username]) }";
-
-                string resp = await _httpClientWrapper.DownloadStringAsync(url);
+                var response = await _httpClient.GetAsync(url);
+                string resp = await response.Content.ReadAsStringAsync();
 
                 var lqd = new LmsQuizDTO()
                 {
@@ -129,8 +131,9 @@ namespace EdugameCloud.Lti.Sakai
 
             var resultsJson = JsonConvert.SerializeObject(answers);
 
-            await _httpClientWrapper.UploadJsonStringAsync(url, resultsJson);
-
+            var content = new StringContent(resultsJson, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(url, content);
+            //return await response.Content.ReadAsStringAsync();
         }
 
         public async Task PublishQuiz(Dictionary<string, object> licenseSettings, string courseId, int quizId)

@@ -15,7 +15,6 @@ namespace Esynctraining.Lti.Lms.Schoology
     {
         private readonly ISchoologyRestApiClient _restApiClient;
 
-
         public SchoologyLmsUserService(ILogger logger, ISchoologyRestApiClient restApiClient) : base(logger)
         {
             _restApiClient = restApiClient ?? throw new ArgumentNullException(nameof(restApiClient));
@@ -31,7 +30,7 @@ namespace Esynctraining.Lti.Lms.Schoology
             string clientId = licenseSettings[LmsLicenseSettingNames.SchoologyConsumerKey].ToString();
             string clientSecret = licenseSettings[LmsLicenseSettingNames.SchoologyConsumerSecret].ToString();
 
-            var usr = await (new SchoologyRestApiClient()).GetRestCall<User>(clientId,
+            var usr = await _restApiClient.GetRestCall<User>(clientId,
                 clientSecret,
                 $"users/{lmsUserId}");
 
@@ -83,7 +82,7 @@ namespace Esynctraining.Lti.Lms.Schoology
 
             var enrolledUserTasks = enrollments.GroupBy(u => u.uid).Select(g => g.First()).Select(enrollment =>
             {
-                var usr = new SchoologyRestApiClient().GetRestCall<User>(clientId,
+                var usr = _restApiClient.GetRestCall<User>(clientId,
                           clientSecret,
                           $"users/{enrollment.uid}");
                 return usr.ContinueWith(x =>

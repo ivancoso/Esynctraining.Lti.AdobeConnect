@@ -1,17 +1,27 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 using Castle.MicroKernel.Lifestyle;
 using Castle.Windsor.MsDependencyInjection;
 using EdugameCloud.Lti.Api.Host.Swagger;
+using EdugameCloud.Lti.Sakai;
 using EdugameCloud.Lti.Telephony;
 using Esynctraining.AspNetCore;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
+using Esynctraining.HttpClient;
 using Esynctraining.Json.Jil;
+using Esynctraining.Lti.Lms.AgilixBuzz;
+using Esynctraining.Lti.Lms.Common.API.Sakai;
+using Esynctraining.Lti.Lms.Common.API.Schoology;
+using Esynctraining.Lti.Lms.Sakai;
+using Esynctraining.Lti.Lms.Schoology;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -73,6 +83,7 @@ namespace EdugameCloud.Lti.Api.Host
 
             services.AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.Http.HttpContextAccessor>();
 
+            services = RegisterHttpClients(services);
             var container = DIConfig.ConfigureWindsor(Configuration);
             services.AddRequestScopingMiddleware(container.BeginScope);
 
@@ -81,6 +92,41 @@ namespace EdugameCloud.Lti.Api.Host
             //services.AddOptions();
 
             return WindsorRegistrationHelper.CreateServiceProvider(container, services);
+        }
+
+        private IServiceCollection RegisterHttpClients(IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddTransient<DebugHttpLoggingHandler>();
+            serviceCollection.AddHttpClient();
+            serviceCollection.AddHttpClient(Esynctraining.Lti.Lms.Common.Constants.Http.MoodleApiClientName, c =>
+            {
+                c.Timeout = TimeSpan.FromMilliseconds(Esynctraining.Lti.Lms.Common.Constants.Http.MoodleApiClientTimeout);
+            });
+            serviceCollection.AddHttpClient<BuzzApiClient>(c =>
+            {
+                c.BaseAddress = new Uri(Configuration["AppSettings:AgilixBuzzApiUrl"]);
+                c.Timeout = TimeSpan.FromMilliseconds(Esynctraining.Lti.Lms.Common.Constants.Http.BuzzApiClientTimeout);
+                c.DefaultRequestHeaders.Add("User-Agent", "EduGameCloud");
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                return new HttpClientHandler()
+                {
+                    AllowAutoRedirect = false,
+                    CookieContainer = new System.Net.CookieContainer()
+                };
+            }).AddHttpMessageHandler<DebugHttpLoggingHandler>();
+
+            serviceCollection.AddHttpClient<LTI2Api>();
+            serviceCollection.AddHttpClient<IEGCEnabledSakaiApi, SakaiApi>();
+
+            serviceCollection.AddHttpClient<ISchoologyRestApiClient, SchoologyRestApiClient>(c =>
+            {
+                c.BaseAddress = new Uri(Configuration["AppSettings:SchoologyApiUrl"]);
+            });
+
+            serviceCollection.Replace(Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Singleton<IHttpMessageHandlerBuilderFilter, CustomLoggingFilter>());
+
+            return serviceCollection;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

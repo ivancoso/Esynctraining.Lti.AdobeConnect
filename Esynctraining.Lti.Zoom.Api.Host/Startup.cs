@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
@@ -18,6 +19,7 @@ using Esynctraining.Lti.Lms.Common.API.Canvas;
 using Esynctraining.Lti.Lms.Common.API.Desire2Learn;
 using Esynctraining.Lti.Lms.Common.API.Moodle;
 using Esynctraining.Lti.Lms.Common.API.Schoology;
+using Esynctraining.Lti.Lms.Common.HttpClient;
 using Esynctraining.Lti.Lms.Desire2Learn;
 using Esynctraining.Lti.Lms.Moodle;
 using Esynctraining.Lti.Lms.Sakai;
@@ -27,7 +29,6 @@ using Esynctraining.Lti.Zoom.Api.Host.Controllers;
 using Esynctraining.Lti.Zoom.Api.Host.Swagger;
 using Esynctraining.Lti.Zoom.Api.Services;
 using Esynctraining.Lti.Zoom.Common;
-using Esynctraining.Lti.Zoom.Common.HostedServices;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Mail;
@@ -36,13 +37,15 @@ using Esynctraining.Mail.Configuration.Json;
 using Esynctraining.Mail.SmtpClient.MailKit;
 using Esynctraining.Mail.TemplateTransform.RazorLight;
 using Esynctraining.Zoom.ApiWrapper;
-using Esynctraining.Zoom.ApiWrapper.JWT;
 using Esynctraining.Zoom.ApiWrapper.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Http.Logging;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
@@ -136,22 +139,9 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddTransient<UserSessionService, UserSessionService>();
             services.AddSingleton<IJsonSerializer, JilSerializer>();
             services.AddSingleton<IJsonDeserializer, JilSerializer>();
-            services.AddTransient<IEGCEnabledCanvasAPI, EGCEnabledCanvasAPI>();
-            services.AddTransient<IAgilixBuzzApi, DlapAPI>();
-            services.AddTransient<ISchoologyRestApiClient, SchoologyRestApiClient>();
-            services.AddTransient<IBlackBoardApi, SoapBlackBoardApi>();
-            services.AddTransient<IMoodleApi, MoodleApi>();
-            services.AddTransient<CanvasLmsUserService, CanvasLmsUserService>();
-            services.AddTransient<AgilixBuzzLmsUserService, AgilixBuzzLmsUserService>();
-            services.AddTransient<SchoologyLmsUserService, SchoologyLmsUserService>();
-            services.AddTransient<BlackboardLmsUserService, BlackboardLmsUserService>();
-            services.AddTransient<MoodleLmsUserService, MoodleLmsUserService>();
 
-            services.AddTransient<LTI2Api, LTI2Api>();
-            services.AddTransient<SakaiLmsUserService, SakaiLmsUserService>();
+            services = RegisterLtiServices(services);
 
-            services.AddTransient<IDesire2LearnApiService, Desire2LearnApiService>();
-            services.AddTransient<Desire2LearnLmsUserService, Desire2LearnLmsUserService>();
             services.AddTransient<KalturaService, KalturaService>();
             services.AddTransient<ZoomUserService, ZoomUserService>();
             services.AddTransient<ZoomRecordingService, ZoomRecordingService>();
@@ -162,10 +152,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host
             services.AddTransient<IMeetingSessionService, MeetingSessionService>();
             services.AddTransient<ZoomOfficeHoursService, ZoomOfficeHoursService>();
             services.AddSingleton<ILtiTokenAccessor, LtiTokenAccessor>();
-            services.AddSingleton<LmsUserServiceFactory, LmsUserServiceFactory>();
-            services.AddSingleton<CanvasCalendarEventService, CanvasCalendarEventService>();
-            services.AddSingleton<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();
             services.AddScoped<ILmsLicenseAccessor, LicenseAccessor>();
+
             //services.Configure<TemplateSettings>(Configuration.GetSection("MailTemplateSettings")).AddSingleton<ITemplateSettings>(sp => sp.GetService<IOptions<TemplateSettings>>().Value);
             //services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings")).AddSingleton<ISmtpSettings>(sp => sp.GetService<IOptions<SmtpSettings>>().Value);
             services.ConfigureSingleton<ISmtpSettings, SmtpSettings>(Configuration.GetSection("SmtpSettings"), x => x)
@@ -227,6 +215,69 @@ namespace Esynctraining.Lti.Zoom.Api.Host
                     c.SwaggerEndpoint("/v1/swagger/v1/swagger.json", "eSyncTraining LTI Zoom API V1");
                 });
             }
+        }
+
+        private IServiceCollection RegisterLtiServices(IServiceCollection services)
+        {
+            services = RegisterHttpClients(services);
+
+            services.AddTransient<IMoodleApi, MoodleApi>();
+            services.AddTransient<MoodleLmsUserService, MoodleLmsUserService>();
+
+            services.AddTransient<IDesire2LearnApiService, Desire2LearnApiService>();
+            services.AddTransient<Desire2LearnLmsUserService, Desire2LearnLmsUserService>();
+
+            services.AddTransient<IEGCEnabledCanvasAPI, EGCEnabledCanvasAPI>();
+            services.AddTransient<CanvasLmsUserService, CanvasLmsUserService>();
+            services.AddTransient<CanvasCalendarEventService, CanvasCalendarEventService>();
+
+            services.AddTransient<IAgilixBuzzApi, DlapAPI>();
+            services.AddTransient<AgilixBuzzLmsUserService, AgilixBuzzLmsUserService>();
+
+            services.AddTransient<IBlackBoardApi, SoapBlackBoardApi>();
+            services.AddTransient<BlackboardLmsUserService, BlackboardLmsUserService>();
+
+            services.AddTransient<SakaiLmsUserService, SakaiLmsUserService>();
+
+            services.AddTransient<SchoologyLmsUserService, SchoologyLmsUserService>();
+
+            services.AddSingleton<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();
+            services.AddSingleton<LmsUserServiceFactory, LmsUserServiceFactory>();
+            return services;
+        }
+
+        private IServiceCollection RegisterHttpClients(IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddTransient<LoggingHttpMessageHandler>();
+            serviceCollection.AddHttpClient();
+            serviceCollection.AddHttpClient(Esynctraining.Lti.Lms.Common.Constants.Http.MoodleApiClientName, c =>
+            {
+                c.Timeout = TimeSpan.FromMilliseconds(Esynctraining.Lti.Lms.Common.Constants.Http.MoodleApiClientTimeout);
+            });
+            serviceCollection.AddHttpClient<BuzzApiClient>(c =>
+            {
+                c.BaseAddress = new Uri(Configuration["AppSettings:AgilixBuzzApiUrl"]);
+                c.Timeout = TimeSpan.FromMilliseconds(Esynctraining.Lti.Lms.Common.Constants.Http.BuzzApiClientTimeout);
+                c.DefaultRequestHeaders.Add("User-Agent", "eSync");
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                return new HttpClientHandler()
+                {
+                    AllowAutoRedirect = false,
+                    CookieContainer = new System.Net.CookieContainer()
+                };
+            }).AddHttpMessageHandler<LoggingHttpMessageHandler>(); //enable Trace level for logging headers
+
+            serviceCollection.AddHttpClient<LTI2Api>();
+
+            serviceCollection.AddHttpClient<ISchoologyRestApiClient, SchoologyRestApiClient>(c =>
+            {
+                c.BaseAddress = new Uri(Configuration["AppSettings:SchoologyApiUrl"]);
+            });
+
+            serviceCollection.Replace(ServiceDescriptor.Singleton<IHttpMessageHandlerBuilderFilter, HttpMsLoggingFilter>());
+
+            return serviceCollection;
         }
 
     }

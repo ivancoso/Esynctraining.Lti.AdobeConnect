@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{55BBA09A-A844-4A7B-BB8E-38860E00BAEF}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,8 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Doma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Reports.Host.Core", "Esynctraining.Lti.Lms\Esynctraining.Lti.Reports.Host.Core\Esynctraining.Lti.Reports.Host.Core.csproj", "{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.HttpClient", "Esynctraining.HttpClient\Esynctraining.HttpClient.csproj", "{B715F065-BE5E-4890-9FF4-26372FE06B4E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.AgilixBuzz", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.AgilixBuzz\Esynctraining.Lti.Lms.AgilixBuzz.csproj", "{48FAF324-7016-439E-A33C-F3C8C50C3A7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Schoology", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj", "{B15E57D9-0D87-43C1-9549-C6672652FD18}"
@@ -38,9 +36,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Zoom.Comm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Moodle", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Moodle\Esynctraining.Lti.Lms.Moodle.csproj", "{71C6F060-D638-40FA-8E17-BE5153C0ED8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Lti.Lms.Desire2Learn", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Desire2Learn\Esynctraining.Lti.Lms.Desire2Learn.csproj", "{810F1F17-692D-4BE4-9655-0DA71366C6DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Desire2Learn", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Desire2Learn\Esynctraining.Lti.Lms.Desire2Learn.csproj", "{810F1F17-692D-4BE4-9655-0DA71366C6DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Lti.Lms.Sakai", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Sakai\Esynctraining.Lti.Lms.Sakai.csproj", "{5A4193FC-CEB2-484A-ABF0-4CD70AC9F8A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Sakai", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Sakai\Esynctraining.Lti.Lms.Sakai.csproj", "{5A4193FC-CEB2-484A-ABF0-4CD70AC9F8A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,14 +111,6 @@ Global
 		{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{D2F9C50E-AA6B-48BF-8A69-BB38F59EEDBB}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
-		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
-		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{B715F065-BE5E-4890-9FF4-26372FE06B4E}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 		{48FAF324-7016-439E-A33C-F3C8C50C3A7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{48FAF324-7016-439E-A33C-F3C8C50C3A7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48FAF324-7016-439E-A33C-F3C8C50C3A7A}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU

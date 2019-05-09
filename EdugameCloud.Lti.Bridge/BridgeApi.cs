@@ -6,8 +6,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using EdugameCloud.Lti.Core.Constants;
-using Esynctraining.HttpClient;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Newtonsoft.Json;
 
@@ -15,6 +13,13 @@ namespace EdugameCloud.Lti.Bridge
 {
     public class BridgeApi : IBridgeApi
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public BridgeApi(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        }
+
         // https://api.bridgeapp.com/doc/api/html/file.API_Overview.html
         private string GetBasicHeader(Dictionary<string, object> licenseSettings)
         {
@@ -179,11 +184,11 @@ namespace EdugameCloud.Lti.Bridge
             return await response.Content.ReadAsAsync<T>();//new List<MediaTypeFormatter>{ new JilMediaTypeFormatter(JilSerializer.JilOptions) }
         }
 
-
-
-        private HttpClientWrapper CreateClient(string apiUrl)
+        private HttpClient CreateClient(string apiUrl)
         {
-            return new HttpClientWrapper(new Uri(apiUrl));
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(apiUrl);
+            return client;
         }
     }
 }

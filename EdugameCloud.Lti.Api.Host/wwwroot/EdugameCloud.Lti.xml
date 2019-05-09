@@ -104,26 +104,6 @@
             The <see cref="T:System.Collections.Generic.List`1"/>.
             </returns>
         </member>
-        <member name="T:EdugameCloud.Lti.API.LmsFactory">
-            <summary>
-            The LMS factory.
-            </summary>
-        </member>
-        <member name="F:EdugameCloud.Lti.API.LmsFactory.canvasApi">
-            <summary>
-            The Canvas API.
-            </summary>
-        </member>
-        <member name="F:EdugameCloud.Lti.API.LmsFactory.moodleApi">
-            <summary>
-            The Moodle API.
-            </summary>
-        </member>
-        <member name="F:EdugameCloud.Lti.API.LmsFactory.blackboardApi">
-            <summary>
-            The blackboard api.
-            </summary>
-        </member>
         <member name="M:EdugameCloud.Lti.API.LmsFactory.GetEGCEnabledLmsAPI(EdugameCloud.Lti.Domain.Entities.LmsProviderEnum)">
             <summary>
             The get LMS API.
@@ -796,7 +776,7 @@
                 The _app secret.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.#ctor(System.String,System.String)">
+        <member name="M:EdugameCloud.Lti.OAuth.Canvas.CanvasClient.#ctor(System.String,System.String,System.Net.Http.IHttpClientFactory)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Lti.OAuth.Canvas.CanvasClient"/> class. 
             </summary>

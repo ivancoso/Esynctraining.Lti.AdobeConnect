@@ -15,4 +15,11 @@
         /// </summary>
         public const string Https = "https://";
     }
+
+    public static class Http
+    {
+        public const string MoodleApiClientName = "MoodleApiClient";
+        public const double MoodleApiClientTimeout = 3 * 60 * 1000;
+        public const double BuzzApiClientTimeout = 30 * 1000;
+    }
 }

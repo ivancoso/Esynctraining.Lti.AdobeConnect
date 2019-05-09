@@ -10,6 +10,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using Castle.Windsor.MsDependencyInjection;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti;
 using EdugameCloud.MVC.ModelBinders;
@@ -26,6 +27,7 @@ using Esynctraining.Mvc;
 using Esynctraining.Windsor;
 using FluentValidation;
 using FluentValidation.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using IResourceProvider = Esynctraining.Core.Providers.IResourceProvider;
 
 namespace EdugameCloud.Web
@@ -80,7 +82,7 @@ namespace EdugameCloud.Web
             container.Install(new LoggerWindsorInstaller());
             container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
             RegisterLocalComponents(container);
-
+            RegisterHttpClient(container);
             SetControllerFactory(container);
             AreaRegistration.RegisterAllAreas();
             var modelBinders = container.ResolveAll(typeof(BaseModelBinder));
@@ -161,6 +163,12 @@ namespace EdugameCloud.Web
                 Component.For<IResourceProvider>()
                     .ImplementedBy<EGCResourceProvider>()
                     .Activator<ResourceProviderActivator>());
+        }
+        private static void RegisterHttpClient(IWindsorContainer container)
+        {
+            ServiceCollection serviceCollection = new ServiceCollection();
+            serviceCollection.AddHttpClient();
+            container.AddServices(serviceCollection);
         }
 
         private static void SetControllerFactory(IWindsorContainer container)

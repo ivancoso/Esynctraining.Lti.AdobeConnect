@@ -1,9 +1,13 @@
 ﻿using Esynctraining.Core.Json;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common;
+using Esynctraining.Lti.Lms.Common.API.Canvas;
+using Esynctraining.Lti.Lms.Common.API.Desire2Learn;
 using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Zoom.Common;
 using Esynctraining.Lti.Zoom.Common.Dto;
+using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Lti.Zoom.Common.Services;
 using Esynctraining.Lti.Zoom.Constants;
 using Esynctraining.Lti.Zoom.Domain;
@@ -15,6 +19,7 @@ using Esynctraining.Zoom.ApiWrapper;
 using LtiLibrary.NetCore.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -25,12 +30,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Esynctraining.Lti.Lms.Canvas;
-using Esynctraining.Lti.Lms.Common.API.Canvas;
-using Esynctraining.Lti.Lms.Common.API.Desire2Learn;
-using Esynctraining.Lti.Zoom.Common.Dto.Enums;
-using Esynctraining.Zoom.ApiWrapper.OAuth;
-using Esynctraining.Lti.Lms.Common;
 using HttpScheme = Esynctraining.Lti.Zoom.Constants.HttpScheme;
 using ILogger = Esynctraining.Core.Logging.ILogger;
 using OAuthTokenResponse = Esynctraining.Lti.Lms.Common.API.Canvas.OAuthTokenResponse;
@@ -47,22 +46,24 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private readonly ZoomUserService _userService;
         private readonly LmsUserServiceFactory _lmsUserServiceFactory;
         private readonly ILmsLicenseService _lmsLicenseService;
-        private readonly CanvasAPI _canvasApi;
+        private readonly IEGCEnabledCanvasAPI _canvasApi;
         private readonly IDesire2LearnApiService _brightSpaceApi;
-
+        private readonly Microsoft.Extensions.Logging.ILogger _logger;
         public LtiController(ILogger logger, ApplicationSettingsProvider settings, ILmsLicenseService licenseService,
             UserSessionService sessionService, IJsonDeserializer jsonDeserializer, ZoomMeetingService meetingService,
             ZoomUserService userService, LmsUserServiceFactory lmsUserServiceFactory,
-            ILmsLicenseService lmsLicenseService, IDesire2LearnApiService brightSpaceApi) : base(logger, settings, sessionService)
+            ILmsLicenseService lmsLicenseService, IEGCEnabledCanvasAPI canvasApi, 
+            IDesire2LearnApiService brightSpaceApi, ILogger<LtiController> msLogger) : base(logger, settings, sessionService)
         {
-            _licenseService = licenseService;
-            _jsonDeserializer = jsonDeserializer;
-            _meetingService = meetingService;
-            _userService = userService;
-            _lmsUserServiceFactory = lmsUserServiceFactory;
-            _lmsLicenseService = lmsLicenseService;
-            _canvasApi = new CanvasAPI(logger, jsonDeserializer);
+            _licenseService = licenseService ?? throw new ArgumentNullException(nameof(licenseService));
+            _jsonDeserializer = jsonDeserializer ?? throw new ArgumentNullException(nameof(meetingService));
+            _meetingService = meetingService ?? throw new ArgumentNullException(nameof(meetingService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _lmsUserServiceFactory = lmsUserServiceFactory ?? throw new ArgumentNullException(nameof(lmsUserServiceFactory));
+            _lmsLicenseService = lmsLicenseService ?? throw new ArgumentNullException(nameof(lmsLicenseService));
+            _canvasApi = canvasApi ?? throw new ArgumentNullException(nameof(canvasApi));
             _brightSpaceApi = brightSpaceApi ?? throw new ArgumentNullException(nameof(brightSpaceApi));
+            _logger = msLogger ?? throw new ArgumentNullException(nameof(msLogger));
         }
 
         [HttpGet]

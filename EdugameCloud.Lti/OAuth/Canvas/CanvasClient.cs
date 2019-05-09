@@ -12,7 +12,6 @@ using Esynctraining.Core.Extensions;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
-using Esynctraining.HttpClient;
 
 namespace EdugameCloud.Lti.OAuth.Canvas
 {
@@ -65,7 +64,7 @@ namespace EdugameCloud.Lti.OAuth.Canvas
         /// </summary>
         private static readonly Dictionary<string, string> userCanvasUrlCache = new Dictionary<string, string>();
 
-        private static readonly HttpClientWrapper _httpClientWrapper = new HttpClientWrapper();
+        private readonly IHttpClientFactory _httpClientFactory;
 
         #endregion
 
@@ -96,7 +95,7 @@ namespace EdugameCloud.Lti.OAuth.Canvas
         /// <param name="appSecret">
         /// The app secret.
         /// </param>
-        public CanvasClient(string appId, string appSecret)
+        public CanvasClient(string appId, string appSecret, IHttpClientFactory httpClientFactory)
             : base("canvas")
         {
             if (string.IsNullOrEmpty(appId))
@@ -105,6 +104,7 @@ namespace EdugameCloud.Lti.OAuth.Canvas
                 throw new ArgumentException(nameof(appSecret));
             this.appId = appId;
             this.appSecret = appSecret;
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
         #endregion
@@ -194,7 +194,8 @@ namespace EdugameCloud.Lti.OAuth.Canvas
                 {
                     var requestMessage = new HttpRequestMessage(HttpMethod.Get, string.Format(AuthorizationEndpoint, canvasUrl));
                     requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Authorization", "Bearer " + accessToken);
-                    HttpResponseMessage response = await _httpClientWrapper.SendAsync(requestMessage);
+                    var client = _httpClientFactory.CreateClient();
+                    HttpResponseMessage response = await client.SendAsync(requestMessage);
                     response.EnsureSuccessStatusCode();
                     string canvasUserStringFormat = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject<CanvasUser>(canvasUserStringFormat);
@@ -254,8 +255,15 @@ namespace EdugameCloud.Lti.OAuth.Canvas
                 {
                     var canvasGetTokenUrl = string.Format(TokenEndpoint, canvasUrl);
 
-                    var data = Task.Run(() => _httpClientWrapper.PostValuesAsync(canvasGetTokenUrl, parameters)).Result;
+                    var task = Task.Run(async () =>
+                    {
+                        var client = _httpClientFactory.CreateClient();
+                        var response = await client.PostAsync(canvasGetTokenUrl, new FormUrlEncodedContent(parameters));
+                        response.EnsureSuccessStatusCode();
+                        return await response.Content.ReadAsStringAsync();
+                    });
 
+                    var data = task.Result;
                     if (string.IsNullOrEmpty(data))
                     {
                         throw new Exception("data is empty");

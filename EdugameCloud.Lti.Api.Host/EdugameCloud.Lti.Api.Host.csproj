@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Windsor" Version="4.1.0" />
-    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.3.0" />
+    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.3.1" />
     <PackageReference Include="Esynctraining.AspNetCore" Version="2.0.0.11" />
     <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
@@ -60,6 +60,7 @@
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Canvas\Esynctraining.Lti.Lms.Canvas.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Desire2Learn\Esynctraining.Lti.Lms.Desire2Learn.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Moodle\Esynctraining.Lti.Lms.Moodle.csproj" />
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Sakai\Esynctraining.Lti.Lms.Sakai.csproj" />
     <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj" />
   </ItemGroup>
   <ItemGroup>
