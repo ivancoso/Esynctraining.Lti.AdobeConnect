@@ -37,6 +37,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Http.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Esynctraining.Lti.Zoom.Host
 {
@@ -192,7 +193,11 @@ namespace Esynctraining.Lti.Zoom.Host
 
         private IServiceCollection RegisterHttpClients(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<LoggingHttpMessageHandler>();
+            serviceCollection.AddTransient<LoggingHttpMessageHandler>((container) =>
+            {
+                var logger = container.GetRequiredService<ILogger<LoggingHttpMessageHandler>>();
+                return new LoggingHttpMessageHandler(logger);
+            });
             serviceCollection.AddHttpClient();
             serviceCollection.AddHttpClient(Esynctraining.Lti.Lms.Common.Constants.Http.MoodleApiClientName, c =>
             {

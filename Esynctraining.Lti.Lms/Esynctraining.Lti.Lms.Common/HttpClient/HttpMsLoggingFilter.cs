@@ -8,9 +8,12 @@ namespace Esynctraining.Lti.Lms.Common.HttpClient
     {
         private readonly ILogger _logger;
 
-        public HttpMsLoggingFilter(ILogger logger)
+        public HttpMsLoggingFilter(ILoggerFactory loggerFactory)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            if(loggerFactory == null)
+                throw new ArgumentNullException(nameof(loggerFactory));
+
+            _logger = loggerFactory.CreateLogger<HttpMsLoggingFilter>();
         }
 
         public Action<HttpMessageHandlerBuilder> Configure(Action<HttpMessageHandlerBuilder> next)

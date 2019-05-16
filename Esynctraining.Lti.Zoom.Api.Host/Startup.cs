@@ -248,7 +248,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host
 
         private IServiceCollection RegisterHttpClients(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<LoggingHttpMessageHandler>();
+            serviceCollection.AddTransient<LoggingHttpMessageHandler>((container) =>
+            {
+                var logger = container.GetRequiredService<ILogger<LoggingHttpMessageHandler>>();
+                return new LoggingHttpMessageHandler(logger);
+            });
             serviceCollection.AddHttpClient();
             serviceCollection.AddHttpClient(Esynctraining.Lti.Lms.Common.Constants.Http.MoodleApiClientName, c =>
             {
