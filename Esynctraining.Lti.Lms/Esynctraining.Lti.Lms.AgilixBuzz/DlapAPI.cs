@@ -206,7 +206,13 @@ namespace Esynctraining.Lti.Lms.AgilixBuzz
             string password = licenseSettings[LmsLicenseSettingNames.BuzzAdminPassword].ToString();
             try
             {
-                string userPrefix = lmsDomain.ToLower()
+                var uri = new Uri(
+                    lmsDomain.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                        ? lmsDomain
+                        : "http://" + lmsDomain
+                );
+
+                string userPrefix = uri.Host.ToLower()
                     .Replace(".agilixbuzz.com", string.Empty)
                     .Replace("www.", string.Empty);
 
