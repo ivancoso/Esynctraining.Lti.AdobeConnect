@@ -241,8 +241,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host
 
             services.AddTransient<SchoologyLmsUserService, SchoologyLmsUserService>();
 
-            services.AddSingleton<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();
-            services.AddSingleton<LmsUserServiceFactory, LmsUserServiceFactory>();
+            services.AddTransient<LmsCalendarEventServiceFactory, LmsCalendarEventServiceFactory>();
+            services.AddTransient<LmsUserServiceFactory, LmsUserServiceFactory>();
             return services;
         }
 
