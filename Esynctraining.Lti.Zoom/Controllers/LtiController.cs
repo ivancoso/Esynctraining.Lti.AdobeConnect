@@ -283,8 +283,11 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
                         var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
-
-                        OAuthTokenResponse token = await _canvasApi.RequestToken($"{Settings.BasePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain.RemoveHttpProtocolAndTrailingSlash());
+                        var settingsBasePath = (string)Settings.BasePath;
+                        var basePath = settingsBasePath.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                            ? settingsBasePath
+                            : Request.Scheme + "://" + Request.Host + settingsBasePath;
+                        OAuthTokenResponse token = await _canvasApi.RequestToken($"{basePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain.RemoveHttpProtocolAndTrailingSlash());
                         await _sessionService.UpdateSessionRefreshToken(s, token.access_token, token.refresh_token);
 
                         return await RedirectToHome(s);

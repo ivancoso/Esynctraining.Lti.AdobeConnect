@@ -32,7 +32,7 @@ namespace Esynctraining.Lti.Zoom.Common
             try
             {
                 license = await _licenseAccessor.GetLicense();
-                _logger.Info($"Check token for license {license.ConsumerKey}");
+                _logger.Debug($"Check token for license {license.ConsumerKey}");
                 if (!(await IsAccessTokenValid(license.ZoomUserDto.AccessToken)))
                 {
                     _logger.Warn($"[Failed] Check token for license {license.ConsumerKey}");
@@ -56,7 +56,7 @@ namespace Esynctraining.Lti.Zoom.Common
             }
             finally
             {
-                _logger.Info($"End Check token for license {license.ConsumerKey}");
+                _logger.Debug($"End Check token for license {license.ConsumerKey}");
                 _sem.Release();
             }
 

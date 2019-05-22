@@ -62,12 +62,12 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             {
                 Logger.Error($"User {Param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account", e);
             }
-
+            
             var zoomMeetingsResult = await _meetingService.GetMeetings(CourseId, type, Param.lis_person_contact_email_primary, userId);
             sw.Stop();
             if (sw.Elapsed.TotalSeconds >= 2)
             {
-                Logger.InfoFormat($"[GetCourseMeetings] Time : {sw.Elapsed}, License={LmsLicense.ConsumerKey}, User={Param.lis_person_contact_email_primary}");
+                Logger.DebugFormat($"[GetCourseMeetings] Time : {sw.Elapsed}, License={LmsLicense.ConsumerKey}, User={Param.lis_person_contact_email_primary}");
             }
 
             return zoomMeetingsResult;
