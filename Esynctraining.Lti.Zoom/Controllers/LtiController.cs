@@ -608,7 +608,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
 
                 LmsProviderName = lmsProvider.LmsProviderName, //todo
-                UserGuideLink = $"{ZoomUrls.BaseUrl}/content/lti-instructions/{lmsProvider.UserGuideFileUrl}", //todo
+                UserGuideLink = $"https://zoomsupport.cosocloud.com/knowledgeBase", //todo
                 EnableClassRosterSecurity = license.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity),
                 EnableOfficeHours = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHours),
                 EnableOfficeHoursSlots = license.GetSetting<bool>(LmsLicenseSettingNames.EnableOfficeHoursSlots),
