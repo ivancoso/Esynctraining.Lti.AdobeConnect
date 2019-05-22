@@ -26,11 +26,6 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
         /// </summary>
         public virtual string ConfigurationUrl { get; set; }
 
-        /// <summary>
-        /// Gets or sets the user guide file url.
-        /// </summary>
-        public virtual string UserGuideFileUrl { get; set; }
-
         #endregion
 
         public static LmsProvider Generate(int productId)
@@ -43,7 +38,6 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                     {
                         LmsProviderName = "Canvas",
                         ShortName = "canvas",
-                        UserGuideFileUrl = "CanvasZoomIntegration.pdf",
                     };
                     break;
                 case LMS.AgilixBuzz:
@@ -51,7 +45,6 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                     {
                         LmsProviderName = "AgilixBuzz",
                         ShortName = "AgilixBuzz",
-                        UserGuideFileUrl = "BuzzZoomIntegration.pdf",
                     };
                     break;
                 case LMS.Schoology:
@@ -59,7 +52,6 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                     {
                         LmsProviderName = "Schoology",
                         ShortName = "Schoology",
-                        UserGuideFileUrl = "SchoologyZoomIntegration.pdf",
                     };
                     break;
                 case LMS.BlackBoard:
@@ -67,7 +59,6 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                     {
                         LmsProviderName = "BlackBoard",
                         ShortName = "BlackBoard",
-                        UserGuideFileUrl = "BlackBoardZoomIntegration.pdf",
                     };
                     break;
                 case LMS.Moodle:
@@ -75,7 +66,6 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                     {
                         LmsProviderName = "Moodle",
                         ShortName = "Moodle",
-                        UserGuideFileUrl = "MoodleZoomIntegration.pdf",
                     };
                     break;
                 case LMS.Sakai:
@@ -83,7 +73,6 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                     {
                         LmsProviderName = "Sakai",
                         ShortName = "Sakai",
-                        UserGuideFileUrl = "SakaiZoomIntegration.pdf",
                     };
                     break;
                 case LMS.Desire2Learn:
@@ -91,7 +80,6 @@ namespace Esynctraining.Lti.Zoom.Domain.Entities
                     {
                         LmsProviderName = "BrigthSpace",
                         ShortName = "BrigthSpace",
-                        UserGuideFileUrl = "BrigthSpaceZoomIntegration.pdf",
                     };
                     break;
 
