@@ -7,18 +7,24 @@
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
     <projectUrl>http://esynctraining.com/</projectUrl>
-    <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+    <iconUrl>http://www.esynctraining.com/media/1033/esync_logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Provides pdf pre processing functionality. GhostScript based</description>
-    <copyright>Copyright © 2013-2014 eSyncTraining.com</copyright>
-    <tags>core</tags>
+    <copyright>Copyright © 2013-2019 eSyncTraining.com</copyright>
     <releaseNotes>Provides pdf pre processing functionality. GhostScript based</releaseNotes>
     <dependencies>
-      <dependency id="Ghostscript.NET" version="1.1.2" />
-      <dependency id="iTextSharp" version="5.4.4" />
+      <dependency id="Ghostscript.NET" version="1.2.0" />
+      <dependency id="iTextSharp" version="5.5.6" />
     </dependencies>
     <references>
       <reference file="Esynctraining.PdfProcessor.dll" />
+      <reference file="itextsharp.dll" />
+      <reference file="Ghostscript.NET.dll" />
+      
     </references>
   </metadata>
+  <files>
+    <file src=".\bin\Debug\itextsharp.dll" target="lib/net40" />
+    <file src=".\bin\Debug\Ghostscript.NET.dll" target="lib/net40" />
+  </files>
 </package>

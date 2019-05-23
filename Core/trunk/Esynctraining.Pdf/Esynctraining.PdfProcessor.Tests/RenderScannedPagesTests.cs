@@ -203,7 +203,7 @@
             string inPdfPath = Directory.GetCurrentDirectory() + "/BlackRectanglesWithSomeText.pdf";
             PdfProcessorTests.FlushResourceToFile(Resources + "BlackRectanglesWithSomeText.pdf", inPdfPath);
             string outPdfPath = inPdfPath + ".out.pdf";
-            Assert.IsTrue(target.RenderScannedPagesWithGsNet(inPdfPath, outPdfPath, 150));
+            Assert.IsTrue(target.RenderSpecialCsPagesWithGsNet(inPdfPath, outPdfPath, 150));
 
             using (var reader = new PdfReader(outPdfPath))
             {
@@ -225,7 +225,7 @@
             string inPdfPath = Directory.GetCurrentDirectory() + "/BlackRectangles2.pdf";
             PdfProcessorTests.FlushResourceToFile(Resources + "BlackRectangles.pdf", inPdfPath);
             string outPdfPath = inPdfPath + ".out.pdf";
-            Assert.IsTrue(target.RenderScannedPagesWithGsNet(inPdfPath, outPdfPath, 150));
+            Assert.IsTrue(target.RenderSpecialCsPagesWithGsNet(inPdfPath, outPdfPath, 150));
 
             using (var reader = new PdfReader(outPdfPath))
             {
@@ -247,7 +247,7 @@
             string inPdfPath = Directory.GetCurrentDirectory() + "/BlackRectanglesWithRenderedKey.pdf";
             PdfProcessorTests.FlushResourceToFile(Resources + "BlackRectanglesWithRenderedKey.pdf", inPdfPath);
             string outPdfPath = inPdfPath + ".out.pdf";
-            Assert.IsFalse(target.RenderScannedPagesWithGsNet(inPdfPath, outPdfPath, 150));
+            Assert.IsFalse(target.RenderSpecialCsPagesWithGsNet(inPdfPath, outPdfPath, 150));
         }
 
         /// <summary>
@@ -259,7 +259,7 @@
             string inPdfPath = Directory.GetCurrentDirectory() + "/BlackRectanglesWithAllText.pdf";
             PdfProcessorTests.FlushResourceToFile(Resources + "BlackRectanglesWithAllText.pdf", inPdfPath);
             string outPdfPath = inPdfPath + ".out.pdf";
-            Assert.IsFalse(target.RenderScannedPagesWithGsNet(inPdfPath, outPdfPath, 150));
+            Assert.IsFalse(target.RenderSpecialCsPagesWithGsNet(inPdfPath, outPdfPath, 150));
         }
 
         #endregion

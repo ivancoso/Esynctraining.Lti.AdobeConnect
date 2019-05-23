@@ -1154,7 +1154,7 @@ try
 	    }
 
 	    # Create the command to use to create the package.
-	    $packCommand = "& ""$NuGetExecutableFilePath"" pack ""$fileToPack"" $PackOptions"
+	    $packCommand = "& nuget pack ""$fileToPack"" $PackOptions"
 		$packCommand = $packCommand -ireplace ';', '`;'		# Escape any semicolons so they are not interpreted as the start of a new command.
 
 		# Create the package.
