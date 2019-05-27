@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -42,7 +43,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         [LmsAuthorizeBase(ApiCallEnabled = true)]
         public virtual async Task<OperationResultWithData<IEnumerable<ZoomSessionParticipantDto>>> GetReportParticipantsBySessions(string sessionId)
         {
-            var sessions = await _reportService.GetParticipantsBySessionId(sessionId);
+            var sessions = await _reportService.GetParticipantsBySessionId(WebUtility.UrlDecode(sessionId).Replace(" ", "+"));
             return sessions.ToSuccessResult();
         }
 
