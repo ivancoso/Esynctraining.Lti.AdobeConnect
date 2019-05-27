@@ -113,6 +113,8 @@
         /// </summary>
         public const string PrincipalUpdatePassword = "user-id={0}&password={1}&password-verify={2}";
 
+        public const string PrincipalUpdateType = "principal-id={0}&type={1}";
+
         /// <summary>
         /// The report meeting attendance.
         /// </summary>

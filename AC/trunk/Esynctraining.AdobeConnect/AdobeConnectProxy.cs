@@ -826,6 +826,13 @@ namespace Esynctraining.AdobeConnect
                 principalId, newPassword);
         }
 
+        //convert guest->user, user->guest
+        public GenericResult PrincipalUpdateType(string principalId, PrincipalType type)
+        {
+            return Execute(() => { return _provider.PrincipalUpdateType(principalId, type); },
+                principalId, type.ToString());
+        }
+
         public StatusInfo RemoveFromGroup(string principalId, string groupId)
         {
             return Execute(() => { return _provider.RemoveFromGroup(principalId, groupId); }, principalId, groupId);

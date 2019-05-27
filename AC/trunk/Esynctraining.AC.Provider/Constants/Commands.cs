@@ -241,6 +241,8 @@
             /// </summary>
             public const string UpdatePassword = "user-update-pwd";
 
+            public const string UpdateType = "update-principal-type";
+
             /// <summary>
             /// The update.
             /// </summary>

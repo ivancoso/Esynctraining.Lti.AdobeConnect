@@ -254,6 +254,24 @@ namespace Esynctraining.AC.Provider
             return new GenericResult(status);
         }
 
+        public GenericResult PrincipalUpdateType(string principalId, PrincipalType type)
+        {
+            StatusInfo status;
+            var parameters = string.Format(
+                CommandParams.PrincipalUpdateType,
+                principalId,
+                type.ToXmlString());
+            requestProcessor.Process(Commands.Principal.UpdateType, parameters, out status);
+            /*
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<results>
+    <status code="ok"/>
+    <update-principal-type type="user" principal-id="158343788"/>
+</results>
+             */
+            return new GenericResult(status);
+        }
+
         /// <summary>
         /// Creates or updates a user or group. The user or group (that is, the principal) is created or
         /// updated in the same account as the user making the call.

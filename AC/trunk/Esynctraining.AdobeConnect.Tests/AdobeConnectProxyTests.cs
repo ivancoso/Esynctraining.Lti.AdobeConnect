@@ -258,5 +258,26 @@ namespace Esynctraining.AdobeConnect.Tests
 
             Assert.IsTrue(transactions.Any());
         }
+
+        [Test]
+        public void WillConvertGuestToUser()
+        {
+            var email = "***guest-email***";
+            var acApiUrl = new Uri("http://connectdev.esynctraining.com");
+            var con = new ConnectionDetails(acApiUrl);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), acApiUrl, String.Empty);
+            
+            proxy.Login(new UserCredentials("", ""));//admin
+            var guestResult = proxy.ReportGuestsByLogin(email);
+            if (guestResult.Values.Any())
+            {
+                var guest = guestResult.Values.First();
+                var updateResult = proxy.PrincipalUpdateType(guest.PrincipalId, PrincipalType.user);
+                Assert.IsTrue(updateResult.Success);
+                var principalInfo = proxy.GetPrincipalInfo(guest.PrincipalId);
+                Assert.AreEqual(principalInfo.PrincipalInfo.Principal.Type, PrincipalType.user.ToString());
+            }
+        }
     }
 }

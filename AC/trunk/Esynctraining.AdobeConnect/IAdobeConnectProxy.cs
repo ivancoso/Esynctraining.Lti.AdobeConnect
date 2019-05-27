@@ -130,6 +130,7 @@ namespace Esynctraining.AdobeConnect
         PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation);
         PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation, bool throwOnAdobeError);
         GenericResult PrincipalUpdatePassword(string principalId, string newPassword);
+        GenericResult PrincipalUpdateType(string principalId, PrincipalType type);
         StatusInfo RemoveFromGroup(string principalId, string groupId);
         bool RemoveFromGroupByType(string principalId, PrincipalType type);
 
