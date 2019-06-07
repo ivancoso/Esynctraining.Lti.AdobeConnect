@@ -47,7 +47,12 @@
         [ClassInitialize]
         public static void Init(TestContext context)
         {
-            target = new PdfProcessorHelper();
+            var gs = PdfProcessorHelper.SetupGhostScriptFromEmbeddedResources(Directory.GetCurrentDirectory());
+            target = new PdfProcessorHelper(new PdfProcessorSettings()
+            {
+                SearchForGhosts = false, GhostScriptDllPath = gs.GhostScriptDllPath,
+                GhostScriptVersion = gs.GhostScriptVersion
+            });
         }
 
         /// <summary>
@@ -69,7 +74,7 @@
         [TestMethod]
         public void CheckActions_ResultedFileContainsOnlyImages_ProperlyRotated()
         {
-            string inPdfPath = Directory.GetCurrentDirectory() + "/BlackRectangles1.pdf";
+            string inPdfPath = Directory.GetCurrentDirectory() + @"\BlackRectangles1.pdf";
             PdfProcessorTests.FlushResourceToFile(Resources + "BlackRectangles.pdf", inPdfPath);
             string outPdfPath = inPdfPath + ".out.pdf";
             using (var reader = new PdfReader(inPdfPath))
@@ -309,8 +314,8 @@
             e.MoveNext();
             PdfName key = e.Current.Key;
             PdfStream str = dictionary.GetAsStream(key);
-            Assert.AreEqual(width, str.GetAsNumber(PdfName.WIDTH).IntValue);
-            Assert.AreEqual(height, str.GetAsNumber(PdfName.HEIGHT).IntValue);
+            Assert.AreEqual(width ,str.GetAsNumber(PdfName.WIDTH).IntValue);
+            Assert.AreEqual(height , str.GetAsNumber(PdfName.HEIGHT).IntValue);
         }
 
         /// <summary>
