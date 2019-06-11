@@ -993,6 +993,11 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.GetEventList(); });
         }
 
+        public CollectionResult<EventNotification> EventNotificationList(string eventScoId)
+        {
+            return Execute(() => { return _provider.EventNotificationList(eventScoId); }, eventScoId);
+        }
+
         public RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields eventDetails)
         {
             return Execute(() => { return _provider.RegisterToEvent(eventDetails); });

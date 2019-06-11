@@ -167,6 +167,9 @@
             public const string List = "event-list";
 
             public const string Login = "event-login";
+
+            public const string NotificationList = "notification-list";
+
         }
 
         /// <summary>

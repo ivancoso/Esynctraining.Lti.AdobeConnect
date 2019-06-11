@@ -9,12 +9,12 @@
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>+update-principal-type</PackageReleaseNotes>
-    <Version>1.0.5.10</Version>
+    <PackageReleaseNotes>+EventNotificationList</PackageReleaseNotes>
+    <Version>1.0.5.11</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <AssemblyVersion>1.0.5.10</AssemblyVersion>
-    <FileVersion>1.0.5.10</FileVersion>
+    <AssemblyVersion>1.0.5.11</AssemblyVersion>
+    <FileVersion>1.0.5.11</FileVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">

@@ -9,11 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>+update-principal-type</PackageReleaseNotes>
-    <Version>1.0.6.2</Version>
+    <PackageReleaseNotes>+EventNotificationList</PackageReleaseNotes>
+    <Version>1.0.6.3</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.6.2</FileVersion>
-    <AssemblyVersion>1.0.6.2</AssemblyVersion>
+    <FileVersion>1.0.6.3</FileVersion>
+    <AssemblyVersion>1.0.6.3</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -260,6 +260,24 @@ namespace Esynctraining.AC.Provider
 
             return new EventLoginInfoResult(status);
         }
-        
+
+
+        // https://helpx.adobe.com/adobe-connect/webservices/notification-list.html
+        public CollectionResult<EventNotification> EventNotificationList(string eventScoId)
+        {
+            if (string.IsNullOrWhiteSpace(eventScoId))
+                throw new ArgumentException("Non-empty value expected", nameof(eventScoId));
+
+            var requestString = $"sco-id={eventScoId}&target-acl-id={eventScoId}";
+
+            StatusInfo status;
+            var doc = this.requestProcessor.Process(Commands.Event.NotificationList, requestString, out status);
+
+            return ResponseIsOk(doc, status)
+                ? new CollectionResult<EventNotification>(status, GenericCollectionParser<EventNotification>.Parse(doc.SelectSingleNode("//notification-list"), "notification", EventNotificationParser.Parse))
+                : new CollectionResult<EventNotification>(status);
+
+        }
+
     }
 }

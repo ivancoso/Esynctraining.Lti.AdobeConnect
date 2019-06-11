@@ -175,6 +175,8 @@ namespace Esynctraining.AdobeConnect
 
         EventCollectionResult GetEventList();
 
+        CollectionResult<EventNotification> EventNotificationList(string eventScoId);
+
         MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
 
         MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0);
