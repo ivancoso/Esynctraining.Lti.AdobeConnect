@@ -1,5 +1,4 @@
-﻿
-namespace Esynctraining.Pdf2SwfConverter.Model
+﻿namespace Esynctraining.Pdf2SwfConverter.Model
 {
     public enum ConversionState
     {
@@ -7,6 +6,7 @@ namespace Esynctraining.Pdf2SwfConverter.Model
         OutputExists,
         ConversionFailed,
         ConversionFailedPaged,
-        OptimizationFailed
+        OptimizationFailed,
     }
+
 }

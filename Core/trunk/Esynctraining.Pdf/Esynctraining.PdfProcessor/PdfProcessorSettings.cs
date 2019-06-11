@@ -14,5 +14,7 @@ namespace Esynctraining.PdfProcessor
         public string GhostScriptLibPath { get; set; } 
 
         public Version GhostScriptVersion { get; set; }
+
     }
+
 }

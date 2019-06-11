@@ -60,6 +60,9 @@ namespace Esynctraining.Pdf2SwfConverter
             {
                 return Swf.Replace("{inputFileName}", Path.GetFileNameWithoutExtension(inputFileName));
             }
+
         }
+
     }
+
 }

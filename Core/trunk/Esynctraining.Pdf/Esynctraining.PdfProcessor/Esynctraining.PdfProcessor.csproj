@@ -1,106 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{52F607BB-AB4F-4FE5-8CAB-89F423AF6E8F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Esynctraining.PdfProcessor</RootNamespace>
-    <AssemblyName>Esynctraining.PdfProcessor</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Ghostscript.NET, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ghostscript.NET.1.1.2\lib\net40\Ghostscript.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="itextsharp, Version=5.4.4.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
-      <HintPath>..\packages\iTextSharp.5.4.4\lib\itextsharp.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <None Remove="Resources\gsdll32.dll" />
+    <None Remove="Resources\gsdll64.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Actions\Filters\AndFilter.cs" />
-    <Compile Include="Actions\Filters\OrFilter.cs" />
-    <Compile Include="Actions\Filters\HasSpecialCsResourceFilter.cs" />
-    <Compile Include="Actions\Filters\HasFontResourceFilter.cs" />
-    <Compile Include="Actions\Filters\LogicalOperationFilter.cs" />
-    <Compile Include="Actions\Filters\NotFilter.cs" />
-    <Compile Include="Actions\Filters\PageHasSpecificKeyFilter.cs" />
-    <Compile Include="Actions\Filters\PdfFilter.cs" />
-    <Compile Include="Actions\IPdfAction.cs" />
-    <Compile Include="Actions\FilteredPdfAction.cs" />
-    <Compile Include="Actions\PdfAction.cs" />
-    <Compile Include="Actions\RenderPageAction.cs" />
-    <Compile Include="PdfProcessorHelper.cs" />
-    <Compile Include="PdfProcessorSettings.cs" />
-    <Compile Include="Renders\GsNetPdfRender.cs" />
-    <Compile Include="Renders\IPdfRender.cs" />
-    <Compile Include="PdfProcessor.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Esynctraining.PdfProcessor.nuspec" />
-    <None Include="packages.config" />
-    <None Include="PostBuildScripts\BuildNewPackage-RanAutomatically.ps1" />
-    <None Include="PostBuildScripts\New-NuGetPackage.ps1" />
-    <None Include="PostBuildScripts\UploadPackage-RunManually.bat" />
-    <None Include="PostBuildScripts\UploadPackage-RunManually.ps1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Esynctraining.Pdf.Common\Esynctraining.Pdf.Common.csproj">
-      <Project>{adbaad8d-3b84-42e9-b2f1-83db1b544fbb}</Project>
-      <Name>Esynctraining.Pdf.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\gsdll32.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\gsdll64.dll" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
-REM If you see this in Visual Studio's Error List window, check the Output window's Build tab for the actual error.
-ECHO Building NuGet package in Post-Build event...
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(ProjectDir)PostBuildScripts\BuildNewPackage-RanAutomatically.ps1' -ProjectFilePath '$(ProjectPath)' -OutputDirectory '$(TargetDir)' -Configuration '$(ConfigurationName)' -Platform '$(PlatformName)'"</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <ItemGroup>
+    <PackageReference Include="Ghostscript.NET" Version="1.2.1" />
+    <PackageReference Include="iTextSharp" Version="5.5.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.Pdf.Common\Esynctraining.Pdf.Common.csproj" />
+  </ItemGroup>
+
 </Project>

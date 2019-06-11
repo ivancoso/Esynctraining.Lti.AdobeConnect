@@ -24,7 +24,7 @@
         /// </summary>
         private readonly int resolution;
 
-        private readonly string _gsLibPath;
+        //private readonly string _gsLibPath;
 
         /// <summary>
         /// Track whether Dispose has been called..

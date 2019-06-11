@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Esynctraining.Pdf2SwfConverter.Model
+﻿namespace Esynctraining.Pdf2SwfConverter.Model
 {
     public class ConversionStatus
     {
-        public ConversionStatus()
-        {
-        }
+        public ConversionState State { get; set; }
+
+        public string Message { get; set; }
+
+        public bool RenderEverythingAsBitmap { get; set; }
+
+        public bool OverwriteSource { get; set; }
+
+
+        public ConversionStatus() { }
 
         public ConversionStatus(ConversionState state, string message = null)
         {
@@ -18,10 +19,6 @@ namespace Esynctraining.Pdf2SwfConverter.Model
             Message = message;
         }
 
-        public ConversionState State { get; set; }
-
-        public string Message { get; set; }
-        public bool RenderEverythingAsBitmap { get; set; }
-        public bool OverwriteSource { get; set; }
     }
+
 }

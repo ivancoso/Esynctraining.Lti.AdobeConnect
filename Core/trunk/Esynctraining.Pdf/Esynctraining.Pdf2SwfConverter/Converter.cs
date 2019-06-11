@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Esynctraining.Pdf2SwfConverter.Extensions;
 using Esynctraining.Pdf2SwfConverter.Model;
 using Esynctraining.PdfProcessor;
-using iTextSharp.text.log;
 using iTextSharp.text.pdf;
 using Microsoft.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -21,6 +19,7 @@ namespace Esynctraining.Pdf2SwfConverter
         private readonly ConverterSettings _settings;
         private readonly PdfProcessorHelper _pdfProcessor;
         private readonly ILogger _logger;
+
 
         public Converter(ConverterSettings settings, PdfProcessorHelper pdfProcessor, ILogger logger)
         {
@@ -255,15 +254,6 @@ namespace Esynctraining.Pdf2SwfConverter
             }
         }
 
-        /// <summary>
-        /// The get number of pages.
-        /// </summary>
-        /// <param name="file">
-        /// The web orb file.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Nullable{Int32}"/>.
-        /// </returns>
         private async Task<int> GetNumberOfPages(string file)
         {
             try
@@ -281,15 +271,6 @@ namespace Esynctraining.Pdf2SwfConverter
             }
         }
 
-        /// <summary>
-        /// The get number of pages using stream.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Nullable{Int32}"/>.
-        /// </returns>
         private async Task<int> GetNumberOfPagesUsingStream(string file)
         {
             using (var sr = new StreamReader(File.OpenRead(file)))
@@ -343,59 +324,59 @@ namespace Esynctraining.Pdf2SwfConverter
             try
             {
                 using (var proc = new Process
-            {
-                StartInfo =
                 {
-                    FileName = _settings.Pdf2SwfExecutableFilePath,
-                    Arguments = args,
-                    UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                }
-            })
-            {
-                if (proc.Start())
+                    StartInfo =
+                    {
+                        FileName = _settings.Pdf2SwfExecutableFilePath,
+                        Arguments = args,
+                        UseShellExecute = false,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                    }
+                })
                 {
-                    string result = proc.StandardOutput.ReadToEnd();
-                    await proc.WaitForExitAsync();
-
-                    _logger.LogInformation("Converter message:" + result);
-                    proc.Close();
-
-
-                    if (!status.RenderEverythingAsBitmap
-                        && result.Contains("This file is too complex to render- SWF only supports 65536 shapes at once")
-                    )
+                    if (proc.Start())
                     {
-                        status.RenderEverythingAsBitmap = true;
-                        return await Convert(initialArgs, filePath, status);
-                    }
+                        string result = proc.StandardOutput.ReadToEnd();
+                        await proc.WaitForExitAsync();
 
-                    if (!status.OverwriteSource
-                        && result.Contains("PDF disallows copying"))
-                    {
-                        status.OverwriteSource = true;
-                        return await Convert(initialArgs, filePath, status);
-                    }
-                    else if (status.OverwriteSource)
-                    {
-                        status.OverwriteSource = false;
-                    }
+                        _logger.LogInformation("Converter message:" + result);
+                        proc.Close();
 
-                    if (checkResultAfterConversion != null)
-                    {
-                        return checkResultAfterConversion(ConversionState.Converted);
-                    }
 
-                    status.State = ConversionState.Converted;
+                        if (!status.RenderEverythingAsBitmap
+                            && result.Contains("This file is too complex to render- SWF only supports 65536 shapes at once")
+                        )
+                        {
+                            status.RenderEverythingAsBitmap = true;
+                            return await Convert(initialArgs, filePath, status);
+                        }
+
+                        if (!status.OverwriteSource
+                            && result.Contains("PDF disallows copying"))
+                        {
+                            status.OverwriteSource = true;
+                            return await Convert(initialArgs, filePath, status);
+                        }
+                        else if (status.OverwriteSource)
+                        {
+                            status.OverwriteSource = false;
+                        }
+
+                        if (checkResultAfterConversion != null)
+                        {
+                            return checkResultAfterConversion(ConversionState.Converted);
+                        }
+
+                        status.State = ConversionState.Converted;
+                    }
+                    else
+                    {
+                        _logger.LogError($"Starting the conversion tool process failed {_settings.Pdf2SwfExecutableFilePath} {args}");
+                        status.State = ConversionState.ConversionFailed;
+                    }
                 }
-                else
-                {
-                    _logger.LogError($"Starting the conversion tool process failed {_settings.Pdf2SwfExecutableFilePath} {args}");
-                    status.State = ConversionState.ConversionFailed;
-                }
-            }
             }
             catch (Exception e)
             {
@@ -439,4 +420,5 @@ namespace Esynctraining.Pdf2SwfConverter
         #endregion
 
     }
+
 }

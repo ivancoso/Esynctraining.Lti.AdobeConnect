@@ -1,40 +1,21 @@
 ﻿namespace Esynctraining.PdfProcessor
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using Esynctraining.PdfProcessor.Actions;
 
-    /// <summary>
-    /// The PDF processor.
-    /// </summary>
     public class PdfProcessor
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PdfProcessor"/> class.
-        /// </summary>
-        /// <param name="actions">
-        /// The actions.
-        /// </param>
-        public PdfProcessor(IList<IPdfAction> actions)
-        {
-            this.Actions = actions;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets the actions.
-        /// </summary>
         protected IList<IPdfAction> Actions { get; set; }
 
-        #endregion
 
-        #region Public Methods and Operators
+        public PdfProcessor(IList<IPdfAction> actions)
+        {
+            Actions = actions ?? throw new ArgumentNullException(nameof(actions));
+        }
+
 
         /// <summary>
         /// Executes list of actions for certain page.
@@ -50,6 +31,6 @@
             return this.Actions.Aggregate(false, (current, pdfAction) => current | pdfAction.Execute(page));
         }
 
-        #endregion
     }
+
 }

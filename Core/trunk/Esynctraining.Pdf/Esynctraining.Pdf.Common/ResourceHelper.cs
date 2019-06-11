@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Esynctraining.Pdf.Common
 {
-    public class ResourceHelper
+    public static class ResourceHelper
     {
         /// <summary>
         /// The flush resource to file.
@@ -35,5 +30,7 @@ namespace Esynctraining.Pdf.Common
                 }
             }
         }
+
     }
+
 }

@@ -7,5 +7,7 @@
         public string Pdf2SwfExecutableFilePath { get; set; }
 
         public string SwfToolsCommandPattern { get; set; } = @" ""{pdfFile}"" -o ""{swfFile}"" -f -T 9 -t -s storeallcharacters";
+
     }
+
 }

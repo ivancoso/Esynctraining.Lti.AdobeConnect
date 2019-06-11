@@ -1,28 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Esynctraining.Pdf.Common;
+using Esynctraining.PdfProcessor.Actions;
+using Esynctraining.PdfProcessor.Actions.Filters;
+using Esynctraining.PdfProcessor.Renders;
+using iTextSharp.text.pdf;
 
 namespace Esynctraining.PdfProcessor
 {
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-
-    using Esynctraining.PdfProcessor.Actions;
-    using Esynctraining.PdfProcessor.Actions.Filters;
-    using Esynctraining.PdfProcessor.Renders;
-
-    using iTextSharp.text.pdf;
-
-    /// <summary>
-    /// The PDF processor helper.
-    /// </summary>
     public class PdfProcessorHelper
     {
         private const string Resources = "Esynctraining.PdfProcessor.Resources.";
 
-        private PdfProcessorSettings _settings;
+        private readonly PdfProcessorSettings _settings;
+
 
         public static (string GhostScriptDllPath, Version GhostScriptVersion) SetupGhostScriptFromEmbeddedResources(string workingDir = null)
         {
@@ -327,18 +322,20 @@ namespace Esynctraining.PdfProcessor
             return new GsNetPdfRender(inBuffer, 150, _settings.GhostScriptVersion, _settings.GhostScriptDllPath,_settings.GhostScriptLibPath);
         }
 
-        private GsNetPdfRender CreateGsNetPdfRender(string inFile, int resolution)
-        {
-            if (_settings.SearchForGhosts)
-            {
-                //this will search the registry for system installed GhostScript
-                return new GsNetPdfRender(inFile, resolution);
-            }
+        //private GsNetPdfRender CreateGsNetPdfRender(string inFile, int resolution)
+        //{
+        //    if (_settings.SearchForGhosts)
+        //    {
+        //        //this will search the registry for system installed GhostScript
+        //        return new GsNetPdfRender(inFile, resolution);
+        //    }
 
-            //this way we are pointing the wrapper to the dll 
-            return new GsNetPdfRender(inFile, 150, _settings.GhostScriptVersion, _settings.GhostScriptDllPath,
-                _settings.GhostScriptLibPath);
+        //    //this way we are pointing the wrapper to the dll 
+        //    return new GsNetPdfRender(inFile, 150, _settings.GhostScriptVersion, _settings.GhostScriptDllPath,
+        //        _settings.GhostScriptLibPath);
 
-        }
+        //}
+
     }
+
 }

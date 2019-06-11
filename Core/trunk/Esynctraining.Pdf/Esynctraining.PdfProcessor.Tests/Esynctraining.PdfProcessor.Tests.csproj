@@ -64,12 +64,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Esynctraining.PdfProcessor\Esynctraining.PdfProcessor.csproj">
-      <Project>{52F607BB-AB4F-4FE5-8CAB-89F423AF6E8F}</Project>
-      <Name>Esynctraining.PdfProcessor</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

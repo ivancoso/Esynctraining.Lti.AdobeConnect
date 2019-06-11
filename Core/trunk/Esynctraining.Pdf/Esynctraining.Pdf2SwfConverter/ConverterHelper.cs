@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Esynctraining.Pdf.Common;
-using Esynctraining.PdfProcessor;
 
 namespace Esynctraining.Pdf2SwfConverter
 {
-    public class ConverterHelper
+    public static class ConverterHelper
     {
         private const string Resources = "Esynctraining.Pdf2SwfConverter.Resources.";
 
@@ -27,5 +21,7 @@ namespace Esynctraining.Pdf2SwfConverter
 
             return pdf2SwfToolPath;
         }
+
     }
+
 }
