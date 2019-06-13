@@ -31,6 +31,7 @@ namespace Esynctraining.Pdf2SwfConverter
                     if (value != null && value.Contains("{pageNumber}"))
                     {
                         _pagedSwf = value;
+                        return;
                     }
 
                     throw new ArgumentOutOfRangeException("value", "Paged naming convention should contain {pageNumber} bit");
