@@ -171,9 +171,8 @@ namespace Esynctraining.AC.Provider
             // act: "event-register"
             StatusInfo status;
 
-            var requestString = string.IsNullOrWhiteSpace(form.Password)
-                ? $"sco-id={form.ScoId}&login={UrlEncode(form.Email)}&first-name={form.FirstName}&last-name={form.LastName}"
-                : $"sco-id={form.ScoId}&login={UrlEncode(form.Email)}&password={form.Password}&password-verify={form.VerifyPassword}&first-name={form.FirstName}&last-name={form.LastName}";
+            var requestString = 
+                $"sco-id={form.ScoId}&login={UrlEncode(form.Login)}&password={form.Password}&password-verify={form.VerifyPassword}&first-name={form.FirstName}&last-name={form.LastName}&email={UrlEncode(form.Email)}";
 
             if (form.AdditionalFields.Values.Any())
             {
