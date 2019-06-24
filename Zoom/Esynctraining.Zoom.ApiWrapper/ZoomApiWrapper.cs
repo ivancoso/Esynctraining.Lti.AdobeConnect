@@ -34,6 +34,9 @@ namespace Esynctraining.Zoom.ApiWrapper
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
                 return restResponse.Data;
 
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
+                return null;
+
             throw new ZoomApiException
             {
                 Content = restResponse.Content,
