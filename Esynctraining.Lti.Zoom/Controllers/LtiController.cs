@@ -76,40 +76,10 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
             if (dbMeeting == null)
                 return NotFound(meetingId);
-            UserInfoDto zoomUser = null;
-            //string userId;
-            try
-            {
-                zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
-                if (zoomUser.Status != ZoomUserStatus.Active)
-                {
-                    ViewBag.Message =
-                        "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
-                    return this.View("~/Views/Lti/LtiError.cshtml");
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to zoom account of license {param.oauth_consumer_key}", e);
 
-                try
-                {
-                    var userInfo = await _userService.CreateUser(new CreateUserDto
-                    {
-                        Email = param.lis_person_contact_email_primary,
-                        FirstName = param.PersonNameGiven,
-                        LastName = param.PersonNameFamily
-                    });
-                }
-                catch (ZoomApiException ex)
-                {
-                    Logger.Error(
-                        $"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}",
-                        ex);
-                }
-
-                ViewBag.Message =
-                    "The invitation to Zoom account was sent to your email. Please check your email and try to log in to LMS again.";
+            UserInfoDto zoomUser = await TryGetZoomUser(param);
+            if (zoomUser == null)
+            {
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
 
@@ -142,29 +112,15 @@ namespace Esynctraining.Lti.Zoom.Controllers
         public virtual async Task<ActionResult<JoinLinkParamDto>> JoinMeetingMobile(int meetingId, string session)
         {
             var userSession = await GetSession(session);
-            //var license = await _licenseService.GetLicense(userSession.LicenseKey);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(userSession.SessionData);
             var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
 
             if (dbMeeting == null)
                 return NotFound(meetingId);
-            UserInfoDto zoomUser = null;
-            //string userId;
-            try
-            {
-                zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account", e);
 
-                var userInfo = await _userService.CreateUser(new CreateUserDto
-                {
-                    Email = param.lis_person_contact_email_primary,
-                    FirstName = param.PersonNameGiven,
-                    LastName = param.PersonNameFamily
-                });
-
+            UserInfoDto zoomUser = await TryGetZoomUser(param);
+            if (zoomUser == null)
+            {
                 return Content(
                     "User either in 'pending' or 'inactive' status. Please check your email or contact Administrator and try again.");
             }
@@ -189,41 +145,11 @@ namespace Esynctraining.Lti.Zoom.Controllers
             {
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-                try
+                if ((await TryGetZoomUser(param)) == null )
                 {
-                    var zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
-                    if (zoomUser.Status != ZoomUserStatus.Active)
-                    {
-                        ViewBag.Message =
-                            "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
-                        return this.View("~/Views/Lti/LtiError.cshtml");
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Error($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to zoom account of license {param.oauth_consumer_key}", e);
-
-                    try
-                    {
-                        var userInfo = await _userService.CreateUser(new CreateUserDto
-                        {
-                            Email = param.lis_person_contact_email_primary,
-                            FirstName = param.PersonNameGiven,
-                            LastName = param.PersonNameFamily
-                        });
-                    }
-                    catch (ZoomApiException ex)
-                    {
-                        Logger.Error(
-                            $"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}",
-                            ex);
-                    }
-
-                    ViewBag.Message =
-                        "The invitation to Zoom account was sent to your email. Please check your email and try to log in to LMS again.";
                     return this.View("~/Views/Lti/LtiError.cshtml");
                 }
-                
+
                 var model = await BuildModelAsync(s);
                 return View("Index", model);
             }
@@ -644,5 +570,42 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return !string.IsNullOrWhiteSpace(teacherRoles) && teacherRoles.Split(',')
                        .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
+
+        private async Task<UserInfoDto> TryGetZoomUser(LtiParamDTO param)
+        {
+            try
+            {
+                var zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
+
+                if (zoomUser == null)
+                {
+                    Logger.Info($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to zoom account of license {param.oauth_consumer_key}");
+                    var userInfo = await _userService.CreateUser(new CreateUserDto
+                    {
+                        Email = param.lis_person_contact_email_primary,
+                        FirstName = param.PersonNameGiven,
+                        LastName = param.PersonNameFamily
+                    });
+
+                    ViewBag.Message = "The invitation to Zoom account was sent to your email. Please check your email and try to log in to LMS again.";
+                    return null;
+                }
+
+                if (zoomUser.Status != ZoomUserStatus.Active)
+                {
+                    ViewBag.Message = "Your account is either in 'pending' or 'inactive' status. Check email for registration link or contact your Zoom account manager.";
+                    return null;
+                }
+
+                return zoomUser;
+            }
+            catch (ZoomApiException ex)
+            {
+                Logger.Error($"[ZoomApiException] Status:{ex.StatusDescription}, Content:{ex.Content}, ErrorMessage: {ex.ErrorMessage}", ex);
+                ViewBag.Message = "Somethings happens. Connect to administrators.";
+                return null;
+            }
+        }
+
     }
 }
