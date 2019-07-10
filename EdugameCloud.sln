@@ -84,6 +84,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Desir
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.Lti.Lms.Sakai", "Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Sakai\Esynctraining.Lti.Lms.Sakai.csproj", "{0D722D8D-D9C6-4E4D-ADF1-B6EE8DF034F5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdugameCloud.Lti.SearchApi.Host", "EdugameCloud.Lti.SearchApi.Host\EdugameCloud.Lti.SearchApi.Host.csproj", "{977EF823-49C4-49EF-B774-15710C1BE3FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -335,6 +337,14 @@ Global
 		{0D722D8D-D9C6-4E4D-ADF1-B6EE8DF034F5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0D722D8D-D9C6-4E4D-ADF1-B6EE8DF034F5}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{0D722D8D-D9C6-4E4D-ADF1-B6EE8DF034F5}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
+		{977EF823-49C4-49EF-B774-15710C1BE3FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{977EF823-49C4-49EF-B774-15710C1BE3FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{977EF823-49C4-49EF-B774-15710C1BE3FA}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{977EF823-49C4-49EF-B774-15710C1BE3FA}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{977EF823-49C4-49EF-B774-15710C1BE3FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{977EF823-49C4-49EF-B774-15710C1BE3FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{977EF823-49C4-49EF-B774-15710C1BE3FA}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{977EF823-49C4-49EF-B774-15710C1BE3FA}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
