@@ -7,6 +7,7 @@
         public string ScoId { get; set; }
         public int CompanyLmsId { get; set; }
         public int LmsMeetingTypeId { get; set; }
+        public int? OfficeHoursId { get; set; }
         public MeetingNameInfoDto MeetingNameInfo { get; set; }
     }
 }

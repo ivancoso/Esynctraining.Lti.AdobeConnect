@@ -36,6 +36,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Controllers
                 CompanyLmsId = cm.CompanyLmsId,
                 CourseId = cm.CourseId,
                 ScoId = cm.ScoId,
+                OfficeHoursId = cm.OfficeHoursId,
                 MeetingNameInfo = _jsonDeserializer.JsonDeserialize<MeetingNameInfoDto>(cm.MeetingNameJson)
             });
 
@@ -47,7 +48,20 @@ namespace EdugameClaud.Lti.SearchApi.Host.Controllers
             resultIds.AddRange(foundMeetingsIds);
             resultIds = resultIds.Distinct().ToList();
 
-            IEnumerable<MeetingDto> result = lmsCourseMeetingDtos.Where(r => resultIds.Contains(r.LmsCourseMeetingId)).Select(
+            IEnumerable<LmsCourseMeetingDto> filtredMeetings = lmsCourseMeetingDtos.Where(r => resultIds.Contains(r.LmsCourseMeetingId)).ToList();
+
+            IEnumerable<int> OfficeHoursMeetingIds = filtredMeetings.Where(m => m.ScoId == null && m.OfficeHoursId.HasValue).Select(s => s.OfficeHoursId.Value);
+            if (OfficeHoursMeetingIds.Any())
+            {
+                var officeHours = _dbContext.OfficeHours.Where(oh => OfficeHoursMeetingIds.Contains(oh.OfficeHoursId));
+                foreach(var officeHour in officeHours)
+                {
+                    var meeting = filtredMeetings.Single(m => m.OfficeHoursId == officeHour.OfficeHoursId);
+                    meeting.ScoId = officeHour.ScoId;
+                }
+            }
+
+            IEnumerable<MeetingDto> result = filtredMeetings.Select(
                 f => new MeetingDto
                 {
                     MeetingScoId = f.ScoId,
