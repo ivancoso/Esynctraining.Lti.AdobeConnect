@@ -554,7 +554,7 @@ namespace EdugameCloud.Lti.Domain.Entities
                     {
                         result.Add(LmsUserSettingNames.Token,
                             preferUserSettings ? userParameters.LmsUser.Token : AdminUser?.Token);
-                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course.ToString());
+                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course);
                     }
                     else
                     {
@@ -601,7 +601,7 @@ namespace EdugameCloud.Lti.Domain.Entities
                     if (userParameters != null)
                     {
                         result.Add(LmsUserSettingNames.Token, userParameters.Wstoken);//todo: separate setting?
-                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course.ToString());
+                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course);
                         result.Add(LmsUserSettingNames.CourseName, userParameters.CourseName);
                     }
                     
@@ -637,7 +637,7 @@ namespace EdugameCloud.Lti.Domain.Entities
                     }
                     if (userParameters != null)
                     {
-                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course.ToString());
+                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course);
                         result.Add(LmsUserSettingNames.SessionId, userParameters.Id);
                     }
                     break;
@@ -663,7 +663,7 @@ namespace EdugameCloud.Lti.Domain.Entities
                     }
                     if (userParameters != null)
                     {
-                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course.ToString());
+                        result.Add(LmsUserSettingNames.CourseId, userParameters.Course);
                         result.Add(LmsUserSettingNames.CourseName, userParameters.CourseName);
                         result.Add(LmsUserSettingNames.SessionId, userParameters.Id);
                         result.Add(LmsUserSettingNames.UserId, userParameters.LmsUser.UserId);

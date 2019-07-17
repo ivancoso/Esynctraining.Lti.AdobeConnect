@@ -107,7 +107,7 @@ namespace EdugameCloud.WCFService.Converters
                         new
                         {
                             surveyId = s.Key,
-                            courseId = surveyResult.Survey.SubModuleItem.SubModuleCategory.LmsCourseId ?? 0,
+                            courseId = surveyResult.Survey.SubModuleItem.SubModuleCategory.LmsCourseId,
                             usersResults =
                         s.GroupBy(u => new { u.userId, u.startTime })
                         .Select(

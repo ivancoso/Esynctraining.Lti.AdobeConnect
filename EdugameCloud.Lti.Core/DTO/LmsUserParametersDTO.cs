@@ -49,7 +49,7 @@
         public string AcId { get; set; }
 
         [DataMember(Name = "course")]
-        public int Course { get; set; }
+        public string Course { get; set; }
 
         [DataMember(Name = "domain")]
         public string Domain { get; set; }

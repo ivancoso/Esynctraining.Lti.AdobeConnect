@@ -15,6 +15,6 @@ namespace Esynctraining.Lti.Lms.Common.API.Canvas
         Task<bool> IsTokenExpired(string api, string userToken);
 
         Task<LmsUserDTO> GetUser(string api, string userToken, string userId);
-        Task<AnnouncementDTO> CreateAnnouncement(string api, string userToken, int courseId, string title, string message);
+        Task<AnnouncementDTO> CreateAnnouncement(string api, string userToken, string courseId, string title, string message);
     }
 }

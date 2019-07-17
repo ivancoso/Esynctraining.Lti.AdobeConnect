@@ -16,7 +16,7 @@
         /// <summary>
         /// Gets or sets the course.
         /// </summary>
-        public virtual int Course { get; set; }
+        public virtual string Course { get; set; }
 
         /// <summary>
         /// Gets or sets the LMS user.

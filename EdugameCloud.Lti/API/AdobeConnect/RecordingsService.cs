@@ -39,7 +39,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
 
         public PagedResult<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
-            int courseId, 
+            string courseId, 
             int id,
             Func<IRoomTypeFactory> getRoomTypeFactory,
             string sortBy,
@@ -78,7 +78,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             ProcessPublishedFlag(lmsCompany, meeting, result);
 
-            result = applyAdditionalFilter(result);
+            //ACLTI-2101 possible solution
+            //if (meeting.LmsMeetingType != (int)LmsMeetingType.StudyGroup)
+            //{
+            //    result = applyAdditionalFilter(result);
+            //}
 
             var total = result.Count();
 
@@ -308,7 +312,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public OperationResult EditRecording(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
-            int courseId,
+            string courseId,
             string recordingId,
             int id,
             string name, 
@@ -352,7 +356,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public OperationResult RemoveRecording(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
-            int courseId,
+            string courseId,
             string recordingId,
             int id)
         {

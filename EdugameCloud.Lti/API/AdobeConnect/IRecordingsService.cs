@@ -13,7 +13,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     {
         PagedResult<IRecordingDto> GetRecordings(ILmsLicense lmsCompany, 
             Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
-            int courseId, 
+            string courseId, 
             int id,
             Func<IRoomTypeFactory> getRoomTypeFactory,
             string sortBy,
@@ -34,7 +34,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         OperationResult EditRecording(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
-            int courseId,
+            string courseId,
             string recordingId,
             int id,
             string name,
@@ -43,7 +43,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         OperationResult RemoveRecording(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
-            int courseId,
+            string courseId,
             string recordingId,
             int id);
 

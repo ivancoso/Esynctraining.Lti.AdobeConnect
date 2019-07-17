@@ -198,6 +198,12 @@ namespace EdugameCloud.Lti.Controllers
                                 if (param.lms_user_login == "$Canvas.user.loginId")
                                     throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
                             }
+                            //ACLTI-2120
+                            if(!result.ExtraData.ContainsKey("accesstoken"))
+                            {
+                                Logger.Warn($"[Canvas AuthCallback] {JsonSerializer.JsonSerialize(result)}");
+                                throw new InvalidOperationException("Unexpected error happened during authorization.");
+                            }
 
                             return await AuthCallbackSave(session, provider,
                                 result.ExtraData.ContainsKey("accesstoken")

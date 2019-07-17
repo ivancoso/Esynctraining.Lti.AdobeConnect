@@ -116,7 +116,7 @@
             The <see cref="T:NHibernate.IFutureValue`1"/>.
             </returns>
         </member>
-        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(System.String,System.Int32,System.Int32)">
+        <member name="M:EdugameCloud.Lti.Core.Business.Models.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(System.String,System.String,System.Int32)">
             <summary>
             The get one by AC id course id and LMS user id.
             </summary>

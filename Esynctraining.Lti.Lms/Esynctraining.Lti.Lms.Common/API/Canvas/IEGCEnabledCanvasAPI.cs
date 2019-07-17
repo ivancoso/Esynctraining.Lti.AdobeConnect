@@ -11,13 +11,13 @@ namespace Esynctraining.Lti.Lms.Common.API.Canvas
         Task<List<LmsUserDTO>> GetUsersForCourse(string domain, string courseid, Dictionary<string, object> licenseSettings);
 
         //sections
-        Task<List<LmsCourseSectionDTO>> GetCourseSections(string domain, string userToken, int courseId);
+        Task<List<LmsCourseSectionDTO>> GetCourseSections(string domain, string userToken, string courseId);
 
         //quizzes
         Task<CanvasQuizSubmissionDTO> CreateQuizSubmission(
             string api,
             string userToken,
-            int courseid,
+            string courseid,
             int quizid);
 
         Task AnswerQuestionsForQuiz(string api, string userToken, CanvasQuizSubmissionDTO submission);
@@ -25,7 +25,7 @@ namespace Esynctraining.Lti.Lms.Common.API.Canvas
         Task CompleteQuizSubmission(
             string api,
             string userToken,
-            int courseid,
+            string courseid,
             CanvasQuizSubmissionDTO submission);
 
         //calendar

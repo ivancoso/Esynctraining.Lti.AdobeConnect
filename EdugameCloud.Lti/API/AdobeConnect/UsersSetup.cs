@@ -174,7 +174,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public async Task<Tuple<List<LmsUserDTO>, string>> GetLMSUsers(
             ILmsLicense lmsLicense, 
             LmsCourseMeeting meeting, 
-            int courseId,
+            string courseId,
             ILtiUserListParam extraData)
         {
             if (lmsLicense.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null
@@ -264,7 +264,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public async Task<Tuple<IList<LmsUserDTO>, string>> GetUsers(
             ILmsLicense lmsCompany,
             IAdobeConnectProxy provider,
-            int courseId,
+            string courseId,
             ILtiUserListParam param, 
             long id, 
             List<LmsUserDTO> users = null)
@@ -886,7 +886,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCourseMeeting meeting,
             IAdobeConnectProxy provider, 
             string lmsUserId, 
-            int courseId, 
+            string courseId, 
             string meetingScoId,
             List<LmsUserDTO> users,
             object extraData = null)

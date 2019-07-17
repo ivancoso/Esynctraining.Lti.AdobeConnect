@@ -74,7 +74,7 @@ namespace EdugameCloud.Lti.Api.Controllers
 
         public ILmsLicense LmsCompany { get; set; }
 
-        public int CourseId { get; set; }
+        public string CourseId { get; set; }
 
         private MeetingSetup MeetingSetup => IoC.Resolve<MeetingSetup>();
 

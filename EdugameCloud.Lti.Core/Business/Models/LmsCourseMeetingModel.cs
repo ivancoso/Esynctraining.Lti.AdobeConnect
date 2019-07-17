@@ -1,17 +1,17 @@
-﻿namespace EdugameCloud.Lti.Core.Business.Models
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using EdugameCloud.Lti.Domain.Entities;
-    using Esynctraining.NHibernate;
-    using Esynctraining.NHibernate.Queries;
-    using NHibernate;
-    using NHibernate.Criterion;
-    using NHibernate.Linq;
-    using NHibernate.SqlCommand;
-    using NHibernate.Transform;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.NHibernate;
+using Esynctraining.NHibernate.Queries;
+using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Linq;
+using NHibernate.SqlCommand;
+using NHibernate.Transform;
 
+namespace EdugameCloud.Lti.Core.Business.Models
+{
     /// <summary>
     /// The LMS course meeting model.
     /// </summary>
@@ -32,12 +32,12 @@
 
         #endregion
         
-        public LmsCourseMeeting GetOneByCourseAndId(int companyLmsId, int courseId, long id)
+        public LmsCourseMeeting GetOneByCourseAndId(int companyLmsId, string courseId, long id)
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException(nameof(companyLmsId));
-            if (courseId == 0)
-                throw new ArgumentOutOfRangeException(nameof(courseId));
+            if (string.IsNullOrEmpty(courseId))
+                throw new ArgumentException(nameof(courseId));
             if (id <= 0)
                 throw new ArgumentOutOfRangeException(nameof(id));
 
@@ -217,12 +217,12 @@
         //    return this.Repository.FindOne(defaultQuery);
         //}
 
-        public IEnumerable<LmsCourseMeeting> GetAllByCourseId(int companyLmsId, int courseId)
+        public IEnumerable<LmsCourseMeeting> GetAllByCourseId(int companyLmsId, string courseId)
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException(nameof(companyLmsId));
-            if (courseId == 0)
-                throw new ArgumentOutOfRangeException(nameof(courseId));
+            if (string.IsNullOrEmpty(courseId))
+                throw new ArgumentException(nameof(courseId));
 
             int seminars = (int)LmsMeetingType.Seminar;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
@@ -230,12 +230,12 @@
             return this.Repository.FindAll(defaultQuery);
         }
 
-        public IEnumerable<LmsCourseMeeting> GetSeminarsByCourseId(int companyLmsId, int courseId)
+        public IEnumerable<LmsCourseMeeting> GetSeminarsByCourseId(int companyLmsId, string courseId)
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException(nameof(companyLmsId));
-            if (courseId == 0)
-                throw new ArgumentOutOfRangeException(nameof(courseId));
+            if (string.IsNullOrEmpty(courseId))
+                throw new ArgumentException(nameof(courseId));
 
             int seminars = (int)LmsMeetingType.Seminar;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()

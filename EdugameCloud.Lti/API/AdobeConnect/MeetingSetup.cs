@@ -191,7 +191,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Error(result.InnerXml);
         }
 
-        public async Task<IEnumerable<MeetingDTO>> GetMeetingsAsync(ILmsLicense lmsLicense, int courseId, IAdobeConnectProxy provider,
+        public async Task<IEnumerable<MeetingDTO>> GetMeetingsAsync(ILmsLicense lmsLicense, string courseId, IAdobeConnectProxy provider,
             LmsUser lmsUser, LtiParamDTO param, StringBuilder trace)
         {
             if (lmsLicense == null)
@@ -1541,7 +1541,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //}
 
         private void SaveLMSUserParameters(
-            int lmsCourseId,
+            string lmsCourseId,
             LmsCompany lmsLicense,
             string lmsUserId,
             string adobeConnectUserId,
@@ -1908,7 +1908,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public LmsCourseMeeting GetCourseMeeting(ILmsLicense lmsLicense, int courseId, long id, LmsMeetingType type)
+        public LmsCourseMeeting GetCourseMeeting(ILmsLicense lmsLicense, string courseId, long id, LmsMeetingType type)
         {
             LmsCourseMeeting meeting = null;
 

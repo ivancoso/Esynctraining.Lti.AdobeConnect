@@ -71,7 +71,7 @@ namespace EdugameCloud.Lti.API
             List<LmsUser> users = lmsCompany.LmsUsers.ToList();//meetingIds == null ? lmsCompany.LmsUsers.ToList() : null;
 
             object localLockObject = new object();
-            Dictionary<int, IEnumerable<LmsUserDTO>> licenseUsers = new Dictionary<int, IEnumerable<LmsUserDTO>>();
+            Dictionary<string, IEnumerable<LmsUserDTO>> licenseUsers = new Dictionary<string, IEnumerable<LmsUserDTO>>();
 //            var input = meetings.Select(x => new Tuple<LmsCourseMeeting, string>(x, x.GetMeetingScoId())).ToList();
             var timer = Stopwatch.StartNew();
 //synchronous version
@@ -81,7 +81,7 @@ namespace EdugameCloud.Lti.API
                 foreach (var groupedMeeting in groupedMeetings)
                 {
                     var courseId = groupedMeeting.Key;
-                    var opResult = await service.GetUsers(lmsCompany.GetLMSSettings(_settings), courseId.ToString());
+                    var opResult = await service.GetUsers(lmsCompany.GetLMSSettings(_settings), courseId);
                     if (opResult.IsSuccess)
                     {
                         licenseUsers.Add(courseId, opResult.Data);

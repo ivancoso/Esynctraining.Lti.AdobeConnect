@@ -57,7 +57,7 @@
         /// <returns>
         /// The <see cref="IFutureValue{LmsUserParameters}"/>.
         /// </returns>
-        public IFutureValue<LmsUserParameters> GetOneByAcIdCourseIdAndCompanyLmsId(string adobeConnectUserId, int lmsCourseId, int companyLmsId)
+        public IFutureValue<LmsUserParameters> GetOneByAcIdCourseIdAndCompanyLmsId(string adobeConnectUserId, string lmsCourseId, int companyLmsId)
         {
             var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver()
                 .Where(x => x.AcId == adobeConnectUserId && x.Course == lmsCourseId && x.CompanyLms.Id == companyLmsId).Take(1);

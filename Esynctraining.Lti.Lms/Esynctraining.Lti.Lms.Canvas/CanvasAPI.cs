@@ -206,7 +206,7 @@ namespace Esynctraining.Lti.Lms.Canvas
         public async Task<AnnouncementDTO> CreateAnnouncement(
             string api,
             string userToken,
-            int courseId,
+            string courseId,
             string title,
             string message)
         {

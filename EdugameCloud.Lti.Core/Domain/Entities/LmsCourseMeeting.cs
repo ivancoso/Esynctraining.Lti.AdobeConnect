@@ -13,7 +13,7 @@
 
         public virtual int LmsCompanyId { get; set; }
 
-        public virtual int CourseId { get; set; }
+        public virtual string CourseId { get; set; }
 
         public virtual string ScoId { get; set; }
 

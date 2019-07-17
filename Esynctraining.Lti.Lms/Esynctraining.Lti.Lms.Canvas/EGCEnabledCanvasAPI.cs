@@ -263,7 +263,7 @@ namespace Esynctraining.Lti.Lms.Canvas
 
         //sections
 
-        public async Task<List<LmsCourseSectionDTO>> GetCourseSections(string domain, string userToken, int courseId)
+        public async Task<List<LmsCourseSectionDTO>> GetCourseSections(string domain, string userToken, string courseId)
         {
             try
             {
@@ -550,7 +550,7 @@ namespace Esynctraining.Lti.Lms.Canvas
         }
 
         //quizzes - canvas only
-        public async Task<CanvasQuizSubmissionDTO> CreateQuizSubmission(string api, string userToken, int courseId, int quizId)
+        public async Task<CanvasQuizSubmissionDTO> CreateQuizSubmission(string api, string userToken, string courseId, int quizId)
         {
             IRestResponse<CanvasQuizSubmissionResultDTO> response;
             try
@@ -618,7 +618,7 @@ namespace Esynctraining.Lti.Lms.Canvas
             }
         }
 
-        public async Task CompleteQuizSubmission(string api, string userToken, int courseId, CanvasQuizSubmissionDTO submission)
+        public async Task CompleteQuizSubmission(string api, string userToken, string courseId, CanvasQuizSubmissionDTO submission)
         {
             IRestResponse response;
             try

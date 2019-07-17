@@ -47,7 +47,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         /// <summary>
         /// Gets the course id.
         /// </summary>
-        int course_id { get; }
+        string course_id { get; }
 
         /// <summary>
         /// Gets the context label.
@@ -117,7 +117,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         /// <summary>
         /// Gets the course id.
         /// </summary>
-        public int course_id { get; set; }
+        public string course_id { get; set; }
 
         /// <summary>
         /// Gets or sets the custom canvas API domain.
@@ -127,8 +127,8 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         /// <summary>
         /// Gets or sets the custom canvas course id.
         /// </summary>
-        public int custom_canvas_course_id { get; set; }
-        public int custom_live_course_id { get; set; }
+        public string custom_canvas_course_id { get; set; }
+        public string custom_live_course_id { get; set; }
 
         /// <summary>
         /// Gets or sets the custom canvas user id.
@@ -430,9 +430,8 @@ namespace Esynctraining.Lti.Lms.Common.Dto
 
         #region Methods
 
-        private int GetCourseFromQueryOfUrl(string url)
+        private string GetCourseFromQueryOfUrl(string url)
         {
-            int result = 0;
             try
             {
                 url = HttpUtility.UrlDecode(url) ?? string.Empty;
@@ -448,9 +447,9 @@ namespace Esynctraining.Lti.Lms.Common.Dto
                 if (courseId != null)
                 {
                     courseId = courseId.TrimStart('_').TrimEnd('1').TrimEnd('_');
-                    if (int.TryParse(courseId, out result))
+                    if (long.TryParse(courseId, out long result))
                     {
-                        return result;
+                        return courseId;
                     }
                 }
             }
@@ -459,7 +458,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
             {
             }
 
-            return result;
+            return null;
         }
         
         private string GetLmsDomain()
@@ -521,71 +520,70 @@ namespace Esynctraining.Lti.Lms.Common.Dto
             course_id = CalcCourseId();
         }
 
-        private int TryParseBlackBoardCourseId()
+        private string TryParseBlackBoardCourseId()
         {
-            int result = 0;
+            string result = null;
             if (tool_consumer_info_product_family_code != null &&
                 tool_consumer_info_product_family_code.ToLowerInvariant().Contains("blackboard"))
             {
-                result = this.GetCourseFromQueryOfUrl(this.launch_presentation_return_url);
-                if (result == 0)
+                result = GetCourseFromQueryOfUrl(launch_presentation_return_url);
+                if (result == null)
                 {
-                    result = this.GetCourseFromQueryOfUrl(this.referer);
+                    result = GetCourseFromQueryOfUrl(referer);
                 }
             }
 
             return result;
         }
         
-        private int TryGetSakaiCourseIdHash()
+        private string TryGetSakaiCourseIdHash()
         {
             int result = 0;
             var code = tool_consumer_info_product_family_code;
             if (code != null && (code.ToLowerInvariant().Contains("sakai") || code.ToLowerInvariant().Contains("imsglc")))
             {
                 Guid guid;
-                if (Guid.TryParse(this.context_id, out guid))
+                if (Guid.TryParse(context_id, out guid))
                 {
                     result = guid.GetHashCode();
                 }
                 else
                 {
                     // TRICK: UNIR's Sakai returns non-guid values here
-                    return this.context_id.GetHashCode();
+                    return context_id.GetHashCode().ToString();
                 }
             }
 
-            return result;
+            return result.ToString();
         }
 
-        public int CalcCourseId()
+        public string CalcCourseId()
         {
             if (tool_consumer_info_product_family_code != null &&
                 tool_consumer_info_product_family_code.ToLowerInvariant().Contains("haiku"))
             {
                 var contextId = Regex.Match(this.context_id, @"\d+").Value;
 
-                return int.Parse(contextId);
+                return contextId;
             }
 
-            if (this.custom_canvas_course_id != 0)
+            if (custom_canvas_course_id != null)
             {
-                return this.custom_canvas_course_id;
+                return custom_canvas_course_id;
             }
 
-            if (custom_live_course_id != 0)
+            if (custom_live_course_id != null)
             {
                 return custom_live_course_id;
             }
 
-            int courseId;
-            if (int.TryParse(this.context_id, out courseId))
+            if (long.TryParse(context_id, out long courseIdParse))
             {
-                return courseId;
+                return context_id;
             }
 
-            courseId = this.TryParseBlackBoardCourseId();
-            return courseId != 0 ? courseId : this.TryGetSakaiCourseIdHash();
+            var courseId = TryParseBlackBoardCourseId();
+            return courseId != null ? courseId : TryGetSakaiCourseIdHash();
         }
 
         #endregion

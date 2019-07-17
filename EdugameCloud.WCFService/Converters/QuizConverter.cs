@@ -189,12 +189,12 @@ namespace EdugameCloud.WCFService.Converters
         private SubModuleCategory ProcessSubModuleCategory(LmsQuizDTO quiz, User user, int companyLmsId, bool isSurvey)
         {
             var subModuleCategoryModel = this.SubModuleCategoryModel;
-            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(int.Parse(quiz.course), companyLmsId).Value
+            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(quiz.course, companyLmsId).Value
                 ?? new SubModuleCategory
                 {
                     CompanyLmsId = this.LmsCompanyModel.GetOneById(companyLmsId).Value.With(x => x.Id),
                     CategoryName = quiz.courseName,
-                    LmsCourseId = int.Parse(quiz.course),
+                    LmsCourseId = quiz.course,
                     User = user,
                     DateModified = DateTime.Now,
                     IsActive = true,

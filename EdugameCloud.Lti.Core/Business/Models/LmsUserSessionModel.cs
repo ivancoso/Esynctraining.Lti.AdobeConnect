@@ -30,7 +30,7 @@
 
         #endregion
         
-        public IFutureValue<LmsUserSession> GetOneByCompanyAndUserAndCourse(int userId, int courseId)
+        public IFutureValue<LmsUserSession> GetOneByCompanyAndUserAndCourse(int userId, string courseId)
         {
             var queryOver =
                 new DefaultQueryOver<LmsUserSession, Guid>().GetQueryOver()

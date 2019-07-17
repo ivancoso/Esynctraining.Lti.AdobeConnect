@@ -191,17 +191,16 @@ namespace EdugameCloud.Lti.Api.Filters
             return Guid.Empty;
         }
 
-        private static int FetchApiCourseId(HttpRequest req)
+        private static string FetchApiCourseId(HttpRequest req)
         {
             string authHeader = req.Headers[HeaderName];
             string token = authHeader.Substring(apiAuthScheme.Length)
                     .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)[1];
 
-            int intCourseId;
-            if (int.TryParse(token, out intCourseId))
-                return intCourseId;
+            if (long.TryParse(token, out long intCourseId))
+                return token;
 
-            return SakaiCourseNumberTrick.GetHashCode(token);
+            return SakaiCourseNumberTrick.GetHashCode(token).ToString();
 
             //string ltiUrl = (IoC.Resolve<ApplicationSettingsProvider>() as dynamic).LtiHostUrl as string;
             //var url = new Uri(new Uri(new Uri(ltiUrl), "hash/"), WebUtility.UrlEncode(token));

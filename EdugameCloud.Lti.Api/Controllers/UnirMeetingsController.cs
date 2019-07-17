@@ -33,15 +33,18 @@ namespace EdugameCloud.Lti.Api.Controllers
             // TODO: calculated (Canvas=custom_canvas_course_id)
             // TODO: !!
             [IgnoreDataMember]
-            public int course_id
+            public string course_id
             {
                 get
                 {
                     if (tool_consumer_info_product_family_code == "canvas")
-                        return int.Parse(course);
+                        return course;
 
                     if (tool_consumer_info_product_family_code == "sakai")
-                        return SakaiCourseNumberTrick.GetHashCode(course);
+                    {
+                        var convertedId = SakaiCourseNumberTrick.GetHashCode(course);
+                        return convertedId.ToString();
+                    }
 
                     throw new NotSupportedException($"{tool_consumer_info_product_family_code} is not supported LMS for this API");
 
