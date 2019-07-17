@@ -151,7 +151,7 @@ namespace EdugameCloud.WCFService.Contracts
         [FaultContract(typeof(Error))]
         [WebInvoke(UriTemplate = "PublishQuiz", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        OperationResultDto PublishQuiz(int lmsUserParametersId, int courseId, int quizId);
+        OperationResultDto PublishQuiz(int lmsUserParametersId, string courseId, int quizId);
     }
 
 }

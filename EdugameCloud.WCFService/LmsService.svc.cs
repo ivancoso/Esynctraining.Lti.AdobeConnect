@@ -312,14 +312,14 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        public OperationResultDto PublishQuiz(int lmsUserParametersId, int courseId, int quizId)
+        public OperationResultDto PublishQuiz(int lmsUserParametersId, string courseId, int quizId)
         {
             var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
             if (lmsUserParameters != null)
             {
                 var lmsApi = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
 
-                lmsApi.PublishQuiz(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true), courseId.ToString(), quizId);
+                lmsApi.PublishQuiz(lmsUserParameters.CompanyLms.GetLMSSettings(Settings, lmsUserParameters, true), courseId, quizId);
 
                 return OperationResultDto.Success();
             }
