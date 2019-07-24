@@ -353,6 +353,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 // Parse and validate the request
                 Request.CheckForRequiredLtiParameters();
+
                 var sw = Stopwatch.StartNew();
 
                 LmsCompany lmsCompany =
@@ -399,6 +400,14 @@ namespace EdugameCloud.Lti.Controllers
                 if (lmsProvider.ToLower() == LmsProviderNames.Haiku)
                 {
                     param.user_id = param.user_id.TrimEnd('_');
+                }
+
+                if (lmsProvider.ToLower() == LmsProviderNames.Canvas)
+                {
+                    if (Request.Headers.HasKey("Referer"))
+                    {
+                        param.referer = Request.Headers["Referer"].ToString();
+                    }
                 }
 
                 sw = Stopwatch.StartNew();
