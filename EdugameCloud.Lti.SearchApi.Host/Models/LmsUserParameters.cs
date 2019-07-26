@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EdugameClaud.Lti.SearchApi.Host.Models
+namespace EdugameCloud.Lti.SearchApi.Host.Models
 {
     public partial class LmsUserParameters
     {
@@ -12,7 +12,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
 
         public int LmsUserParametersId { get; set; }
         public string Wstoken { get; set; }
-        public int Course { get; set; }
+        public string Course { get; set; }
         public string AcId { get; set; }
         public int? LmsUserId { get; set; }
         public int? CompanyLmsId { get; set; }

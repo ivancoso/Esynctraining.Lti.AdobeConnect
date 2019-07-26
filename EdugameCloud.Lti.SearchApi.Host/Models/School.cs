@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EdugameClaud.Lti.SearchApi.Host.Models
+namespace EdugameCloud.Lti.SearchApi.Host.Models
 {
-    public partial class WftSchool
+    public partial class School
     {
         public int SchoolId { get; set; }
         public int StateId { get; set; }
@@ -22,6 +22,6 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
         public string MktgRepresentative { get; set; }
         public string AccountName { get; set; }
 
-        //public virtual State State { get; set; }
+        public virtual State State { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EdugameClaud.Lti.SearchApi.Host.Models
+namespace EdugameCloud.Lti.SearchApi.Host.Models
 {
     public partial class QuestionType
     {

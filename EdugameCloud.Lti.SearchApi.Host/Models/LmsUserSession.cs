@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EdugameClaud.Lti.SearchApi.Host.Models
+namespace EdugameCloud.Lti.SearchApi.Host.Models
 {
     public partial class LmsUserSession
     {
@@ -11,9 +11,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
         public DateTime? DateModified { get; set; }
         public int CompanyLmsId { get; set; }
         public int? LmsUserId { get; set; }
-        public int LmsCourseId { get; set; }
-        public string ZoomAccessToken { get; set; }
-        public string ZoomRefreshToken { get; set; }
+        public string LmsCourseId { get; set; }
 
         public virtual CompanyLms CompanyLms { get; set; }
         public virtual LmsUser LmsUser { get; set; }

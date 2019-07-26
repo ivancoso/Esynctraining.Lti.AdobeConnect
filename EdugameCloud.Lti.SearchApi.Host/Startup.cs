@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using EdugameClaud.Lti.SearchApi.Host.Models;
+using EdugameCloud.Lti.SearchApi.Host.Models;
 using Esynctraining.AspNetCore.Filters;
 using Esynctraining.AspNetCore.Formatters;
 using Esynctraining.Core.Json;
@@ -81,7 +82,7 @@ namespace EdugameClaud.Lti.SearchApi.Host
 
             services.AddSingleton<Esynctraining.Core.Logging.ILogger, MicrosoftLoggerWrapper>();
             var connectionString = Configuration.GetConnectionString("Db");
-            services.AddDbContext<EduGameCloudDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<EduGameCloudContext>(options => options.UseSqlServer(connectionString));
 
         }
 

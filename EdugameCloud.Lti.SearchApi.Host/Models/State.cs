@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EdugameClaud.Lti.SearchApi.Host.Models
+namespace EdugameCloud.Lti.SearchApi.Host.Models
 {
     public partial class State
     {
         public State()
         {
             Address = new HashSet<Address>();
-            WftSchool = new HashSet<WftSchool>();
+            School = new HashSet<School>();
         }
 
         public int StateId { get; set; }
@@ -20,6 +20,6 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
         public int ZoomLevel { get; set; }
 
         public virtual ICollection<Address> Address { get; set; }
-        public virtual ICollection<WftSchool> WftSchool { get; set; }
+        public virtual ICollection<School> School { get; set; }
     }
 }

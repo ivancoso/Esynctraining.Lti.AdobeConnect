@@ -2,15 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EdugameClaud.Lti.SearchApi.Host.Models
+namespace EdugameCloud.Lti.SearchApi.Host.Models
 {
-    public partial class EduGameCloudDbContext : DbContext
+    public partial class EduGameCloudContext : DbContext
     {
-        public EduGameCloudDbContext()
+        public EduGameCloudContext()
         {
         }
 
-        public EduGameCloudDbContext(DbContextOptions<EduGameCloudDbContext> options)
+        public EduGameCloudContext(DbContextOptions<EduGameCloudContext> options)
             : base(options)
         {
         }
@@ -70,6 +70,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
         public virtual DbSet<QuizQuestionResultAnswer> QuizQuestionResultAnswer { get; set; }
         public virtual DbSet<QuizResult> QuizResult { get; set; }
         public virtual DbSet<Schedule> Schedule { get; set; }
+        public virtual DbSet<School> School { get; set; }
         public virtual DbSet<ScoreType> ScoreType { get; set; }
         public virtual DbSet<SngroupDiscussion> SngroupDiscussion { get; set; }
         public virtual DbSet<Snlink> Snlink { get; set; }
@@ -102,7 +103,6 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
         public virtual DbSet<UserLoginHistory> UserLoginHistory { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
         public virtual DbSet<Webinar> Webinar { get; set; }
-        public virtual DbSet<WftSchool> WftSchool { get; set; }
 
         // Unable to generate entity type for table 'dbo.EmailHistory'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.NewsletterSubscription'. Please see the warning messages.
@@ -114,7 +114,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=192.168.10.113;Database=EduGameCloud.Dev;User ID=sa;Password=`12345tgB;Connection Timeout=180;");
+                optionsBuilder.UseSqlServer("data source=192.168.10.103;initial catalog=EduGameCloud;persist security info=True;user id=sa;password=`12345tgB;");
             }
         }
 
@@ -511,7 +511,9 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
             {
                 entity.Property(e => e.AcEventScoId).HasMaxLength(50);
 
-                entity.Property(e => e.Guid).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.Guid)
+                    .HasColumnName("guid")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.HasOne(d => d.CompanyAcDomain)
                     .WithMany(p => p.CompanyEventQuizMapping)
@@ -873,7 +875,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
 
             modelBuilder.Entity<Distractor>(entity =>
             {
-                entity.Property(e => e.DistractorId).HasColumnName("distractorId");
+                entity.Property(e => e.DistractorId).HasColumnName("distractorID");
 
                 entity.Property(e => e.CreatedBy).HasColumnName("createdBy");
 
@@ -917,7 +919,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
 
                 entity.Property(e => e.ModifiedBy).HasColumnName("modifiedBy");
 
-                entity.Property(e => e.QuestionId).HasColumnName("questionId");
+                entity.Property(e => e.QuestionId).HasColumnName("questionID");
 
                 entity.Property(e => e.RightImageId).HasColumnName("rightImageId");
 
@@ -1178,7 +1180,10 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
 
                 entity.Property(e => e.CompanyLmsId).HasColumnName("companyLmsId");
 
-                entity.Property(e => e.CourseId).HasColumnName("courseId");
+                entity.Property(e => e.CourseId)
+                    .IsRequired()
+                    .HasColumnName("courseId")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.EnableDynamicProvisioning).HasColumnName("enableDynamicProvisioning");
 
@@ -1492,7 +1497,10 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
 
                 entity.Property(e => e.CompanyLmsId).HasColumnName("companyLmsId");
 
-                entity.Property(e => e.Course).HasColumnName("course");
+                entity.Property(e => e.Course)
+                    .IsRequired()
+                    .HasColumnName("course")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.CourseName)
                     .HasColumnName("courseName")
@@ -1540,21 +1548,16 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
                     .HasColumnName("dateModified")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.LmsCourseId).HasColumnName("lmsCourseId");
+                entity.Property(e => e.LmsCourseId)
+                    .IsRequired()
+                    .HasColumnName("lmsCourseId")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.LmsUserId).HasColumnName("lmsUserId");
 
                 entity.Property(e => e.SessionData)
                     .HasColumnName("sessionData")
                     .HasColumnType("ntext");
-
-                entity.Property(e => e.ZoomAccessToken)
-                    .HasMaxLength(512)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ZoomRefreshToken)
-                    .HasMaxLength(512)
-                    .IsUnicode(false);
 
                 entity.HasOne(d => d.CompanyLms)
                     .WithMany(p => p.LmsUserSession)
@@ -2209,6 +2212,49 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
                 entity.Property(e => e.ScheduleType).HasColumnName("scheduleType");
             });
 
+            modelBuilder.Entity<School>(entity =>
+            {
+                entity.ToTable("_School");
+
+                entity.Property(e => e.AccountName).HasMaxLength(100);
+
+                entity.Property(e => e.AdvRepresentative).HasMaxLength(200);
+
+                entity.Property(e => e.CorporateName).HasMaxLength(100);
+
+                entity.Property(e => e.Essrepresentative)
+                    .HasColumnName("ESSRepresentative")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Fax).HasMaxLength(20);
+
+                entity.Property(e => e.Fbcrepresentative)
+                    .HasColumnName("FBCRepresentative")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.FirstDirector).HasMaxLength(200);
+
+                entity.Property(e => e.MainPhone).HasMaxLength(20);
+
+                entity.Property(e => e.MktgRepresentative).HasMaxLength(200);
+
+                entity.Property(e => e.OnsiteOperator).HasMaxLength(500);
+
+                entity.Property(e => e.SchoolEmail).HasMaxLength(100);
+
+                entity.Property(e => e.SchoolNumber).HasMaxLength(20);
+
+                entity.Property(e => e.SpeedDialNumber).HasMaxLength(20);
+
+                entity.Property(e => e.StandardsRepresentative).HasMaxLength(200);
+
+                entity.HasOne(d => d.State)
+                    .WithMany(p => p.School)
+                    .HasForeignKey(d => d.StateId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__School__StateId__34A9A997");
+            });
+
             modelBuilder.Entity<ScoreType>(entity =>
             {
                 entity.Property(e => e.ScoreTypeId).HasColumnName("scoreTypeId");
@@ -2559,7 +2605,9 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
                     .HasColumnName("isActive")
                     .HasDefaultValueSql("((0))");
 
-                entity.Property(e => e.LmsCourseId).HasColumnName("lmsCourseId");
+                entity.Property(e => e.LmsCourseId)
+                    .HasColumnName("lmsCourseId")
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.LmsProviderId).HasColumnName("lmsProviderId");
 
@@ -2835,7 +2883,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
                 entity.Property(e => e.Value)
                     .IsRequired()
                     .HasColumnName("value")
-                    .HasMaxLength(500);
+                    .HasMaxLength(4000);
 
                 entity.HasOne(d => d.SurveyDistractorAnswer)
                     .WithMany(p => p.SurveyQuestionResultAnswerSurveyDistractorAnswer)
@@ -3268,52 +3316,6 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
                 entity.Property(e => e.WebinarHost)
                     .HasColumnName("webinar_host")
                     .HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<WftSchool>(entity =>
-            {
-                entity.HasKey(e => e.SchoolId)
-                    .HasName("PK_School");
-
-                entity.ToTable("_wft_School");
-
-                entity.Property(e => e.AccountName).HasMaxLength(100);
-
-                entity.Property(e => e.AdvRepresentative).HasMaxLength(200);
-
-                entity.Property(e => e.CorporateName).HasMaxLength(100);
-
-                entity.Property(e => e.Essrepresentative)
-                    .HasColumnName("ESSRepresentative")
-                    .HasMaxLength(200);
-
-                entity.Property(e => e.Fax).HasMaxLength(20);
-
-                entity.Property(e => e.Fbcrepresentative)
-                    .HasColumnName("FBCRepresentative")
-                    .HasMaxLength(200);
-
-                entity.Property(e => e.FirstDirector).HasMaxLength(200);
-
-                entity.Property(e => e.MainPhone).HasMaxLength(20);
-
-                entity.Property(e => e.MktgRepresentative).HasMaxLength(200);
-
-                entity.Property(e => e.OnsiteOperator).HasMaxLength(500);
-
-                entity.Property(e => e.SchoolEmail).HasMaxLength(100);
-
-                entity.Property(e => e.SchoolNumber).HasMaxLength(20);
-
-                entity.Property(e => e.SpeedDialNumber).HasMaxLength(20);
-
-                entity.Property(e => e.StandardsRepresentative).HasMaxLength(200);
-
-                entity.HasOne(d => d.State)
-                    .WithMany(p => p.WftSchool)
-                    .HasForeignKey(d => d.StateId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__School__StateId__674A37FD");
             });
         }
     }

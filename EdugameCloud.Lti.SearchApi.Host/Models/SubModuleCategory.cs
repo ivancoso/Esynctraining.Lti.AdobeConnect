@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EdugameClaud.Lti.SearchApi.Host.Models
+namespace EdugameCloud.Lti.SearchApi.Host.Models
 {
     public partial class SubModuleCategory
     {
@@ -17,7 +17,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
         public int? ModifiedBy { get; set; }
         public DateTime DateModified { get; set; }
         public bool? IsActive { get; set; }
-        public int? LmsCourseId { get; set; }
+        public string LmsCourseId { get; set; }
         public int? LmsProviderId { get; set; }
         public int? CompanyLmsId { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EdugameClaud.Lti.SearchApi.Host.Models
+namespace EdugameCloud.Lti.SearchApi.Host.Models
 {
     public partial class LmsCourseMeeting
     {
@@ -15,12 +15,12 @@ namespace EdugameClaud.Lti.SearchApi.Host.Models
         }
 
         public int LmsCourseMeetingId { get; set; }
-        public int CourseId { get; set; }
+        public string CourseId { get; set; }
         public string ScoId { get; set; }
         public int CompanyLmsId { get; set; }
-        public int LmsMeetingTypeId { get; set; }
         public int? OfficeHoursId { get; set; }
         public int? OwnerId { get; set; }
+        public int LmsMeetingTypeId { get; set; }
         public string MeetingNameJson { get; set; }
         public bool? Reused { get; set; }
         public int? SourceCourseMeetingId { get; set; }

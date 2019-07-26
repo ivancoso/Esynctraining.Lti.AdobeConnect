@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EdugameClaud.Lti.SearchApi.Host.DTOs;
 using EdugameClaud.Lti.SearchApi.Host.Models;
+using EdugameCloud.Lti.SearchApi.Host.Models;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Utils;
@@ -16,8 +17,8 @@ namespace EdugameClaud.Lti.SearchApi.Host.Controllers
     public class MeetingSearchController : ControllerBase
     {
         private IJsonDeserializer _jsonDeserializer = null;
-        private readonly EduGameCloudDbContext _dbContext = null;
-        public MeetingSearchController(EduGameCloudDbContext dbContext, IJsonDeserializer jsonDeserializer)
+        private readonly EduGameCloudContext _dbContext = null;
+        public MeetingSearchController(EduGameCloudContext dbContext, IJsonDeserializer jsonDeserializer)
         {
             _dbContext = dbContext;
             _jsonDeserializer = jsonDeserializer;
