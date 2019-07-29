@@ -65,6 +65,26 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
         }
 
+        public async Task<UserInfoDto> GetUser(string accountId, string idOrEmail)
+        {
+            var user = await _zoomApi.GetUser(accountId, idOrEmail);
+            return user == null
+                ? null
+                : new UserInfoDto
+                {
+                    Id = user.Id,
+                    Type = user.Type,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Verified = user.Verified == 1,
+                    Timezone = user.Timezone,
+                    Status = (ZoomUserStatus)((int)user.Status)
+                };
+
+        }
+
+
         public async Task<UserDto> CreateUser(string email, string firstName, string lastName)
         {
             return await CreateUser(new CreateUserDto()

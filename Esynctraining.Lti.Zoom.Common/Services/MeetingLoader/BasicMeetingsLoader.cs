@@ -11,8 +11,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
 {
     public class BasicMeetingsLoader : MeetingsLoader
     {
-        public BasicMeetingsLoader(ZoomDbContext dbContext, Guid licenseKey, string courseId, ZoomApiWrapper zoomApi, string currentUserId) 
-            : base(dbContext, licenseKey, courseId, zoomApi, currentUserId)
+        public BasicMeetingsLoader(ZoomDbContext dbContext, Guid licenseKey, string courseId, ZoomApiWrapper zoomApi, string currentUserId, UserInfoDto user) 
+            : base(dbContext, licenseKey, courseId, zoomApi, currentUserId, user)
         {
             CourseMeetingType = CourseMeetingType.Basic;
         }

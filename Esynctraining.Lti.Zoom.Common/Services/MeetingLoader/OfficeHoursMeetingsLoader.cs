@@ -20,7 +20,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
             string courseId, 
             ZoomApiWrapper zoomApi, 
             string currentUserId,
-            ZoomOfficeHoursService ohService) : base(dbContext, licenseKey, courseId, zoomApi, currentUserId)
+            ZoomOfficeHoursService ohService,
+            UserInfoDto user) : base(dbContext, licenseKey, courseId, zoomApi, currentUserId, user)
         {
             _ohService = ohService;
             CourseMeetingType = CourseMeetingType.OfficeHour;

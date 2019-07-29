@@ -17,16 +17,18 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
         protected readonly ZoomApiWrapper _zoomApi;
         protected readonly string _currentUserId;
         protected readonly Guid _licenseKey;
+        protected readonly UserInfoDto _user;
 
         protected CourseMeetingType CourseMeetingType { get; set; }
 
-        protected MeetingsLoader(ZoomDbContext dbContext, Guid licenseKey, string courseId, ZoomApiWrapper zoomApi, string currentUserId)
+        protected MeetingsLoader(ZoomDbContext dbContext, Guid licenseKey, string courseId, ZoomApiWrapper zoomApi, string currentUserId, UserInfoDto user)
         {
             _dbContext = dbContext;
             _licenseKey = licenseKey;
             _courseId = courseId;
             _zoomApi = zoomApi;
             _currentUserId = currentUserId;
+            _user = user;
         }
 
         public async Task<IEnumerable<MeetingViewModel>> Load()
@@ -54,6 +56,12 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
             foreach (var notHandledId in notHandledMeetings)
             {
                 var meetingDetailResult = await _zoomApi.GetMeeting(notHandledId);
+
+                if (!meetingDetailResult.IsSuccess && !string.IsNullOrEmpty(_user.SubAccountid))
+                {
+                    meetingDetailResult = await _zoomApi.GetMeeting(_user.SubAccountid, notHandledId);
+                }
+
                 if (!meetingDetailResult.IsSuccess)
                 {
                     var deleteErrorCodes = new List<ZoomApiErrorCodes>

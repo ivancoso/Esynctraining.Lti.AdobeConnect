@@ -110,6 +110,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             try
             {
                 user = await _zoomUserService.GetUser(Param.lis_person_contact_email_primary);
+
+                if (user == null)
+                {
+                    user = await _zoomUserService.GetUser("timao1WIQuGeh9BAeQXVnQ", Param.lis_person_contact_email_primary);
+                }
             }
             catch (Exception e)
             {

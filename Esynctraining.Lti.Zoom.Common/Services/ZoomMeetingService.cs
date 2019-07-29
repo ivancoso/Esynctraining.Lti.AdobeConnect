@@ -60,7 +60,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return await _zoomMeetingApiService.GetMeetingApiDetails(dbMeeting);
         }
 
-        public async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetMeetings(string courseId, CourseMeetingType type, string email, string currentUserId = null)
+        public async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetMeetings(string courseId, CourseMeetingType type, string email, UserInfoDto user, string currentUserId = null)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
 
@@ -68,13 +68,13 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             switch (type)
             {
                 case CourseMeetingType.Basic:
-                    meetingsLoader = new BasicMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId);
+                    meetingsLoader = new BasicMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, user);
                     break;
                 case CourseMeetingType.OfficeHour:
-                    meetingsLoader = new OfficeHoursMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, _ohService);
+                    meetingsLoader = new OfficeHoursMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, _ohService, user);
                     break;
                 case CourseMeetingType.StudyGroup:
-                    meetingsLoader = new StudyGroupMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, email);
+                    meetingsLoader = new StudyGroupMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, email, user);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -353,7 +353,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             meetingDto.StartTime = meetingDto.StartTime.AddSeconds(offset);
             meetingDto.Timezone = user.Timezone;
 
-            var result = await _zoomApi.CreateMeeting(user.Id, meetingDto);
+            var result = string.IsNullOrEmpty(user.SubAccountid) 
+                            ? await _zoomApi.CreateMeeting(user.Id, meetingDto)
+                            : await _zoomApi.CreateMeeting(user.SubAccountid, user.Id, meetingDto);
 
             if (!result.IsSuccess)
             {
@@ -362,6 +364,24 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             return result.Data.ToSuccessResult();
         }
+
+        private async Task<OperationResultWithData<Meeting>> CreateApiMeeting(string accountId, UserInfoDto user, CreateMeetingViewModel dto)
+        {
+            var meetingDto = ConvertFromDto(dto);
+            var offset = GetTimezoneOffset(user, meetingDto.StartTime);
+            meetingDto.StartTime = meetingDto.StartTime.AddSeconds(offset);
+            meetingDto.Timezone = user.Timezone;
+
+            var result = await _zoomApi.CreateMeeting(accountId, user.Id, meetingDto);
+
+            if (!result.IsSuccess)
+            {
+                return OperationResultWithData<Meeting>.Error(result.Message);
+            }
+
+            return result.Data.ToSuccessResult();
+        }
+
 
         public async Task<LmsCourseMeeting> GetMeeting(int meetingId, string courseId)
         {

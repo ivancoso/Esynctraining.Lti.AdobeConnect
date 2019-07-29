@@ -4,6 +4,7 @@
     {
         public bool Verified { get; set; }
         public string Timezone { get; set; }
+        public string SubAccountid { get; set; }
         /*"pmi": "string",
     "timezone": "string",
     "dept": "string",

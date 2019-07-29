@@ -579,6 +579,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
                 if (zoomUser == null)
                 {
+                   //----------------------
+                   zoomUser = await _userService.GetUser("timao1WIQuGeh9BAeQXVnQ", param.lis_person_contact_email_primary);
+                    if (zoomUser != null)
+                    {
+                        return zoomUser;
+                    }
+                    //----------------------
+
                     Logger.Info($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to zoom account of license {param.oauth_consumer_key}");
                     var userInfo = await _userService.CreateUser(new CreateUserDto
                     {

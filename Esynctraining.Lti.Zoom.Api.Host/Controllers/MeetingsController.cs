@@ -49,9 +49,15 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         {
             var sw = Stopwatch.StartNew();
             string userId = null;
+            UserInfoDto user = null;
             try
             {
-                var user = await _userService.GetUser(Param.lis_person_contact_email_primary);
+                user = await _userService.GetUser(Param.lis_person_contact_email_primary);
+                if (user == null)
+                {
+                    user = await _userService.GetUser("timao1WIQuGeh9BAeQXVnQ", Param.lis_person_contact_email_primary);
+                    user.SubAccountid = "timao1WIQuGeh9BAeQXVnQ";
+                }
                 userId = user.Id;
             }
             catch (ZoomApiException ex)
@@ -63,7 +69,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 Logger.Error($"User {Param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account", e);
             }
             
-            var zoomMeetingsResult = await _meetingService.GetMeetings(CourseId, type, Param.lis_person_contact_email_primary, userId);
+            var zoomMeetingsResult = await _meetingService.GetMeetings(CourseId, type, Param.lis_person_contact_email_primary, user,  userId);
             sw.Stop();
             if (sw.Elapsed.TotalSeconds >= 2)
             {
@@ -106,6 +112,11 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 try
                 {
                     user = await _userService.GetUser(Param.lis_person_contact_email_primary);
+                    if (user == null)
+                    {
+                        user = await _userService.GetUser("timao1WIQuGeh9BAeQXVnQ", Param.lis_person_contact_email_primary);
+                        user.SubAccountid = "timao1WIQuGeh9BAeQXVnQ";
+                    }
                     userId = user.Id;
 
                     if (!IsPossibleCreateMeeting(user, requestDto, out string errorMessage))
