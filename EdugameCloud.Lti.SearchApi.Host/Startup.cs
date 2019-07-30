@@ -114,14 +114,14 @@ namespace EdugameClaud.Lti.SearchApi.Host
             });
             if (env.IsDevelopment())
             {
-                app.UseSwagger(c =>
-                {
-                });
+                //app.UseSwagger(c =>
+                //{
+                //});
 
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/v1/swagger/v1/swagger.json", "eSyncTraining LTI Zoom API V1");
-                });
+                //app.UseSwaggerUI(c =>
+                //{
+                //    c.SwaggerEndpoint("/v1/swagger/v1/swagger.json", "eSyncTraining LTI Zoom API V1");
+                //});
             }
         }
     }
