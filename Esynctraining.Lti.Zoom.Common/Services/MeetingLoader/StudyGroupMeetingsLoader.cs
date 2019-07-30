@@ -13,8 +13,16 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
     {
         protected readonly string _email;
 
-        public StudyGroupMeetingsLoader(ZoomDbContext dbContext, Guid licenseKey, string courseId, ZoomApiWrapper zoomApi, string currentUserId, string email, UserInfoDto user) 
-            : base(dbContext, licenseKey, courseId, zoomApi, currentUserId, user)
+        public StudyGroupMeetingsLoader(
+                                        ZoomDbContext dbContext, 
+                                        LmsLicenseDto license, 
+                                        string courseId, 
+                                        ZoomApiWrapper zoomApi, 
+                                        string currentUserId, 
+                                        string email, 
+                                        UserInfoDto user, 
+                                        ZoomUserService zoomUserService) 
+                                        : base(dbContext, license, courseId, zoomApi, currentUserId, user, zoomUserService)
         {
             CourseMeetingType = CourseMeetingType.StudyGroup;
             _email = email;

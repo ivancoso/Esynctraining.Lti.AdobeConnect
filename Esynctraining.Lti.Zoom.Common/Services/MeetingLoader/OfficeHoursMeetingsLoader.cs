@@ -16,12 +16,13 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
         private readonly ZoomOfficeHoursService _ohService;
 
         public OfficeHoursMeetingsLoader(ZoomDbContext dbContext,
-            Guid licenseKey, 
+            LmsLicenseDto license, 
             string courseId, 
             ZoomApiWrapper zoomApi, 
             string currentUserId,
             ZoomOfficeHoursService ohService,
-            UserInfoDto user) : base(dbContext, licenseKey, courseId, zoomApi, currentUserId, user)
+            UserInfoDto user,
+            ZoomUserService zoomUserService) : base(dbContext, license, courseId, zoomApi, currentUserId, user, zoomUserService)
         {
             _ohService = ohService;
             CourseMeetingType = CourseMeetingType.OfficeHour;
@@ -45,7 +46,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
             {
                 //getting current teacher's OH from other course
                 var ohMeeting = await _dbContext.LmsCourseMeetings.FirstOrDefaultAsync(x =>
-                    x.LicenseKey == _licenseKey && x.ProviderHostId == _currentUserId && x.Type == (int)CourseMeetingType.OfficeHour);
+                    x.LicenseKey == _license.ConsumerKey && x.ProviderHostId == _currentUserId && x.Type == (int)CourseMeetingType.OfficeHour);
                 if (ohMeeting != null)
                 {
                     var ohDetailsResult = await _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);

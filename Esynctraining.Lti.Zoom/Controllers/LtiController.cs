@@ -71,13 +71,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
         {
             var userSession = await GetSession(session);
             var license = await _licenseService.GetLicense(userSession.LicenseKey);
+            bool enableSubAccounts = license.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(userSession.SessionData);
             var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
 
             if (dbMeeting == null)
                 return NotFound(meetingId);
 
-            UserInfoDto zoomUser = await TryGetZoomUser(param);
+            UserInfoDto zoomUser = await TryGetZoomUser(param, enableSubAccounts.ToString());
             if (zoomUser == null)
             {
                 return this.View("~/Views/Lti/LtiError.cshtml");
@@ -113,12 +114,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
         {
             var userSession = await GetSession(session);
             var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(userSession.SessionData);
+            var license = await _licenseService.GetLicense(userSession.LicenseKey);
+            bool enableSubAccounts = license.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
             var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
 
             if (dbMeeting == null)
                 return NotFound(meetingId);
 
-            UserInfoDto zoomUser = await TryGetZoomUser(param);
+            UserInfoDto zoomUser = await TryGetZoomUser(param, enableSubAccounts.ToString());
             if (zoomUser == null)
             {
                 return Content(
@@ -139,13 +142,13 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return joinLinkParam;
         }
 
-        public async Task<ActionResult> Home(string session)
+        public async Task<ActionResult> Home(string session, string enableSubAccounts)
         {
             try
             {
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-                if ((await TryGetZoomUser(param)) == null )
+                if ((await TryGetZoomUser(param, enableSubAccounts)) == null )
                 {
                     return this.View("~/Views/Lti/LtiError.cshtml");
                 }
@@ -209,6 +212,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
                         var oAuthId = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthId);
                         var oAuthKey = license.GetSetting<string>(LmsLicenseSettingNames.CanvasOAuthKey);
+                        bool enableSubAccounts = license.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
                         var settingsBasePath = (string)Settings.BasePath;
                         var basePath = settingsBasePath.StartsWith("http", StringComparison.OrdinalIgnoreCase)
                             ? settingsBasePath
@@ -216,7 +220,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         OAuthTokenResponse token = await _canvasApi.RequestToken($"{basePath}/oauth_complete", oAuthId, oAuthKey, code, license.Domain.RemoveHttpProtocolAndTrailingSlash());
                         await _sessionService.UpdateSessionRefreshToken(s, token.access_token, token.refresh_token);
 
-                        return await RedirectToHome(s);
+                        return await RedirectToHome(s, enableSubAccounts);
                     }
                     if (provider == LmsProviderNames.Brightspace)
                     {
@@ -236,7 +240,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         }
 
                         await _sessionService.UpdateSessionRefreshToken(s, token, token);
-                        return await RedirectToHome(s);
+                        return await RedirectToHome(s, false);
                     }
                 }
                 catch (ApplicationException ex)
@@ -283,6 +287,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 }
 
                 var license = await _licenseService.GetLicense(Guid.Parse(param.oauth_consumer_key));
+
+                bool enableSubAccounts = license.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+
 
                 if (license != null)
                 {
@@ -379,7 +386,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 sw.Stop();
                 Logger.InfoFormat($"Metric: LoginWithProvider time: {sw.Elapsed}.\r\n");
 
-                return await RedirectToHome(session);
+                return await RedirectToHome(session, enableSubAccounts);
             }
             catch (LtiException ex)
             {
@@ -496,12 +503,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return session;
         }
 
-        private async Task<ActionResult> RedirectToHome(LmsUserSession session, StringBuilder trace = null)
+        private async Task<ActionResult> RedirectToHome(LmsUserSession session, bool enableSubAccounts, StringBuilder trace = null)
         {
-            //LtiViewModelDto model = await BuildModelAsync(session, trace);
             return RedirectToAction("Home", "Lti", new
             {
-                session = session.Id.ToString()
+                session = session.Id.ToString(),
+                enableSubAccounts = enableSubAccounts.ToString()
             });
         }
 
@@ -571,22 +578,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
                        .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
 
-        private async Task<UserInfoDto> TryGetZoomUser(LtiParamDTO param)
+        private async Task<UserInfoDto> TryGetZoomUser(LtiParamDTO param, string enableSubAccounts)
         {
             try
             {
-                var zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary);
+                var zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary, bool.Parse(enableSubAccounts));
 
                 if (zoomUser == null)
                 {
-                   //----------------------
-                   zoomUser = await _userService.GetUser("timao1WIQuGeh9BAeQXVnQ", param.lis_person_contact_email_primary);
-                    if (zoomUser != null)
-                    {
-                        return zoomUser;
-                    }
-                    //----------------------
-
                     Logger.Info($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to zoom account of license {param.oauth_consumer_key}");
                     var userInfo = await _userService.CreateUser(new CreateUserDto
                     {

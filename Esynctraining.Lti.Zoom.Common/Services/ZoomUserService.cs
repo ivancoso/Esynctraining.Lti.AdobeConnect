@@ -49,25 +49,61 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         public async Task<UserInfoDto> GetUser(string idOrEmail)
         {
             var user = await _zoomApi.GetUser(idOrEmail);
-            return user == null
-                ? null
-                : new UserInfoDto
-                {
-                    Id = user.Id,
-                    Type = user.Type,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Verified = user.Verified == 1,
-                    Timezone = user.Timezone,
-                    Status = (ZoomUserStatus)((int)user.Status)
-                };
-
+            return BuildUserInfoDto(user);
         }
 
         public async Task<UserInfoDto> GetUser(string accountId, string idOrEmail)
         {
             var user = await _zoomApi.GetUser(accountId, idOrEmail);
+            return BuildUserInfoDto(user);
+        }
+
+        public async Task<IEnumerable<Account>> GetSubAccounts()
+        {
+            var subAccounts = new List<Account>();
+            var pageNumber = 1;
+            var pageSize = 300;
+            var totalRecords = 0;
+            do
+            {
+                var page = await _zoomApi.GetAccounts(pageSize: pageSize, pageNumber: pageNumber);
+                subAccounts.AddRange(page.Accounts);
+                totalRecords = page.TotalRecords;
+                pageNumber++;
+
+            } while (pageSize * (pageNumber - 1) < totalRecords);
+
+            return subAccounts;
+        }
+
+        public async Task<UserInfoDto> GetUser(string idOrEmail, bool enableSubAccounts)
+        {
+            UserInfoDto user = await GetUser(idOrEmail);
+            if (user != null || !enableSubAccounts)
+                return user;
+
+            var subAccounts = await GetSubAccounts();
+
+            if (!subAccounts.Any())
+                return null;
+
+            foreach(var subAccount in subAccounts)
+            {
+                user = await GetUser(subAccount.Id, idOrEmail);
+                if (user != null)
+                {
+                    user.SubAccountid = subAccount.Id;
+                    break;
+                }
+
+                    
+            }
+
+            return user;
+        }
+
+        private UserInfoDto BuildUserInfoDto(UserInfo user)
+        {
             return user == null
                 ? null
                 : new UserInfoDto
@@ -81,9 +117,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     Timezone = user.Timezone,
                     Status = (ZoomUserStatus)((int)user.Status)
                 };
-
         }
-
 
         public async Task<UserDto> CreateUser(string email, string firstName, string lastName)
         {
@@ -98,6 +132,25 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         public async Task<UserDto> CreateUser(CreateUserDto dto)
         {
             var user = await _zoomApi.CreateUser(new CreateUser
+            {
+                Email = dto.Email,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Password = dto.Password,
+                Type = UserTypes.Basic,
+            }, "create");
+
+            return new UserDto
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+            };
+        }
+
+        public async Task<UserDto> CreateUser(string accountId, CreateUserDto dto)
+        {
+            var user = await _zoomApi.CreateUser(accountId, new CreateUser
             {
                 Email = dto.Email,
                 FirstName = dto.FirstName,

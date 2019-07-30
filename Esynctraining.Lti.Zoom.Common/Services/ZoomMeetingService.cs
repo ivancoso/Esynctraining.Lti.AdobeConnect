@@ -63,18 +63,19 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         public async Task<OperationResultWithData<IEnumerable<MeetingViewModel>>> GetMeetings(string courseId, CourseMeetingType type, string email, UserInfoDto user, string currentUserId = null)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
+            bool enableSubAccounts = licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
 
             MeetingsLoader meetingsLoader = null;
             switch (type)
             {
                 case CourseMeetingType.Basic:
-                    meetingsLoader = new BasicMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, user);
+                    meetingsLoader = new BasicMeetingsLoader(_dbContext, licenseDto, courseId, _zoomApi, currentUserId, user, _userService);
                     break;
                 case CourseMeetingType.OfficeHour:
-                    meetingsLoader = new OfficeHoursMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, _ohService, user);
+                    meetingsLoader = new OfficeHoursMeetingsLoader(_dbContext, licenseDto, courseId, _zoomApi, currentUserId, _ohService, user, _userService);
                     break;
                 case CourseMeetingType.StudyGroup:
-                    meetingsLoader = new StudyGroupMeetingsLoader(_dbContext, licenseDto.ConsumerKey, courseId, _zoomApi, currentUserId, email, user);
+                    meetingsLoader = new StudyGroupMeetingsLoader(_dbContext, licenseDto, courseId, _zoomApi, currentUserId, email, user, _userService);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -214,6 +215,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             }
             else
             {
+                bool enableSubAccounts = licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
                 var m = await CreateApiMeeting(user, requestDto);
                 if (!m.IsSuccess)
                 {

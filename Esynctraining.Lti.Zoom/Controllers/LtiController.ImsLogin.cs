@@ -91,47 +91,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     return View("~/Views/Lti/Outcomes.cshtml", new OutcomeModel {Session = sessionKey});
                 }
-                //this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
 
-//                Principal acPrincipal = null;
-//
-//                acPrincipal = acUserService.GetOrCreatePrincipal(
-//                    adobeConnectProvider,
-//                    param.lms_user_login,
-//                    param.lis_person_contact_email_primary,
-//                    param.PersonNameGiven,
-//                    param.PersonNameFamily,
-//                    lmsCompany);
-//                if (lmsUser == null)
-//                {
-//                    lmsUser = new LmsUser
-//                    {
-//                        LmsCompany = lmsCompany,
-//                        UserId = param.lms_user_id,
-//                        Username = param.GetUserNameOrEmail(),
-//                        PrincipalId = acPrincipal?.PrincipalId,
-//                    };
-//                    this.lmsUserModel.RegisterSave(lmsUser);
-//
-//                    // TRICK: save lmsUser to session
-//                    SaveSessionUser(session, lmsUser);
-//                }
-//
-//                if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
-//                {
-//                    lmsUser.PrincipalId = acPrincipal.PrincipalId;
-//                    this.lmsUserModel.RegisterSave(lmsUser);
-//                }
-//
-//                if (acPrincipal == null)
-//                {
-//                    Logger.ErrorFormat(
-//                        "[LoginWithProvider] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.",
-//                        lmsCompany.Id, lmsUser.Id, param.lms_user_login);
-//                    throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
-//                }
-
-                return await RedirectToHome(session);
+                bool enableSubAccounts = license.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+                return await RedirectToHome(session, enableSubAccounts);
             }
             catch (LtiException ex)
             {

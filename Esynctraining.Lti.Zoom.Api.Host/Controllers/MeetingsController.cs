@@ -52,12 +52,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             UserInfoDto user = null;
             try
             {
-                user = await _userService.GetUser(Param.lis_person_contact_email_primary);
-                if (user == null)
-                {
-                    user = await _userService.GetUser("timao1WIQuGeh9BAeQXVnQ", Param.lis_person_contact_email_primary);
-                    user.SubAccountid = "timao1WIQuGeh9BAeQXVnQ";
-                }
+                bool enableSubAccounts = LmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+                user = await _userService.GetUser(Param.lis_person_contact_email_primary, enableSubAccounts);
                 userId = user.Id;
             }
             catch (ZoomApiException ex)
@@ -111,12 +107,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
                 UserInfoDto user = null;
                 try
                 {
-                    user = await _userService.GetUser(Param.lis_person_contact_email_primary);
-                    if (user == null)
-                    {
-                        user = await _userService.GetUser("timao1WIQuGeh9BAeQXVnQ", Param.lis_person_contact_email_primary);
-                        user.SubAccountid = "timao1WIQuGeh9BAeQXVnQ";
-                    }
+                    bool enableSubAccounts = LmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+                    user = await _userService.GetUser(Param.lis_person_contact_email_primary, enableSubAccounts);
                     userId = user.Id;
 
                     if (!IsPossibleCreateMeeting(user, requestDto, out string errorMessage))

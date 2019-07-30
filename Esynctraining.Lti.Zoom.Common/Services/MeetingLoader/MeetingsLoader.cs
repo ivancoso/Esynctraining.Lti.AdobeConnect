@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
 using Esynctraining.Lti.Zoom.Domain;
@@ -16,19 +17,21 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
         private readonly string _courseId;
         protected readonly ZoomApiWrapper _zoomApi;
         protected readonly string _currentUserId;
-        protected readonly Guid _licenseKey;
+        protected readonly LmsLicenseDto _license;
         protected readonly UserInfoDto _user;
+        private readonly ZoomUserService _zoomUserService;
 
         protected CourseMeetingType CourseMeetingType { get; set; }
 
-        protected MeetingsLoader(ZoomDbContext dbContext, Guid licenseKey, string courseId, ZoomApiWrapper zoomApi, string currentUserId, UserInfoDto user)
+        protected MeetingsLoader(ZoomDbContext dbContext, LmsLicenseDto license, string courseId, ZoomApiWrapper zoomApi, string currentUserId, UserInfoDto user, ZoomUserService zoomUserService)
         {
             _dbContext = dbContext;
-            _licenseKey = licenseKey;
+            _license = license;
             _courseId = courseId;
             _zoomApi = zoomApi;
             _currentUserId = currentUserId;
             _user = user;
+            _zoomUserService = zoomUserService;
         }
 
         public async Task<IEnumerable<MeetingViewModel>> Load()
@@ -44,22 +47,30 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
         protected async Task<IEnumerable<LmsCourseMeeting>> LoadFromDb()
         {
             var dbMeetings = _dbContext.LmsCourseMeetings.Where(x =>
-                x.LicenseKey == _licenseKey && _courseId == x.CourseId && x.Type == (int)CourseMeetingType);
+                x.LicenseKey == _license.ConsumerKey && _courseId == x.CourseId && x.Type == (int)CourseMeetingType);
 
             return dbMeetings;
         }
 
         protected async Task<List<MeetingViewModel>> MergeWithZoomMeeting(IEnumerable<LmsCourseMeeting> dbMeetings)
         {
+            bool enableSubAccounts = _license.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+
             List<MeetingViewModel> result = new List<MeetingViewModel>();
             var notHandledMeetings = dbMeetings.Select(x => x.ProviderMeetingId).ToList();
             foreach (var notHandledId in notHandledMeetings)
             {
                 var meetingDetailResult = await _zoomApi.GetMeeting(notHandledId);
 
-                if (!meetingDetailResult.IsSuccess && !string.IsNullOrEmpty(_user.SubAccountid))
+                if (!meetingDetailResult.IsSuccess && enableSubAccounts)
                 {
-                    meetingDetailResult = await _zoomApi.GetMeeting(_user.SubAccountid, notHandledId);
+                    var subAccounts = await _zoomUserService.GetSubAccounts();
+                    foreach(var account in subAccounts)
+                    {
+                        meetingDetailResult = await _zoomApi.GetMeeting(account.Id, notHandledId);
+                        if (meetingDetailResult.IsSuccess)
+                            break;
+                    }
                 }
 
                 if (!meetingDetailResult.IsSuccess)

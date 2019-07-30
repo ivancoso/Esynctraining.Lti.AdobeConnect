@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Zoom.Api.Dto;
 using Esynctraining.Lti.Zoom.Api.Host.Filters;
 using Esynctraining.Lti.Zoom.Common;
@@ -109,12 +110,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             UserInfoDto user = null;
             try
             {
-                user = await _zoomUserService.GetUser(Param.lis_person_contact_email_primary);
-
-                if (user == null)
-                {
-                    user = await _zoomUserService.GetUser("timao1WIQuGeh9BAeQXVnQ", Param.lis_person_contact_email_primary);
-                }
+                bool enableSubAccounts = LmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+                user = await _zoomUserService.GetUser(Param.lis_person_contact_email_primary, enableSubAccounts);
             }
             catch (Exception e)
             {
