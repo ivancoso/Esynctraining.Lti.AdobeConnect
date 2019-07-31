@@ -84,7 +84,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
 
-            var url = await _meetingService.GetMeetingUrl(zoomUser.Id, dbMeeting.ProviderMeetingId,
+            var url = await _meetingService.GetMeetingUrl(zoomUser, dbMeeting.ProviderMeetingId,
                 param.lis_person_contact_email_primary,
                 async () =>
                 {
@@ -133,9 +133,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 ConfoNo = dbMeeting.ProviderMeetingId,
                 Uid = zoomUser.Id,
                 Uname = $"{zoomUser.FirstName} {zoomUser.LastName}",
-                Tk = await _meetingService.GetToken(zoomUser.Id, "token"),
-                Zpk = await _meetingService.GetToken(zoomUser.Id, "zpk"),
-                Zak = await _meetingService.GetToken(zoomUser.Id, "zak"),
+                Tk = await _meetingService.GetToken(zoomUser, "token"),
+                Zpk = await _meetingService.GetToken(zoomUser, "zpk"),
+                Zak = await _meetingService.GetToken(zoomUser, "zak"),
                 Email = param.lis_person_contact_email_primary
             };
 

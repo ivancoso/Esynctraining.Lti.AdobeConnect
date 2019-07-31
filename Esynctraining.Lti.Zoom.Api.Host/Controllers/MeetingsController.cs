@@ -252,8 +252,10 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             //param.lis_person_contact_email_primary
             var lmsSettings = LmsLicense.GetLMSSettings(Session);
 
+            bool enableSubAccounts = LmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+
             var result = await _meetingService.DeleteMeeting(meetingId, CourseId,
-                Param.lis_person_contact_email_primary, remove, lmsSettings);
+                Param.lis_person_contact_email_primary, remove, lmsSettings, enableSubAccounts);
 
             return result;
 
