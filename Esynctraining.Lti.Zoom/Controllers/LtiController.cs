@@ -85,7 +85,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             }
 
             var url = await _meetingService.GetMeetingUrl(zoomUser, dbMeeting.ProviderMeetingId,
-                param.lis_person_contact_email_primary,
+                param.lis_person_contact_email_primary, enableSubAccounts,
                 async () =>
                 {
                     var lmsSettings = license.GetLMSSettings(userSession);

@@ -86,14 +86,23 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         }
 
 
-        public async Task<string> GetMeetingUrl(UserInfoDto user, string meetingId, string email,
+        public async Task<string> GetMeetingUrl(UserInfoDto user, string meetingId, string email, bool enableSubAccounts,
             Func<Task<RegistrantDto>> getRegistrant)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
 
-            var meetingResult = string.IsNullOrEmpty(user.SubAccountid) 
-                                ? await _zoomApi.GetMeeting(meetingId)
-                                : await _zoomApi.GetMeeting(user.SubAccountid, meetingId);
+            var meetingResult = await _zoomApi.GetMeeting(meetingId);
+
+            if (!meetingResult.IsSuccess && enableSubAccounts)
+            {
+                var accounts = await _userService.GetSubAccounts();
+                foreach(var account in accounts)
+                {
+                    meetingResult = await _zoomApi.GetMeeting(account.Id, meetingId);
+                    if (meetingResult.IsSuccess)
+                        break;
+                }
+            }
 
             string baseUrl = meetingResult.Data.JoinUrl;
             if (meetingResult.Data.HostId != user.Id
