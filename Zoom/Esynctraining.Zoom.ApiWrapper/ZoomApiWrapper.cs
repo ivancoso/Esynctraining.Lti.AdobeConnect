@@ -37,6 +37,10 @@ namespace Esynctraining.Zoom.ApiWrapper
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
                 return null;
 
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.BadRequest && restResponse.Data.Code == "1010")
+                return null;
+
+
             throw new ZoomApiException
             {
                 Content = restResponse.Content,
@@ -44,6 +48,32 @@ namespace Esynctraining.Zoom.ApiWrapper
                 StatusDescription = restResponse.StatusDescription
             };
         }
+
+        public async Task<UserInfo> GetUser(string accountId, string idOrEmail)
+        {
+            RestRequest restRequest = await BuildRequestAuthorization("/accounts/{accountId}/users/{idOrEmail}", Method.GET);
+            restRequest.AddParameter(nameof(accountId), (object)accountId, ParameterType.UrlSegment);
+            restRequest.AddParameter(nameof(idOrEmail), (object)idOrEmail, ParameterType.UrlSegment);
+            IRestResponse<UserInfo> restResponse = await (await GetWebClient()).ExecuteTaskAsync<UserInfo>((IRestRequest)restRequest);
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data;
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
+                return null;
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.BadRequest && restResponse.Data.Code == "1010")
+                return null;
+
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
+        }
+
 
         public async Task<UserInfo> GetCurrentUser()
         {
@@ -94,6 +124,41 @@ namespace Esynctraining.Zoom.ApiWrapper
             };
         }
 
+        public async Task<User> CreateUser(string accountId, CreateUser createUser, string action)
+        {
+            List<string> stringList = createUser.Validate();
+            if (stringList.Count > 0)
+                throw new Exception(string.Format("CreateUser request does not pass validation. {0}", (object)string.Join(" :: ", (IEnumerable<string>)stringList)));
+            if (!action.Equals(CreateUserAction.Create, StringComparison.InvariantCultureIgnoreCase) && !action.Equals(CreateUserAction.AutoCreate, StringComparison.InvariantCultureIgnoreCase) && (!action.Equals(CreateUserAction.CustCreate, StringComparison.InvariantCultureIgnoreCase) && !action.Equals(CreateUserAction.SsoCreate, StringComparison.InvariantCultureIgnoreCase)))
+                throw new Exception(string.Format("CreateUser action allowed values are [{0},{1},{2},{3}]", new object[4]
+                {
+          (object) CreateUserAction.Create,
+          (object) CreateUserAction.AutoCreate,
+          (object) CreateUserAction.CustCreate,
+          (object) CreateUserAction.SsoCreate
+                }));
+            if (string.IsNullOrWhiteSpace(createUser.Password) && !string.IsNullOrWhiteSpace(action) && action.Equals(CreateUserAction.AutoCreate, StringComparison.InvariantCultureIgnoreCase))
+                throw new Exception(string.Format("{0} property is required for creating user when action is set to {1}", (object)"Password", (object)CreateUserAction.AutoCreate));
+            RestRequest restRequest = await BuildRequestAuthorization("accounts/{accountId}/users", Method.POST);
+            restRequest.AddParameter("accountId", (object)accountId, ParameterType.UrlSegment);
+            restRequest.AddJsonBody((object)new
+            {
+                action = action,
+                user_info = createUser
+            });
+            IRestResponse<User> restResponse = await (await GetWebClient()).ExecuteTaskAsync<User>((IRestRequest)restRequest);
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
+                return restResponse.Data;
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
+        }
+
+
         public async Task<ListUsers> GetUsers(UserStatus status = UserStatus.Active, int pageSize = 30, int pageNumber = 1)
         {
             if (pageSize > 300)
@@ -115,6 +180,51 @@ namespace Esynctraining.Zoom.ApiWrapper
             };
         }
 
+        public async Task<ListAccount> GetAccounts(int pageSize = 30, int pageNumber = 1)
+        {
+            if (pageSize > 300)
+                throw new Exception("GetUsers page size max 300");
+
+            RestRequest restRequest = await BuildRequestAuthorization("accounts", Method.GET);
+            restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
+            restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
+            IRestResponse<ListAccount> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ListAccount>((IRestRequest)restRequest);
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data;
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
+        }
+
+
+        public async Task<ListUsers> GetAccountUsers(int accountId, UserStatus status = UserStatus.Active, int pageSize = 30, int pageNumber = 1)
+        {
+            if (pageSize > 300)
+                throw new Exception("GetUsers page size max 300");
+            RestRequest restRequest = await BuildRequestAuthorization("accounts/{accountId}/users", Method.GET);
+            restRequest.AddParameter(nameof(status), (object)status.ToString().ToLowerInvariant(), ParameterType.QueryString);
+            restRequest.AddParameter("accountId", (object)accountId, ParameterType.QueryString);
+            restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
+            restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
+            IRestResponse<ListUsers> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ListUsers>((IRestRequest)restRequest);
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data;
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
+        }
+
+
         public async Task<ZoomApiResultWithData<Meeting>> GetMeeting(string meetingId)
         {
             RestRequest restRequest = await BuildRequestAuthorization("meetings/{meetingId}", Method.GET);
@@ -126,6 +236,20 @@ namespace Esynctraining.Zoom.ApiWrapper
 
             return await HandleErrorRequest(restResponse);
         }
+
+        public async Task<ZoomApiResultWithData<Meeting>> GetMeeting(string accountId, string meetingId)
+        {
+            RestRequest restRequest = await BuildRequestAuthorization("accounts/{accountId}/meetings/{meetingId} ", Method.GET);
+            restRequest.AddParameter(nameof(meetingId), meetingId, ParameterType.UrlSegment);
+            restRequest.AddParameter(nameof(accountId), accountId, ParameterType.UrlSegment);
+            IRestResponse<Meeting> restResponse = await (await GetWebClient()).ExecuteGetTaskAsync<Meeting>(restRequest);
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data.ToSuccessZoomApiResult();
+
+            return await HandleErrorRequest(restResponse);
+        }
+
 
         private async Task<ZoomApiResultWithData<T>> HandleErrorRequest<T>(IRestResponse<T> restResponse) where T : class
         {
@@ -193,10 +317,55 @@ namespace Esynctraining.Zoom.ApiWrapper
             return (ZoomListRegistrants)null;
         }
 
+        public async Task<ZoomListRegistrants> GetSubAccountsMeetingRegistrants(string accountId, string meetingId, string occurrenceId = null, string status = "approved", int pageSize = 300, int pageNumber = 1)
+        {
+            if (pageSize > 300)
+                throw new Exception("GetMeetingRegistrants page size max 300");
+            RestRequest restRequest = await BuildRequestAuthorization("/accounts/{accountId}/meetings/{meetingId}/registrants", Method.GET);
+            restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+            restRequest.AddParameter(nameof(accountId), (object)accountId, ParameterType.UrlSegment);
+            if (!string.IsNullOrEmpty(occurrenceId))
+            {
+                restRequest.AddParameter(nameof(occurrenceId), occurrenceId, ParameterType.QueryString);
+            }
+            restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
+            restRequest.AddParameter("page_number", (object)pageNumber, ParameterType.QueryString);
+            restRequest.AddParameter("status", (object)status, ParameterType.QueryString);
+            IRestResponse<ZoomListRegistrants> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomListRegistrants>((IRestRequest)restRequest);
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data;
+            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
+                throw new Exception(restResponse.ErrorMessage);
+            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
+                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
+            return (ZoomListRegistrants)null;
+        }
+
+
         public async Task<ZoomApiResultWithData<ZoomAddRegistrantResponse>> AddRegistrant(string meetingId, ZoomAddRegistrantRequest registrant, string occurenceIds = null)
         {
             RestRequest restRequest = await BuildRequestAuthorization("meetings/{meetingId}/registrants", Method.POST);
             restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+            restRequest.AddJsonBody((object)registrant);
+            IRestResponse<ZoomAddRegistrantResponse> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomAddRegistrantResponse>((IRestRequest)restRequest);
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
+                return restResponse.Data.ToSuccessZoomApiResult();
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.BadRequest)
+                return ZoomApiResultWithData<ZoomAddRegistrantResponse>.ApiError(restResponse.Content); ;
+
+            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
+                throw new Exception(restResponse.ErrorMessage);
+            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
+                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
+            return null;
+        }
+
+        public async Task<ZoomApiResultWithData<ZoomAddRegistrantResponse>> AddRegistrant(string accountId, string meetingId, ZoomAddRegistrantRequest registrant, string occurenceIds = null)
+        {
+            RestRequest restRequest = await BuildRequestAuthorization("accounts/{accountId}/meetings/{meetingId}/registrants", Method.POST);
+            restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+            restRequest.AddParameter(nameof(accountId), (object)accountId, ParameterType.UrlSegment);
             restRequest.AddJsonBody((object)registrant);
             IRestResponse<ZoomAddRegistrantResponse> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomAddRegistrantResponse>((IRestRequest)restRequest);
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
@@ -264,6 +433,24 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
             return false;
         }
+
+        public async Task<bool> DeleteMeeting(string accountId, string meetingId, string occurrenceId = null)
+        {
+            RestRequest restRequest = await BuildRequestAuthorization("accounts/{accountId}/meetings/{meetingId}", Method.DELETE);
+            restRequest.AddParameter(nameof(accountId), (object)accountId, ParameterType.UrlSegment);
+            restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+            if (!string.IsNullOrWhiteSpace(occurrenceId))
+                restRequest.AddParameter("occurrence_id", (object)occurrenceId, ParameterType.QueryString);
+            IRestResponse restResponse = await (await GetWebClient()).ExecuteTaskAsync((IRestRequest)restRequest);
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NoContent)
+                return true;
+            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
+                throw new Exception(restResponse.ErrorMessage);
+            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
+                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
+            return false;
+        }
+
 
         public async Task<ZoomApiRecordingList> GetRecordings(string meetingId, bool trash = false)
         {
@@ -356,6 +543,16 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
             return restResponse.Data.Token;
         }
 
+        public async Task<string> GetUserToken(string accountId, string userId, string type)
+        {
+            RestRequest restRequest = await BuildRequestAuthorization("accounts/{accountId}/users/{userId}/token", Method.GET);
+            restRequest.AddParameter(nameof(accountId), (object)accountId, ParameterType.UrlSegment);
+            restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
+            restRequest.AddParameter("type", type, ParameterType.QueryString);
+            IRestResponse<ZoomToken> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ZoomToken>((IRestRequest)restRequest);
+            return restResponse.Data.Token;
+        }
+
         public async Task<ZoomApiResultWithData<Meeting>> CreateMeeting(string userId, Meeting meeting)
         {
             RestRequest restRequest = await BuildRequestAuthorization("users/{userId}/meetings", Method.POST);
@@ -379,6 +576,32 @@ Occurrence IDs, could get this value from Meeting Get API. Multiple value separa
 
             return ZoomApiResultWithData<Meeting>.Error($"Faild with creating meeting {userId}");
         }
+
+        public async Task<ZoomApiResultWithData<Meeting>> CreateMeeting(string accountId, string userId, Meeting meeting)
+        {
+            RestRequest restRequest = await BuildRequestAuthorization("accounts/{accountId}/users/{userId}/meetings", Method.POST);
+            restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
+            restRequest.AddParameter(nameof(accountId), (object)accountId, ParameterType.UrlSegment);
+            restRequest.AddJsonBody((object)meeting);
+            IRestResponse<Meeting> restResponse = await (await GetWebClient()).ExecuteTaskAsync<Meeting>((IRestRequest)restRequest);
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
+                return restResponse.Data.ToSuccessZoomApiResult();
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed
+                && (restResponse.StatusCode == HttpStatusCode.NotFound || restResponse.StatusCode == HttpStatusCode.BadRequest))
+            {
+                return ZoomApiResultWithData<Meeting>.ApiError(restResponse.Content);
+            }
+
+            if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
+                throw new Exception(restResponse.ErrorMessage);
+
+            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
+                throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
+
+            return ZoomApiResultWithData<Meeting>.Error($"Faild with creating meeting {userId}");
+        }
+
 
         public async Task<ZoomApiResultWithData<bool>> UpdateMeeting(string meetingId, Meeting meeting)
         {

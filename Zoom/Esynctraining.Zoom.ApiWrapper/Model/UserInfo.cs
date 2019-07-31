@@ -17,6 +17,7 @@ namespace Esynctraining.Zoom.ApiWrapper.Model
         public DateTime CreatedAt { get; set; }
         public DateTime LastLoginTime { get; set; }
         public UserStatus Status { get; set; }
+        public string Code { get; set; }
     }
 
     public class User
