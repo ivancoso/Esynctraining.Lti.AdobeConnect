@@ -184,7 +184,8 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             UserInfoDto user = null;
             try
             {
-                user = await _userService.GetUser(Param.lis_person_contact_email_primary);
+                bool enableSubAccounts = LmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+                user = await _userService.GetUser(Param.lis_person_contact_email_primary, enableSubAccounts);
 
                 if (!IsPossibleCreateMeeting(user, vm, out string errorMessage))
                 {

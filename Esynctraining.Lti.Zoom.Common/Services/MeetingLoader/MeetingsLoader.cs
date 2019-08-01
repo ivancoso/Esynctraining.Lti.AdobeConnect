@@ -64,13 +64,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
 
                 if (!meetingDetailResult.IsSuccess && enableSubAccounts)
                 {
-                    var subAccounts = await _zoomUserService.GetSubAccounts();
-                    foreach(var account in subAccounts)
-                    {
-                        meetingDetailResult = await _zoomApi.GetMeeting(account.Id, notHandledId);
-                        if (meetingDetailResult.IsSuccess)
-                            break;
-                    }
+                    var dbMeeting = dbMeetings.First(m => m.ProviderMeetingId == notHandledId);
+                    meetingDetailResult = await _zoomApi.GetMeeting(dbMeeting.SubAccountId, notHandledId);
                 }
 
                 if (!meetingDetailResult.IsSuccess)

@@ -86,57 +86,32 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         }
 
 
-        public async Task<string> GetMeetingUrl(UserInfoDto user, string meetingId, string email, bool enableSubAccounts,
-            Func<Task<RegistrantDto>> getRegistrant)
+        public async Task<string> GetMeetingUrl(UserInfoDto user, LmsCourseMeeting meeting, string email, bool enableSubAccounts,
+            Func<Task<RegistrantDto>> getLmsUsers)
         {
             var licenseDto = await _licenseAccessor.GetLicense();
 
-            var meetingResult = await _zoomApi.GetMeeting(meetingId);
+            var meetingResult = await _zoomApi.GetMeeting(meeting.ProviderMeetingId);
 
             if (!meetingResult.IsSuccess && enableSubAccounts)
             {
-                var accounts = await _userService.GetSubAccounts();
-                foreach(var account in accounts)
-                {
-                    meetingResult = await _zoomApi.GetMeeting(account.Id, meetingId);
-                    if (meetingResult.IsSuccess)
-                        break;
-                }
+                meetingResult = await _zoomApi.GetMeeting(meeting.SubAccountId, meeting.ProviderMeetingId);
             }
 
             string baseUrl = meetingResult.Data.JoinUrl;
-            if (meetingResult.Data.HostId != user.Id
-                && meetingResult.Data.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration
-                && licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity))
+            if (IsRosterSecureMeeting(meetingResult.Data, licenseDto, user))
             {
-                var registrants = string.IsNullOrEmpty(user.SubAccountid) 
-                                ? await _zoomApi.GetMeetingRegistrants(meetingId) 
-                                : await _zoomApi.GetSubAccountsMeetingRegistrants(user.SubAccountid, meetingId);
-
-                var userReg = registrants.Registrants.FirstOrDefault(x =>
-                    x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
+                var userReg = await FindMeetingRegistrantByEmail(meeting, email);
                 if (userReg != null)
                     baseUrl = userReg.JoinUrl;
                 else
                 {
-                    var registrant = await getRegistrant();
+                    var registrant = await getLmsUsers();
                     if (registrant != null)
                     {
-                        var newZoomAddRegistrantRequest = new ZoomAddRegistrantRequest(registrant.Email,
-                            registrant.FirstName, registrant.LastName);
-                        var addResult = await _zoomApi.AddRegistrant(meetingId, newZoomAddRegistrantRequest);
-                        //if (!addResult.IsSuccess)
-                        //{
-                        //    return ;
-                        //}
-                        await _userService.UpdateRegistrantStatus(meetingId, new [] {registrant.Email}, nameof(RegistrantUpdateStatusAction.Approve));
+                        await AddRegistrantToMeeting(registrant, meeting);
 
-                        var registrants2 = string.IsNullOrEmpty(user.SubAccountid) 
-                                            ? await _zoomApi.GetMeetingRegistrants(meetingId)
-                                            : await _zoomApi.GetSubAccountsMeetingRegistrants(user.SubAccountid, meetingId);
-
-                        var userReg2 = registrants2.Registrants.FirstOrDefault(x =>
-                            x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
+                        var userReg2 = await FindMeetingRegistrantByEmail(meeting, email);
                         if (userReg2 != null)
                             baseUrl = userReg2.JoinUrl;
                     }
@@ -148,6 +123,39 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 : await _zoomApi.GetUserToken(user.SubAccountid, user.Id, "zak");
 
             return baseUrl + (baseUrl.Contains("?") ? "&" : "?") + "zak=" + userToken;
+        }
+
+        private bool IsRosterSecureMeeting(Meeting meeting, LmsLicenseDto licenseDto, UserInfoDto user)
+        {
+            return
+                meeting.HostId != user.Id
+                && meeting.Settings.ApprovalType != MeetingApprovalTypes.NoRegistration
+                && licenseDto.GetSetting<bool>(LmsLicenseSettingNames.EnableClassRosterSecurity);
+        }
+
+        private async Task AddRegistrantToMeeting(RegistrantDto registrant, LmsCourseMeeting meeting)
+        {
+            var newZoomAddRegistrantRequest = new ZoomAddRegistrantRequest(registrant.Email, registrant.FirstName, registrant.LastName);
+
+            var addResult = string.IsNullOrEmpty(meeting.SubAccountId)
+                            ? await _zoomApi.AddRegistrant(meeting.ProviderMeetingId, newZoomAddRegistrantRequest)
+                            : await _zoomApi.AddRegistrant(meeting.SubAccountId, meeting.ProviderMeetingId, newZoomAddRegistrantRequest);
+
+            await _userService.UpdateRegistrantStatus(meeting.SubAccountId,
+                                                        meeting.ProviderMeetingId,
+                                                        new[] { registrant.Email },
+                                                        nameof(RegistrantUpdateStatusAction.Approve));
+
+        }
+
+        private async Task<ZoomMeetingRegistrant> FindMeetingRegistrantByEmail(LmsCourseMeeting meeting, string email)
+        {
+            var registrants = string.IsNullOrEmpty(meeting.SubAccountId)
+                    ? await _zoomApi.GetMeetingRegistrants(meeting.ProviderMeetingId)
+                    : await _zoomApi.GetSubAccountsMeetingRegistrants(meeting.SubAccountId, meeting.ProviderMeetingId);
+
+
+            return registrants.Registrants.FirstOrDefault(x => x.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public async Task<string> GetToken(UserInfoDto user, string type)
@@ -258,6 +266,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 dbMeeting.ProviderMeetingId = m.Data.Id;
                 dbMeeting.Details = json;
                 dbMeeting.ProviderHostId = m.Data.HostId;
+                dbMeeting.SubAccountId = user.SubAccountid;
             }
 
             if (requestDto.Type == (int)CourseMeetingType.Basic)
@@ -292,7 +301,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                         FirstName = x.GetFirstName(),
                         LastName = x.GetLastName()
                     });
-                await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, false);
+
+                await _userService.RegisterUsersToMeetingAndApprove(dbMeeting, registrants, false);
             }
 
             if (requestDto.Type.GetValueOrDefault(1) == (int)CourseMeetingType.StudyGroup)
@@ -300,7 +310,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 if (requestDto.Participants != null)
                 {
                     var registrants = requestDto.Participants.Where(x => !x.Email.Equals(extraData.lis_person_contact_email_primary, StringComparison.InvariantCultureIgnoreCase));
-                    await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants, false);
+                    await _userService.RegisterUsersToMeetingAndApprove(dbMeeting, registrants, false);
                 }
             }
 
@@ -427,7 +437,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         public async Task<OperationResultWithData<bool>> UpdateMeeting(int meetingId, Dictionary<string, object> licenseSettings, string courseId, string email, CreateMeetingViewModel vm, UserInfoDto user)
         {
             var dbMeeting = await GetMeeting(meetingId, courseId);
-            var updatedResult = await UpdateApiMeeting(dbMeeting.ProviderMeetingId, user, vm);
+            var updatedResult = await UpdateApiMeeting(dbMeeting, user, vm);
             if (!updatedResult.IsSuccess)
             {
                 return OperationResultWithData<bool>.Error(updatedResult.Message);
@@ -450,8 +460,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                                     FirstName = x.GetFirstName(),
                                     LastName = x.GetLastName()
                                 });
-                        await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, registrants,
-                            true);
+                        await _userService.RegisterUsersToMeetingAndApprove(dbMeeting, registrants, true);
                     }
 
 
@@ -460,10 +469,10 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
                 if (dbMeeting.Type == (int)CourseMeetingType.StudyGroup)
                 {
-                    var registrants = await _userService.GetMeetingRegistrants(dbMeeting.ProviderMeetingId);
+                    var registrants = await _userService.GetMeetingRegistrants(dbMeeting);
                     await _userService.CleanApprovedRegistrant(dbMeeting.ProviderMeetingId, vm.Participants, registrants);
 
-                    await _userService.RegisterUsersToMeetingAndApprove(dbMeeting.ProviderMeetingId, vm.Participants, true);
+                    await _userService.RegisterUsersToMeetingAndApprove(dbMeeting, vm.Participants, true);
                 }
 
                 return true.ToSuccessResult();
@@ -539,7 +548,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return meetingDto;
         }
 
-        public async Task<OperationResultWithData<bool>> UpdateApiMeeting(string meetingId, UserInfoDto user, CreateMeetingViewModel dto)
+        public async Task<OperationResultWithData<bool>> UpdateApiMeeting(LmsCourseMeeting dbMeeting, UserInfoDto user, CreateMeetingViewModel dto)
         {
             var meeting = ConvertFromDto(dto);
 
@@ -547,7 +556,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             meeting.StartTime = meeting.StartTime.AddSeconds(offset);
             meeting.Timezone = user.Timezone;
 
-            var updatedResult = await _zoomApi.UpdateMeeting(meetingId, meeting);
+            var updatedResult = string.IsNullOrEmpty(dbMeeting.SubAccountId) 
+                ? await _zoomApi.UpdateMeeting(dbMeeting.ProviderMeetingId, meeting)
+                : await _zoomApi.UpdateMeeting(dbMeeting.SubAccountId, dbMeeting.ProviderMeetingId, meeting);
 
             return updatedResult.IsSuccess
                 ? updatedResult.Data.ToSuccessResult()

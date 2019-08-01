@@ -45,7 +45,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         public virtual async Task<OperationResultWithData<List<ZoomMeetingRegistrantDto>>> GetMeetingRegistrants(int meetgingId, [FromQuery] ZoomMeetingRegistrantStatus status)
         {
             LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
-            var registrants = await _zoomUserService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, status);
+            var registrants = await _zoomUserService.GetMeetingRegistrants(meeting, null, status);
             return registrants.ToSuccessResult();
         }
 
@@ -55,7 +55,7 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
         public virtual async Task<OperationResultWithData<SyncParticipantsDto>> GetSyncParticipants(int meetgingId)
         {
             LmsCourseMeeting meeting = await _meetingService.GetMeeting(meetgingId, CourseId);
-            var registrants = (await _zoomUserService.GetMeetingRegistrants(meeting.ProviderMeetingId, null, ZoomMeetingRegistrantStatus.Approved))
+            var registrants = (await _zoomUserService.GetMeetingRegistrants(meeting, null, ZoomMeetingRegistrantStatus.Approved))
                 .Select(r => new RegistrantDto
                             {
                                 Email = r.Email,

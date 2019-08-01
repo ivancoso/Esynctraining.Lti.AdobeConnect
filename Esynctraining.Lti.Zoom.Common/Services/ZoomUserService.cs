@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Esynctraining.Core.Logging;
 using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Enums;
+using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
 
@@ -168,7 +169,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         }
 
 
-        public async Task<List<ZoomMeetingRegistrantDto>> GetMeetingRegistrants(string meetingId, string occurrenceId = null, ZoomMeetingRegistrantStatus? status = null)
+        public async Task<List<ZoomMeetingRegistrantDto>> GetMeetingRegistrants(LmsCourseMeeting meeting, string occurrenceId = null, ZoomMeetingRegistrantStatus? status = null)
         {
             var registrants = new List<ZoomMeetingRegistrantDto>();
             var statuses = new List<ZoomMeetingRegistrantStatus>();
@@ -186,7 +187,10 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
                 do
                 {
-                    var page = await _zoomApi.GetMeetingRegistrants(meetingId, occurrenceId, st.ToString().ToLower(), pageSize, pageNumber);
+                    var page = string.IsNullOrEmpty(meeting.SubAccountId) 
+                            ? await _zoomApi.GetMeetingRegistrants(meeting.ProviderMeetingId, occurrenceId, st.ToString().ToLower(), pageSize, pageNumber)
+                            : await _zoomApi.GetSubAccountsMeetingRegistrants(meeting.SubAccountId, meeting.ProviderMeetingId, occurrenceId, st.ToString().ToLower(), pageSize, pageNumber);
+
                     registrants.AddRange(page.Registrants.Select(ConvertFromApiObjectToDto));
                     totalRecords = page.TotalRecords;
                     pageNumber++;
@@ -197,11 +201,11 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             return registrants;
         }
 
-        public async Task<bool> RegisterUsersToMeetingAndApprove(string meetingId, IEnumerable<RegistrantDto> registrants, bool checkRegistrants)
+        public async Task<bool> RegisterUsersToMeetingAndApprove(LmsCourseMeeting meeting, IEnumerable<RegistrantDto> registrants, bool checkRegistrants)
         {
             var registrantsToApprove = new List<ZoomMeetingRegistrantDto>();
             var zoomUserEmails = (await GetActiveUsers()).Where(x => !string.IsNullOrEmpty(x.Email)).Select(x =>x.Email);
-            var regs = await GetMeetingRegistrants(meetingId);
+            var regs = await GetMeetingRegistrants(meeting);
 
             foreach (var registrant in registrants)
             {
@@ -233,9 +237,12 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
                         if (addRegistrant)
                         {
-                            var newZoomAddRegistrantRequest = new ZoomAddRegistrantRequest(registrant.Email,
-                                registrant.FirstName, registrant.LastName);
-                            var addResult = await _zoomApi.AddRegistrant(meetingId, newZoomAddRegistrantRequest);
+                            var newZoomAddRegistrantRequest = new ZoomAddRegistrantRequest(registrant.Email, registrant.FirstName, registrant.LastName);
+                            
+                            var addResult = string.IsNullOrEmpty(meeting.SubAccountId) 
+                                            ? await _zoomApi.AddRegistrant(meeting.ProviderMeetingId, newZoomAddRegistrantRequest)
+                                            : await _zoomApi.AddRegistrant(meeting.SubAccountId, meeting.ProviderMeetingId, newZoomAddRegistrantRequest);
+
                             if (!addResult.IsSuccess)
                             {
                                 continue;
@@ -255,13 +262,13 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 }
                 catch (Exception e)
                 {
-                    _logger.Error($"[RegisterAndApprove] meetingId={meetingId}, email={registrant.Email}", e);
+                    _logger.Error($"[RegisterAndApprove] meetingId={meeting.ProviderMeetingId}, email={registrant.Email}", e);
                 }
             }
 
             if (registrantsToApprove.Any())
             {
-                await UpdateRegistrantStatus(meetingId, registrantsToApprove.Select(r => r.Email), nameof(RegistrantUpdateStatusAction.Approve));
+                await UpdateRegistrantStatus(meeting.SubAccountId ,meeting.ProviderMeetingId, registrantsToApprove.Select(r => r.Email), nameof(RegistrantUpdateStatusAction.Approve));
             }
 
             return true;
@@ -292,6 +299,33 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                                                                 Action = status,
                                                                 Registrants = registrants
                                                             }, null);
+        }
+
+        public async Task UpdateRegistrantStatus(string subAccountId, string meetingId, IEnumerable<string> emails, string status)
+        {
+            status = status.ToLower();
+            var registrants = emails.Select(email => new ZoomRegistrantForStatusRequest
+            {
+                Email = email
+            })
+                .ToList();
+
+            if(string.IsNullOrEmpty(subAccountId))
+            {
+                await _zoomApi.UpdateRegistrantsStatus(meetingId, new ZoomUpdateRegistrantStatusRequest
+                {
+                    Action = status,
+                    Registrants = registrants
+                }, null);
+            }
+            else
+            {
+                await _zoomApi.UpdateRegistrantsStatus(subAccountId, meetingId, new ZoomUpdateRegistrantStatusRequest
+                {
+                    Action = status,
+                    Registrants = registrants
+                }, null);
+            }
         }
 
         public async Task UpdateRegistrantStatus(string meetingId, IEnumerable<string> emails, string status)

@@ -18,6 +18,9 @@ namespace Esynctraining.Lti.Zoom.Domain
         [MaxLength(50)]
         public string LmsCalendarEventId { get; set; }
 
+        [MaxLength(50)]
+        public string SubAccountId { get; set; }
+
         public virtual List<LmsMeetingSession> MeetingSessions { get; protected set; }
 
     }

@@ -84,7 +84,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
 
-            var url = await _meetingService.GetMeetingUrl(zoomUser, dbMeeting.ProviderMeetingId,
+            var url = await _meetingService.GetMeetingUrl(zoomUser, dbMeeting,
                 param.lis_person_contact_email_primary, enableSubAccounts,
                 async () =>
                 {
