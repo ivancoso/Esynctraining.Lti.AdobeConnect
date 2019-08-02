@@ -9,6 +9,7 @@ using CsvHelper;
 using Esynctraining.Core.Json;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Lti.Lms.Common.Constants;
 using Esynctraining.Lti.Lms.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Services;
@@ -24,16 +25,18 @@ namespace Esynctraining.Lti.Zoom.Controllers
         private readonly IJsonSerializer _serializer;
         private readonly ZoomReportService _reportService;
         private readonly ZoomMeetingService _meetingService;
+        private readonly ZoomUserService _userService;
 
         public ReportsController(ILogger logger, ApplicationSettingsProvider settings, UserSessionService sessionService,
             ILmsLicenseService lmsLicenseService, IJsonSerializer serializer, IJsonDeserializer deserializer, ZoomReportService reportService,
-            ZoomMeetingService meetingService) : base(logger, settings, sessionService)
+            ZoomMeetingService meetingService, ZoomUserService userService) : base(logger, settings, sessionService)
         {
             _lmsLicenseService = lmsLicenseService;
             _serializer = serializer;
             _deserializer = deserializer;
             _reportService = reportService;
             _meetingService = meetingService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -44,7 +47,11 @@ namespace Esynctraining.Lti.Zoom.Controllers
             var param = _deserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
             var dbMeeting = await _meetingService.GetMeeting(meetingId, param.course_id.ToString());
             var apiMeeting = await _meetingService.GetMeetingDetails(meetingId, param.course_id.ToString());
-            var sessions = await _reportService.GetSessionsReport(dbMeeting.ProviderMeetingId, dbMeeting.ProviderHostId, null, true);
+
+            bool enableSubAccounts = license.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
+            var zoomUser = await _userService.GetUser(dbMeeting.ProviderHostId, enableSubAccounts);
+
+            var sessions = await _reportService.GetSessionsReport(dbMeeting, zoomUser, null, true);
 
             byte[] fileBytes = new byte[0];
             var url = Settings.ReportsUrl.TrimEnd('/') + "/ReportBySession";
@@ -104,7 +111,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             if (dbMeeting == null)
                 return NotFound(meetingId);
 
-            var participants = await _reportService.GetParticipantsBySessionId(WebUtility.UrlDecode(meetingSessionId).Replace(" ", "+"));
+            var participants = await _reportService.GetParticipantsBySessionId(WebUtility.UrlDecode(meetingSessionId).Replace(" ", "+"), null);
             var records = participants.Select(x => new
             {
                 x.Details.Name,
