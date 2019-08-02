@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Esynctraining.Lti.Zoom.Common.Dto;
 using Esynctraining.Lti.Zoom.Common.Dto.Reports;
+using Esynctraining.Lti.Zoom.Domain;
 using Esynctraining.Zoom.ApiWrapper;
 using Esynctraining.Zoom.ApiWrapper.Model;
 
@@ -18,14 +20,18 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             _zoomApi = zoomApi ?? throw new ArgumentNullException(nameof(zoomApi));
         }
 
-        public async Task<IEnumerable<ZoomSessionDto>> GetSessionsReport(string meetingId, string userId, string sessionId = null, bool includeParticipants = false)
+        public async Task<IEnumerable<ZoomSessionDto>> GetSessionsReport(LmsCourseMeeting meeting, UserInfoDto user, string sessionId = null, bool includeParticipants = false)
         {
-            var allUserSessions = await _zoomApi.GetMeetingsReport(userId, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
-            var meetingSessions = allUserSessions.Meetings.Where(x => x.Id == meetingId);
+            var allUserSessions = string.IsNullOrEmpty(user.SubAccountid) 
+                                ? await _zoomApi.GetMeetingsReport(user.Id, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1))
+                                : await _zoomApi.GetMeetingsReport(user.SubAccountid, user.Id, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
+
+            var meetingSessions = allUserSessions.Meetings.Where(x => x.Id == meeting.ProviderMeetingId);
             if (sessionId != null)
             {
                 meetingSessions = meetingSessions.Where(x => x.Uuid == sessionId);
             }
+
             var result = new List<ZoomSessionDto>();
             foreach (var s in meetingSessions)
             {
@@ -35,17 +41,23 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     SessionId = s.Uuid,
                     StartedAt = s.StartTime.DateTime,
                     EndedAt = s.EndTime.DateTime,
-                    Participants = includeParticipants ? (await GetParticipantsBySessionId(s.Uuid)).ToList() : null
+                    Participants = includeParticipants ? (await GetParticipantsBySessionId(s.Uuid, meeting.SubAccountId)).ToList() : null
                 };
                 result.Add(sessionDto);
             }
             return result;
         }
 
-        public async Task<IEnumerable<ZoomSessionParticipantDto>> GetParticipantsBySessionId(string sessionId)
+        public async Task<IEnumerable<ZoomSessionParticipantDto>> GetParticipantsBySessionId(string sessionId, string accountId)
         {
-            var participants = await _zoomApi.GetMeetingParticipantsReport(sessionId);
-            var details = await _zoomApi.GetMeetingParticipantsDetails(sessionId);
+            var participants = string.IsNullOrEmpty(accountId) 
+                                ? await _zoomApi.GetMeetingParticipantsReport(sessionId)
+                                : await _zoomApi.GetMeetingParticipantsReport(accountId, sessionId);
+
+            var details = string.IsNullOrEmpty(accountId) 
+                            ? await _zoomApi.GetMeetingParticipantsDetails(sessionId)
+                            : await _zoomApi.GetMeetingParticipantsDetails(accountId, sessionId);
+
             List<ZoomSessionParticipantDto> result = participants.Participants.Select(x => new ZoomSessionParticipantDto
                 {
                     ParticipantName = x.Name,

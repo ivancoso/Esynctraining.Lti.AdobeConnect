@@ -14,6 +14,7 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
         public long StartTime { get; set; }
         public int Duration { get; set; } //minutes
         public string Timezone { get; set; }
+        public string SubAccountId { get; set; }
 
         public bool CanEdit { get; set; }
         public bool CanJoin { get; set; }

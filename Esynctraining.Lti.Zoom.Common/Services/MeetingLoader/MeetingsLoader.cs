@@ -125,6 +125,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
                 vm.Id = dbMeeting.Id;
                 vm.Type = dbMeeting.Type;
                 vm.LtiSessions = dbMeeting.MeetingSessions.Select(MeetingSessionConverter.ConvertFromEntity);
+                vm.SubAccountId = dbMeeting.SubAccountId;
             }
 
             return vm;

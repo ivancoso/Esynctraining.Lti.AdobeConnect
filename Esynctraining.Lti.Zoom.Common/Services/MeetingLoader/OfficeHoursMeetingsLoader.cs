@@ -34,7 +34,11 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
             {
                 foreach (var oh in result)
                 {
-                    var ohDetailsResult = await _zoomApi.GetMeeting(oh.ConferenceId);
+                    var ohDetailsResult = string.IsNullOrEmpty(oh.SubAccountId) 
+                                            ? await _zoomApi.GetMeeting(oh.ConferenceId)
+                                            : await _zoomApi.GetMeeting(oh.SubAccountId, oh.ConferenceId);
+
+
                     if (!ohDetailsResult.IsSuccess)
                         throw new Exception(ohDetailsResult.Message);
 
