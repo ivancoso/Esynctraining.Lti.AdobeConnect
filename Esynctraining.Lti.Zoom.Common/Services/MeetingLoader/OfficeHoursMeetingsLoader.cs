@@ -51,9 +51,14 @@ namespace Esynctraining.Lti.Zoom.Common.Services.MeetingLoader
                 //getting current teacher's OH from other course
                 var ohMeeting = await _dbContext.LmsCourseMeetings.FirstOrDefaultAsync(x =>
                     x.LicenseKey == _license.ConsumerKey && x.ProviderHostId == _currentUserId && x.Type == (int)CourseMeetingType.OfficeHour);
+
                 if (ohMeeting != null)
                 {
-                    var ohDetailsResult = await _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId);
+                    var ohDetailsResult = string.IsNullOrEmpty(ohMeeting.SubAccountId) 
+                                            ? await _zoomApi.GetMeeting(ohMeeting.ProviderMeetingId)
+                                            : await _zoomApi.GetMeeting(ohMeeting.SubAccountId, ohMeeting.ProviderMeetingId);
+
+
                     if (!ohDetailsResult.IsSuccess)
                     {
                         var deleteErrorCodes = new List<ZoomApiErrorCodes>
