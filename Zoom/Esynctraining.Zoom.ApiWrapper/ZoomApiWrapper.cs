@@ -591,10 +591,27 @@ namespace Esynctraining.Zoom.ApiWrapper
 
         public async Task<ZoomMeetingsReportList> GetMeetingsReport(string userId, DateTime from, DateTime to, int pageSize = 300, string nextPageToken = null)
         {
+            return await GetMeetingsReport(null, userId, from, to, pageSize, nextPageToken);
+        }
+
+        public async Task<ZoomMeetingsReportList> GetMeetingsReport(string accountId, string userId, DateTime from, DateTime to, int pageSize = 300, string nextPageToken = null)
+        {
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
-            RestRequest restRequest = await BuildRequestAuthorization("report/users/{userId}/meetings", Method.GET);
-            restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
+
+            RestRequest restRequest = null;
+            if (string.IsNullOrEmpty(accountId))
+            {
+                restRequest = await BuildRequestAuthorization("report/users/{userId}/meetings", Method.GET);
+                restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
+            }
+            else
+            {
+                restRequest = await BuildRequestAuthorization("accounts/{accountId}/report/users/{userId}/meetings", Method.GET);
+                restRequest.AddParameter(nameof(userId), (object)userId, ParameterType.UrlSegment);
+                restRequest.AddParameter(nameof(accountId), (object)accountId, ParameterType.UrlSegment);
+            }
+
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("from", (object)from.ToString("yyyy-MM-dd"), ParameterType.QueryString);
             restRequest.AddParameter("to", (object)to.ToString("yyyy-MM-dd"), ParameterType.QueryString);
@@ -605,10 +622,11 @@ namespace Esynctraining.Zoom.ApiWrapper
                 return restResponse.Data;
             if (!string.IsNullOrWhiteSpace(restResponse.ErrorMessage))
                 throw new Exception(restResponse.ErrorMessage);
-             if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
+            if (!string.IsNullOrWhiteSpace(restResponse.StatusDescription) && !string.IsNullOrWhiteSpace(restResponse.Content))
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
             return (ZoomMeetingsReportList)null;
         }
+
 
         public async Task<ZoomMeetingPoolsReport> GetZoomMeetingPoolsReport(string meetingId)
         {
@@ -627,11 +645,28 @@ namespace Esynctraining.Zoom.ApiWrapper
 
         public async Task<MeetingParticipantsReport> GetMeetingParticipantsReport(string meetingId, int pageSize = 300, string nextPageToken = null)
         {
+            return await GetMeetingParticipantsReport(null, meetingId, pageSize, nextPageToken);
+        }
+
+        public async Task<MeetingParticipantsReport> GetMeetingParticipantsReport(string accountId, string meetingId, int pageSize = 300, string nextPageToken = null)
+        {
             meetingId = WebUtility.UrlEncode(meetingId);
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
-            RestRequest restRequest = await BuildRequestAuthorization("report/meetings/{meetingId}/participants", Method.GET);
-            restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+
+            RestRequest restRequest = null;
+            if (string.IsNullOrEmpty(accountId))
+            {
+                restRequest = await BuildRequestAuthorization("report/meetings/{meetingId}/participants", Method.GET);
+                restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+            }
+            else
+            {
+                restRequest = await BuildRequestAuthorization("accounts/{accountId}/report/meetings/{meetingId}/participants ", Method.GET);
+                restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
+                restRequest.AddParameter(nameof(accountId), (object)accountId, ParameterType.UrlSegment);
+            }
+
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             if (!string.IsNullOrWhiteSpace(nextPageToken))
                 restRequest.AddParameter("next_page_token", (object)nextPageToken, ParameterType.QueryString);
@@ -645,11 +680,28 @@ namespace Esynctraining.Zoom.ApiWrapper
             return (MeetingParticipantsReport)null;
         }
 
+
         public async Task<ListMeetingParticipantsDetails> GetMeetingParticipantsDetails(string meetingId, int pageSize = 300, string nextPageToken = null)
+        {
+            return await GetMeetingParticipantsDetails(null, meetingId, pageSize, nextPageToken);
+        }
+
+        public async Task<ListMeetingParticipantsDetails> GetMeetingParticipantsDetails(string accountId, string meetingId, int pageSize = 300, string nextPageToken = null)
         {
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
-            RestRequest restRequest = await BuildRequestAuthorization($"metrics/meetings/{meetingId}/participants", Method.GET);
+
+            RestRequest restRequest = null;
+            if (string.IsNullOrEmpty(accountId))
+            {
+                restRequest = await BuildRequestAuthorization($"metrics/meetings/{meetingId}/participants", Method.GET);
+            }
+            else
+            {
+                restRequest = await BuildRequestAuthorization($"accounts/{accountId}/metrics/meetings/{meetingId}/participants", Method.GET);
+            }
+            
+
             restRequest.AddParameter("page_size", (object)pageSize, ParameterType.QueryString);
             restRequest.AddParameter("type", "past", ParameterType.QueryString);
             if (!string.IsNullOrWhiteSpace(nextPageToken))
@@ -663,6 +715,7 @@ namespace Esynctraining.Zoom.ApiWrapper
                 throw new Exception(string.Format("{0} || {1}", (object)restResponse.StatusDescription, (object)restResponse.Content));
             return (ListMeetingParticipantsDetails)null;
         }
+
 
         public async Task<OAuthTokenInfo> RefreshOauthToken(string refreshToken, string redirectUrl, string clientId, string sclientSecret)
         {
