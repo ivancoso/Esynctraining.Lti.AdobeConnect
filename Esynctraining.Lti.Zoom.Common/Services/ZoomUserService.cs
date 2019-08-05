@@ -80,7 +80,16 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         public async Task<UserInfoDto> GetUser(string idOrEmail, bool enableSubAccounts)
         {
             UserInfoDto user = await GetUser(idOrEmail);
-            if (user != null || !enableSubAccounts)
+
+            if (user.Code == null)
+                return user;
+
+            //User {email} does not exist.
+            if (user.Code == "1001")
+                return user;
+
+            //User not belong to this account.
+            if (user.Code == "1010" && !enableSubAccounts)
                 return user;
 
             var subAccounts = await GetSubAccounts();
@@ -91,13 +100,11 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             foreach(var subAccount in subAccounts)
             {
                 user = await GetUser(subAccount.Id, idOrEmail);
-                if (user != null)
+                if (user.Code == null)
                 {
                     user.SubAccountId = subAccount.Id;
                     break;
                 }
-
-                    
             }
 
             return user;
@@ -116,7 +123,8 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     LastName = user.LastName,
                     Verified = user.Verified == 1,
                     Timezone = user.Timezone,
-                    Status = (ZoomUserStatus)((int)user.Status)
+                    Status = (ZoomUserStatus)((int)user.Status),
+                    Code = user.Code
                 };
         }
 

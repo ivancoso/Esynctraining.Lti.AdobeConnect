@@ -584,7 +584,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             {
                 var zoomUser = await _userService.GetUser(param.lis_person_contact_email_primary, bool.Parse(enableSubAccounts));
 
-                if (zoomUser == null)
+                if (zoomUser.Code == "1001")
                 {
                     Logger.Info($"User {param.lis_person_contact_email_primary} doesn't exist or doesn't belong to zoom account of license {param.oauth_consumer_key}");
                     var userInfo = await _userService.CreateUser(new CreateUserDto
@@ -595,6 +595,12 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     });
 
                     ViewBag.Message = "The invitation to Zoom account was sent to your email. Please check your email and try to log in to LMS again.";
+                    return null;
+                }
+
+                if (zoomUser.Code == "1010")
+                {
+                    ViewBag.Message = "Your Zoom license doesn't have EnableSubAccount option enabled. Please talk to your Zoom administrator.";
                     return null;
                 }
 

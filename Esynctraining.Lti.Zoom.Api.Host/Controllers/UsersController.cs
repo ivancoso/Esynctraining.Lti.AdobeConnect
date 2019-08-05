@@ -112,19 +112,31 @@ namespace Esynctraining.Lti.Zoom.Api.Host.Controllers
             {
                 bool enableSubAccounts = LmsLicense.GetSetting<bool>(LmsLicenseSettingNames.EnableSubAccounts);
                 user = await _zoomUserService.GetUser(Param.lis_person_contact_email_primary, enableSubAccounts);
+
+                if (user.Code == "1001")
+                {
+                    Logger.Error($"User {Param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account");
+                    await _zoomUserService.CreateUser(new CreateUserDto
+                    {
+                        Email = Param.lis_person_contact_email_primary,
+                        FirstName = Param.PersonNameGiven,
+                        LastName = Param.PersonNameFamily
+                    });
+
+                    return OperationResultWithData<UserInfoDto>.Error(
+                        "User either in 'pending' or 'inactive' status. Please check your email or contact Administrator and try again.");
+
+                }
+
+                if (user.Code == "1010")
+                {
+                    Logger.Error($"User {Param.lis_person_contact_email_primary} doesn't belong to this account");
+                    return OperationResultWithData<UserInfoDto>.Error($"User {Param.lis_person_contact_email_primary} doesn't belong to this account");
+                }
             }
             catch (Exception e)
             {
-                Logger.Error($"User {Param.lis_person_contact_email_primary} doesn't exist or doesn't belong to this account", e);
-                await _zoomUserService.CreateUser(new CreateUserDto
-                {
-                    Email = Param.lis_person_contact_email_primary,
-                    FirstName = Param.PersonNameGiven,
-                    LastName = Param.PersonNameFamily
-                });
-
-                return OperationResultWithData<UserInfoDto>.Error(
-                    "User either in 'pending' or 'inactive' status. Please check your email or contact Administrator and try again.");
+                return OperationResultWithData<UserInfoDto>.Error("Please check your email or contact Administrator and try again.");
             }
 
             return user.ToSuccessResult();
