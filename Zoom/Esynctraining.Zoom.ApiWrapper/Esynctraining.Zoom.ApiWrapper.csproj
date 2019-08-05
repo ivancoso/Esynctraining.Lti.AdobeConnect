@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.0.1.6</AssemblyVersion>
-    <FileVersion>1.0.1.6</FileVersion>
-    <Version>1.0.1.6</Version>
+    <AssemblyVersion>1.0.1.8</AssemblyVersion>
+    <FileVersion>1.0.1.8</FileVersion>
+    <Version>1.0.1.8</Version>
     <Description>Wrapper for Zoom Api REST services</Description>
     <PackageReleaseNotes>added account API</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

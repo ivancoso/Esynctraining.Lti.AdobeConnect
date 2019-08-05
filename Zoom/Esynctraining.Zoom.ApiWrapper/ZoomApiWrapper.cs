@@ -50,10 +50,11 @@ namespace Esynctraining.Zoom.ApiWrapper
                 return restResponse.Data;
 
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.NotFound)
-                return null;
+                return restResponse.Data;
 
+            //1010 - User not belong to this account.
             if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.BadRequest && restResponse.Data.Code == "1010")
-                return null;
+                return restResponse.Data;
 
             throw new ZoomApiException
             {
@@ -101,10 +102,15 @@ namespace Esynctraining.Zoom.ApiWrapper
                 }));
             if (string.IsNullOrWhiteSpace(createUser.Password) && !string.IsNullOrWhiteSpace(action) && action.Equals(CreateUserAction.AutoCreate, StringComparison.InvariantCultureIgnoreCase))
                 throw new Exception(string.Format("{0} property is required for creating user when action is set to {1}", (object)"Password", (object)CreateUserAction.AutoCreate));
-            RestRequest restRequest = await BuildRequestAuthorization("accounts/{accountId}/users", Method.POST);
+            RestRequest restRequest = null;
 
-            if (!string.IsNullOrEmpty(accountId))
+            if (string.IsNullOrEmpty(accountId))
             {
+                restRequest = await BuildRequestAuthorization("users", Method.POST);
+            }
+            else
+            {
+                restRequest = await BuildRequestAuthorization("accounts/{accountId}/users", Method.POST);
                 restRequest.AddParameter("accountId", (object)accountId, ParameterType.UrlSegment);
             }
 
