@@ -22,9 +22,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
         public async Task<IEnumerable<ZoomSessionDto>> GetSessionsReport(LmsCourseMeeting meeting, UserInfoDto user, string sessionId = null, bool includeParticipants = false)
         {
-            var allUserSessions = string.IsNullOrEmpty(user.SubAccountid) 
+            var allUserSessions = string.IsNullOrEmpty(user.SubAccountId) 
                                 ? await _zoomApi.GetMeetingsReport(user.Id, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1))
-                                : await _zoomApi.GetMeetingsReport(user.SubAccountid, user.Id, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
+                                : await _zoomApi.GetMeetingsReport(user.SubAccountId, user.Id, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1));
 
             var meetingSessions = allUserSessions.Meetings.Where(x => x.Id == meeting.ProviderMeetingId);
             if (sessionId != null)

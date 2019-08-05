@@ -118,9 +118,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 }
             }
 
-            var userToken = string.IsNullOrEmpty(user.SubAccountid) 
+            var userToken = string.IsNullOrEmpty(user.SubAccountId) 
                 ? await _zoomApi.GetUserToken(user.Id, "zak") 
-                : await _zoomApi.GetUserToken(user.SubAccountid, user.Id, "zak");
+                : await _zoomApi.GetUserToken(user.SubAccountId, user.Id, "zak");
 
             return baseUrl + (baseUrl.Contains("?") ? "&" : "?") + "zak=" + userToken;
         }
@@ -160,9 +160,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
         public async Task<string> GetToken(UserInfoDto user, string type)
         {
-            return string.IsNullOrEmpty(user.SubAccountid) 
+            return string.IsNullOrEmpty(user.SubAccountId) 
                     ? await _zoomApi.GetUserToken(user.Id, type) 
-                    : await _zoomApi.GetUserToken(user.SubAccountid, user.Id, type);
+                    : await _zoomApi.GetUserToken(user.SubAccountId, user.Id, type);
         }
 
         public async Task<OperationResult> DeleteMeeting(int meetingId, string courseId, string email, bool remove, Dictionary<string, object> lmsSettings, bool enableSubAccount, string occurenceId = null)
@@ -187,9 +187,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                     string userId = null;
                     //var user = await _userService.GetUser(email);
                     userId = user.Id;
-                    var isDeleted = string.IsNullOrEmpty(user.SubAccountid) 
+                    var isDeleted = string.IsNullOrEmpty(user.SubAccountId) 
                                     ? await _zoomApi.DeleteMeeting(meeting.ProviderMeetingId, occurenceId)
-                                    : await _zoomApi.DeleteMeeting(user.SubAccountid, meeting.ProviderMeetingId, occurenceId);
+                                    : await _zoomApi.DeleteMeeting(user.SubAccountId, meeting.ProviderMeetingId, occurenceId);
                     // find all user's OH and delete
                     LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
 
@@ -201,9 +201,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             }
             else
             {
-                var isDeleted = string.IsNullOrEmpty(user.SubAccountid) 
+                var isDeleted = string.IsNullOrEmpty(user.SubAccountId) 
                                 ? await _zoomApi.DeleteMeeting(meeting.ProviderMeetingId, occurenceId)
-                                : await _zoomApi.DeleteMeeting(user.SubAccountid, meeting.ProviderMeetingId, occurenceId);
+                                : await _zoomApi.DeleteMeeting(user.SubAccountId, meeting.ProviderMeetingId, occurenceId);
 
                 LmsLicenseDto licenseDto = await _licenseAccessor.GetLicense();
                 await RemoveLmsCalendarEventForMeeting(licenseDto, lmsSettings, meeting);
@@ -266,7 +266,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 dbMeeting.ProviderMeetingId = m.Data.Id;
                 dbMeeting.Details = json;
                 dbMeeting.ProviderHostId = m.Data.HostId;
-                dbMeeting.SubAccountId = user.SubAccountid;
+                dbMeeting.SubAccountId = user.SubAccountId;
             }
 
             if (requestDto.Type == (int)CourseMeetingType.Basic)
@@ -397,9 +397,9 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             meetingDto.StartTime = meetingDto.StartTime.AddSeconds(offset);
             meetingDto.Timezone = user.Timezone;
 
-            var result = string.IsNullOrEmpty(user.SubAccountid) 
+            var result = string.IsNullOrEmpty(user.SubAccountId) 
                             ? await _zoomApi.CreateMeeting(user.Id, meetingDto)
-                            : await _zoomApi.CreateMeeting(user.SubAccountid, user.Id, meetingDto);
+                            : await _zoomApi.CreateMeeting(user.SubAccountId, user.Id, meetingDto);
 
             if (!result.IsSuccess)
             {

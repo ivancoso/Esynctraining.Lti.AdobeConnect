@@ -93,7 +93,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 user = await GetUser(subAccount.Id, idOrEmail);
                 if (user != null)
                 {
-                    user.SubAccountid = subAccount.Id;
+                    user.SubAccountId = subAccount.Id;
                     break;
                 }
 
