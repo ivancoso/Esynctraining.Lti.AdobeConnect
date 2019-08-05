@@ -148,12 +148,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
             {
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-                if ((await TryGetZoomUser(param, enableSubAccounts)) == null )
+                UserInfoDto zoomUser = await TryGetZoomUser(param, enableSubAccounts);
+
+                if (zoomUser == null)
                 {
                     return this.View("~/Views/Lti/LtiError.cshtml");
                 }
 
-                var model = await BuildModelAsync(s);
+                var model = await BuildModelAsync(s, zoomUser);
                 return View("Index", model);
             }
             catch (Exception ex)
@@ -512,7 +514,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             });
         }
 
-        private async Task<LtiViewModelDto> BuildModelAsync(LmsUserSession session, StringBuilder trace = null)
+        private async Task<LtiViewModelDto> BuildModelAsync(LmsUserSession session, UserInfoDto zoomUser, StringBuilder trace = null)
         {
             var license = await _licenseService.GetLicense(session.LicenseKey);
 
@@ -552,7 +554,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 EnabledStorageProviders = await GetEnabledStorageProviders(license),
                 PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),
                 SupportSectionText = license.GetSetting<string>(LmsLicenseSettingNames.SupportSectionText),
-                EnableMeetingSessions = license.GetSetting<bool>(LmsLicenseSettingNames.EnableMeetingSessions)
+                EnableMeetingSessions = license.GetSetting<bool>(LmsLicenseSettingNames.EnableMeetingSessions),
+                IsSubAccount = !string.IsNullOrEmpty(zoomUser.SubAccountId)
             };
 
             return model;
