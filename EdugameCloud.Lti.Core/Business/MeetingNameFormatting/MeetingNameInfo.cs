@@ -12,6 +12,9 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting
         public string courseNum { get; set; }
 
         [DataMember]
+        public string courseName { get; set; }
+
+        [DataMember]
         public string meetingName { get; set; }
 
         [DataMember]

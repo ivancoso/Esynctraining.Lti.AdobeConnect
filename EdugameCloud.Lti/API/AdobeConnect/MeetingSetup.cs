@@ -1352,10 +1352,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 updateItem.Name = acMeetingName;
 
                 // TODO: move TO formatter base?
+                //POPOVR
                 var json = JsonSerializer.JsonSerialize(new MeetingNameInfo
                 {
                     courseId = courseId,
                     courseNum = param.context_label,
+                    courseName = param.context_title,
                     meetingName = meetingDTO.Name,
                     date = DateTime.Today.ToString("MM/dd/yy"),
                 });

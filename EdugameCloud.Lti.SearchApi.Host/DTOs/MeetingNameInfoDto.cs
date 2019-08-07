@@ -11,6 +11,8 @@ namespace EdugameClaud.Lti.SearchApi.Host.DTOs
 
         public string courseNum { get; set; }
 
+        public string courseName { get; set; }
+
         public string meetingName { get; set; }
 
         public string date { get; set; }

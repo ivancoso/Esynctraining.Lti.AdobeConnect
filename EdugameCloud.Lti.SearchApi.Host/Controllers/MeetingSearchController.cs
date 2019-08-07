@@ -47,7 +47,7 @@ namespace EdugameClaud.Lti.SearchApi.Host.Controllers
                 MeetingNameInfo = _jsonDeserializer.JsonDeserialize<MeetingNameInfoDto>(cm.MeetingNameJson)
             });
 
-            var foundCoursesIds = lmsCourseMeetingDtos.Where(r => r.MeetingNameInfo.courseNum.Contains(text, StringComparison.OrdinalIgnoreCase)).Select(f => f.LmsCourseMeetingId);
+            var foundCoursesIds = lmsCourseMeetingDtos.Where(r => r.MeetingNameInfo.courseName.Contains(text, StringComparison.OrdinalIgnoreCase)).Select(f => f.LmsCourseMeetingId);
             var foundMeetingsIds = lmsCourseMeetingDtos.Where(r => r.MeetingNameInfo.meetingName.Contains(text, StringComparison.OrdinalIgnoreCase)).Select(f => f.LmsCourseMeetingId);
 
             var resultIds = new List<int>();
