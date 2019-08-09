@@ -39,6 +39,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
                 {
                     Duration = s.Duration,
                     SessionId = s.Uuid,
+                    SessionNumber = "3",
                     StartedAt = s.StartTime.DateTime,
                     EndedAt = s.EndTime.DateTime,
                     Participants = includeParticipants ? (await GetParticipantsBySessionId(s.Uuid, meeting.SubAccountId)).ToList() : null

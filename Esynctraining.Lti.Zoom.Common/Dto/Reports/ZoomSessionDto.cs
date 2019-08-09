@@ -42,5 +42,8 @@ namespace Esynctraining.Lti.Zoom.Common.Dto.Reports
         [DataMember]
         public string SessionId { get; set; }
 
+        [DataMember]
+        public string SessionNumber { get; set; }
+
     }
 }
