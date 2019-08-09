@@ -71,6 +71,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     dateEnded = x.EndedAt.ToString(),
                     meetingId = apiMeeting.Id,
                     sessionId = x.SessionId,
+                    sessionNumber = x.SessionNumber,
                     participantsCount = x.Participants.Count,
                     Participants = x.Participants.Select(p => new
                     {
