@@ -28,7 +28,7 @@ namespace Esynctraining.Lti.Reports.Host.Core.Controllers
                 {
                     DateStarted = "2018-05-24",
                     DateEnded = "2018-05-24 05:00",
-                   MeetingId = 123,
+                    MeetingId = "123",
                     SessionId = "1",
                     ParticipantsCount = 2,
                     Participants = new List<SessionParticipantDto>{new SessionParticipantDto
@@ -137,43 +137,8 @@ namespace Esynctraining.Lti.Reports.Host.Core.Controllers
         {
             try
             {
-                //var tz = GetTimeZoneInfoForTzdbId(timezone) ?? TimeZoneInfo.Utc;
-                //LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, s.LmsCourseId, meetingId);
-
-                //var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
-                //var acMeetingUrl = credentials.AcServer + acMeeting.ScoInfo.UrlPath;
-                //var acMeetingTitle = acMeeting.ScoInfo.Name;
-
-                //var tempMeetingSessions = this.meetingSetup.GetSessionsReports(
-                //    meeting.GetMeetingScoId(),
-                //    acProvider,
-                //    tz,
-                //    startIndex,
-                //    limit);
-
-                //var meetingSessions = new List<ACSessionReportDto>();
-
-                //if (tempMeetingSessions.Any())
-                //{
-                //    meetingSessions = tempMeetingSessions.Select(x => new ACSessionReportDto(x, tz)).ToList();
-                //}
-
-                //if (format.ToUpper() != "PDF" && format.ToUpper() != "EXCEL")
-                //{
-                //    this.RedirectToError("Unable to generate report in such format " + " \"" + format + "\"");
-                //    return null;
-                //}
-
-                //var company = this.companyModel.GetOneById(s.LmsCompany.CompanyId).Value;
-
-                //if (company == null)
-                //{
-                //    this.RedirectToError("Unable to retrieve data about company");
-                //    return null;
-                //}
                 var localDate = DateTime.Now;
                 var format = dto.IsExcelFormat ? "EXCEL" : "PDF";
-                //bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
                 var parametersList = GetReportParameters(dto);
                 var subreports = new Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>>
                 {

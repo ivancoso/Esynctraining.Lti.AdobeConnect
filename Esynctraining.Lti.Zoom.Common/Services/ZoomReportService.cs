@@ -33,18 +33,20 @@ namespace Esynctraining.Lti.Zoom.Common.Services
             }
 
             var result = new List<ZoomSessionDto>();
+            int i = 1;
             foreach (var s in meetingSessions)
             {
                 var sessionDto = new ZoomSessionDto
                 {
                     Duration = s.Duration,
                     SessionId = s.Uuid,
-                    SessionNumber = "3",
+                    SessionNumber = i.ToString(),
                     StartedAt = s.StartTime.DateTime,
                     EndedAt = s.EndTime.DateTime,
                     Participants = includeParticipants ? (await GetParticipantsBySessionId(s.Uuid, meeting.SubAccountId)).ToList() : null
                 };
                 result.Add(sessionDto);
+                i++;
             }
             return result;
         }

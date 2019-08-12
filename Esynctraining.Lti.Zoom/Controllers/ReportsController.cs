@@ -69,7 +69,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 {
                     dateStarted = x.StartedAt.ToString(),
                     dateEnded = x.EndedAt.ToString(),
-                    meetingId = apiMeeting.Id,
+                    meetingId = apiMeeting.Id.ToString(),
                     sessionId = x.SessionId,
                     sessionNumber = x.SessionNumber,
                     participantsCount = x.Participants.Count,
