@@ -21,5 +21,13 @@ namespace Esynctraining.Lti.Lms.Common.Dto
             EndAt = endTime;
             Title = title;
         }
+
+        public LmsCalendarEventDTO(DateTime startTime, DateTime endTime, string title, string description)
+        {
+            StartAt = startTime;
+            EndAt = endTime;
+            Title = title;
+            Description = $"<a href='{description}'>Course</a>" ;
+        }
     }
 }

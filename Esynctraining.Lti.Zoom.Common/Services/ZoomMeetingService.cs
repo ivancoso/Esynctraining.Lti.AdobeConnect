@@ -271,7 +271,7 @@ namespace Esynctraining.Lti.Zoom.Common.Services
 
             if (requestDto.Type == (int)CourseMeetingType.Basic)
             {
-                var lmsEvent = await CreateLmsCalendarEvent(licenseDto, lmsSettings, courseId, requestDto);
+                var lmsEvent = await CreateLmsCalendarEvent(licenseDto, lmsSettings, courseId, requestDto, extraData);
                 dbMeeting.LmsCalendarEventId = lmsEvent?.Id;
             }
 
@@ -321,11 +321,11 @@ namespace Esynctraining.Lti.Zoom.Common.Services
         }
 
         private async Task<LmsCalendarEventDTO> CreateLmsCalendarEvent(LmsLicenseDto licenseDto, Dictionary<string, object> lmsSettings, string courseId,
-            CreateMeetingViewModel requestDto)
+            CreateMeetingViewModel requestDto, ILtiParam param)
         {
             var date = LongToDateTime(requestDto.StartTime.Value);
 
-            var lmsCalendarEvent = new LmsCalendarEventDTO(date, date.AddMinutes(requestDto.Duration.Value), requestDto.Topic);
+            var lmsCalendarEvent = new LmsCalendarEventDTO(date, date.AddMinutes(requestDto.Duration.Value), requestDto.Topic, param.referer);
             var calendarEventService = _lmsCalendarEventServiceFactory.GetService(licenseDto.ProductId, lmsSettings);
 
             if (calendarEventService == null)

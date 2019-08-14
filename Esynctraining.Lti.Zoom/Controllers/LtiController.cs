@@ -321,6 +321,14 @@ namespace Esynctraining.Lti.Zoom.Controllers
                     throw new LtiException($"Invalid signature parameter");
                 }
 
+                if ((LMS)license.ProductId == LMS.Canvas)
+                {
+                    if (Request.Headers.ContainsKey("Referer"))
+                    {
+                        param.referer = Request.Headers["Referer"].ToString();
+                    }
+                }
+
                 ValidateLtiVersion(param);
                 ValidateIntegrationRequiredParameters(license, param);
 

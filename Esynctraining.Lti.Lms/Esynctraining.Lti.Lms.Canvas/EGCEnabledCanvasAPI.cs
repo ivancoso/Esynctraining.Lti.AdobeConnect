@@ -665,7 +665,8 @@ namespace Esynctraining.Lti.Lms.Canvas
             string startTimeUtc = lmsEvent.StartAt.ToString(StandartTimeFormat);
             string endTimeUtc = lmsEvent.EndAt.ToString(StandartTimeFormat);
             string eventTitle = HttpUtility.UrlEncode(lmsEvent.Title);
-            var link = $"/api/v1/calendar_events?calendar_event[context_code]=course_{courseId}&calendar_event[title]={eventTitle}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}";
+            string eventDesc = HttpUtility.UrlEncode(lmsEvent.Description);
+            var link = $"/api/v1/calendar_events?calendar_event[context_code]=course_{courseId}&calendar_event[title]={eventTitle}&calendar_event[start_at]={startTimeUtc}&calendar_event[end_at]={endTimeUtc}&calendar_event[description]={eventDesc}";
 
             var refreshTokenParams = licenseSettings.ContainsKey(LmsUserSettingNames.RefreshToken)
                 ? new RefreshTokenParamsDto
