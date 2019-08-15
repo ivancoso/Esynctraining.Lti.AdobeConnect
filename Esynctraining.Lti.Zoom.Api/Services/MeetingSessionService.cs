@@ -43,7 +43,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             _lmsCalendarEventServiceFactory = lmsCalendarEventServiceFactory ?? throw new ArgumentNullException(nameof(lmsCalendarEventServiceFactory)); ;
         }
 
-        public async Task<IEnumerable<MeetingSessionDto>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LmsCourseMeeting meeting, string courseId, Dictionary<string, object> lmsSettings)
+        public async Task<IEnumerable<MeetingSessionDto>> CreateBatchAsync(CreateMeetingSessionsBatchDto dto, LmsCourseMeeting meeting, string courseId, Dictionary<string, object> lmsSettings, ILtiParam param)
         {
 
             var apiDetails = await _zoomMeetingApiService.GetMeetingApiDetails(meeting);
@@ -84,7 +84,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
                 LmsCalendarEventDTO calendarEvent = null;
                 if (lmsCalendarEventService != null)
                 {
-                    var lmsEvent = new LmsCalendarEventDTO(session.StartDate, session.EndDate, session.Name);
+                    var lmsEvent = new LmsCalendarEventDTO(session.StartDate, session.EndDate, session.Name, param.referer);
                     calendarEvent = await lmsCalendarEventService.CreateEvent(courseId, lmsSettings, lmsEvent);
                 }
 
@@ -108,7 +108,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             return meeting.MeetingSessions.Select(MeetingSessionConverter.ConvertFromEntity).ToArray();
         }
 
-        public async Task<MeetingSessionDto> CreateSessionAsync(LmsCourseMeeting meeting, Dictionary<string, object> lmsSettings)
+        public async Task<MeetingSessionDto> CreateSessionAsync(LmsCourseMeeting meeting, Dictionary<string, object> lmsSettings, ILtiParam ltiParam)
         {
             var apiDetails = await _zoomMeetingApiService.GetMeetingApiDetails(meeting);
             
@@ -133,7 +133,7 @@ namespace Esynctraining.Lti.Zoom.Api.Services
             LmsCalendarEventDTO newLmsEvent = null;
             if (lmsCalendarEventService != null)
             {
-                LmsCalendarEventDTO lmsCalendarEvent = new LmsCalendarEventDTO(ev.StartDate, ev.EndDate, ev.Name);
+                LmsCalendarEventDTO lmsCalendarEvent = new LmsCalendarEventDTO(ev.StartDate, ev.EndDate, ev.Name, ltiParam.referer);
                 newLmsEvent =
                     await lmsCalendarEventService.CreateEvent(meeting.CourseId, lmsSettings, lmsCalendarEvent);
             }
