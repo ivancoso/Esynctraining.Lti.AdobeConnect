@@ -21,6 +21,8 @@ namespace Esynctraining.Lti.Zoom.Common.Dto
 
         public ZoomUserDto ZoomUserDto { get; set; }
 
+        public ICollection<LmsLicenseRoleMappingDto> LmsLicenseRoleMappings { get; set; }
+
         public T GetSetting<T>(string settingName)
         {
             return (Settings.ContainsKey(settingName))

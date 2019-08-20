@@ -275,7 +275,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                             Email = param.lis_person_contact_email_primary,
                             FirstName = param.PersonNameGiven,
                             LastName = param.PersonNameFamily,
-                            Type = IsTeacher(param) ? UserTypes.Pro : UserTypes.Basic,
+                            Type = IsTeacher(param, license) ? UserTypes.Pro : UserTypes.Basic,
                         }, "custCreate");
                 }
 

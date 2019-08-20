@@ -547,7 +547,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 // BB contains: lis_person_name_full:" Blackboard  Administrator"
                 CurrentUserName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline),
                 //LicenseSettings = settings,
-                IsTeacher = IsTeacher(param),
+                IsTeacher = IsTeacher(param, license),
 
                 CourseMeetingsEnabled =
                     true, //credentials.EnableCourseMeetings.GetValueOrDefault() || param.is_course_meeting_enabled,
@@ -582,11 +582,25 @@ namespace Esynctraining.Lti.Zoom.Controllers
             return result;
         }
 
-        private bool IsTeacher(LtiParamDTO param)
+        private bool IsTeacher(LtiParamDTO param, LmsLicenseDto license)
         {
-            string teacherRoles = Settings.TeacherRoles;
-            return !string.IsNullOrWhiteSpace(teacherRoles) && teacherRoles.Split(',')
-                       .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
+            if (license.LmsLicenseRoleMappings == null || !license.LmsLicenseRoleMappings.Any())
+            {
+                string teacherRoles = Settings.TeacherRoles;
+                return !string.IsNullOrWhiteSpace(teacherRoles) && teacherRoles.Split(',')
+                           .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
+            }
+            else
+            {
+                foreach(var roleMapping in license.LmsLicenseRoleMappings)
+                {
+                    if (param.roles.IndexOf(roleMapping.LmsRole.Name.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0 && roleMapping.ZoomRole.Id == 1)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
         private async Task<UserInfoDto> TryGetZoomUser(LtiParamDTO param, string enableSubAccounts)
