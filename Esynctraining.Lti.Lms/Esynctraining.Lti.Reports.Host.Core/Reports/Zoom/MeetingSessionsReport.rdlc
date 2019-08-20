@@ -459,7 +459,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!SessionId.Value</Value>
+                                  <Value>=Fields!SessionNumber.Value</Value>
                                   <Style>
                                     <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontSize>8pt</FontSize>
