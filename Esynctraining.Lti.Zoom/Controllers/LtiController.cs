@@ -584,9 +584,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
 
         private bool IsTeacher(LtiParamDTO param, LmsLicenseDto license)
         {
+            string teacherRoles = Settings.TeacherRoles;
             if (license.LmsLicenseRoleMappings == null || !license.LmsLicenseRoleMappings.Any())
             {
-                string teacherRoles = Settings.TeacherRoles;
                 return !string.IsNullOrWhiteSpace(teacherRoles) && teacherRoles.Split(',')
                            .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
             }
@@ -599,7 +599,9 @@ namespace Esynctraining.Lti.Zoom.Controllers
                         return true;
                     }
                 }
-                return false;
+
+                return !string.IsNullOrWhiteSpace(teacherRoles) && teacherRoles.Split(',')
+                           .Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
             }
         }
 
