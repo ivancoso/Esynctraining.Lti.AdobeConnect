@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public int LmsId { get; set; }
         public string Name { get; set; }
+        public string LtiName { get; set; }
     }
 }

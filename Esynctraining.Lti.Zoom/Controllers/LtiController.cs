@@ -594,7 +594,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
             {
                 foreach(var roleMapping in license.LmsLicenseRoleMappings)
                 {
-                    if (param.roles.IndexOf(roleMapping.LmsRole.Name.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0 && roleMapping.ZoomRole.Id == 1)
+                    if (param.roles.IndexOf(roleMapping.LmsRole.LtiName.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0 && roleMapping.ZoomRole.Id == 1)
                     {
                         return true;
                     }
