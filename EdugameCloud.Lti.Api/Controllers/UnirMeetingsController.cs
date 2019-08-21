@@ -350,7 +350,8 @@ namespace EdugameCloud.Lti.Api.Controllers
                 string meetingName = string.IsNullOrWhiteSpace(nameInfo.reusedMeetingName) ? nameInfo.meetingName : nameInfo.reusedMeetingName;
 
                 var start = sco.BeginDateOffset.Value;
-                string format = sco.Language == "es" ? "dd/MM/yy" : "MM/yy/yy";
+                //string format = sco.Language == "es" ? "dd/MM/yy" : "MM/dd/yy";
+                string format = "MM-dd-yyyy";
 
                 return new MeetingDTOInput
                 {
