@@ -45,6 +45,7 @@ namespace Esynctraining.AdobeConnect
             new TimeZoneMap(35,  "Eastern Standard Time", -5 * 60 ),
             new TimeZoneMap(40,  "U.S. Eastern Standard Time", -5 * 60 ),
             new TimeZoneMap(45,  "S.A. Pacific Standard Time", -5 * 60 ),
+            new TimeZoneMap(47,  "Caracas Standard Time", -(4 * 60 + 30)  ),
             new TimeZoneMap(50,  "Atlantic Standard Time", -4 * 60 ),
             new TimeZoneMap(55,  "S.A. Western Standard Time", -4 * 60 ),
             new TimeZoneMap(56,  "Pacific S.A. Standard Time", -4 * 60 ),
@@ -57,6 +58,7 @@ namespace Esynctraining.AdobeConnect
             new TimeZoneMap(83,  "Cape Verde Standard Time", -1 * 60 ),
             new TimeZoneMap(85,  "GMT Standard Time", 0 ),
             new TimeZoneMap(90,  "Greenwich Standard Time", 0 ),
+            new TimeZoneMap(91,  "Monrovia, Reykjavik Standard Time", 0 ),
             new TimeZoneMap(95,  "Central Europe Standard Time", 1 * 60 ),
             new TimeZoneMap(100, "Central European Standard Time", 1 * 60 ),
             new TimeZoneMap(105, "Romance Standard Time", 1 * 60 ),
@@ -66,6 +68,7 @@ namespace Esynctraining.AdobeConnect
             new TimeZoneMap(120, "Egypt Standard Time", 2 * 60 ),
             new TimeZoneMap(125, "FLE Standard Time", 2 * 60 ),
             new TimeZoneMap(130, "GTB Standard Time", 2 * 60 ),
+            new TimeZoneMap(131, "Minsk Standard Time", 2 * 60 ),
             new TimeZoneMap(135, "Israel Standard Time", 2 * 60 ),
             new TimeZoneMap(140, "South Africa Standard Time", 2 * 60 ),
             new TimeZoneMap(145, "Russian Standard Time", 3 * 60 ),
@@ -75,6 +78,7 @@ namespace Esynctraining.AdobeConnect
             new TimeZoneMap(160, "Iran Standard Time", 3 * 60 + 30 ),
             new TimeZoneMap(165, "Arabian Standard Time", 4 * 60 ),
             new TimeZoneMap(170, "Caucasus Standard Time", 4 * 60 ),
+            new TimeZoneMap(171, "Baku Standard Time", 4 * 60 ),
             new TimeZoneMap(175, "Transitional Islamic State of Afghanistan Standard Time", 4 * 60 + 30 ),
             new TimeZoneMap(180, "Ekaterinburg Standard Time", 5 * 60 ),
             new TimeZoneMap(185, "West Asia Standard Time", 5 * 60 ),
@@ -102,9 +106,11 @@ namespace Esynctraining.AdobeConnect
             new TimeZoneMap(270, "Vladivostok Standard Time", 10 * 60 ),
             new TimeZoneMap(275, "West Pacific Standard Time", 10 * 60 ),
             new TimeZoneMap(280, "Central Pacific Standard Time", 11 * 60 ),
+            new TimeZoneMap(283, "Kamchatka, Marshall Islands Standard Time", 12 * 60 ),
             new TimeZoneMap(285, "Fiji Islands Standard Time", 12 * 60 ),
             new TimeZoneMap(290, "New Zealand Standard Time", 12 * 60 ),
             new TimeZoneMap(300, "Tonga Standard Time", 13 * 60 ),
+            new TimeZoneMap(310, "West Samoa Standard Time", 13 * 60 ),
         };
 
         #endregion TimeZones

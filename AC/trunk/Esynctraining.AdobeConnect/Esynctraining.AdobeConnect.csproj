@@ -9,11 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>+EventNotificationList</PackageReleaseNotes>
-    <Version>1.0.6.3</Version>
+    <PackageReleaseNotes>updated timezones list</PackageReleaseNotes>
+    <Version>1.0.6.4</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.6.3</FileVersion>
-    <AssemblyVersion>1.0.6.3</AssemblyVersion>
+    <FileVersion>1.0.6.4</FileVersion>
+    <AssemblyVersion>1.0.6.4</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
