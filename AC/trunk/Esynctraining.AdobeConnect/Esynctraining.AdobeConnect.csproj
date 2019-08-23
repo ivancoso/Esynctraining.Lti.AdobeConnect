@@ -10,10 +10,10 @@
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
     <PackageReleaseNotes>updated timezones list</PackageReleaseNotes>
-    <Version>1.0.6.4</Version>
+    <Version>1.0.6.5</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.6.4</FileVersion>
-    <AssemblyVersion>1.0.6.4</AssemblyVersion>
+    <FileVersion>1.0.6.5</FileVersion>
+    <AssemblyVersion>1.0.6.5</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
