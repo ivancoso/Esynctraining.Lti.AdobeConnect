@@ -727,7 +727,6 @@ namespace Esynctraining.AC.Provider.Utils
 
                     // there is not always an invalid child element
                     XmlNode node = doc.SelectSingleNode("//invalid");
-
                     if (node != null)
                     {
                         status.SubCode = EnumReflector.ReflectEnum(node.SelectAttributeValue("subcode"), StatusSubCodes.not_set);
@@ -739,6 +738,19 @@ namespace Esynctraining.AC.Provider.Utils
                             status.Min = node.ParseAttributeInt("min");
                             status.Max = node.ParseAttributeInt("max");
                         }
+                        return doc;
+                    }
+
+                    //<results><status code="invalid" subcode="user-suspended"><param value="5"/></status></results>
+                    var minutesParamNode = doc.SelectSingleNode("//param");
+                    if (minutesParamNode != null)
+                    {
+                        status.SubCode = EnumReflector.ReflectEnum(doc.SelectSingleNodeValue("//status/@subcode"), StatusSubCodes.not_set);
+                        if (status.SubCode == StatusSubCodes.user_suspended)
+                        {
+                            status.UserSuspendedParam = minutesParamNode.ParseAttributeInt("value");
+                        }
+                        return doc;
                     }
 
                     break;

@@ -61,6 +61,11 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         public string SessionInfo { get; set; }
 
+        /// <summary>
+        /// User suspended period (in minutes).
+        /// </summary>
+        public int? UserSuspendedParam { get; set; }
+
 
         public int? TryGetSubCodeAsInt32()
         {

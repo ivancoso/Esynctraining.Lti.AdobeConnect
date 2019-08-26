@@ -127,7 +127,12 @@
         /// <summary>
         /// event limit reached
         /// </summary>
-        limit_reached
+        limit_reached,
+        /// <summary>
+        /// Login Suspended.
+        // To protect your account, your Login has been temporarily suspended for the next 5 minutes due to too many incorrect Login attempts.
+        /// </summary>
+        user_suspended
     }
 
     public enum ScoType
