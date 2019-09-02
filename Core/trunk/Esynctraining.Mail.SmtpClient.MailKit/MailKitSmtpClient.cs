@@ -97,7 +97,21 @@ namespace Esynctraining.Mail.SmtpClient.MailKit
             {
                 foreach (var att in attachments)
                 {
-                    bodyBuilder.Attachments.Add(att.FileName, att.Stream);
+                    if (att.ContentType == null)
+                    {
+                        bodyBuilder.Attachments.Add(att.FileName, att.Stream);
+                    }
+                    else
+                    {
+                        var contentType = new MimeKit.ContentType(att.ContentType.MediaType, att.ContentType.MediaSubtype);
+
+                        foreach (var parameter in att.ContentType.Parameters)
+                        {
+                            contentType.Parameters.Add(parameter.Key, parameter.Value);
+                        }
+
+                        bodyBuilder.Attachments.Add(att.FileName, att.Stream, contentType);
+                    }
                 }
             }
 

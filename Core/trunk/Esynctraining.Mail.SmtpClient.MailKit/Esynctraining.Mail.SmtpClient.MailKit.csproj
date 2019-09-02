@@ -5,17 +5,17 @@
     <Authors>Sergey Isakovich</Authors>
     <Company>eSyncTraining Inc.</Company>
     <Description>MailKit implementation of ISmtpClient</Description>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <FileVersion>1.0.0.3</FileVersion>
-    <Version>1.0.0.3</Version>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
+    <FileVersion>1.0.0.4</FileVersion>
+    <Version>1.0.0.4</Version>
     <PackageTags>mail mailkit smtp</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Updated MailKit; skip Auth error (debug log message, not err)</PackageReleaseNotes>
+    <PackageReleaseNotes>+ attachment contentType</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1" />
-    <PackageReference Include="Esynctraining.Mail.Core" Version="1.0.0.3" />
+    <PackageReference Include="Esynctraining.Mail.Core" Version="1.0.0.4" />
     <PackageReference Include="MailKit" Version="2.1.3" />
   </ItemGroup>
 

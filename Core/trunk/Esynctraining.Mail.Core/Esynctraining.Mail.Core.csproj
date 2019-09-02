@@ -6,11 +6,11 @@
     <Authors>Sergey Isakovich</Authors>
     <Company>eSyncTraining Inc.</Company>
     <Description>Core project for Mail</Description>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <FileVersion>1.0.0.3</FileVersion>
-    <Version>1.0.0.3</Version>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
+    <FileVersion>1.0.0.4</FileVersion>
+    <Version>1.0.0.4</Version>
     <PackageTags>mail</PackageTags>
-    <PackageReleaseNotes>+ ISmtpClient SendEmailAsync string body added</PackageReleaseNotes>
+    <PackageReleaseNotes>+ attachment contentType</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>

@@ -8,6 +8,8 @@ namespace Esynctraining.Mail
 
         public Stream Stream { get; set; }
 
+        public ContentType ContentType { get; set; }
+
     }
 
 }
