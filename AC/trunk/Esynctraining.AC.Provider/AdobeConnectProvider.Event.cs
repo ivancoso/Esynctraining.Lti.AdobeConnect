@@ -166,15 +166,18 @@ namespace Esynctraining.AC.Provider
                 : new GenericResult<EventRegistrationDetails>(status, null);
         }
 
-        public RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields form)
+        public RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields form, bool sendPasswordFields = true)
         {
             // act: "event-register"
             StatusInfo status;
 
-            var requestString = 
-                $"sco-id={form.ScoId}&login={UrlEncode(form.Login)}&password={form.Password}&password-verify={form.VerifyPassword}&first-name={form.FirstName}&last-name={form.LastName}&email={UrlEncode(form.Email)}";
+            // TODO: UrlEncode??
+            var requestString =
+                sendPasswordFields
+                ? $"sco-id={form.ScoId}&login={UrlEncode(form.Login)}&first-name={form.FirstName}&last-name={form.LastName}&email={UrlEncode(form.Email)}&password={form.Password}&password-verify={form.VerifyPassword}"
+                : $"sco-id={form.ScoId}&login={UrlEncode(form.Login)}&first-name={form.FirstName}&last-name={form.LastName}&email={UrlEncode(form.Email)}";
 
-            if (form.AdditionalFields.Values.Any())
+            if (form.AdditionalFields != null && form.AdditionalFields.Values.Any())
             {
                 foreach (var key in form.AdditionalFields.Keys)
                 {
