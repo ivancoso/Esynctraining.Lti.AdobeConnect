@@ -9,11 +9,11 @@
     <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
     <PackageId>Esynctraining.AdobeConnect</PackageId>
     <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>updated timezones list</PackageReleaseNotes>
-    <Version>1.0.6.5</Version>
+    <PackageReleaseNotes>BC-631 process event without password requirement</PackageReleaseNotes>
+    <Version>1.0.6.6</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <FileVersion>1.0.6.5</FileVersion>
-    <AssemblyVersion>1.0.6.5</AssemblyVersion>
+    <FileVersion>1.0.6.6</FileVersion>
+    <AssemblyVersion>1.0.6.6</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

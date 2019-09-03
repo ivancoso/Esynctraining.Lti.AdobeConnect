@@ -998,9 +998,9 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.EventNotificationList(eventScoId); }, eventScoId);
         }
 
-        public RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields eventDetails)
+        public RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields eventDetails, bool sendPasswordFields = true)
         {
-            return Execute(() => { return _provider.RegisterToEvent(eventDetails); });
+            return Execute(() => { return _provider.RegisterToEvent(eventDetails, sendPasswordFields); });
         }
 
         public EventLoginInfoResult EventLogin(string login, string password, string scoId)

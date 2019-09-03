@@ -251,7 +251,8 @@ namespace Esynctraining.AdobeConnect
         SingleObjectResult<CustomField> CustomFieldUpdate(CustomField value);
 
         EventLoginInfoResult EventLogin(string login, string password, string scoId);
-        RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields eventDetails);
+        RegisterEventInfoResult RegisterToEvent(EventRegistrationFormFields eventDetails, bool sendPasswordFields = true);
+
         SaveEventResponse CreateEvent(SaveEventFields saveEventFields);
         SaveEventResponse EditEvent(SaveEventFields saveEventFields, string eventScoId, bool isTimezoneChanged);
 
