@@ -734,18 +734,18 @@ namespace Esynctraining.AC.Provider
                 string parameters;
                 if (string.IsNullOrEmpty(accountId))
                 {
-                   parameters = string.Format(
-                   CommandParams.LoginParams,
-                   UrlEncode(login),
-                   UrlEncode(password));
+                    parameters = string.Format(
+                    CommandParams.LoginParams,
+                    UrlEncode(login),
+                    UrlEncode(password));
                 }
                 else
                 {
-                   parameters = string.Format(
-                   CommandParams.LoginWithAccountParams,
-                   UrlEncode(login),
-                   UrlEncode(password),
-                   UrlEncode(accountId));
+                    parameters = string.Format(
+                    CommandParams.LoginWithAccountParams,
+                    UrlEncode(login),
+                    UrlEncode(password),
+                    UrlEncode(accountId));
                 }
 
                 var doc = this.requestProcessor.Process(
@@ -754,6 +754,10 @@ namespace Esynctraining.AC.Provider
                     out status);
 
                 return ResponseIsOk(doc, status);
+            }
+            catch (InvalidSchemeException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

@@ -43,39 +43,23 @@ namespace Esynctraining.AC.Provider.Utils
 
         #region Public Properties
 
-        public Uri AdobeConnectRoot
-        {
-            get { return connectionDetails.AdobeConnectRoot; }
-        }
+        public Uri AdobeConnectRoot => connectionDetails.AdobeConnectRoot;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        ///     Gets a value indicating whether is logged in.
+        /// Gets a value indicating whether is logged in.
         /// </summary>
-        private bool IsLoggedIn
-        {
-            // TODO: check if session is not expired!
-            get
-            {
-                return this.IsSessionCookieValid;
-            }
-        }
+        private bool IsLoggedIn => this.IsSessionCookieValid;
 
         /// <summary>
-        ///     Gets a value indicating whether is session cookie valid.
+        /// Gets a value indicating whether is session cookie valid.
         /// </summary>
-        private bool IsSessionCookieValid
-        {
-            get
-            {
-                return this.sessionCookie != null
+        private bool IsSessionCookieValid => this.sessionCookie != null
                     && !string.IsNullOrWhiteSpace(this.sessionCookie.Value)
                     && !string.IsNullOrWhiteSpace(this.sessionCookie.Domain);
-            }
-        }
 
         #endregion
 
@@ -650,11 +634,25 @@ namespace Esynctraining.AC.Provider.Utils
                 // (Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
+                //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+
                 webResponse = webRequest.GetResponse() as HttpWebResponse;
 
                 if (webResponse == null)
                 {
                     return null;
+                }
+
+                if (webResponse.StatusCode == HttpStatusCode.Redirect)
+                {
+                    string redirect = webResponse.Headers["Location"];
+                    if (webRequest.RequestUri.Scheme == "http"
+                        && redirect != null
+                        && redirect.StartsWith("HTTPS", StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new InvalidSchemeException($"Adobe Connect at '{webRequest.RequestUri.Host}' requires HTTPS. Check your connection details.");
+                    }
+                    throw new InvalidSchemeException("Adobe Connect service returns 302(Redirect) http status.");
                 }
 
                 if (!this.IsLoggedIn)
@@ -667,26 +665,26 @@ namespace Esynctraining.AC.Provider.Utils
                     }
                 }
 
-                Stream receiveStream = webResponse.GetResponseStream();
-
-                if (receiveStream == null)
-                {
-                    return null;
-                }
 
                 XmlDocument doc = null;
-
-                using (var readStream = new StreamReader(receiveStream, Encoding.UTF8))
+                using (Stream receiveStream = webResponse.GetResponseStream())
                 {
-                    string buf = readStream.ReadToEnd();
-
-                    if (!string.IsNullOrEmpty(buf))
+                    using (var readStream = new StreamReader(receiveStream, Encoding.UTF8))
                     {
-                        doc = this.ProcessXmlResult(status, buf);
+                        string buf = readStream.ReadToEnd();
+
+                        if (!string.IsNullOrEmpty(buf))
+                        {
+                            doc = ProcessXmlResult(status, buf);
+                        }
                     }
                 }
 
                 return doc;
+            }
+            catch (InvalidSchemeException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -713,7 +711,7 @@ namespace Esynctraining.AC.Provider.Utils
             {
                 doc.Load(new StringReader(buffer));
             }
-            catch (XmlException ex)
+            catch (XmlException)
             {
                 doc.Load(new StringReader(RemoveTroublesomeCharacters(buffer)));
             }
@@ -830,6 +828,7 @@ namespace Esynctraining.AC.Provider.Utils
             request.Accept = "*/*";
             request.KeepAlive = false;
             request.CookieContainer = new CookieContainer();
+            request.AllowAutoRedirect = false;
             //// Empty value causes 500 error for 'http://connect.uthsc.edu/' during File Download
             //request.UserAgent = @"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
 

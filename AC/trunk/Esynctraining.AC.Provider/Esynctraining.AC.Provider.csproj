@@ -9,12 +9,12 @@
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>event-register: added login parameter</PackageReleaseNotes>
-    <Version>1.0.5.14</Version>
+    <PackageReleaseNotes>AllowAutoRedirect = false</PackageReleaseNotes>
+    <Version>1.0.5.15</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <AssemblyVersion>1.0.5.14</AssemblyVersion>
-    <FileVersion>1.0.5.14</FileVersion>
+    <AssemblyVersion>1.0.5.15</AssemblyVersion>
+    <FileVersion>1.0.5.15</FileVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
