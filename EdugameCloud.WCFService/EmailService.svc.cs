@@ -429,6 +429,11 @@ namespace EdugameCloud.WCFService
             var acDomain = CompanyAcServerModel.GetOneById(mapping.CompanyAcDomain.Id).Value;
             var apiUrl = new Uri(acDomain.AcServer);
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), Logger, apiUrl);
+
+            var loginResult = proxy.Login(new UserCredentials(acDomain.Username, acDomain.Password));
+            if (!loginResult.Success)
+                throw new InvalidOperationException($"Can't login to AC url {acDomain.AcServer} user {acDomain.Username}");
+
             var eventInfo = proxy.GetScoInfo(mapping.AcEventScoId);
             if (!eventInfo.Success)
                 throw new InvalidOperationException(eventInfo.Status.GetErrorInfo());
