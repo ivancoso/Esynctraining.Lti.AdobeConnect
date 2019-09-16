@@ -1,26 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
+using Esynctraining.AC.Provider.Constants;
+using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AC.Provider.Extensions;
 
 namespace Esynctraining.AC.Provider.Utils
 {
-    using System;
-    using System.IO;
-    using System.Net;
-    using System.Net.Http;
-    using System.Text;
-    using System.Xml;
-
-    using Esynctraining.AC.Provider.Constants;
-    using Esynctraining.AC.Provider.DataObjects;
-    using Esynctraining.AC.Provider.Entities;
-    using Esynctraining.AC.Provider.Extensions;
-
-
-    /// <summary>
-    /// The request processor.
-    /// </summary>
     internal class RequestProcessor
     {
         #region Fields
@@ -455,7 +449,7 @@ namespace Esynctraining.AC.Provider.Utils
                 return null;
             }
 
-            return this.FinalizeProcessingResponse(status, webRequest);
+            return FinalizeProcessingResponse(status, webRequest);
         }
 
         public XmlDocument ProcessUpload(
@@ -636,11 +630,25 @@ namespace Esynctraining.AC.Provider.Utils
 
                 //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
 
-                webResponse = webRequest.GetResponse() as HttpWebResponse;
+                // TRICK: fix for .NET Core 
+                // https://stackoverflow.com/questions/45603984/httpwebrequest-in-net-core-2-0-throwing-302-found-exception
+                try
+                {
+                    webResponse = webRequest.GetResponse() as HttpWebResponse;
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Message.Contains("302"))
+                    {
+                        var r = ex.Response as HttpWebResponse;
+                        if (r.StatusCode == HttpStatusCode.Found)
+                            webResponse = ex.Response as HttpWebResponse;
+                    }
+                }
 
                 if (webResponse == null)
                 {
-                    return null;
+                    throw new InvalidOperationException("AC webResponse == null");
                 }
 
                 if (webResponse.StatusCode == HttpStatusCode.Redirect)

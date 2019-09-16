@@ -5,16 +5,16 @@
     <Copyright>Copyright � 2013-2019 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.AC.Provider</AssemblyTitle>
     <Authors>eSyncTraining.com</Authors>
-    <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>AllowAutoRedirect = false</PackageReleaseNotes>
-    <Version>1.0.5.15</Version>
+    <PackageReleaseNotes>fix AllowAutoRedirect=false for .NET Core</PackageReleaseNotes>
+    <Version>1.0.5.16</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <AssemblyVersion>1.0.5.15</AssemblyVersion>
-    <FileVersion>1.0.5.15</FileVersion>
+    <AssemblyVersion>1.0.5.16</AssemblyVersion>
+    <FileVersion>1.0.5.16</FileVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
@@ -35,9 +35,9 @@
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>
