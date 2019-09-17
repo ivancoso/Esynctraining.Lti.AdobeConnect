@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.AC.Provider.Tests", "Esynctraining.AC.Provider.Tests\Esynctraining.AC.Provider.Tests.csproj", "{88098E87-4B3A-42C0-84D2-9235EBDEF659}"
 EndProject
@@ -15,8 +15,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.AdobeConnect", "Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj", "{91BD4543-FB2D-465D-BD41-0DA670B4C3EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.AdobeConnect.Api", "Esynctraining.AdobeConnect.Api\Esynctraining.AdobeConnect.Api.csproj", "{4ACA73E1-70BD-4348-BF3C-ECE791031CBB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.AdobeConnect.OwinSecurity", "Esynctraining.AdobeConnect.OwinSecurity\Esynctraining.AdobeConnect.OwinSecurity.csproj", "{2DACBDE4-4B3A-4EF0-8F1C-86684B559C11}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Esynctraining.AdobeConnect.Tests", "Esynctraining.AdobeConnect.Tests\Esynctraining.AdobeConnect.Tests.csproj", "{9EACCDC7-26F5-4D2C-A74B-56E82F87938D}"
 EndProject
@@ -48,10 +46,6 @@ Global
 		{4ACA73E1-70BD-4348-BF3C-ECE791031CBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ACA73E1-70BD-4348-BF3C-ECE791031CBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ACA73E1-70BD-4348-BF3C-ECE791031CBB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DACBDE4-4B3A-4EF0-8F1C-86684B559C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DACBDE4-4B3A-4EF0-8F1C-86684B559C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DACBDE4-4B3A-4EF0-8F1C-86684B559C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DACBDE4-4B3A-4EF0-8F1C-86684B559C11}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9EACCDC7-26F5-4D2C-A74B-56E82F87938D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9EACCDC7-26F5-4D2C-A74B-56E82F87938D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EACCDC7-26F5-4D2C-A74B-56E82F87938D}.Release|Any CPU.ActiveCfg = Release|Any CPU

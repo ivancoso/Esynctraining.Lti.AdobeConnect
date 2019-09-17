@@ -4,21 +4,20 @@
     <Description>Provides Adobe Connect functionality for eSyncTraining projects</Description>
     <Copyright>Copyright � 2013-2019 eSyncTraining.com</Copyright>
     <AssemblyTitle>Esynctraining.AC.Provider</AssemblyTitle>
-    <Authors>eSyncTraining.com</Authors>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <Authors>Sergey Isakovich</Authors>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
     <PackageId>Esynctraining.AC.Provider</PackageId>
     <PackageTags>core;AC;AdobeConnect</PackageTags>
     <PackageReleaseNotes>Use Polly to retry if login response cookie is invalid. netstandard2.0 ONLY.</PackageReleaseNotes>
-    <Version>1.0.6.0</Version>
+    <Version>1.0.6.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <AssemblyVersion>1.0.6.0</AssemblyVersion>
-    <FileVersion>1.0.6.0</FileVersion>
+    <AssemblyVersion>1.0.6.1</AssemblyVersion>
+    <FileVersion>1.0.6.1</FileVersion>
+    <Company>CoSo Cloud LLC</Company>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <PackageReference Include="Polly" Version="7.1.1" />
   </ItemGroup>
 
