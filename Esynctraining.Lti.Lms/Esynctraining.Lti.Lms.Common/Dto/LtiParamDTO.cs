@@ -37,7 +37,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
 
     }
 
-    public interface ILtiParam: ILtiUserListParam
+    public interface ILtiParam : ILtiUserListParam
     {
         /// <summary>
         /// Gets the custom BlackBoard role.
@@ -86,7 +86,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         /// <summary>
         ///     The referer.
         /// </summary>
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
         private string refererField;
 
@@ -171,7 +171,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
         /// Gets or sets the LIS person name family.
         /// </summary>
         public string lis_person_name_family { get; set; }
-                    
+
         // splitting according to recomendations https://www.imsglobal.org/wiki/step-3-are-all-required-parameters-present
         public string PersonNameFamily
         {
@@ -190,6 +190,23 @@ namespace Esynctraining.Lti.Lms.Common.Dto
                 return null;
             }
         }
+
+        public string LastNameFromFullNameParam
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(lis_person_name_full))
+                {
+                    if (lis_person_name_full.Contains("@")) // canvas can return empty lis_person_name_family in case when user was created only with email, lis_person_name_full is filled
+                        return lis_person_name_full.Split('@')[0];
+
+                    var splitted = lis_person_name_full.Split(' ');
+                    return splitted.Last();
+                }
+                return PersonNameFamily;
+            }
+        }
+
 
         /// <summary>
         /// Gets or sets the LIS person name full.
@@ -217,10 +234,23 @@ namespace Esynctraining.Lti.Lms.Common.Dto
             }
         }
 
-        /// <summary>
-        /// Gets or sets the LIS person source ID.
-        /// </summary>
-        public string lis_person_sourcedid { get; set; }
+        public string FirstNameFromFullNameParam
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(lis_person_name_full))
+                {
+                    var splitted = lis_person_name_full.Split(' ');
+                    return splitted[0];
+                }
+                return PersonNameGiven;
+            }
+        }
+
+/// <summary>
+/// Gets or sets the LIS person source ID.
+/// </summary>
+public string lis_person_sourcedid { get; set; }
 
         /// <summary>
         /// Gets or sets the custom_enablemeeting.

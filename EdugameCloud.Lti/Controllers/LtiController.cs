@@ -492,8 +492,8 @@ namespace EdugameCloud.Lti.Controllers
                             adobeConnectProvider,
                             param.lms_user_login,
                             param.lis_person_contact_email_primary,
-                            param.PersonNameGiven,
-                            param.PersonNameFamily,
+                            param.FirstNameFromFullNameParam,
+                            param.LastNameFromFullNameParam,
                             lmsCompany);
 
                         sw.Stop();
