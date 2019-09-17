@@ -13,6 +13,7 @@ namespace Esynctraining.AC.Provider
     using Esynctraining.AC.Provider.EntityParsing;
     using Esynctraining.AC.Provider.Extensions;
     using Esynctraining.AC.Provider.Utils;
+    using Polly;
 
     /// <summary>
     /// The adobe connect provider.
@@ -49,10 +50,29 @@ namespace Esynctraining.AC.Provider
             if (credentials == null)
                 throw new ArgumentNullException(nameof(credentials));
 
+            var retry = Policy.HandleResult<LoginResult>(x => x == null).Retry(20);
+            return retry.Execute(() =>
+            {
+                return DoLogin(credentials);
+            });
+        }
+
+        private LoginResult DoLogin(UserCredentials credentials)
+        {
+            if (credentials == null)
+                throw new ArgumentNullException(nameof(credentials));
+
             this.requestProcessor.SetSessionId(null);
 
             StatusInfo statusInfo;
-            var success = LoginInternal(credentials.Login, credentials.Password, credentials.AccountId, out statusInfo);
+            bool success = LoginInternal(credentials.Login, credentials.Password, credentials.AccountId, out statusInfo);
+
+            // OK XML but no cookie!!
+            if (success && !requestProcessor.IsLoggedIn)
+            {
+                System.Diagnostics.Trace.WriteLine("AC login response: success && !requestProcessor.IsLoggedIn");
+                return null;
+            }
 
             UserInfo user = null;
             if (success)

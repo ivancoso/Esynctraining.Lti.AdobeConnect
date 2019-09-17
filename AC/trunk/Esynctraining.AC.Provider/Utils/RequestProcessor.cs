@@ -46,7 +46,7 @@ namespace Esynctraining.AC.Provider.Utils
         /// <summary>
         /// Gets a value indicating whether is logged in.
         /// </summary>
-        private bool IsLoggedIn => this.IsSessionCookieValid;
+        internal bool IsLoggedIn => this.IsSessionCookieValid;
 
         /// <summary>
         /// Gets a value indicating whether is session cookie valid.
@@ -664,7 +664,8 @@ namespace Esynctraining.AC.Provider.Utils
                 }
 
                 if (!this.IsLoggedIn)
-                {
+                {   
+                    //webResponse.Headers[HttpResponseHeader.SetCookie]
                     if (webResponse.Cookies[AdobeConnectProviderConstants.SessionCookieName] != null)
                     {
                         this.sessionCookie = webResponse.Cookies[AdobeConnectProviderConstants.SessionCookieName];
