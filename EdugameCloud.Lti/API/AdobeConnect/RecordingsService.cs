@@ -81,7 +81,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //ACLTI-2101 possible solution
             //if (meeting.LmsMeetingType != (int)LmsMeetingType.StudyGroup)
             //{
-            //    result = applyAdditionalFilter(result);
+                result = applyAdditionalFilter(result);
             //}
 
             var total = result.Count();
