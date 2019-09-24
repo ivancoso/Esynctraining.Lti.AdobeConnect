@@ -221,7 +221,7 @@ namespace EdugameCloud.WCFService
 
             var scoId = postQuizResult.EventQuizMapping.AcEventScoId;
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), Logger, apiUrl);
-            var eventInfo = proxy.GetScoInfo(scoId);
+            var eventInfo = proxy.GetEventInfo(scoId);
             if (!eventInfo.Success)
                 throw new InvalidOperationException();
 
@@ -237,7 +237,7 @@ namespace EdugameCloud.WCFService
             {
                 CertificateLink = postQuizResult.BuildDownloadUrl(Settings.CertificatesUrl),
                 ParticipantName = postQuizResult.ParticipantName,
-                EventName = eventInfo.ScoInfo.Name
+                EventName = eventInfo.EventInfo.Name
             };
             bool sentSuccessfully = MailModel.SendEmailSync(postQuizResult.ParticipantName, postQuizResult.ACEmail,
                         Emails.CertificateSubject,
@@ -368,10 +368,9 @@ namespace EdugameCloud.WCFService
 
             var scoId = mapping.AcEventScoId;
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), Logger, apiUrl);
-            var eventInfo = proxy.GetScoInfo(scoId);
+            var eventInfo = proxy.GetEventInfo(scoId);
             if (!eventInfo.Success)
                 throw new InvalidOperationException();
-            
 
             var emailsNotSend = new List<string>();
             foreach (var quizResult in quizResults)
@@ -394,7 +393,7 @@ namespace EdugameCloud.WCFService
                     var model = new EventQuizResultSuccessModel(Settings)
                     {
                         Name = quizResult.ParticipantName,
-                        EventName = eventInfo.ScoInfo?.Name ?? scoId,
+                        EventName = eventInfo.EventInfo?.Name ?? scoId,
                         MailSubject = "AC Event Post quiz result",
                         PostQuizUrl = Settings.CertificatesUrl + "/UI/#/?quizResultGuid=" + quizResult.Guid,
                         Date = quizResult.EndTime
