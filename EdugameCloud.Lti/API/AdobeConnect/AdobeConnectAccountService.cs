@@ -131,13 +131,30 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 try
                 {
-                    var principalUpdateResult = adminProvider.PrincipalUpdate(
+                    if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Canvas)
+                    {
+                        ///Old logic for canvas: FirstName and LastName were gotten from SortableName Property.
+                        ///(LTI parameter: lis_person_name_given)
+                        ///Now according to task https://jira.esynctraining.com/browse/ACLTI-2137
+                        ///We get fistName and LastName from FullName property (LTI param: lis_person_name_full).
+                        var principalUpdateResult = adminProvider.PrincipalUpdate(
                         new PrincipalSetup
                         {
                             PrincipalId = registeredUser.PrincipalId,
-                            FirstName = param.PersonNameGiven,
-                            LastName = param.PersonNameFamily,
+                            FirstName = param.FirstNameFromFullNameParam,
+                            LastName = param.LastNameFromFullNameParam,
                         }, true);
+                    }
+                    else
+                    {
+                        var principalUpdateResult = adminProvider.PrincipalUpdate(
+                            new PrincipalSetup
+                            {
+                                PrincipalId = registeredUser.PrincipalId,
+                                FirstName = param.PersonNameGiven,
+                                LastName = param.PersonNameFamily,
+                            }, true);
+                    }
                 }
                 catch (AdobeConnectException ex)
                 {
