@@ -29,5 +29,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string login,
             string email,
             bool searchByEmailFirst);
+
+        Principal UpdatePrincipalName(
+            IAdobeConnectProxy provider,
+            string principalId,
+            string firstName,
+            string lastName);
     }
 }

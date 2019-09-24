@@ -108,6 +108,42 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 : principalCache.FirstOrDefault(p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase));
         }
 
+        public Principal UpdatePrincipalName(
+            IAdobeConnectProxy provider,
+            string principalId,
+            string firstName,
+            string lastName)
+        {
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                throw new Core.WarningMessageException("Adobe Connect User's First Name can't be empty.");
+            }
+            if (string.IsNullOrWhiteSpace(lastName))
+            {
+                throw new Core.WarningMessageException("Adobe Connect User's Last Name can't be empty.");
+            }
+
+            var setup = new PrincipalSetup
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                PrincipalId = principalId
+            };
+
+            PrincipalResult pu = provider.PrincipalUpdate(setup, true, false);
+
+            if (!pu.Success)
+            {
+                return null;
+            }
+
+            if (pu.Principal != null)
+            {
+                return pu.Principal;
+            }
+            return null;
+        }
+
         private Principal CreatePrincipal(
             IAdobeConnectProxy provider,
             string login,

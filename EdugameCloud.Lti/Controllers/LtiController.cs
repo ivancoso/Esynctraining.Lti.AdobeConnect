@@ -488,13 +488,37 @@ namespace EdugameCloud.Lti.Controllers
                         trace.AppendFormat("lmsCompany.AdminUser == null: time: {0}.\r\n", sw.Elapsed.ToString());
                         sw = Stopwatch.StartNew();
 
+                        ///Old logic for Canvas LMS: FirstName and LastName were gotten from SortableName Property.
+                        ///(LTI parameter: lis_person_name_given)
+                        ///Now according to task https://jira.esynctraining.com/browse/ACLTI-2137
+                        ///We get fistName and LastName from FullName property (LTI param: lis_person_name_full).
+                        //acPrincipal = acUserService.GetOrCreatePrincipal(
+                        //    adobeConnectProvider,
+                        //    param.lms_user_login,
+                        //    param.lis_person_contact_email_primary,
+                        //    param.FirstNameFromFullNameParam,
+                        //    param.LastNameFromFullNameParam,
+                        //    lmsCompany);
+
                         acPrincipal = acUserService.GetOrCreatePrincipal(
-                            adobeConnectProvider,
-                            param.lms_user_login,
-                            param.lis_person_contact_email_primary,
-                            param.FirstNameFromFullNameParam,
-                            param.LastNameFromFullNameParam,
-                            lmsCompany);
+                                        adobeConnectProvider,
+                                        param.lms_user_login,
+                                        param.lis_person_contact_email_primary,
+                                        param.PersonNameGiven,
+                                        param.PersonNameFamily,
+                                        lmsCompany);
+
+                        /////according to task https://jira.esynctraining.com/browse/ACLTI-2137
+                        /////We need to update name of AC user if name were gotten from Sortable Name
+                        /////Now We get fistName and LastName from FullName canvas property (LTI param: lis_person_name_full).
+                        //if (!string.Equals(acPrincipal.Name, $"{param.FirstNameFromFullNameParam} {param.LastNameFromFullNameParam}", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    acPrincipal = acUserService.UpdatePrincipalName(
+                        //        adobeConnectProvider,
+                        //        acPrincipal.PrincipalId,
+                        //        param.FirstNameFromFullNameParam,
+                        //        param.LastNameFromFullNameParam);
+                        //}
 
                         sw.Stop();
                         trace.AppendFormat("acUserService.GetOrCreatePrincipal: time: {0}.\r\n",
