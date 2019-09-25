@@ -492,13 +492,21 @@ namespace EdugameCloud.Lti.Controllers
                         ///(LTI parameter: lis_person_name_given)
                         ///Now according to task https://jira.esynctraining.com/browse/ACLTI-2137
                         ///We get fistName and LastName from FullName property (LTI param: lis_person_name_full).
+                        //acPrincipal = acUserService.GetOrCreatePrincipal(
+                        //    adobeConnectProvider,
+                        //    param.lms_user_login,
+                        //    param.lis_person_contact_email_primary,
+                        //    param.FirstNameFromFullNameParam,
+                        //    param.LastNameFromFullNameParam,
+                        //    lmsCompany);
+
                         acPrincipal = acUserService.GetOrCreatePrincipal(
-                            adobeConnectProvider,
-                            param.lms_user_login,
-                            param.lis_person_contact_email_primary,
-                            param.FirstNameFromFullNameParam,
-                            param.LastNameFromFullNameParam,
-                            lmsCompany);
+                                adobeConnectProvider,
+                                param.lms_user_login,
+                                param.lis_person_contact_email_primary,
+                                param.PersonNameGiven,
+                                param.PersonNameFamily,
+                                lmsCompany);
 
 
                         sw.Stop();
