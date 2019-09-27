@@ -200,7 +200,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
                     if (lis_person_name_full.Contains("@")) // canvas can return empty lis_person_name_family in case when user was created only with email, lis_person_name_full is filled
                         return lis_person_name_full.Split('@')[0];
 
-                    var splitted = lis_person_name_full.Trim().Split(' ');
+                    var splitted = lis_person_name_full.Trim().Split(new char[] { ' ' }, 2);
                     return splitted.Last();
                 }
                 return PersonNameFamily;
@@ -240,7 +240,7 @@ namespace Esynctraining.Lti.Lms.Common.Dto
             {
                 if (!string.IsNullOrEmpty(lis_person_name_full))
                 {
-                    var splitted = lis_person_name_full.Trim().Split(' ');
+                    var splitted = lis_person_name_full.Trim().Split(new char[] { ' ' }, 2);
                     return splitted[0];
                 }
                 return PersonNameGiven;
