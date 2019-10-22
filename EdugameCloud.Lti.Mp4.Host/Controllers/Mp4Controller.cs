@@ -356,12 +356,19 @@ because one TEST UPLOAD2
                 title = fileName,
             };
 
-            logger.Info($"PostVttFile uploadScoInfo scoId:{fileScoId}; fileContentType:{fileContentType}; fileName:{fileName}; title:{fileName}; content.Length:{content}; ac:{ac.AdobeConnectRoot.AbsoluteUri}");
+            logger.Info($"PostVttFile uploadScoInfo scoId:{fileScoId}; fileContentType:{fileContentType}; fileName:{fileName}; title:{fileName}; content.Length:{content.Length}; ac:{ac.AdobeConnectRoot.AbsoluteUri}");
 
             try
             {
-                string originalFileName = fileName;
-                StatusInfo uploadResult = ac.UploadContent(uploadScoInfo);
+                var apiUrl = new Uri("http://connectstage.esynctraining.com");
+
+                var acService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(logger);
+
+                var proxy = acService.GetProvider2(new AdobeConnectAccess2(apiUrl, "breezbreezns766pwkd3mbqc4b"));
+
+                var d = proxy.UploadContent(uploadScoInfo);
+
+                //StatusInfo uploadResult = ac.UploadContent(uploadScoInfo);
             }
             catch (AdobeConnectException ex)
             {
