@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using EdugameCloud.Lti.Api.Controllers;
 using EdugameCloud.Lti.API.AdobeConnect;
+using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -53,7 +56,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         }
 
         public ValuesController(
-           IAdobeConnectAccountService acAccountService,
+           API.AdobeConnect.IAdobeConnectAccountService acAccountService,
            ApplicationSettingsProvider settings,
            ILogger logger,
            ICache cache
@@ -61,6 +64,51 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             : base(acAccountService, settings, logger, cache)
         {
         }
+
+        [HttpGet("uploadcontent-test")]
+        public IEnumerable<TestDto> Get2()
+        {
+            //var logger = new FakeLogger();
+
+            var apiUrl = new Uri("https://aggie-connect.nmsu.edu");
+
+            var acService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(Logger);
+
+            var proxy = acService.GetProvider2(new AdobeConnectAccess2(apiUrl, "breezp4tzzzcx4ut6iy6w"));
+
+
+            //var content = File.ReadAllBytes(@"C:\Users\kniaz\Downloads\po82jtnycylf.html");
+            var someString = @"WEBVTT
+
+0
+00:00:00.037-- > 00:00:03.049
+this is a new test to see if the
+
+1
+00:00:03.049-- > 00:00:05.057
+captioning feature is not4 working
+
+";
+            var content = Encoding.ASCII.GetBytes(someString);
+
+            var uploadScoInfo = new UploadScoInfo
+            {
+                scoId = "1355270",
+                fileContentType = "text/html",
+                fileName = "subtitles.html",
+                fileBytes = content,
+                title = "subtitles.html",
+            };
+
+            var d = proxy.UploadContent(uploadScoInfo);
+
+            return new TestDto[]
+            {
+                new TestDto { Id = 1, Description = "Uploaded", Date = DateTime.Now },
+                new TestDto { Id = 2, Date = DateTime.Today }
+            };
+        }
+
 
         [HttpGet]
         public IEnumerable<TestDto> Get()
