@@ -243,18 +243,15 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     Message = "No file uploaded",
                 };
 
-            var fileContent = file.OpenReadStream().ReadFully();
-
-            Logger.Info($"PostVttFile File.Length:{file.Length}; fileContent.Length {fileContent.Length}");            
-
             var ac = GetAdminProvider();
             //return new SubtitleUtility(ac, Logger, this).PostVttFile(fileScoId);
 
             FileDto acFile = Create(fileScoId,
                 file.FileName,
                 file.ContentType,
-                fileContent,
-                ac);
+                file.OpenReadStream().ReadFully(),
+                ac,
+                Logger);
 
             return new //FileUploadResultDto
             {
@@ -314,7 +311,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             return sco.ScoInfo;
         }
 
-        private static FileDto Create(string fileScoId, string fileName, string fileContentType, byte[] content, IAdobeConnectProxy ac)
+        private static FileDto Create(string fileScoId, string fileName, string fileContentType, byte[] content, IAdobeConnectProxy ac, ILogger logger)
         {
             if (string.IsNullOrWhiteSpace(fileName))
                 throw new ArgumentException("fileName can't be empty", nameof(fileName));
@@ -322,6 +319,33 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 throw new ArgumentException("fileContentType can't be empty", nameof(fileContentType));
             if (content == null)
                 throw new ArgumentNullException(nameof(content));
+
+            // TEST
+            var someString = @"WEBVTT
+
+0
+00:00:16.006 --> 00:00:18.001
+will be at noon when you can please 
+
+1
+00:00:19.028 --> 00:00:20.049
+great or so 
+
+2
+00:00:25.018 --> 00:00:28.025
+Uh yes way let me know just 
+
+3
+00:00:28.067 --> 00:00:30.052
+typical week to completely up 
+
+4
+00:00:40.067 --> 00:00:41.037
+because one TEST UPLOAD2
+
+";
+            content = System.Text.Encoding.ASCII.GetBytes(someString);
+            // TEST
 
             var uploadScoInfo = new UploadScoInfo
             {
@@ -331,6 +355,8 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 fileBytes = content,
                 title = fileName,
             };
+
+            logger.Info($"PostVttFile uploadScoInfo scoId:{fileScoId}; fileContentType:{fileContentType}; fileName:{fileName}; title:{fileName}; content.Length:{content}; ac:{ac.AdobeConnectRoot.AbsoluteUri}");
 
             try
             {
