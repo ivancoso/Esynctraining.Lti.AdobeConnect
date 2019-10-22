@@ -234,7 +234,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
         [LmsAuthorizeBase]
-        public object PostVttFile(string fileScoId, [FromForm]IFormFile file)
+        public object PostVttFile(string fileScoId, /*[FromForm]*/IFormFile file)
         {
             if (file == null)
                 return new //FileUploadResultDto
