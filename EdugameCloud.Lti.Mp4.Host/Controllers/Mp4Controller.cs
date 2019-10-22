@@ -250,8 +250,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 file.FileName,
                 file.ContentType,
                 file.OpenReadStream().ReadFully(),
-                ac,
-                Logger);
+                ac);
 
             return new //FileUploadResultDto
             {
@@ -311,7 +310,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             return sco.ScoInfo;
         }
 
-        private static FileDto Create(string fileScoId, string fileName, string fileContentType, byte[] content, IAdobeConnectProxy ac, ILogger logger)
+        private static FileDto Create(string fileScoId, string fileName, string fileContentType, byte[] content, IAdobeConnectProxy ac)
         {
             if (string.IsNullOrWhiteSpace(fileName))
                 throw new ArgumentException("fileName can't be empty", nameof(fileName));
@@ -319,33 +318,6 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 throw new ArgumentException("fileContentType can't be empty", nameof(fileContentType));
             if (content == null)
                 throw new ArgumentNullException(nameof(content));
-
-            // TEST
-            var someString = @"WEBVTT
-
-0
-00:00:16.006 --> 00:00:18.001
-will be at noon when you can please 
-
-1
-00:00:19.028 --> 00:00:20.049
-great or so 
-
-2
-00:00:25.018 --> 00:00:28.025
-Uh yes way let me know just 
-
-3
-00:00:28.067 --> 00:00:30.052
-typical week to completely up 
-
-4
-00:00:40.067 --> 00:00:41.037
-because one TEST UPLOAD2
-
-";
-            content = System.Text.Encoding.ASCII.GetBytes(someString);
-            // TEST
 
             var uploadScoInfo = new UploadScoInfo
             {
@@ -356,19 +328,9 @@ because one TEST UPLOAD2
                 title = fileName,
             };
 
-            logger.Info($"PostVttFile uploadScoInfo scoId:{fileScoId}; fileContentType:{fileContentType}; fileName:{fileName}; title:{fileName}; content.Length:{content.Length}; ac:{ac.AdobeConnectRoot.AbsoluteUri}");
-
             try
             {
-                var apiUrl = new Uri("http://connectstage.esynctraining.com");
-
-                var acService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(logger);
-
-                var proxy = acService.GetProvider2(new AdobeConnectAccess2(apiUrl, "breezbreezns766pwkd3mbqc4b"));
-
-                var d = proxy.UploadContent(uploadScoInfo);
-
-                //StatusInfo uploadResult = ac.UploadContent(uploadScoInfo);
+                StatusInfo uploadResult = ac.UploadContent(uploadScoInfo);
             }
             catch (AdobeConnectException ex)
             {

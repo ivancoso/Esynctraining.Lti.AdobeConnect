@@ -65,62 +65,6 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         {
         }
 
-        [HttpGet("uploadcontent-test")]
-        public IEnumerable<TestDto> Get2()
-        {
-
-            var apiUrl = new Uri("https://connectstage.esynctraining.com");
-
-            var acService = new Esynctraining.AdobeConnect.AdobeConnectAccountService(Logger);
-
-            var proxy = acService.GetProvider2(new AdobeConnectAccess2(apiUrl, "breezbreezhqpt892zszvoioyi"));
-
-
-            //var content = File.ReadAllBytes(@"C:\Users\kniaz\Downloads\po82jtnycylf.html");
-            var someString = @"WEBVTT
-
-0
-00:00:16.006 --> 00:00:18.001
-will be at noon when you can please 
-
-1
-00:00:19.028 --> 00:00:20.049
-great or so 
-
-2
-00:00:25.018 --> 00:00:28.025
-Uh yes way let me know just 
-
-3
-00:00:28.067 --> 00:00:30.052
-typical week to completely up 
-
-4
-00:00:40.067 --> 00:00:41.037
-because one TEST UPLOAD
-
-";
-            var content = Encoding.ASCII.GetBytes(someString);
-
-            var uploadScoInfo = new UploadScoInfo
-            {
-                scoId = "5174664",
-                fileContentType = "text/html",
-                fileName = "p8e0bmu3hkc.html",
-                fileBytes = content,
-                title = "p8e0bmu3hkc.html",
-            };
-
-            var d = proxy.UploadContent(uploadScoInfo);
-
-            return new TestDto[]
-            {
-                new TestDto { Id = 1, Description = "Uploaded with code=" + d.Code, Date = DateTime.Now },
-                new TestDto { Id = 2, Date = DateTime.Today }
-            };
-        }
-
-
         [HttpGet]
         public IEnumerable<TestDto> Get()
         {
