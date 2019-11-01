@@ -242,7 +242,7 @@ namespace EdugameCloud.Core.Business.Models
                     IsCorrect = r.IsCorrect,
                     QuestionId = r.QuestionRef.Id,
                     Answer = String.Join(";", r.Answers.Select(a => a.Value)),
-                    DistractorIds = r.Answers.Select(a => a.QuizDistractorAnswer.Id)
+                    DistractorIds = r.Answers.Where(a => a.QuizDistractorAnswer != null).Select(a => a.QuizDistractorAnswer.Id)
                 }).ToList()
             });
 
