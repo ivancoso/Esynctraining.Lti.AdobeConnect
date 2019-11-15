@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Esynctraining.AC.Provider.DataObjects.Results;
+using Esynctraining.Core.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ namespace Esynctraining.AdobeConnect.Recordings
     public class SeminarRecordingExtractor : RecordingExtractorBase
     {
         private readonly ISeminarService _seminarService;
+        private readonly ILogger _logger;
 
 
         /// <summary>
@@ -16,9 +19,10 @@ namespace Esynctraining.AdobeConnect.Recordings
         public static int MaxDegreeOfParallelism { get; set; } = 1;
 
 
-        public SeminarRecordingExtractor(IAdobeConnectProxy acProxy, ISeminarService seminarService) : base(acProxy)
+        public SeminarRecordingExtractor(IAdobeConnectProxy acProxy, ISeminarService seminarService, ILogger logger) : base(acProxy)
         {
             _seminarService = seminarService ?? throw new ArgumentNullException(nameof(seminarService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -81,7 +85,7 @@ namespace Esynctraining.AdobeConnect.Recordings
         }
 
 
-        private static void ProcessSession(IAdobeConnectProxy AcProxy, 
+        private void ProcessSession(IAdobeConnectProxy AcProxy, 
             string seminarScoId,
             AC.Provider.Entities.ScoContent seminarSession,
             IRecordingDtoBuilder dtoBuilder,
@@ -89,7 +93,19 @@ namespace Esynctraining.AdobeConnect.Recordings
             TimeZoneInfo timeZone,
             List<IRecordingDto> resultList)
         {
-            var sessionRecordings = AcProxy.GetSeminarSessionRecordingsList(seminarScoId, seminarSession.ScoId);
+            RecordingCollectionResult sessionRecordings = null;
+            // VSSO-205
+            // https://verizon.cosocloud.com/api/xml?action=list-recordings&folder-id=7349002&seminar-session-id=8766014 returns internal-error, catching error
+            try
+            {
+                sessionRecordings = AcProxy.GetSeminarSessionRecordingsList(seminarScoId, seminarSession.ScoId);
+            }
+            catch(AdobeConnectException e) 
+            {
+                _logger.Error($"[Error-GetSeminarSessionRecordingsList] Server={AcProxy.AdobeConnectRoot}, seminarId={seminarScoId}, sessionId={seminarSession.ScoId}, AC response: {e.Status?.InnerXml}");
+                return;
+            }
+
             foreach (var recording in sessionRecordings.Values.Where(x => x.Icon != "mp4-archive"))
             {
                 var dto = dtoBuilder.Build(recording, accountUrl, timeZone);

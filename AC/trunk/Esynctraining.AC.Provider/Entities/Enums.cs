@@ -132,7 +132,11 @@
         /// Login Suspended.
         // To protect your account, your Login has been temporarily suspended for the next 5 minutes due to too many incorrect Login attempts.
         /// </summary>
-        user_suspended
+        user_suspended,
+        /// <summary>
+        /// event registration - user has been already registered (field="already-registered")
+        /// </summary>
+        not_allowed
     }
 
     public enum ScoType
