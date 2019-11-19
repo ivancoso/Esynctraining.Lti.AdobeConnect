@@ -53,6 +53,7 @@ namespace Esynctraining.Lti.Lms.Common.Constants
         public const string Mp4ServiceWithSubtitlesLicenseKey = nameof(Mp4ServiceWithSubtitlesLicenseKey);
         public const string ShowAudioProfile = nameof(ShowAudioProfile);
         public const string AudioProfileUnique = nameof(AudioProfileUnique);
+        public const string HidePrivateRecordingsForStudents = nameof(HidePrivateRecordingsForStudents);
 
         public const string SeminarsEnable = nameof(SeminarsEnable);
         public const string SeminarsLabel = nameof(SeminarsLabel);

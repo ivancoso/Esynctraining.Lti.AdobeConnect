@@ -530,6 +530,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "enableCanvasExportToCalendar")]
         public bool EnableCanvasExportToCalendar { get; set; }
+
+        [DataMember(Name = "hidePrivateRecordingsForStudents")]
+        public bool HidePrivateRecordingsForStudents { get; set; }
     }
 
 }

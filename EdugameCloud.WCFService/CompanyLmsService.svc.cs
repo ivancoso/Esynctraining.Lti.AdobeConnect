@@ -294,6 +294,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.CanStudentCreateStudyGroup, dto.canStudentCreateStudyGroup);
             UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.EnableVirtualClassrooms, dto.enableVirtualClassrooms);
             UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.NamedVirtualClassroomManager, dto.namedVirtualClassroomManager);
+            UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.HidePrivateRecordingsForStudents, dto.HidePrivateRecordingsForStudents);
 
             UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.MoodleCoreServiceToken, dto.moodleCoreServiceToken);
             UpdateOrDeleteSetting(instance, LmsLicenseSettingNames.MoodleQuizServiceToken, dto.moodleQuizServiceToken);
