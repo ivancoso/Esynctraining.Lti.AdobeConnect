@@ -125,6 +125,7 @@ namespace EdugameCloud.Lti.DTO
             this.enableSeminars = instance.GetSetting<bool>(LmsLicenseSettingNames.SeminarsEnable);
             this.labelSeminar = instance.GetSetting<string>(LmsLicenseSettingNames.SeminarsLabel);
             this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableAuditGuestEntry);
+            this.HidePrivateRecordingsForStudents = instance.GetSetting<bool>(LmsLicenseSettingNames.HidePrivateRecordingsForStudents);
             useSakaiEvents = instance.GetSetting<bool>(LmsLicenseSettingNames.UseSakaiEvents);
             enableMeetingSessions = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableMeetingSessions);
             enableMyContent = instance.GetSetting<bool>(LmsLicenseSettingNames.EnableMyContent);
