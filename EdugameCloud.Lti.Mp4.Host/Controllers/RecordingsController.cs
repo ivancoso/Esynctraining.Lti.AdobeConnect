@@ -65,8 +65,9 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 Func<IRoomTypeFactory> getRoomTypeFactory =
                     () => new RoomTypeFactory(ac, (LmsMeetingType)input.LmsMeetingType, IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
-                var publishOnly = (!LmsCompany.AutoPublishRecordings && !new LmsRoleService(Settings).IsTeacher(param, LmsCompany))
-                    || (!new LmsRoleService(Settings).IsTeacher(param, LmsCompany) && LmsCompany.GetSetting<bool>(LmsLicenseSettingNames.HidePrivateRecordingsForStudents));
+                var publishOnly = !LmsCompany.AutoPublishRecordings && !new LmsRoleService(Settings).IsTeacher(param, LmsCompany)
+                    && LmsCompany.GetSetting<bool>(LmsLicenseSettingNames.HidePrivateRecordingsForStudents);
+
 
                 var rawRecordings = RecordingsService.GetRecordings(
                     LmsCompany,
