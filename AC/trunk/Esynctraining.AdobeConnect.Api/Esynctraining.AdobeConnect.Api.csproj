@@ -1,32 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Description>Provides Adobe Connect high-level DTO and services</Description>
-    <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
-    <AssemblyTitle>Esynctraining.Provider.Api</AssemblyTitle>
-    <Authors>eSyncTraining.com</Authors>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AssemblyName>Esynctraining.AdobeConnect.Api</AssemblyName>
-    <PackageId>Esynctraining.AdobeConnect.Api</PackageId>
-    <PackageTags>AC;AdobeConnect</PackageTags>
-    <PackageReleaseNotes>netstandard2.0 ONLY.</PackageReleaseNotes>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.4.0</Version>
-    <AssemblyVersion>1.0.4.0</AssemblyVersion>
-    <FileVersion>1.0.4.0</FileVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <Description>Provides Adobe Connect high-level DTO and services</Description>
+        <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
+        <AssemblyTitle>Esynctraining.Provider.Api</AssemblyTitle>
+        <Authors>eSyncTraining.com</Authors>
+        <TargetFrameworks>netstandard2.0</TargetFrameworks>
+        <AssemblyName>Esynctraining.AdobeConnect.Api</AssemblyName>
+        <PackageId>Esynctraining.AdobeConnect.Api</PackageId>
+        <PackageTags>AC;AdobeConnect</PackageTags>
+        <PackageReleaseNotes>netstandard2.0 ONLY.</PackageReleaseNotes>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Version>1.0.7.2</Version>
+        <AssemblyVersion>1.0.7.2</AssemblyVersion>
+        <FileVersion>1.0.7.2</FileVersion>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
-    <DocumentationFile>bin\Release\net45\Esynctraining.AdobeConnect.Api.xml</DocumentationFile>
-  </PropertyGroup>
- 
-  <ItemGroup>
-    <ProjectReference Include="..\Esynctraining.AC.Provider\Esynctraining.AC.Provider.csproj" />
-    <ProjectReference Include="..\Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
-  </ItemGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
+        <DocumentationFile>bin\Release\net45\Esynctraining.AdobeConnect.Api.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Esynctraining.AC.Provider\Esynctraining.AC.Provider.csproj" />
+        <ProjectReference Include="..\Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
+    </ItemGroup>
 
 </Project>

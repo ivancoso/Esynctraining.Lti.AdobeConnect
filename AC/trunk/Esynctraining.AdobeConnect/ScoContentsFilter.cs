@@ -9,6 +9,8 @@ namespace Esynctraining.AdobeConnect
         public SortOptions SortOptions { get; set; }
         public PageOptions PageOptions { get; set; }
         public string NameLikeFilter { get; set; }
+
+        public string IconFilter { get; set; }
         public IEnumerable<ScoType> Types { get; set; }
     }
 }

@@ -449,6 +449,9 @@ namespace Esynctraining.AdobeConnect
                 if (!string.IsNullOrEmpty(filter.NameLikeFilter))
                     filters.Add(string.Format(CommandParams.FilterNameLike, filter.NameLikeFilter));
 
+                if (!string.IsNullOrEmpty(filter.IconFilter))
+                    filters.Add(string.Format(CommandParams.FilterIcon, filter.IconFilter));
+
                 if (filter.SortOptions != null)
                 {
                     filters.Add(string.Empty.AppendSortingIfNeeded(filter.SortOptions.SortField, filter.SortOptions.SortOrder));
