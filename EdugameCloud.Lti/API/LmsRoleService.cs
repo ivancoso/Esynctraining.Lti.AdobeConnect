@@ -44,6 +44,22 @@ namespace EdugameCloud.Lti.API
                 }
             }
 
+            //LTI PARAMs from canvas do not contain custom roles.
+            if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Canvas)
+            {
+                char[] delimiterChars = { '/', ',', '.', ':'};
+                string roles = System.Web.HttpUtility.UrlDecode(param.roles);
+                string[] lmsRolesFromParams = roles.Split(delimiterChars);
+
+                return
+                    //defaultTeacherRoles
+                    (!string.IsNullOrWhiteSpace(_teacherRoles) && _teacherRoles.Split(',')
+                        .Any(x => lmsRolesFromParams.Any(p => p.Equals(x.Trim(), StringComparison.InvariantCultureIgnoreCase))))
+                    //licenseSpecificTeacherRoles
+                    || lmsCompany.RoleMappings.Where(x => x.IsTeacherRole).Select(x => x.LmsRoleName)
+                        .Any(x => lmsRolesFromParams.Any(p => p.Equals(x.Trim(), StringComparison.InvariantCultureIgnoreCase)));
+            }
+
             return
                 //defaultTeacherRoles
                 (!string.IsNullOrWhiteSpace(_teacherRoles) && _teacherRoles.Split(',')
