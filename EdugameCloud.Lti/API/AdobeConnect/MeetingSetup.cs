@@ -207,18 +207,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var sw = Stopwatch.StartNew();
             var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(lmsLicense.Id, courseId).ToList();
             sw.Stop();
-            bool isTeacher = this.UsersSetup.IsTeacher(param, lmsLicense);
-            if (!isTeacher && lmsLicense.GetSetting<bool>(LmsLicenseSettingNames.UseCourseSections))
-            {
-                LmsCourseSectionsServiceBase sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense.LmsProviderId, lmsLicense.GetLMSSettings(Settings), param);
-                var sections = await sectionsService.GetCourseSections();
-                meetings =
-                    meetings.Where(
-                        x =>
-                            (LmsMeetingType) x.LmsMeetingType != LmsMeetingType.Meeting
-                            || !x.CourseSections.Any()
-                            || x.CourseSections.Any(cs => sections.Any(s =>s.Id == cs.LmsId && s.Users.Any(u => u.Id == lmsUser.UserId)))).ToList();
-            }
+            // ACLTI-2143 [UNIR] Error in POST /meetings in lti-api
+            //bool isTeacher = this.UsersSetup.IsTeacher(param, lmsLicense);
+            //if (!isTeacher && lmsLicense.GetSetting<bool>(LmsLicenseSettingNames.UseCourseSections))
+            //{
+            //    LmsCourseSectionsServiceBase sectionsService = LmsFactory.GetCourseSectionsService(lmsLicense.LmsProviderId, lmsLicense.GetLMSSettings(Settings), param);
+            //    var sections = await sectionsService.GetCourseSections();
+            //    meetings =
+            //        meetings.Where(
+            //            x =>
+            //                (LmsMeetingType) x.LmsMeetingType != LmsMeetingType.Meeting
+            //                || !x.CourseSections.Any()
+            //                || x.CourseSections.Any(cs => sections.Any(s =>s.Id == cs.LmsId && s.Users.Any(u => u.Id == lmsUser.UserId)))).ToList();
+            //}
 
             trace?.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", sw.Elapsed.ToString());
 
