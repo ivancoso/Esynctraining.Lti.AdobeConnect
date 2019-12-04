@@ -42,16 +42,16 @@ namespace EdugameCloud.Lti.Api.Controllers
             StringBuilder trace = null;
             var acProvider = this.GetAdminProvider();
 
+            var param = new LtiParamDTO { course_id = CourseId };
             // TODO: implement. will be use be External API only
             IEnumerable<MeetingDTO> meetings = await _meetingSetup.GetMeetingsAsync(
                    LmsCompany,
-                   CourseId,
                    acProvider,
                    new LmsUser(),
-                    new LtiParamDTO(),
                    //session.LmsUser,
-                   //param,
-                   trace);
+                   param,
+                   trace,
+                   true);
 
             return meetings.ToSuccessResult();
         }

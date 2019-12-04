@@ -952,7 +952,6 @@ namespace EdugameCloud.Lti.Controllers
 
             var meetings = await meetingSetup.GetMeetingsAsync(
                 credentials,
-                param.course_id,
                 acProvider,
                 session.LmsUser,
                 param,
