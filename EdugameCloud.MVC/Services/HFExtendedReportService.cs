@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
 using OfficeOpenXml;
@@ -51,6 +52,7 @@ namespace EdugameCloud.MVC.Services
                     int endRow = 4;
                     int startUserRowCorrect = 0;
                     int questionOrder = 1;
+                    List<int> excludeRowsFromSum = new List<int>();
                     foreach (var q in sessionResult.Questions)
                     {
                         List<int> correctRows = new List<int>();
@@ -93,6 +95,31 @@ namespace EdugameCloud.MVC.Services
                                     correctRows.Add(startUserRowCorrect);
                                 }
                                 break;
+                            case QuestionTypeEnum.Speedometer:
+                                excludeRowsFromSum.Add(endRow);
+                                try
+                                {
+                                    var distractor = q.Distractors.First();
+                                    var xmlDoc = new XmlDocument();
+                                    xmlDoc.LoadXml(distractor.DistractorName); //<meter trackMin="0" trackMax="8" tickInterval="1" correct="3" unit="hn" range="3"/>
+                                    XmlElement root = xmlDoc.DocumentElement;
+
+                                    string description = $"Values: {root.Attributes["trackMin"].Value}-{root.Attributes["trackMax"].Value}, Correct: {root.Attributes["correct"].Value}";
+                                    if (root.HasAttribute("range"))
+                                    {
+                                        if(int.TryParse(root.Attributes["correct"].Value, out int intCorrect) && int.TryParse(root.Attributes["range"].Value, out int intRange))
+                                        {
+                                            description += $"-{intCorrect + intRange}";
+                                        }
+                                    }
+                                    ws.Cells[endRow, 4].Value = description;
+                                }
+                                catch(Exception e)
+                                {
+                                    //log
+                                }
+                                ws.Cells[endRow++, 3].Value = "Answer choice";
+                                break;
                             default:
                                 endRow++;
                                 break;
@@ -109,6 +136,15 @@ namespace EdugameCloud.MVC.Services
                             }
                         }
 
+                        if(sessionResult.SubModuleItemType == SubModuleItemType.Quiz)
+                        {
+                            foreach (var correctRow in correctRows)
+                            {
+                                ws.Cells[correctRow, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                ws.Cells[correctRow, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
+                            }
+                        }
+
                         foreach (var qr in sessionResult.ReportResults)
                         {
                             var qqr =
@@ -119,17 +155,22 @@ namespace EdugameCloud.MVC.Services
                                 case SubModuleItemType.Quiz:
                                     if (qqr != null)
                                     {
-                                        ws.Cells[startUserRowCorrect, startUserPartColumn].Value = qqr.IsCorrect ? 1 : 0;
+                                        if ((QuestionTypeEnum)q.QuestionType.Id == QuestionTypeEnum.Speedometer)
+                                        {
+                                            if (int.TryParse(qqr.Answer, out int intAnswer))
+                                                ws.Cells[endRow - 3, startUserPartColumn].Value = intAnswer;
+                                            else
+                                                ws.Cells[endRow - 3, startUserPartColumn].Value = qqr.Answer; //answer choice
+                                        }
+
+                                        ws.Cells[startUserRowCorrect, startUserPartColumn].Value = 
+                                            qqr.IsCorrect ? 1 : 0;
                                     }
                                     else
                                     {
                                         ws.Cells[endRow - 2, startUserPartColumn].Value = 0; // No Answer
                                     }
-                                    foreach (var correctRow in correctRows)
-                                    {
-                                        ws.Cells[correctRow, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                        ws.Cells[correctRow, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
-                                    }
+                                    
                                     break;
                                 case SubModuleItemType.Survey:
                                     if (qqr == null || !qqr.DistractorIds.Any())
@@ -178,7 +219,12 @@ namespace EdugameCloud.MVC.Services
 
                         for (var i = 0; i < sessionResult.ReportResults.Count(); i++)
                         {
-                            ws.Cells[startRow, StartUserColumn + i].FormulaR1C1 = $"={questionsCount}-SUM(R3C:R[-1]C)";
+                            var formulaR1C1 = $"={questionsCount}-SUM(R3C:R[-1]C)";
+                            foreach(var excludeRaw in excludeRowsFromSum)
+                            {
+                                formulaR1C1 += $"+R{excludeRaw}C";
+                            }
+                            ws.Cells[startRow, StartUserColumn + i].FormulaR1C1 = formulaR1C1;
                             ws.Cells[startRow + 1, StartUserColumn + i].FormulaR1C1 =
                                 $"=ROUNDUP(({questionsCount}-R[-1]C)/{questionsCount}*100, 0)";
                         }
