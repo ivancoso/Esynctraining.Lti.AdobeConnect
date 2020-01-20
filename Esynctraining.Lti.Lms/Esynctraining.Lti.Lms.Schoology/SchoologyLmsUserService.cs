@@ -61,12 +61,12 @@ namespace Esynctraining.Lti.Lms.Schoology
                 $"sections/{courseId}");
 
             List<Enrollment> enrollments = new List<Enrollment>();
-            RootObject2 enrollmentCallResult;
+            EnrollmentsResult enrollmentCallResult;
             int startPage = 0;
-            int pageSize = 20;
+            int pageSize = 100;
             do
             {
-                enrollmentCallResult = await _restApiClient.GetRestCall<RootObject2>(clientId,
+                enrollmentCallResult = await _restApiClient.GetRestCall<EnrollmentsResult>(clientId,
                     clientSecret,
                     $"sections/{section.id}/enrollments?start={startPage}&limit={pageSize}");
 
@@ -75,41 +75,44 @@ namespace Esynctraining.Lti.Lms.Schoology
                 startPage += pageSize;
 
             } while (enrollments.Count < Int32.Parse(enrollmentCallResult.total));
+            
+            startPage = 0;
+            UsersResult usersCallResult;
+            var users = new List<User>();
+            do
+            {
+                usersCallResult = await _restApiClient.GetRestCall<UsersResult>(clientId,
+                    clientSecret,
+                    $"users?start={startPage}&limit={pageSize}");
+
+                users.AddRange(usersCallResult.user);
+
+                startPage += pageSize;
+
+            } while (users.Count < Int32.Parse(usersCallResult.total));
 
             //https://developers.schoology.com/api-documentation/rest-api-v1/enrollment
             //status 5: Archived (Course specific status members can be placed in before being fully unenrolled)
-            enrollments = enrollments.Distinct().Where(e => e.status != "5").ToList();
 
-            var enrolledUserTasks = enrollments.GroupBy(u => u.uid).Select(g => g.First()).Select(enrollment =>
-            {
-                var usr = _restApiClient.GetRestCall<User>(clientId,
-                          clientSecret,
-                          $"users/{enrollment.uid}");
-                return usr.ContinueWith(x =>
+            var enrolledUsers =
+                enrollments.Distinct().Where(e => e.status != "5").GroupBy(u => u.uid).Select(g =>
                 {
-                    var u = x.Result;
-                    u.admin = enrollment.admin;
-                    return u;
-                });
-            });
+                    var enr = g.First();
+                    var user = users.FirstOrDefault(U => U.uid == enr.uid);
+                    if (user == null)
+                        return null;
+                    return new LmsUserDTO
+                    {
+                        Id = user.uid,
+                        Login = string.IsNullOrWhiteSpace(user.username) ? user.primary_email : user.username,
+                        // TODO: middle name
+                        Name = user.name_first + " " + user.name_last,
+                        Email = user.primary_email,
+                        LmsRole = enr.admin == 1 ? "Teacher" : "Student"
+                    };
+                }).Where(x => x != null).ToList();
 
-            var enrolledUsers = await Task.WhenAll(enrolledUserTasks);
-
-            var users = enrolledUsers
-                .GroupBy(u => u.uid)
-                .Select(g => g.First())
-                .Select(x => new LmsUserDTO
-                {
-                    Id = x.uid,
-                    Login = string.IsNullOrWhiteSpace(x.username) ? x.primary_email : x.username,
-                    // TODO: middle name
-                    Name = x.name_first + " " + x.name_last,
-                    Email = x.primary_email,
-                    LmsRole = x.admin == 1 ? "Teacher" : "Student",
-                })
-                .ToList();
-
-            return users.ToSuccessResult();
+            return enrolledUsers.ToSuccessResult();
         }
     }
 }

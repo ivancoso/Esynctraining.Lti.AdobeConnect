@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Esynctraining.Lti.Lms.Schoology
+﻿namespace Esynctraining.Lti.Lms.Schoology
 {
     internal class Enrollment
     {
@@ -20,12 +18,5 @@ namespace Esynctraining.Lti.Lms.Schoology
         public string status { get; set; }
         //public string picture_url { get; set; }
         //public Links links { get; set; }
-    }
-
-    internal class RootObject2
-    {
-        public List<Enrollment> enrollment { get; set; }
-        public string total { get; set; }
-        public Links links { get; set; }
     }
 }
