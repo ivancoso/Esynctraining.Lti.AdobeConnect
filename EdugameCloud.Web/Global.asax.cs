@@ -23,7 +23,6 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.FluentValidation;
-using Esynctraining.Mvc;
 using Esynctraining.Windsor;
 using FluentValidation;
 using FluentValidation.Mvc;

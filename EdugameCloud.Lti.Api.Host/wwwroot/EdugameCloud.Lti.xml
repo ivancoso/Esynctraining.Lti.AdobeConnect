@@ -1301,5 +1301,36 @@
               Looks up a localized string similar to Title must be between 1 and 60 characters long..
             </summary>
         </member>
+        <member name="M:EdugameCloud.Lti.ServiceLocatorControllerFactory.#ctor(Esynctraining.Core.Utils.IServiceLocator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EdugameCloud.Lti.ServiceLocatorControllerFactory"/> class.
+            </summary>
+            <param name="container">
+            The container.
+            </param>
+        </member>
+        <member name="M:EdugameCloud.Lti.ServiceLocatorControllerFactory.GetControllerInstance(System.Web.Routing.RequestContext,System.Type)">
+            <summary>
+            The get controller instance.
+            </summary>
+            <param name="requestContext">
+            The request context.
+            </param>
+            <param name="controllerType">
+            The controller type.
+            </param>
+            <returns>
+            The <see cref="T:System.Web.Mvc.IController"/>.
+            </returns>
+            <exception cref="T:System.Web.HttpException">
+             404 controller not found
+            </exception>
+            <exception cref="T:System.ArgumentException">
+             Controller instance does not implement IController
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+            Controller is not registered with IoC container
+            </exception>
+        </member>
     </members>
 </doc>

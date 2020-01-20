@@ -103,10 +103,6 @@
     <Reference Include="Esynctraining.Json.Jil, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Json.Jil.1.0.0.3\lib\net461\Esynctraining.Json.Jil.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Mvc, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Mvc.1.0.0.1\lib\net45\Esynctraining.Mvc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.NHibernate.1.0.1\lib\net461\Esynctraining.NHibernate.dll</HintPath>
     </Reference>

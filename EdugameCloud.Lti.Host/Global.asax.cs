@@ -40,7 +40,6 @@ using Esynctraining.Lti.Lms.Desire2Learn;
 using Esynctraining.Lti.Lms.Moodle;
 using Esynctraining.Lti.Lms.Sakai;
 using Esynctraining.Lti.Lms.Schoology;
-using Esynctraining.Mvc;
 using Esynctraining.WebApi;
 using Esynctraining.Windsor;
 using Microsoft.Extensions.DependencyInjection;
