@@ -487,6 +487,44 @@ namespace Esynctraining.Zoom.ApiWrapper
             return false;
         }
 
+        public async Task<ListGroups> GetGroups()
+        {
+            RestRequest restRequest = await BuildRequestAuthorization($"groups", Method.GET);
+            IRestResponse<ListGroups> restResponse = await (await GetWebClient()).ExecuteTaskAsync<ListGroups>((IRestRequest)restRequest);
+
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
+                return restResponse.Data;
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
+        }
+
+        public async Task<bool> AddGroupMember(string groupId, User user)
+        {
+            var newGroupMember = new NewGroupMember { Id = user.Id, Email = user.Email };
+            NewGroupMembers newGroupMembers = new NewGroupMembers
+            {
+                Members = new List<NewGroupMember> { newGroupMember }
+            };
+
+            RestRequest restRequest = await BuildRequestAuthorization($"groups/{groupId}/members", Method.POST);
+            restRequest.AddJsonBody((object)newGroupMembers);
+            IRestResponse<AddGroupMemberResponse> restResponse = await (await GetWebClient()).ExecuteTaskAsync<AddGroupMemberResponse>((IRestRequest)restRequest);
+            if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.Created)
+                return true;
+
+            throw new ZoomApiException
+            {
+                Content = restResponse.Content,
+                ErrorMessage = restResponse.ErrorMessage,
+                StatusDescription = restResponse.StatusDescription
+            };
+        }
+
         public class ZoomToken
         {
             public string Token { get; set; }
