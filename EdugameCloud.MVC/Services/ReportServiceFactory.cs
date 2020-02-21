@@ -10,7 +10,7 @@ namespace EdugameCloud.MVC.Services
             switch (reportType)
             {
                 case 1:
-                    return new HFExtendedReportService();
+                    return new GoddardExtendedReportService();
                 case 2:
                     if(subModuleType == SubModuleItemType.Survey)
                         return new MngSurveyReportService();
