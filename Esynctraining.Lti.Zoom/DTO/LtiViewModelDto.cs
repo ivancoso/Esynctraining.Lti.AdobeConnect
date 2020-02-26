@@ -122,5 +122,7 @@ namespace Esynctraining.Lti.Zoom.DTO
         public bool EnableMeetingSessions { get; set; }
 
         public bool IsSubAccount { get; set; }
+
+        public string Language { get; set; }
     }
 }

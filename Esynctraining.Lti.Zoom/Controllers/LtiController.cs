@@ -563,7 +563,8 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 PrimaryColor = license.GetSetting<string>(LmsLicenseSettingNames.PrimaryColor),
                 SupportSectionText = license.GetSetting<string>(LmsLicenseSettingNames.SupportSectionText),
                 EnableMeetingSessions = license.GetSetting<bool>(LmsLicenseSettingNames.EnableMeetingSessions),
-                IsSubAccount = !string.IsNullOrEmpty(zoomUser.SubAccountId)
+                IsSubAccount = !string.IsNullOrEmpty(zoomUser.SubAccountId),
+                Language = license.Language.TwoLetterCode
             };
 
             return model;
