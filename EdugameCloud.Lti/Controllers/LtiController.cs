@@ -344,6 +344,7 @@ namespace EdugameCloud.Lti.Controllers
         [ValidateInput(false)]
         public virtual async Task<ActionResult> LoginWithProvider(string provider, LtiParamDTO param)
         {
+            Logger.Info($"LoginWithProvider started with key {param.oauth_consumer_key}, user is: {param.user_id ?? string.Empty}");
             var methodTime = Stopwatch.StartNew();
             var trace = new StringBuilder();
             try
