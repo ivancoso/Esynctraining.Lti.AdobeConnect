@@ -280,6 +280,7 @@ namespace EdugameCloud.Lti.Controllers
         [OutputCache(VaryByParam = "*", NoStore = true, Duration = 0, Location = System.Web.UI.OutputCacheLocation.None)]
         public virtual async Task<ActionResult> JoinMeeting(string session, int meetingId)
         {
+            Logger.Info($"JoinMeeting started. Session {session}");
             LmsCompany credentials = null;
             try
             {
