@@ -146,15 +146,20 @@ namespace Esynctraining.Lti.Zoom.Controllers
         {
             try
             {
+                Logger.Info($"Get session info by: {session}");
                 LmsUserSession s = await _sessionService.GetSession(Guid.Parse(session));
+                Logger.Info($"Session param: {s.SessionData}");
                 var param = _jsonDeserializer.JsonDeserialize<LtiParamDTO>(s.SessionData);
-                UserInfoDto zoomUser = await TryGetZoomUser(param, enableSubAccounts);
 
+                Logger.Info($"Get Zoom User");
+                UserInfoDto zoomUser = await TryGetZoomUser(param, enableSubAccounts);
+                
                 if (zoomUser == null)
                 {
                     return this.View("~/Views/Lti/LtiError.cshtml");
                 }
 
+                Logger.Info($"Zoom User: {zoomUser.Email}");
                 var model = await BuildModelAsync(s, zoomUser);
                 return View("Index", model);
             }
