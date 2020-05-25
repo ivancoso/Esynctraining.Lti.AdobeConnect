@@ -284,6 +284,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 // TRICK: to save course_id in DB;
                 param.CalculateFields();
                 // Parse and validate the request
+                Logger.Debug($"Content type: {Request.ContentType}");
                 Request.CheckForRequiredLtiParameters();
                 if (!Guid.TryParse(param.oauth_consumer_key, out Guid consumerKey))
                 {
