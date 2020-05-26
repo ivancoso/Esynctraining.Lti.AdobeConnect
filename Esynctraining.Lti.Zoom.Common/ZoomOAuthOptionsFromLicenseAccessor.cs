@@ -74,6 +74,10 @@ namespace Esynctraining.Lti.Zoom.Common
 
         private async Task<HttpResponseMessage> GetZoomUserInfo(string accessToken)
         {
+            //---------POPOV----------
+            await Task.Delay(180_000);
+            //-------------------------
+
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.zoom.us/v2/users/me");
             request.Headers.Add("Accept", "application/json");
             request.Headers.Add("Authorization", $"Bearer  {accessToken}");
