@@ -285,6 +285,7 @@ namespace Esynctraining.Lti.Zoom.Controllers
                 param.CalculateFields();
                 // Parse and validate the request
                 Logger.Debug($"Content type: {Request.ContentType}");
+                Logger.Debug($"License key: {param?.oauth_consumer_key}");
                 Request.CheckForRequiredLtiParameters();
                 if (!Guid.TryParse(param.oauth_consumer_key, out Guid consumerKey))
                 {
