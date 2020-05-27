@@ -3,7 +3,6 @@ using Esynctraining.Zoom.ApiWrapper.OAuth;
 using System;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Esynctraining.Core.Logging;
 
@@ -14,9 +13,8 @@ namespace Esynctraining.Lti.Zoom.Common
         private readonly ILmsLicenseAccessor _licenseAccessor;
         private readonly ILmsLicenseService _lmsLicenseService;
         private readonly ILogger _logger;
-        private static readonly System.Net.Http.HttpClient _httpClient = new System.Net.Http.HttpClient();
-
-        private static readonly SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+        private static readonly HttpClient _httpClient = new HttpClient();
+        private readonly AsyncDuplicateLock _locker = new AsyncDuplicateLock();
 
         public ZoomOAuthOptionsFromLicenseAccessor(ILmsLicenseAccessor licenseAccessor, ILmsLicenseService lmsLicenseService, ILogger logger)
         {
@@ -27,42 +25,31 @@ namespace Esynctraining.Lti.Zoom.Common
 
         public async Task<ZoomOAuthOptions> GetOptions()
         {
-            Dto.LmsLicenseDto license = null;
-            await _sem.WaitAsync();
-            try
+            var license1 = await _licenseAccessor.GetLicense();
+            using (await _locker.LockAsync(license1.ConsumerKey))
             {
-                license = await _licenseAccessor.GetLicense();
-                _logger.Debug($"Check token for license {license.ConsumerKey}");
-                if (!(await IsAccessTokenValid(license.ZoomUserDto.AccessToken)))
+                _logger.Debug($"Check token for license {license1.ConsumerKey}");
+                if (!(await IsAccessTokenValid(license1.ZoomUserDto.AccessToken)))
                 {
-                    _logger.Warn($"[Failed] Check token for license {license.ConsumerKey}");
-                    var response = await UpdateAccessToken(license.ZoomUserDto);
+                    _logger.Warn($"[Failed] Check token for license {license1.ConsumerKey}");
+                    var response = await UpdateAccessToken(license1.ZoomUserDto);
                     if (response.IsSuccessStatusCode)
                     {
-                        _logger.Info($"Update access token for license key {license.ConsumerKey}");
+                        _logger.Info($"Update access token for license key {license1.ConsumerKey}");
                         var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
-                        license.ZoomUserDto = (await _lmsLicenseService.UpdateOAuthTokensForLicense(license.ConsumerKey,
+                        license1.ZoomUserDto = (await _lmsLicenseService.UpdateOAuthTokensForLicense(license1.ConsumerKey,
                             tokenResponse.access_token, tokenResponse.refresh_token)).ZoomUserDto;
                     }
                     else
                     {
-                        _logger.Error($"Error while updating token for license {license.ConsumerKey}");
+                        _logger.Error($"Error while updating token for license {license1.ConsumerKey}");
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, $"GetOptions for license {license.ConsumerKey}");
-            }
-            finally
-            {
-                _logger.Debug($"End Check token for license {license.ConsumerKey}");
-                _sem.Release();
             }
 
             return new ZoomOAuthOptions
             {
-                AccessToken = license.ZoomUserDto.AccessToken,
+                AccessToken = license1.ZoomUserDto.AccessToken,
             };
         }
 
