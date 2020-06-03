@@ -76,7 +76,7 @@ namespace Esynctraining.Lti.Lms.Moodle
 
                     //Popov
                     var enrollmentsResultTemp = await tupleEnrollmentsResult.result;
-                    enrollmentsResult = enrollmentsResultTemp.Item1;
+                    enrollmentsResult = enrollmentsResultTemp?.Item1;
                     error = tupleEnrollmentsResult.error;
                 }
 
