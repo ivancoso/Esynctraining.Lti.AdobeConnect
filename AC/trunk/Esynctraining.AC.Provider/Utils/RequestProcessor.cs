@@ -644,6 +644,8 @@ namespace Esynctraining.AC.Provider.Utils
                         if (r.StatusCode == HttpStatusCode.Found)
                             webResponse = ex.Response as HttpWebResponse;
                     }
+                    else
+                        throw;
                 }
 
                 if (webResponse == null)
