@@ -23,8 +23,8 @@ namespace Esynctraining.AdobeConnect.Tests
             var tests = new AdobeConnectProxyTests();
             //tests.WillTestDateAddHours();
             //tests.WillUpdatePassword();
-            tests.ScoMove();
-
+            //tests.ScoMove();
+            tests.WillUpdateMeetingHTMLLaunch();
 
 
 

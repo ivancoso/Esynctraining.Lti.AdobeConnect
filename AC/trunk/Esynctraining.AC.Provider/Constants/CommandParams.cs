@@ -236,6 +236,7 @@
         /// </summary>
         internal static class Features
         {
+            public const string AccountId = "account-id={0}";
             /// <summary>
             /// The update.
             /// </summary>

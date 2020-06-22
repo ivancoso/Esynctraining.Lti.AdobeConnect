@@ -63,6 +63,17 @@
             info.EventGuestPolicy = xml.SelectSingleNodeValue("event-guest-policy/text()");
             info.UpdateLinkedItem = xml.ParseNodeBool("update-linked-item/text()");
             info.EventTemplateScoId = xml.SelectSingleNodeValue("event-template/text()");
+            info.Chargebacks = xml.SelectSingleNodeValue("chargebacks/text()");
+            
+            info.MeetingHtmlLaunch = bool.TryParse(xml.SelectSingleNodeValue("meetingHTMLLaunch/text()"), out bool meetingHtmlLaunch)
+                ? meetingHtmlLaunch
+                : (bool?)null;
+            info.TrainingHtmlLaunch = bool.TryParse(xml.SelectSingleNodeValue("trainingHTMLLaunch/text()"), out bool trainingHtmlLaunch)
+                ? trainingHtmlLaunch
+                : (bool?)null;
+            info.WebinarHtmlLaunch = bool.TryParse(xml.SelectSingleNodeValue("webinarHTMLLaunch/text()"), out bool webinarHtmlLaunch)
+                ? webinarHtmlLaunch
+                : (bool?)null;
         }
 
     }

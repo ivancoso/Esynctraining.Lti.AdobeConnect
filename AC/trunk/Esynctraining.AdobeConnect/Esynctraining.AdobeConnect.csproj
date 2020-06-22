@@ -9,11 +9,11 @@
         <AssemblyName>Esynctraining.AdobeConnect</AssemblyName>
         <PackageId>Esynctraining.AdobeConnect</PackageId>
         <PackageTags>AC;AdobeConnect</PackageTags>
-        <PackageReleaseNotes>netstandard2.0 ONLY; GetSeminarSessionRecordingsList - catching error for each session</PackageReleaseNotes>
-        <Version>1.0.7.2</Version>
+        <PackageReleaseNotes>+MeetingFeatureInfo; enableHtml</PackageReleaseNotes>
+        <Version>1.0.7.3</Version>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <FileVersion>1.0.7.2</FileVersion>
-        <AssemblyVersion>1.0.7.2</AssemblyVersion>
+        <FileVersion>1.0.7.3</FileVersion>
+        <AssemblyVersion>1.0.7.3</AssemblyVersion>
     </PropertyGroup>
 
     <ItemGroup>

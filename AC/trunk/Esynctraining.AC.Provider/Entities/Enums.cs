@@ -228,6 +228,9 @@
         meeting_passcode,
         telephony_profile,
         seminar_expected_load,
+        meetingHTMLLaunch,
+        trainingHTMLLaunch,
+        webinarHTMLLaunch
     }
 
     public enum PermissionId

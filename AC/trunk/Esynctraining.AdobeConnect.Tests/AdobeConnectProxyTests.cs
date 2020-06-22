@@ -279,5 +279,19 @@ namespace Esynctraining.AdobeConnect.Tests
                 Assert.AreEqual(principalInfo.PrincipalInfo.Principal.Type, PrincipalType.user.ToString());
             }
         }
+
+
+        [Test]
+        public void WillUpdateMeetingHTMLLaunch()
+        {
+            var email = "";
+            var acApiUrl = new Uri("https://esynctraining.adobeconnect.com");
+            var con = new ConnectionDetails(acApiUrl);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), acApiUrl, String.Empty);
+
+            proxy.Login(new UserCredentials("", ""));//admin
+            var update = proxy.UpdateAclField("1690082137", AclFieldId.meetingHTMLLaunch.ToString(), false.ToString().ToLower());
+        }
     }
 }

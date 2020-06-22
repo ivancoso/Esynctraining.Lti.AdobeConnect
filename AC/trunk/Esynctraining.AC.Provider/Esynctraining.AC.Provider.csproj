@@ -9,11 +9,11 @@
         <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
         <PackageId>Esynctraining.AC.Provider</PackageId>
         <PackageTags>core;AC;AdobeConnect</PackageTags>
-        <PackageReleaseNotes>throwing actual exception for AC request</PackageReleaseNotes>
-        <Version>1.0.7.3</Version>
+        <PackageReleaseNotes>+MeetingFeatureInfo; enableHtml</PackageReleaseNotes>
+        <Version>1.0.7.4</Version>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <AssemblyVersion>1.0.7.3</AssemblyVersion>
-        <FileVersion>1.0.7.3</FileVersion>
+        <AssemblyVersion>1.0.7.4</AssemblyVersion>
+        <FileVersion>1.0.7.4</FileVersion>
         <Company>CoSo Cloud LLC</Company>
     </PropertyGroup>
 

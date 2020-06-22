@@ -159,6 +159,11 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlElement("meeting-passcode")]
         public string MeetingPasscode { get; set; }
 
+        public string Chargebacks { get; set; }
+        public bool? MeetingHtmlLaunch { get; set; }
+        public bool? TrainingHtmlLaunch { get; set; }
+        public bool? WebinarHtmlLaunch { get; set; }
+
         public ScoInfo SourceSco { get; set; }
     }
 }

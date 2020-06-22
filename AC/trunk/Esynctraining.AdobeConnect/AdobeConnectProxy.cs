@@ -1155,6 +1155,12 @@ namespace Esynctraining.AdobeConnect
             return result;
         }
 
+        public CollectionResult<RoomFeature> MeetingFeatureInfo(string accountId = null)
+        {
+            return Execute(() => { return _provider.MeetingFeatureInfo(accountId); },
+                accountId);
+        }
+
         public StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId)
         {
             return Execute(() => { return _provider.UpdatePublicAccessPermissions(aclId, permissionId); },

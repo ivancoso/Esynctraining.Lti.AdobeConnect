@@ -225,6 +225,7 @@ namespace Esynctraining.AdobeConnect
         StatusInfo UpdateAclField(string aclId, string fieldId, string value); //there could be custom Id for Acl field
         StatusInfo UpdateAclField(IEnumerable<AclFieldUpdateTrio> values);
         //StatusInfo UpdateMeetingFeature(string accountId, MeetingFeatureId featureId, bool enable);
+        CollectionResult<RoomFeature> MeetingFeatureInfo(string accountId = null);
         StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId);
         StatusInfo UpdatePublicAccessPermissions(string aclId, SpecialPermissionId permissionId);
         ScoInfoResult UpdateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase;

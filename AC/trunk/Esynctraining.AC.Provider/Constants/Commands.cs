@@ -130,6 +130,7 @@
             /// The meeting feature update.
             /// </summary>
             public const string FeatureUpdate = "meeting-feature-update";
+            public const string FeatureInfo = "meeting-feature-info";
 
             /// <summary>
             /// The acl field info.

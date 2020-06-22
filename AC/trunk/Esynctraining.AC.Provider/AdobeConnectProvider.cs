@@ -458,6 +458,25 @@ namespace Esynctraining.AC.Provider
             return status;
         }
 
+        public CollectionResult<RoomFeature> MeetingFeatureInfo(string accountId = null)
+        {
+            // act: "meeting-feature-info"
+            StatusInfo status;
+
+            string parameters = accountId == null ? (string)null : string.Format(CommandParams.Features.AccountId, accountId);
+            var doc = requestProcessor.Process(Commands.Sco.FeatureInfo, parameters, out status);
+
+            const string path = "//results/disabled-features/feature";
+
+            return ResponseIsOk(doc, status)
+                ? new CollectionResult<RoomFeature>(status,
+                    doc.SelectNodes(path).Cast<XmlNode>()
+                    .Select(RoomFeatureParser.Parse)
+                    .Where(item => item != null)
+                    .ToArray())
+                : new CollectionResult<RoomFeature>(status);
+        }
+
         /// <summary>
         /// The get ACL field.
         /// </summary>
