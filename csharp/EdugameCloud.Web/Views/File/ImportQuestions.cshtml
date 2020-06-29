@@ -1,0 +1,13 @@
+﻿@using Resources
+@{
+    Layout = EdugameCloudT4.Shared.Views._Layout;
+    ViewBag.Title = Index.Title;
+}
+
+<div id="flashContent" style="width: 100%; height:100%">
+    @using (Html.BeginForm(EdugameCloudT4.File.ImportQuestions(), FormMethod.Post, new { style = "margin:auto; width: 621px;", enctype = "multipart/form-data" }))
+    {
+        <input type="file" name="data" id="data" />
+        <button type="submit" title="Upload and process" style="margin-right:110px;margin-top:20px; float:right">Upload and process</button>
+    }
+</div>

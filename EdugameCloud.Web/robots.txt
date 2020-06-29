@@ -1,8 +1,0 @@
-﻿User-agent: *
-Disallow: /api/
-Disallow: /lti/
-Disallow: /lti-api/
-Disallow: /lti-mp4/
-Disallow: /services/
-Disallow: /Scripts/
-Disallow: /Content/

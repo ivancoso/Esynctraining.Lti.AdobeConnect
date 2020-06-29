@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      service="EdugameCloud.Lti.API.Desire2Learn.IDesire2LearnApiService, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Desire2Learn.Desire2LearnApiService, EdugameCloud.Lti.Desire2Learn"></component>
+    <component
+      id="Brightspace"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Desire2Learn.Desire2LearnLmsUserService, EdugameCloud.Lti.Desire2Learn"></component>
+    <component
+      id="Brightspace_Sync"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Desire2Learn.Desire2LearnLmsUserServiceSync, EdugameCloud.Lti.Desire2Learn"></component>
+  </components>
+</configuration>

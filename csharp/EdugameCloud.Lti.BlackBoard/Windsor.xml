@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      id="IBlackBoardAPI"
+      service="EdugameCloud.Lti.API.BlackBoard.IBlackBoardApi, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.BlackBoard.SoapBlackBoardApi, EdugameCloud.Lti.BlackBoard"
+      lifestyle="singleton"></component>
+    <component
+      id="IEGCEnabledBlackBoardAPI"
+      service="EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.BlackBoard.EGCEnabledBlackboardApi, EdugameCloud.Lti.BlackBoard"
+      lifestyle="singleton"></component>
+    <component
+      id="Blackboard"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.BlackBoard.BlackboardLmsUserService, EdugameCloud.Lti.BlackBoard"
+      lifestyle="singleton"></component>
+  </components>
+</configuration>

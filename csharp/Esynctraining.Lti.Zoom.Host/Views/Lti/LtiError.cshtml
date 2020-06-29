@@ -1,0 +1,39 @@
+﻿@{
+    Layout = null;
+
+    string errorMessage = string.Empty;
+
+    if (string.IsNullOrWhiteSpace(ViewBag.Message))
+    {
+        errorMessage = string.IsNullOrWhiteSpace(ViewBag.DebugError)
+            ? "ExceptionMessage"
+            : "ErrorOccured" + ViewBag.DebugError;
+    }
+    else
+    {
+        errorMessage = ViewBag.Message;
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>eSyncTraining - LTI Error occured</title>
+</head>
+<body style="padding: 20px; font-family: 'LatoWeb', 'Helvetica Neue',Helvetica,Arial,sans-serif;">
+<span>@Html.Raw(errorMessage)</span>
+    
+@if (!string.IsNullOrEmpty(ViewBag.ReturnUrl))
+{
+    <br />
+    <br />
+    <span>Click to return to the LMS page:</span>
+    <br />
+    <a href="@ViewBag.ReturnUrl">@ViewBag.ReturnUrl</a>
+}
+</body>
+</html>

@@ -1,0 +1,98 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <FileVersion>1.9.0.0</FileVersion>
+    <Version>1.9.0</Version>
+
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Reports\MeetingHostReport.rdlc" />
+    <None Remove="Reports\ParticipantDetails\Collaboration.rdlc" />
+    <None Remove="Reports\ParticipantDetails\Crossword.rdlc" />
+    <None Remove="Reports\ParticipantDetails\Quiz.rdlc" />
+    <None Remove="Reports\ParticipantDetails\Survey.rdlc" />
+    <None Remove="Reports\ParticipantDetails\Test.rdlc" />
+    <None Remove="Reports\QuestionDetails\Collaboration.rdlc" />
+    <None Remove="Reports\QuestionDetails\Crossword.rdlc" />
+    <None Remove="Reports\QuestionDetails\Quiz.rdlc" />
+    <None Remove="Reports\QuestionDetails\Survey.rdlc" />
+    <None Remove="Reports\QuestionDetails\Survey\AnswersStatistics.rdlc" />
+    <None Remove="Reports\QuestionDetails\Survey\ParticipantsStatistics.rdlc" />
+    <None Remove="Reports\QuestionDetails\Test.rdlc" />
+    <None Remove="Reports\SessionDetails\Collaboration.rdlc" />
+    <None Remove="Reports\SessionDetails\Crossword.rdlc" />
+    <None Remove="Reports\SessionDetails\Quiz.rdlc" />
+    <None Remove="Reports\SessionDetails\Survey.rdlc" />
+    <None Remove="Reports\SessionDetails\Test.rdlc" />
+    <None Remove="Reports\SessionsReport.rdlc" />
+    <None Remove="Reports\SessionsReportNoQuestions.rdlc" />
+    <None Remove="Reports\SessionsReportNoQuestionsNoParticipants.rdlc" />
+    <None Remove="Reports\SubReports\ParticipantsSubReport.rdlc" />
+    <None Remove="StyleCop.Cache" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\MeetingHostReport.rdlc" />
+    <EmbeddedResource Include="Reports\ParticipantDetails\Collaboration.rdlc" />
+    <EmbeddedResource Include="Reports\ParticipantDetails\Crossword.rdlc" />
+    <EmbeddedResource Include="Reports\ParticipantDetails\Quiz.rdlc" />
+    <EmbeddedResource Include="Reports\ParticipantDetails\Survey.rdlc" />
+    <EmbeddedResource Include="Reports\ParticipantDetails\Test.rdlc" />
+    <EmbeddedResource Include="Reports\QuestionDetails\Collaboration.rdlc" />
+    <EmbeddedResource Include="Reports\QuestionDetails\Crossword.rdlc" />
+    <EmbeddedResource Include="Reports\QuestionDetails\Quiz.rdlc" />
+    <EmbeddedResource Include="Reports\QuestionDetails\Survey.rdlc" />
+    <EmbeddedResource Include="Reports\QuestionDetails\Survey\AnswersStatistics.rdlc" />
+    <EmbeddedResource Include="Reports\QuestionDetails\Survey\ParticipantsStatistics.rdlc" />
+    <EmbeddedResource Include="Reports\QuestionDetails\Test.rdlc" />
+    <EmbeddedResource Include="Reports\SessionDetails\Collaboration.rdlc" />
+    <EmbeddedResource Include="Reports\SessionDetails\Crossword.rdlc" />
+    <EmbeddedResource Include="Reports\SessionDetails\Quiz.rdlc" />
+    <EmbeddedResource Include="Reports\SessionDetails\Survey.rdlc" />
+    <EmbeddedResource Include="Reports\SessionDetails\Test.rdlc" />
+    <EmbeddedResource Include="Reports\SessionsReport.rdlc" />
+    <EmbeddedResource Include="Reports\SessionsReportNoQuestions.rdlc" />
+    <EmbeddedResource Include="Reports\SessionsReportNoQuestionsNoParticipants.rdlc" />
+    <EmbeddedResource Include="Reports\SubReports\ParticipantsSubReport.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="4.1.1" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
+    <PackageReference Include="Esynctraining.Core.SystemWeb" Version="1.0.0.1" />
+    <PackageReference Include="FluentValidation" Version="8.1.3" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
+    <PackageReference Include="Microsoft.ReportViewer.Runtime.WebForms" Version="12.0.2402.15" />
+    <PackageReference Include="T4MVCExtensions" Version="3.17.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\WebResources.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="T4MVC.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+ 
+
+</Project>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EdugameCloud.PublicApi</name>
+    </assembly>
+    <members>
+        <member name="T:EdugameCloud.PublicApi.Controllers.AdobeConnectSessionReportingController">
+            <summary>
+            TODO DESCRIPTION.
+            </summary>
+        </member>
+        <member name="M:EdugameCloud.PublicApi.Controllers.AdobeConnectSessionReportingController.GetCrosswordSessionsByUserId">
+            <summary>
+            Returns crossword sessions for the calling user.
+            </summary>
+            <returns>Array of session entries.</returns>
+        </member>
+        <member name="M:EdugameCloud.PublicApi.Controllers.AdobeConnectSessionReportingController.GetQuizSessionsByUserId">
+            <summary>
+            Returns quiz sessions for the user.
+            </summary>
+            <returns>Array of session entries.</returns>
+        </member>
+        <member name="M:EdugameCloud.PublicApi.Controllers.AdobeConnectSessionReportingController.GetSurveySessionsByUserId">
+            <summary>
+            Returns survey sessions for the user.
+            </summary>
+            <returns>Array of session entries.</returns>
+        </member>
+        <member name="M:EdugameCloud.PublicApi.Controllers.AdobeConnectSessionReportingController.GetTestSessionsByUserId">
+            <summary>
+            Returns test sessions for the user.
+            </summary>
+            <returns>Array of session entries.</returns>
+        </member>
+    </members>
+</doc>

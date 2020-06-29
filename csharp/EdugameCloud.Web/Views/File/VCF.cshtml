@@ -1,0 +1,22 @@
+﻿@model EdugameCloud.MVC.ViewModels.VCFViewModel
+@using Resources
+@{
+    Layout = EdugameCloudT4.Shared.Views._Layout;
+    ViewBag.Title = Index.Title;
+}
+
+<div id="flashContent" style="width: 100%; height:100%">
+    @using (Html.BeginForm(EdugameCloudT4.File.ConvertToVCF(), FormMethod.Post, new { id = "vcfForm", style="margin:auto; width: 621px;" }))
+    {
+        @Html.ValidationSummary();
+        @Html.LabelFor(x=>x.XmlProfile, "Input profile xml:")
+        @Html.TextAreaFor(x=>x.XmlProfile, new { style = "width: 621px; margin-bottom: 20px; height: 339px;"})
+        <button type="submit" title="Convert and download" >Convert and download</button>
+    }
+</div>
+        
+        
+           
+       
+    
+               

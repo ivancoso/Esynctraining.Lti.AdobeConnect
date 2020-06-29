@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
-  <sql-query name="getSNSessionsByUserId">
-    <query-param name="userId" type="System.Int32"/>
-    exec getSNSessionsByUserId @userId=:userId
-  </sql-query>
-</hibernate-mapping>

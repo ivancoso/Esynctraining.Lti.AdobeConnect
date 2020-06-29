@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <Version>1.9.0</Version>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <FileVersion>1.9.0.0</FileVersion>
+    
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\ACSession.hbm.xml" />
+    <EmbeddedResource Include="Hbm\AppletItem.hbm.xml" />
+    <EmbeddedResource Include="Hbm\LmsCompany.hbm.xml" />
+    <EmbeddedResource Include="Hbm\LmsUser.hbm.xml" />
+    <EmbeddedResource Include="Hbm\Quiz.hbm.xml" />
+    <EmbeddedResource Include="Hbm\SubModuleCategory.hbm.xml" />
+    <EmbeddedResource Include="Hbm\SubModuleItem.hbm.xml" />
+    <EmbeddedResource Include="Hbm\Survey.hbm.xml" />
+    <EmbeddedResource Include="Hbm\Test.hbm.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Persistence" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti.Persistence\EdugameCloud.Lti.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<connectionStrings>
+  <add name="Database" connectionString="PLACE_YOUR_CONNECTION_STRING_HERE" />
+</connectionStrings>    

@@ -1,0 +1,320 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BlackboardDomainMissing" xml:space="preserve">
+    <value>Blackboard LMS domain is missing.</value>
+  </data>
+  <data name="CanNotGetBreezeSession" xml:space="preserve">
+    <value>Can't get Adobe Connect BreezeSession</value>
+  </data>
+  <data name="CanSaveToDb" xml:space="preserve">
+    <value>Could not save user information in database. Please contact system administrator.</value>
+  </data>
+  <data name="CantCreatePrincipalWithEmptyEmail" xml:space="preserve">
+    <value>User Email doesn't exist</value>
+  </data>
+  <data name="CantRetrieveLmsUsers" xml:space="preserve">
+    <value>Unable retrieve information about LMS users.</value>
+    <comment>b</comment>
+  </data>
+  <data name="CreateAcPrincipalManually" xml:space="preserve">
+    <value>User does not exist in AC database. You must create AC accounts manually.</value>
+  </data>
+  <data name="ErrorOccured" xml:space="preserve">
+    <value>Error occured. </value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>An exception is occured. Try again later or contact your administrator.</value>
+  </data>
+  <data name="ExceptionOccured" xml:space="preserve">
+    <value>An exception is occured. </value>
+  </data>
+  <data name="IncorrectAcPassword" xml:space="preserve">
+    <value>The password you provided is incorrect. Please try again.</value>
+  </data>
+  <data name="LtiExternalToolUrl" xml:space="preserve">
+    <value>Review LTI integration. Possibly you have invalid consumer key or External Tool URL.</value>
+  </data>
+  <data name="LtiInvalidRequest" xml:space="preserve">
+    <value>Invalid LTI request</value>
+  </data>
+  <data name="LtiNoAcAccount" xml:space="preserve">
+    <value>Sorry, Adobe Connect account does not exist for you. Please contact administrator.</value>
+  </data>
+  <data name="LtiNoLmsAdmin" xml:space="preserve">
+    <value>Sorry, LMS Admin is not set for current license. Please contact administrator.</value>
+  </data>
+  <data name="LtiValidationDifferentDomain" xml:space="preserve">
+    <value>This LTI integration is already set for different domain.</value>
+  </data>
+  <data name="LtiValidationInactiveCompanyLicense" xml:space="preserve">
+    <value>Sorry, your company doesn't have any active license. Please contact administrator.</value>
+  </data>
+  <data name="LtiValidationInactiveLmsLicense" xml:space="preserve">
+    <value>LMS License is not active. Please contact administrator.</value>
+  </data>
+  <data name="LtiValidationNoSetup" xml:space="preserve">
+    <value>Your Adobe Connect integration is not set up for provided consumer key.</value>
+  </data>
+  <data name="MeetingCantFindPrincipal" xml:space="preserve">
+    <value>Cannot find Adobe Connect user with email {0} or login {1}</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingDeletionDisabled" xml:space="preserve">
+    <value>Meeting deletion is disabled</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotAssociatedToCourse" xml:space="preserve">
+    <value>This meeting is not associated to any course.</value>
+  </data>
+  <data name="MeetingNotFound" xml:space="preserve">
+    <value>Meeting not found</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotFoundInAC" xml:space="preserve">
+    <value>Meeting not found in Adobe Connect</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotStudyGroup" xml:space="preserve">
+    <value>The meeting is not a study group, you can only leave study groups.</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotUniqueUrlPath" xml:space="preserve">
+    <value>URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator.</value>
+    <comment>b</comment>
+  </data>
+  <data name="NoLmsInformation" xml:space="preserve">
+    <value>Could not find LMS information. Please, contact system administrator.</value>
+  </data>
+  <data name="NoSessionInformation" xml:space="preserve">
+    <value>Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.</value>
+  </data>
+  <data name="NotUniqueName" xml:space="preserve">
+    <value>There is already another item with this name. Please try again.</value>
+    <comment>b</comment>
+  </data>
+  <data name="NoUserByPrincipalIdFound" xml:space="preserve">
+    <value>No user with principal id {0} found in Adobe Connect.</value>
+  </data>
+  <data name="NoUserFound" xml:space="preserve">
+    <value>No user with id {0} found.</value>
+  </data>
+  <data name="PrincipalEmailUsedForGuest" xml:space="preserve">
+    <value>Unable to sync users. Guest record with email '{0}' already exists in Adobe Connect. Please contact AC administrator to promote guest to user.</value>
+  </data>
+  <data name="PrincipalLoginUsedForGuest" xml:space="preserve">
+    <value>Unable to sync users. Guest record with login '{0}' already exists in Adobe Connect. Please contact AC administrator to promote guest to user.</value>
+  </data>
+  <data name="PrincipalValidateAlreadyInAc" xml:space="preserve">
+    <value>User '{0}' already exists in Adobe Connect.</value>
+  </data>
+  <data name="PrincipalValidateEmailLength" xml:space="preserve">
+    <value>E-mail must be between 1 and 60 characters long.</value>
+  </data>
+  <data name="PrincipalValidateLoginLength" xml:space="preserve">
+    <value>Login must be between 1 and 60 characters long.</value>
+  </data>
+  <data name="PrincipalValidateNameLength" xml:space="preserve">
+    <value>The combined length of First and Last name must be between 1 and 60 characters.</value>
+  </data>
+  <data name="RecordingAlreadyHasMP4" xml:space="preserve">
+    <value>Recording is already been converted to MP4.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingCantDeleteMP4Progress" xml:space="preserve">
+    <value>Cannot delete. MP4 is already in progress.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingDisabledMP4" xml:space="preserve">
+    <value>MP4 functionality is not enabled in Adobe Connect.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingDuplicateMP4" xml:space="preserve">
+    <value>Trying to create MP4 duplicate recording.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingMissedMP4" xml:space="preserve">
+    <value>MP4 recording doesn't exist.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingNotFound" xml:space="preserve">
+    <value>No recording found</value>
+    <comment>b</comment>
+  </data>
+  <data name="SessionTimeOut" xml:space="preserve">
+    <value>Session timed out. Please refresh the page.</value>
+  </data>
+  <data name="UserIsAlreadyParticipant" xml:space="preserve">
+    <value>This Adobe Connect user is already a participant of the meeting.</value>
+  </data>
+  <data name="UserNotInAdobeConnect" xml:space="preserve">
+    <value>User does not exist in Adobe Connect.</value>
+  </data>
+  <data name="UsersCannotBeSync" xml:space="preserve">
+    <value>Some of the users cannot be synchronized due to: </value>
+    <comment>c</comment>
+  </data>
+  <data name="UsersDuplicateEmail" xml:space="preserve">
+    <value>users with duplicate email exist, </value>
+    <comment>c</comment>
+  </data>
+  <data name="UsersEmptyEmail" xml:space="preserve">
+    <value>users with empty email exist, </value>
+    <comment>c</comment>
+  </data>
+  <data name="ValidateSummaryLength" xml:space="preserve">
+    <value>Summary must be between 0 and 4000 characters long.</value>
+  </data>
+  <data name="ValidateTitleLength" xml:space="preserve">
+    <value>Title must be between 1 and 60 characters long.</value>
+  </data>
+  <data name="UsersCouldNotBeRemoved" xml:space="preserve">
+    <value>Some of the users could not be removed.</value>
+  </data>
+  <data name="UsersCouldNotBeUpdated" xml:space="preserve">
+    <value>Some of the users could not be updated.</value>
+  </data>
+  <data name="LtiValidationWrongSignature" xml:space="preserve">
+    <value>Invalid signature parameter.</value>
+  </data>
+  <data name="LtiValidationWrongVersion" xml:space="preserve">
+    <value>Invalid LTI Version parameter.</value>
+  </data>
+  <data name="LtiValidationMissingParameters" xml:space="preserve">
+    <value>Missing parameters:</value>
+  </data>
+  <data name="LtiValidationNoContextRole" xml:space="preserve">
+    <value>There is no LIS context role provided in request.</value>
+  </data>
+  <data name="LtiValidationRequiredACParameters" xml:space="preserve">
+    <value>The following parameters are required for AC integration:</value>
+  </data>
+  <data name="LtiOauthInvalidParameters" xml:space="preserve">
+    <value>Invalid OAuth parameters. Application Id and Application Key cannot be empty.</value>
+  </data>
+  <data name="AdobeConnectDeniedErrorMessage" xml:space="preserve">
+    <value>Not Authorized. Please check that account used to access Adobe Connect has sufficient permissions.</value>
+  </data>
+  <data name="PrincipalValidateEmailFormat" xml:space="preserve">
+    <value>Not a valid e-mail address.</value>
+  </data>
+  <data name="NotUniqueMeetingName" xml:space="preserve">
+    <value>There is already another meeting with this name. Please try again.</value>
+  </data>
+</root>

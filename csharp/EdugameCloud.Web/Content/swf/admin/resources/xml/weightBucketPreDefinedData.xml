@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<weightBucket>
+  <option id="1" label="Dollar" />
+  <option id="4" label="%" />
+  <option id="2" label="Points" />
+  <!--<option id="3" label="Rupees" />-->
+</weightBucket>

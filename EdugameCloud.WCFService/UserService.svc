@@ -1,4 +1,0 @@
-﻿<%@ServiceHost Language="C#" Debug="true" Service="EdugameCloud.WCFService.UserService" 
-    Factory="Castle.Facilities.WcfIntegration.DefaultServiceHostFactory, Castle.Facilities.WcfIntegration" 
-    CodeBehind="UserService.svc.cs" %>
-
