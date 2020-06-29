@@ -1,0 +1,1 @@
+﻿These images are used within emails

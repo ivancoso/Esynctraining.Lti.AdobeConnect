@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      id="Schoology"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Schoology.SchoologyLmsUserService, EdugameCloud.Lti.Schoology"></component>
+    <component
+      service="EdugameCloud.Lti.API.Schoology.ISchoologyRestApiClient, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Schoology.SchoologyRestApiClient, EdugameCloud.Lti.Schoology"></component>
+  </components>
+</configuration>

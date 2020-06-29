@@ -1,0 +1,743 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props" Condition="Exists('..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1758C513-FDF1-47FA-842F-9C332DA85C17}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdugameCloud.WCFService</RootNamespace>
+    <AssemblyName>EdugameCloud.WCFService</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+    <UseIISExpress>false</UseIISExpress>
+    <IISExpressSSLPort>443</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="antlr.runtime, Version=2.7.6.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ical.Net.2.3.2\lib\net46\antlr.runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Facilities.Logging, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.LoggingFacility.4.1.0\lib\net45\Castle.Facilities.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Facilities.WcfIntegration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.WcfIntegrationFacility.4.1.0\lib\net45\Castle.Facilities.WcfIntegration.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor.MsDependencyInjection, Version=3.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.MsDependencyInjection.3.3.1\lib\netstandard2.0\Castle.Windsor.MsDependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="DotAmf, Version=1.0.1.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.1.2\lib\net461\DotAmf.dll</HintPath>
+    </Reference>
+    <Reference Include="DotAmf.Wcf, Version=1.0.1.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.1.2\lib\net461\DotAmf.Wcf.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetOpenAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.5.9, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.5.9\lib\net461\Esynctraining.AC.Provider.dll</HintPath>
+    </Reference>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.6.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.6.1\lib\net461\Esynctraining.AdobeConnect.dll</HintPath>
+    </Reference>
+    <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.CastleLog4Net.1.0.0.2\lib\net45\Esynctraining.CastleLog4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Esynctraining.Core, Version=1.0.1.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.1.4\lib\net461\Esynctraining.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Esynctraining.FluentValidation, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.FluentValidation.1.0.2\lib\net461\Esynctraining.FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Esynctraining.Http.Streaming">
+      <HintPath>..\packages\Esynctraining.Http.Streaming.1.0.0.1\lib\net40\Esynctraining.Http.Streaming.dll</HintPath>
+    </Reference>
+    <Reference Include="Esynctraining.Mail, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Mail.1.0.0.6\lib\net45\Esynctraining.Mail.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Esynctraining.NHibernate, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.NHibernate.1.0.1\lib\net461\Esynctraining.NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Esynctraining.Windsor, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Windsor.1.0.0.3\lib\net45\Esynctraining.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.8.1.3\lib\net45\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.8.11.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.8.11\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Ical.Net, Version=2.1.0.13690, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ical.Net.2.3.2\lib\net46\Ical.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Ical.Net.Collections, Version=2.1.0.13689, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ical.Net.2.3.2\lib\net46\Ical.Net.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.2.2.0\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Http, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Http.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NodaTime, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ical.Net.2.3.2\lib\net46\NodaTime.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.10.0\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.6.9.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.6.9\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.ComponentModel.Primitives, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Primitives.4.3.0\lib\net45\System.ComponentModel.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Discovery" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WcfRestContrib, Version=1.7.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CompanyAcDomainsService.svc" />
+    <Content Include="Logs\placeholder.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mail\Templates\TeacherCertificateEmail.html" />
+    <Content Include="Mail\Templates\CertificateEmail.html" />
+    <Content Include="Mail\Templates\EventQuizRegistration.html" />
+    <Content Include="OfflineQuizService.svc" />
+    <Content Include="CompanyEventsService.svc" />
+    <Content Include="FileStorage\Export\ReadMe.txt" />
+    <Content Include="FileStorage\Import\ReadMe.txt" />
+    <Content Include="FileStorage\Uploads\Placeholder.txt" />
+    <Content Include="images\adobeconnect_icon3.png" />
+    <Content Include="images\footer.png" />
+    <Content Include="images\logoBig.png" />
+    <None Include="images\readme.txt" />
+    <Content Include="LmsService.svc" />
+    <Content Include="Mail\Templates\ActivationLink.html" />
+    <Content Include="Mail\Templates\ErrorMail.html" />
+    <Content Include="Mail\Templates\EventQuizResultUnsuccess.html" />
+    <Content Include="Mail\Templates\LicenseUpgrade.html" />
+    <Content Include="Mail\Templates\Enterprise.html" />
+    <Content Include="Mail\Templates\EventQuizResultSuccess.html" />
+    <Content Include="Mail\Templates\Trial.html" />
+    <Content Include="CompanyLmsService.svc" />
+    <Content Include="EmailService.svc" />
+    <Content Include="TestResultService.svc" />
+    <Content Include="TestService.svc" />
+    <Content Include="SurveyResultService.svc" />
+    <Content Include="SurveyService.svc" />
+    <Content Include="SNMemberService.svc" />
+    <Content Include="SNGroupDiscussionService.svc" />
+    <Content Include="SNProfileService.svc" />
+    <Content Include="BuildVersionService.svc" />
+    <Content Include="QuestionTypeService.svc" />
+    <Content Include="ReportingService.svc" />
+    <Content Include="ThemeService.svc" />
+    <Content Include="DistractorService.svc" />
+    <Content Include="QuestionService.svc" />
+    <Content Include="SubModuleCategoryService.svc" />
+    <Content Include="SubModuleItemService.svc" />
+    <Content Include="LookupService.svc" />
+    <Content Include="CompanyService.svc" />
+    <Content Include="CompanyLicenseService.svc" />
+    <Content Include="QuizService.svc" />
+    <Content Include="AppletItemService.svc" />
+    <Content Include="ACSessionService.svc" />
+    <Content Include="AppletResultService.svc" />
+    <Content Include="QuizResultService.svc" />
+    <Content Include="RestService.svc" />
+    <Content Include="FileService.svc" />
+    <Content Include="Uploads\dummy.js" />
+    <Content Include="UserService.svc" />
+    <Content Include="Global.asax" />
+    <Content Include="log4net.cfg.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mail\Templates\ChangePassword.html" />
+    <Content Include="Mail\Templates\ActivationInvitation.html" />
+    <Content Include="nhibernate.cfg.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_GlobalResources\ErrorsTexts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ErrorsTexts.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Start\DIConfig.cs" />
+    <Compile Include="Base\ExportService.cs" />
+    <Compile Include="CompanyAcDomainsService.svc.cs">
+      <DependentUpon>CompanyAcDomainsService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Contracts\IOfflineQuizService.cs" />
+    <Compile Include="CORS\CorsConstants.cs" />
+    <Compile Include="CORS\CorsEnabledAttribute.cs" />
+    <Compile Include="CORS\CorsEnabledMessageInspector.cs" />
+    <Compile Include="CORS\CorsEnabledServiceHostFactory.cs" />
+    <Compile Include="CORS\EnableCorsEndpointBehavior.cs" />
+    <Compile Include="CORS\PreflightOperationBehavior.cs" />
+    <Compile Include="CORS\PreflightOperationInvoker.cs" />
+    <Compile Include="Mail\Models\CertificateEmailModel.cs" />
+    <Compile Include="Mail\Models\EventQuizRegistrationModel.cs" />
+    <Compile Include="Mail\Models\TeacherCertificateEmailModel.cs" />
+    <Compile Include="OfflineQuizService.svc.cs">
+      <DependentUpon>OfflineQuizService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="CompanyEventsService.svc.cs">
+      <DependentUpon>CompanyEventsService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Contracts\IACSessionService.cs" />
+    <Compile Include="Contracts\IAppletItemService.cs" />
+    <Compile Include="Contracts\IAppletResultService.cs" />
+    <Compile Include="Contracts\IBuildVersionService.cs" />
+    <Compile Include="Contracts\ICompanyAcDomainsService.cs" />
+    <Compile Include="Contracts\ICompanyLicenseService.cs" />
+    <Compile Include="Contracts\ICompanyLmsService.cs" />
+    <Compile Include="Contracts\ICompanyService.cs" />
+    <Compile Include="Contracts\IDistractorService.cs" />
+    <Compile Include="Contracts\IEmailService.cs" />
+    <Compile Include="Contracts\IExportService.cs" />
+    <Compile Include="Contracts\IFileService.cs" />
+    <Compile Include="Contracts\IImportService.cs" />
+    <Compile Include="Contracts\ILmsService.cs" />
+    <Compile Include="Contracts\ILookupService.cs" />
+    <Compile Include="Contracts\IQuestionService.cs" />
+    <Compile Include="Contracts\IQuestionTypeService.cs" />
+    <Compile Include="Contracts\IQuizResultService.cs" />
+    <Compile Include="Contracts\IQuizService.cs" />
+    <Compile Include="Contracts\IReportingService.cs" />
+    <Compile Include="Contracts\IRestService.cs" />
+    <Compile Include="Contracts\ISNGroupDiscussionService.cs" />
+    <Compile Include="Contracts\ISNMemberService.cs" />
+    <Compile Include="Contracts\ISNProfileService.cs" />
+    <Compile Include="Contracts\ISocialService.cs" />
+    <Compile Include="Contracts\ISubModuleCategoryService.cs" />
+    <Compile Include="Contracts\ISubModuleItemService.cs" />
+    <Compile Include="Contracts\ISurveyResultService.cs" />
+    <Compile Include="Contracts\ISurveyService.cs" />
+    <Compile Include="Contracts\ITestResultService.cs" />
+    <Compile Include="Contracts\ITestService.cs" />
+    <Compile Include="Contracts\IThemeService.cs" />
+    <Compile Include="Contracts\IUserService.cs" />
+    <Compile Include="Converters\BlackboardResultConverter.cs" />
+    <Compile Include="Converters\CanvasResultConverter.cs" />
+    <Compile Include="Converters\CompanyDTOConverter.cs" />
+    <Compile Include="Converters\ConverterFactory.cs" />
+    <Compile Include="Converters\MoodleResultConverter.cs" />
+    <Compile Include="Converters\QuizConverter.cs" />
+    <Compile Include="Converters\QuizResultConverter.cs" />
+    <Compile Include="Converters\SakaiResultConverter.cs" />
+    <Compile Include="CORS\CustomHeaderMessageInspector.cs" />
+    <Compile Include="CORS\EnableCrossOriginResourceSharingBehavior.cs" />
+    <Compile Include="DTO\CompanyLmsOperationDTO.cs" />
+    <Compile Include="DTO\CompanyDTO.cs" />
+    <Compile Include="DTO\FileDownloadDTO.cs" />
+    <Compile Include="DTO\IdNamePairDTO.cs" />
+    <Compile Include="DTO\UserDTOWithSplashScreenDTO.cs" />
+    <Compile Include="ErrorHandling\ErrorHandlerBehavior.cs" />
+    <Compile Include="ErrorHandling\ErrorServiceBehavior.cs" />
+    <Compile Include="ErrorHandling\Log4NetErrorHandler.cs" />
+    <Compile Include="Contracts\ICompanyEventsService.cs" />
+    <Compile Include="LmsService.svc.cs">
+      <DependentUpon>LmsService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Mail\Models\AccountDeletedModel.cs" />
+    <Compile Include="Mail\Models\ActivationLinkModel.cs" />
+    <Compile Include="Mail\Models\ChangePasswordModel.cs" />
+    <Compile Include="Mail\Models\EnterpriseModel.cs" />
+    <Compile Include="Mail\Models\ErrorMailModel.cs" />
+    <Compile Include="Mail\Models\EventQuizResultSuccessModel.cs" />
+    <Compile Include="Mail\Models\EventQuizResultUnsuccessModel.cs" />
+    <Compile Include="Mail\Models\LicenseUpgradeModel.cs" />
+    <Compile Include="Mail\Models\TrialModel.cs" />
+    <Compile Include="CompanyLmsService.svc.cs">
+      <DependentUpon>CompanyLmsService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="EmailService.svc.cs">
+      <DependentUpon>EmailService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="ExtendedHttpBehavior\ExtendedQueryStringConverter.cs" />
+    <Compile Include="ExtendedHttpBehavior\ExtendedWebHttpBehaviour.cs" />
+    <Compile Include="TestResultService.svc.cs">
+      <DependentUpon>TestResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="TestService.svc.cs">
+      <DependentUpon>TestService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="SurveyResultService.svc.cs">
+      <DependentUpon>SurveyResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="SurveyService.svc.cs">
+      <DependentUpon>SurveyService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="SNMemberService.svc.cs">
+      <DependentUpon>SNMemberService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="SNGroupDiscussionService.svc.cs">
+      <DependentUpon>SNGroupDiscussionService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="SNProfileService.svc.cs">
+      <DependentUpon>SNProfileService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="BuildVersionService.svc.cs">
+      <DependentUpon>BuildVersionService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="QuestionTypeService.svc.cs">
+      <DependentUpon>QuestionTypeService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingService.svc.cs">
+      <DependentUpon>ReportingService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="ThemeService.svc.cs">
+      <DependentUpon>ThemeService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="DistractorService.svc.cs">
+      <DependentUpon>DistractorService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="QuestionService.svc.cs">
+      <DependentUpon>QuestionService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="SubModuleCategoryService.svc.cs">
+      <DependentUpon>SubModuleCategoryService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="SubModuleItemService.svc.cs">
+      <DependentUpon>SubModuleItemService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="LookupService.svc.cs">
+      <DependentUpon>LookupService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="CompanyService.svc.cs">
+      <DependentUpon>CompanyService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="CompanyLicenseService.svc.cs">
+      <DependentUpon>CompanyLicenseService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="QuizService.svc.cs">
+      <DependentUpon>QuizService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="AppletItemService.svc.cs">
+      <DependentUpon>AppletItemService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="ACSessionService.svc.cs">
+      <DependentUpon>ACSessionService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="AppletResultService.svc.cs">
+      <DependentUpon>AppletResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="QuizResultService.svc.cs">
+      <DependentUpon>QuizResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="RestService.svc.cs">
+      <DependentUpon>RestService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="FileService.svc.cs">
+      <DependentUpon>FileService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="UserService.svc.cs">
+      <DependentUpon>UserService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Common.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Common.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Emails.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Emails.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Base\BaseService.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Mail\Models\ActivationInvitationModel.cs" />
+    <Compile Include="Providers\ResourceProviderActivator.cs" />
+    <Compile Include="Providers\WcfResourceProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validators\ACSessionDTOValidator.cs" />
+    <Compile Include="Validators\AppletResultDTOValidator.cs" />
+    <Compile Include="Validators\AppletItemDTOValidator.cs" />
+    <Compile Include="Validators\CompanyLmsValidator.cs" />
+    <Compile Include="Validators\LmsUserParametersDTOValidator.cs" />
+    <Compile Include="Validators\NewsletterSubscriptionDTOValidator.cs" />
+    <Compile Include="Validators\EmailHistoryDTOValidator.cs" />
+    <Compile Include="Validators\CompanyLicenseDTOValidator.cs" />
+    <Compile Include="Validators\CompanyDTOValidator.cs" />
+    <Compile Include="Validators\BuildVersionDTOValidator.cs" />
+    <Compile Include="Validators\BatchUsersDTOValidator.cs" />
+    <Compile Include="Validators\CompanyThemeDTOValidator.cs" />
+    <Compile Include="Validators\QuizSummaryResultDTOValidator.cs" />
+    <Compile Include="Validators\SurveySummaryResultDTOValidator.cs" />
+    <Compile Include="Validators\TestDTOValidator.cs" />
+    <Compile Include="Validators\TestQuestionResultDTOValidator.cs" />
+    <Compile Include="Validators\TestResultDTOValidator.cs" />
+    <Compile Include="Validators\TestSmiWrapperDTOValidator.cs" />
+    <Compile Include="Validators\SurveyQuestionResultAnswerDTOValidator.cs" />
+    <Compile Include="Validators\SurveySmiWrapperDTOValidator.cs" />
+    <Compile Include="Validators\QuizSmiWrapperDTOValidator.cs" />
+    <Compile Include="Validators\SurveyDTOValidator.cs" />
+    <Compile Include="Validators\SurveyQuestionResultDTOValidator.cs" />
+    <Compile Include="Validators\SurveyResultDTOValidator.cs" />
+    <Compile Include="Validators\TestSummaryResultDTOValidator.cs" />
+    <Compile Include="Validators\VCFProfileDTOValidator.cs" />
+    <Compile Include="Validators\UserDTOValidator.cs" />
+    <Compile Include="Validators\SNMemberDTOValidator.cs" />
+    <Compile Include="Validators\SNProfileSNServiceDTOValidator.cs" />
+    <Compile Include="Validators\SNMapSettingsDTOValidator.cs" />
+    <Compile Include="Validators\SNLinkDTOValidator.cs" />
+    <Compile Include="Validators\SNGroupDiscussionValidator.cs" />
+    <Compile Include="Validators\SNProfileDTOValidator.cs" />
+    <Compile Include="Validators\QuestionTypeDTOValidator.cs" />
+    <Compile Include="Validators\DistractorDTOValidator.cs" />
+    <Compile Include="Validators\ThemeDTOValidator.cs" />
+    <Compile Include="Validators\QuestionDTOValidator.cs" />
+    <Compile Include="Validators\SubModuleCategoryDTOValidator.cs" />
+    <Compile Include="Validators\SubModuleItemDTOValidator.cs" />
+    <Compile Include="Validators\QuizQuestionResultDTOValidator.cs" />
+    <Compile Include="Validators\QuizDTOValidator.cs" />
+    <Compile Include="Validators\QuizResultDTOValidator.cs" />
+    <Compile Include="Validators\FileDtoValidator.cs" />
+    <Compile Include="Validators\ForgetPasswordViewModelValidator.cs" />
+    <Compile Include="ViewModels\ForgetPasswordViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mail\Attachments\svn.ignore" />
+    <Content Include="Web.constrings">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="FileStorage\Schemas\Edugame.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="FileStorage\Schemas\WebEx.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="lms.companyRoleMapping.cfg.json" />
+    <None Include="Properties\PublishProfiles\Dev.pubxml" />
+    <None Include="Properties\PublishProfiles\EdugameCloud.pubxml" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\Common.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Common.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_GlobalResources\Emails.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Emails.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\ErrorsTexts.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>ErrorsTexts.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj">
+      <Project>{2c718c51-fa6e-47df-8260-e1f085b3bc48}</Project>
+      <Name>EdugameCloud.Core.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
+      <Project>{0356a403-7b15-4a68-9c81-7b6bff6956cf}</Project>
+      <Name>EdugameCloud.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
+      <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
+      <Name>EdugameCloud.Lti.BlackBoard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Bridge\EdugameCloud.Lti.Bridge.csproj">
+      <Project>{5bd06fb7-1f43-400e-a71c-627b94a0afe5}</Project>
+      <Name>EdugameCloud.Lti.Bridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
+      <Project>{6b3dc960-c953-4783-927c-40e438746ac5}</Project>
+      <Name>EdugameCloud.Lti.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Haiku\EdugameCloud.Lti.Haiku.csproj">
+      <Project>{139294a8-0d29-4857-958b-d9bfb5604728}</Project>
+      <Name>EdugameCloud.Lti.Haiku</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
+      <Project>{23C32769-727D-4F59-9746-1C75A0B39F49}</Project>
+      <Name>EdugameCloud.Lti.Moodle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj">
+      <Project>{2a856007-ffab-4d1d-b8d5-510451bf8b79}</Project>
+      <Name>EdugameCloud.Lti.Sakai</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
+      <Project>{b45a1c76-37bd-45ba-95b5-21befd17b3e5}</Project>
+      <Name>EdugameCloud.Lti</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
+      <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
+      <Name>EdugameCloud.Persistence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.HttpClient\Esynctraining.HttpClient.csproj">
+      <Project>{67d0275d-2e41-4dfc-bb37-5bfcb70f9fae}</Project>
+      <Name>Esynctraining.HttpClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.AgilixBuzz\Esynctraining.Lti.Lms.AgilixBuzz.csproj">
+      <Project>{fc2de60e-d087-4366-8fe1-158ac9b87026}</Project>
+      <Name>Esynctraining.Lti.Lms.AgilixBuzz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Canvas\Esynctraining.Lti.Lms.Canvas.csproj">
+      <Project>{c580ca4f-71db-43ee-aee8-ca6a1ca76f62}</Project>
+      <Name>Esynctraining.Lti.Lms.Canvas</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Common\Esynctraining.Lti.Lms.Common.csproj">
+      <Project>{856DFC9A-1C9B-4E9E-B056-FBEE6D4030B5}</Project>
+      <Name>Esynctraining.Lti.Lms.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Desire2Learn\Esynctraining.Lti.Lms.Desire2Learn.csproj">
+      <Project>{72d8cade-9d46-4f82-8f50-85d1b0f2e68e}</Project>
+      <Name>Esynctraining.Lti.Lms.Desire2Learn</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Moodle\Esynctraining.Lti.Lms.Moodle.csproj">
+      <Project>{e4577dca-72d0-4ce8-ba01-276dbc1f6e1d}</Project>
+      <Name>Esynctraining.Lti.Lms.Moodle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Sakai\Esynctraining.Lti.Lms.Sakai.csproj">
+      <Project>{0D722D8D-D9C6-4E4D-ADF1-B6EE8DF034F5}</Project>
+      <Name>Esynctraining.Lti.Lms.Sakai</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Lti.Lms\Esynctraining.Lti.Lms.Schoology\Esynctraining.Lti.Lms.Schoology.csproj">
+      <Project>{1c0d3806-361a-4cd8-acdb-43aff540ac72}</Project>
+      <Name>Esynctraining.Lti.Lms.Schoology</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugProxy|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>21646</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://dev.edugamecloud.com/Services</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+    <Error Condition="!Exists('..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.Microsoft.VisualStudio.Web.targets.14.0.0.3\build\MSBuild.Microsoft.VisualStudio.Web.targets.props'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

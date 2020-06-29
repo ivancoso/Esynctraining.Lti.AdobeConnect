@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      id="HaikuApi"
+      service="EdugameCloud.Lti.API.Haiku.IHaikuRestApiClient, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Haiku.HaikuRestApiClient, EdugameCloud.Lti.Haiku"></component>
+    <component
+      id="Haiku"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Haiku.HaikuLmsUserService, EdugameCloud.Lti.Haiku"></component>
+    <component
+      id="HaikuSectionsService"
+      service="EdugameCloud.Lti.API.LmsCourseSectionsServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Haiku.HaikuLmsCourseSectionsService, EdugameCloud.Lti.Haiku"
+      lifestyle="transient"></component>
+  </components>
+</configuration>

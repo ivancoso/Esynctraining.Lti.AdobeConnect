@@ -1,0 +1,247 @@
+@{
+    ViewBag.Title = "EdugameCloud API Test Page";
+}
+@section scripts {
+    <script src="//code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#um_get_access_token_btn').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: $('#api_url').val() + 'Token',
+                    data: 'client_secret=secret&client_id=client&grant_type=password&username=' + encodeURIComponent($('#um_username_1').val()) + '&password=' + $('#um_password_1').val(),
+                    //contentType: "Content-Type: application/x-www-form-urlencoded",
+                    success: function (_d) { $('#um_access_token').val(_d.access_token); }
+                }).fail(function (_d) { alert(JSON.stringify(_d)); });
+            });
+
+            $('#api_get_all_testsessions').click(function () {
+                GetList('reporting/testsessions/');
+            });
+
+            $('#api_get_bymeeting_testsessions').click(function () {
+            	var params = "?meetingUrl=" + encodeURIComponent($("#api_testsessions_meetingUrl").val());
+            	GetData2('reporting/testsessions/by-meeting/', params);
+            });
+
+            $('#api_get_one_testsession').click(function () {
+                GetDetails2('reporting/testsessions/', '#api_testsessions_acSessionId', '#api_testsessions_subModuleItemId');
+            });
+
+            $('#api_get_one_testsession_email').click(function () {
+            	GetDetails3('reporting/testsessions/', '#api_testsessions_email_acSessionId', '#api_testsessions_email_subModuleItemId', '#api_testsessions_email_acEmail');
+            });
+
+            $('#api_get_all_quizsessions').click(function () {
+                GetList('reporting/quizsessions/');
+            });
+
+            $('#api_get_bymeeting_quizsessions').click(function () {
+            	var params = "?meetingUrl=" + encodeURIComponent($("#api_quizsessions_meetingUrl").val());
+            	GetData2('reporting/quizsessions/by-meeting/', params);
+            });
+
+            $('#api_get_one_quizsession').click(function () {
+                GetDetails2('reporting/quizsessions/', '#api_quizsessions_acSessionId', '#api_quizsessions_subModuleItemId');
+            });
+
+            $('#api_get_one_quizsession_email').click(function () {
+            	GetDetails3('reporting/quizsessions/', '#api_quizsessions_email_acSessionId', '#api_quizsessions_email_subModuleItemId', '#api_quizsessions_email_acEmail');
+            });
+
+            $('#api_get_all_surveysessions').click(function () {
+                GetList('reporting/surveysessions/');
+            });
+
+            $('#api_get_bymeeting_surveysessions').click(function () {
+            	var params = "?meetingUrl=" + encodeURIComponent($("#api_surveysessions_meetingUrl").val());
+            	GetData2('reporting/surveysessions/by-meeting/', params);
+            });
+
+            $('#api_get_one_surveysession').click(function () {
+                GetDetails2('reporting/surveysessions/', '#api_surveysessions_acSessionId', '#api_surveysessions_subModuleItemId');
+            });
+
+            $('#api_get_one_surveysession_email').click(function () {
+            	GetDetails3('reporting/surveysessions/', '#api_surveysessions_email_acSessionId', '#api_surveysessions_email_subModuleItemId', '#api_surveysessions_email_acEmail');
+            });
+
+            $('#api_get_all_snsessions').click(function () {
+                GetList('reporting/snsessions/');
+            });
+
+            $('#api_get_one_snsession').click(function () {
+            	GetData('reporting/snsessions/', '#api_snsessions_acSessionId');
+            });
+
+            $('#api_get_all_crosswordsessions').click(function () {
+                GetList('reporting/crosswordsessions/');
+            });
+
+            $('#api_get_one_crosswordsession').click(function () {
+            	GetData('reporting/crosswordsessions/', '#api_crosswordsessions_acSessionId');
+            });
+
+            function GetList(relativeUrl)
+            {
+                $.ajax({
+                    type: "GET",
+                    url: $('#api_url').val() + relativeUrl,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
+                    },
+                    success: function (_d)
+                    {
+                        $('#result').html(JSON.stringify(_d, null, 4));
+                        $('#result').removeClass("prettyprinted");                        
+                        PR.prettyPrint()
+                        //alert(JSON.stringify(_d));
+                    }
+                }).fail(function (_d) { alert(JSON.stringify(_d)); });
+            }
+
+            function GetData(relativeUrl, paramInputId) {
+                $.ajax({
+                    type: "GET",
+                    url: $('#api_url').val() + relativeUrl + encodeURIComponent($(paramInputId).val()),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
+                    },
+                    success: function (_d)
+                    {
+                        $('#result').html(JSON.stringify(_d, null, 4));
+                        $('#result').removeClass("prettyprinted");
+                        PR.prettyPrint()
+                        //alert(JSON.stringify(_d));
+                    }
+                }).fail(function (_d) { alert(JSON.stringify(_d)); });
+            }
+
+            function GetData2(relativeUrl, params) {
+            	$.ajax({
+            		type: "GET",
+            		url: $('#api_url').val() + relativeUrl + params,
+            		beforeSend: function (xhr) {
+            			xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
+            		},
+            		success: function (_d) {
+            			$('#result').html(JSON.stringify(_d, null, 4));
+            			$('#result').removeClass("prettyprinted");
+            			PR.prettyPrint()
+            			//alert(JSON.stringify(_d));
+            		}
+            	}).fail(function (_d) { alert(JSON.stringify(_d)); });
+            }
+
+            function GetDetails2(relativeUrl, sessionInputId, subModuleItemInputId) {
+                $.ajax({
+                    type: "GET",
+                    url: $('#api_url').val() + relativeUrl + $(sessionInputId).val() + '/' + $(subModuleItemInputId).val(),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
+                    },
+                    success: function (_d)
+                    {
+                        $('#result').html(JSON.stringify(_d, null, 4));
+                        $('#result').removeClass("prettyprinted");
+                        PR.prettyPrint()
+                        //alert(JSON.stringify(_d));
+                    }
+                }).fail(function (_d) { alert(JSON.stringify(_d)); });
+            }
+
+            function GetDetails3(relativeUrl, sessionInputId, subModuleItemInputId, thirdParamInputId) {
+            	$.ajax({
+            		type: "GET",
+            		url: $('#api_url').val() + relativeUrl + $(sessionInputId).val() + '/' + $(subModuleItemInputId).val() + '/' + encodeURIComponent($(thirdParamInputId).val()),
+            		beforeSend: function (xhr) {
+            			xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
+            		},
+            		success: function (_d) {
+            			$('#result').html(JSON.stringify(_d, null, 4));
+            			$('#result').removeClass("prettyprinted");
+            			PR.prettyPrint()
+            			//alert(JSON.stringify(_d));
+            		}
+            	}).fail(function (_d) { alert(JSON.stringify(_d)); });
+            }
+        });
+    </script>
+    <script src="//cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+}
+<link type="text/css" href="~/Areas/HelpPage/HelpPage.css" rel="stylesheet" />
+<header class="help-page">
+    <div class="content-wrapper">
+        <div class="float-left">
+            <h1>@ViewBag.Title</h1>
+        </div>
+    </div>
+</header>
+<div id="body" class="help-page">
+    <section class="featured">
+        <div class="content-wrapper">
+            @*<h2>Introduction</h2>*@
+            <p>
+                @Html.ActionLink("Back to help", "Index", "Help")
+            </p>
+        </div>
+    </section>
+    <section class="content-wrapper main-content clear-fix">
+        Api Server Url:
+        <ul>
+            <li>Url: <input placeholder="e.g., https://dev.edugamecloud.com/api/" id='api_url' value="http://dev.edugamecloud.com/api/" /></li>
+        </ul>
+        User Management:
+        <ul>
+            <li>
+                Get Access Token: <input placeholder="Username" id="um_username_1" value="demo@esynctraining.com" />
+                <input type="password" placeholder="Password" id="um_password_1" value="" />
+                <input type="button" value="Get" id="um_get_access_token_btn" />
+                <input placeholder="Access Token" id="um_access_token" />
+            </li>
+        </ul>
+        API Endpoints:
+        <ul>
+            <li>
+                <p>Access Token: <input placeholder="Required for any api call" id="api_access_token" /></p>
+            </li>
+            <li>
+                <p><b>Tests</b></p>
+                <p><input type="button" value="Get Tests Sessions" id="api_get_all_testsessions" /></p>
+				<p><input type="button" value="Get Tests Sessions By Meeting" id="api_get_bymeeting_testsessions" /> : <input placeholder="Full Meeting URL" id="api_testsessions_meetingUrl" /></p>
+                <p><input type="button" value="Get Tests Session Details" id="api_get_one_testsession" /> : <input placeholder="acSessionId" id="api_testsessions_acSessionId" /> <input placeholder="subModuleItemId" id="api_testsessions_subModuleItemId" /></p>
+				<p><input type="button" value="Get Test Session Details By Email" id="api_get_one_testsession_email" /> : <input placeholder="acSessionId" id="api_testsessions_email_acSessionId" /> <input placeholder="subModuleItemId" id="api_testsessions_email_subModuleItemId" /> <input placeholder="AC User Email" id="api_testsessions_email_acEmail" /></p>
+            </li>
+            <li>
+                <p><b>Quizes</b></p>
+                <p><input type="button" value="Get Quiz Sessions" id="api_get_all_quizsessions" /></p>
+				<p><input type="button" value="Get Quiz Sessions By Meeting" id="api_get_bymeeting_quizsessions" /> : <input placeholder="Full Meeting URL" id="api_quizsessions_meetingUrl" /></p>
+                <p><input type="button" value="Get Quiz Session Details" id="api_get_one_quizsession" /> : <input placeholder="acSessionId" id="api_quizsessions_acSessionId" /> <input placeholder="subModuleItemId" id="api_quizsessions_subModuleItemId" /></p>
+				<p><input type="button" value="Get Quiz Session Details By Email" id="api_get_one_quizsession_email" /> : <input placeholder="acSessionId" id="api_quizsessions_email_acSessionId" /> <input placeholder="subModuleItemId" id="api_quizsessions_email_subModuleItemId" /> <input placeholder="AC User Email" id="api_quizsessions_email_acEmail" /></p>
+            </li>
+            <li>
+                <p><b>Surveys</b></p>
+                <p><input type="button" value="Get Survey Sessions" id="api_get_all_surveysessions" /></p>
+				<p><input type="button" value="Get Survey Sessions By Meeting" id="api_get_bymeeting_surveysessions" /> : <input placeholder="Full Meeting URL" id="api_surveysessions_meetingUrl" /></p>
+                <p><input type="button" value="Get Survey Session Details" id="api_get_one_surveysession" /> : <input placeholder="acSessionId" id="api_surveysessions_acSessionId" /> <input placeholder="subModuleItemId" id="api_surveysessions_subModuleItemId" /></p>
+				<p><input type="button" value="Get Survey Session Details By Email" id="api_get_one_surveysession_email" /> : <input placeholder="acSessionId" id="api_surveysessions_email_acSessionId" /> <input placeholder="subModuleItemId" id="api_surveysessions_email_subModuleItemId" /> <input placeholder="AC User Email" id="api_surveysessions_email_acEmail" /></p>
+            </li>
+            <li>
+                <p><b>Collaboration Maps</b></p>
+                <p><input type="button" value="Get Collaboration Sessions" id="api_get_all_snsessions" /></p>
+                <p><input type="button" value="Get Collaboration Session Details" id="api_get_one_snsession" /> : <input placeholder="acSessionId" id="api_snsessions_acSessionId" /></p>
+            </li>
+            <li>
+                <p><b>Crosswords</b></p>
+                <p><input type="button" value="Get Crossword Sessions" id="api_get_all_crosswordsessions" /></p>
+				@*<p><input type="button" value="Get Crossword Sessions By Meeting" id="api_get_bymeeting_crosswordsession" /> : <input placeholder="Full Meeting URL" id="api_crosswordsessions_meetingUrl" /></p>*@
+                <p><input type="button" value="Get Crossword Session Details" id="api_get_one_crosswordsession" /> : <input placeholder="acSessionId" id="api_crosswordsessions_acSessionId" /></p>
+            </li>
+        </ul>
+    </section>
+    <section class="content-wrapper main-content clear-fix">
+        API Request Result:
+        <pre id="result" class="prettyprint lang-js">{ 'data' : 'empty' }</pre>
+    </section>
+</div>

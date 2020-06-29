@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <Version>1.9.0</Version>
+
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Windsor.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.BlackBoardClient" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
+    <PackageReference Include="Esynctraining.NHibernate" Version="1.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Microsoft.Web.Services3" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj" />
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj" />
+  </ItemGroup>
+
+</Project>
