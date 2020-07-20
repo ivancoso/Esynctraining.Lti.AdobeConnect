@@ -694,7 +694,7 @@ namespace Esynctraining.Zoom.ApiWrapper
 
         public async Task<MeetingParticipantsReport> GetMeetingParticipantsReport(string accountId, string meetingId, int pageSize = 300, string nextPageToken = null)
         {
-            meetingId = WebUtility.UrlEncode(meetingId);
+            meetingId = WebUtility.UrlEncode(WebUtility.UrlEncode(meetingId));
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
 
