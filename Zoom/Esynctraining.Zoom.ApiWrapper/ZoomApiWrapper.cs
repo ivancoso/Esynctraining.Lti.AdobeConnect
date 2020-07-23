@@ -694,18 +694,7 @@ namespace Esynctraining.Zoom.ApiWrapper
 
         public async Task<MeetingParticipantsReport> GetMeetingParticipantsReport(string accountId, string meetingId, int pageSize = 300, string nextPageToken = null)
         {
-            //https://marketplace.zoom.us/docs/api-reference/zoom-api/reports/reportmeetings
-            //Meeting UUID. Each meeting instance will generate its own UUID(i.e., after a meeting ends, 
-            //a new UUID will be generated for the next instance of the meeting). 
-            //Please double encode your UUID when using it for API calls if the UUID begins with a ‘/’ or contains ‘//’ in it.
-            if (meetingId.StartsWith("/") || meetingId.Contains(@"//"))
-            {
-                meetingId = WebUtility.UrlEncode(WebUtility.UrlEncode(meetingId));
-            }
-            else
-            {
-                meetingId = WebUtility.UrlEncode(meetingId);
-            }
+            meetingId = WebUtility.UrlEncode(meetingId);
             
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
@@ -747,10 +736,12 @@ namespace Esynctraining.Zoom.ApiWrapper
             if (pageSize > 300)
                 throw new Exception("GetMeetingParticipantsReport page size max 300");
 
+            meetingId = WebUtility.UrlEncode(meetingId);
             RestRequest restRequest = null;
             if (string.IsNullOrEmpty(accountId))
             {
-                restRequest = await BuildRequestAuthorization($"metrics/meetings/{meetingId}/participants", Method.GET);
+                restRequest = await BuildRequestAuthorization("metrics/meetings/{meetingId}/participants", Method.GET);
+                restRequest.AddParameter(nameof(meetingId), (object)meetingId, ParameterType.UrlSegment);
             }
             else
             {
