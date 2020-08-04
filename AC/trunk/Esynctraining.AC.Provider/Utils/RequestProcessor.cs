@@ -435,7 +435,7 @@ namespace Esynctraining.AC.Provider.Utils
         /// </returns>
         public XmlDocument Process(string action, string parameters, out StatusInfo status)
         {
-            status = new StatusInfo { Code = StatusCodes.not_set };
+            status = new StatusInfo { Code = StatusCodes.not_set, Action = action };
 
             if (parameters == null)
             {
@@ -717,6 +717,9 @@ namespace Esynctraining.AC.Provider.Utils
         protected XmlDocument ProcessXmlResult(StatusInfo status, string buffer)
         {
             var doc = new XmlDocument();
+            
+            //setting response before xml load, for logging response
+            status.InnerXml = buffer;
 
             try
             {

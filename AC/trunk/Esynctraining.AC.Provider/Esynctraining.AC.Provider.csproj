@@ -9,11 +9,11 @@
         <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
         <PackageId>Esynctraining.AC.Provider</PackageId>
         <PackageTags>core;AC;AdobeConnect</PackageTags>
-        <PackageReleaseNotes>+MeetingFeatureInfo; enableHtml</PackageReleaseNotes>
-        <Version>1.0.7.4</Version>
+        <PackageReleaseNotes>+StatusInfo.Action for logging</PackageReleaseNotes>
+        <Version>1.0.7.5</Version>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <AssemblyVersion>1.0.7.4</AssemblyVersion>
-        <FileVersion>1.0.7.4</FileVersion>
+        <AssemblyVersion>1.0.7.5</AssemblyVersion>
+        <FileVersion>1.0.7.5</FileVersion>
         <Company>CoSo Cloud LLC</Company>
     </PropertyGroup>
 

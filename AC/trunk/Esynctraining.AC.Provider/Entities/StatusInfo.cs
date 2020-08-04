@@ -46,6 +46,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         public string InvalidField { get; set; }
 
+        public string Action { get; set; }
         /// <summary>
         /// Gets or sets the underlying exception info.
         /// </summary>
