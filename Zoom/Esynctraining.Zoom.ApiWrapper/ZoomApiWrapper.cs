@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -353,6 +354,23 @@ namespace Esynctraining.Zoom.ApiWrapper
         }
 
         public async Task<bool> UpdateRegistrantsStatus(string accountId, string meetingId, ZoomUpdateRegistrantStatusRequest updateStatusRequest, string occurenceId)
+        {
+            foreach(var registrans in updateStatusRequest.Registrants.ToChunks(30))
+            {
+                ZoomUpdateRegistrantStatusRequest zoomUpdateRegistrantStatusRequest =
+                    new ZoomUpdateRegistrantStatusRequest
+                    {
+                        Action = updateStatusRequest.Action,
+                        Registrants = new List<ZoomRegistrantForStatusRequest>(registrans)
+                    };
+
+                await UpdateRegistrantsStatusDo(accountId, meetingId, zoomUpdateRegistrantStatusRequest, occurenceId);
+            }
+
+            return true;
+        }
+
+        public async Task<bool> UpdateRegistrantsStatusDo(string accountId, string meetingId, ZoomUpdateRegistrantStatusRequest updateStatusRequest, string occurenceId)
         {
             RestRequest restRequest = null;
             if (string.IsNullOrEmpty(accountId))
