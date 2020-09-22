@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -280,7 +283,6 @@ namespace Esynctraining.AdobeConnect.Tests
             }
         }
 
-
         [Test]
         public void WillUpdateMeetingHTMLLaunch()
         {
@@ -292,6 +294,31 @@ namespace Esynctraining.AdobeConnect.Tests
 
             proxy.Login(new UserCredentials("", ""));//admin
             var update = proxy.UpdateAclField("1690082137", AclFieldId.meetingHTMLLaunch.ToString(), false.ToString().ToLower());
+        }
+
+        //ACLTI-2307
+        [Test]
+        public async Task WillRetrieveMeetingEnrollments()
+        {
+            var acApiUrl = new Uri("https://nevadalearning.adobeconnect.com");
+            var con = new ConnectionDetails(acApiUrl);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), acApiUrl, String.Empty);
+            var login = proxy.Login(new UserCredentials("", ""));//admin
+            var commonInfo = proxy.GetCommonInfo();
+            var res = proxy.GetAllMeetingEnrollments("4622234399");
+
+            using (var httpClinet = new HttpClient())
+            {
+                try
+                {
+                    var result = await httpClinet.GetStringAsync($"https://nevadalearning.adobeconnect.com/api/xml?action=permissions-info&acl-id=4622234399&filter-permission-id=host&filter-permission-id=mini-host&filter-permission-id=view&session={commonInfo.CommonInfo.Cookie}");
+                }
+                catch(Exception e)
+                {
+
+                }
+            }
         }
     }
 }

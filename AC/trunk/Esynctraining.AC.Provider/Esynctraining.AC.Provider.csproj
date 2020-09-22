@@ -9,11 +9,11 @@
         <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
         <PackageId>Esynctraining.AC.Provider</PackageId>
         <PackageTags>core;AC;AdobeConnect</PackageTags>
-        <PackageReleaseNotes>+StatusInfo.Action for logging</PackageReleaseNotes>
-        <Version>1.0.7.5</Version>
+        <PackageReleaseNotes>GetAllMeetingEnrollments - chunked in case of IOException</PackageReleaseNotes>
+        <Version>1.0.7.6</Version>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <AssemblyVersion>1.0.7.5</AssemblyVersion>
-        <FileVersion>1.0.7.5</FileVersion>
+        <AssemblyVersion>1.0.7.6</AssemblyVersion>
+        <FileVersion>1.0.7.6</FileVersion>
         <Company>CoSo Cloud LLC</Company>
     </PropertyGroup>
 

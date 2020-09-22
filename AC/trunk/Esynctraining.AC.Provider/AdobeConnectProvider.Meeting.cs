@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Xml;
@@ -79,7 +80,35 @@
             if (string.IsNullOrWhiteSpace(meetingId))
                 throw new ArgumentException("Meeting SCO can't be empty", nameof(meetingId));
 
-            return this.GetPermissionsInfo(meetingId, CommandParams.Permissions.Filter.PermissionId.MeetingAll).ConvertForMeeting();
+            PermissionCollectionResult result = null;
+
+            result = GetPermissionsInfo(meetingId, CommandParams.Permissions.Filter.PermissionId.MeetingAll);
+            
+            // ACLTI-2307 - workaround. Need to remove when migrated to HttpClient. WebResponse throws IOException (unexpected EOF) in some cases.
+            if (!result.Success && result.Status.UnderlyingExceptionInfo is IOException)
+            { 
+                int i = 0;
+                int chunk = 30; //for 30 records server does not return header Transfer-Encoding: chunked
+                PermissionCollectionResult res;
+                List<PermissionInfo> permissions = new List<PermissionInfo>();
+                do
+                {
+                    // action=permissions-info
+                    var commandParams = string.Format(CommandParams.Permissions.AclId + "&{1}", meetingId, CommandParams.Permissions.Filter.PermissionId.MeetingAll);
+
+                    res = DoCallPermissionsInfo(Commands.Permissions.Info, commandParams, chunk * i++, chunk);
+                    if(res.Success)
+                    {
+                        permissions.AddRange(res.Values);
+                    }
+                }
+                while (res.Values.Any());
+
+                var meetingPermissions = permissions.Select(x => new MeetingPermissionInfo(x)).ToList();
+                return new MeetingPermissionCollectionResult(res.Status, meetingPermissions);
+            }
+
+            return result.ConvertForMeeting();
         }
 
         public MeetingPermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds)
