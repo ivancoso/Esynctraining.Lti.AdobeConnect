@@ -42,7 +42,7 @@ namespace AnonymousChat.WebApi.Host
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<SmtpClientCheck>();
-
+            services.AddCors();
             services.AddHealthChecks(checks =>
             {
                 checks
@@ -99,6 +99,14 @@ namespace AnonymousChat.WebApi.Host
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            var origins = Configuration["AppSettings:CorsOrigin"].Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            app.UseCors(builder =>
+                builder
+                .WithOrigins(origins)
+                .WithMethods("POST", "GET", "DELETE", "PUT")
+                .WithHeaders("Authorization", "X-Requested-With", "Content-Type", "Accept", "Origin")
+                .SetPreflightMaxAge(TimeSpan.FromDays(1)));
 
             app.UseMvc();
 
