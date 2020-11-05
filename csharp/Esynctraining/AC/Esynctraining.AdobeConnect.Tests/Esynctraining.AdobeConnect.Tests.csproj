@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <AssemblyName>Esynctraining.AdobeConnect.Tests</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>Esynctraining.AdobeConnect.Tests</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifiers>win-anycpu;win</RuntimeIdentifiers>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--<ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">-->
+    <ProjectReference Include="..\Esynctraining.AC.Provider\Esynctraining.AC.Provider.csproj" />
+    <ProjectReference Include="..\Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj" />
+    <PackageReference Include="Castle.Core" Version="3.3.3" />
+    <PackageReference Include="Castle.LoggingFacility" Version="3.3.0" />
+    <PackageReference Include="Castle.Windsor" Version="3.3.0" />
+    <PackageReference Include="Esynctraining.CastleLog4Net" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Core.Logging.CastleLogger" Version="1.0.0.1" />
+    <PackageReference Include="Esynctraining.Windsor" Version="1.0.0.1" />
+    <PackageReference Include="log4net" Version="2.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="NSubstitute" Version="1.10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.0.2" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestAdapter" Version="1.1.13" />
+    <PackageReference Include="NUnit" Version="2.6.4" />
+  </ItemGroup>
+
+</Project>

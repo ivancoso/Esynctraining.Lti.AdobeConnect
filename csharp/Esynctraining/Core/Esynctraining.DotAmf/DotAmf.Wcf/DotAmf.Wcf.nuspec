@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>DotAmf.Wcf</id>
+    <version>1.0.1.2</version>
+    <title>DotAmf.Wcf</title>
+    <authors>eSyncTraining.com</authors>
+    <owners>eSyncTraining.com</owners>
+    <projectUrl>http://esynctraining.com/</projectUrl>
+    <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>WCF service extensions for full AMF/AMFX support.</description>
+    <copyright>Copyright © 2014-2017 eSyncTraining.com</copyright>
+    <tags>amf, wcf</tags>
+    <releaseNotes>.Net 4.6.1.</releaseNotes>
+    <dependencies>
+    </dependencies>
+    <references>
+      <reference file="DotAmf.Wcf.dll" />
+      <reference file="DotAmf.dll" />
+    </references>
+  </metadata>
+  <files>
+    <file src="bin\$configuration$\DotAmf.dll" target="lib\net45" />
+    <file src="bin\$configuration$\DotAmf.Wcf.dll" target="lib\net45" />
+    <file src="bin\$configuration$\DotAmf.dll" target="lib\net461" />
+    <file src="bin\$configuration$\DotAmf.Wcf.dll" target="lib\net461" />
+   </files>
+</package>

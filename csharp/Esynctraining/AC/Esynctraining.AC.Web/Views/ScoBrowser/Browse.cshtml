@@ -1,0 +1,70 @@
+﻿@model eSyncTraining.Web.Models.ScoBrowserModel
+
+@{
+    ViewBag.Title = "Sco Browser";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<ul id="menu">
+    <li>@Html.ActionLink("Shared Events", "Browse", "ScoBrowser", new { scoType = "events"}, null)</li>
+    <li>@Html.ActionLink("User Events", "Browse", "ScoBrowser", new { scoType = "user-events"}, null)</li>
+    <li>@Html.ActionLink("Shared Meetings", "Browse", "ScoBrowser", new { scoType = "meetings"}, null)</li>
+    <li>@Html.ActionLink("My Meetings", "Browse", "ScoBrowser", new { scoType = "my-meetings"}, null)</li>
+    <li>@Html.ActionLink("User Meetings", "Browse", "ScoBrowser", new { scoType = "user-meetings"}, null)</li>
+</ul>
+
+    @if (Model != null && !string.IsNullOrWhiteSpace(Model.ScoType))
+    {
+        <p>@Html.ActionLink(string.Format("Create New {0}", Model.CreateNewLabel), "Create", new { scoType = Model.ScoType, folderId = Model.FolderId }, null)</p>
+    }
+    else
+    {
+        <h3>Please select Type</h3>
+    }
+
+
+    @if (Model != null && Model.Values != null && Model.Values.Any())
+    {
+        <table>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Values.First().ScoId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Values.First().Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Values.First().Type)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Values.First().Path)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Values.First().DateModified)
+                </th>
+            </tr>
+
+            @foreach (var item in Model.Values)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ScoId)
+                    </td>
+                    <td>
+                        @(item.IsFolder ? this.Html.ActionLink(item.Name, "BrowseFolder", new { scoType = Model.ScoType, folderId = item.ScoId }, new { @style="font-weight:bold;" }) : this.Html.ActionLink(item.Name, "EditItem", new { scoType = Model.ScoType, scoId = item.ScoId }))
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Type)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Path)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateModified)
+                    </td>
+                </tr>
+            }
+
+        </table>
+    }

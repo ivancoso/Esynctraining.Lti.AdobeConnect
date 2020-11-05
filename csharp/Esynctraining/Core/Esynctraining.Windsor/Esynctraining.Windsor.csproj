@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <Version>1.0.0.3</Version>
+    <Authors>eSyncTraining.com</Authors>
+    <Company>eSyncTraining.com</Company>
+    <Description>Provides Castle.Windsor functionality for eSyncTraining projects.</Description>
+    <Product>eSyncTraining.com</Product>
+    <PackageProjectUrl>http://esynctraining.com/</PackageProjectUrl>
+    <PackageIconUrl>http://dotnet.esynctraining.com:2399/esync128.png</PackageIconUrl>
+    <Copyright>Copyright © 2015 eSyncTraining.com</Copyright>
+    <PackageTags>core windso</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Windsor" Version="3.3.0" />
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.2" />
+  </ItemGroup>
+
+</Project>

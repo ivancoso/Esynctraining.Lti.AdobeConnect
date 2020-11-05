@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Description>Provides Adobe Connect functionality for CoSo projects</Description>
+        <Copyright>Copyright (c) 2020 cosocloud.com</Copyright>
+        <AssemblyTitle>Esynctraining.AC.Provider</AssemblyTitle>
+        <Authors>CoSo Cloud LLC</Authors>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
+        <PackageId>Esynctraining.AC.Provider</PackageId>
+        <PackageTags>core;AC;AdobeConnect</PackageTags>
+        <PackageReleaseNotes>GetAllMeetingEnrollments - chunked in case of IOException</PackageReleaseNotes>
+        <Version>1.0.7.6</Version>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <AssemblyVersion>1.0.7.6</AssemblyVersion>
+        <FileVersion>1.0.7.6</FileVersion>
+        <Company>CoSo Cloud LLC</Company>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Polly" Version="7.1.1" />
+    </ItemGroup>
+
+</Project>

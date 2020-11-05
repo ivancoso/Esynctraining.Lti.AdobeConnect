@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\gsdll32.dll" />
+    <None Remove="Resources\gsdll64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\gsdll32.dll" />
+    <EmbeddedResource Include="Resources\gsdll64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ghostscript.NET" Version="1.2.1" />
+    <PackageReference Include="iTextSharp" Version="5.5.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.Pdf.Common\Esynctraining.Pdf.Common.csproj" />
+  </ItemGroup>
+
+</Project>

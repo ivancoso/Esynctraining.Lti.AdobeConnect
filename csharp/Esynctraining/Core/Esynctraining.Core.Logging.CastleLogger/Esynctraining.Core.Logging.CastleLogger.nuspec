@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Esynctraining.Core.Logging.CastleLogger</id>
+        <version>1.0.0.1</version>
+        <title>Esynctraining.Core.Logging.CastleLogger</title>
+        <authors>eSyncTraining.com</authors>
+        <owners>eSyncTraining.com</owners>
+        <projectUrl>http://esynctraining.com/</projectUrl>
+        <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides simple Castle logger wrapper for eSyncTraining projects.</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright © 2016 eSyncTraining.com</copyright>
+        <tags>core castle logging logger</tags>
+      <dependencies>
+        <dependency id="Esynctraining.Core.Only" version="1.0.0.21" />
+      </dependencies>
+      <references>
+            <reference file="Esynctraining.Core.Logging.CastleLogger.dll" />
+        </references>
+    </metadata>
+    <files>
+     <file src="bin\$configuration$\Esynctraining.Core.Logging.CastleLogger.dll" target="lib\net45" />
+    </files>
+</package>

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <Version>1.2.0.1</Version>
+    <Authors>eSyncTraining.com</Authors>
+    <Company>eSyncTraining.com</Company>
+    <PackageProjectUrl>http://esynctraining.com/</PackageProjectUrl>
+    <PackageIconUrl>http://dotnet.esynctraining.com:2399/esync128.png</PackageIconUrl>
+    <Description>Provides core functionality for pdf annotations projects (nhibernate mappings)</Description>
+    <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
+    <PackageTags>pdf annotation persistence</PackageTags>
+    <AssemblyVersion>1.2.0.1</AssemblyVersion>
+    <FileVersion>1.2.0.1</FileVersion>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.WcfIntegrationFacility" Version="4.1.0" />
+    <PackageReference Include="Castle.Windsor" Version="4.1.0" />
+    <PackageReference Include="Esynctraining.Core.FullText" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Persistence" Version="1.0.0.6" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.2" />
+    <PackageReference Include="NHibernate" Version="4.1.1.4000" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDFAnnotation.Core\PDFAnnotation.Core.csproj" />
+  </ItemGroup>
+
+</Project>

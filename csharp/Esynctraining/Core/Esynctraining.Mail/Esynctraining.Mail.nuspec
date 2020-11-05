@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Esynctraining.Mail</id>
+        <version>1.0.0.6</version>
+        <title>Esynctraining.Mail</title>
+        <authors>eSyncTraining.com</authors>
+        <owners>eSyncTraining.com</owners>
+        <projectUrl>http://esynctraining.com/</projectUrl>
+        <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides core SMTP functionality for eSyncTraining projects.</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright © 2015 eSyncTraining.com</copyright>
+        <tags>core mail smtp</tags>
+        <dependencies>
+            <dependency id="RazorEngine" version="3.9.0" />
+            <dependency id="Esynctraining.Core.Only" version="1.0.0.21" />
+        </dependencies>
+        <references>
+            <reference file="Esynctraining.Mail.dll" />
+        </references>
+    </metadata>
+    <files>
+     <file src="bin\$configuration$\Esynctraining.Mail.dll" target="lib\net45" />
+    </files>
+</package>

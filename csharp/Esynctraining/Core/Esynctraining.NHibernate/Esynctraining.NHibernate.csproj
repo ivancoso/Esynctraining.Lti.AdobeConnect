@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;net461</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Provides NHibernate functionality for eSyncTraining projects.</Description>
+    <Copyright>Copyright © 2015-2017 eSyncTraining.com</Copyright>
+    <Company>eSyncTraining.com</Company>
+    <Version>1.0.1</Version>
+    <PackageTags>core nhibernate</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.1" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.2" />
+    <PackageReference Include="NHibernate" Version="4.1.1.4000" />
+  </ItemGroup>
+
+</Project>

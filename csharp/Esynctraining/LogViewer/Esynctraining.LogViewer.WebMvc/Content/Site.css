@@ -1,0 +1,73 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 100%;
+}
+
+
+/* log4net table styles */
+.log-id {
+    text-align: right;
+    vertical-align: top;
+}
+
+.log-date {
+    width: 170px;
+    text-align: right;
+}
+
+.log-level {
+    width: 70px;
+}
+
+.field-validation-error {
+    color: #b10000;
+    font-size: smaller;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    border: 2px ridge #ff0000;
+}
+
+.validation-summary-errors {
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .navbar-right {
+        margin-right: 0px;
+    }
+}

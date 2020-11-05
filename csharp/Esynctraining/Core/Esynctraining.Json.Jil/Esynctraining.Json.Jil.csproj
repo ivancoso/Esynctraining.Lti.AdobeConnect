@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <Version>1.0.0.3</Version>
+    <Description></Description>
+    <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
+    <Company>eSyncTraining.com</Company>
+    <PackageTags>json</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Jil JsonDeserialize added options</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Jil" Version="2.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.Core\Esynctraining.Core.csproj" />
+  </ItemGroup>
+
+</Project>

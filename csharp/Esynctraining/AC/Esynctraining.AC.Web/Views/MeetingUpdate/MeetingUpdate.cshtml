@@ -1,0 +1,86 @@
+﻿@model eSyncTraining.Web.Models.MeetingDetailModel
+
+@{
+    ViewBag.Title = "Meeting Details";
+}
+
+@{
+    var permissionDropdownContnent = new[]
+                                         {
+                                             new SelectListItem{Text = "Only registered users may enter the room (guest access is blocked)", Value = "denied"},
+                                             new SelectListItem{Text = "Only registered users and accepted guests may enter the room", Value = "remove", Selected = true},
+                                             new SelectListItem{Text = "Anyone who has the URL for the meeting can enter the room", Value = "view-hidden"}
+                                         };
+
+    if (Model != null)
+    {
+        var selectedPermission = permissionDropdownContnent.FirstOrDefault(p => p.Value.Equals(Model.PermissionId));
+
+        if (selectedPermission != null)
+        {
+            selectedPermission.Selected = true;
+        }
+    }
+}
+<div>
+    <a href="@ViewBag.ReturnUrl">&lt;- Back to List</a>
+</div>
+
+<hgroup class="title">
+    @if (Model == null)
+    {
+        <h1>Unexpected error occured!</h1>
+    }
+    else
+    {
+        <h1>@ViewBag.Title.</h1>
+    }
+    
+</hgroup>
+
+@if (Model != null)
+{
+    if (!string.IsNullOrWhiteSpace(Model.ScoId))
+    {
+        <h3>@Html.ActionLink("Manage Participants", "Index", "MeetingParticipants", new { meetingId = Model.ScoId, meetingName = Model.Name, returnUrl = ViewBag.ReturnUrl }, null)</h3>
+    }
+    
+    using (Html.BeginForm("Save", "MeetingUpdate", new { returnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>MeetingUpdateModel</legend>
+
+            @Html.Partial("_ScoUpdateFieldsetPartial")
+            
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PermissionId)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.PermissionId, permissionDropdownContnent)
+            </div>
+
+            <p>
+                <input type="submit" value="@(string.IsNullOrWhiteSpace(Model.ScoId) ? "Create" : "Save")" />
+            </p>
+        </fieldset>
+    }
+    if (!string.IsNullOrWhiteSpace(Model.ScoId))
+    {
+        using (Html.BeginForm("Delete", "MeetingUpdate", new { returnUrl = ViewBag.ReturnUrl }))
+        {
+            if (Model != null)
+            {
+                @Html.HiddenFor(model => model.ScoId)
+            }
+
+            <input type="submit" value="Delete" />
+        }
+    }
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

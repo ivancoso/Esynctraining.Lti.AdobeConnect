@@ -1,0 +1,33 @@
+﻿@model IEnumerable<eSyncTraining.Web.Models.ParticipantSlimModel>
+
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PrincipalId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PrincipalId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+            <br/>
+            (@Html.DisplayFor(modelItem => item.Login))
+        </td>
+        <td>
+            @using (Html.BeginForm("SetPermission", "MeetingParticipants", new { meetingId = ViewBag.MeetingId, meetingName = ViewBag.MeetingName, principalId = item.PrincipalId, permissionId = "remove", currentPrincipalId = ViewBag.CurrentPrincipalId, returnUrl = ViewBag.ReturnUrl }))
+            {
+                <input type="submit" value="Remove" />
+            }
+        </td>
+    </tr>
+}
+
+</table>

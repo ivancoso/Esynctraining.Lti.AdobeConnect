@@ -1,0 +1,97 @@
+﻿@model eSyncTraining.Web.Models.ScoDetailModelBase
+
+@{
+    var languagesDropdownContent = new[]
+                                       {
+                                           new SelectListItem{Text = "English", Value = "en"},
+                                           new SelectListItem{Text = "French", Value = "fr"},
+                                           new SelectListItem{Text = "German", Value = "de"},
+                                           new SelectListItem{Text = "Japanese", Value = "ja"},
+                                           new SelectListItem{Text = "Korean", Value = "ko"},
+                                           new SelectListItem{Text = "Russian", Value = "ru"}
+                                       };
+
+    if (Model != null)
+    {
+        var selectedLanguage = languagesDropdownContent.FirstOrDefault(p => p.Value.Equals(Model.Language, StringComparison.InvariantCultureIgnoreCase));
+
+        if (selectedLanguage != null)
+        {
+            selectedLanguage.Selected = true;
+        }
+    }
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ScoId))
+{
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.ScoId): @Html.DisplayFor(model => model.ScoId)
+        @Html.HiddenFor(model => model.ScoId)
+    </div>
+}
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.FolderId): @Html.DisplayFor(model => model.FolderId)
+    @Html.HiddenFor(model => model.FolderId)
+</div>
+        
+@if (!string.IsNullOrWhiteSpace(Model.ScoId))
+{
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.DateCreated): @Html.DisplayFor(model => model.DateCreated)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.DateModified): @Html.DisplayFor(model => model.DateModified)
+    </div>
+}
+        
+<div>&nbsp;</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.UrlPath)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.UrlPath)
+    @Html.ValidationMessageFor(model => model.UrlPath)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Name)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Name)
+    @Html.ValidationMessageFor(model => model.Name)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Description)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.Description)
+    @Html.ValidationMessageFor(model => model.Description)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.Language)
+</div>
+<div class="editor-field">
+    @Html.DropDownListFor(model => model.Language, languagesDropdownContent)
+    @Html.ValidationMessageFor(model => model.Language)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.BeginDate)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.BeginDate)
+    @Html.ValidationMessageFor(model => model.BeginDate)
+</div>
+
+<div class="editor-label">
+    @Html.LabelFor(model => model.EndDate)
+</div>
+<div class="editor-field">
+    @Html.EditorFor(model => model.EndDate)
+    @Html.ValidationMessageFor(model => model.EndDate)
+</div>

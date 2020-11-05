@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461;netstandard1.3</TargetFrameworks>
+    <Version>1.0.1.1</Version>
+    <Authors>eSyncTraining.com</Authors>
+    <Company>eSyncTraining.com</Company>
+    <PackageProjectUrl>http://esynctraining.com/</PackageProjectUrl>
+    <PackageIconUrl>http://dotnet.esynctraining.com:2399/esync128.png</PackageIconUrl>
+    <Description>CreateApiException extension to parse json with error.</Description>
+    <Copyright>Copyright © 2016-2018 eSyncTraining.com</Copyright>
+    <PackageTags>core webapi client</PackageTags>
+    <PackageReleaseNotes>removed newtonsoft reference; use IJsonDeserializer</PackageReleaseNotes>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.4" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.3" />
+  </ItemGroup>
+
+</Project>

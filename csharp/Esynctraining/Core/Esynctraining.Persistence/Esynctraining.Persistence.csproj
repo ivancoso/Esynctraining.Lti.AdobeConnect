@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+    <PackageTags>persistence</PackageTags>
+    <Copyright>Copyright © 2013-2016 eSyncTraining.com</Copyright>
+    <Description>Provides core functionality for NHibernate eSyncTraining projects</Description>
+    <Company>eSyncTraining.com</Company>
+    <Authors>eSyncTraining.com</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Windsor" Version="4.1.0" />
+    <PackageReference Include="FluentNHibernate" Version="2.0.3" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.2" />
+    <PackageReference Include="NHibernate" Version="4.1.1.4000" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Esynctraining.NHibernate\Esynctraining.NHibernate.csproj" />
+  </ItemGroup>
+
+</Project>

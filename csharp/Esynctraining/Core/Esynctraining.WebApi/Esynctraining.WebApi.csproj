@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <PackageId>Esynctraining.WebApi</PackageId>
+    <Version>1.0.0.4</Version>
+    <Authors>eSyncTraining.com</Authors>
+    <Company>eSyncTraining.com</Company>
+    <Product>eSyncTraining.com</Product>
+    <PackageProjectUrl>http://esynctraining.com/</PackageProjectUrl>
+    <PackageIconUrl>http://dotnet.esynctraining.com:2399/esync128.png</PackageIconUrl>
+    <Description>Provides WindsorCompositionRoot for WebApi projects.</Description>
+    <PackageReleaseNotes>+ WebApiExceptionLogger</PackageReleaseNotes>
+    <Copyright>Copyright © 2016 eSyncTraining.com</Copyright>
+    <PackageTags>core mvc webapi</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Core.Only" Version="1.0.1.2" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.3" />
+  </ItemGroup>
+
+</Project>

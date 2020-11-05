@@ -1,0 +1,67 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Provides core functionality for eSyncTraining projects.</Description>
+    <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
+    <AssemblyTitle>Esynctraining.Core.Only</AssemblyTitle>
+    <VersionPrefix>1.0.1.0</VersionPrefix>
+    <Authors>eSyncTraining.com</Authors>
+    <TargetFrameworks>net45;net461;netstandard1.3</TargetFrameworks>
+    <AssemblyName>Esynctraining.Core</AssemblyName>
+    <PackageId>Esynctraining.Core.Only</PackageId>
+    <PackageTags>core</PackageTags>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.1.4</Version>
+    <PackageReleaseNotes>fix json interfaces namespace</PackageReleaseNotes>
+    <AssemblyVersion>1.0.1.4</AssemblyVersion>
+    <FileVersion>1.0.1.4</FileVersion>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <EmbeddedResource Include="Windsor.xml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+
+  
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
+
+<ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+</ItemGroup>
+
+<ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
+  </ItemGroup>
+ 
+
+<ItemGroup>
+  <Folder Include="Properties\" />
+</ItemGroup>
+
+  
+
+
+</Project>

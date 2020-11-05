@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      service="Esynctraining.AdobeConnect.IAdobeConnectAccountService, Esynctraining.AdobeConnect"
+      type="Esynctraining.AdobeConnect.AdobeConnectAccountService, Esynctraining.AdobeConnect"
+      lifestyle="transient"></component>
+    <component
+      service="Esynctraining.AdobeConnect.ISeminarService, Esynctraining.AdobeConnect"
+      type="Esynctraining.AdobeConnect.SeminarService, Esynctraining.AdobeConnect"
+      lifestyle="transient"></component>
+  </components>
+</configuration>

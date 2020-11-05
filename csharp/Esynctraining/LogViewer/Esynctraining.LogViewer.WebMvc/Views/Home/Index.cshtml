@@ -1,0 +1,108 @@
+﻿@model Esynctraining.LogViewer.MvcWeb.Models.HomeIndexModel
+@{
+    ViewBag.Title = "Home";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "change-database-form", @class = "form-inline", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <fieldset class="fieldset">
+                <legend>Log Source</legend>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SelectedLogDatabase, "DB")
+                    @Html.DropDownListFor(m => m.SelectedLogDatabase, Model.LogDatabases, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.OutputRowCount, "Row Count")
+                    @Html.TextBoxFor(m => m.OutputRowCount, new { @class = "form-control" })
+                </div>
+                <button id="btn-change-database" class="btn btn-primary">Change</button>
+            </fieldset>
+        }
+    </div>
+    <div class="col-md-6">
+        @using (Html.BeginForm("TruncateLogs", "Home", FormMethod.Post, new { id = "truncate-logs-form", @class = "form-inline", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <fieldset class="fieldset">
+                <legend>Truncate Logs in @Model.SelectedLogDatabaseName</legend>
+                <div class="form-group">
+                    <button id="btn-truncate-logs" class="btn btn-default">Truncate Logs</button>
+                </div>
+            </fieldset>
+        }
+    </div>
+</div>
+<div class="row" style="padding-top:20px;">
+    <div class="col-md-6 col-ld-6 col-sm-12">       
+        @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { id = "search-form", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <fieldset class="fieldset">
+                <legend>Search</legend>
+                <div class="form-group">
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.SearchTerm, Model.SearchTerm, new { @class = "form-control search-input", placeholder = "Search", title = "Search", type = "search" })
+                        
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit" title="Search"><span class="glyphicon glyphicon-search"></span>&nbsp;Search</button>
+                        </span>                        
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SearchTerm)
+                </div>
+            </fieldset>
+        }
+    </div>
+</div>
+<div>
+    @if (Model.Logs.Count > 0)
+    {
+        <h3>Last @Model.Logs.Count Logs</h3>
+        
+        <table id="log-entries" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Date</th>
+                    <th>Level</th>
+                    <th>Logger</th>
+                    <th style="max-width: 600px;">Message</th>
+                    <th>Exception</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model.Logs)
+                {
+                    <tr>
+                        <td class="log-id">@Html.ActionLink(@log.Id.ToString(), "Detail", "Log", new { id = log.Id }, null)</td>
+                        <td class="log-date text-nowrap">@log.Date</td>
+                        <td class="log-level">@log.Level</td>
+                        <td title="@log.Logger">@log.ShortenedLogger</td>
+                        <td style="max-width: 600px;">@Html.Raw(log.Message.Replace("\r\n", "<br />").Replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"))</td>
+                        <td>@log.Exception</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h3>There are no logs to display.</h3>
+    }
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(function () {
+            $("#truncate-logs-form").submit(function(evt) {
+                if (!confirm("Really truncate logs?!?")) {
+                    evt.preventDefault();
+                }
+            });
+        });
+    </script>
+}

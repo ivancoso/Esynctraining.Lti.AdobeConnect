@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3E05DE78-D386-414A-9505-33861FF180F9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PDFAnnotation.Core</RootNamespace>
+    <AssemblyName>PDFAnnotation.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.3.3.0\lib\net40-client\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Facilities.Logging, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.LoggingFacility.3.3.0\lib\net40\Castle.Facilities.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Facilities.WcfIntegration, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.WcfIntegrationFacility.3.3.0\lib\net40\Castle.Facilities.WcfIntegration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Services.Logging.Log4netIntegration, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core-log4net.3.3.0\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Esynctraining.Core, Version=1.0.0.15, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.15\lib\net40\Esynctraining.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Esynctraining.Core.Weborb, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Weborb.1.0.0.4\lib\net40\Esynctraining.Core.Weborb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Esynctraining.PdfProcessor, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.PdfProcessor.1.0.0.2\lib\net40\Esynctraining.PdfProcessor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation, Version=5.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.5.6.2.0\lib\portable-net40+sl50+wp80+win8+wpa81\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ghostscript.NET, Version=1.2.0.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ghostscript.NET.1.2.0\lib\net40\Ghostscript.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.6.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.6\lib\itextsharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.0.3.4000\lib\net40\NHibernate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.6.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.6.3\lib\net40\RazorEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Discovery" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\OldSources\esyncTraining\Huseby\svn\csharp\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WcfRestContrib">
+      <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
+    </Reference>
+    <Reference Include="weborb, Version=5.1.0.24, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\weborb.5.1.0.24\lib\net40\weborb.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\RestrictedAccessAttribute.cs" />
+    <Compile Include="Authentication\AuthenticationValidator.cs" />
+    <Compile Include="Authentication\PDFAnnotationIdentity.cs" />
+    <Compile Include="Business\Models\AddressModel.cs" />
+    <Compile Include="Business\Models\ATDrawingModel.cs" />
+    <Compile Include="Business\Models\ATHighlightStrikeOutModel.cs" />
+    <Compile Include="Business\Models\ATMarkModel.cs" />
+    <Compile Include="Business\Models\CompanyContactModel.cs" />
+    <Compile Include="Business\Models\TopicModel.cs" />
+    <Compile Include="Business\Models\PDFModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Business\Models\ATRotationModel.cs" />
+    <Compile Include="Business\Models\ATShapeModel.cs" />
+    <Compile Include="Business\Models\ATTextItemModel.cs" />
+    <Compile Include="Business\Models\CategoryModel.cs" />
+    <Compile Include="Business\Models\ContactModel.cs" />
+    <Compile Include="Business\Models\ContactTypeModel.cs" />
+    <Compile Include="Business\Models\CountryModel.cs" />
+    <Compile Include="Business\Models\FileModel.cs" />
+    <Compile Include="Business\Models\CompanyModel.cs" />
+    <Compile Include="Business\Models\PasswordActivationModel.cs" />
+    <Compile Include="Business\Models\RTMPModel.cs" />
+    <Compile Include="Business\Models\ScheduleModel.cs" />
+    <Compile Include="Business\Models\StateModel.cs" />
+    <Compile Include="Business\Queries\QueryOverContact.cs" />
+    <Compile Include="Business\TimeExtensions.cs" />
+    <Compile Include="Constants\ClientConstants.cs" />
+    <Compile Include="Constants\EntityTypes.cs" />
+    <Compile Include="Contracts\ITopicService.cs" />
+    <Compile Include="Contracts\ICategoryService.cs" />
+    <Compile Include="Contracts\IContactService.cs" />
+    <Compile Include="Contracts\IFileService.cs" />
+    <Compile Include="Contracts\ICompanyService.cs" />
+    <Compile Include="Contracts\ILookupService.cs" />
+    <Compile Include="Contracts\IPDFService.cs" />
+    <Compile Include="Contracts\IRestService.cs" />
+    <Compile Include="Converters\JsonDateTimeConverter.cs" />
+    <Compile Include="Domain\DTO\AddressDTO.cs" />
+    <Compile Include="Domain\DTO\ATDrawingMarkDTO.cs" />
+    <Compile Include="Domain\DTO\ATHighlightStrikeOutMarkDTO.cs" />
+    <Compile Include="Domain\DTO\CategoryContactDTO.cs" />
+    <Compile Include="Domain\DTO\CompanyForCreationDTO.cs" />
+    <Compile Include="Domain\DTO\CompanyContactDTO.cs" />
+    <Compile Include="Domain\DTO\ConfigDTO.cs" />
+    <Compile Include="Domain\DTO\FileConvertationDTO.cs" />
+    <Compile Include="Domain\DTO\FileTopicDTO.cs" />
+    <Compile Include="Domain\DTO\TopicDTO.cs" />
+    <Compile Include="Domain\DTO\IBaseMarkDTO.cs" />
+    <Compile Include="Domain\DTO\IBoxedMarkDTO.cs" />
+    <Compile Include="Domain\DTO\ATMarkDTO.cs" />
+    <Compile Include="Domain\DTO\ATPageSymbolsDTO.cs" />
+    <Compile Include="Domain\DTO\ATShapeMarkDTO.cs" />
+    <Compile Include="Domain\DTO\ATTextItemDTO.cs" />
+    <Compile Include="Domain\DTO\CategoryDTO.cs" />
+    <Compile Include="Domain\DTO\ContactDTO.cs" />
+    <Compile Include="Domain\DTO\ContactTypeDTO.cs" />
+    <Compile Include="Domain\DTO\ContactWithDetailsDTO.cs" />
+    <Compile Include="Domain\DTO\ExtendedCategoryDTO.cs" />
+    <Compile Include="Domain\DTO\GroupedCategoriesDTO.cs" />
+    <Compile Include="Domain\DTO\CompanyWithDetailsDTO.cs" />
+    <Compile Include="Domain\DTO\CountryDTO.cs" />
+    <Compile Include="Domain\DTO\FileDTO.cs" />
+    <Compile Include="Domain\DTO\CompanyDTO.cs" />
+    <Compile Include="Domain\DTO\GenericEmailDTO.cs" />
+    <Compile Include="Domain\DTO\LoginDTO.cs" />
+    <Compile Include="Domain\DTO\LookupDTO.cs" />
+    <Compile Include="Domain\DTO\StateDTO.cs" />
+    <Compile Include="Domain\DTO\TabFirstPageWrapper.cs" />
+    <Compile Include="Domain\Entities\Address.cs" />
+    <Compile Include="Domain\Entities\ATDrawing.cs" />
+    <Compile Include="Domain\Entities\ATHighlightStrikeOut.cs" />
+    <Compile Include="Domain\Entities\ATMark.cs" />
+    <Compile Include="Domain\Entities\ATRotation.cs" />
+    <Compile Include="Domain\Entities\ATShape.cs" />
+    <Compile Include="Domain\Entities\ATTextItem.cs" />
+    <Compile Include="Domain\Entities\Contact.cs" />
+    <Compile Include="Domain\Entities\ContactStatusEnum.cs" />
+    <Compile Include="Domain\Entities\ContactType.cs" />
+    <Compile Include="Domain\Entities\ContactTypeEnum.cs" />
+    <Compile Include="Domain\Entities\Category.cs" />
+    <Compile Include="Domain\Entities\CompanyContact.cs" />
+    <Compile Include="Domain\Entities\Topic.cs" />
+    <Compile Include="Domain\Entities\Country.cs" />
+    <Compile Include="Domain\Entities\File.cs" />
+    <Compile Include="Domain\Entities\Company.cs" />
+    <Compile Include="Domain\Entities\PasswordActivation.cs" />
+    <Compile Include="Domain\Entities\Schedule.cs" />
+    <Compile Include="Domain\Entities\ScheduleDescriptor.cs" />
+    <Compile Include="Domain\Entities\ScheduleType.cs" />
+    <Compile Include="Domain\Entities\State.cs" />
+    <Compile Include="Extensions\ArrayExtensions.cs" />
+    <Compile Include="Extensions\NHibernateExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RTMP\ClientConnectionHandler.cs" />
+    <Compile Include="RTMP\DBChangesNotifier.cs" />
+    <Compile Include="RTMP\NotificationType.cs" />
+    <Compile Include="Utils\CharRenderInfo.cs" />
+    <Compile Include="Utils\Pdf2SwfConverter.cs" />
+    <Compile Include="Utils\Point.cs" />
+    <Compile Include="Utils\PointsConverter.cs" />
+    <Compile Include="Utils\TextSymbolsExtractionStategy.cs" />
+    <Compile Include="Weborb\WebOrbAuthenticationHandler.cs" />
+    <Compile Include="Weborb\WebOrbAuthorizationHandler.cs" />
+    <Compile Include="Weborb\WebOrbRolesProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="nuget.config" />
+    <None Include="packages.config" />
+    <None Include="PDFAnnotation.Core.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="PostBuildScripts\BuildNewPackage-RanAutomatically.ps1" />
+    <None Include="PostBuildScripts\New-NuGetPackage.ps1" />
+    <None Include="PostBuildScripts\UploadPackage-RunManually.bat" />
+    <None Include="PostBuildScripts\UploadPackage-RunManually.ps1" />
+    <None Include="_CreateNewNuGetPackage\Config.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\New-NuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\UploadNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PostBuildScripts\NuGet.exe" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
+REM If you see this in Visual Studio's Error List window, check the Output window's Build tab for the actual error.
+ECHO Creating NuGet package in Post-Build event...
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(ProjectDir)_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1' -ProjectFilePath '$(ProjectPath)' -OutputDirectory '$(TargetDir)' -BuildConfiguration '$(ConfigurationName)' -BuildPlatform '$(PlatformName)'"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

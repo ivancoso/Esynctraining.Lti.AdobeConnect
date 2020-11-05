@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>PDFAnnotation.Persistence</id>
+    <version>1.0.1.25</version>
+    <title>PDFAnnotation.Persistence</title>
+    <authors>eSyncTraining.com</authors>
+    <owners>eSyncTraining.com</owners>
+    <projectUrl>http://esynctraining.com/</projectUrl>
+    <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides core functionality for pdf annotations projects (nhibernate mappings)</description>
+    <copyright>Copyright © 2013-2015 eSyncTraining.com</copyright>
+    <tags>pdf annotation persistence</tags>
+    <releaseNotes>Provides core functionality for pdf annotations projects (nhibernate mappings)</releaseNotes>
+    <dependencies>
+        <dependency id="PDFAnnotation.Core" version="[1.0.0.0,2.0.0.0]" />
+    </dependencies>
+    <references>
+      <reference file="PDFAnnotation.Persistence.dll" />
+    </references>
+  </metadata>
+</package>

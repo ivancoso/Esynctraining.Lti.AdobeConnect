@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <Authors>eSyncTraining.com</Authors>
+    <Company>eSyncTraining.com</Company>
+    <PackageProjectUrl>http://esynctraining.com/</PackageProjectUrl>
+    <Description>Provides core functionality for pdf annotations projects</Description>
+    <Copyright>Copyright © 2016-2017 eSyncTraining.com</Copyright>
+    <PackageTags>pdf annotation</PackageTags>
+    <PackageIconUrl>http://dotnet.esynctraining.com:2399/esync128.png</PackageIconUrl>
+    <Version>1.2.0.1</Version>
+    <AssemblyVersion>1.2.0.1</AssemblyVersion>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <FileVersion>1.2.0.1</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Esynctraining.Core.FullText" Version="1.0.0.2" />
+    <PackageReference Include="Esynctraining.Crypto" Version="1.0.2" />
+    <PackageReference Include="Esynctraining.NHibernate" Version="1.0.1" />
+    <PackageReference Include="Esynctraining.PdfProcessor" Version="1.0.0.3" />
+    <PackageReference Include="Iesi.Collections" Version="4.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="wcfrestcontrib" Version="1.7.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="WIRIScommon">
+      <HintPath>..\ExternalLibraries\WIRIS\WIRIScommon.dll</HintPath>
+    </Reference>
+    <Reference Include="WIRISeditor">
+      <HintPath>..\ExternalLibraries\WIRIS\WIRISeditor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Business\Models\PDFModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>
